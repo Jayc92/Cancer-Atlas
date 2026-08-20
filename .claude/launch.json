@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cancer-atlas",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "3055",
+        "--directory",
+        "/Users/joseph.carfagno/Downloads/cancer-atlas"
+      ],
+      "port": 3055,
+      "url": "http://localhost:3055"
+    }
+  ]
+}

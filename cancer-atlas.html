@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cancer Atlas — body to mutation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0f1a; --panel:#121a2b; --panel-2:#0e1524; --line:#24314a;
+    --text:#e7ecf6; --muted:#8393ad;
+    --teal:#35c9c1; --coral:#ff6b5e; --azure:#4f8dfd; --amber:#f2b642; --violet:#a78bfa;
+    --driver:#ff6b5e; --passenger:#6b7c99;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:radial-gradient(ellipse at 50% 0%,#101a30 0%,var(--bg) 60%);color:var(--text);font-family:'IBM Plex Sans',sans-serif;overflow:hidden;}
+  .display{font-family:'Space Grotesk',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  #app{position:relative;width:100%;height:100vh;min-height:580px;}
+  .screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .4s ease;}
+  .screen.active{opacity:1;pointer-events:auto;}
+
+  /* ---------- shared header ---------- */
+  #header{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px;pointer-events:none;}
+  #brand{pointer-events:auto;}
+  #brand .eyebrow{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.14em;color:var(--teal);text-transform:uppercase;margin-bottom:4px;}
+  #crumbs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:'Space Grotesk';font-size:17px;font-weight:600;max-width:70vw;}
+  #crumbs .crumb{cursor:pointer;color:var(--text);opacity:.5;transition:opacity .15s;}
+  #crumbs .crumb.current{opacity:1;cursor:default;}
+  #crumbs .crumb:not(.current):hover{opacity:.85;text-decoration:underline;}
+  #crumbs .sep{color:var(--muted);opacity:.5;font-weight:400;}
+  #disclaimer{position:absolute;right:24px;bottom:18px;z-index:50;max-width:260px;font-size:10.5px;color:var(--muted);text-align:right;line-height:1.5;background:rgba(18,26,43,.72);border:1px solid var(--line);border-radius:10px;padding:10px 12px;backdrop-filter:blur(6px);pointer-events:none;transition:opacity .25s ease;}
+  /* The mutation panel occupies the same bottom-right corner and carries its own
+     citation key, so the global disclaimer would otherwise render on top of it. */
+  #app.panel-open #disclaimer{opacity:0;}
+
+  /* ================= BODY SCREEN ================= */
+  #screenBody{}
+  #bodyWrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+  #bodyPerspective{perspective:1400px;width:min(420px,60vw);height:min(640px,78vh);}
+  #bodyGroup{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .05s linear;cursor:grab;}
+  #bodyGroup:active{cursor:grabbing;}
+  #bodySvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+  .silhouette{fill:url(#bodyGrad);stroke:var(--teal);stroke-width:1.4;stroke-opacity:.55;filter:drop-shadow(0 0 24px rgba(53,201,193,.18));}
+  .hotspot{position:absolute;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;cursor:pointer;transform-style:preserve-3d;}
+  .hotspot .ring{position:absolute;inset:-8px;border-radius:50%;border:1px solid currentColor;opacity:.35;}
+  .hotspot .dot{position:absolute;inset:4px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor;}
+  .hotspot.active-organ{color:var(--teal);}
+  .hotspot.inactive-organ{color:var(--muted);opacity:.65;}
+  .hotspot.glow{animation:pulseGlow 1s ease 2;}
+  @keyframes pulseGlow{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.6);}}
+  .hotspot-label{position:absolute;left:20px;top:-6px;white-space:nowrap;font-family:'IBM Plex Mono';font-size:10.5px;background:rgba(10,14,24,.7);border:1px solid var(--line);padding:2px 7px;border-radius:20px;opacity:0;transition:opacity .15s;}
+  .hotspot:hover .hotspot-label{opacity:1;}
+
+  #searchWrap{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);width:min(360px,84vw);z-index:40;}
+  #searchInput{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-family:'IBM Plex Sans';font-size:14px;padding:11px 14px;border-radius:24px;outline:none;}
+  #searchInput:focus{border-color:var(--teal);}
+  #searchResults{margin-top:8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:none;}
+  #searchResults.show{display:block;}
+  .sr-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--line);}
+  .sr-row:last-child{border-bottom:none;}
+  .sr-row:hover{background:var(--panel-2);}
+  .sr-name{font-size:13.5px;}
+  .sr-sys{font-size:10.5px;color:var(--muted);}
+  .sr-tag{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);padding:2px 6px;border-radius:20px;}
+
+  #bodyHint{position:absolute;left:24px;bottom:18px;z-index:40;font-size:12px;color:var(--muted);max-width:220px;line-height:1.5;}
+  #bodyHint b{color:var(--text);font-weight:600;}
+
+  #toast{position:absolute;left:50%;top:26px;transform:translateX(-50%) translateY(-140%);background:var(--panel);border:1px solid var(--line);padding:10px 16px;border-radius:10px;font-size:13px;z-index:60;transition:transform .3s ease;}
+  #toast.show{transform:translateX(-50%) translateY(0);}
+
+  /* ================= ORGAN SCREEN ================= */
+  #screenOrgan{overflow-y:auto;}
+  #organWrap{max-width:760px;margin:0 auto;padding:100px 28px 60px;}
+  #organWrap .eyebrow{font-family:'IBM Plex Mono';font-size:11px;color:var(--teal);letter-spacing:.12em;text-transform:uppercase;}
+  #organWrap h1{font-family:'Space Grotesk';font-size:34px;margin:8px 0 4px;}
+  #organWrap .sub{color:var(--muted);font-size:14px;margin-bottom:22px;}
+  #organVisual{width:100%;max-width:280px;margin:0 auto 24px;}
+  .facts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:20px 0 30px;}
+  .fact{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+  .fact .flabel{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px;}
+  .fact .fval{font-size:14px;font-weight:600;font-family:'Space Grotesk';}
+  #organWrap p.desc{color:#c4cee0;font-size:14.5px;line-height:1.65;max-width:600px;}
+  .section-title{font-family:'Space Grotesk';font-size:19px;font-weight:600;margin:34px 0 14px;}
+  .cancer-list{display:flex;flex-direction:column;gap:10px;}
+  .cancer-row{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .cancer-row.enabled{cursor:pointer;border-color:rgba(53,201,193,.4);}
+  .cancer-row.enabled:hover{background:var(--panel-2);}
+  .cr-left{display:flex;flex-direction:column;gap:3px;}
+  .cr-name{font-size:15px;font-weight:600;font-family:'Space Grotesk';}
+  .cr-share{font-size:11.5px;color:var(--muted);}
+  .cr-cta{font-size:12.5px;color:var(--teal);font-weight:600;white-space:nowrap;}
+  .cr-cta.disabled{color:var(--muted);}
+
+  /* ---------- 3D viewers (ovary organ + tumor site map) ---------- */
+  #ovaryViewerWrap{width:100%;max-width:320px;aspect-ratio:1/1;margin:0 auto 6px;border-radius:18px;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 38%,#182338 0%,#0d1320 72%);border:1px solid var(--line);cursor:grab;}
+  #ovaryViewerWrap:active{cursor:grabbing;}
+  #ovaryViewerWrap canvas{display:block;width:100%!important;height:100%!important;}
+  #ovaryInfoCard{max-width:320px;margin:0 auto 26px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-height:64px;}
+  #ovaryInfoCard .oi-title{font-family:'Space Grotesk';font-size:14px;font-weight:600;margin-bottom:4px;}
+  #ovaryInfoCard .oi-text{font-size:12.5px;color:var(--muted);line-height:1.55;}
+  #ovaryInfoCard .oi-text.placeholder{font-style:italic;}
+  #organHint{text-align:center;font-size:11.5px;color:var(--muted);margin:-2px auto 22px;max-width:320px;}
+  #organHint b{color:var(--text);}
+
+  #txSiteViewer{position:absolute;inset:0;cursor:grab;transition:opacity .45s ease;}
+  #txSiteViewer:active{cursor:grabbing;}
+  #txSiteViewer.hidden{opacity:0;pointer-events:none;}
+  #txSiteViewer canvas{display:block;width:100%!important;height:100%!important;}
+  .site-label{position:absolute;font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.06em;color:var(--text);background:rgba(10,14,24,.55);border:1px solid var(--line);padding:3px 8px;border-radius:20px;pointer-events:none;white-space:nowrap;transform:translate(-50%,-160%);}
+
+  /* ================= CANCER (TUMOR EXPLORER) SCREEN ================= */
+  #screenCancer{}
+  #txStage{position:absolute;inset:0;}
+  #txCenterCaption{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:5;}
+  #txCenterCaption .big{font-family:'Space Grotesk';font-size:14px;color:var(--muted);opacity:.55;letter-spacing:.03em;}
+  #txCellLayer{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .45s ease;}
+  #txCellLayer.active{opacity:1;pointer-events:auto;}
+  .node{position:absolute;border-radius:50%;transform:translate(-50%,-50%);will-change:left,top,width,height,opacity;}
+  .node.clickable{cursor:pointer;}
+  #txLegend{position:absolute;left:24px;bottom:18px;z-index:20;background:rgba(18,26,43,.72);border:1px solid var(--line);border-radius:10px;padding:12px 14px;backdrop-filter:blur(6px);display:flex;flex-direction:column;gap:7px;}
+  #txLegend .lg-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:2px;}
+  .lg-row{display:flex;align-items:center;gap:8px;font-size:12.5px;}
+  .lg-dot{width:9px;height:9px;border-radius:50%;flex:none;box-shadow:0 0 8px currentColor;}
+  #txHint{position:absolute;right:24px;top:78px;z-index:20;text-align:right;max-width:240px;font-size:12px;color:var(--muted);line-height:1.5;}
+  #txHint b{color:var(--text);font-weight:600;}
+
+  #txPanel{position:absolute;top:0;right:0;height:100%;width:360px;max-width:88vw;background:var(--panel);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:30;display:flex;flex-direction:column;box-shadow:-30px 0 60px rgba(0,0,0,.35);}
+  #txPanel.open{transform:translateX(0);}
+  #txPanelHead{padding:20px 20px 14px;border-bottom:1px solid var(--line);position:relative;}
+  #txPanelHead .pid{font-family:'Space Grotesk';font-size:20px;font-weight:600;}
+  #txPanelHead .psub{font-size:12px;color:var(--muted);margin-top:3px;}
+  #txPanelClose{position:absolute;top:16px;right:16px;width:26px;height:26px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;}
+  #txPanelClose:hover{color:var(--text);border-color:var(--muted);}
+  #txPanelBody{padding:16px 20px 20px;overflow-y:auto;flex:1;}
+  .grp-title{font-family:'IBM Plex Mono';font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:16px 0 8px;display:flex;align-items:center;gap:8px;}
+  .grp-title:first-child{margin-top:0;}
+  .grp-title::after{content:"";height:1px;flex:1;background:var(--line);}
+  .mut{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:8px;background:var(--panel-2);}
+  .mut-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .mut-gene{font-family:'IBM Plex Mono';font-weight:600;font-size:13.5px;}
+  .badge{font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;padding:2px 7px;border-radius:20px;font-weight:600;flex:none;}
+  .badge.driver{background:rgba(255,107,94,.15);color:var(--driver);border:1px solid rgba(255,107,94,.35);}
+  .badge.passenger{background:rgba(107,124,153,.15);color:var(--passenger);border:1px solid rgba(107,124,153,.35);}
+  .mut-meta{font-size:11px;color:var(--muted);margin-top:4px;font-family:'IBM Plex Mono';}
+  .mut-note{font-size:12.5px;color:#c4cee0;margin-top:7px;line-height:1.45;}
+  .empty-note{font-size:12.5px;color:var(--muted);font-style:italic;}
+  #txLegendKey{padding:14px 20px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6;}
+  #txLegendKey b{color:var(--text);}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;}
+
+  @media (max-width:640px){
+    #txHint{display:none;} #txLegend{display:none;} #disclaimer{max-width:170px;}
+    #txPanel{width:100%;} #crumbs{font-size:14px;max-width:60vw;}
+    #bodyPerspective{width:78vw;height:70vh;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="header">
+    <div id="brand">
+      <div class="eyebrow">Illustrative atlas · real published data where noted</div>
+      <div id="crumbs"></div>
+    </div>
+  </div>
+  <div id="disclaimer">Body silhouette and navigation are illustrative. Ovary anatomy, HGSOC mutation frequencies, and spread pattern are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016) — not one real patient. Which gene is shown at which site is a simplified teaching device: McPherson (2016) establishes the spread pattern and TCGA (2011) the cohort-level frequencies, not this specific pairing.</div>
+  <div id="toast"></div>
+
+  <!-- ============ SCREEN 1: BODY ============ -->
+  <div class="screen active" id="screenBody">
+    <div id="bodyWrap">
+      <div id="bodyPerspective">
+        <div id="bodyGroup">
+          <svg id="bodySvg" viewBox="0 0 400 700">
+            <defs>
+              <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1c2942" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#0e1524" stop-opacity="0.9"/>
+              </linearGradient>
+            </defs>
+            <!-- head -->
+            <ellipse class="silhouette" cx="200" cy="58" rx="34" ry="40"/>
+            <!-- neck -->
+            <rect class="silhouette" x="186" y="94" width="28" height="20" rx="8"/>
+            <!-- torso -->
+            <path class="silhouette" d="M140,118 C150,110 250,110 260,118
+              C270,150 268,190 250,220
+              C262,240 266,270 258,300
+              C250,335 235,355 200,360
+              C165,355 150,335 142,300
+              C134,270 138,240 150,220
+              C132,190 130,150 140,118 Z"/>
+            <!-- arms -->
+            <path class="silhouette" d="M140,122 C118,140 105,190 100,250 C97,285 98,320 104,350
+              C106,358 118,358 118,348 C114,315 114,282 118,250 C122,205 133,165 152,132 Z"/>
+            <path class="silhouette" d="M260,122 C282,140 295,190 300,250 C303,285 302,320 296,350
+              C294,358 282,358 282,348 C286,315 286,282 282,250 C278,205 267,165 248,132 Z"/>
+            <!-- legs -->
+            <path class="silhouette" d="M168,352 C160,410 156,470 158,530 C159,570 163,610 168,645
+              C170,655 184,655 184,645 C180,610 178,570 179,530 C180,472 184,412 192,358 Z"/>
+            <path class="silhouette" d="M232,352 C240,410 244,470 242,530 C241,570 237,610 232,645
+              C230,655 216,655 216,645 C220,610 222,570 221,530 C220,472 216,412 208,358 Z"/>
+          </svg>
+
+          <!-- hotspots (positioned as % of the 400x700 viewBox mapped to container) -->
+          <div class="hotspot active-organ" data-organ="ovary" style="left:47%;top:49%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Ovaries</div></div>
+          <div class="hotspot active-organ" data-organ="ovary" style="left:53%;top:49%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Ovaries</div></div>
+
+          <div class="hotspot inactive-organ" data-organ="brain" style="left:50%;top:8%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Brain</div></div>
+          <div class="hotspot inactive-organ" data-organ="lungs" style="left:50%;top:24%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Lungs</div></div>
+          <div class="hotspot inactive-organ" data-organ="breast" style="left:42%;top:28%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Breast</div></div>
+          <div class="hotspot inactive-organ" data-organ="breast" style="left:58%;top:28%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Breast</div></div>
+          <div class="hotspot inactive-organ" data-organ="liver" style="left:58%;top:34%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Liver</div></div>
+          <div class="hotspot inactive-organ" data-organ="kidneys" style="left:39%;top:36%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Kidneys</div></div>
+          <div class="hotspot inactive-organ" data-organ="kidneys" style="left:61%;top:36%;"><div class="ring"></div><div class="dot"></div><div class="hotspot-label">Kidneys</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="searchWrap">
+      <input id="searchInput" type="text" placeholder="Search an organ…" autocomplete="off">
+      <div id="searchResults"></div>
+    </div>
+    <div id="bodyHint"><b>Drag</b> to rotate · <b>scroll</b> to zoom · <b>click</b> a marker to explore that organ</div>
+  </div>
+
+  <!-- ============ SCREEN 2: ORGAN (Ovary) ============ -->
+  <div class="screen" id="screenOrgan">
+    <div id="organWrap">
+      <div class="eyebrow">Female Reproductive System</div>
+      <h1>Ovary</h1>
+      <div class="sub">Paired organ · almond-sized · produces eggs and sex hormones</div>
+
+      <div id="ovaryViewerWrap"></div>
+      <div id="organHint"><b>Drag</b> to rotate · <b>scroll</b> to zoom · <b>click</b> a glowing point to investigate a structure</div>
+      <div id="ovaryInfoCard">
+        <div class="oi-title" id="oiTitle">Investigate</div>
+        <div class="oi-text placeholder" id="oiText">Click a glowing point on the model to learn what that structure is and does.</div>
+      </div>
+
+      <div class="facts-grid">
+        <div class="fact"><div class="flabel">Size</div><div class="fval">~3 × 1.5 × 1 cm</div></div>
+        <div class="fact"><div class="flabel">Location</div><div class="fval">Pelvis, either side of uterus</div></div>
+        <div class="fact"><div class="flabel">Function</div><div class="fval">Releases eggs; makes estrogen &amp; progesterone</div></div>
+        <div class="fact"><div class="flabel">Blood supply</div><div class="fval">Ovarian arteries</div></div>
+      </div>
+
+      <p class="desc">The ovaries sit in the pelvis on either side of the uterus, each connected to a fallopian tube. Their outer surface — the site where most ovarian cancers actually begin — is covered by a single layer of epithelial cells.</p>
+
+      <div class="section-title">Cancers of the ovary</div>
+      <div class="cancer-list" id="cancerList"></div>
+    </div>
+  </div>
+
+  <!-- ============ SCREEN 3: CANCER / TUMOR EXPLORER ============ -->
+  <div class="screen" id="screenCancer">
+    <div id="txStage">
+      <div id="txCenterCaption"><div class="big" id="txCaptionText"></div></div>
+      <div id="txSiteViewer"></div>
+      <div id="txCellLayer"></div>
+    </div>
+    <div id="txHint"><b>Drag</b> to rotate the tumor · <b>click</b> a colored cluster to enter that site · <b>click</b> a cell to view its mutations</div>
+    <div id="txLegend">
+      <div class="lg-title">Sites (real intraperitoneal spread pattern)</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--coral);color:var(--coral)"></span>Ovary (primary)</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--azure);color:var(--azure)"></span>Omentum</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--amber);color:var(--amber)"></span>Peritoneum</div>
+      <div class="lg-row"><span class="lg-dot" style="background:var(--violet);color:var(--violet)"></span>Bowel serosa</div>
+    </div>
+    <div id="txPanel">
+      <div id="txPanelHead">
+        <div class="pid mono" id="txPanelId">Cell</div>
+        <div class="psub" id="txPanelSub"></div>
+        <button id="txPanelClose">✕</button>
+      </div>
+      <div id="txPanelBody"></div>
+      <div id="txLegendKey"><b>Trunk</b> = present since the founding cell &nbsp;·&nbsp; <b>Branch</b> = arose at this site &nbsp;·&nbsp; <b>Private</b> = unique to this cell &nbsp;·&nbsp; <b>Driver</b> = gives cells an advantage &nbsp;·&nbsp; <b>Passenger</b> = along for the ride</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  // ============================================================
+  // GLOBAL NAV STATE
+  // ============================================================
+  // `aliases` exists because searching the label alone is too literal: the organ screen
+  // titles itself "Ovary" (singular) while the label is "Ovaries", so the one wired organ
+  // was unreachable by its own name. Include singular, plural, and adjectival forms.
+  const ORGANS = [
+    { key:'ovary',   label:'Ovaries', system:'Reproductive', active:true,  aliases:['ovary','ovaries','ovarian'] },
+    { key:'brain',   label:'Brain',   system:'Nervous',      active:false, aliases:['brain','brains','cerebral','neurological'] },
+    { key:'lungs',   label:'Lungs',   system:'Respiratory',  active:false, aliases:['lung','lungs','pulmonary','respiratory'] },
+    { key:'breast',  label:'Breast',  system:'Reproductive', active:false, aliases:['breast','breasts','mammary'] },
+    { key:'liver',   label:'Liver',   system:'Digestive',    active:false, aliases:['liver','hepatic','hepatocellular'] },
+    { key:'kidneys', label:'Kidneys', system:'Urinary',      active:false, aliases:['kidney','kidneys','renal'] },
+  ];
+
+  // Single matching rule shared by the results list and the Enter-key shortcut, so the
+  // two paths can never disagree about what a query matches.
+  function organMatchesQuery(organ, q){
+    if(organ.label.toLowerCase().includes(q)) return true;
+    return (organ.aliases || []).some(alias => alias.includes(q));
+  }
+  function findOrganMatches(q){
+    return ORGANS.filter(organ => organMatchesQuery(organ, q));
+  }
+
+  const CANCERS = [
+    { id:'hgsoc', name:'High-grade serous carcinoma', share:'~70% of ovarian carcinomas', active:true },
+    { id:'endo',  name:'Endometrioid carcinoma',       share:'~10% of ovarian carcinomas', active:false },
+    { id:'clear', name:'Clear-cell carcinoma',         share:'~10% of ovarian carcinomas', active:false },
+    { id:'muc',   name:'Mucinous carcinoma',           share:'~3% of ovarian carcinomas',  active:false },
+    { id:'lgsc',  name:'Low-grade serous carcinoma',   share:'<5% of ovarian carcinomas',  active:false },
+  ];
+
+  let screen = 'body'; // body | organ | cancer
+
+  const crumbsEl = document.getElementById('crumbs');
+  const toastEl = document.getElementById('toast');
+  let toastTimer = null;
+
+  function showToast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 2200);
+  }
+
+  function setScreen(name){
+    screen = name;
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('screen'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+    if(name==='organ' && ovaryRig) ovaryRig.resize();
+    if(name==='cancer' && siteRig) siteRig.resize();
+    renderCrumbs();
+  }
+
+  function renderCrumbs(){
+    let parts = [{label:'Body', fn:()=>setScreen('body')}];
+    if(screen==='organ' || screen==='cancer'){
+      parts.push({label:'Ovary', fn:()=>setScreen('organ')});
+    }
+    if(screen==='cancer'){
+      parts.push({label:'High-Grade Serous Carcinoma', fn:()=>txGoLevel(1)});
+      if(txLevel>=2 && txCurrentRegion!==null){
+        parts.push({label:REGIONS[txCurrentRegion].name, fn:()=>txGoLevel(2)});
+      }
+      if(txLevel===3 && txCurrentCell){
+        parts.push({label:'Cell '+txCurrentCell.id, fn:null});
+      }
+    }
+    crumbsEl.innerHTML = parts.map((p,i)=>{
+      const isLast = i===parts.length-1;
+      return `<span class="crumb ${isLast?'current':''}" data-i="${i}">${p.label}</span>` + (isLast?'':'<span class="sep">›</span>');
+    }).join('');
+    crumbsEl.querySelectorAll('.crumb').forEach((el,i)=>{
+      el.addEventListener('click', ()=>{ if(parts[i].fn) parts[i].fn(); });
+    });
+  }
+
+  // ============================================================
+  // SHARED INTERACTION HELPER
+  // ============================================================
+  // Drag-vs-click disambiguation. Every pointer gesture in this app does double duty —
+  // "rotate the model" and "select the thing under the cursor" — so a gesture only counts
+  // as a click if the pointer barely moved. Shared by the body screen and every
+  // makeOrbitRig instance so the threshold cannot drift between viewers.
+  const CLICK_DRAG_THRESHOLD_PX = 6;
+
+  function makeMoveTracker(){
+    let totalMovementPx = 0, lastX = 0, lastY = 0;
+    return {
+      begin(e){ totalMovementPx = 0; lastX = e.clientX; lastY = e.clientY; },
+      // Returns this event's delta so each caller applies its own rotation math.
+      track(e){
+        const dx = e.clientX - lastX, dy = e.clientY - lastY;
+        lastX = e.clientX; lastY = e.clientY;
+        totalMovementPx += Math.abs(dx) + Math.abs(dy);
+        return { dx, dy };
+      },
+      isClick(){ return totalMovementPx < CLICK_DRAG_THRESHOLD_PX; }
+    };
+  }
+
+  // ============================================================
+  // SCREEN 1 — BODY
+  // ============================================================
+  const bodyGroup = document.getElementById('bodyGroup');
+  let rotX = 0, rotY = 0, zoom = 1;
+  let dragging = false;
+  const bodyTracker = makeMoveTracker();
+
+  function applyBodyTransform(){
+    bodyGroup.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${zoom})`;
+  }
+
+  bodyGroup.addEventListener('pointerdown', e=>{
+    dragging = true; bodyTracker.begin(e);
+  });
+  window.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    const { dx, dy } = bodyTracker.track(e);
+    rotY = Math.max(-35, Math.min(35, rotY + dx*0.25));
+    rotX = Math.max(-20, Math.min(20, rotX - dy*0.25));
+    applyBodyTransform();
+  });
+  window.addEventListener('pointerup', ()=>{ dragging = false; });
+  document.getElementById('bodyPerspective').addEventListener('wheel', e=>{
+    e.preventDefault();
+    zoom = Math.max(0.7, Math.min(2.2, zoom - e.deltaY*0.001));
+    applyBodyTransform();
+  }, { passive:false });
+
+  function glowHotspots(organKey){
+    document.querySelectorAll('.hotspot[data-organ="'+organKey+'"]').forEach(el=>{
+      el.classList.add('glow');
+      setTimeout(()=>el.classList.remove('glow'), 2000);
+    });
+  }
+
+  function selectOrgan(key){
+    const organ = ORGANS.find(o=>o.key===key);
+    if(!organ) return;
+    if(organ.active){
+      setScreen('organ');
+    } else {
+      showToast('Full atlas coming soon for ' + organ.label);
+      glowHotspots(key);
+    }
+  }
+
+  document.querySelectorAll('.hotspot').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      // A click delivered at the end of a rotate gesture is not a selection. The marker's
+      // ring makes it a ~32px target, so small drags used to both rotate and navigate.
+      if(!bodyTracker.isClick()) return;
+      selectOrgan(el.dataset.organ);
+    });
+  });
+
+  // search
+  const searchInput = document.getElementById('searchInput');
+  const searchResults = document.getElementById('searchResults');
+  function renderSearch(query){
+    const q = query.trim().toLowerCase();
+    if(!q){ searchResults.classList.remove('show'); searchResults.innerHTML=''; return; }
+    const matches = findOrganMatches(q);
+    if(matches.length===0){ searchResults.classList.remove('show'); searchResults.innerHTML=''; return; }
+    searchResults.innerHTML = matches.map(o=>`
+      <div class="sr-row" data-key="${o.key}">
+        <div><div class="sr-name">${o.label}</div><div class="sr-sys">${o.system}</div></div>
+        <div class="sr-tag">${o.active ? 'Explore' : 'Coming soon'}</div>
+      </div>`).join('');
+    searchResults.classList.add('show');
+    searchResults.querySelectorAll('.sr-row').forEach(row=>{
+      row.addEventListener('click', ()=>{ selectOrgan(row.dataset.key); searchResults.classList.remove('show'); searchInput.value=''; });
+    });
+  }
+  searchInput.addEventListener('input', ()=>renderSearch(searchInput.value));
+  searchInput.addEventListener('keydown', e=>{
+    if(e.key==='Enter'){
+      const q = searchInput.value.trim().toLowerCase();
+      if(!q) return;
+      const match = findOrganMatches(q)[0];
+      if(match){ selectOrgan(match.key); searchResults.classList.remove('show'); }
+    }
+  });
+
+  // ============================================================
+  // SCREEN 2 — ORGAN (Ovary)
+  // ============================================================
+  const cancerListEl = document.getElementById('cancerList');
+  cancerListEl.innerHTML = CANCERS.map(c=>`
+    <div class="cancer-row ${c.active?'enabled':''}" data-id="${c.id}">
+      <div class="cr-left">
+        <div class="cr-name">${c.name}</div>
+        <div class="cr-share">${c.share}</div>
+      </div>
+      <div class="cr-cta ${c.active?'':'disabled'}">${c.active ? 'Explore this cancer →' : 'Profile coming soon'}</div>
+    </div>`).join('');
+  cancerListEl.querySelectorAll('.cancer-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      const c = CANCERS.find(x=>x.id===row.dataset.id);
+      if(c && c.active){ enterCancerScreen(); }
+      else { showToast('Profile coming soon for ' + c.name); }
+    });
+  });
+
+  // ============================================================
+  // SCREEN 3 — CANCER / TUMOR EXPLORER (HGSOC)
+  // ============================================================
+  const REGIONS = [
+    { id:'OV', name:'Ovary (primary)', color:cssVar('--coral'), pos3d:{x:-1.3,y:-0.35,z:0.35},
+      branch:{ gene:'BRCA1/2 pathway loss', class:'driver', ccf:'~50% of HGSOC tumors are HR-deficient overall', note:'Loss of homologous-recombination repair — the single biggest known determinant of PARP-inhibitor sensitivity in this disease.' } },
+    { id:'OM', name:'Omentum', color:cssVar('--azure'), pos3d:{x:0.4,y:1.05,z:-0.3},
+      branch:{ gene:'CCNE1 amplification', class:'driver', ccf:'~15–20% of HGSOC tumors', note:'Extra copies of a cell-cycle gene that push cells through division. These tumors are usually HR-proficient and tend to resist platinum chemo and PARP inhibitors.' } },
+    { id:'PE', name:'Peritoneum', color:cssVar('--amber'), pos3d:{x:1.35,y:-0.15,z:0.4},
+      branch:{ gene:'NF1 mutation', class:'driver', ccf:'recurrent, low individual frequency (TCGA cohort)', note:'Removes a brake on RAS signaling — one of several independent routes HGSOC tumors take to the same growth advantage.' } },
+    { id:'BO', name:'Bowel serosa', color:cssVar('--violet'), pos3d:{x:0.05,y:-1.25,z:0.15},
+      branch:{ gene:'RB1 loss', class:'driver', ccf:'recurrent, low individual frequency (TCGA cohort)', note:'Removes a cell-cycle checkpoint, often found alongside cyclin-pathway changes like CCNE1 amplification.' } },
+  ];
+  const TRUNK = [
+    { gene:'TP53 mutation', class:'driver', ccf:'~96% of HGSOC tumors (TCGA, 2011)', note:'Disables the tumor-suppressor gene lost in nearly every high-grade serous ovarian cancer — so consistent across cases that it\'s considered the founding event of this disease.' },
+  ];
+  const PRIVATE_POOL = [
+    { gene:'CDK12 alteration', class:'driver', note:'A recurrent DNA-repair gene hit in a minority of tumors, adding to the genomic instability already caused by TP53 loss.' },
+    { gene:'BRCA reversion mutation', class:'driver', note:'A second mutation that restores the BRCA reading frame — a well-documented way tumor cells regain repair capacity and become resistant to PARP inhibitors after treatment.' },
+    { gene:'MYC amplification', class:'driver', note:'Extra copies of a master growth-signaling gene; one of the more common focal amplifications found across HGSOC genomes.' },
+    { gene:'PTEN loss', class:'driver', note:'Removes a brake on the PI3K growth pathway — another recurring route to the same advantage seen elsewhere in this tumor.' },
+    { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
+  ];
+
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  // Ring drawn around cells that carry private mutations. The previous
+  // rgba(255,255,255,.16) was swallowed by the dot's own coloured glow. Coral is the
+  // driver-badge colour, so the ring reads as "extra mutations here" rather than as
+  // decoration. The dark inner band separates ring from dot on the Ovary site, whose
+  // cells are coral themselves and would otherwise just look like bigger dots.
+  const PRIVATE_RING_SHADOW = `0 0 0 2px ${cssVar('--bg')}, 0 0 0 4px ${cssVar('--driver')}`;
+
+  let txLevel = 1;
+  let txCurrentRegion = null;
+  let txCurrentCell = null;
+  const regionCellCache = {};
+
+  const txSiteViewerEl = document.getElementById('txSiteViewer');
+  const txCellLayer = document.getElementById('txCellLayer');
+  const txCaptionText = document.getElementById('txCaptionText');
+  const txPanel = document.getElementById('txPanel');
+  const txPanelId = document.getElementById('txPanelId');
+  const txPanelSub = document.getElementById('txPanelSub');
+  const txPanelBody = document.getElementById('txPanelBody');
+  const txStageEl = document.getElementById('txStage');
+  const appEl = document.getElementById('app');
+
+  // ============================================================
+  // SHARED 3D HELPERS
+  // ============================================================
+
+  // Deterministic organic vertex displacement (no external noise lib needed)
+  function organicDisplace(geometry, amplitude, freq, seed){
+    const pos = geometry.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      const x=pos.getX(i), y=pos.getY(i), z=pos.getZ(i);
+      const len = Math.sqrt(x*x+y*y+z*z) || 1;
+      const nx=x/len, ny=y/len, nz=z/len;
+      const n = Math.sin(nx*freq+seed) * Math.cos(ny*freq*1.3+seed*2) * Math.sin(nz*freq*0.7+seed*3);
+      const disp = 1 + amplitude*n;
+      pos.setXYZ(i, x*disp, y*disp, z*disp);
+    }
+    pos.needsUpdate = true;
+    geometry.computeVertexNormals();
+  }
+
+  function makeOrbitRig(container, opts){
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+    container.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+    const key = new THREE.DirectionalLight(0xffffff, 0.9);
+    key.position.set(3, 4, 5);
+    scene.add(key);
+    const rim = new THREE.PointLight(0x35c9c1, 1.1, 20);
+    rim.position.set(-4, -2, -3);
+    scene.add(rim);
+
+    let theta = opts.theta || 0.6, phi = opts.phi || 1.15;
+    let radius = opts.radius || 4.2;
+    const minR = opts.minRadius || 2.4;
+    // Not const: frameContents() may need to push the zoom-out limit further than the
+    // caller's guess in order to fit everything on a wide or narrow viewport.
+    let maxR = opts.maxRadius || 7;
+
+    // A framing request can arrive before the container has been laid out, and the fit
+    // depends on a real aspect ratio — computing it against a placeholder 1x1 container
+    // yields a nonsense distance. So remember the request and let resize() retry it once
+    // the container actually has dimensions.
+    let framingMeshes = null, framingPadding = 1.12, hasFramed = false;
+
+    function updateCamera(){
+      camera.position.x = radius * Math.sin(phi) * Math.sin(theta);
+      camera.position.y = radius * Math.cos(phi);
+      camera.position.z = radius * Math.sin(phi) * Math.cos(theta);
+      camera.lookAt(0,0,0);
+    }
+    updateCamera();
+
+    // Pull the camera back far enough that everything in `framingMeshes` fits the frame.
+    // The rig always looks at the origin, so distance is measured from there rather than
+    // from the contents' centre. The limiting constraint is the narrower of the two view
+    // angles — vertical on a wide viewport, horizontal on a tall one.
+    function applyFraming(){
+      const w = container.clientWidth, h = container.clientHeight;
+      if(!framingMeshes || !w || !h) return false;
+      const box = new THREE.Box3();
+      framingMeshes.forEach(mesh=>{ mesh.updateMatrixWorld(); box.expandByObject(mesh); });
+      if(box.isEmpty()) return false;
+      const sphere = box.getBoundingSphere(new THREE.Sphere());
+      const framingRadius = sphere.center.length() + sphere.radius;
+      const verticalFov = camera.fov * Math.PI / 180;
+      const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * camera.aspect);
+      const halfAngle = Math.min(verticalFov, horizontalFov) / 2;
+      const needed = (framingRadius * framingPadding) / Math.sin(halfAngle);
+      if(needed > maxR) maxR = needed;
+      radius = Math.max(minR, needed);
+      updateCamera();
+      hasFramed = true;
+      return true;
+    }
+
+    function resize(){
+      const w = container.clientWidth || 1, h = container.clientHeight || 1;
+      camera.aspect = w/h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+      // Retry a framing request that couldn't be satisfied before layout existed.
+      if(!hasFramed) applyFraming();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    let dragging = false, autoRotate = opts.autoRotate!==false;
+    const tracker = makeMoveTracker();
+
+    container.addEventListener('pointerdown', e=>{
+      dragging = true; tracker.begin(e);
+    });
+    window.addEventListener('pointermove', e=>{
+      if(!dragging) return;
+      const { dx, dy } = tracker.track(e);
+      theta -= dx*0.008;
+      phi = Math.max(0.35, Math.min(2.7, phi - dy*0.008));
+      updateCamera();
+    });
+    window.addEventListener('pointerup', e=>{
+      if(!dragging) return;
+      dragging = false;
+      if(tracker.isClick() && opts.onClick) opts.onClick(e, container);
+    });
+    container.addEventListener('wheel', e=>{
+      e.preventDefault();
+      radius = Math.max(minR, Math.min(maxR, radius + e.deltaY*0.003));
+      updateCamera();
+    }, { passive:false });
+
+    return {
+      scene, camera, renderer, container,
+      get autoRotate(){ return autoRotate; },
+      set autoRotate(v){ autoRotate = v; },
+      get dragging(){ return dragging; },
+      get framed(){ return hasFramed; },
+      spin(delta){ theta += delta; updateCamera(); },
+      // Fit the camera to these meshes instead of trusting a hardcoded starting radius.
+      // Returns false if the container isn't laid out yet; resize() will retry.
+      frameContents(meshes, padding){
+        framingMeshes = meshes;
+        if(padding) framingPadding = padding;
+        return applyFraming();
+      },
+      resize,
+      project(vec3){
+        const v = vec3.clone().project(camera);
+        const w = container.clientWidth, h = container.clientHeight;
+        return { x:(v.x+1)/2*w, y:(1-v.y)/2*h, z:v.z };
+      }
+    };
+  }
+
+  // ============================================================
+  // OVARY 3D VIEWER (organ screen)
+  // ============================================================
+  const OVARY_HOTSPOTS = [
+    { key:'surface', label:'Surface epithelium', dir:[0.28,0.6,0.85],
+      text:'A single layer of cells covering the ovary\'s outer surface. Most ovarian cancers, including high-grade serous carcinoma, are now thought to arise here or in the adjacent fallopian tube.' },
+    { key:'cortex', label:'Cortex', dir:[0.88,0.12,0.25],
+      text:'The outer functional layer, packed with follicles at every stage of development — from resting to nearly ready to release an egg.' },
+    { key:'medulla', label:'Medulla', dir:[-0.35,0.15,-0.85],
+      text:'The core of the ovary, deep to the cortex — loose connective tissue carrying the blood vessels, lymphatics, and nerves that supply it.' },
+    { key:'hilum', label:'Hilum', dir:[0.05,-1,0.12],
+      text:'Where the ovary attaches to its supporting ligament — the entry and exit point for its blood supply and nerves.' },
+  ];
+
+  let ovaryRig = null;
+  const ovaryMarkers = [];
+
+  function initOvaryViewer(){
+    const container = document.getElementById('ovaryViewerWrap');
+    ovaryRig = makeOrbitRig(container, {
+      theta:0.5, phi:1.2, radius:4, minRadius:2.6, maxRadius:6, autoRotate:true,
+      onClick:(e, cont)=>{
+        const rect = cont.getBoundingClientRect();
+        const mouse = new THREE.Vector2(
+          ((e.clientX-rect.left)/rect.width)*2-1,
+          -((e.clientY-rect.top)/rect.height)*2+1
+        );
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, ovaryRig.camera);
+        const hits = raycaster.intersectObjects(ovaryMarkers.map(m=>m.mesh));
+        if(hits.length){
+          const hit = ovaryMarkers.find(m=>m.mesh===hits[0].object);
+          showOvaryInfo(hit.data);
+        }
+      }
+    });
+
+    const geo = new THREE.SphereGeometry(1, 48, 48);
+    organicDisplace(geo, 0.045, 6.5, 1.7);
+    const mat = new THREE.MeshStandardMaterial({ color:0xe6b6a8, roughness:0.55, metalness:0.04 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.scale.set(0.9, 1.28, 0.98);
+    ovaryRig.scene.add(mesh);
+
+    const scaleVec = new THREE.Vector3(0.9, 1.28, 0.98);
+    OVARY_HOTSPOTS.forEach(h=>{
+      const d = new THREE.Vector3(h.dir[0], h.dir[1], h.dir[2]).normalize();
+      const mMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.06, 16, 16),
+        new THREE.MeshBasicMaterial({ color:0x35c9c1 })
+      );
+      mMesh.position.set(d.x*scaleVec.x*1.04, d.y*scaleVec.y*1.04, d.z*scaleVec.z*1.04);
+      const glow = new THREE.PointLight(0x35c9c1, 0.5, 1.2);
+      glow.position.copy(mMesh.position);
+      ovaryRig.scene.add(mMesh, glow);
+      ovaryMarkers.push({ mesh:mMesh, data:h });
+    });
+  }
+
+  function showOvaryInfo(h){
+    document.getElementById('oiTitle').textContent = h.label;
+    const t = document.getElementById('oiText');
+    t.textContent = h.text;
+    t.classList.remove('placeholder');
+  }
+
+  // ============================================================
+  // TUMOR SITE-MAP 3D VIEWER (cancer screen, level 1)
+  // ============================================================
+  let siteRig = null;
+  const siteBlobs = [];
+  const siteLabelEls = [];
+
+  function initSiteViewer(){
+    const container = txSiteViewerEl;
+    siteRig = makeOrbitRig(container, {
+      theta:0.6, phi:1.15, radius:4.6, minRadius:3, maxRadius:8, autoRotate:true,
+      onClick:(e, cont)=>{
+        const rect = cont.getBoundingClientRect();
+        const mouse = new THREE.Vector2(
+          ((e.clientX-rect.left)/rect.width)*2-1,
+          -((e.clientY-rect.top)/rect.height)*2+1
+        );
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, siteRig.camera);
+        const hits = raycaster.intersectObjects(siteBlobs.map(b=>b.mesh));
+        if(hits.length){
+          const blob = siteBlobs.find(b=>b.mesh===hits[0].object);
+          txEnterRegion(blob.regionIdx);
+        }
+      }
+    });
+
+    REGIONS.forEach((region, idx)=>{
+      const geo = new THREE.IcosahedronGeometry(0.6, 3);
+      organicDisplace(geo, 0.16, 4.2, idx*2.1 + 0.4);
+      const mat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(region.color),
+        roughness:0.5, metalness:0.05,
+        emissive: new THREE.Color(region.color), emissiveIntensity:0.18
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(region.pos3d.x, region.pos3d.y, region.pos3d.z);
+      siteRig.scene.add(mesh);
+      siteBlobs.push({ mesh, regionIdx:idx });
+
+      const label = document.createElement('div');
+      label.className = 'site-label';
+      label.textContent = region.name;
+      label.style.color = region.color;
+      label.style.borderColor = region.color;
+      container.appendChild(label);
+      siteLabelEls.push(label);
+    });
+
+    // Frame all four sites now that they exist. The site blobs spread further from the
+    // origin than the ovary mesh does, so a hardcoded radius clipped the topmost blob
+    // (Omentum) off the viewport at 16:9.
+    siteRig.frameContents(siteBlobs.map(b=>b.mesh));
+  }
+
+  function siteTick(){
+    if(screen==='cancer' && txLevel===1 && siteRig){
+      // Self-heal if the initial fit was deferred because the container had no layout yet.
+      if(!siteRig.framed) siteRig.resize();
+      if(siteRig.autoRotate && !siteRig.dragging) siteRig.spin(0.0022);
+      siteRig.renderer.render(siteRig.scene, siteRig.camera);
+      siteBlobs.forEach((b,i)=>{
+        const p = siteRig.project(b.mesh.position);
+        siteLabelEls[i].style.left = p.x+'px';
+        siteLabelEls[i].style.top = p.y+'px';
+        siteLabelEls[i].style.opacity = p.z < 1 ? '1' : '0';
+      });
+    }
+    requestAnimationFrame(siteTick);
+  }
+
+  function ovaryTick(){
+    if(screen==='organ' && ovaryRig){
+      if(ovaryRig.autoRotate && !ovaryRig.dragging) ovaryRig.spin(0.0016);
+      ovaryRig.renderer.render(ovaryRig.scene, ovaryRig.camera);
+    }
+    requestAnimationFrame(ovaryTick);
+  }
+
+  // mulberry32 — a small, fast PRNG with an explicit seed. Used instead of Math.random()
+  // so a site's cell scatter is identical on every load: cell OV-7 must always be the same
+  // cell with the same mutations. Reshuffling on reload would imply the tool is re-sampling
+  // a live patient, and would break any citation of a specific cell in teaching material.
+  function makeSeededRandom(seed){
+    let state = seed >>> 0;
+    return function nextRandom(){
+      state = (state + 0x6D2B79F5) >>> 0;
+      let scrambled = state;
+      scrambled = Math.imul(scrambled ^ (scrambled >>> 15), scrambled | 1);
+      scrambled ^= scrambled + Math.imul(scrambled ^ (scrambled >>> 7), scrambled | 61);
+      return ((scrambled ^ (scrambled >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // FNV-1a: turns a key like 'OV' or 'OV-7' into the 32-bit integer seed the PRNG wants,
+  // so each site (and each cell within it) gets its own stable but distinct stream.
+  function seedFromKey(key){
+    let hash = 2166136261;
+    for(let i=0;i<key.length;i++){
+      hash ^= key.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
+  // Fisher-Yates. Deliberately not [...pool].sort(()=>random()-0.5), which is biased and
+  // ordering-dependent on the engine's sort implementation even with a seeded source.
+  function shuffleWithRandom(items, nextRandom){
+    const shuffled = [...items];
+    for(let i=shuffled.length-1;i>0;i--){
+      const j = Math.floor(nextRandom()*(i+1));
+      const swap = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = swap;
+    }
+    return shuffled;
+  }
+
+  function buildRegionCells(regionIdx){
+    const region = REGIONS[regionIdx];
+    if(regionCellCache[region.id]) return regionCellCache[region.id];
+    const count = 22;
+    // One stream for layout: positions are generated sequentially by rejection sampling,
+    // so they can't be keyed per index the way the per-cell mutation draws are.
+    const layoutRandom = makeSeededRandom(seedFromKey(region.id));
+    const pts = [];
+    let attempts = 0;
+    while(pts.length < count && attempts < 4000){
+      attempts++;
+      const ang = layoutRandom()*Math.PI*2;
+      const rad = Math.sqrt(layoutRandom()) * 0.42;
+      const x = 0.5 + Math.cos(ang)*rad;
+      const y = 0.5 + Math.sin(ang)*rad;
+      let ok = true;
+      for(const p of pts){ if(Math.hypot(p.x-x,p.y-y) < 0.085){ ok=false; break; } }
+      if(ok) pts.push({x,y});
+    }
+    const cells = pts.map((p,idx)=>{
+      const cellId = region.id+'-'+(idx+1);
+      // Keyed by the cell's own id, so a cell's mutation profile depends only on which
+      // cell it is — not on how many cells happened to be generated before it.
+      const cellRandom = makeSeededRandom(seedFromKey(cellId));
+      const hasPrivate = cellRandom() < 0.42;
+      const priv = [];
+      if(hasPrivate){
+        const n = cellRandom()<0.3 ? 2 : 1;
+        const shuffled = shuffleWithRandom(PRIVATE_POOL, cellRandom);
+        for(let k=0;k<n;k++) priv.push(shuffled[k]);
+      }
+      return { id: cellId, x:p.x, y:p.y, private:priv };
+    });
+    regionCellCache[region.id] = cells;
+    return cells;
+  }
+
+  function txEnterRegion(regionIdx){
+    txCurrentRegion = regionIdx;
+    txLevel = 2;
+    if(siteRig) siteRig.autoRotate = false;
+    txSiteViewerEl.classList.add('hidden');
+    txCaptionText.textContent = '';
+    txRenderCellLayer(regionIdx);
+    txCellLayer.classList.add('active');
+    renderCrumbs();
+  }
+
+  function txGoLevel(lv){
+    if(lv===1){
+      txClosePanel(false);
+      txLevel = 1;
+      txCurrentRegion = null; txCurrentCell = null;
+      txCellLayer.classList.remove('active');
+      txSiteViewerEl.classList.remove('hidden');
+      if(siteRig){ setTimeout(()=>{ siteRig.autoRotate = true; }, 200); }
+    } else if(lv===2){
+      txClosePanel(false);
+      txLevel = 2;
+    }
+    renderCrumbs();
+  }
+
+  function txRenderCellLayer(regionIdx){
+    txCellLayer.innerHTML = '';
+    const region = REGIONS[regionIdx];
+    const cells = buildRegionCells(regionIdx);
+    const rect = txStageEl.getBoundingClientRect();
+    cells.forEach(cell=>{
+      const el = document.createElement('div');
+      el.className = 'node clickable';
+      const hasPriv = cell.private.length>0;
+      el.style.background = region.color;
+      el.style.left = (cell.x*rect.width)+'px';
+      el.style.top = (cell.y*rect.height)+'px';
+      el.style.width = '15px'; el.style.height = '15px';
+      el.style.boxShadow = hasPriv ? PRIVATE_RING_SHADOW + `, 0 0 10px ${region.color}` : `0 0 8px ${region.color}`;
+      el.title = 'Cell ' + cell.id;
+      el.addEventListener('click', (e)=>{ e.stopPropagation(); txOpenCell(regionIdx, cell); });
+      txCellLayer.appendChild(el);
+    });
+    txCaptionText.textContent = region.name.toUpperCase() + ' · ' + cells.length + ' sampled cells · coral ring = additional private mutations';
+  }
+
+  function txOpenCell(regionIdx, cell){
+    txCurrentCell = cell;
+    txLevel = 3;
+    const region = REGIONS[regionIdx];
+    txPanelId.textContent = 'Cell ' + cell.id;
+    txPanelSub.textContent = region.name + ' site';
+    let html = '';
+    html += txMutGroup('Trunk mutations', TRUNK);
+    html += txMutGroup('Branch mutation (site assignment illustrative)', [region.branch]);
+    html += cell.private.length
+      ? txMutGroup('Private mutations (this cell only)', cell.private)
+      : `<div class="grp-title">Private mutations (this cell only)</div><div class="empty-note">None sampled in this cell — a reminder that not every population carries every hit.</div>`;
+    txPanelBody.innerHTML = html;
+    txPanel.classList.add('open');
+    appEl.classList.add('panel-open');
+    renderCrumbs();
+  }
+
+  function txMutGroup(title, list){
+    let html = `<div class="grp-title">${title}</div>`;
+    list.forEach(m=>{
+      html += `
+        <div class="mut">
+          <div class="mut-top"><span class="mut-gene">${m.gene}</span><span class="badge ${m.class}">${m.class}</span></div>
+          ${m.ccf ? `<div class="mut-meta">${m.ccf}</div>` : ''}
+          <div class="mut-note">${m.note}</div>
+        </div>`;
+    });
+    return html;
+  }
+
+  function txClosePanel(updateLevel){
+    txPanel.classList.remove('open');
+    appEl.classList.remove('panel-open');
+    txCurrentCell = null;
+    if(updateLevel!==false && txLevel===3) txLevel = 2;
+  }
+  document.getElementById('txPanelClose').addEventListener('click', ()=>{ txClosePanel(true); renderCrumbs(); });
+  txStageEl.addEventListener('click', ()=>{ if(txLevel===3){ txClosePanel(true); renderCrumbs(); } });
+  window.addEventListener('resize', ()=>{ if(screen==='cancer' && txLevel===2) txRenderCellLayer(txCurrentRegion); });
+
+  function enterCancerScreen(){
+    setScreen('cancer');
+    if(!siteRig) initSiteViewer();
+    siteRig.resize();
+    txGoLevel(1);
+  }
+
+  // ============================================================
+  initOvaryViewer();
+  requestAnimationFrame(ovaryTick);
+  requestAnimationFrame(siteTick);
+  renderCrumbs();
+})();
+</script>
+</body>
+</html>

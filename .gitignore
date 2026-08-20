@@ -1,0 +1,22 @@
+# Pre-edit safety copies. This project has no build step and edits happen in place,
+# so a .bak-<pass-name> snapshot is taken before each editing pass. Useful locally for
+# diffing a pass, but git history supersedes them — never commit one.
+*.bak-*
+*.bak
+
+# Local dev server output. The preview is `python3 -m http.server`, which logs to stdout,
+# but redirected logs land here often enough to be worth ignoring up front.
+*.log
+logs/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editor scratch
+*.swp
+*~
+.idea/
+.vscode/
