@@ -21,6 +21,19 @@
   .screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .4s ease;}
   .screen.active{opacity:1;pointer-events:auto;}
 
+  /* ---------- keyboard focus ---------- */
+  /* Teal is the design system's structural accent, so a teal ring reads as chrome rather than
+     as one more data colour competing with the coral/azure/amber/violet site palette.
+     :focus-visible, not :focus, so clicking a marker or a row doesn't leave a ring behind.
+     The offset keeps the ring clear of the coloured glow on the cell dots and site blobs. */
+  #app :focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+  /* #searchInput sets outline:none for its custom focus border; that border is a 1px colour
+     shift, which is too weak on its own, so restore a real ring for keyboard users. */
+  #searchInput:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+  /* The screens themselves take focus on navigation (see setScreen). A ring around the whole
+     viewport communicates nothing, and the region's announced name already does the work. */
+  .screen:focus,.screen:focus-visible{outline:none;}
+
   /* ---------- shared header ---------- */
   #header{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px;pointer-events:none;}
   #brand{pointer-events:auto;}
@@ -98,6 +111,16 @@
   #ovaryViewerWrap{width:100%;max-width:320px;aspect-ratio:1/1;margin:0 auto 6px;border-radius:18px;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 38%,#182338 0%,#0d1320 72%);border:1px solid var(--line);cursor:grab;}
   #ovaryViewerWrap:active{cursor:grabbing;}
   #ovaryViewerWrap canvas{display:block;width:100%!important;height:100%!important;}
+  /* Keyboard proxy for the four investigate points. The points themselves are WebGL meshes, so
+     there is nothing to put a tabindex on; this is one transparent disc per point, projected onto
+     the same screen position every frame (see ovaryTick). It stays invisible until focused because
+     the glowing mesh underneath is already the visual affordance — a permanently visible ring on
+     top of it would double the marker and change the organ screen's look. On focus it shows the
+     ring plus the structure's name, so a sighted keyboard user can tell which point they are on.
+     pointer-events:none keeps the mouse path on the existing raycast, so nothing double-fires. */
+  .organ-point{position:absolute;width:24px;height:24px;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);}
+  .organ-point .opt-name{position:absolute;left:50%;top:0;transform:translate(-50%,-150%);font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.06em;color:var(--text);background:rgba(10,14,24,.72);border:1px solid var(--line);padding:3px 8px;border-radius:20px;white-space:nowrap;opacity:0;transition:opacity .15s ease;}
+  .organ-point:focus-visible .opt-name{opacity:1;}
   #ovaryInfoCard{max-width:320px;margin:0 auto 26px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-height:64px;}
   #ovaryInfoCard .oi-title{font-family:'Space Grotesk';font-size:14px;font-weight:600;margin-bottom:4px;}
   #ovaryInfoCard .oi-text{font-size:12.5px;color:var(--muted);line-height:1.55;}
@@ -163,21 +186,22 @@
 <body>
 <div id="app">
 
-  <div id="header">
-    <div id="brand">
-      <div class="eyebrow">Illustrative atlas · real published data where noted</div>
-      <div id="crumbs"></div>
-    </div>
-  </div>
   <div id="disclaimer">Body silhouette and navigation are illustrative. Ovary anatomy, HGSOC mutation frequencies, and spread pattern are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016) — not one real patient. Which gene is shown at which site is a simplified teaching device: McPherson (2016) establishes the spread pattern and TCGA (2011) the cohort-level frequencies, not this specific pairing.</div>
-  <div id="toast"></div>
+  <!-- The toast is the only feedback for activating a "coming soon" organ or cancer, and it
+       self-dismisses after 2.2s, so it has to announce itself. role="status" carries the polite
+       politeness implicitly; aria-live is stated anyway because the role is easy to lose in a
+       later edit. aria-atomic so the whole sentence is read, not just the changed words. -->
+  <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <!-- ============ SCREEN 1: BODY ============ -->
-  <div class="screen active" id="screenBody">
+  <div class="screen active" id="screenBody" role="region" aria-label="Body map — choose an organ" tabindex="-1">
     <div id="bodyWrap">
       <div id="bodyPerspective">
         <div id="bodyGroup">
-          <svg id="bodySvg" viewBox="0 0 400 700">
+          <!-- Purely decorative: the silhouette carries no information the labelled hotspots don't,
+               and unlabelled <ellipse>/<path> nodes are announced as "graphic" noise by some screen
+               readers. Safe to hide because the hotspots are siblings of this <svg>, not children. -->
+          <svg id="bodySvg" viewBox="0 0 400 700" aria-hidden="true" focusable="false">
             <defs>
               <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="#1c2942" stop-opacity="0.9"/>
@@ -224,22 +248,35 @@
     </div>
 
     <div id="searchWrap">
-      <input id="searchInput" type="text" placeholder="Search an organ…" autocomplete="off">
+      <!-- There is no visible <label>, and a placeholder is only a fallback accessible name — it
+           stops being read the moment anything is typed, so a field being re-checked mid-edit goes
+           nameless. aria-label states it permanently; the placeholder stays for sighted users. -->
+      <input id="searchInput" type="text" placeholder="Search an organ…" aria-label="Search an organ" autocomplete="off">
       <div id="searchResults"></div>
     </div>
     <div id="bodyHint"><b>Drag</b> to rotate · <b>scroll</b> to zoom · <b>click</b> a marker to explore that organ</div>
   </div>
 
   <!-- ============ SCREEN 2: ORGAN (Ovary) ============ -->
-  <div class="screen" id="screenOrgan">
+  <div class="screen" id="screenOrgan" role="region" aria-label="Ovary — cancer types" tabindex="-1" inert>
     <div id="organWrap">
       <div class="eyebrow">Female Reproductive System</div>
       <h1>Ovary</h1>
       <div class="sub">Paired organ · almond-sized · produces eggs and sex hormones</div>
 
-      <div id="ovaryViewerWrap"></div>
+      <!-- role="group", not role="img": this container now holds the four .organ-point buttons that
+           give the investigate points a keyboard path, and role="img" would collapse them out of the
+           accessibility tree — the same trap already documented on #txSiteViewer. The canvas gets
+           role="img" in initOvaryViewer() instead, because a WebGL surface exposes nothing at all to
+           a screen reader and its label is the only description of the model anyone gets. -->
+      <div id="ovaryViewerWrap" role="group" aria-label="Interactive 3D model of the ovary"></div>
       <div id="organHint"><b>Drag</b> to rotate · <b>scroll</b> to zoom · <b>click</b> a glowing point to investigate a structure</div>
-      <div id="ovaryInfoCard">
+      <!-- Activating an investigate point rewrites this card in place, with no navigation and no
+           focus move, so without a live region a screen-reader user gets silence for their Enter
+           press. Same reasoning as #txPanelBody. Announcing beats moving focus here: the card sits
+           below the model, and stealing focus out of the viewer would cost you your place among the
+           four points when the whole intent is to compare them. -->
+      <div id="ovaryInfoCard" role="region" aria-label="Investigate point details" aria-live="polite">
         <div class="oi-title" id="oiTitle">Investigate</div>
         <div class="oi-text placeholder" id="oiText">Click a glowing point on the model to learn what that structure is and does.</div>
       </div>
@@ -259,11 +296,18 @@
   </div>
 
   <!-- ============ SCREEN 3: CANCER / TUMOR EXPLORER ============ -->
-  <div class="screen" id="screenCancer">
+  <div class="screen" id="screenCancer" role="region" aria-label="High-grade serous carcinoma — tumor explorer" tabindex="-1" inert>
     <div id="txStage">
       <div id="txCenterCaption"><div class="big" id="txCaptionText"></div></div>
-      <div id="txSiteViewer"></div>
-      <div id="txCellLayer"></div>
+      <!-- Deliberately role="group", NOT role="img" like the ovary viewer: this container also holds
+           the four projected .site-label buttons, and role="img" would collapse them out of the
+           accessibility tree — which would delete the only keyboard path into a site. The canvas
+           gets its own role="img" in initSiteViewer() so the unreachable WebGL half is described
+           without hiding the reachable half. -->
+      <div id="txSiteViewer" role="group" aria-label="Interactive 3D map of tumor sites"></div>
+      <!-- Starts inert: the cell layer keeps its 22 dots in the DOM after you step back out
+           to the site map, and opacity:0 alone would leave them all in the tab order. -->
+      <div id="txCellLayer" inert></div>
     </div>
     <div id="txHint"><b>Drag</b> to rotate the tumor · <b>click</b> a colored cluster to enter that site · <b>click</b> a cell to view its mutations</div>
     <div id="txLegend">
@@ -273,14 +317,38 @@
       <div class="lg-row"><span class="lg-dot" style="background:var(--amber);color:var(--amber)"></span>Peritoneum</div>
       <div class="lg-row"><span class="lg-dot" style="background:var(--violet);color:var(--violet)"></span>Bowel serosa</div>
     </div>
-    <div id="txPanel">
+    <!-- Starts inert: the panel is hidden by sliding off-canvas with a transform, which keeps
+         its close button and mutation list focusable unless they are explicitly removed. -->
+    <div id="txPanel" tabindex="-1" inert>
       <div id="txPanelHead">
         <div class="pid mono" id="txPanelId">Cell</div>
         <div class="psub" id="txPanelSub"></div>
-        <button id="txPanelClose">✕</button>
+        <!-- The glyph is a multiplication sign, which a screen reader reads as "times" or skips
+             entirely, so the button needs a name of its own. "Close mutation panel" rather than
+             plain "Close" because the cancer screen has three nested levels and "Close" alone
+             wouldn't say which one this backs out of. -->
+        <button id="txPanelClose" aria-label="Close mutation panel">✕</button>
       </div>
-      <div id="txPanelBody"></div>
+      <!-- The mutation list is rebuilt in place when a different cell is activated while the
+           panel is already open, which is a content swap with no navigation and no focus move —
+           so it needs a live region to be noticed at all. -->
+      <div id="txPanelBody" role="region" aria-label="Mutation details" aria-live="polite"></div>
       <div id="txLegendKey"><b>Trunk</b> = present since the founding cell &nbsp;·&nbsp; <b>Branch</b> = arose at this site &nbsp;·&nbsp; <b>Private</b> = unique to this cell &nbsp;·&nbsp; <b>Driver</b> = gives cells an advantage &nbsp;·&nbsp; <b>Passenger</b> = along for the ride</div>
+    </div>
+  </div>
+
+  <!-- Deliberately LAST in #app, and visually unmoved: #header is position:absolute with z-index 50,
+       so paint order does not depend on where it sits in the markup. The reason it sits here is the
+       tab order. Focus lands on the .screen region after every navigation, and sequential focus runs
+       in document order — so while this block was above the screens, the breadcrumb was only ever
+       reachable by Shift+Tab, which is the wrong direction for a "go back" control. Below the screens
+       it is reachable by forward Tab. Note #crumbs itself is a flex child, not the positioned element,
+       which is why the whole #header moves rather than #crumbs alone; #brand holds nothing focusable,
+       so moving it along changes nothing. -->
+  <div id="header">
+    <div id="brand">
+      <div class="eyebrow">Illustrative atlas · real published data where noted</div>
+      <div id="crumbs"></div>
     </div>
   </div>
 
@@ -339,11 +407,30 @@
 
   function setScreen(name){
     screen = name;
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.getElementById('screen'+name.charAt(0).toUpperCase()+name.slice(1)).classList.add('active');
+    const activeScreen = document.getElementById('screen'+name.charAt(0).toUpperCase()+name.slice(1));
+    document.querySelectorAll('.screen').forEach(s=>{
+      const isActive = s === activeScreen;
+      s.classList.toggle('active', isActive);
+      // Inactive screens stay in the layout (opacity:0, not display:none) so every three.js
+      // container keeps a real clientWidth/clientHeight for resize(). The cost of staying in
+      // the layout is that the screen also stays in the tab order and the accessibility tree,
+      // so `inert` is what actually takes it out of both without disturbing layout.
+      s.toggleAttribute('inert', !isActive);
+    });
     if(name==='organ' && ovaryRig) ovaryRig.resize();
     if(name==='cancer' && siteRig) siteRig.resize();
     renderCrumbs();
+    landFocus(activeScreen);
+  }
+
+  // Every navigation destroys or disables the control that triggered it: renderCrumbs() rebuilds
+  // the breadcrumb from scratch, and setScreen()/txGoLevel() mark whole layers inert. Focus would
+  // therefore fall back to <body> and the next Tab would restart from the top of the document, so
+  // put it on the view just arrived at instead. Targeting the labelled region rather than its
+  // first control gives a screen reader an arrival announcement, and the controls are one Tab
+  // away. preventScroll matters because #screenOrgan is itself the scroll container.
+  function landFocus(el){
+    if(el && !el.closest('[inert]')) el.focus({preventScroll:true});
   }
 
   function renderCrumbs(){
@@ -364,8 +451,18 @@
       const isLast = i===parts.length-1;
       return `<span class="crumb ${isLast?'current':''}" data-i="${i}">${p.label}</span>` + (isLast?'':'<span class="sep">›</span>');
     }).join('');
+    // innerHTML above discards the previous segments, so role/tabindex/handlers have to be
+    // reapplied on every navigation rather than wired once at startup.
     crumbsEl.querySelectorAll('.crumb').forEach((el,i)=>{
-      el.addEventListener('click', ()=>{ if(parts[i].fn) parts[i].fn(); });
+      const isCurrent = i === parts.length-1;
+      if(isCurrent){
+        // The trailing segment is where you already are. It used to be clickable, but the
+        // only thing it did was re-navigate to the current location.
+        el.setAttribute('aria-current', 'page');
+        return;
+      }
+      if(!parts[i].fn) return;
+      makeActivatable(el, parts[i].fn, {label: 'Back to ' + parts[i].label});
     });
   }
 
@@ -391,6 +488,41 @@
       },
       isClick(){ return totalMovementPx < CLICK_DRAG_THRESHOLD_PX; }
     };
+  }
+
+  // Button semantics for the elements that behave like buttons but aren't <button>: the
+  // positioned body markers, breadcrumb segments, list rows built from template strings, the
+  // projected 3D site labels, and the cell dots. One helper wires the role, the tab order and
+  // the Enter/Space handler, and the click listener lives here too — so a keyboard activation
+  // is guaranteed to run the identical function a click runs, with no second copy to drift.
+  //
+  // opts.label       — accessible name, for targets whose visible text is absent or ambiguous.
+  // opts.pointerGuard — pointer-only veto, applied to the click path but NOT the key path.
+  function makeActivatable(el, activate, opts){
+    const options = opts || {};
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    if(options.label) el.setAttribute('aria-label', options.label);
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      // A guard like "this click was the tail of a rotate gesture" only makes sense for a
+      // pointer. Keyboard activation has no drag to disambiguate, so it skips the guard.
+      if(options.pointerGuard && !options.pointerGuard()) return;
+      activate();
+    });
+    el.addEventListener('keydown', (e)=>{
+      if(e.key !== 'Enter' && e.key !== ' ') return;
+      // Space scrolls the organ screen and Enter can submit; a real <button> suppresses both.
+      e.preventDefault();
+      e.stopPropagation();
+      activate();
+    });
+  }
+
+  // Organ and cancer rows repeat the same "what is this / does it go anywhere" phrasing, and
+  // the "coming soon" state is only conveyed visually. Build the name in one place.
+  function organActionLabel(organ){
+    return organ.label + (organ.active ? ' — explore this organ' : ' — full atlas coming soon');
   }
 
   // ============================================================
@@ -441,12 +573,14 @@
   }
 
   document.querySelectorAll('.hotspot').forEach(el=>{
-    el.addEventListener('click', (e)=>{
-      e.stopPropagation();
+    const organ = ORGANS.find(o=>o.key===el.dataset.organ);
+    makeActivatable(el, ()=>selectOrgan(el.dataset.organ), {
+      // The marker's own .hotspot-label only becomes visible on hover, so the name has to be
+      // spelled out. Paired markers (two ovaries, two kidneys) share one name deliberately.
+      label: organ ? organActionLabel(organ) : el.dataset.organ,
       // A click delivered at the end of a rotate gesture is not a selection. The marker's
       // ring makes it a ~32px target, so small drags used to both rotate and navigate.
-      if(!bodyTracker.isClick()) return;
-      selectOrgan(el.dataset.organ);
+      pointerGuard: ()=>bodyTracker.isClick()
     });
   });
 
@@ -465,7 +599,12 @@
       </div>`).join('');
     searchResults.classList.add('show');
     searchResults.querySelectorAll('.sr-row').forEach(row=>{
-      row.addEventListener('click', ()=>{ selectOrgan(row.dataset.key); searchResults.classList.remove('show'); searchInput.value=''; });
+      const organ = ORGANS.find(o=>o.key===row.dataset.key);
+      makeActivatable(row, ()=>{
+        selectOrgan(row.dataset.key);
+        searchResults.classList.remove('show');
+        searchInput.value = '';
+      }, {label: organ ? organActionLabel(organ) : row.dataset.key});
     });
   }
   searchInput.addEventListener('input', ()=>renderSearch(searchInput.value));
@@ -491,10 +630,14 @@
       <div class="cr-cta ${c.active?'':'disabled'}">${c.active ? 'Explore this cancer →' : 'Profile coming soon'}</div>
     </div>`).join('');
   cancerListEl.querySelectorAll('.cancer-row').forEach(row=>{
-    row.addEventListener('click', ()=>{
-      const c = CANCERS.find(x=>x.id===row.dataset.id);
+    const c = CANCERS.find(x=>x.id===row.dataset.id);
+    makeActivatable(row, ()=>{
       if(c && c.active){ enterCancerScreen(); }
       else { showToast('Profile coming soon for ' + c.name); }
+    }, {
+      // All five rows respond to activation; only one navigates. The difference is currently
+      // carried by the CTA's colour and the teal border, so state it in the name too.
+      label: c ? c.name + ', ' + c.share + (c.active ? ' — explore this cancer' : ' — profile coming soon') : row.dataset.id
     });
   });
 
@@ -719,6 +862,16 @@
       }
     });
 
+    // Describe the canvas rather than the container (see the markup comment on #ovaryViewerWrap).
+    // The four structure names are deliberately left out of this label now that each one is a real
+    // button in the same subtree — repeating them here would make a screen reader read the list
+    // twice, once as prose and once as controls.
+    const ovaryCanvas = ovaryRig.renderer.domElement;
+    ovaryCanvas.setAttribute('role', 'img');
+    ovaryCanvas.setAttribute('aria-label',
+      'Three-dimensional model of an ovary, an off-white lumpy ellipsoid, with four glowing teal '
+      + 'points marking the structures listed after it. Drag to rotate, scroll to zoom.');
+
     const geo = new THREE.SphereGeometry(1, 48, 48);
     organicDisplace(geo, 0.045, 6.5, 1.7);
     const mat = new THREE.MeshStandardMaterial({ color:0xe6b6a8, roughness:0.55, metalness:0.04 });
@@ -737,7 +890,27 @@
       const glow = new THREE.PointLight(0x35c9c1, 0.5, 1.2);
       glow.position.copy(mMesh.position);
       ovaryRig.scene.add(mMesh, glow);
-      ovaryMarkers.push({ mesh:mMesh, data:h });
+
+      // The DOM half of the marker. Same arrangement as the tumor-site labels: a real element per
+      // 3D point, repositioned each frame from the camera projection, carrying the button semantics
+      // the mesh cannot. Activation goes through makeActivatable to showOvaryInfo — the identical
+      // function the raycast click path calls — so there is one code path and no risk of the two
+      // drifting apart.
+      const point = document.createElement('div');
+      point.className = 'organ-point';
+      const name = document.createElement('span');
+      name.className = 'opt-name';
+      name.textContent = h.label;
+      // aria-hidden: the accessible name below already says this word, and without it a screen
+      // reader announces the structure twice ("Cortex, Cortex — investigate…").
+      name.setAttribute('aria-hidden', 'true');
+      point.appendChild(name);
+      makeActivatable(point, ()=>showOvaryInfo(h), {
+        label: h.label + ' — investigate this structure'
+      });
+      container.appendChild(point);
+
+      ovaryMarkers.push({ mesh:mMesh, data:h, el:point });
     });
   }
 
@@ -775,6 +948,17 @@
       }
     });
 
+    // Describe the canvas itself rather than the container (see the markup comment on #txSiteViewer:
+    // the container has to stay role="group" so the site labels survive). No need to list the four
+    // site names here — they are reachable as real buttons, and repeating them would make a screen
+    // reader read the same four words twice. What is genuinely unavailable otherwise is the picture:
+    // that the clusters are positioned, not decorative.
+    const siteCanvas = siteRig.renderer.domElement;
+    siteCanvas.setAttribute('role', 'img');
+    siteCanvas.setAttribute('aria-label',
+      'Three-dimensional rendering of one high-grade serous tumor as four coloured cell clusters, '
+      + 'spaced to match the real intraperitoneal spread pattern. Drag to rotate, mouse or trackpad only.');
+
     REGIONS.forEach((region, idx)=>{
       const geo = new THREE.IcosahedronGeometry(0.6, 3);
       organicDisplace(geo, 0.16, 4.2, idx*2.1 + 0.4);
@@ -793,6 +977,11 @@
       label.textContent = region.name;
       label.style.color = region.color;
       label.style.borderColor = region.color;
+      // A site's clickable target is its WebGL blob, reached by raycasting — nothing a keyboard
+      // or a screen reader can address. This projected label is the only real DOM node per
+      // site, so it carries the button semantics. It keeps pointer-events:none, so the mouse
+      // path stays exactly as it was (still the raycast) and there is no double activation.
+      makeActivatable(label, ()=>txEnterRegion(idx), {label: region.name + ' site — explore its cells'});
       container.appendChild(label);
       siteLabelEls.push(label);
     });
@@ -823,6 +1012,21 @@
     if(screen==='organ' && ovaryRig){
       if(ovaryRig.autoRotate && !ovaryRig.dragging) ovaryRig.spin(0.0016);
       ovaryRig.renderer.render(ovaryRig.scene, ovaryRig.camera);
+      // Keep each keyboard proxy sitting exactly on top of its glowing mesh. Same projection call
+      // siteTick uses for the site labels, so there is one piece of camera-to-screen math in the
+      // file rather than two.
+      //
+      // No occlusion test here on purpose. A point on the far side of the ovary is hidden by the
+      // mesh's depth buffer but its proxy still projects onto the silhouette — and the existing
+      // mouse path has always behaved the same way, because the raycast only tests the four marker
+      // meshes and never the ovary body. Culling back-facing points for the keyboard would make it
+      // stricter than the pointer, which is the wrong direction for this fix. The model auto-rotates,
+      // so every point comes round to the front within a few seconds regardless.
+      ovaryMarkers.forEach(m=>{
+        const p = ovaryRig.project(m.mesh.position);
+        m.el.style.left = p.x+'px';
+        m.el.style.top = p.y+'px';
+      });
     }
     requestAnimationFrame(ovaryTick);
   }
@@ -909,7 +1113,14 @@
     txCaptionText.textContent = '';
     txRenderCellLayer(regionIdx);
     txCellLayer.classList.add('active');
+    // Both layers are hidden by opacity, so `inert` has to follow `.active`/`.hidden` for the
+    // tab order to match what is on screen. Same reasoning as setScreen().
+    txSiteViewerEl.toggleAttribute('inert', true);
+    txCellLayer.toggleAttribute('inert', false);
     renderCrumbs();
+    // Entering a site inerts the viewer that holds the site label just activated, and this path
+    // goes through neither setScreen nor txGoLevel, so it needs its own landing point.
+    landFocus(document.getElementById('screenCancer'));
   }
 
   function txGoLevel(lv){
@@ -919,7 +1130,13 @@
       txCurrentRegion = null; txCurrentCell = null;
       txCellLayer.classList.remove('active');
       txSiteViewerEl.classList.remove('hidden');
+      txCellLayer.toggleAttribute('inert', true);
+      txSiteViewerEl.toggleAttribute('inert', false);
       if(siteRig){ setTimeout(()=>{ siteRig.autoRotate = true; }, 200); }
+      // Stepping back to the site map inerts the cell layer, so the cell that focus would
+      // otherwise return to is gone. Land on the screen. Level 2 needs no equivalent: the cell
+      // dots are still live there, and txClosePanel returns focus to the one that was opened.
+      landFocus(document.getElementById('screenCancer'));
     } else if(lv===2){
       txClosePanel(false);
       txLevel = 2;
@@ -942,13 +1159,24 @@
       el.style.width = '15px'; el.style.height = '15px';
       el.style.boxShadow = hasPriv ? PRIVATE_RING_SHADOW + `, 0 0 10px ${region.color}` : `0 0 8px ${region.color}`;
       el.title = 'Cell ' + cell.id;
-      el.addEventListener('click', (e)=>{ e.stopPropagation(); txOpenCell(regionIdx, cell); });
+      makeActivatable(el, ()=>txOpenCell(regionIdx, cell), {
+        // The coral ring is the only cue that a cell carries private mutations, so say it.
+        label: 'Cell ' + cell.id + ', ' + region.name + ' site, '
+          + (hasPriv ? cell.private.length + ' private mutation' + (cell.private.length===1?'':'s') : 'no private mutations')
+      });
       txCellLayer.appendChild(el);
     });
     txCaptionText.textContent = region.name.toUpperCase() + ' · ' + cells.length + ' sampled cells · coral ring = additional private mutations';
   }
 
+  // The cell dot that opened the panel, so closing returns focus to it rather than dropping to
+  // <body>. Ignore candidates inside the panel: opening a second cell while the panel is already
+  // up would otherwise record the panel itself, which is inert by the time we restore.
+  let txPanelOpener = null;
+
   function txOpenCell(regionIdx, cell){
+    const opener = document.activeElement;
+    if(opener && !txPanel.contains(opener)) txPanelOpener = opener;
     txCurrentCell = cell;
     txLevel = 3;
     const region = REGIONS[regionIdx];
@@ -960,10 +1188,20 @@
     html += cell.private.length
       ? txMutGroup('Private mutations (this cell only)', cell.private)
       : `<div class="grp-title">Private mutations (this cell only)</div><div class="empty-note">None sampled in this cell — a reminder that not every population carries every hit.</div>`;
+    // Deliberately filled while the panel is still inert, so this write does NOT reach the
+    // #txPanelBody live region. On a first open the focus move below is the announcement; a live
+    // region firing as well would read the whole mutation list over the top of it. Reopening for
+    // another cell while the panel is already up leaves inert off, so that swap does announce —
+    // which is the case the live region exists for. Do not hoist the inert toggle above this.
     txPanelBody.innerHTML = html;
     txPanel.classList.add('open');
+    txPanel.toggleAttribute('inert', false);
     appEl.classList.add('panel-open');
     renderCrumbs();
+    // The panel is the whole point of activating a cell, and its close button is the only way
+    // out by keyboard, so move focus into it. Deliberately not a focus trap — the panel is
+    // non-modal (clicking the stage dismisses it) and Tab out is legitimate.
+    landFocus(txPanel);
   }
 
   function txMutGroup(title, list){
@@ -980,13 +1218,40 @@
   }
 
   function txClosePanel(updateLevel){
+    const wasOpen = txPanel.classList.contains('open');
     txPanel.classList.remove('open');
+    txPanel.toggleAttribute('inert', true);
     appEl.classList.remove('panel-open');
     txCurrentCell = null;
     if(updateLevel!==false && txLevel===3) txLevel = 2;
+    // Hand focus back to the cell that opened this. landFocus skips it if that cell has since
+    // been inerted — stepping back to the site map does exactly that, and txGoLevel(1) supplies
+    // its own landing point for that case.
+    if(wasOpen && txPanelOpener && document.contains(txPanelOpener)) landFocus(txPanelOpener);
+    txPanelOpener = null;
   }
-  document.getElementById('txPanelClose').addEventListener('click', ()=>{ txClosePanel(true); renderCrumbs(); });
-  txStageEl.addEventListener('click', ()=>{ if(txLevel===3){ txClosePanel(true); renderCrumbs(); } });
+  // Every dismissal of the panel is "close it and drop the cell off the breadcrumb", and there are
+  // now three ways to ask for it. Naming the pair once means the Escape key cannot drift away from
+  // what the close button does — including the focus restore inside txClosePanel.
+  function dismissMutationPanel(){
+    txClosePanel(true);
+    renderCrumbs();
+  }
+
+  document.getElementById('txPanelClose').addEventListener('click', dismissMutationPanel);
+  txStageEl.addEventListener('click', ()=>{ if(txLevel===3) dismissMutationPanel(); });
+
+  // Escape as a second keyboard exit, so leaving the panel doesn't require finding the close button
+  // first. Scoped by state rather than by binding and unbinding a listener per open: one listener for
+  // the page lifetime can't be left behind stale, and the panel is the only dismissible layer here,
+  // so there is no other Escape meaning to compete with. Bound on document because focus may sit
+  // inside the panel or back on the cell dot, and both should respond.
+  document.addEventListener('keydown', (e)=>{
+    if(e.key !== 'Escape') return;
+    if(!txPanel.classList.contains('open')) return;
+    e.preventDefault();
+    dismissMutationPanel();
+  });
   window.addEventListener('resize', ()=>{ if(screen==='cancer' && txLevel===2) txRenderCellLayer(txCurrentRegion); });
 
   function enterCancerScreen(){
