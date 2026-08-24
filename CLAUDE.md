@@ -13,8 +13,9 @@ tool that implies it's showing one real patient's data.
 
 ## Current state (as of this handoff)
 A single-file HTML prototype (`cancer-atlas.html`) built in Claude.ai using vanilla
-JS + three.js (r128, via cdnjs), no build step, no backend. It proves out the full
-navigation pattern end-to-end for **one** organ/cancer pair:
+JS + three.js (0.185.1, loaded as an ES module via an import map — see Architecture
+notes; there is no global-script build anymore), no build step, no backend. It
+proves out the full navigation pattern end-to-end for **one** organ/cancer pair:
 
 - **Body screen** — stylized SVG female silhouette (not a real mesh), draggable/
   zoomable via CSS 3D transforms, with hotspot markers on ~6 organs. Search bar
@@ -23,19 +24,28 @@ navigation pattern end-to-end for **one** organ/cancer pair:
   without needing content for every organ yet.
 - **Organ screen (Ovary)** — a real WebGL 3D mesh (three.js), organic/lumpy
   ellipsoid built via deterministic vertex displacement (no external noise lib),
-  drag-to-rotate + scroll-to-zoom via a hand-rolled orbit rig (no OrbitControls
-  import needed — r128 doesn't ship it as an easy CDN include). Four clickable
+  drag-to-rotate + scroll-to-zoom via three's real `OrbitControls`, wrapped in
+  the shared `makeViewer` helper (see Architecture notes). Four clickable
   "investigate" points (Surface epithelium, Cortex, Medulla, Hilum) raycast on
   click and populate an info card below the model. Below that: real anatomical
   facts, then a list of the 5 real ovarian carcinoma subtypes with real
   prevalence figures — only HGSOC is wired, others show "profile coming soon."
 - **Cancer screen (HGSOC)** — three.js scene: four organic blob meshes, one per
-  real anatomical spread site (see Data rules below), same orbit-rig pattern,
+  real anatomical spread site (see Data rules below), same `makeViewer` pattern,
   click a blob → drills into that site's ~22 sampled cells (flat 2D scatter,
   intentionally *not* 3D — this level represents a pathology-slide view, not a
   spatial location). Click a cell → side panel with a full mutation ledger.
 - **Breadcrumb** at the top reflects the full chain (Body › Ovary › HGSOC ›
   [site] › [cell]) and is clickable at every level.
+- **Keyboard accessibility is wired end-to-end** (commit `c5acece`) and must be
+  preserved when adding organs: inactive screens/layers get `inert` (screens are
+  hidden via `opacity`/`pointer-events`, never `display:none`), every clickable
+  div goes through `makeActivatable` for button semantics, and 3D hotspots that
+  have no DOM node of their own get projected DOM proxies repositioned each
+  frame from the camera (`.organ-point` / `.site-label` — the label divs *are*
+  the focusable buttons; the mouse path stays the WebGL raycast). Container
+  roles matter: keep `role="group"` on viewer wrappers (canvas takes
+  `role="img"`), or the projected buttons vanish from the accessibility tree.
 
 ## Data rules (do not relax these)
 1. **Every organ/cancer pair needs its own real-data pass.** Genes, mutation
@@ -85,12 +95,40 @@ navigation pattern end-to-end for **one** organ/cancer pair:
 - **Screen state machine:** top-level `screen` = `body | organ | cancer`.
   Within `cancer`, `txLevel` = `1` (site map) `| 2` (cell scatter) `| 3` (panel
   open). `renderCrumbs()` derives the full breadcrumb from both.
-- **3D viewer helper:** `makeOrbitRig(container, opts)` is a reusable
-  spherical-coordinate camera rig (theta/phi/radius) with drag-to-rotate,
-  wheel-to-zoom, and click-vs-drag disambiguation (tracks total pointer
-  movement; a click only fires if movement stayed under a small threshold).
-  Both the ovary viewer and the tumor site-map viewer are built on it — **reuse
-  this rather than hand-rolling camera math again** for new organs.
+- **three.js loading (migrated 2026-08-23; r128 global script → 0.185.1 ESM):**
+  three ships ESM-only now, loaded via an import map with two entries — `three`
+  and `three/addons/`. **The addons entry is mandatory, not decorative:**
+  `examples/jsm/controls/OrbitControls.js` imports bare `'three'` internally, so
+  removing it breaks every addon import. Module scripts are CORS-fetched, which
+  means `file://` no longer works at all — serve over HTTP.
+- **Rendering defaults were neutralized, not adopted.** Four r128→r185 default
+  changes would silently alter the hand-tuned look, and each is pinned back in
+  code: `THREE.ColorManagement.enabled = false`; explicit
+  `renderer.outputColorSpace = LinearSRGBColorSpace`; explicit `decay: 1` on
+  point/spot lights (default flipped to 2 in r146); and every light intensity
+  multiplied by `LEGACY_LIGHT_SCALE = Math.PI` (r155 deleted `useLegacyLights`,
+  which costs a factor of π). Do not "clean up" these opt-outs in passing —
+  adopting the color-correct pipeline and re-tuning all five lights to match is
+  an **open, deliberately deferred design decision**, not an oversight.
+- **3D viewer helper:** `makeViewer(container, opts)` wraps three's real
+  `OrbitControls` (drag-to-rotate, wheel-to-zoom, idle auto-rotate) plus the
+  scene/renderer/framing plumbing. Both the ovary viewer and the tumor site-map
+  viewer are built on it — **reuse this** for new organs.
+- **Click-vs-drag disambiguation stays app-side, by necessity.** `OrbitControls`
+  has no built-in "was this a click or a drag" concept, and its `change` event
+  cannot substitute: `update()` fires `change` on every auto-rotate frame
+  regardless of user input. The 6px pointer-movement threshold lives in
+  `makeMoveTracker` (shared with the body screen, so the threshold is defined
+  once) — don't go looking for an OrbitControls replacement; it was confirmed
+  not to exist.
+- **Zoom-speed calibration must anchor to the camera's actual framed distance,
+  not a nominal radius.** `applyFraming()` slides the camera out to fit the
+  meshes — for the site map that lands near 2× the configured radius — so
+  `calibrateZoomSpeed(radius)` is re-run at the end of `applyFraming()` with
+  the real distance. Anchoring to `opts.radius` was a real shipped bug (site
+  viewer zoomed 1.8× too fast while the ovary viewer, whose framed distance
+  happens to sit near its nominal, masked it). Any new viewer gets this for
+  free through `makeViewer`; don't bypass it.
 - **Organic mesh look:** `organicDisplace(geometry, amplitude, freq, seed)` —
   deterministic sine-based vertex displacement, no noise library dependency.
   Reuse for any new organ/tumor mesh; vary `seed`/`freq`/`amplitude` per organ
@@ -115,7 +153,7 @@ navigation pattern end-to-end for **one** organ/cancer pair:
 ## Suggested next steps (priority order)
 1. Decide on and set up real project structure (framework choice, file
    layout, whether to keep the no-build-step constraint or introduce one).
-2. Extract the reusable pieces (`makeOrbitRig`, `organicDisplace`, mutation
+2. Extract the reusable pieces (`makeViewer`, `organicDisplace`, mutation
    panel component, breadcrumb component) into shared modules.
 3. Pick the next organ/cancer pair and repeat the real-data-sourcing process
    documented above before writing any code for it.
