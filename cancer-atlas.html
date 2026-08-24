@@ -119,13 +119,13 @@
   .cr-cta{font-size:12.5px;color:var(--teal);font-weight:600;white-space:nowrap;}
   .cr-cta.disabled{color:var(--muted);}
 
-  /* ---------- 3D viewers (ovary organ + tumor site map) ---------- */
-  #ovaryViewerWrap{width:100%;max-width:320px;aspect-ratio:1/1;margin:0 auto 6px;border-radius:18px;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 38%,#182338 0%,#0d1320 72%);border:1px solid var(--line);cursor:grab;}
-  #ovaryViewerWrap:active{cursor:grabbing;}
-  #ovaryViewerWrap canvas{display:block;width:100%!important;height:100%!important;}
+  /* ---------- 3D viewers (organ screen + tumor site map) ---------- */
+  #organViewerWrap{width:100%;max-width:320px;aspect-ratio:1/1;margin:0 auto 6px;border-radius:18px;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 38%,#182338 0%,#0d1320 72%);border:1px solid var(--line);cursor:grab;}
+  #organViewerWrap:active{cursor:grabbing;}
+  #organViewerWrap canvas{display:block;width:100%!important;height:100%!important;}
   /* Keyboard proxy for the four investigate points. The points themselves are WebGL meshes, so
      there is nothing to put a tabindex on; this is one transparent disc per point, projected onto
-     the same screen position every frame (see ovaryTick). It stays invisible until focused because
+     the same screen position every frame (see organTick). It stays invisible until focused because
      the glowing mesh underneath is already the visual affordance — a permanently visible ring on
      top of it would double the marker and change the organ screen's look. On focus it shows the
      ring plus the structure's name, so a sighted keyboard user can tell which point they are on.
@@ -133,10 +133,10 @@
   .organ-point{position:absolute;width:24px;height:24px;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);}
   .organ-point .opt-name{position:absolute;left:50%;top:0;transform:translate(-50%,-150%);font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.06em;color:var(--text);background:rgba(10,14,24,.72);border:1px solid var(--line);padding:3px 8px;border-radius:20px;white-space:nowrap;opacity:0;transition:opacity .15s ease;}
   .organ-point:focus-visible .opt-name{opacity:1;}
-  #ovaryInfoCard{max-width:320px;margin:0 auto 26px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-height:64px;}
-  #ovaryInfoCard .oi-title{font-family:'Space Grotesk';font-size:14px;font-weight:600;margin-bottom:4px;}
-  #ovaryInfoCard .oi-text{font-size:12.5px;color:var(--muted);line-height:1.55;}
-  #ovaryInfoCard .oi-text.placeholder{font-style:italic;}
+  #organInfoCard{max-width:320px;margin:0 auto 26px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-height:64px;}
+  #organInfoCard .oi-title{font-family:'Space Grotesk';font-size:14px;font-weight:600;margin-bottom:4px;}
+  #organInfoCard .oi-text{font-size:12.5px;color:var(--muted);line-height:1.55;}
+  #organInfoCard .oi-text.placeholder{font-style:italic;}
   #organHint{text-align:center;font-size:11.5px;color:var(--muted);margin:-2px auto 22px;max-width:320px;}
   #organHint b{color:var(--text);}
 
@@ -223,7 +223,7 @@
 <body>
 <div id="app">
 
-  <div id="disclaimer">Body model and navigation are illustrative, not a medical scan. Ovary anatomy, HGSOC mutation frequencies, and spread pattern are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016) — not one real patient. Which gene is shown at which site is a simplified teaching device: McPherson (2016) establishes the spread pattern and TCGA (2011) the cohort-level frequencies, not this specific pairing.</div>
+  <div id="disclaimer">Body model and navigation are illustrative, not a medical scan. Ovary/HGSOC anatomy and mutation data are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016); breast/triple-negative data from TCGA (<i>Nature</i>, 2012) and Yates et al. (<i>Cancer Cell</i>, 2017) — not one real patient. For both cancers, which gene is shown at which site is a simplified teaching device: the site-pattern study establishes where spread/metastasis happens and the genomics study the cohort-level mutation frequencies, not this specific site→gene pairing.</div>
   <!-- The toast is the only feedback for activating a "coming soon" organ or cancer, and it
        self-dismisses after 2.2s, so it has to announce itself. role="status" carries the polite
        politeness implicitly; aria-live is stated anyway because the role is easy to lose in a
@@ -232,7 +232,7 @@
 
   <!-- ============ SCREEN 1: BODY ============ -->
   <div class="screen active" id="screenBody" role="region" aria-label="Body map — choose an organ" tabindex="-1">
-    <!-- role="group", not role="img" — same trap as #ovaryViewerWrap/#txSiteViewer: this container
+    <!-- role="group", not role="img" — same trap as #organViewerWrap/#txSiteViewer: this container
          holds one real .hotspot button per organ marker, and role="img" would collapse them out of
          the accessibility tree. The canvas gets its own role="img" in initBodyViewer(). -->
     <div id="bodyViewerWrap" role="group" aria-label="Interactive 3D body model"></div>
@@ -255,49 +255,49 @@
     <div id="bodyHint"><b>Drag</b> to rotate · <b>scroll</b> to zoom · <b>click</b> a marker to explore that organ</div>
   </div>
 
-  <!-- ============ SCREEN 2: ORGAN (Ovary) ============ -->
-  <div class="screen" id="screenOrgan" role="region" aria-label="Ovary — cancer types" tabindex="-1" inert>
+  <!-- ============ SCREEN 2: ORGAN (data-driven — see ORGAN_DETAILS/renderOrganScreen) ============ -->
+  <!-- This screen shows whichever organ is currently selected; nothing below is organ-specific
+       markup any more — eyebrow/h1/sub/facts/desc/cancer-list are all filled in by
+       renderOrganScreen(organKey), and the aria-label is kept in sync there too. -->
+  <div class="screen" id="screenOrgan" role="region" aria-label="Organ — cancer types" tabindex="-1" inert>
     <div id="organWrap">
-      <div class="eyebrow">Female Reproductive System</div>
-      <h1>Ovary</h1>
-      <div class="sub">Paired organ · almond-sized · produces eggs and sex hormones</div>
+      <div class="eyebrow"></div>
+      <h1></h1>
+      <div class="sub"></div>
 
       <!-- role="group", not role="img": this container now holds the four .organ-point buttons that
            give the investigate points a keyboard path, and role="img" would collapse them out of the
            accessibility tree — the same trap already documented on #txSiteViewer. The canvas gets
-           role="img" in initOvaryViewer() instead, because a WebGL surface exposes nothing at all to
+           role="img" in initOrganViewer() instead, because a WebGL surface exposes nothing at all to
            a screen reader and its label is the only description of the model anyone gets. -->
-      <div id="ovaryViewerWrap" role="group" aria-label="Interactive 3D model of the ovary"></div>
+      <div id="organViewerWrap" role="group" aria-label="Interactive 3D model of the selected organ"></div>
       <div id="organHint"><b>Drag</b> to rotate · <b>scroll</b> to zoom · <b>click</b> a glowing point to investigate a structure</div>
       <!-- Activating an investigate point rewrites this card in place, with no navigation and no
            focus move, so without a live region a screen-reader user gets silence for their Enter
            press. Same reasoning as #txPanelBody. Announcing beats moving focus here: the card sits
            below the model, and stealing focus out of the viewer would cost you your place among the
            four points when the whole intent is to compare them. -->
-      <div id="ovaryInfoCard" role="region" aria-label="Investigate point details" aria-live="polite">
+      <div id="organInfoCard" role="region" aria-label="Investigate point details" aria-live="polite">
         <div class="oi-title" id="oiTitle">Investigate</div>
         <div class="oi-text placeholder" id="oiText">Click a glowing point on the model to learn what that structure is and does.</div>
       </div>
 
-      <div class="facts-grid">
-        <div class="fact"><div class="flabel">Size</div><div class="fval">~3 × 1.5 × 1 cm</div></div>
-        <div class="fact"><div class="flabel">Location</div><div class="fval">Pelvis, either side of uterus</div></div>
-        <div class="fact"><div class="flabel">Function</div><div class="fval">Releases eggs; makes estrogen &amp; progesterone</div></div>
-        <div class="fact"><div class="flabel">Blood supply</div><div class="fval">Ovarian arteries</div></div>
-      </div>
+      <div class="facts-grid" id="factsGrid"></div>
 
-      <p class="desc">The ovaries sit in the pelvis on either side of the uterus, each connected to a fallopian tube. Their outer surface — the site where most ovarian cancers actually begin — is covered by a single layer of epithelial cells.</p>
+      <p class="desc" id="organDesc"></p>
 
-      <div class="section-title">Cancers of the ovary</div>
+      <div class="section-title" id="sectionTitle"></div>
       <div class="cancer-list" id="cancerList"></div>
     </div>
   </div>
 
-  <!-- ============ SCREEN 3: CANCER / TUMOR EXPLORER ============ -->
-  <div class="screen" id="screenCancer" role="region" aria-label="High-grade serous carcinoma — tumor explorer" tabindex="-1" inert>
+  <!-- ============ SCREEN 3: CANCER / TUMOR EXPLORER (data-driven — see CANCER_DETAILS/renderCancerScreen) ============ -->
+  <!-- Shows whichever cancer type is currently selected; the aria-label and #txLegend contents
+       below are filled in by renderCancerScreen(cancerId), not hardcoded to one cancer. -->
+  <div class="screen" id="screenCancer" role="region" aria-label="Tumor explorer" tabindex="-1" inert>
     <div id="txStage">
       <div id="txCenterCaption"><div class="big" id="txCaptionText"></div></div>
-      <!-- Deliberately role="group", NOT role="img" like the ovary viewer: this container also holds
+      <!-- Deliberately role="group", NOT role="img" like the organ viewer: this container also holds
            the four projected .site-label buttons, and role="img" would collapse them out of the
            accessibility tree — which would delete the only keyboard path into a site. The canvas
            gets its own role="img" in initSiteViewer() so the unreachable WebGL half is described
@@ -309,11 +309,8 @@
     </div>
     <div id="txHint"><b>Drag</b> to rotate the tumor · <b>click</b> a colored cluster to enter that site · <b>click</b> a cell to view its mutations</div>
     <div id="txLegend">
-      <div class="lg-title">Sites (real intraperitoneal spread pattern)</div>
-      <div class="lg-row"><span class="lg-dot" style="background:var(--coral);color:var(--coral)"></span>Ovary (primary)</div>
-      <div class="lg-row"><span class="lg-dot" style="background:var(--azure);color:var(--azure)"></span>Omentum</div>
-      <div class="lg-row"><span class="lg-dot" style="background:var(--amber);color:var(--amber)"></span>Peritoneum</div>
-      <div class="lg-row"><span class="lg-dot" style="background:var(--violet);color:var(--violet)"></span>Bowel serosa</div>
+      <div class="lg-title" id="txLegendTitle"></div>
+      <div id="txLegendRows"></div>
     </div>
     <!-- Starts inert: the panel is hidden by sliding off-canvas with a transform, which keeps
          its close button and mutation list focusable unless they are explicitly removed. -->
@@ -420,7 +417,10 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     { key:'ovary',    label:'Ovaries',  system:'Reproductive', active:true,  sexes:['female'], aliases:['ovary','ovaries','ovarian'] },
     { key:'brain',    label:'Brain',    system:'Nervous',      active:false, sexes:['female','male'], aliases:['brain','brains','cerebral','neurological'] },
     { key:'lungs',    label:'Lungs',    system:'Respiratory',  active:false, sexes:['female','male'], aliases:['lung','lungs','pulmonary','respiratory'] },
-    { key:'breast',   label:'Breast',   system:'Reproductive', active:false, sexes:['female','male'], aliases:['breast','breasts','mammary'] },
+    // active:true, plus 'triple negative'/'tnbc' aliases — searching either finds Breast, since
+    // search resolves to an organ (not a cancer directly); the cancer itself is one click further,
+    // same as searching "ovary" doesn't skip straight to HGSOC.
+    { key:'breast',   label:'Breast',   system:'Reproductive', active:true,  sexes:['female','male'], aliases:['breast','breasts','mammary','triple negative','triple-negative','tnbc'] },
     { key:'liver',    label:'Liver',    system:'Digestive',    active:false, sexes:['female','male'], aliases:['liver','hepatic','hepatocellular'] },
     { key:'kidneys',  label:'Kidneys',  system:'Urinary',      active:false, sexes:['female','male'], aliases:['kidney','kidneys','renal'] },
     { key:'prostate', label:'Prostate', system:'Reproductive', active:false, sexes:['male'],   aliases:['prostate','prostatic'] },
@@ -436,12 +436,18 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     return ORGANS.filter(organ => organMatchesQuery(organ, q));
   }
 
+  // organKey filters this flat list down to "cancers of the currently displayed organ" in
+  // renderCancerList — one list shared across every organ rather than one array per organ.
   const CANCERS = [
-    { id:'hgsoc', name:'High-grade serous carcinoma', share:'~70% of ovarian carcinomas', active:true },
-    { id:'endo',  name:'Endometrioid carcinoma',       share:'~10% of ovarian carcinomas', active:false },
-    { id:'clear', name:'Clear-cell carcinoma',         share:'~10% of ovarian carcinomas', active:false },
-    { id:'muc',   name:'Mucinous carcinoma',           share:'~3% of ovarian carcinomas',  active:false },
-    { id:'lgsc',  name:'Low-grade serous carcinoma',   share:'<5% of ovarian carcinomas',  active:false },
+    { id:'hgsoc', name:'High-grade serous carcinoma', share:'~70% of ovarian carcinomas', active:true,  organKey:'ovary' },
+    { id:'endo',  name:'Endometrioid carcinoma',       share:'~10% of ovarian carcinomas', active:false, organKey:'ovary' },
+    { id:'clear', name:'Clear-cell carcinoma',         share:'~10% of ovarian carcinomas', active:false, organKey:'ovary' },
+    { id:'muc',   name:'Mucinous carcinoma',           share:'~3% of ovarian carcinomas',  active:false, organKey:'ovary' },
+    { id:'lgsc',  name:'Low-grade serous carcinoma',   share:'<5% of ovarian carcinomas',  active:false, organKey:'ovary' },
+    { id:'lumA',  name:'Luminal A carcinoma',          share:'~50–60% of breast carcinomas', active:false, organKey:'breast' },
+    { id:'lumB',  name:'Luminal B carcinoma',          share:'~15–20% of breast carcinomas', active:false, organKey:'breast' },
+    { id:'her2',  name:'HER2-enriched carcinoma',      share:'~10–15% of breast carcinomas', active:false, organKey:'breast' },
+    { id:'tnbc',  name:'Triple-negative (basal-like) carcinoma', share:'~10–20% of breast carcinomas', active:true, organKey:'breast' },
   ];
 
   let screen = 'body'; // body | organ | cancer
@@ -470,7 +476,7 @@ const LEGACY_LIGHT_SCALE = Math.PI;
       s.toggleAttribute('inert', !isActive);
     });
     if(name==='body' && bodyViewer) bodyViewer.resize();
-    if(name==='organ' && ovaryViewer) ovaryViewer.resize();
+    if(name==='organ' && organViewer) organViewer.resize();
     if(name==='cancer' && siteViewer) siteViewer.resize();
     renderCrumbs();
     landFocus(activeScreen);
@@ -489,12 +495,13 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   function renderCrumbs(){
     let parts = [{label:'Body', fn:()=>setScreen('body')}];
     if(screen==='organ' || screen==='cancer'){
-      parts.push({label:'Ovary', fn:()=>setScreen('organ')});
+      parts.push({label:ORGAN_DETAILS[currentOrganKey].title, fn:()=>setScreen('organ')});
     }
     if(screen==='cancer'){
-      parts.push({label:'High-Grade Serous Carcinoma', fn:()=>txGoLevel(1)});
+      const cancer = CANCER_DETAILS[currentCancerId];
+      parts.push({label:cancer.title, fn:()=>txGoLevel(1)});
       if(txLevel>=2 && txCurrentRegion!==null){
-        parts.push({label:REGIONS[txCurrentRegion].name, fn:()=>txGoLevel(2)});
+        parts.push({label:cancer.regions[txCurrentRegion].name, fn:()=>txGoLevel(2)});
       }
       if(txLevel===3 && txCurrentCell){
         parts.push({label:'Cell '+txCurrentCell.id, fn:null});
@@ -597,6 +604,7 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     const organ = ORGANS.find(o=>o.key===key);
     if(!organ) return;
     if(organ.active){
+      renderOrganScreen(key);
       setScreen('organ');
     } else {
       showToast('Full atlas coming soon for ' + organ.label);
@@ -638,33 +646,69 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   });
 
   // ============================================================
-  // SCREEN 2 — ORGAN (Ovary)
+  // SCREEN 2 — ORGAN (data-driven; see ORGAN_DETAILS below the shared 3D helpers)
   // ============================================================
   const cancerListEl = document.getElementById('cancerList');
-  cancerListEl.innerHTML = CANCERS.map(c=>`
-    <div class="cancer-row ${c.active?'enabled':''}" data-id="${c.id}">
-      <div class="cr-left">
-        <div class="cr-name">${c.name}</div>
-        <div class="cr-share">${c.share}</div>
-      </div>
-      <div class="cr-cta ${c.active?'':'disabled'}">${c.active ? 'Explore this cancer →' : 'Profile coming soon'}</div>
-    </div>`).join('');
-  cancerListEl.querySelectorAll('.cancer-row').forEach(row=>{
-    const c = CANCERS.find(x=>x.id===row.dataset.id);
-    makeActivatable(row, ()=>{
-      if(c && c.active){ enterCancerScreen(); }
-      else { showToast('Profile coming soon for ' + c.name); }
-    }, {
-      // All five rows respond to activation; only one navigates. The difference is currently
-      // carried by the CTA's colour and the teal border, so state it in the name too.
-      label: c ? c.name + ', ' + c.share + (c.active ? ' — explore this cancer' : ' — profile coming soon') : row.dataset.id
+
+  // Rebuilds the cancer list for whichever organ is showing. Was a one-time render keyed to the
+  // (until now) only organ; now it filters the shared CANCERS list by organKey and re-runs every
+  // time renderOrganScreen swaps organs, same reasoning renderSearch already applies per keystroke.
+  function renderCancerList(organKey){
+    const list = CANCERS.filter(c=>c.organKey===organKey);
+    cancerListEl.innerHTML = list.map(c=>`
+      <div class="cancer-row ${c.active?'enabled':''}" data-id="${c.id}">
+        <div class="cr-left">
+          <div class="cr-name">${c.name}</div>
+          <div class="cr-share">${c.share}</div>
+        </div>
+        <div class="cr-cta ${c.active?'':'disabled'}">${c.active ? 'Explore this cancer →' : 'Profile coming soon'}</div>
+      </div>`).join('');
+    cancerListEl.querySelectorAll('.cancer-row').forEach(row=>{
+      const c = list.find(x=>x.id===row.dataset.id);
+      makeActivatable(row, ()=>{
+        if(c && c.active){ enterCancerScreen(c.id); }
+        else { showToast('Profile coming soon for ' + c.name); }
+      }, {
+        // Every row responds to activation; only the active one navigates. The difference is
+        // currently carried by the CTA's colour and the teal border, so state it in the name too.
+        label: c ? c.name + ', ' + c.share + (c.active ? ' — explore this cancer' : ' — profile coming soon') : row.dataset.id
+      });
     });
-  });
+  }
+
+  // Repaints every static bit of the organ screen (eyebrow/h1/sub/facts/desc/cancer list) from
+  // ORGAN_DETAILS, then (re)builds its 3D viewer. Called from selectOrgan before setScreen('organ')
+  // — nothing here is organ-specific markup any more, so a second organ is a data entry, not a
+  // second screen.
+  function renderOrganScreen(organKey){
+    currentOrganKey = organKey;
+    const detail = ORGAN_DETAILS[organKey];
+    const wrap = document.getElementById('organWrap');
+    wrap.querySelector('.eyebrow').textContent = detail.eyebrow;
+    wrap.querySelector('h1').textContent = detail.title;
+    wrap.querySelector('.sub').textContent = detail.sub;
+    document.getElementById('factsGrid').innerHTML = detail.facts.map(f=>
+      `<div class="fact"><div class="flabel">${f.label}</div><div class="fval">${f.val}</div></div>`
+    ).join('');
+    document.getElementById('organDesc').textContent = detail.desc;
+    document.getElementById('sectionTitle').textContent = 'Cancers of the ' + detail.title.toLowerCase();
+    renderCancerList(organKey);
+    // Reset the investigate-point card to its placeholder text — otherwise switching from Ovary
+    // to Breast would leave "Cortex" showing under a model that has no such structure.
+    document.getElementById('oiTitle').textContent = 'Investigate';
+    const oiText = document.getElementById('oiText');
+    oiText.textContent = 'Click a glowing point on the model to learn what that structure is and does.';
+    oiText.classList.add('placeholder');
+    document.getElementById('screenOrgan').setAttribute('aria-label', detail.title + ' — cancer types');
+    initOrganViewer(organKey);
+  }
 
   // ============================================================
-  // SCREEN 3 — CANCER / TUMOR EXPLORER (HGSOC)
+  // SCREEN 3 — CANCER / TUMOR EXPLORER (data-driven; see CANCER_DETAILS below)
   // ============================================================
-  const REGIONS = [
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  const REGIONS_HGSOC = [
     { id:'OV', name:'Ovary (primary)', color:cssVar('--coral'), pos3d:{x:-1.3,y:-0.35,z:0.35},
       branch:{ gene:'BRCA1/2 pathway loss', class:'driver', ccf:'~50% of HGSOC tumors are HR-deficient overall', note:'Loss of homologous-recombination repair — the single biggest known determinant of PARP-inhibitor sensitivity in this disease.' } },
     { id:'OM', name:'Omentum', color:cssVar('--azure'), pos3d:{x:0.4,y:1.05,z:-0.3},
@@ -674,10 +718,10 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     { id:'BO', name:'Bowel serosa', color:cssVar('--violet'), pos3d:{x:0.05,y:-1.25,z:0.15},
       branch:{ gene:'RB1 loss', class:'driver', ccf:'recurrent, low individual frequency (TCGA cohort)', note:'Removes a cell-cycle checkpoint, often found alongside cyclin-pathway changes like CCNE1 amplification.' } },
   ];
-  const TRUNK = [
+  const TRUNK_HGSOC = [
     { gene:'TP53 mutation', class:'driver', ccf:'~96% of HGSOC tumors (TCGA, 2011)', note:'Disables the tumor-suppressor gene lost in nearly every high-grade serous ovarian cancer — so consistent across cases that it\'s considered the founding event of this disease.' },
   ];
-  const PRIVATE_POOL = [
+  const PRIVATE_POOL_HGSOC = [
     { gene:'CDK12 alteration', class:'driver', note:'A recurrent DNA-repair gene hit in a minority of tumors, adding to the genomic instability already caused by TP53 loss.' },
     { gene:'BRCA reversion mutation', class:'driver', note:'A second mutation that restores the BRCA reading frame — a well-documented way tumor cells regain repair capacity and become resistant to PARP inhibitors after treatment.' },
     { gene:'MYC amplification', class:'driver', note:'Extra copies of a master growth-signaling gene; one of the more common focal amplifications found across HGSOC genomes.' },
@@ -685,7 +729,62 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
   ];
 
-  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  // Real distant-metastasis sites (Yates et al., Cancer Cell, 2017), not the intraperitoneal
+  // spread pattern HGSOC uses — breast cancer's real recurrence geography is systemic, so the
+  // "sites" concept still applies but means something different per cancer, which is why
+  // legendTitle is per-CANCER_DETAILS rather than a single hardcoded string.
+  //
+  // Every branch gene below was checked for mechanistic fit with THIS tumor — ER-negative,
+  // TP53-mutant — not just "real gene, real frequency, real cancer somewhere" (see the CLAUDE.md
+  // data-rule this omission prompted). Two earlier picks, ESR1 activating mutation and MDM4
+  // amplification, failed that check and were replaced: ESR1's mechanism (locking the estrogen
+  // receptor into an active shape) requires ER expression a TNBC tumor doesn't have by definition,
+  // and MDM4's mechanism (degrading wild-type p53) is moot once trunk TP53 has already disabled
+  // that pathway. Both were real, sourced, and correctly labeled site-illustrative — the defect
+  // was the gene choice itself, not the site pairing or the citation. FGFR1 and JAK2/STAT-pathway
+  // inactivation are still from Yates et al. (2017)'s pan-breast-cancer metastasis cohort, since
+  // both are receptor-status-agnostic and hold up fine. EGFR amplification and RB1 loss (below)
+  // are basal-like-specific findings from TCGA (Nature, 2012) instead — a different real source,
+  // used because it actually supports a basal-like-specific claim, not to force everything onto one
+  // citation. Assigning one gene to each site is still the same illustrative simplification HGSOC's
+  // omentum/CCNE1 pairing uses (see CLAUDE.md's Architecture notes on why that panel heading says
+  // so explicitly) — this fix is about which genes appear, not about the site-pairing framing.
+  const REGIONS_TNBC = [
+    { id:'BN', name:'Bone', color:cssVar('--coral'), pos3d:{x:-1.3,y:-0.9,z:0.3},
+      branch:{ gene:'EGFR amplification', class:'driver', ccf:'~23% of basal-like tumors (TCGA, Nature, 2012)', note:'Extra copies of a growth-factor receptor gene that drives proliferation directly through its own signaling — unlike estrogen-receptor pathway alterations, this doesn\'t require any hormone-receptor expression, which is why it actually fits a receptor-negative tumor like this one.' } },
+    { id:'LV', name:'Liver', color:cssVar('--azure'), pos3d:{x:0.9,y:-0.6,z:-0.5},
+      branch:{ gene:'RB1 loss', class:'driver', ccf:'a basal-like driving event TCGA (Nature, 2012) reports as shared with high-grade serous ovarian carcinoma', note:'Removes a cell-cycle checkpoint, cooperating directly with this tumor\'s trunk TP53 mutation rather than depending on hormone signaling — TCGA identifies the same TP53-plus-RB1-loss pairing as a shared driving event between basal-like breast cancer and HGSOC, the other cancer modeled in this atlas.' } },
+    { id:'LU', name:'Lung', color:cssVar('--amber'), pos3d:{x:0.2,y:1.15,z:0.35},
+      branch:{ gene:'FGFR1 amplification', class:'driver', ccf:'recurrent focal amplification acquired at metastasis across breast cancer cohorts (Yates et al., Cancer Cell, 2017)', note:'Extra copies of a growth-factor receptor gene that can drive proliferation directly and, in other breast cancer subtypes, contribute to endocrine-therapy resistance.' } },
+    { id:'BR', name:'Brain', color:cssVar('--violet'), pos3d:{x:-0.3,y:1.3,z:-0.4},
+      branch:{ gene:'JAK2/STAT pathway inactivation', class:'driver', ccf:'recurrent pathway-inactivating alteration acquired at metastasis across breast cancer cohorts (Yates et al., Cancer Cell, 2017)', note:'Blunts interferon/JAK–STAT signaling, one route tumor cells use to reduce their visibility to the immune system at the metastatic site — a mechanism with particular clinical relevance in TNBC, where checkpoint immunotherapy already has an established role.' } },
+  ];
+  const TRUNK_TNBC = [
+    { gene:'TP53 mutation', class:'driver', ccf:'~80% of basal-like tumors (TCGA, Nature, 2012)', note:'Disables the tumor-suppressor gene lost in the large majority of basal-like/triple-negative breast cancers — consistent enough across cases to be considered a founding event of this subtype, similar to its role in HGSOC.' },
+  ];
+  const PRIVATE_POOL_TNBC = [
+    { gene:'BRCA1 alteration (germline or somatic)', class:'driver', ccf:'~15–20% of TNBC', note:'Loss of homologous-recombination repair capacity — found in a meaningful minority of TNBC specifically, and a determinant of PARP-inhibitor and platinum-chemotherapy sensitivity here too.' },
+    { gene:'PIK3CA mutation', class:'driver', ccf:'~9% of basal-like tumors — well below the ~39% mutation rate across breast cancer overall, since PIK3CA mutations cluster heavily in ER-positive/luminal disease', note:'Activates the PI3K growth pathway; the frequency gap here is itself informative about how differently this subtype is wired.' },
+    { gene:'CCND1 amplification', class:'driver', note:'Extra copies of a cell-cycle gene (cyclin D1) that pushes cells through division — a recurrent focal amplification in breast cancer broadly.' },
+    { gene:'MYC amplification', class:'driver', note:'Extra copies of a master growth-signaling gene — one of the more common focal amplifications in basal-like breast cancer genomes specifically.' },
+    { gene:'PTEN loss', class:'driver', note:'Removes a brake on the PI3K growth pathway — a route to the same growth advantage PIK3CA mutations reach by a different door, and more frequent in basal-like tumors than PIK3CA mutation itself.' },
+  ];
+
+  // One entry per cancer screen. Everything txEnterRegion/txGoLevel/txOpenCell/renderCrumbs/
+  // initSiteViewer need to show a different cancer lives here — regions/trunk/privatePool plus
+  // the display strings that used to be hardcoded markup (screen aria-label, legend title).
+  const CANCER_DETAILS = {
+    hgsoc: {
+      title:'High-Grade Serous Carcinoma', screenLabel:'High-grade serous carcinoma — tumor explorer',
+      legendTitle:'Sites (real intraperitoneal spread pattern)',
+      regions:REGIONS_HGSOC, trunk:TRUNK_HGSOC, privatePool:PRIVATE_POOL_HGSOC,
+    },
+    tnbc: {
+      title:'Triple-Negative Breast Cancer', screenLabel:'Triple-negative breast cancer — tumor explorer',
+      legendTitle:'Sites (real distant-metastasis pattern)',
+      regions:REGIONS_TNBC, trunk:TRUNK_TNBC, privatePool:PRIVATE_POOL_TNBC,
+    },
+  };
 
   // Ring drawn around cells that carry private mutations. The previous
   // rgba(255,255,255,.16) was swallowed by the dot's own coloured glow. Coral is the
@@ -694,9 +793,16 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   // cells are coral themselves and would otherwise just look like bigger dots.
   const PRIVATE_RING_SHADOW = `0 0 0 2px ${cssVar('--bg')}, 0 0 0 4px ${cssVar('--driver')}`;
 
+  // Which organ/cancer is currently loaded into the (single, shared) organ/cancer screens.
+  // renderOrganScreen/enterCancerScreen set these; renderCrumbs, buildRegionCells, txOpenCell,
+  // txRenderCellLayer and initSiteViewer all read them instead of a hardcoded REGIONS/TRUNK.
+  let currentOrganKey = null;
+  let currentCancerId = null;
   let txLevel = 1;
   let txCurrentRegion = null;
   let txCurrentCell = null;
+  // Keyed by region.id ('OV'/'OM'/... for HGSOC, 'BN'/'LV'/... for TNBC) — shared across cancers
+  // safely as long as every cancer's region ids are unique from every other's, which they are.
   const regionCellCache = {};
 
   const txSiteViewerEl = document.getElementById('txSiteViewer');
@@ -1329,29 +1435,123 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   }
 
   // ============================================================
-  // OVARY 3D VIEWER (organ screen)
+  // ORGAN 3D VIEWER (organ screen) — data-driven; see ORGAN_DETAILS
   // ============================================================
-  const OVARY_HOTSPOTS = [
-    { key:'surface', label:'Surface epithelium', dir:[0.28,0.6,0.85],
-      text:'A single layer of cells covering the ovary\'s outer surface. Most ovarian cancers, including high-grade serous carcinoma, are now thought to arise here or in the adjacent fallopian tube.' },
-    { key:'cortex', label:'Cortex', dir:[0.88,0.12,0.25],
-      text:'The outer functional layer, packed with follicles at every stage of development — from resting to nearly ready to release an egg.' },
-    { key:'medulla', label:'Medulla', dir:[-0.35,0.15,-0.85],
-      text:'The core of the ovary, deep to the cortex — loose connective tissue carrying the blood vessels, lymphatics, and nerves that supply it.' },
-    { key:'hilum', label:'Hilum', dir:[0.05,-1,0.12],
-      text:'Where the ovary attaches to its supporting ligament — the entry and exit point for its blood supply and nerves.' },
-  ];
+  // hotspotScale mirrors whatever non-uniform mesh.scale the organ's buildMesh() applies, so a
+  // hotspot's `dir` vector lands on the mesh's actual (stretched) surface rather than on the
+  // surface of the unstretched unit sphere/dome the direction was computed against.
+  function buildOvaryMesh(){
+    const geo = new THREE.SphereGeometry(1, 48, 48);
+    organicDisplace(geo, 0.045, 6.5, 1.7);
+    const mat = new THREE.MeshStandardMaterial({ color:0xe6b6a8, roughness:0.55, metalness:0.04 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.scale.set(0.9, 1.28, 0.98);
+    return mesh;
+  }
 
-  let ovaryViewer = null;
-  const ovaryMarkers = [];
+  // A dome (partial sphere, apex at +Y) capped flat at its open base — same capping trick the
+  // body torso uses, since SphereGeometry, like LatheGeometry, has no cap of its own once you cut
+  // it short of a full sphere. cap/nipple are children of the dome mesh so they inherit its
+  // non-uniform scale for free instead of needing their own copy of it.
+  function buildBreastMesh(){
+    const radius = 1.0, thetaLength = Math.PI*0.62;
+    const geo = new THREE.SphereGeometry(radius, 40, 28, 0, Math.PI*2, 0, thetaLength);
+    organicDisplace(geo, 0.045, 5.5, 2.3);
+    const mat = new THREE.MeshStandardMaterial({ color:0xe8bdae, roughness:0.58, metalness:0.03 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.scale.set(1.05, 0.92, 0.85);
 
-  function initOvaryViewer(){
-    const container = document.getElementById('ovaryViewerWrap');
-    ovaryViewer = makeViewer(container, {
-      theta:0.5, phi:1.2, radius:4, minRadius:2.6, maxRadius:6, autoRotate:true,
-      // Was ovaryTick()'s spin(0.0016). Moved into the viewer config because OrbitControls owns
-      // the idle rotation now; the per-frame figure is unchanged.
-      autoRotateRadPerFrame:0.0016,
+    const rimY = radius*Math.cos(thetaLength), rimR = radius*Math.sin(thetaLength);
+    const cap = new THREE.Mesh(new THREE.CircleGeometry(rimR*1.03, 28), mat);
+    cap.position.y = rimY; cap.rotation.x = Math.PI/2;
+    mesh.add(cap);
+
+    const nipple = new THREE.Mesh(new THREE.SphereGeometry(radius*0.09, 14, 14), mat);
+    nipple.position.y = radius*1.02;
+    mesh.add(nipple);
+
+    return mesh;
+  }
+
+  const ORGAN_DETAILS = {
+    ovary: {
+      eyebrow:'Female Reproductive System', title:'Ovary',
+      sub:'Paired organ · almond-sized · produces eggs and sex hormones',
+      facts:[
+        {label:'Size', val:'~3 × 1.5 × 1 cm'},
+        {label:'Location', val:'Pelvis, either side of uterus'},
+        {label:'Function', val:'Releases eggs; makes estrogen &amp; progesterone'},
+        {label:'Blood supply', val:'Ovarian arteries'},
+      ],
+      desc:'The ovaries sit in the pelvis on either side of the uterus, each connected to a fallopian tube. Their outer surface — the site where most ovarian cancers actually begin — is covered by a single layer of epithelial cells.',
+      buildMesh: buildOvaryMesh,
+      hotspotScale: new THREE.Vector3(0.9, 1.28, 0.98),
+      viewer:{ theta:0.5, phi:1.2, radius:4, minRadius:2.6, maxRadius:6, autoRotateRadPerFrame:0.0016 },
+      viewerAria:'Three-dimensional model of an ovary, an off-white lumpy ellipsoid, with four glowing '
+        + 'teal points marking the structures listed after it. Drag to rotate, scroll to zoom.',
+      hotspots:[
+        { key:'surface', label:'Surface epithelium', dir:[0.28,0.6,0.85],
+          text:'A single layer of cells covering the ovary\'s outer surface. Most ovarian cancers, including high-grade serous carcinoma, are now thought to arise here or in the adjacent fallopian tube.' },
+        { key:'cortex', label:'Cortex', dir:[0.88,0.12,0.25],
+          text:'The outer functional layer, packed with follicles at every stage of development — from resting to nearly ready to release an egg.' },
+        { key:'medulla', label:'Medulla', dir:[-0.35,0.15,-0.85],
+          text:'The core of the ovary, deep to the cortex — loose connective tissue carrying the blood vessels, lymphatics, and nerves that supply it.' },
+        { key:'hilum', label:'Hilum', dir:[0.05,-1,0.12],
+          text:'Where the ovary attaches to its supporting ligament — the entry and exit point for its blood supply and nerves.' },
+      ],
+    },
+    breast: {
+      eyebrow:'Reproductive / Glandular Tissue', title:'Breast',
+      sub:'Paired gland · overlies pectoralis major · produces milk via lobules and ducts',
+      facts:[
+        {label:'Location', val:'Overlying pectoralis major, upper chest wall'},
+        {label:'Function', val:'Milk production via lobules and ducts'},
+        {label:'Blood supply', val:'Internal thoracic &amp; lateral thoracic arteries'},
+      ],
+      desc:'The breast sits on the chest wall over pectoralis major, made up of milk-producing lobules connected by a branching network of ducts to the nipple, all embedded in stromal and fatty tissue that gives the organ most of its bulk and shape.',
+      buildMesh: buildBreastMesh,
+      hotspotScale: new THREE.Vector3(1.05, 0.92, 0.85),
+      viewer:{ theta:0.4, phi:1.05, radius:3.2, minRadius:2.0, maxRadius:5, autoRotateRadPerFrame:0.0016 },
+      viewerAria:'Three-dimensional model of a breast, a rounded dome with a raised nipple-areola '
+        + 'complex at its center, with four glowing teal points marking the structures listed after '
+        + 'it. Drag to rotate, scroll to zoom.',
+      hotspots:[
+        // Directly parallel to the ovary's surface-epithelium point: this is the "arises here"
+        // structure for this organ, framed the same way for the same pedagogical reason.
+        { key:'ducts', label:'Ducts', dir:[0.25,0.75,0.55],
+          text:'The branching channels that carry milk from the lobules toward the nipple. About 85% of invasive breast cancers arise from duct cells (hence "ductal carcinoma") — directly paralleling how most ovarian cancers begin in the ovary\'s own surface epithelium rather than deeper inside the organ.' },
+        { key:'lobules', label:'Lobules', dir:[0.55,0.55,0.6],
+          text:'Clusters of small glands that produce milk during lactation, feeding into the duct network. A smaller share of invasive cancers ("lobular carcinoma") arise here instead of in the ducts.' },
+        { key:'stroma', label:'Stromal / fatty tissue', dir:[-0.65,0.3,0.55],
+          text:'The fatty and connective tissue that fills the spaces between lobules and ducts — most of what actually gives the breast its size and shape, and where a lump is often first felt even when the cancer itself originated in nearby glandular tissue.' },
+        { key:'nipple', label:'Nipple-areola complex', dir:[0,1,0],
+          text:'Where the duct network converges and opens to the surface. A rarer form, Paget disease of the breast, presents as a skin change here and is often associated with an underlying ductal carcinoma.' },
+      ],
+    },
+  };
+
+  let organViewer = null;
+  const organMarkers = [];
+
+  // Disposes the previous organ's canvas/markers so switching from Ovary to Breast (or back)
+  // doesn't leave a stale WebGL context or orphaned DOM proxies behind — same reasoning as
+  // disposeSiteViewer below, for the same reason: only one organ is ever shown at a time.
+  function disposeOrganViewer(){
+    if(!organViewer) return;
+    organViewer.renderer.dispose();
+    organViewer.renderer.domElement.remove();
+    organMarkers.forEach(m=>m.el.remove());
+    organViewer = null;
+    organMarkers.length = 0;
+  }
+
+  function initOrganViewer(organKey){
+    if(organKey === organViewer?.organKey) return; // already built for this organ
+    disposeOrganViewer();
+    const detail = ORGAN_DETAILS[organKey];
+    const container = document.getElementById('organViewerWrap');
+    organViewer = makeViewer(container, {
+      ...detail.viewer, autoRotate:true,
       onClick:(e, cont)=>{
         const rect = cont.getBoundingClientRect();
         const mouse = new THREE.Vector2(
@@ -1359,50 +1559,43 @@ const LEGACY_LIGHT_SCALE = Math.PI;
           -((e.clientY-rect.top)/rect.height)*2+1
         );
         const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mouse, ovaryViewer.camera);
-        const hits = raycaster.intersectObjects(ovaryMarkers.map(m=>m.mesh));
+        raycaster.setFromCamera(mouse, organViewer.camera);
+        const hits = raycaster.intersectObjects(organMarkers.map(m=>m.mesh));
         if(hits.length){
-          const hit = ovaryMarkers.find(m=>m.mesh===hits[0].object);
-          showOvaryInfo(hit.data);
+          const hit = organMarkers.find(m=>m.mesh===hits[0].object);
+          showOrganInfo(hit.data);
         }
       }
     });
+    organViewer.organKey = organKey;
 
-    // Describe the canvas rather than the container (see the markup comment on #ovaryViewerWrap).
-    // The four structure names are deliberately left out of this label now that each one is a real
-    // button in the same subtree — repeating them here would make a screen reader read the list
-    // twice, once as prose and once as controls.
-    const ovaryCanvas = ovaryViewer.renderer.domElement;
-    ovaryCanvas.setAttribute('role', 'img');
-    ovaryCanvas.setAttribute('aria-label',
-      'Three-dimensional model of an ovary, an off-white lumpy ellipsoid, with four glowing teal '
-      + 'points marking the structures listed after it. Drag to rotate, scroll to zoom.');
+    // Describe the canvas rather than the container (see the markup comment on #organViewerWrap).
+    // Structure names are deliberately left out of this label now that each one is a real button
+    // in the same subtree — repeating them here would make a screen reader read the list twice,
+    // once as prose and once as controls.
+    const canvas = organViewer.renderer.domElement;
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', detail.viewerAria);
 
-    const geo = new THREE.SphereGeometry(1, 48, 48);
-    organicDisplace(geo, 0.045, 6.5, 1.7);
-    const mat = new THREE.MeshStandardMaterial({ color:0xe6b6a8, roughness:0.55, metalness:0.04 });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.scale.set(0.9, 1.28, 0.98);
-    ovaryViewer.scene.add(mesh);
+    organViewer.scene.add(detail.buildMesh());
 
-    const scaleVec = new THREE.Vector3(0.9, 1.28, 0.98);
-    OVARY_HOTSPOTS.forEach(h=>{
+    detail.hotspots.forEach(h=>{
       const d = new THREE.Vector3(h.dir[0], h.dir[1], h.dir[2]).normalize();
       const mMesh = new THREE.Mesh(
         new THREE.SphereGeometry(0.06, 16, 16),
         new THREE.MeshBasicMaterial({ color:0x35c9c1 })
       );
-      mMesh.position.set(d.x*scaleVec.x*1.04, d.y*scaleVec.y*1.04, d.z*scaleVec.z*1.04);
+      mMesh.position.set(d.x*detail.hotspotScale.x*1.04, d.y*detail.hotspotScale.y*1.04, d.z*detail.hotspotScale.z*1.04);
       // decay explicitly 1 (r146 changed the default to 2). This is the light the change hit
       // hardest: at distance 1.2, inverse-square falloff blows the near field out into a halo
       // that swallows the marker instead of ringing it.
       const glow = new THREE.PointLight(0x35c9c1, 0.5 * LEGACY_LIGHT_SCALE, 1.2, 1);
       glow.position.copy(mMesh.position);
-      ovaryViewer.scene.add(mMesh, glow);
+      organViewer.scene.add(mMesh, glow);
 
       // The DOM half of the marker. Same arrangement as the tumor-site labels: a real element per
       // 3D point, repositioned each frame from the camera projection, carrying the button semantics
-      // the mesh cannot. Activation goes through makeActivatable to showOvaryInfo — the identical
+      // the mesh cannot. Activation goes through makeActivatable to showOrganInfo — the identical
       // function the raycast click path calls — so there is one code path and no risk of the two
       // drifting apart.
       const point = document.createElement('div');
@@ -1414,16 +1607,16 @@ const LEGACY_LIGHT_SCALE = Math.PI;
       // reader announces the structure twice ("Cortex, Cortex — investigate…").
       name.setAttribute('aria-hidden', 'true');
       point.appendChild(name);
-      makeActivatable(point, ()=>showOvaryInfo(h), {
+      makeActivatable(point, ()=>showOrganInfo(h), {
         label: h.label + ' — investigate this structure'
       });
       container.appendChild(point);
 
-      ovaryMarkers.push({ mesh:mMesh, data:h, el:point });
+      organMarkers.push({ mesh:mMesh, data:h, el:point });
     });
   }
 
-  function showOvaryInfo(h){
+  function showOrganInfo(h){
     document.getElementById('oiTitle').textContent = h.label;
     const t = document.getElementById('oiText');
     t.textContent = h.text;
@@ -1434,10 +1627,27 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   // TUMOR SITE-MAP 3D VIEWER (cancer screen, level 1)
   // ============================================================
   let siteViewer = null;
-  const siteBlobs = [];
-  const siteLabelEls = [];
+  let siteBlobs = [];
+  let siteLabelEls = [];
 
-  function initSiteViewer(){
+  // Tears down the previous cancer's canvas/markers/labels so a second cancer type doesn't leave
+  // stale WebGL resources or DOM proxies behind. Cheap to call unconditionally on every
+  // enterCancerScreen — initSiteViewer only actually rebuilds when cancerId is new (see below).
+  function disposeSiteViewer(){
+    if(!siteViewer) return;
+    siteViewer.renderer.dispose();
+    siteViewer.renderer.domElement.remove();
+    siteLabelEls.forEach(el=>el.remove());
+    siteViewer = null;
+    siteBlobs = [];
+    siteLabelEls = [];
+  }
+
+  function initSiteViewer(cancerId){
+    if(cancerId === currentCancerId && siteViewer) return; // already built for this cancer
+    disposeSiteViewer();
+    currentCancerId = cancerId;
+    const detail = CANCER_DETAILS[cancerId];
     const container = txSiteViewerEl;
     siteViewer = makeViewer(container, {
       theta:0.6, phi:1.15, radius:4.6, minRadius:3, maxRadius:8, autoRotate:true,
@@ -1467,10 +1677,16 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     const siteCanvas = siteViewer.renderer.domElement;
     siteCanvas.setAttribute('role', 'img');
     siteCanvas.setAttribute('aria-label',
-      'Three-dimensional rendering of one high-grade serous tumor as four coloured cell clusters, '
-      + 'spaced to match the real intraperitoneal spread pattern. Drag to rotate, mouse or trackpad only.');
+      'Three-dimensional rendering of one ' + detail.title.toLowerCase() + ' tumor as four coloured '
+      + 'cell clusters, spaced to match the real site pattern. Drag to rotate, mouse or trackpad only.');
 
-    REGIONS.forEach((region, idx)=>{
+    document.getElementById('screenCancer').setAttribute('aria-label', detail.screenLabel);
+    document.getElementById('txLegendTitle').textContent = detail.legendTitle;
+    document.getElementById('txLegendRows').innerHTML = detail.regions.map(region=>
+      `<div class="lg-row"><span class="lg-dot" style="background:${region.color};color:${region.color}"></span>${region.name}</div>`
+    ).join('');
+
+    detail.regions.forEach((region, idx)=>{
       const geo = new THREE.IcosahedronGeometry(0.6, 3);
       organicSpiculate(geo, {
         amplitude:0.14, freq:4.2, seed:idx*2.1 + 0.4,
@@ -1528,27 +1744,27 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     requestAnimationFrame(siteTick);
   }
 
-  function ovaryTick(){
-    if(screen==='organ' && ovaryViewer){
-      ovaryViewer.update();
-      ovaryViewer.renderer.render(ovaryViewer.scene, ovaryViewer.camera);
+  function organTick(){
+    if(screen==='organ' && organViewer){
+      organViewer.update();
+      organViewer.renderer.render(organViewer.scene, organViewer.camera);
       // Keep each keyboard proxy sitting exactly on top of its glowing mesh. Same projection call
       // siteTick uses for the site labels, so there is one piece of camera-to-screen math in the
       // file rather than two.
       //
-      // No occlusion test here on purpose. A point on the far side of the ovary is hidden by the
+      // No occlusion test here on purpose. A point on the far side of the organ is hidden by the
       // mesh's depth buffer but its proxy still projects onto the silhouette — and the existing
-      // mouse path has always behaved the same way, because the raycast only tests the four marker
-      // meshes and never the ovary body. Culling back-facing points for the keyboard would make it
+      // mouse path has always behaved the same way, because the raycast only tests the marker
+      // meshes and never the organ body. Culling back-facing points for the keyboard would make it
       // stricter than the pointer, which is the wrong direction for this fix. The model auto-rotates,
       // so every point comes round to the front within a few seconds regardless.
-      ovaryMarkers.forEach(m=>{
-        const p = ovaryViewer.project(m.mesh.position);
+      organMarkers.forEach(m=>{
+        const p = organViewer.project(m.mesh.position);
         m.el.style.left = p.x+'px';
         m.el.style.top = p.y+'px';
       });
     }
-    requestAnimationFrame(ovaryTick);
+    requestAnimationFrame(organTick);
   }
 
   // mulberry32 — a small, fast PRNG with an explicit seed. Used instead of Math.random()
@@ -1589,7 +1805,7 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   }
 
   function buildRegionCells(regionIdx){
-    const region = REGIONS[regionIdx];
+    const region = CANCER_DETAILS[currentCancerId].regions[regionIdx];
     if(regionCellCache[region.id]) return regionCellCache[region.id];
     const count = 22;
     // One stream for layout: positions are generated sequentially by rejection sampling,
@@ -1616,7 +1832,7 @@ const LEGACY_LIGHT_SCALE = Math.PI;
       const priv = [];
       if(hasPrivate){
         const n = cellRandom()<0.3 ? 2 : 1;
-        const shuffled = shuffleWithRandom(PRIVATE_POOL, cellRandom);
+        const shuffled = shuffleWithRandom(CANCER_DETAILS[currentCancerId].privatePool, cellRandom);
         for(let k=0;k<n;k++) priv.push(shuffled[k]);
       }
       return { id: cellId, x:p.x, y:p.y, private:priv };
@@ -1650,6 +1866,7 @@ const LEGACY_LIGHT_SCALE = Math.PI;
       txCurrentRegion = null; txCurrentCell = null;
       txCellLayer.classList.remove('active');
       txSiteViewerEl.classList.remove('hidden');
+      txCaptionText.textContent = '';
       txCellLayer.toggleAttribute('inert', true);
       txSiteViewerEl.toggleAttribute('inert', false);
       if(siteViewer){ setTimeout(()=>{ siteViewer.autoRotate = true; }, 200); }
@@ -1666,7 +1883,7 @@ const LEGACY_LIGHT_SCALE = Math.PI;
 
   function txRenderCellLayer(regionIdx){
     txCellLayer.innerHTML = '';
-    const region = REGIONS[regionIdx];
+    const region = CANCER_DETAILS[currentCancerId].regions[regionIdx];
     const cells = buildRegionCells(regionIdx);
     const rect = txStageEl.getBoundingClientRect();
     cells.forEach(cell=>{
@@ -1699,11 +1916,12 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     if(opener && !txPanel.contains(opener)) txPanelOpener = opener;
     txCurrentCell = cell;
     txLevel = 3;
-    const region = REGIONS[regionIdx];
+    const cancer = CANCER_DETAILS[currentCancerId];
+    const region = cancer.regions[regionIdx];
     txPanelId.textContent = 'Cell ' + cell.id;
     txPanelSub.textContent = region.name + ' site';
     let html = '';
-    html += txMutGroup('Trunk mutations', TRUNK);
+    html += txMutGroup('Trunk mutations', cancer.trunk);
     html += txMutGroup('Branch mutation (site assignment illustrative)', [region.branch]);
     html += cell.private.length
       ? txMutGroup('Private mutations (this cell only)', cell.private)
@@ -1774,18 +1992,21 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   });
   window.addEventListener('resize', ()=>{ if(screen==='cancer' && txLevel===2) txRenderCellLayer(txCurrentRegion); });
 
-  function enterCancerScreen(){
+  function enterCancerScreen(cancerId){
+    // initSiteViewer sets currentCancerId — must run before setScreen('cancer'), because
+    // setScreen calls renderCrumbs(), which reads CANCER_DETAILS[currentCancerId] to label the
+    // breadcrumb. Doing this in the other order looked fine on repeat visits (currentCancerId
+    // was already set from last time) and only broke on the very first visit to a given cancer.
+    initSiteViewer(cancerId);
     setScreen('cancer');
-    if(!siteViewer) initSiteViewer();
     siteViewer.resize();
     txGoLevel(1);
   }
 
   // ============================================================
   initBodyViewer();
-  initOvaryViewer();
   requestAnimationFrame(bodyTick);
-  requestAnimationFrame(ovaryTick);
+  requestAnimationFrame(organTick);
   requestAnimationFrame(siteTick);
   renderCrumbs();
 })();
