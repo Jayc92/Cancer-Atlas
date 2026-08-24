@@ -17,11 +17,20 @@ JS + three.js (0.185.1, loaded as an ES module via an import map — see Archite
 notes; there is no global-script build anymore), no build step, no backend. It
 proves out the full navigation pattern end-to-end for **one** organ/cancer pair:
 
-- **Body screen** — stylized SVG female silhouette (not a real mesh), draggable/
-  zoomable via CSS 3D transforms, with hotspot markers on ~6 organs. Search bar
-  filters organs by name. Only **Ovaries** is wired; other organs show a "coming
-  soon" toast + marker pulse when clicked, to demonstrate the intended pattern
-  without needing content for every organ yet.
+- **Body screen** — a real WebGL body (three.js), the third `makeViewer` instance
+  alongside the ovary and tumor-site viewers (see Architecture notes). Two
+  procedural meshes — male and female, built from primitive composition
+  (Lathe torso, Sphere head, Capsule limbs) with a real shoulder-to-hip ratio
+  difference (female ~0.76, hip wider than shoulder; male ~1.23, shoulder wider
+  than hip), toggled by a segmented control; the camera is framed once against
+  both bodies so switching never moves it. Organ hotspots are projected DOM
+  proxies over WebGL marker meshes, same pattern as the ovary's investigate
+  points and the tumor-site labels — not flat `%`-positioned CSS dots. Search
+  bar filters organs by name. Only **Ovaries** is wired; other organs show a
+  "coming soon" toast + marker pulse when clicked, to demonstrate the intended
+  pattern without needing content for every organ yet. Sex-specific organs
+  (Ovaries — female; Prostate — male) only get hotspots on the applicable body;
+  Brain/Lungs/Breast/Liver/Kidneys appear on both.
 - **Organ screen (Ovary)** — a real WebGL 3D mesh (three.js), organic/lumpy
   ellipsoid built via deterministic vertex displacement (no external noise lib),
   drag-to-rotate + scroll-to-zoom via three's real `OrbitControls`, wrapped in
@@ -30,9 +39,9 @@ proves out the full navigation pattern end-to-end for **one** organ/cancer pair:
   click and populate an info card below the model. Below that: real anatomical
   facts, then a list of the 5 real ovarian carcinoma subtypes with real
   prevalence figures — only HGSOC is wired, others show "profile coming soon."
-- **Cancer screen (HGSOC)** — three.js scene: four organic blob meshes, one per
-  real anatomical spread site (see Data rules below), same `makeViewer` pattern,
-  click a blob → drills into that site's ~22 sampled cells (flat 2D scatter,
+- **Cancer screen (HGSOC)** — three.js scene: four spiculated, mottled tumor-mass
+  meshes, one per real anatomical spread site (see Data rules below), same
+  `makeViewer` pattern, click a blob → drills into that site's ~22 sampled cells (flat 2D scatter,
   intentionally *not* 3D — this level represents a pathology-slide view, not a
   spatial location). Click a cell → side panel with a full mutation ledger.
 - **Breadcrumb** at the top reflects the full chain (Body › Ovary › HGSOC ›
@@ -42,8 +51,10 @@ proves out the full navigation pattern end-to-end for **one** organ/cancer pair:
   hidden via `opacity`/`pointer-events`, never `display:none`), every clickable
   div goes through `makeActivatable` for button semantics, and 3D hotspots that
   have no DOM node of their own get projected DOM proxies repositioned each
-  frame from the camera (`.organ-point` / `.site-label` — the label divs *are*
-  the focusable buttons; the mouse path stays the WebGL raycast). Container
+  frame from the camera (`.hotspot` / `.organ-point` / `.site-label` — the label
+  divs *are* the focusable buttons; the mouse path stays the WebGL raycast,
+  except `.hotspot`'s mouse-hover reveal, which is its own raycast in
+  `initBodyViewer()` since the div itself is `pointer-events:none`). Container
   roles matter: keep `role="group"` on viewer wrappers (canvas takes
   `role="img"`), or the projected buttons vanish from the accessibility tree.
 
@@ -132,15 +143,34 @@ proves out the full navigation pattern end-to-end for **one** organ/cancer pair:
 - **Organic mesh look:** `organicDisplace(geometry, amplitude, freq, seed)` —
   deterministic sine-based vertex displacement, no noise library dependency.
   Reuse for any new organ/tumor mesh; vary `seed`/`freq`/`amplitude` per organ
-  for visual variety.
+  for visual variety. A smoothly-varying amplitude only ever makes a shape
+  lumpier, never spiky — `organicSpiculate(geometry, opts)` is the variant for
+  masses that need to read as invasive: it layers the same base wobble with a
+  sparse set of narrow, angularly-confined finger projections (`pow(dot(direction,
+  spikeDir), sharpness)` falloff). The tumor site blobs use it; organs stay on
+  plain `organicDisplace`. Pairs with `applyMottleVertexColors(geometry, colorHex,
+  seed)` for necrotic-looking surface variation — baked as per-vertex color
+  (`material.vertexColors = true`), not a texture, since a subdivided
+  Icosahedron has no UVs worth building a texture against. Capped at 0.4–0.55
+  blend toward the necrotic tone so the site's own color stays dominant, and the
+  emissive glow is set from the **pure**, unmottled region color for the same
+  reason — the glow is what has to stay instantly identifiable at a glance.
+- **Body hotspot placement:** `torsoRadiusAt`/`torsoSurfacePoint`/`organAnchorPoint`
+  place a marker on "the torso surface at this height and angle" without
+  needing real anatomy — both sexes share one vertical layout (`BODY_RIG`), so
+  one anchor spec (`ORGAN_MARKER_SPECS`) works for either body. Not medically
+  precise, same simplification the old flat SVG hotspots used.
 - Renderers are sized off `container.clientWidth/clientHeight`; screens use
   `opacity`/`pointer-events` toggling rather than `display:none`, so containers
   have valid dimensions even while "hidden" — call `.resize()` on screen
   transitions defensively anyway (see `setScreen()`).
 
 ## Known limitations / tech debt
-- Body silhouette is a stylized SVG mannequin, not a real 3D mesh or medical
-  model — fine for proving navigation, not for a polished v1.
+- The male/female bodies are stylized primitive-composition meshes (Lathe +
+  Sphere + Capsule), not real anatomical or medical models — real, deliberate
+  shoulder-to-hip proportion differences, but not anatomically precise, and
+  organ hotspots are placed by height+angle on the torso surface, not real
+  anatomy. Fine for proving navigation, not for a polished v1.
 - Tumor-site blob positions are schematic, not anatomically precise.
 - Single HTML file with vanilla JS closures — will not scale cleanly past a
   handful of organs. Needs modularizing (one data module per organ/cancer,
@@ -157,8 +187,9 @@ proves out the full navigation pattern end-to-end for **one** organ/cancer pair:
    panel component, breadcrumb component) into shared modules.
 3. Pick the next organ/cancer pair and repeat the real-data-sourcing process
    documented above before writing any code for it.
-4. Revisit the body screen — decide if a stylized silhouette is the permanent
-   direction or a placeholder for a proper 3D body mesh later.
+4. The body screen is now a real 3D mesh (male + female) — decide whether the
+   current primitive-composition look is the permanent direction or a
+   placeholder for a higher-fidelity model later.
 
 ## Source file
 The current working prototype is `cancer-atlas.html` — read it in full before
