@@ -15,7 +15,7 @@ tool that implies it's showing one real patient's data.
 A single-file HTML prototype (`cancer-atlas.html`) built in Claude.ai using vanilla
 JS + three.js (0.185.1, loaded as an ES module via an import map — see Architecture
 notes; there is no global-script build anymore), no build step, no backend. It
-proves out the full navigation pattern end-to-end for **two** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **three** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -41,9 +41,12 @@ screen pair per organ:
   intended pattern without needing content for every organ yet. Sex-specific
   organs (Ovaries — female; Prostate — male) only get hotspots on the
   applicable body;
-  Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries and Breast are both
-  active now** — Breast routes to a real breast mesh (a capped partial-sphere
-  dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary).
+  Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, and Lungs
+  are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
+  dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary);
+  Lungs routes to a `LatheGeometry` profile that pinches to a radius of 0 at both
+  poles, so it closes into a solid tapered point at apex/base with no separate cap
+  mesh (unlike the body torso, which needs explicit `topCap`/`botCap` discs).
 - **Organ screen** — one screen, shown for whichever organ is currently
   selected (`renderOrganScreen(organKey)` repaints eyebrow/h1/sub/facts/desc/
   cancer-list from `ORGAN_DETAILS[organKey]` before the screen becomes visible).
@@ -58,7 +61,14 @@ screen pair per organ:
   Stromal-fatty tissue / Nipple-areola complex — Ducts is deliberately framed
   in direct parallel to the ovary's Surface epithelium point ("~85% of invasive
   cancers arise here", same pedagogical shape) — only Triple-Negative (basal-
-  like) is wired, others show "profile coming soon."
+  like) is wired, others show "profile coming soon." **Lungs**: `LatheGeometry`
+  profile (see above), points are Bronchi / Alveoli / Pleura / Hilum — Alveoli
+  is framed the same way as Ovary's Surface epithelium and Breast's Ducts
+  ("adenocarcinoma... most commonly arises here — directly paralleling..."),
+  only Adenocarcinoma is wired, the other three (Squamous cell carcinoma,
+  Large cell carcinoma, Small Cell Lung Cancer — explicitly noted in its own
+  `share` text as a separate category from NSCLC entirely) show "profile
+  coming soon."
 - **Cancer screen** — likewise one screen for whichever cancer is currently
   selected (`enterCancerScreen(cancerId)` calls `initSiteViewer(cancerId)`,
   which rebuilds the canvas/blobs/legend from `CANCER_DETAILS[cancerId]` if a
@@ -70,8 +80,11 @@ screen pair per organ:
   spatial location). Click a cell → side panel with a full mutation ledger.
   **HGSOC**'s sites are the real intraperitoneal spread pattern (ovary → omentum
   → peritoneum → bowel serosa); **TNBC**'s are real distant-metastasis sites
-  (bone/liver/lung/brain, per Yates et al. 2017) — same "sites" concept, two
-  different real meanings, hence `legendTitle` is per-cancer, not hardcoded.
+  (bone/liver/lung/brain, per Yates et al. 2017); **LUAD**'s are also real
+  distant-metastasis sites (bone/brain/liver/adrenal gland, per Riihimäki et
+  al. 2014 — bone ~39% for adenocarcinoma specifically, not the higher
+  all-NSCLC figure sometimes quoted) — same "sites" concept, three different
+  real meanings, hence `legendTitle` is per-cancer, not hardcoded.
 - **Breadcrumb** at the top reflects the full chain (Body › organ › cancer ›
   [site] › [cell]) and is clickable at every level.
 - **Keyboard accessibility is wired end-to-end** (commit `c5acece`) and must be
@@ -125,7 +138,35 @@ screen pair per organ:
    EGFR/RB1 replaced an earlier ESR1/MDM4 pick that had the site-pairing
    caveat right but the gene itself wrong for this receptor-negative,
    TP53-mutant tumor.)
-3. **Mutation model vocabulary** (established and should stay consistent):
+3. **Organ-specific mutual-exclusivity constraints must be checked and recorded,
+   not just mechanistic fit in general.** LUAD's trunk mutation is KRAS (33%,
+   not a near-universal founder like TP53 is for HGSOC/TNBC — see rule 7
+   below). **Major NSCLC driver oncogenes (KRAS, EGFR, ALK, ROS1, etc.) are
+   clinically mutually exclusive within one real tumor** — a tumor has one or
+   none of them, essentially never two; TCGA (*Nature*, 2014) states this
+   directly for KRAS/EGFR ("mutations in KRAS (33%) were mutually exclusive
+   with those in EGFR (14%)"). Because KRAS is this cancer's trunk, **no
+   alternative driver oncogene — especially EGFR — may ever be added to
+   LUAD's branch or private-pool lists**, in any future pass, no matter how
+   real/sourced/well-known that gene's NSCLC frequency is on its own. This is
+   the same class of mistake as data rule 1's ESR1/MDM4 case (real gene, real
+   frequency, real cancer somewhere, wrong for *this* specific tumor's
+   biology) but for a full class of genes at once rather than one gene —
+   check every LUAD branch/private candidate against this list specifically
+   before adding it, not just against general KRAS-pathway coherence.
+   (Current LUAD branch/private genes — STK11, KEAP1, PIK3CA, SMARCA4, MET
+   amplification, CDKN2A loss, ARID1A mutation, RB1 loss, TTN — were all
+   checked and are KRAS-co-occurring or KRAS-orthogonal, never
+   KRAS-competing. Two earlier picks, SMAD4 loss and PTEN loss, were pulled
+   in a post-hoc verification pass and replaced with RB1 loss and ARID1A
+   mutation respectively, after finding SMAD4's LUAD-specific literature
+   support was thin and PTEN's original citation (a Frankell et al. 2023
+   subclonal-selection claim) couldn't be confirmed either — independent
+   literature actually leans the other way, noting PTEN mutations as *more*
+   frequent in squamous (LUSC) than adenocarcinoma — see rule 7 below. Same
+   "don't just trust the gene name" standard that caught ESR1/MDM4, applied
+   twice more in one pass.)
+4. **Mutation model vocabulary** (established and should stay consistent):
    - **Trunk** — present in ~all tumor cells; the founding/earliest driver event.
    - **Branch** — arose within one anatomical site/subclone, not all of them.
    - **Private** — unique to one sampled cell; illustrates ongoing heterogeneity.
@@ -133,7 +174,7 @@ screen pair per organ:
    - Each mutation entry needs: gene/event name, class (driver/passenger),
      a frequency or CCF figure where one exists, and a one-line plain-language
      "why this matters" note (no jargon dump).
-4. Ovary/HGSOC reference sources already used, for continuity:
+5. Ovary/HGSOC reference sources already used, for continuity:
    - TCGA, *Nature*, 2011 (integrated genomic analysis of ovarian carcinoma —
      TP53 ~96%, recurrent CDK12/NF1/RB1 alterations, CCNE1 amplification).
    - McPherson et al., *Nature Genetics*, 2016 (multi-site whole-genome
@@ -141,7 +182,7 @@ screen pair per organ:
      BRCA1/2 pathway loss and HR-deficiency framing).
    - Real ovarian carcinoma subtype shares: HGSOC ~70%, endometrioid ~10%,
      clear-cell ~10%, mucinous ~3%, low-grade serous <5%.
-5. Breast/TNBC reference sources, for continuity:
+6. Breast/TNBC reference sources, for continuity:
    - TCGA, *Nature*, 2012 (comprehensive molecular portraits of human breast
      tumors — basal-like/TNBC TP53 ~80%, PIK3CA ~9% in basal-like vs ~39%
      across breast cancer overall, EGFR amplification ~23% of basal-like
@@ -158,6 +199,89 @@ screen pair per organ:
      above.
    - Real breast carcinoma subtype shares: Luminal A ~50–60%, Luminal B
      ~15–20%, HER2-enriched ~10–15%, basal-like/triple-negative ~10–20%.
+7. Lung/LUAD reference sources, for continuity:
+   - **TCGA (Cancer Genome Atlas Research Network), *Nature*, 2014**
+     ("Comprehensive molecular profiling of lung adenocarcinoma"; PMID
+     25079552, PMCID PMC4231481, open access). **Primary trunk-mutation
+     source, added in a post-hoc verification pass to replace an
+     unverifiable Steeghs et al. citation (see correction note below).**
+     Confirmed directly from the open-access full text: 18 significantly
+     mutated LUAD genes with exact frequencies, including KRAS 33%, EGFR
+     14% (explicitly stated as mutually exclusive with KRAS — "Mutations in
+     KRAS (33%) were mutually exclusive with those in EGFR (14%)"), TP53
+     46%, STK11 17%, KEAP1 17%, PIK3CA 7%, SMARCA4 6%, RB1 4%, CDKN2A 4%,
+     ARID1A 7%, SETD2 9%, NF1 11%, RBM10 8%, U2AF1 3%, MGA 8%, BRAF 10%, MET
+     7%, RIT1 2%. This is now the source for LUAD's trunk KRAS figure (33%,
+     not the earlier "~30–37%" range) and for the RB1 loss (~4%) and ARID1A
+     mutation (~7%) private-pool entries.
+   - Frankell et al., *Nature*, 2023 (TRACERx — the evolutionary history of
+     NSCLC; PMID 37046096, PMCID PMC10115649, open access). Names KRAS,
+     TP53, and STK11 together as under significant *subclonal* (not purely
+     truncal) selection in LUAD; the LUAD-specific SWI-SNF/chromatin-
+     remodeling subclonal finding is SMARCA4/ARID1B/SMARCB1 — **not** SETD2
+     (a LUSC/squamous finding in this same paper, not LUAD; note this is
+     independent of SETD2's 9%-of-LUAD *mutation frequency* in TCGA 2014
+     above — significantly-mutated and significantly-subclonally-selected
+     are different statistical questions in two different papers, both can
+     be true at once). Still cited for STK11/KEAP1's subclonal-selection
+     framing and for the "KRAS itself is often further subclonally selected"
+     point in the trunk note.
+   - Jamal-Hanjani et al., *NEJM*, 2017 (TRACERx's original design paper —
+     tracking NSCLC evolution through multi-region sequencing; the
+     methodological basis Frankell et al. 2023 builds on).
+   - Riihimäki et al., *Lung Cancer*, 2014 (PMID 25130083 — population-based
+     metastatic-pattern study; source for LUAD's four real distant-metastasis
+     sites). Re-confirmed directly (Europe PMC full-text extraction, not
+     recall) at commit time of this correction pass: real paper, correct
+     authors/journal/year/PMID, reports **bone metastases: 39%** for
+     adenocarcinoma specifically — the exact figure used in-product — plus a
+     separate small-cell-lung-cancer breakdown (liver 35%, nervous system
+     47%) not used here. No adrenal-gland-specific percentage is reported in
+     the abstract, so none is claimed in-product either. Confirmed solid;
+     no changes made.
+   - **Correction record (post-hoc verification pass, same day as initial
+     LUAD build):** the original pass cited "Steeghs et al., *Lung Cancer*,
+     2022, N=5,038 NSCLC patients" for the KRAS ~30–37% trunk figure. Direct
+     verification found the real Steeghs et al. paper at that PMID (35461050,
+     "Mutation-tailored treatment selection in non-small cell lung cancer
+     patients in daily clinical practice," *Lung Cancer*, 2022) **is** a real
+     Dutch nationwide NSCLC cohort (Dutch Pathology Registry + Netherlands
+     Cancer Registry) — but its actual cohort is **1,193** stage IV patients
+     (Q4 2017), not 5,038, and its abstract reports only a combined
+     "molecular driver alteration" rate (61.1% of adenocarcinomas carried
+     *any* of 8 driver genes, KRAS among them) — not an isolated KRAS
+     percentage. The paper is paywalled (subscription-required DOI, not
+     open access), so the specific KRAS-only figure could not be confirmed
+     even from the full text. Both the fabricated N and the unverifiable
+     specific-percentage claim were removed; TCGA 2014 (above) — open
+     access, exact 33% figure, directly confirmed — replaced it as the
+     trunk-mutation source. Same standard as the ESR1/MDM4 correction in
+     data rule 1: don't keep a real-paper citation whose specific claim
+     can't actually be confirmed from the source. Two private-pool genes
+     were corrected in the same pass: **SMAD4 loss**, originally attributed
+     to "Frankell et al. 2023 found under significant subclonal selection
+     in LUAD" — that specific claim couldn't be re-confirmed from the full
+     text, and an independent literature search found SMAD4 studied in LUAD
+     mainly for expression/splicing/prognosis, not as a recurrent genomic
+     driver event the way it is in pancreatic/colorectal cancer — replaced
+     with **RB1 loss** (TCGA 2014, ~4%, directly confirmed). **PTEN loss**,
+     also originally attributed to the same Frankell 2023 claim, had the
+     same problem — and TCGA 2014's own list of 18 significantly mutated
+     LUAD genes above does not include PTEN at all, while an independent
+     search found a paper stating PTEN mutations are *more* frequent in
+     LUSC (squamous) than LUAD — replaced with **ARID1A mutation** (TCGA
+     2014, ~7%, directly confirmed, same SWI/SNF-chromatin mechanistic
+     category as SMARCA4).
+   - Real NSCLC subtype shares: Adenocarcinoma ~40%, Squamous cell carcinoma
+     ~25–30%, Large cell carcinoma ~10%; Small Cell Lung Cancer ~15% of all
+     lung cancers but is its own separate category from NSCLC entirely, not an
+     NSCLC subtype — stated as such in its `share` text in-product, not just
+     in this file.
+   - **Standing rule for this organ specifically — see data rule 3 above:**
+     KRAS/EGFR/ALK/ROS1 mutual exclusivity in NSCLC means EGFR (or any other
+     alternative NSCLC driver oncogene) must never be added to LUAD's
+     branch/private-pool lists, no matter how well-sourced its own frequency
+     is, because KRAS is already this cancer's trunk mutation.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -366,7 +490,18 @@ screen pair per organ:
   Blender itself is now a real build-time dependency (not a runtime one — see
   Architecture notes) for regenerating these two files; nobody should need it
   just to run the app.
-- Tumor-site blob positions are schematic, not anatomically precise.
+- Tumor-site blob positions are schematic, not anatomically precise. **Check
+  `pos3d` spacing against the default camera framing, not just against other
+  sites' blob-mesh overlap** — TNBC's Brain/Lung site labels (and meshes)
+  sit stacked directly on top of each other at the default site-map rotation
+  (verified while adding LUAD, not fixed, since it predates this pass and
+  isn't a regression to fix silently). LUAD reused TNBC's exact Brain
+  `pos3d` for its own Brain site at first and inherited the identical
+  overlap with Adrenal gland — caught via screenshot, fixed by respacing
+  LUAD's four `pos3d` values further apart (HGSOC's original 4-way spread
+  was the model to follow, not TNBC's). Worth a real fix — e.g. a shared
+  minimum-angular-separation pass over each cancer's `REGIONS_*` — before
+  adding a 4th cancer with 4+ sites of its own.
 - Single HTML file with vanilla JS closures — the organ/cancer *screens* are
   now generalized (see Architecture notes), but there's still no build step
   and no per-organ/per-cancer file split, so the file itself keeps growing
@@ -381,11 +516,14 @@ screen pair per organ:
    layout, whether to keep the no-build-step constraint or introduce one).
 2. Extract the reusable pieces (`makeViewer`, `organicDisplace`, mutation
    panel component, breadcrumb component) into shared modules.
-3. Ovary/HGSOC and Breast/TNBC are both done. Pick organ/cancer pair #3 and
-   repeat the real-data-sourcing process documented above before writing any
-   code for it — the screens themselves are ready (see the `ORGAN_DETAILS`/
-   `CANCER_DETAILS` note in Architecture notes); it should mean a data entry
-   and a `buildMesh()`, not new markup.
+3. Ovary/HGSOC, Breast/TNBC, and Lungs/LUAD are all done. Pick organ/cancer
+   pair #4 and repeat the real-data-sourcing process documented above before
+   writing any code for it — the screens themselves are ready (see the
+   `ORGAN_DETAILS`/`CANCER_DETAILS` note in Architecture notes); it should mean
+   a data entry and a `buildMesh()`, not new markup. Remember to check any
+   organ-specific mutual-exclusivity constraints for the new cancer's driver
+   genes (data rule 3) the same way LUAD's KRAS/EGFR/ALK/ROS1 constraint was
+   checked — not every cancer will have one, but check before assuming.
 4. Done: the body screen now loads real static meshes (Blender's "Human Base
    Meshes" bundle, `assets/*.glb`) instead of procedural primitives — the
    third asset source tried, after MakeHuman (abandoned, source-topology
