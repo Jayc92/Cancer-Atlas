@@ -77,6 +77,9 @@
   #bodySexToggle button{font-family:'IBM Plex Sans';font-size:12.5px;font-weight:600;color:var(--muted);background:transparent;border:none;padding:6px 16px;border-radius:16px;cursor:pointer;}
   #bodySexToggle button[aria-pressed="true"]{background:var(--teal);color:var(--bg);}
   #bodySexToggle button:not([aria-pressed="true"]):hover{color:var(--text);}
+  #bodySexToggle button:disabled{opacity:.4;cursor:default;}
+  #bodyLoading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'IBM Plex Mono';font-size:12.5px;color:var(--muted);letter-spacing:.04em;animation:bodyLoadingPulse 1.6s ease-in-out infinite;}
+  @keyframes bodyLoadingPulse{0%,100%{opacity:.45;}50%{opacity:1;}}
 
   #searchWrap{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);width:min(360px,84vw);z-index:40;}
   #searchInput{width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-family:'IBM Plex Sans';font-size:14px;padding:11px 14px;border-radius:24px;outline:none;}
@@ -223,7 +226,7 @@
 <body>
 <div id="app">
 
-  <div id="disclaimer">Body model and navigation are illustrative, not a medical scan. Ovary/HGSOC anatomy and mutation data are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016); breast/triple-negative data from TCGA (<i>Nature</i>, 2012) and Yates et al. (<i>Cancer Cell</i>, 2017) — not one real patient. For both cancers, which gene is shown at which site is a simplified teaching device: the site-pattern study establishes where spread/metastasis happens and the genomics study the cohort-level mutation frequencies, not this specific site→gene pairing.</div>
+  <div id="disclaimer">Body model and navigation are illustrative, not a medical scan. Male/female body meshes are derived from the MakeHuman project's base mesh and blend-shape targets (Data Collection AB, Joel Palmius, Jonas Hauquier; CC0 1.0 Universal — credited here though not legally required). Ovary/HGSOC anatomy and mutation data are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016); breast/triple-negative data from TCGA (<i>Nature</i>, 2012) and Yates et al. (<i>Cancer Cell</i>, 2017) — not one real patient. For both cancers, which gene is shown at which site is a simplified teaching device: the site-pattern study establishes where spread/metastasis happens and the genomics study the cohort-level mutation frequencies, not this specific site→gene pairing.</div>
   <!-- The toast is the only feedback for activating a "coming soon" organ or cancer, and it
        self-dismisses after 2.2s, so it has to announce itself. role="status" carries the polite
        politeness implicitly; aria-live is stated anyway because the role is easy to lose in a
@@ -235,14 +238,24 @@
     <!-- role="group", not role="img" — same trap as #organViewerWrap/#txSiteViewer: this container
          holds one real .hotspot button per organ marker, and role="img" would collapse them out of
          the accessibility tree. The canvas gets its own role="img" in initBodyViewer(). -->
-    <div id="bodyViewerWrap" role="group" aria-label="Interactive 3D body model"></div>
+    <div id="bodyViewerWrap" role="group" aria-label="Interactive 3D body model">
+      <!-- The body meshes are the one asset this file fetches over the network (~1.1MB each),
+           so unlike every other viewer here there's a real gap between the screen becoming
+           active and something being visible. role="status"/aria-live so a screen-reader user
+           gets the same "it's working" signal a sighted user gets from the pulsing text; removed
+           from the DOM entirely on success (see hideBodyLoading) rather than just hidden, so it
+           can't be found by Tab once nothing is loading. -->
+      <div id="bodyLoading" role="status" aria-live="polite">Loading 3D body model…</div>
+    </div>
 
     <!-- Two real <button>s rather than makeActivatable divs: this is a plain mutually-exclusive
          toggle with no drag gesture anywhere near it, so native Enter/Space/click handling is
-         simpler and no less correct than the synthetic path the WebGL markers need. -->
+         simpler and no less correct than the synthetic path the WebGL markers need. Both start
+         disabled — there is nothing to toggle to until the GLBs finish loading (see
+         initBodyViewer) — and are re-enabled together once the mesh swap is actually possible. -->
     <div id="bodySexToggle" role="group" aria-label="Body model sex">
-      <button type="button" data-sex="female" aria-pressed="true">Female</button>
-      <button type="button" data-sex="male" aria-pressed="false">Male</button>
+      <button type="button" data-sex="female" aria-pressed="true" disabled>Female</button>
+      <button type="button" data-sex="male" aria-pressed="false" disabled>Male</button>
     </div>
 
     <div id="searchWrap">
@@ -358,6 +371,9 @@ import * as THREE from 'three';
 // Named import, unlike THREE above, because there is exactly one thing needed from this module
 // and 'OrbitControls' is already the name the call sites want to read.
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+// Loads the baked body meshes (assets/*.glb) — the only asset this file fetches over the
+// network rather than building procedurally. See the BODY 3D VIEWER section for why.
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // --- Rendering-pipeline compatibility with the r128-era look -------------------------------
 // Three defaults changed between r128 and 0.185.1 that alter how this scene *looks* without
@@ -1135,163 +1151,81 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   }
 
   // ============================================================
-  // BODY 3D VIEWER (body screen) — male + female procedural bodies
+  // BODY 3D VIEWER (body screen) — baked male + female meshes (assets/*.glb)
   // ============================================================
-  // Shared vertical layout both sexes are built against, in the same world-space units the
-  // ovary/tumor viewers use. Sex differences live entirely in SEX_CONFIG (profile radii, limb
-  // thickness) — keeping the y-layout identical means a marker anchor formula written once
-  // (organAnchorPoint) works for both bodies, and toggling sex never needs to reframe the camera.
-  const BODY_RIG = {
-    torsoCenterY: 0.40,   // world y of the torso Lathe's local origin
-    hipY: 0.0,            // world y of the hip / leg-attach line (local -0.40 on the torso profile)
-    shoulderTopY: 0.80,   // world y of the torso's top ring (local +0.40)
-    shoulderAttachY: 0.68,// where the arms actually attach — below the neckline, at the shoulder ball
-    neckHeight: 0.13,
-    legBottomY: -1.32,
-  };
+  // The male/female bodies are no longer procedural. They're two static meshes baked from
+  // MakeHuman's own base mesh + macro-detail blend-shape targets (CC0 1.0, both the mesh and
+  // the targets — confirmed directly via MakeHuman's LICENSE.md, which names "Targets and
+  // modifiers" as a covered asset category, and independently via the per-file CC0 header every
+  // .target file carries, the same way base.obj carries one). MakeHuman itself has no headless
+  // export path — its "Scripting"/"Socket" plugins are Qt TaskViews that only run inside the
+  // already-launched desktop app — so the bake applies the same target-blend math the app would
+  // (base mesh + 1/3 caucasian + 1/3 asian + 1/3 african of the male-young or female-young
+  // target, matching MakeHuman's default ethnicity mix and age/muscle/weight defaults) directly
+  // against the raw .target delta files, entirely outside the app. See assets/male_body.glb /
+  // assets/female_body.glb — no build step here to regenerate them; that was a one-time,
+  // outside-this-file process.
+  //
+  // NOTE FOR NEXT TIME: MakeHuman's own asset-downloader (download_assets_git.py) points at
+  // github.com/makehumancommunity/makehuman-assets, which no longer exists (`git ls-remote`
+  // returns "Repository not found" — confirmed, not a transient error). The macrodetails target
+  // files used here were fetched from the main `makehuman` repo instead, cross-checked against
+  // the actively-maintained `mpfb2` (MakeHuman-for-Blender) repo, which bundles the same files
+  // self-contained. Don't waste time chasing the official downloader script if this comes up
+  // again — go straight to the source repos.
+  const BODY_MATERIAL_COLOR = 0xd9b6a4; // one neutral tone for both — the GLBs carry no material of their own
 
-  // Profiles are (localY, radius) pairs, localY relative to torsoCenterY, bottom (hip) to top
-  // (shoulder). This is the one place the two sexes actually differ in shape: female tapers to a
-  // waist and is WIDER at the hip than the shoulder (ratio ~0.76); male has almost no waist taper
-  // and is WIDER at the shoulder than the hip (ratio ~1.23) — an inverted relationship, not just a
-  // scaled copy. Both get a chest-height bump (bust / pec) at the same local height.
-  const SEX_CONFIG = {
-    female: {
-      torsoProfile: [[-0.40,0.34],[-0.28,0.30],[-0.10,0.22],[0.02,0.25],[0.12,0.30],[0.22,0.27],[0.32,0.24],[0.40,0.26]],
-      headRadius:0.16, neckRadius:0.085, armRadius:0.075, legRadius:0.14,
-    },
-    male: {
-      torsoProfile: [[-0.40,0.26],[-0.28,0.25],[-0.10,0.24],[0.02,0.25],[0.12,0.30],[0.22,0.31],[0.32,0.34],[0.40,0.32]],
-      headRadius:0.175, neckRadius:0.10, armRadius:0.085, legRadius:0.16,
-    },
-  };
-  const BODY_MATERIAL_COLOR = 0xd9b6a4; // one neutral tone for both — the shape carries the sex difference, not a palette swap
-
-  // Piecewise-linear lookup into a sex's torso profile, so markers can be anchored to "the
-  // surface at this height" without duplicating the profile's numbers a second time.
-  function torsoRadiusAt(cfg, worldY){
-    const localY = worldY - BODY_RIG.torsoCenterY;
-    const pts = cfg.torsoProfile;
-    if(localY <= pts[0][0]) return pts[0][1];
-    for(let i=0;i<pts.length-1;i++){
-      const [y0,r0] = pts[i], [y1,r1] = pts[i+1];
-      if(localY <= y1){
-        const t = (localY-y0)/(y1-y0);
-        return r0 + (r1-r0)*t;
-      }
-    }
-    return pts[pts.length-1][1];
-  }
-
-  function headCenterY(cfg){
-    return BODY_RIG.shoulderTopY + BODY_RIG.neckHeight + cfg.headRadius*0.92;
-  }
-
-  // A point on the torso's surface at a given height and angle around the vertical axis
-  // (0deg = straight ahead, matching how LatheGeometry's revolve places angle-0 at max +Z).
-  function torsoSurfacePoint(cfg, y, angleDeg, margin){
-    const r = torsoRadiusAt(cfg, y) * (margin || 1.05);
-    const a = angleDeg * Math.PI/180;
-    return [r*Math.sin(a), y, r*Math.cos(a)];
-  }
-
-  // Every organ hotspot's 3D anchor(s), by sex-independent angle/height so the same spec places
-  // a sensible point on either body. onHead points are measured from the head's own center
-  // instead of the torso profile. Not meant to be anatomically precise (kidneys are genuinely
-  // more lateral/posterior than a front-facing viewer can show well) — same level of
-  // simplification the old flat SVG hotspots used.
+  // Every organ hotspot's anchor, as a fraction of standing height (0 = lowest vertex, 1 =
+  // highest) plus an angle around the vertical axis (0deg = straight ahead, +Z). Unlike the old
+  // procedural bodies, there's no analytic torsoRadiusAt(height) formula for a real mesh, so a
+  // spec here doesn't encode a position directly — it's an instruction to findBodySurfaceAnchor()
+  // to raycast inward from outside the mesh at this height/angle and land wherever the surface
+  // actually is. That makes the same spec correct for both sexes despite their different
+  // proportions, and correct regardless of exactly how the bake shaped any given region.
+  // Angles are kept modest (|angle| <= ~55deg in the chest band) because the source mesh's rest
+  // pose has T-pose arms extending horizontally from about 0.56 to 0.78 of standing height — a
+  // wider angle in that Y band hits the outstretched arm instead of the torso. Verified by
+  // sampling the actual bake's vertex cloud per height band before picking these numbers, not by
+  // eyeballing the render. Not meant to be anatomically precise (kidneys are genuinely more
+  // lateral/posterior than a front-facing viewer can show well) — same level of simplification
+  // the old flat SVG hotspots, and then the old procedural-body hotspots, both used.
   const ORGAN_MARKER_SPECS = {
-    ovary:    { points:[{y:0.08,angle:-30},{y:0.08,angle:30}] },
-    brain:    { points:[{onHead:true,angle:0}] },
-    lungs:    { points:[{y:0.62,angle:0}] },
-    breast:   { points:[{y:0.50,angle:-38},{y:0.50,angle:38}] },
-    liver:    { points:[{y:0.28,angle:42}] },
-    kidneys:  { points:[{y:0.18,angle:-68},{y:0.18,angle:68}] },
-    prostate: { points:[{y:-0.06,angle:0}] },
+    brain:    { points:[{heightFrac:0.95, angle:0}] },
+    lungs:    { points:[{heightFrac:0.65, angle:0}] },
+    breast:   { points:[{heightFrac:0.68, angle:-30}, {heightFrac:0.68, angle:30}] },
+    liver:    { points:[{heightFrac:0.60, angle:38}] },
+    kidneys:  { points:[{heightFrac:0.53, angle:-55}, {heightFrac:0.53, angle:55}] },
+    ovary:    { points:[{heightFrac:0.49, angle:-25}, {heightFrac:0.49, angle:25}] },
+    prostate: { points:[{heightFrac:0.46, angle:0}] },
   };
 
-  function organAnchorPoint(cfg, point){
-    if(point.onHead){
-      const r = cfg.headRadius*1.05, a = point.angle*Math.PI/180;
-      return [r*Math.sin(a), headCenterY(cfg), r*Math.cos(a)];
+  // Cast a ray inward from well outside the mesh, at a given fraction of its own height and a
+  // given angle around the vertical axis, and return where it actually hits the surface (nudged
+  // outward a hair along the hit normal so the marker sphere doesn't clip into the mesh). `bbox`
+  // is passed in rather than recomputed per point — it's the same box for every hotspot on a
+  // given body, and getBoundingSphere/Box3 walking ~22k vertices per hotspot would add up.
+  function findBodySurfaceAnchor(group, bbox, heightFrac, angleDeg){
+    const targetY = bbox.min.y + heightFrac * (bbox.max.y - bbox.min.y);
+    const a = angleDeg * Math.PI / 180;
+    const dir = new THREE.Vector3(Math.sin(a), 0, Math.cos(a));
+    const farR = Math.max(bbox.max.x - bbox.min.x, bbox.max.z - bbox.min.z) * 3 + 5;
+    const origin = new THREE.Vector3(dir.x * farR, targetY, dir.z * farR);
+    const raycaster = new THREE.Raycaster(origin, dir.clone().negate(), 0, farR * 2);
+    const meshes = [];
+    group.traverse(o=>{ if(o.isMesh) meshes.push(o); });
+    const hits = raycaster.intersectObjects(meshes, true);
+    if(!hits.length){
+      // Every spec above was checked against the real mesh before shipping, so this should
+      // never fire — but a silent wrong-looking dot is worse than a loud, findable one.
+      log_missedBodyRaycast(heightFrac, angleDeg);
+      return new THREE.Vector3(0, targetY, 0);
     }
-    return torsoSurfacePoint(cfg, point.y, point.angle);
+    const hit = hits[0];
+    const worldNormal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
+    return hit.point.clone().addScaledVector(worldNormal, 0.05);
   }
-
-  // Builds one sex's full body as a THREE.Group of primitives (Lathe torso + capped ends,
-  // Cylinder neck, Sphere head, Capsule arms/legs), each run through organicDisplace with a
-  // small amplitude — enough to read as organic skin rather than plastic, not enough to blur the
-  // silhouette that actually carries the sex difference. Distinct seeds per part/sex keep the
-  // noise from repeating identically across pieces.
-  function buildBodyGroup(sexKey){
-    const cfg = SEX_CONFIG[sexKey];
-    const seedBase = sexKey==='female' ? 1.0 : 5.0;
-    const material = new THREE.MeshStandardMaterial({ color:BODY_MATERIAL_COLOR, roughness:0.62, metalness:0.03 });
-    const group = new THREE.Group();
-
-    const torsoPts = cfg.torsoProfile.map(([y,r])=>new THREE.Vector2(r,y));
-    const torsoGeo = new THREE.LatheGeometry(torsoPts, 28);
-    organicDisplace(torsoGeo, 0.02, 8, seedBase+0.3);
-    const torso = new THREE.Mesh(torsoGeo, material);
-    torso.position.y = BODY_RIG.torsoCenterY;
-    group.add(torso);
-
-    // LatheGeometry has no cap option (unlike Cylinder's openEnded), so without these two discs
-    // the torso is a hollow tube — invisible from the front but a visible gap the moment the
-    // camera tilts far enough up or down (maxPolarAngle/minPolarAngle both allow that here).
-    // Slightly oversized (*1.05) to cover the organicDisplace noise on the rim they're sealing.
-    const topR = torsoRadiusAt(cfg, BODY_RIG.shoulderTopY) * 1.05;
-    const topCap = new THREE.Mesh(new THREE.CircleGeometry(topR, 28), material);
-    topCap.position.y = BODY_RIG.shoulderTopY; topCap.rotation.x = -Math.PI/2;
-    const botR = torsoRadiusAt(cfg, BODY_RIG.hipY) * 1.05;
-    const botCap = new THREE.Mesh(new THREE.CircleGeometry(botR, 28), material);
-    botCap.position.y = BODY_RIG.hipY; botCap.rotation.x = Math.PI/2;
-    group.add(topCap, botCap);
-
-    const neckGeo = new THREE.CylinderGeometry(cfg.neckRadius*0.9, cfg.neckRadius, BODY_RIG.neckHeight, 16);
-    organicDisplace(neckGeo, 0.015, 10, seedBase+1.1);
-    const neck = new THREE.Mesh(neckGeo, material);
-    neck.position.y = BODY_RIG.shoulderTopY + BODY_RIG.neckHeight/2;
-    group.add(neck);
-
-    const headGeo = new THREE.SphereGeometry(cfg.headRadius, 24, 24);
-    organicDisplace(headGeo, 0.02, 9, seedBase+2.2);
-    const head = new THREE.Mesh(headGeo, material);
-    head.position.y = headCenterY(cfg);
-    group.add(head);
-
-    // Arms tilt a few degrees outward at the shoulder rather than hanging perfectly straight —
-    // rotating about Z shifts the (local +Y) top of the capsule sideways while leaving the
-    // bottom closer to center, which is the "arms slightly out from the body" silhouette the old
-    // SVG had. Sign is negated on the +x side because rotating a vertical segment by +angle about
-    // Z moves ITS top toward -x, the opposite of outward for that side.
-    const ARM_TILT = 0.11;
-    const shoulderR = torsoRadiusAt(cfg, BODY_RIG.shoulderAttachY);
-    [-1, 1].forEach(side=>{
-      const armX = side * (shoulderR + cfg.armRadius*0.85);
-      const topY = BODY_RIG.shoulderAttachY, botY = -0.12;
-      const totalLen = topY - botY;
-      const armGeo = new THREE.CapsuleGeometry(cfg.armRadius, Math.max(0.1, totalLen - cfg.armRadius*2), 6, 12);
-      organicDisplace(armGeo, 0.02, 9, seedBase+3.1+side);
-      const arm = new THREE.Mesh(armGeo, material);
-      arm.position.set(armX, (topY+botY)/2, 0);
-      arm.rotation.z = -side * ARM_TILT;
-      group.add(arm);
-    });
-
-    const hipR = torsoRadiusAt(cfg, BODY_RIG.hipY);
-    [-1, 1].forEach(side=>{
-      const legX = side * hipR * 0.62;
-      const topY = BODY_RIG.hipY, botY = BODY_RIG.legBottomY;
-      const totalLen = topY - botY;
-      const legGeo = new THREE.CapsuleGeometry(cfg.legRadius, Math.max(0.1, totalLen - cfg.legRadius*2), 6, 12);
-      organicDisplace(legGeo, 0.02, 9, seedBase+5.1+side);
-      const leg = new THREE.Mesh(legGeo, material);
-      leg.position.set(legX, (topY+botY)/2, 0);
-      group.add(leg);
-    });
-
-    return group;
+  function log_missedBodyRaycast(heightFrac, angleDeg){
+    console.warn('Body hotspot raycast missed the mesh entirely', { heightFrac, angleDeg });
   }
 
   let bodyViewer = null;
@@ -1299,6 +1233,7 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   let femaleBodyGroup = null, maleBodyGroup = null;
   const bodyMarkerRecords = []; // { mesh, el, key, sex }
   let hoveredBodyMarker = null;
+  let bodyReady = false;
 
   function bodyCanvasLabel(){
     return 'Three-dimensional model of a human body, currently showing the ' + currentBodySex
@@ -1306,12 +1241,33 @@ const LEGACY_LIGHT_SCALE = Math.PI;
       + 'explore, muted for ones not yet wired up. Drag to rotate, scroll to zoom.';
   }
 
+  function hideBodyLoading(){
+    const el = document.getElementById('bodyLoading');
+    if(el) el.remove();
+  }
+  function showBodyLoadError(err){
+    console.error('Failed to load body model', err);
+    const el = document.getElementById('bodyLoading');
+    if(el) el.textContent = 'Could not load the body model. Check your connection and reload.';
+  }
+
+  function applyBodyMaterial(group){
+    const material = new THREE.MeshStandardMaterial({ color:BODY_MATERIAL_COLOR, roughness:0.62, metalness:0.03 });
+    group.traverse(o=>{ if(o.isMesh) o.material = material; });
+  }
+
   function initBodyViewer(){
     const container = document.getElementById('bodyViewerWrap');
+    // radius/minRadius/maxRadius are scaled to the GLBs' own units (the baked mesh is ~17 units
+    // tall, vs. the old procedural body's ~2.4) — frameContents() below re-derives the real
+    // distance from the actual mesh anyway, but a nominal opts.radius that starts in the right
+    // order of magnitude keeps the initial placement (before framing) sane, and minRadius sets a
+    // real "how close can you zoom in" floor rather than one tuned for a mesh 8x smaller.
     bodyViewer = makeViewer(container, {
-      theta:0.5, phi:1.2, radius:3.6, minRadius:2.2, maxRadius:7, autoRotate:true,
+      theta:0.5, phi:1.2, radius:20, minRadius:9, maxRadius:45, autoRotate:true,
       autoRotateRadPerFrame:0.0015,
       onClick:(e, cont)=>{
+        if(!bodyReady) return;
         const rect = cont.getBoundingClientRect();
         const mouse = new THREE.Vector2(
           ((e.clientX-rect.left)/rect.width)*2-1,
@@ -1332,47 +1288,13 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     bodyCanvas.setAttribute('role', 'img');
     bodyCanvas.setAttribute('aria-label', bodyCanvasLabel());
 
-    femaleBodyGroup = buildBodyGroup('female');
-    maleBodyGroup = buildBodyGroup('male');
-    bodyViewer.scene.add(femaleBodyGroup, maleBodyGroup);
-    maleBodyGroup.visible = false;
-    // Framed against BOTH bodies at once so toggling sex never has to move the camera — the
-    // two silhouettes are close enough in overall extent that one frame fits either.
-    bodyViewer.frameContents([femaleBodyGroup, maleBodyGroup], 1.2);
-
-    ORGANS.forEach(organ=>{
-      const spec = ORGAN_MARKER_SPECS[organ.key];
-      if(!spec) return;
-      (organ.sexes || []).forEach(sex=>{
-        const cfg = SEX_CONFIG[sex];
-        spec.points.forEach(point=>{
-          const anchor = organAnchorPoint(cfg, point);
-          const mesh = new THREE.Mesh(
-            new THREE.SphereGeometry(0.045, 12, 12),
-            new THREE.MeshBasicMaterial({ color: organ.active ? 0x35c9c1 : 0x8393ad })
-          );
-          mesh.position.set(anchor[0], anchor[1], anchor[2]);
-          mesh.visible = sex === currentBodySex;
-          (sex === 'female' ? femaleBodyGroup : maleBodyGroup).add(mesh);
-
-          const el = document.createElement('div');
-          el.className = 'hotspot ' + (organ.active ? 'active-organ' : 'inactive-organ');
-          el.dataset.organ = organ.key;
-          el.innerHTML = '<div class="ring"></div><div class="dot"></div><div class="hotspot-label"></div>';
-          el.querySelector('.hotspot-label').textContent = organ.label;
-          el.hidden = sex !== currentBodySex;
-          makeActivatable(el, ()=>selectOrgan(organ.key), { label: organActionLabel(organ) });
-          container.appendChild(el);
-
-          bodyMarkerRecords.push({ mesh, el, key:organ.key, sex });
-        });
-      });
-    });
-
     // Hover reveal, since the DOM proxies are pointer-events:none and can never get a native
-    // :hover — this is the mouse-side equivalent of the :focus-visible rule in the CSS. Raycasts
-    // against only the current sex's markers, same filter the click handler above uses.
+    // :hover — this is the mouse-side equivalent of the :focus-visible rule in the CSS. Wired up
+    // front (not inside the load callback) since it's a no-op until bodyMarkerRecords is
+    // populated anyway, and keeping all container listeners in one place avoids a "did this get
+    // attached twice" question if initBodyViewer were ever called more than once.
     container.addEventListener('pointermove', e=>{
+      if(!bodyReady) return;
       const rect = container.getBoundingClientRect();
       const mouse = new THREE.Vector2(
         ((e.clientX-rect.left)/rect.width)*2-1,
@@ -1398,10 +1320,70 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     document.querySelectorAll('#bodySexToggle button').forEach(btn=>{
       btn.addEventListener('click', ()=>toggleBodySex(btn.dataset.sex));
     });
+
+    const loader = new GLTFLoader();
+    const loadOne = (url)=>new Promise((resolve, reject)=>loader.load(url, (gltf)=>resolve(gltf.scene), undefined, reject));
+
+    Promise.all([loadOne('assets/female_body.glb'), loadOne('assets/male_body.glb')])
+      .then(([femaleScene, maleScene])=>{
+        femaleBodyGroup = femaleScene;
+        maleBodyGroup = maleScene;
+        applyBodyMaterial(femaleBodyGroup);
+        applyBodyMaterial(maleBodyGroup);
+        bodyViewer.scene.add(femaleBodyGroup, maleBodyGroup);
+        maleBodyGroup.visible = false;
+        // Framed against BOTH bodies at once so toggling sex never has to move the camera.
+        bodyViewer.frameContents([femaleBodyGroup, maleBodyGroup], 1.25);
+
+        buildBodyMarkers();
+
+        bodyReady = true;
+        hideBodyLoading();
+        document.querySelectorAll('#bodySexToggle button').forEach(b=>b.disabled = false);
+      })
+      .catch(showBodyLoadError);
+  }
+
+  function buildBodyMarkers(){
+    femaleBodyGroup.updateMatrixWorld(true);
+    maleBodyGroup.updateMatrixWorld(true);
+    const femaleBbox = new THREE.Box3().setFromObject(femaleBodyGroup);
+    const maleBbox = new THREE.Box3().setFromObject(maleBodyGroup);
+    const container = document.getElementById('bodyViewerWrap');
+
+    ORGANS.forEach(organ=>{
+      const spec = ORGAN_MARKER_SPECS[organ.key];
+      if(!spec) return;
+      (organ.sexes || []).forEach(sex=>{
+        const group = sex === 'female' ? femaleBodyGroup : maleBodyGroup;
+        const bbox = sex === 'female' ? femaleBbox : maleBbox;
+        spec.points.forEach(point=>{
+          const anchor = findBodySurfaceAnchor(group, bbox, point.heightFrac, point.angle);
+          const mesh = new THREE.Mesh(
+            new THREE.SphereGeometry(0.3, 12, 12),
+            new THREE.MeshBasicMaterial({ color: organ.active ? 0x35c9c1 : 0x8393ad })
+          );
+          mesh.position.copy(anchor);
+          mesh.visible = sex === currentBodySex;
+          group.add(mesh);
+
+          const el = document.createElement('div');
+          el.className = 'hotspot ' + (organ.active ? 'active-organ' : 'inactive-organ');
+          el.dataset.organ = organ.key;
+          el.innerHTML = '<div class="ring"></div><div class="dot"></div><div class="hotspot-label"></div>';
+          el.querySelector('.hotspot-label').textContent = organ.label;
+          el.hidden = sex !== currentBodySex;
+          makeActivatable(el, ()=>selectOrgan(organ.key), { label: organActionLabel(organ) });
+          container.appendChild(el);
+
+          bodyMarkerRecords.push({ mesh, el, key:organ.key, sex });
+        });
+      });
+    });
   }
 
   function toggleBodySex(sex){
-    if(sex === currentBodySex) return;
+    if(!bodyReady || sex === currentBodySex) return;
     currentBodySex = sex;
     femaleBodyGroup.visible = sex === 'female';
     maleBodyGroup.visible = sex === 'male';
@@ -1424,12 +1406,14 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     if(screen==='body' && bodyViewer){
       bodyViewer.update();
       bodyViewer.renderer.render(bodyViewer.scene, bodyViewer.camera);
-      bodyMarkerRecords.forEach(r=>{
-        if(r.sex !== currentBodySex) return;
-        const p = bodyViewer.project(r.mesh.position);
-        r.el.style.left = p.x+'px';
-        r.el.style.top = p.y+'px';
-      });
+      if(bodyReady){
+        bodyMarkerRecords.forEach(r=>{
+          if(r.sex !== currentBodySex) return;
+          const p = bodyViewer.project(r.mesh.position);
+          r.el.style.left = p.x+'px';
+          r.el.style.top = p.y+'px';
+        });
+      }
     }
     requestAnimationFrame(bodyTick);
   }

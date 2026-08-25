@@ -21,18 +21,30 @@ sharing one organ screen and one cancer screen between them (see the
 screen pair per organ:
 
 - **Body screen** — a real WebGL body (three.js), the third `makeViewer` instance
-  alongside the ovary and tumor-site viewers (see Architecture notes). Two
-  procedural meshes — male and female, built from primitive composition
-  (Lathe torso, Sphere head, Capsule limbs) with a real shoulder-to-hip ratio
-  difference (female ~0.76, hip wider than shoulder; male ~1.23, shoulder wider
-  than hip), toggled by a segmented control; the camera is framed once against
-  both bodies so switching never moves it. Organ hotspots are projected DOM
-  proxies over WebGL marker meshes, same pattern as the ovary's investigate
-  points and the tumor-site labels — not flat `%`-positioned CSS dots. Search
-  bar filters organs by name. Only **Ovaries** is wired; other organs show a
-  "coming soon" toast + marker pulse when clicked, to demonstrate the intended
-  pattern without needing content for every organ yet. Sex-specific organs
-  (Ovaries — female; Prostate — male) only get hotspots on the applicable body;
+  alongside the ovary and tumor-site viewers (see Architecture notes). Male and
+  female are two static, pre-baked meshes (`assets/female_body.glb`,
+  `assets/male_body.glb`, ~1.1MB each), loaded via `GLTFLoader` — not built
+  procedurally. They're derived from MakeHuman's own base mesh and blend-shape
+  targets, licensed CC0 1.0 Universal (verified two ways: MakeHuman's
+  `LICENSE.md` names "Targets and modifiers" as its own covered-asset category,
+  not just "the base mesh," and every individual `.target` file used carries its
+  own per-file CC0 declaration, the same way `base.obj` does — see Architecture
+  notes for the bake process itself). Not legally required to credit CC0 work,
+  but credited anyway in `#disclaimer`, consistent with how this project already
+  treats every other data source. A `#bodyLoading` status text covers the one
+  real load-time gap this file has ever had (every other viewer builds its mesh
+  synchronously) and is removed from the DOM — not just hidden — once both GLBs
+  resolve; the sex toggle starts `disabled` for the same reason. Toggled by a
+  segmented control; the camera is framed once against both bodies so switching
+  never moves it. Organ hotspots are projected DOM proxies over WebGL marker
+  meshes, same pattern as the ovary's investigate points and the tumor-site
+  labels — not flat `%`-positioned CSS dots, and no longer placed by an analytic
+  torso-profile formula either (see `findBodySurfaceAnchor` in Architecture
+  notes). Search bar filters organs by name. Organs without a wired-up screen
+  show a "coming soon" toast + marker pulse when clicked, to demonstrate the
+  intended pattern without needing content for every organ yet. Sex-specific
+  organs (Ovaries — female; Prostate — male) only get hotspots on the
+  applicable body;
   Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries and Breast are both
   active now** — Breast routes to a real breast mesh (a capped partial-sphere
   dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary).
@@ -244,22 +256,61 @@ screen pair per organ:
   blend toward the necrotic tone so the site's own color stays dominant, and the
   emissive glow is set from the **pure**, unmottled region color for the same
   reason — the glow is what has to stay instantly identifiable at a glance.
-- **Body hotspot placement:** `torsoRadiusAt`/`torsoSurfacePoint`/`organAnchorPoint`
-  place a marker on "the torso surface at this height and angle" without
-  needing real anatomy — both sexes share one vertical layout (`BODY_RIG`), so
-  one anchor spec (`ORGAN_MARKER_SPECS`) works for either body. Not medically
-  precise, same simplification the old flat SVG hotspots used.
+- **Body mesh source and bake process (2026-08-24):** `assets/female_body.glb` /
+  `assets/male_body.glb` were baked outside this file, once, from MakeHuman's
+  base mesh (`base.obj`) plus its `macrodetails` blend-shape `.target` files —
+  reproducing exactly what setting MakeHuman's Gender macro slider to 0.0/1.0
+  does (linear blend of ⅓ caucasian + ⅓ asian + ⅓ african of the
+  male-young/female-young target, MakeHuman's own default ethnicity mix, with
+  age/muscle/weight left at their neutral defaults, which contribute zero at
+  that setting). MakeHuman has no headless export path worth using — its
+  "Scripting" and "Socket" plugins are Qt `TaskView`s that only run inside the
+  already-launched desktop GUI, not standalone — so this was done by reading
+  the actual blend formula out of `human.py`/`humanmodifier.py` and applying it
+  directly to the raw `.target` files with a one-off Python script (not part of
+  this repo; there is no build step here to regenerate the GLBs). **If this
+  ever needs redoing:** MakeHuman's own asset-downloader
+  (`download_assets_git.py`) points at
+  `github.com/makehumancommunity/makehuman-assets`, which no longer exists
+  (`git ls-remote` → "Repository not found" — confirmed dead, not transient).
+  Get the `.target` files from the main `makehuman` repo directly; `mpfb2`
+  (MakeHuman-for-Blender, actively maintained) bundles the same files
+  self-contained and is a useful cross-check.
+- **Body hotspot placement:** no analytic torso-profile formula exists for a
+  real mesh, so `findBodySurfaceAnchor(group, bbox, heightFrac, angleDeg)`
+  raycasts inward from outside the mesh — at a given fraction of its own
+  standing height and an angle around the vertical axis (0° = straight ahead)
+  — and lands wherever the surface actually is, nudged out along the hit
+  normal so the marker doesn't clip in. `ORGAN_MARKER_SPECS` holds the
+  height-fraction/angle pairs, one spec working for both sexes despite their
+  different proportions since the raycast always finds THAT body's own
+  surface. Angles are kept modest (roughly ±40° through the waist, up to ±55°
+  only at the lower hip/kidney band) because the source mesh's T-pose rest
+  arms extend horizontally from about 0.56 to 0.78 of standing height — a
+  wider angle in that band hits the arm instead of the torso. This was checked
+  by sampling the actual bake's vertex cloud per height band before picking
+  the numbers, not by eyeballing the render, and re-verified visually and
+  numerically (screen-space offsets small relative to true arm span) for both
+  sexes after integration. A raycast miss is logged to the console rather than
+  failing silently — none has fired for the current spec set. Not medically
+  precise, same simplification the old flat SVG hotspots, and then the old
+  procedural-body hotspots, both used.
 - Renderers are sized off `container.clientWidth/clientHeight`; screens use
   `opacity`/`pointer-events` toggling rather than `display:none`, so containers
   have valid dimensions even while "hidden" — call `.resize()` on screen
   transitions defensively anyway (see `setScreen()`).
 
 ## Known limitations / tech debt
-- The male/female bodies are stylized primitive-composition meshes (Lathe +
-  Sphere + Capsule), not real anatomical or medical models — real, deliberate
-  shoulder-to-hip proportion differences, but not anatomically precise, and
-  organ hotspots are placed by height+angle on the torso surface, not real
-  anatomy. Fine for proving navigation, not for a polished v1.
+- The male/female bodies are real baked meshes now (MakeHuman-derived, see
+  Architecture notes), not stylized primitives — a real visual upgrade — but
+  they're still generic/average bodies, not medical models, and organ
+  hotspots are still placed by height-fraction + angle via raycasting, not
+  real anatomical landmarks. Fine for proving navigation, not for a polished
+  v1. The GLBs are also this app's first network-fetched asset (~1.1MB each,
+  uncompressed — no Draco/meshopt) and its first non-CC0-by-construction,
+  license-verified-after-the-fact dependency; worth remembering if either
+  assumption ("everything here is generated in-browser," "everything here is
+  provably CC0 by the code itself") gets baked into future tooling.
 - Tumor-site blob positions are schematic, not anatomically precise.
 - Single HTML file with vanilla JS closures — the organ/cancer *screens* are
   now generalized (see Architecture notes), but there's still no build step
@@ -280,9 +331,12 @@ screen pair per organ:
    code for it — the screens themselves are ready (see the `ORGAN_DETAILS`/
    `CANCER_DETAILS` note in Architecture notes); it should mean a data entry
    and a `buildMesh()`, not new markup.
-4. The body screen is now a real 3D mesh (male + female) — decide whether the
-   current primitive-composition look is the permanent direction or a
-   placeholder for a higher-fidelity model later.
+4. Done: the body screen now loads real baked meshes (MakeHuman-derived,
+   `assets/*.glb`) instead of procedural primitives. Remaining follow-up, not
+   started: compress the GLBs (Draco/meshopt) if load time ever becomes a
+   real complaint rather than a theoretical one, and reconsider whether organ
+   hotspots should eventually anchor to real anatomical landmarks on the mesh
+   rather than height-fraction + angle.
 
 ## Source file
 The current working prototype is `cancer-atlas.html` — read it in full before
