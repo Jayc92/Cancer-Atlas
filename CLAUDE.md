@@ -15,7 +15,7 @@ tool that implies it's showing one real patient's data.
 A single-file HTML prototype (`cancer-atlas.html`) built in Claude.ai using vanilla
 JS + three.js (0.185.1, loaded as an ES module via an import map — see Architecture
 notes; there is no global-script build anymore), no build step, no backend. It
-proves out the full navigation pattern end-to-end for **three** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **four** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -41,12 +41,17 @@ screen pair per organ:
   intended pattern without needing content for every organ yet. Sex-specific
   organs (Ovaries — female; Prostate — male) only get hotspots on the
   applicable body;
-  Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, and Lungs
-  are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
+  Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, Lungs, and
+  Kidneys are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
   dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary);
   Lungs routes to a `LatheGeometry` profile that pinches to a radius of 0 at both
   poles, so it closes into a solid tapered point at apex/base with no separate cap
-  mesh (unlike the body torso, which needs explicit `topCap`/`botCap` discs).
+  mesh (unlike the body torso, which needs explicit `topCap`/`botCap` discs); Kidneys
+  routes to a flattened, elongated `SphereGeometry` ellipsoid (no literal concave
+  medial notch — see Architecture notes) — the kidney marker positions on the body
+  itself needed no new work, since `ORGAN_MARKER_SPECS.kidneys` was already placed
+  and screen-space-verified during the body-mesh integration, well before this organ
+  was wired up; activating it was only the `ORGANS`/`ORGAN_DETAILS` flip.
 - **Organ screen** — one screen, shown for whichever organ is currently
   selected (`renderOrganScreen(organKey)` repaints eyebrow/h1/sub/facts/desc/
   cancer-list from `ORGAN_DETAILS[organKey]` before the screen becomes visible).
@@ -68,7 +73,14 @@ screen pair per organ:
   only Adenocarcinoma is wired, the other three (Squamous cell carcinoma,
   Large cell carcinoma, Small Cell Lung Cancer — explicitly noted in its own
   `share` text as a separate category from NSCLC entirely) show "profile
-  coming soon."
+  coming soon." **Kidneys**: flattened ellipsoid, points are Cortex / Medulla /
+  Renal pelvis / Hilum — Cortex is framed the same "arises here" way as the
+  three prior organs' points — only Clear cell renal cell carcinoma is wired,
+  Papillary and Chromophobe show "profile coming soon." Its retroperitoneal
+  location fact gets the same second-sentence treatment Lungs' dual blood
+  supply got: it's the one anatomically distinct thing about this organ
+  relative to every prior one (ovary/breast are intraperitoneal-or-overlying,
+  lungs thoracic; kidneys sit behind the peritoneum entirely).
 - **Cancer screen** — likewise one screen for whichever cancer is currently
   selected (`enterCancerScreen(cancerId)` calls `initSiteViewer(cancerId)`,
   which rebuilds the canvas/blobs/legend from `CANCER_DETAILS[cancerId]` if a
@@ -80,11 +92,26 @@ screen pair per organ:
   spatial location). Click a cell → side panel with a full mutation ledger.
   **HGSOC**'s sites are the real intraperitoneal spread pattern (ovary → omentum
   → peritoneum → bowel serosa); **TNBC**'s are real distant-metastasis sites
-  (bone/liver/lung/brain, per Yates et al. 2017); **LUAD**'s are also real
+  (bone/liver/lung/brain) — bone (~24.5%), lung (~23.8%), and brain (~3.6%)
+  confirmed directly against a SEER-based population study (Gao et al. 2023),
+  liver confirmed as a real TNBC metastatic site (Yates et al. 2017; also
+  discussed, without an overall percentage, in Gao et al. 2023's survival
+  analysis) but with no overall percentage claimed for it, same honesty
+  precedent LUAD/ccRCC use for their own unclaimed sites — an earlier,
+  secondhand Foulkes et al. 2010 citation for all four sites' percentages
+  didn't hold up on direct inspection (paywalled, no extractable numbers) and
+  was dropped rather than kept; **LUAD**'s are also real
   distant-metastasis sites (bone/brain/liver/adrenal gland, per Riihimäki et
   al. 2014 — bone ~39% for adenocarcinoma specifically, not the higher
-  all-NSCLC figure sometimes quoted) — same "sites" concept, three different
-  real meanings, hence `legendTitle` is per-cancer, not hardcoded.
+  all-NSCLC figure sometimes quoted); **ccRCC**'s are also real
+  distant-metastasis sites (lung/bone/liver/brain) — lung (~54%) and bone
+  (~20%) confirmed directly against a Swedish population-based registry
+  (Dabestani et al. 2016), liver and brain confirmed as real major ccRCC
+  metastatic sites via a separate population-based study (Bianchi et al.
+  2012) but without a clean overall percentage extractable from its
+  abstract, so none is claimed for those two — same honesty precedent as
+  LUAD's unclaimed adrenal-gland percentage — same "sites" concept, four
+  different real meanings, hence `legendTitle` is per-cancer, not hardcoded.
 - **Breadcrumb** at the top reflects the full chain (Body › organ › cancer ›
   [site] › [cell]) and is clickable at every level.
 - **Keyboard accessibility is wired end-to-end** (commit `c5acece`) and must be
@@ -140,7 +167,7 @@ screen pair per organ:
    TP53-mutant tumor.)
 3. **Organ-specific mutual-exclusivity constraints must be checked and recorded,
    not just mechanistic fit in general.** LUAD's trunk mutation is KRAS (33%,
-   not a near-universal founder like TP53 is for HGSOC/TNBC — see rule 7
+   not a near-universal founder like TP53 is for HGSOC/TNBC — see rule 8
    below). **Major NSCLC driver oncogenes (KRAS, EGFR, ALK, ROS1, etc.) are
    clinically mutually exclusive within one real tumor** — a tumor has one or
    none of them, essentially never two; TCGA (*Nature*, 2014) states this
@@ -163,10 +190,30 @@ screen pair per organ:
    support was thin and PTEN's original citation (a Frankell et al. 2023
    subclonal-selection claim) couldn't be confirmed either — independent
    literature actually leans the other way, noting PTEN mutations as *more*
-   frequent in squamous (LUSC) than adenocarcinoma — see rule 7 below. Same
+   frequent in squamous (LUSC) than adenocarcinoma — see rule 8 below. Same
    "don't just trust the gene name" standard that caught ESR1/MDM4, applied
    twice more in one pass.)
-4. **Mutation model vocabulary** (established and should stay consistent):
+4. **"Cooperating" and "competing" are two distinct mutation-framing models this
+   atlas now uses — check which one actually applies per organ, never assume.**
+   Lung/LUAD (rule 3 above) is a *competing*-driver cancer: KRAS/EGFR/ALK/ROS1
+   are clinically mutually exclusive alternatives, so only one may ever be
+   modeled as present. Kidney/ccRCC is the **opposite** pattern: PBRM1, SETD2,
+   and BAP1 are not alternatives to the trunk VHL mutation at all — TCGA
+   (*Nature*, 2013) reports chromosome 3p loss in 91% of ccRCC tumors
+   "encompassing all of the four most commonly mutated genes (VHL, PBRM1, BAP1
+   and SETD2)," meaning these genes' most common alteration *is* the same
+   single 3p-deletion event that removes VHL, not four independent choices a
+   tumor makes instead of one another. **Neither pattern generalizes to the
+   next organ without checking.** The ccRCC pass itself proved this within one
+   organ: KDM5C is ccRCC's fourth branch gene and does cooperate with VHL loss
+   (not compete with it), but *not* via the same chromosome-3p co-deletion
+   mechanism as PBRM1/SETD2/BAP1 — KDM5C sits on Xp11.22 (NCBI Gene ID 8242),
+   not chromosome 3p, confirmed directly rather than assumed just because it's
+   another branch gene in the same "cooperating" cancer. Whichever pattern a
+   future organ turns out to have, verify it directly at the source the way
+   both of these were, rather than defaulting to whichever pattern the most
+   recently added organ used.
+5. **Mutation model vocabulary** (established and should stay consistent):
    - **Trunk** — present in ~all tumor cells; the founding/earliest driver event.
    - **Branch** — arose within one anatomical site/subclone, not all of them.
    - **Private** — unique to one sampled cell; illustrates ongoing heterogeneity.
@@ -174,7 +221,7 @@ screen pair per organ:
    - Each mutation entry needs: gene/event name, class (driver/passenger),
      a frequency or CCF figure where one exists, and a one-line plain-language
      "why this matters" note (no jargon dump).
-5. Ovary/HGSOC reference sources already used, for continuity:
+6. Ovary/HGSOC reference sources already used, for continuity:
    - TCGA, *Nature*, 2011 (integrated genomic analysis of ovarian carcinoma —
      TP53 ~96%, recurrent CDK12/NF1/RB1 alterations, CCNE1 amplification).
    - McPherson et al., *Nature Genetics*, 2016 (multi-site whole-genome
@@ -182,7 +229,7 @@ screen pair per organ:
      BRCA1/2 pathway loss and HR-deficiency framing).
    - Real ovarian carcinoma subtype shares: HGSOC ~70%, endometrioid ~10%,
      clear-cell ~10%, mucinous ~3%, low-grade serous <5%.
-6. Breast/TNBC reference sources, for continuity:
+7. Breast/TNBC reference sources, for continuity:
    - TCGA, *Nature*, 2012 (comprehensive molecular portraits of human breast
      tumors — basal-like/TNBC TP53 ~80%, PIK3CA ~9% in basal-like vs ~39%
      across breast cancer overall, EGFR amplification ~23% of basal-like
@@ -199,7 +246,52 @@ screen pair per organ:
      above.
    - Real breast carcinoma subtype shares: Luminal A ~50–60%, Luminal B
      ~15–20%, HER2-enriched ~10–15%, basal-like/triple-negative ~10–20%.
-7. Lung/LUAD reference sources, for continuity:
+   - **Site-frequency correction (post-hoc verification pass, closing a rigor
+     gap TNBC shipped with):** TNBC's four sites had real branch-gene picks
+     but no cited *metastatic-site* frequency at all — unlike LUAD's bone
+     ~39% and ccRCC's lung ~54%/bone ~20%, which were verified and recorded
+     even though, on inspection during this same pass, neither is actually
+     rendered as an on-screen percentage anywhere in the UI for any cancer;
+     this project's real precedent is "verified and recorded in source
+     comments + here," not a numeric badge in the 3D view. Brought to that
+     same standard: a candidate citation, **Foulkes et al., *NEJM*, 2010**
+     ("Triple-Negative Breast Cancer," PMID 21067385) — offered secondhand
+     with lung 40%/brain 30%/liver 20%/bone 10% — was checked directly and
+     did not hold up: it's a real review article, but its abstract is a
+     scope-only summary with zero percentages, and the full text is
+     paywalled with no PMC mirror, so the specific figures could not be
+     confirmed from the source at all. Dropped, same as Steeghs was for
+     LUAD, rather than kept on an unverifiable secondhand citation.
+   - **Gao et al., *Precision Medical Sciences*, 2023** (DOI 10.1002/
+     prm2.12107, open access — "Patterns of distant metastases in patients
+     with triple-negative breast cancer—A population-based study"; SEER,
+     24,822 TNBC patients 2010–2015, 1,026 with distant metastasis at
+     diagnosis). Confirmed directly from the open-access full text: bone
+     24.46% (251/1026), lung 23.78% (244/1026), brain 3.61% (37/1026) — the
+     figures now used for those three sites. Liver is discussed only in the
+     paper's survival analysis (grouped with brain as the worst-prognosis
+     sites) and never given its own overall percentage anywhere in the
+     text — confirmed by searching specifically for every mention of
+     "liver," not inferred from its absence from a top-3 list — so none is
+     claimed for Liver in-product, the same honesty precedent as LUAD's
+     adrenal gland and ccRCC's liver/brain.
+   - **Kennecke et al., *J Clin Oncol*, 2010** (PMID 20498394, not open
+     access, but specific findings confirmed directly from the abstract
+     text, not the review's own summary of it) — the real, distinctive
+     finding this correction pass adds that wasn't represented anywhere in
+     TNBC's content before: TNBC's organotropism genuinely differs from
+     other breast cancer subtypes, not just a different set of numbers on
+     the same pattern. Confirmed directly: "basal-like tumors had a higher
+     rate of brain, lung, and distant nodal metastases but a significantly
+     lower rate of liver and bone metastases" versus luminal subtypes, and
+     "bone was the most common metastatic site in all subtypes except
+     basal-like tumors." One real caveat preserved rather than
+     over-generalized: the abstract separately states triple-negative
+     *nonbasal* tumors specifically were "not associated with fewer liver
+     metastases" — the lower-liver finding is strongest for basal-like, not
+     TNBC as a whole, and the in-product comment reflects that distinction
+     rather than flattening it.
+8. Lung/LUAD reference sources, for continuity:
    - **TCGA (Cancer Genome Atlas Research Network), *Nature*, 2014**
      ("Comprehensive molecular profiling of lung adenocarcinoma"; PMID
      25079552, PMCID PMC4231481, open access). **Primary trunk-mutation
@@ -282,6 +374,112 @@ screen pair per organ:
      alternative NSCLC driver oncogene) must never be added to LUAD's
      branch/private-pool lists, no matter how well-sourced its own frequency
      is, because KRAS is already this cancer's trunk mutation.
+9. Kidney/ccRCC reference sources — **every citation in this section was
+   verified directly at the source before being written into the app, not
+   after (see data rule 4 above for why that discipline matters here
+   specifically — this organ's genes cooperate rather than compete, which is
+   easy to get wrong in the other direction the same way LUAD's ESR1/MDM4/
+   SMAD4/PTEN picks were wrong):**
+   - **Moore et al., *PLOS Genetics*, 2011** ("Von Hippel-Lindau (VHL)
+     inactivation in sporadic clear cell renal cancer: associations with
+     germline VHL polymorphisms and etiologic risk factors"; PMID 22022277,
+     PMCID PMC3192834, open access). **Authorship correction:** this paper is
+     what the original task prompt referred to as "Nickerson et al." —
+     Nickerson ML is a real coauthor, but the first author is Moore LE.
+     Confirmed directly from the abstract: 86.6% of ccRCC cases showed VHL
+     inactivation via sequence alterations or promoter hypermethylation — the
+     trunk figure used in-product (rounds to the "~87%" the task prompt
+     specified). The abstract does not itself characterize VHL as truncal —
+     that claim comes from Gerlinger et al. 2012 below, cited separately for
+     exactly that reason, per the task's own instruction to verify the two
+     citations independently rather than treating them as interchangeable.
+   - **Gerlinger et al., *NEJM*, 2012** ("Intratumor heterogeneity and
+     branched evolution revealed by multiregion sequencing"; PMID 22397650,
+     PMCID PMC4878653, free to read via Europe PMC though not open-licensed).
+     Confirmed directly from the full text: "Of these driver genes, only VHL
+     was mutated ubiquitously in all analyzed regions" — the source for VHL's
+     *architecturally* truncal status, not just its frequency. Also directly
+     confirmed a real, distinctive finding not previously represented
+     anywhere in this atlas: **convergent evolution**, where different
+     specific mutations in the same gene arise independently in different
+     regions of one tumor. Three genes show this in the paper — SETD2 (three
+     distinct mutations: a missense change shared by the metastases, a
+     splice-site change in one region, a frameshift deletion shared by every
+     other region), KDM5C (disruptive mutations in most regions, a distinct
+     splice-site mutation in the metastases), and PTEN (two independent
+     mutations — splice-site and missense — in separate regions). Wired into
+     the SETD2, KDM5C, and PTEN mutation notes in-product, each restating the
+     specific detail rather than a generic "convergent evolution happens
+     here" gloss, since the task asked for this only if it could be confirmed
+     directly rather than paraphrased from its own summary — it could, in
+     full and in more genes (three, not the two originally suggested) than
+     expected.
+   - **TCGA (Cancer Genome Atlas Research Network), *Nature*, 2013**
+     ("Comprehensive molecular characterization of clear cell renal cell
+     carcinoma"; PMID 23792563, PMCID PMC3771322, open access). Confirmed
+     directly from the open-access full text: chromosome 3p loss in 91% of
+     samples "encompassing all of the four most commonly mutated genes (VHL,
+     PBRM1, BAP1 and SETD2)" — the source for this organ's "cooperating, not
+     competing" framing (data rule 4). Individual gene frequencies confirmed
+     directly: PBRM1 41%, BAP1 15%, SETD2 12%. KDM5C, PTEN, and MTOR are
+     confirmed real, recurrent ccRCC genes — VHL, PBRM1, SETD2, KDM5C, PTEN,
+     BAP1, MTOR, and TP53 are named as the paper's eight most significant of
+     19 total significantly mutated genes (q<0.00001) — but no overall-cohort
+     percentage for any of these three could be extracted from the available
+     text (only molecular-subtype-specific figures, e.g. PTEN "11% in m3 vs
+     1%" in other clusters), so none is claimed for KDM5C or PTEN in-product,
+     same honesty precedent as LUAD's unclaimed KDM5C-equivalent figures. The
+     ~28% MTOR-mutation figure used in-product is a precisely different claim
+     than "MTOR gene mutated in 28%" — confirmed directly that it's "an
+     unsupervised pathway analysis... identified mutually exclusive patterns
+     of alterations targeting multiple components of the PI3K/Akt/mTOR
+     pathway in 28% of the tumors," i.e. 28% of tumors have *some* alteration
+     across that whole pathway (MTOR, PTEN, PIK3CA, etc.), with those
+     alterations mutually exclusive *with each other* — not the MTOR gene
+     itself mutated in 28% of tumors (its own gene-level figure is a
+     molecular-subtype-specific "12% vs 4%," not an overall one). Worded
+     precisely in-product for this reason. KDM5C's chromosomal location
+     (Xp11.22, not chromosome 3p — NCBI Gene ID 8242) was checked
+     independently rather than assumed to share PBRM1/SETD2/BAP1's
+     co-deletion mechanism just because all four are ccRCC branch genes —
+     see data rule 4.
+   - **Dabestani et al., *World Journal of Urology*, 2016** ("Renal cell
+     carcinoma recurrences and metastases in primary non-metastatic
+     patients: a population-based study"; PMID 26847337). Confirmed directly
+     from the full abstract (Swedish National Kidney Cancer Register, 4,527
+     patients 2005–2009, 623 recurrences during 5-year follow-up): "the most
+     frequent sites of metastases were lung (54%), lymph nodes (22%) and bone
+     (20%)" — the source for the Lung and Bone figures used in-product.
+     Neither liver nor brain metastasis is mentioned anywhere in this
+     abstract, with any percentage — confirmed by searching the full
+     abstract text specifically for both, not inferred from their absence
+     from a "most frequent" top-3 list. These two real figures replaced the
+     task prompt's suggested "~45%"/"~30%" once verification turned up a
+     real, precise, population-based number that didn't match — same
+     "verify, then use what's actually confirmed" standard as LUAD's KRAS
+     trunk figure.
+   - **Bianchi et al., *Annals of Oncology*, 2012** ("Distribution of
+     metastatic sites in renal cell carcinoma: a population-based analysis";
+     PMID 21890909, Nationwide Inpatient Sample, 11,157 metastatic RCC
+     patients, 1998–2007, not open access). This is the source for Liver and
+     Brain being included as real ccRCC metastatic sites at all — its own
+     abstract explicitly frames the study as examining "lung, bone, liver and
+     brain metastases" as the four sites of interest. But its actual reported
+     figures are conditional/subgroup rates, not simple overall percentages:
+     bone metastases "10% in patients with exclusive abdominal metastases and
+     49% in patients with abdominal, thoracic and brain metastases," brain
+     metastases "2%... and 16%..." by the same kind of subgroup — confirmed
+     directly by requesting the complete abstract text, not just a
+     percentage-shaped excerpt of it. No liver-specific or brain-specific
+     overall percentage could be verified from this abstract, which is
+     exactly why none is claimed for those two sites in-product — this
+     paper's role here is establishing the sites are real, not supplying a
+     number, the same limited role Riihimäki's adrenal-gland mention plays
+     for LUAD.
+   - Real renal cell carcinoma subtype shares: Clear cell ~75–80%, Papillary
+     ~15%, Chromophobe ~5% — standard NCI/WHO-style figures, same treatment
+     (no individual citation fetch) as every other cancer's subtype-share
+     list in this file.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -499,9 +697,14 @@ screen pair per organ:
   `pos3d` for its own Brain site at first and inherited the identical
   overlap with Adrenal gland — caught via screenshot, fixed by respacing
   LUAD's four `pos3d` values further apart (HGSOC's original 4-way spread
-  was the model to follow, not TNBC's). Worth a real fix — e.g. a shared
-  minimum-angular-separation pass over each cancer's `REGIONS_*` — before
-  adding a 4th cancer with 4+ sites of its own.
+  was the model to follow, not TNBC's). ccRCC (organ #4) designed its own
+  fresh `pos3d` values from scratch rather than copying any prior cancer's,
+  and was screenshot-verified clean (no label/mesh overlap) at the default
+  rotation — so the pattern hasn't recurred, but the underlying risk (any
+  future cancer that copies coordinates instead of designing its own) is
+  still there. Worth a real fix — e.g. a shared minimum-angular-separation
+  pass over each cancer's `REGIONS_*` — before this keeps being solved by
+  hand once per cancer.
 - Single HTML file with vanilla JS closures — the organ/cancer *screens* are
   now generalized (see Architecture notes), but there's still no build step
   and no per-organ/per-cancer file split, so the file itself keeps growing
@@ -516,14 +719,19 @@ screen pair per organ:
    layout, whether to keep the no-build-step constraint or introduce one).
 2. Extract the reusable pieces (`makeViewer`, `organicDisplace`, mutation
    panel component, breadcrumb component) into shared modules.
-3. Ovary/HGSOC, Breast/TNBC, and Lungs/LUAD are all done. Pick organ/cancer
-   pair #4 and repeat the real-data-sourcing process documented above before
-   writing any code for it — the screens themselves are ready (see the
-   `ORGAN_DETAILS`/`CANCER_DETAILS` note in Architecture notes); it should mean
-   a data entry and a `buildMesh()`, not new markup. Remember to check any
-   organ-specific mutual-exclusivity constraints for the new cancer's driver
-   genes (data rule 3) the same way LUAD's KRAS/EGFR/ALK/ROS1 constraint was
-   checked — not every cancer will have one, but check before assuming.
+3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, and Kidneys/ccRCC are all done. Pick
+   organ/cancer pair #5 and repeat the real-data-sourcing process documented
+   above — **verify every citation directly at the source before writing it
+   into the app, not after**, the standard the ccRCC pass held itself to from
+   the start rather than fixing in a follow-up correction pass the way LUAD
+   needed to. The screens themselves are ready (see the `ORGAN_DETAILS`/
+   `CANCER_DETAILS` note in Architecture notes); it should mean a data entry
+   and a `buildMesh()`, not new markup. Remember to check which mutation-
+   framing model actually applies — competing/mutually-exclusive drivers like
+   Lung's KRAS/EGFR/ALK/ROS1, or cooperating/co-occurring drivers like
+   Kidney's VHL/PBRM1/SETD2/BAP1 (data rule 4) — not every cancer will fit
+   either pattern cleanly, but check which one (if any) applies before
+   assuming the most recently added organ's pattern carries over.
 4. Done: the body screen now loads real static meshes (Blender's "Human Base
    Meshes" bundle, `assets/*.glb`) instead of procedural primitives — the
    third asset source tried, after MakeHuman (abandoned, source-topology
