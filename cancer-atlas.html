@@ -226,7 +226,7 @@
 <body>
 <div id="app">
 
-  <div id="disclaimer">Body model and navigation are illustrative, not a medical scan. Male/female body meshes are derived from the MakeHuman project's base mesh and blend-shape targets (Data Collection AB, Joel Palmius, Jonas Hauquier; CC0 1.0 Universal — credited here though not legally required). Ovary/HGSOC anatomy and mutation data are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016); breast/triple-negative data from TCGA (<i>Nature</i>, 2012) and Yates et al. (<i>Cancer Cell</i>, 2017) — not one real patient. For both cancers, which gene is shown at which site is a simplified teaching device: the site-pattern study establishes where spread/metastasis happens and the genomics study the cohort-level mutation frequencies, not this specific site→gene pairing.</div>
+  <div id="disclaimer">Body model and navigation are illustrative, not a medical scan. Male/female body meshes are from Blender's "Human Base Meshes" bundle (Blender Studio and community contributors, via blender.org/download/demo-files; CC0 1.0 — credited here though not legally required). Ovary/HGSOC anatomy and mutation data are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016); breast/triple-negative data from TCGA (<i>Nature</i>, 2012) and Yates et al. (<i>Cancer Cell</i>, 2017) — not one real patient. For both cancers, which gene is shown at which site is a simplified teaching device: the site-pattern study establishes where spread/metastasis happens and the genomics study the cohort-level mutation frequencies, not this specific site→gene pairing.</div>
   <!-- The toast is the only feedback for activating a "coming soon" organ or cancer, and it
        self-dismisses after 2.2s, so it has to announce itself. role="status" carries the polite
        politeness implicitly; aria-live is stated anyway because the role is easy to lose in a
@@ -1153,48 +1153,71 @@ const LEGACY_LIGHT_SCALE = Math.PI;
   // ============================================================
   // BODY 3D VIEWER (body screen) — baked male + female meshes (assets/*.glb)
   // ============================================================
-  // The male/female bodies are no longer procedural. They're two static meshes baked from
-  // MakeHuman's own base mesh + macro-detail blend-shape targets (CC0 1.0, both the mesh and
-  // the targets — confirmed directly via MakeHuman's LICENSE.md, which names "Targets and
-  // modifiers" as a covered asset category, and independently via the per-file CC0 header every
-  // .target file carries, the same way base.obj carries one). MakeHuman itself has no headless
-  // export path — its "Scripting"/"Socket" plugins are Qt TaskViews that only run inside the
-  // already-launched desktop app — so the bake applies the same target-blend math the app would
-  // (base mesh + 1/3 caucasian + 1/3 asian + 1/3 african of the male-young or female-young
-  // target, matching MakeHuman's default ethnicity mix and age/muscle/weight defaults) directly
-  // against the raw .target delta files, entirely outside the app. See assets/male_body.glb /
-  // assets/female_body.glb — no build step here to regenerate them; that was a one-time,
-  // outside-this-file process.
+  // The male/female bodies are static meshes, not procedural. **History, because it's not
+  // obvious from the code alone why this isn't the MakeHuman bake this project shipped with
+  // first:** that bake was abandoned after a real-source-asset defect, not a pipeline bug — a
+  // wireframe/connected-component check (same technique used below) found MakeHuman's own
+  // base.obj has a low-poly "cap" surface fusing the inner thighs into one skirt-like cone, plus
+  // an unrelated stray debug cube, both present even in the pristine, unmodified base mesh
+  // before any blend-shape math touched it. A CC-BY Sketchfab pair (DNC44's "Basic Human
+  // Male/Female") was the next candidate, but verifying it required an authenticated Sketchfab
+  // download and creating that account isn't something this pass does — that path is blocked,
+  // not disqualified, and could still be revisited by hand later.
   //
-  // NOTE FOR NEXT TIME: MakeHuman's own asset-downloader (download_assets_git.py) points at
-  // github.com/makehumancommunity/makehuman-assets, which no longer exists (`git ls-remote`
-  // returns "Repository not found" — confirmed, not a transient error). The macrodetails target
-  // files used here were fetched from the main `makehuman` repo instead, cross-checked against
-  // the actively-maintained `mpfb2` (MakeHuman-for-Blender) repo, which bundles the same files
-  // self-contained. Don't waste time chasing the official downloader script if this comes up
-  // again — go straight to the source repos.
+  // Current source: **Blender's "Human Base Meshes" bundle** — a free CC0 asset pack on
+  // blender.org's own Demo Files page (blender.org/download/demo-files/), credited to "Blender
+  // Studio and community contributions." Confirmed clean by the same rigor as the abandoned
+  // candidates: license quoted directly from a README text block *inside* the downloaded
+  // .blend file itself ("Human Base Meshes: Asset Bundle - Version 1.4 / All provided assets
+  // are public domain under the CC0 license") — note a *different*, stale text block elsewhere
+  // in the same file is literally named "LICENSE" and describes an unrelated asset ("Rain Rig",
+  // CC-BY) that isn't this bundle; the on-point statement is the one in the version-numbered
+  // README, not the one labeled LICENSE. Topology confirmed via Blender's headless Python API
+  // (`blender --background --python`, a real first-class interface — unlike MakeHuman, nothing
+  // hacky about it): `GEO-body_male_realistic` and `GEO-body_female_realistic` are each exactly
+  // one connected component (no stray geometry), genuinely distinct sculpts (mean per-vertex
+  // difference ~4.8cm, not zero), with a real measurable gap between the legs at every height
+  // band from ankle to mid-thigh and a correct merge into one torso only at the hip — no
+  // MakeHuman-style fusion. Each sex is its own static mesh (no macro-slider/blend-shape math
+  // to reproduce), a real simplification over the abandoned approach.
+  //
+  // The catch: the bundle's bodies carry a Multires modifier at level 3 (677K verts / 1.35M
+  // triangles each in the Blender file) — far too heavy for a browser GLB. `assets/*.glb` were
+  // exported at **Multires level 0** (the base cage: 10,582 verts / 21,160 triangles each,
+  // topology-identical to level 3 — checked at both levels before exporting, not assumed). If
+  // this ever needs re-exporting, force `modifier.levels = 0` (and `sculpt_levels`/
+  // `render_levels` too) before `export_scene.gltf(..., export_apply=True)`, or the export
+  // silently regresses back to the 677K-vertex resolution. Real-world scale now (meters, ~1.7
+  // tall) instead of MakeHuman's arbitrary ~17-unit body — `makeViewer` opts below are scaled
+  // accordingly; don't reuse the old radius/minRadius/maxRadius numbers.
+  //
+  // Blender is now a build-time tool this project depends on to *regenerate* these two files —
+  // installed via `brew install --cask blender`, used only via its headless CLI, no GUI
+  // involved. It is not a runtime dependency: the shipped app still just fetches two static
+  // GLBs same as before, nothing about page load changed.
   const BODY_MATERIAL_COLOR = 0xd9b6a4; // one neutral tone for both — the GLBs carry no material of their own
 
   // Every organ hotspot's anchor, as a fraction of standing height (0 = lowest vertex, 1 =
-  // highest) plus an angle around the vertical axis (0deg = straight ahead, +Z). Unlike the old
-  // procedural bodies, there's no analytic torsoRadiusAt(height) formula for a real mesh, so a
-  // spec here doesn't encode a position directly — it's an instruction to findBodySurfaceAnchor()
-  // to raycast inward from outside the mesh at this height/angle and land wherever the surface
-  // actually is. That makes the same spec correct for both sexes despite their different
-  // proportions, and correct regardless of exactly how the bake shaped any given region.
-  // Angles are kept modest (|angle| <= ~55deg in the chest band) because the source mesh's rest
-  // pose has T-pose arms extending horizontally from about 0.56 to 0.78 of standing height — a
-  // wider angle in that Y band hits the outstretched arm instead of the torso. Verified by
-  // sampling the actual bake's vertex cloud per height band before picking these numbers, not by
-  // eyeballing the render. Not meant to be anatomically precise (kidneys are genuinely more
-  // lateral/posterior than a front-facing viewer can show well) — same level of simplification
-  // the old flat SVG hotspots, and then the old procedural-body hotspots, both used.
+  // highest) plus an angle around the vertical axis (0deg = straight ahead, +Z). There's no
+  // analytic torsoRadiusAt(height) formula for a real mesh, so a spec here doesn't encode a
+  // position directly — it's an instruction to findBodySurfaceAnchor() to raycast inward from
+  // outside the mesh at this height/angle and land wherever the surface actually is. That makes
+  // the same spec correct for both sexes despite their different proportions.
+  // Angles were re-derived from scratch for this mesh, not carried over from the abandoned
+  // MakeHuman spec — the rest pose is different (arms angled down-and-out from the shoulder
+  // rather than a flat horizontal T-pose) and the safe angular window against the arm is wider
+  // as a result: the arm only intrudes past roughly 55-70deg through the chest/waist band here,
+  // vs. MakeHuman's ~55deg ceiling. Verified per height band with the same
+  // angle-vs-radius sampling technique used to catch that mesh's problems, not by eyeballing the
+  // render. Not meant to be anatomically precise (kidneys are genuinely more lateral/posterior
+  // than a front-facing viewer can show well) — same level of simplification every hotspot
+  // system this app has had, going back to the original flat SVG dots, has used.
   const ORGAN_MARKER_SPECS = {
     brain:    { points:[{heightFrac:0.95, angle:0}] },
-    lungs:    { points:[{heightFrac:0.65, angle:0}] },
-    breast:   { points:[{heightFrac:0.68, angle:-30}, {heightFrac:0.68, angle:30}] },
-    liver:    { points:[{heightFrac:0.60, angle:38}] },
-    kidneys:  { points:[{heightFrac:0.53, angle:-55}, {heightFrac:0.53, angle:55}] },
+    lungs:    { points:[{heightFrac:0.66, angle:0}] },
+    breast:   { points:[{heightFrac:0.70, angle:-35}, {heightFrac:0.70, angle:35}] },
+    liver:    { points:[{heightFrac:0.60, angle:40}] },
+    kidneys:  { points:[{heightFrac:0.53, angle:-50}, {heightFrac:0.53, angle:50}] },
     ovary:    { points:[{heightFrac:0.49, angle:-25}, {heightFrac:0.49, angle:25}] },
     prostate: { points:[{heightFrac:0.46, angle:0}] },
   };
@@ -1208,7 +1231,9 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     const targetY = bbox.min.y + heightFrac * (bbox.max.y - bbox.min.y);
     const a = angleDeg * Math.PI / 180;
     const dir = new THREE.Vector3(Math.sin(a), 0, Math.cos(a));
-    const farR = Math.max(bbox.max.x - bbox.min.x, bbox.max.z - bbox.min.z) * 3 + 5;
+    // Padding and nudge distance are in the mesh's own units (meters, ~1.7 tall) — scaled down
+    // from the abandoned MakeHuman bake's ~17-unit body, not reused as-is.
+    const farR = Math.max(bbox.max.x - bbox.min.x, bbox.max.z - bbox.min.z) * 3 + 0.5;
     const origin = new THREE.Vector3(dir.x * farR, targetY, dir.z * farR);
     const raycaster = new THREE.Raycaster(origin, dir.clone().negate(), 0, farR * 2);
     const meshes = [];
@@ -1222,7 +1247,7 @@ const LEGACY_LIGHT_SCALE = Math.PI;
     }
     const hit = hits[0];
     const worldNormal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
-    return hit.point.clone().addScaledVector(worldNormal, 0.05);
+    return hit.point.clone().addScaledVector(worldNormal, 0.005);
   }
   function log_missedBodyRaycast(heightFrac, angleDeg){
     console.warn('Body hotspot raycast missed the mesh entirely', { heightFrac, angleDeg });
@@ -1258,13 +1283,14 @@ const LEGACY_LIGHT_SCALE = Math.PI;
 
   function initBodyViewer(){
     const container = document.getElementById('bodyViewerWrap');
-    // radius/minRadius/maxRadius are scaled to the GLBs' own units (the baked mesh is ~17 units
-    // tall, vs. the old procedural body's ~2.4) — frameContents() below re-derives the real
-    // distance from the actual mesh anyway, but a nominal opts.radius that starts in the right
-    // order of magnitude keeps the initial placement (before framing) sane, and minRadius sets a
-    // real "how close can you zoom in" floor rather than one tuned for a mesh 8x smaller.
+    // radius/minRadius/maxRadius are scaled to the GLBs' own units — real-world meters now
+    // (~1.7 tall), not the abandoned MakeHuman bake's arbitrary ~17-unit body, so these are
+    // ~10x smaller than they used to be. frameContents() below re-derives the real distance
+    // from the actual mesh anyway, but a nominal opts.radius that starts in the right order of
+    // magnitude keeps the initial placement (before framing) sane, and minRadius sets a real
+    // "how close can you zoom in" floor scaled to this mesh, not the previous one.
     bodyViewer = makeViewer(container, {
-      theta:0.5, phi:1.2, radius:20, minRadius:9, maxRadius:45, autoRotate:true,
+      theta:0.5, phi:1.2, radius:2, minRadius:0.9, maxRadius:5, autoRotate:true,
       autoRotateRadPerFrame:0.0015,
       onClick:(e, cont)=>{
         if(!bodyReady) return;
@@ -1360,7 +1386,10 @@ const LEGACY_LIGHT_SCALE = Math.PI;
         spec.points.forEach(point=>{
           const anchor = findBodySurfaceAnchor(group, bbox, point.heightFrac, point.angle);
           const mesh = new THREE.Mesh(
-            new THREE.SphereGeometry(0.3, 12, 12),
+            // Scaled to this mesh's real-world-meter units (~1.7 tall) — 0.03 is the same
+            // fraction of standing height the old 0.3 marker was, against the abandoned
+            // MakeHuman bake's ~17-unit body.
+            new THREE.SphereGeometry(0.03, 12, 12),
             new THREE.MeshBasicMaterial({ color: organ.active ? 0x35c9c1 : 0x8393ad })
           );
           mesh.position.copy(anchor);
