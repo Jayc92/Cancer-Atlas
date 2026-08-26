@@ -15,7 +15,7 @@ tool that implies it's showing one real patient's data.
 A single-file HTML prototype (`cancer-atlas.html`) built in Claude.ai using vanilla
 JS + three.js (0.185.1, loaded as an ES module via an import map — see Architecture
 notes; there is no global-script build anymore), no build step, no backend. It
-proves out the full navigation pattern end-to-end for **five** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **six** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -42,7 +42,7 @@ screen pair per organ:
   organs (Ovaries — female; Prostate — male) only get hotspots on the
   applicable body;
   Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, Lungs,
-  Kidneys, and Liver are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
+  Kidneys, Liver, and Brain are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
   dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary);
   Lungs routes to a `LatheGeometry` profile that pinches to a radius of 0 at both
   poles, so it closes into a solid tapered point at apex/base with no separate cap
@@ -55,7 +55,9 @@ screen pair per organ:
   routes to a wide, wedge-like `SphereGeometry` ellipsoid (same non-lobed
   simplification as the kidney's missing concave notch — the "four lobes" fact is
   stated in text, not modeled as four mesh pieces) — its body-marker position also
-  needed no new work, same reason as Kidneys.
+  needed no new work, same reason as Kidneys. Brain routes to a rounded, loosely
+  convoluted `SphereGeometry` ellipsoid — body-marker position, again, needed no
+  new work.
 - **Organ screen** — one screen, shown for whichever organ is currently
   selected (`renderOrganScreen(organKey)` repaints eyebrow/h1/sub/facts/desc/
   cancer-list from `ORGAN_DETAILS[organKey]` before the screen becomes visible).
@@ -96,6 +98,14 @@ screen pair per organ:
   supply than Lungs' (nutrient-rich/oxygen-poor vs. oxygen-rich, not
   oxygenated/deoxygenated by flow direction) — only Hepatocellular carcinoma
   is wired, Intrahepatic cholangiocarcinoma shows "profile coming soon."
+  **Brain**: rounded convoluted ellipsoid, points are White matter / Ventricular
+  system / Cerebral cortex / Blood-brain barrier — White matter, not Cerebral
+  cortex, gets the "arises here" framing (confirmed directly: StatPearls,
+  "Glioblastoma," describes GBM as a subcortical white-matter disease first;
+  the Cerebral cortex point is deliberately the opposite of every prior
+  organ's first point — an explicit non-arises-here contrast, stated as such)
+  — only Glioblastoma is wired, Lower-grade astrocytoma, Oligodendroglioma,
+  and Meningioma show "profile coming soon."
 - **Cancer screen** — likewise one screen for whichever cancer is currently
   selected (`enterCancerScreen(cancerId)` calls `initSiteViewer(cancerId)`,
   which rebuilds the canvas/blobs/legend from `CANCER_DETAILS[cancerId]` if a
@@ -141,6 +151,16 @@ screen pair per organ:
   (59%, Nault et al. 2013) was likewise cross-checked against three other
   independent cohorts and found to vary genuinely by population (~39–61%),
   not corrected but explicitly caveated in-product for the same reason.
+  **GBM is a genuine structural departure, not a sixth "distant-metastasis
+  sites" cancer** — see data rule 7 below for the full reasoning and its own
+  standing note; the short version is that GBM's four "regions" (Enhancing
+  core, Necrotic core, Infiltrative margin, Peritumoral edema) are zones
+  within *one* tumor mass, `pos3d`-clustered tightly on purpose so the four
+  blobs visually merge rather than reading as scattered organs, and
+  `legendTitle`/`screenLabel` say so explicitly (`regionWord:'region'` even
+  changes "site" to "region" throughout the panel/label text via a new,
+  backward-compatible optional field on `CANCER_DETAILS` — every other
+  cancer's entries simply omit it and fall back to "site").
 - **Breadcrumb** at the top reflects the full chain (Body › organ › cancer ›
   [site] › [cell]) and is clickable at every level.
 - **Keyboard accessibility is wired end-to-end** (commit `c5acece`) and must be
@@ -196,7 +216,7 @@ screen pair per organ:
    TP53-mutant tumor.)
 3. **Organ-specific mutual-exclusivity constraints must be checked and recorded,
    not just mechanistic fit in general.** LUAD's trunk mutation is KRAS (33%,
-   not a near-universal founder like TP53 is for HGSOC/TNBC — see rule 10
+   not a near-universal founder like TP53 is for HGSOC/TNBC — see rule 11
    below). **Major NSCLC driver oncogenes (KRAS, EGFR, ALK, ROS1, etc.) are
    clinically mutually exclusive within one real tumor** — a tumor has one or
    none of them, essentially never two; TCGA (*Nature*, 2014) states this
@@ -219,7 +239,7 @@ screen pair per organ:
    support was thin and PTEN's original citation (a Frankell et al. 2023
    subclonal-selection claim) couldn't be confirmed either — independent
    literature actually leans the other way, noting PTEN mutations as *more*
-   frequent in squamous (LUSC) than adenocarcinoma — see rule 10 below. Same
+   frequent in squamous (LUSC) than adenocarcinoma — see rule 11 below. Same
    "don't just trust the gene name" standard that caught ESR1/MDM4, applied
    twice more in one pass.)
 4. **"Cooperating" and "competing" are two distinct mutation-framing models this
@@ -277,12 +297,43 @@ screen pair per organ:
    being mutually exclusive molecular classifiers in HCC." Both the rule and
    the exception are wired into the TP53/CTNNB1 branch notes in-product, not
    left in a code comment only — the same standard ccRCC's convergent-
-   evolution finding was held to (rule 11 below, Kidney/ccRCC sources), now
+   evolution finding was held to (rule 12 below, Kidney/ccRCC sources), now
    applied to a finding that qualifies a rule rather than just illustrating
    one. Don't flatten this to "TP53 and CTNNB1 are mutually exclusive" the
    next time this organ's content is touched — the exception is real and
    sourced, not a hedge.
-7. **Mutation model vocabulary** (established and should stay consistent):
+7. **The "sites" screen itself can be a structural departure, not just the
+   mutation-framing model within it — check whether an organ's cancer
+   actually has real distant metastasis before building four of them.**
+   Every cancer before Brain/GBM has real, if sometimes rare or unclaimed,
+   distant-metastasis sites (or, for HGSOC, a real intraperitoneal spread
+   pattern) to model. Glioblastoma does not: extracranial metastasis occurs
+   in under 1–2% of cases, confirmed directly from two independent sources
+   (Majd et al., *The Oncologist*, 2024, "Extraneural metastases occur in
+   less than 1% of all patients with glioblastoma"; Conejero Merchán et al.,
+   *Open Respiratory Archives*, 2026, "less than 2% of cases"). Modeling
+   four separate distant organs here the way every prior cancer's screen
+   does would misrepresent the single most basic fact about how this
+   disease spreads. What GBM genuinely has instead is well-documented
+   *intratumor* regional heterogeneity — real histological/radiological
+   zones (enhancing core, necrotic core, infiltrative margin, peritumoral
+   edema; confirmed against both the Ivy Glioblastoma Atlas Project's own
+   histological zonation and standard MRI-defined GBM zones) within one
+   infiltrative mass. The fix reuses every existing mechanism — same
+   region/branch-gene/raycast/keyboard machinery every prior cancer's site
+   map uses — rather than building a new rendering system: `pos3d` values
+   are deliberately clustered tightly (the opposite of every prior cancer's
+   widely-spaced sites — see the Known Limitations note on this, so nobody
+   "fixes" GBM's clustering thinking it's an oversight) so the four blobs
+   visually merge into one lumpy mass, and a new optional `regionWord` field
+   on `CANCER_DETAILS` (default `'site'`, GBM sets `'region'`) swaps the word
+   used in every per-region label/aria-label/panel-subtitle string. Every
+   other cancer's entry omits `regionWord` and is unaffected. **This
+   departure is specific to GBM's own biology, not a new universal
+   pattern** — the next organ added should default back to real distant
+   sites unless its own literature says otherwise, checked the same way
+   GBM's ~1–2% figure was, not assumed from this one exception.
+8. **Mutation model vocabulary** (established and should stay consistent):
    - **Trunk** — present in ~all tumor cells; the founding/earliest driver event.
    - **Branch** — arose within one anatomical site/subclone, not all of them.
    - **Private** — unique to one sampled cell; illustrates ongoing heterogeneity.
@@ -290,7 +341,7 @@ screen pair per organ:
    - Each mutation entry needs: gene/event name, class (driver/passenger),
      a frequency or CCF figure where one exists, and a one-line plain-language
      "why this matters" note (no jargon dump).
-8. Ovary/HGSOC reference sources already used, for continuity:
+9. Ovary/HGSOC reference sources already used, for continuity:
    - TCGA, *Nature*, 2011 (integrated genomic analysis of ovarian carcinoma —
      TP53 ~96%, recurrent CDK12/NF1/RB1 alterations, CCNE1 amplification).
    - McPherson et al., *Nature Genetics*, 2016 (multi-site whole-genome
@@ -298,7 +349,7 @@ screen pair per organ:
      BRCA1/2 pathway loss and HR-deficiency framing).
    - Real ovarian carcinoma subtype shares: HGSOC ~70%, endometrioid ~10%,
      clear-cell ~10%, mucinous ~3%, low-grade serous <5%.
-9. Breast/TNBC reference sources, for continuity:
+10. Breast/TNBC reference sources, for continuity:
    - TCGA, *Nature*, 2012 (comprehensive molecular portraits of human breast
      tumors — basal-like/TNBC TP53 ~80%, PIK3CA ~9% in basal-like vs ~39%
      across breast cancer overall, EGFR amplification ~23% of basal-like
@@ -360,7 +411,7 @@ screen pair per organ:
      metastases" — the lower-liver finding is strongest for basal-like, not
      TNBC as a whole, and the in-product comment reflects that distinction
      rather than flattening it.
-10. Lung/LUAD reference sources, for continuity:
+11. Lung/LUAD reference sources, for continuity:
    - **TCGA (Cancer Genome Atlas Research Network), *Nature*, 2014**
      ("Comprehensive molecular profiling of lung adenocarcinoma"; PMID
      25079552, PMCID PMC4231481, open access). **Primary trunk-mutation
@@ -443,7 +494,7 @@ screen pair per organ:
      alternative NSCLC driver oncogene) must never be added to LUAD's
      branch/private-pool lists, no matter how well-sourced its own frequency
      is, because KRAS is already this cancer's trunk mutation.
-11. Kidney/ccRCC reference sources — **every citation in this section was
+12. Kidney/ccRCC reference sources — **every citation in this section was
    verified directly at the source before being written into the app, not
    after (see data rule 4 above for why that discipline matters here
    specifically — this organ's genes cooperate rather than compete, which is
@@ -549,7 +600,7 @@ screen pair per organ:
      ~15%, Chromophobe ~5% — standard NCI/WHO-style figures, same treatment
      (no individual citation fetch) as every other cancer's subtype-share
      list in this file.
-12. Liver/HCC reference sources — **every citation in this section was
+13. Liver/HCC reference sources — **every citation in this section was
     verified directly at the source before being written into the app, the
     standard held from the start rather than corrected after the fact (see
     the LUAD correction record above for what "after the fact" looks like).
@@ -716,6 +767,129 @@ screen pair per organ:
       intrahepatic cholangiocarcinoma ~10–15% — standard NCI/WHO-style
       figures, same no-individual-citation treatment as every other
       cancer's subtype-share list.
+14. Brain/GBM reference sources — **every citation in this section was
+    verified directly at the source before being written into the app. This
+    organ needed a structural-departure check no prior organ did (data rule
+    7) before any data-sourcing work even started.**
+    - **Majd et al., *The Oncologist*, 2024** (PMID 38837109, PMCID
+      PMC11379637, open access — "Metastatic extraneural glioblastoma
+      diagnosed with molecular testing"). Confirmed directly: "Extraneural
+      metastases occur in less than 1% of all patients with glioblastoma" —
+      one of two independent sources establishing the structural-departure
+      premise (data rule 7) before any other work on this organ began.
+    - **Conejero Merchán et al., *Open Respiratory Archives*, 2026** (PMID
+      41541893 — "Pulmonary Metastasis From Glioblastoma: An Uncommon
+      Clinical Entity"). Confirmed directly: "extracranial metastasis...
+      occurs in less than 2% of cases" — the second independent source, as
+      the task asked for, not a single citation taken on trust.
+    - **Louis et al., *Neuro-Oncology*, 2021** ("The 2021 WHO Classification
+      of Tumors of the Central Nervous System: a summary"; PMID 34185076,
+      PMCID PMC8328013, free to read via Europe PMC). Confirmed directly:
+      "eliminates the term 'Glioblastoma, IDH-mutant'" and "all IDH-mutant
+      diffuse astrocytic tumors are considered a single type (*Astrocytoma,
+      IDH-mutant*)" — the source for this organ's trunk-level classifier
+      being IDH-wildtype status itself, not merely a percentage split within
+      a single disease the way TP53/VHL frequencies are elsewhere in this
+      file. No prevalence percentage for IDH-wildtype vs. IDH-mutant among
+      grade-4 astrocytic tumors could be extracted from the accessible text
+      after multiple attempts — not claimed in-product for that reason,
+      same honesty precedent as every other organ's unclaimed figures.
+    - **TCGA (Brennan et al.), *Cell*, 2013** ("The somatic genomic
+      landscape of glioblastoma"; PMID 24120142, PMCID PMC3910500, free to
+      read via Europe PMC). Confirmed directly: EGFR alterations 57.4%,
+      PDGFRA alterations 13.1% (both combined mutation-and/or-amplification
+      figures — worded precisely as such in-product, since an amplification-
+      only figure could not be isolated from the accessible text despite
+      several attempts, the same "word precisely, don't overclaim" standard
+      ccRCC's MTOR-pathway figure used); CDKN2A/B deletion 57.8%; PI3K
+      pathway mutations 25.1%, "mutually exclusive of PTEN mutations/
+      deletions," with 59.4% of GBM showing one or the other — PTEN's own
+      ~34% figure used in-product is computed (59.4% − 25.1%) from these two
+      directly-confirmed numbers, not read verbatim, and stated as such. Also
+      the source for three real, GBM-specific mechanistic-fit exclusions
+      (data rule 7's comment block in `cancer-atlas.html` has the full
+      reasoning for each): NF1 loss (~10%) confirmed mutually exclusive with
+      EGFR alterations; RB1 loss (7.6%) confirmed mutually exclusive with
+      CDKN2A/B deletion and CDK4/6 amplification ("78.9% of tumors had one or
+      more alteration affecting Rb function," never several stacked); and
+      the same PI3K/PTEN exclusivity above ruling out adding PIK3CA/PIK3R1
+      mutation alongside PTEN loss. Each was a real gene at a real GBM
+      frequency that would have competed with a gene already in use — the
+      same class of mistake as HCC's AXIN1, caught before shipping this
+      time, three times over in one organ.
+    - **Killela et al., *PNAS*, 2013** ("TERT promoter mutations occur
+      frequently in gliomas..."; PMID 23530248, PMCID PMC3625331, not open
+      access but full text confirmed accessible). Confirmed directly: "The
+      prevalence of TERT promoter mutations was remarkably high in GBMs of
+      adults (83% of 78 tumors)" — used in place of a smaller, less
+      representative subsample (25 of 423 patients) in the TCGA/Brennan 2013
+      cohort above, which predates TERT promoter sequencing being routine.
+      83% is high enough that TERT promoter mutation is modeled as a second
+      **trunk**-level entry alongside IDH-wildtype status, not a private-pool
+      finding the way the task's own suggested placement implied — genuinely
+      trunk-tier by this atlas's own established range (TP53 ~96%/~80% for
+      HGSOC/TNBC, VHL 86.6% for ccRCC), confirmed directly that `trunk`'s
+      shared rendering (`txMutGroup`) already `.forEach`s over the array, so
+      two entries needed no new code.
+    - **Snuderl et al., *Cancer Cell*, 2011** ("Mosaic amplification of
+      multiple receptor tyrosine kinase genes in glioblastoma"; PMID
+      22137795, not open access). Confirmed directly: "up to three different
+      receptor tyrosine kinases (EGFR, MET, PDGFRA) amplified in single
+      tumors in different cells in a mutually exclusive fashion" — the
+      primary source for representing EGFR and PDGFRA as region-specific
+      branch genes rather than population-level alternatives the way Lung's
+      KRAS/EGFR/ALK/ROS1 are (data rule 3): the mutual exclusivity here is
+      *spatial* (which region of one tumor), not *populational* (which
+      patient), which is exactly why splitting them across regions rather
+      than pooling them is the mechanistically correct choice, not just a
+      convenient one.
+    - **Sottoriva et al., *PNAS*, 2013** ("Intratumor heterogeneity in human
+      glioblastoma reflects cancer evolutionary dynamics"; PMID 23412337,
+      PMCID PMC3593922, not open access). Independently confirmed the same
+      spatial-heterogeneity finding for PDGFRA specifically: in one real
+      patient's tumor, "fragments T and T2 show no alterations, [while]
+      focal gain and amplification are evident in fragments T3 and T4" —
+      two independent papers confirming the same specific mechanism, not one
+      citation doing double duty.
+    - **ATRX loss, checked and excluded** (the task's own suggested private-
+      pool candidate list included it): confirmed directly that ATRX loss is
+      a defining marker of IDH-*mutant* astrocytoma specifically, part of
+      the "early lineage-defining alterations (IDH1/2, ATRX, TP53)" in that
+      lineage — not IDH-wildtype glioblastoma, which typically retains ATRX
+      function. Including it here would have blurred the exact molecular
+      boundary this organ's trunk-level classifier exists to draw. The
+      clearest single mechanistic-fit catch in this pass, structurally the
+      same mistake as HCC's AXIN1 but one step earlier: not "competes with a
+      branch gene already in use," but "belongs to the other diagnostic
+      entity this cancer's own trunk note explicitly distinguishes itself
+      from."
+    - **MGMT promoter methylation, deliberately excluded from the ledger and
+      explained in prose instead** — the task asked for an explicit decision,
+      not silent omission or an awkward fit. MGMT methylation status is the
+      single strongest predictor of temozolomide response in real GBM
+      management, but it is an epigenetic silencing mark, not a DNA
+      mutation, and this atlas's mutation ledger (`gene`/`class`: driver or
+      passenger/`ccf`/`note`) has no schema slot for a change that isn't
+      genetic — confirmed directly that the badge CSS only styles `.driver`
+      and `.passenger`, so any other `class` value would render unstyled
+      rather than actually representing a third real category. Explained in
+      the IDH-wildtype trunk note's own prose instead, where a user reading
+      "what defines this tumor" would naturally encounter it.
+    - **Price et al. (CBTRUS), *Neuro-Oncology*, 2025** ("CBTRUS Statistical
+      Report: Primary Brain and Other Central Nervous System Tumors
+      Diagnosed in the United States in 2018-2022"; PMID 41092086, not open
+      access). Confirmed directly: glioblastoma "13.7% of all tumors and
+      52.2% of all malignant tumors"; meningioma "42.6% of all tumors." The
+      report's own abstract gives gliomas overall as 22.2% of all tumors but
+      does not separately break out astrocytoma or oligodendroglioma — after
+      repeated attempts to find an individually-verified split (including
+      checking two earlier CBTRUS report years for a more granular table),
+      none was found, so both are stated as sharing the remaining ~8.5%
+      rather than a fabricated-looking precise split. Meningioma is listed
+      in this organ's cancer list despite arising from the meninges, not
+      brain tissue itself — the same "real primary tumor of this organ
+      system, different cell of origin" treatment HCC's cholangiocarcinoma
+      listing already established.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -745,8 +919,10 @@ screen pair per organ:
   the existing ones. It's the latter: `ORGAN_DETAILS[organKey]` (eyebrow/
   title/sub/facts/desc/hotspots/buildMesh/viewer opts) drives
   `renderOrganScreen()`/`initOrganViewer()`, and `CANCER_DETAILS[cancerId]`
-  (title/screenLabel/legendTitle/regions/trunk/privatePool) drives
-  `enterCancerScreen()`/`initSiteViewer()`. `currentOrganKey`/`currentCancerId`
+  (title/screenLabel/legendTitle/regions/trunk/privatePool, plus an optional
+  `regionWord` — default `'site'`, GBM sets `'region'` since its four
+  "sites" are zones of one tumor, not distant organs; see data rule 7)
+  drives `enterCancerScreen()`/`initSiteViewer()`. `currentOrganKey`/`currentCancerId`
   track which one is loaded; `initOrganViewer`/`initSiteViewer` no-op if asked
   to rebuild the one already showing, and dispose-and-rebuild (canvas +
   renderer + DOM proxies) if asked for a different one — only one organ's and
@@ -941,7 +1117,15 @@ screen pair per organ:
   copies coordinates instead of designing its own) is still there. Worth a
   real fix — e.g. a shared minimum-angular-separation pass over each
   cancer's `REGIONS_*` — before this keeps being solved by hand once per
-  cancer, now five times over.
+  cancer, now five times over. **GBM (organ #6) is the one deliberate
+  exception to "spread the four `pos3d` values apart" — do not "fix" its
+  clustering thinking it's an oversight.** Its four `pos3d` values are
+  clustered tightly *on purpose* (data rule 7) so the four blobs visually
+  merge into one lumpy mass, matching its real biology (intratumor regions,
+  not distant metastases) — screenshot-verified at the default rotation to
+  confirm the four labels stay individually legible despite the tight
+  spacing, which is the opposite check every prior cancer's `pos3d` pass
+  ran (spread apart enough to *avoid* merging).
 - Single HTML file with vanilla JS closures — the organ/cancer *screens* are
   now generalized (see Architecture notes), but there's still no build step
   and no per-organ/per-cancer file split, so the file itself keeps growing
@@ -956,23 +1140,30 @@ screen pair per organ:
    layout, whether to keep the no-build-step constraint or introduce one).
 2. Extract the reusable pieces (`makeViewer`, `organicDisplace`, mutation
    panel component, breadcrumb component) into shared modules.
-3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, Kidneys/ccRCC, and Liver/HCC are all
-   done. Pick organ/cancer pair #6 and repeat the real-data-sourcing process
-   documented above — **verify every citation directly at the source before
-   writing it into the app, not after**, the standard ccRCC and HCC both held
-   themselves to from the start rather than fixing in a follow-up correction
-   pass the way LUAD needed to. The screens themselves are ready (see the
-   `ORGAN_DETAILS`/`CANCER_DETAILS` note in Architecture notes); it should
-   mean a data entry and a `buildMesh()`, not new markup. Remember to check
-   which mutation-framing model actually applies — competing/mutually-
-   exclusive drivers like Lung's KRAS/EGFR/ALK/ROS1, cooperating/co-occurring
-   drivers like Kidney's VHL/PBRM1/SETD2/BAP1, or a "general rule with a
-   documented exception" like Liver's TP53/CTNNB1 (data rules 3/4/6) — not
-   every cancer will fit any of these three patterns cleanly, but check
-   before assuming the most recently added organ's pattern carries over.
-   Also check whether the new organ's trunk mutation is truncal for the
-   usual spatial reason or a temporal one like Liver's TERT (data rule 5) —
-   don't reuse "present in every region" language by default.
+3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, Kidneys/ccRCC, Liver/HCC, and
+   Brain/GBM are all done. Pick organ/cancer pair #7 and repeat the
+   real-data-sourcing process documented above — **verify every citation
+   directly at the source before writing it into the app, not after**, the
+   standard ccRCC, HCC, and GBM all held themselves to from the start rather
+   than fixing in a follow-up correction pass the way LUAD needed to. The
+   screens themselves are ready (see the `ORGAN_DETAILS`/`CANCER_DETAILS`
+   note in Architecture notes); it should mean a data entry and a
+   `buildMesh()`, not new markup. Remember to check which mutation-framing
+   model actually applies — competing/mutually-exclusive drivers like Lung's
+   KRAS/EGFR/ALK/ROS1, cooperating/co-occurring drivers like Kidney's
+   VHL/PBRM1/SETD2/BAP1, or a "general rule with a documented exception"
+   like Liver's TP53/CTNNB1 (data rules 3/4/6) — not every cancer will fit
+   any of these three patterns cleanly, but check before assuming the most
+   recently added organ's pattern carries over. Also check whether the new
+   organ's trunk mutation is truncal for the usual spatial reason or a
+   temporal one like Liver's TERT (data rule 5) — don't reuse "present in
+   every region" language by default. **Most importantly, check whether the
+   new cancer actually has real distant-metastasis sites at all before
+   building four of them** (data rule 7) — GBM didn't, and defaulting to
+   the "four distant organs" pattern without checking would have
+   misrepresented its most basic behavior. Most cancers will have real
+   sites the way five of six organs so far do; don't assume GBM's
+   intratumor-region departure is now the default either.
 4. Done: the body screen now loads real static meshes (Blender's "Human Base
    Meshes" bundle, `assets/*.glb`) instead of procedural primitives — the
    third asset source tried, after MakeHuman (abandoned, source-topology
