@@ -1128,6 +1128,14 @@ screen pair per organ:
   which costs a factor of π). Do not "clean up" these opt-outs in passing —
   adopting the color-correct pipeline and re-tuning all five lights to match is
   an **open, deliberately deferred design decision**, not an oversight.
+  **Revisited and reconfirmed (tech-debt pass, same session as the mesh-detail
+  pass below) — still parked, not adopted.** Every screenshot taken across
+  seven organs and seven cancers this pass showed vibrant, correctly-saturated
+  meshes matching this file's own signed-off palette, with no visible defect
+  the modern pipeline would fix; adopting it now would be a deliberate
+  redesign (re-tuning five lights, re-validating every material against a
+  new target look) orthogonal to whatever prompted revisiting it, not a bug
+  fix. Don't re-litigate this without a real visual defect driving it.
 - **3D viewer helper:** `makeViewer(container, opts)` wraps three's real
   `OrbitControls` (drag-to-rotate, wheel-to-zoom, idle auto-rotate) plus the
   scene/renderer/framing plumbing. The body viewer, every organ viewer, and the
@@ -1278,30 +1286,71 @@ screen pair per organ:
   just to run the app.
 - Tumor-site blob positions are schematic, not anatomically precise. **Check
   `pos3d` spacing against the default camera framing, not just against other
-  sites' blob-mesh overlap** — TNBC's Brain/Lung site labels (and meshes)
-  sit stacked directly on top of each other at the default site-map rotation
-  (verified while adding LUAD, not fixed, since it predates this pass and
-  isn't a regression to fix silently). LUAD reused TNBC's exact Brain
-  `pos3d` for its own Brain site at first and inherited the identical
-  overlap with Adrenal gland — caught via screenshot, fixed by respacing
-  LUAD's four `pos3d` values further apart (HGSOC's original 4-way spread
-  was the model to follow, not TNBC's). ccRCC (organ #4) and HCC (organ #5)
-  both designed their own fresh `pos3d` values from scratch rather than
-  copying any prior cancer's, and both were screenshot-verified clean (no
-  label/mesh overlap) at the default rotation — so the pattern hasn't
-  recurred twice more, but the underlying risk (any future cancer that
-  copies coordinates instead of designing its own) is still there. Worth a
-  real fix — e.g. a shared minimum-angular-separation pass over each
-  cancer's `REGIONS_*` — before this keeps being solved by hand once per
-  cancer, now five times over. **GBM (organ #6) is the one deliberate
-  exception to "spread the four `pos3d` values apart" — do not "fix" its
-  clustering thinking it's an oversight.** Its four `pos3d` values are
-  clustered tightly *on purpose* (data rule 7) so the four blobs visually
-  merge into one lumpy mass, matching its real biology (intratumor regions,
-  not distant metastases) — screenshot-verified at the default rotation to
-  confirm the four labels stay individually legible despite the tight
-  spacing, which is the opposite check every prior cancer's `pos3d` pass
-  ran (spread apart enough to *avoid* merging).
+  sites' blob-mesh overlap.** **FIXED (tech-debt pass):** TNBC's Brain/Lung
+  site labels and meshes sat stacked directly on top of each other at the
+  default site-map rotation (`pos3d` distance 0.91, vs. 1.6+ for every other
+  pair in this cancer and in HGSOC's own spread) — this had been flagged
+  since the LUAD pass as "confirmed pre-existing in both older organs," but
+  direct re-verification during this pass found **HGSOC was already clean**
+  (all four sites ≥1.6 apart, no visual overlap at the default rotation —
+  left untouched rather than "fixed" to match a premise that didn't hold up
+  on inspection). Only TNBC needed a real fix: Lung moved to
+  `{1.6,1.4,0.6}` and Brain to `{-1.0,1.3,-0.3}` (Bone/Liver untouched, two
+  respacing iterations — the first fix cleared Lung/Brain but drifted Lung
+  into Liver, caught by re-screenshotting rather than declaring done after
+  one edit). Click-to-navigate and keyboard access reverified on all four
+  TNBC sites post-fix. LUAD reused TNBC's exact Brain `pos3d` for its own
+  Brain site at first and inherited the identical overlap with Adrenal
+  gland — caught via screenshot, fixed by respacing LUAD's four `pos3d`
+  values further apart (HGSOC's original 4-way spread was the model to
+  follow, not TNBC's). ccRCC (organ #4) and HCC (organ #5) both designed
+  their own fresh `pos3d` values from scratch rather than copying any prior
+  cancer's, and both were screenshot-verified clean at the default rotation.
+  The underlying risk (any future cancer that copies coordinates instead of
+  designing its own) is still there — a shared minimum-angular-separation
+  pass over each cancer's `REGIONS_*` would close it structurally, not yet
+  done. **GBM (organ #6) and Prostate (organ #7) are the two deliberate
+  exceptions to "spread the four `pos3d` values apart" — do not "fix"
+  either's clustering thinking it's an oversight.** Both are clustered
+  tightly *on purpose* (data rules 7 and 15) so their blobs visually merge
+  into one mass/gland, matching their real biology (intratumor regions;
+  independently-arising multifocal origins) — both screenshot-verified at
+  the default rotation to confirm their labels stay individually legible
+  despite the tight spacing, the opposite check every real-distant-site
+  cancer's `pos3d` pass runs (spread apart enough to *avoid* merging).
+- **Mesh geometry resolution — FIXED (tech-debt/quality pass).** Every organ
+  `SphereGeometry` was 48×48 segments (2,401 vertices) and every tumor site/
+  region/focus mesh was one shared `IcosahedronGeometry(0.6, 3)` call
+  (960 vertices after `organicSpiculate`) — visibly faceted on the lit
+  highlight of rounder organs (Brain, freq 8) and, more sharply, on tumor
+  blobs' spike tips (`organicSpiculate`'s `sharpness:11` angular falloff
+  needs real vertex density near a spike's tip to read smoothly; no amount
+  of `computeVertexNormals()` — already called after every displacement —
+  fixes an undersampled tip). Confirmed by screenshot before touching
+  anything, not assumed from "looks rough" alone. Bumped organ spheres to
+  80×80 (6,561 vertices), the shared tumor-blob Icosahedron to detail 5
+  (2,160 vertices), lungs' `LatheGeometry` 32→48 radial segments, and the
+  breast dome/cap/nipple proportionally — see the in-code comments at
+  `buildOvaryMesh` and the tumor-blob loop in `initSiteViewer` for the exact
+  numbers. Performance checked directly: this app's own `requestAnimationFrame`
+  loop can't be measured in this project's headless preview environment
+  (`document.hidden` reports `true` even when the tab is fronted, so rAF
+  never fires between tool calls) — worth knowing if a future pass reaches
+  for real-fps profiling here and gets nothing. The real substitute used
+  instead: a synthetic `THREE.WebGLRenderer` benchmark (same
+  `organicDisplace`/`organicSpiculate` code, isolated from the app) timing
+  raw `render()` calls from 48 up to 192 organ-sphere segments and
+  Icosahedron detail 3 through 9 — every level stayed under 0.08ms/frame,
+  noise-dominated with no scaling trend, so the chosen resolutions have
+  wide headroom to spare rather than being maxed out just because the
+  budget allowed it. Raycasting, the click-vs-drag guard (re-tested
+  specifically against GBM's overlapping clustered blobs, same scenario
+  CLAUDE.md already flags for this), and the full keyboard chain (organ
+  hotspot → cancer row → tumor site → cell panel, dispatched as real
+  `KeyboardEvent`s since this environment's synthetic OS-level key events
+  don't reliably reach a backgrounded tab either) were all reverified
+  after the change — zero regressions, zero console errors across all
+  seven organ/cancer pairs.
 - Single HTML file with vanilla JS closures — the organ/cancer *screens* are
   now generalized (see Architecture notes), but there's still no build step
   and no per-organ/per-cancer file split, so the file itself keeps growing
