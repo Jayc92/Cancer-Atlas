@@ -15,7 +15,7 @@ tool that implies it's showing one real patient's data.
 A single-file HTML prototype (`cancer-atlas.html`) built in Claude.ai using vanilla
 JS + three.js (0.185.1, loaded as an ES module via an import map — see Architecture
 notes; there is no global-script build anymore), no build step, no backend. It
-proves out the full navigation pattern end-to-end for **four** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **five** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -41,8 +41,8 @@ screen pair per organ:
   intended pattern without needing content for every organ yet. Sex-specific
   organs (Ovaries — female; Prostate — male) only get hotspots on the
   applicable body;
-  Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, Lungs, and
-  Kidneys are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
+  Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, Lungs,
+  Kidneys, and Liver are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
   dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary);
   Lungs routes to a `LatheGeometry` profile that pinches to a radius of 0 at both
   poles, so it closes into a solid tapered point at apex/base with no separate cap
@@ -51,7 +51,11 @@ screen pair per organ:
   medial notch — see Architecture notes) — the kidney marker positions on the body
   itself needed no new work, since `ORGAN_MARKER_SPECS.kidneys` was already placed
   and screen-space-verified during the body-mesh integration, well before this organ
-  was wired up; activating it was only the `ORGANS`/`ORGAN_DETAILS` flip.
+  was wired up; activating it was only the `ORGANS`/`ORGAN_DETAILS` flip. Liver
+  routes to a wide, wedge-like `SphereGeometry` ellipsoid (same non-lobed
+  simplification as the kidney's missing concave notch — the "four lobes" fact is
+  stated in text, not modeled as four mesh pieces) — its body-marker position also
+  needed no new work, same reason as Kidneys.
 - **Organ screen** — one screen, shown for whichever organ is currently
   selected (`renderOrganScreen(organKey)` repaints eyebrow/h1/sub/facts/desc/
   cancer-list from `ORGAN_DETAILS[organKey]` before the screen becomes visible).
@@ -80,7 +84,18 @@ screen pair per organ:
   location fact gets the same second-sentence treatment Lungs' dual blood
   supply got: it's the one anatomically distinct thing about this organ
   relative to every prior one (ovary/breast are intraperitoneal-or-overlying,
-  lungs thoracic; kidneys sit behind the peritoneum entirely).
+  lungs thoracic; kidneys sit behind the peritoneum entirely). **Liver**: wide
+  wedge-like ellipsoid, points are Hepatocytes / Portal vein / Bile ducts /
+  Hepatic capsule — Hepatocytes gets the "arises here" framing every prior
+  organ's first point uses, Bile ducts is deliberately the opposite: a
+  contrast point stating that intrahepatic cholangiocarcinoma (the organ's
+  other, not-yet-wired cancer) arises there *instead*, the same ductal-vs-
+  lobular contrast Breast's own hotspots already draw. Its dual blood supply
+  (portal vein ~75%, hepatic artery ~25% — StatPearls, "Physiology, Liver")
+  gets the second-sentence treatment, framed as a different *kind* of dual
+  supply than Lungs' (nutrient-rich/oxygen-poor vs. oxygen-rich, not
+  oxygenated/deoxygenated by flow direction) — only Hepatocellular carcinoma
+  is wired, Intrahepatic cholangiocarcinoma shows "profile coming soon."
 - **Cancer screen** — likewise one screen for whichever cancer is currently
   selected (`enterCancerScreen(cancerId)` calls `initSiteViewer(cancerId)`,
   which rebuilds the canvas/blobs/legend from `CANCER_DETAILS[cancerId]` if a
@@ -110,8 +125,22 @@ screen pair per organ:
   metastatic sites via a separate population-based study (Bianchi et al.
   2012) but without a clean overall percentage extractable from its
   abstract, so none is claimed for those two — same honesty precedent as
-  LUAD's unclaimed adrenal-gland percentage — same "sites" concept, four
-  different real meanings, hence `legendTitle` is per-cancer, not hardcoded.
+  LUAD's unclaimed adrenal-gland percentage; **HCC**'s are also real
+  distant-metastasis sites (lung/bone/lymph nodes/adrenal gland) — lung
+  (~55%), lymph nodes (~41%), and bone (~28%) confirmed directly against a
+  dedicated retrospective CT study (Katyal et al., Radiology, 2000; lung and
+  bone re-checked against a larger, more recent SEER cohort — Zhuang et al.,
+  Translational Cancer Research, 2025 — which closely corroborates lung
+  [51%] but reports notably higher bone [43%], a real discrepancy stated
+  explicitly in-product rather than smoothed over), adrenal
+  gland confirmed as a real, clinically-recognized HCC metastatic site via
+  dedicated case series (adrenalectomy and radiotherapy cohorts) but without
+  a population-level percentage, same honesty precedent as the others' own
+  unclaimed sites — same "sites" concept, five different real meanings,
+  hence `legendTitle` is per-cancer, not hardcoded. HCC's TERT trunk figure
+  (59%, Nault et al. 2013) was likewise cross-checked against three other
+  independent cohorts and found to vary genuinely by population (~39–61%),
+  not corrected but explicitly caveated in-product for the same reason.
 - **Breadcrumb** at the top reflects the full chain (Body › organ › cancer ›
   [site] › [cell]) and is clickable at every level.
 - **Keyboard accessibility is wired end-to-end** (commit `c5acece`) and must be
@@ -167,7 +196,7 @@ screen pair per organ:
    TP53-mutant tumor.)
 3. **Organ-specific mutual-exclusivity constraints must be checked and recorded,
    not just mechanistic fit in general.** LUAD's trunk mutation is KRAS (33%,
-   not a near-universal founder like TP53 is for HGSOC/TNBC — see rule 8
+   not a near-universal founder like TP53 is for HGSOC/TNBC — see rule 10
    below). **Major NSCLC driver oncogenes (KRAS, EGFR, ALK, ROS1, etc.) are
    clinically mutually exclusive within one real tumor** — a tumor has one or
    none of them, essentially never two; TCGA (*Nature*, 2014) states this
@@ -190,7 +219,7 @@ screen pair per organ:
    support was thin and PTEN's original citation (a Frankell et al. 2023
    subclonal-selection claim) couldn't be confirmed either — independent
    literature actually leans the other way, noting PTEN mutations as *more*
-   frequent in squamous (LUSC) than adenocarcinoma — see rule 8 below. Same
+   frequent in squamous (LUSC) than adenocarcinoma — see rule 10 below. Same
    "don't just trust the gene name" standard that caught ESR1/MDM4, applied
    twice more in one pass.)
 4. **"Cooperating" and "competing" are two distinct mutation-framing models this
@@ -213,7 +242,47 @@ screen pair per organ:
    future organ turns out to have, verify it directly at the source the way
    both of these were, rather than defaulting to whichever pattern the most
    recently added organ used.
-5. **Mutation model vocabulary** (established and should stay consistent):
+5. **A trunk mutation can be truncal for a temporal reason instead of a
+   spatial one — check which, don't reuse the other organs' language by
+   default.** Every trunk mutation before Liver/HCC (TP53 for HGSOC/TNBC, VHL
+   for ccRCC) is truncal in the *spatial* sense established by Gerlinger et
+   al.'s ccRCC work: present in every region of a tumor sampled at one point
+   in time. HCC's trunk, TERT promoter mutation, is truncal for a different
+   reason entirely — it is the earliest event in *time*, not the most
+   spatially ubiquitous one. Nault et al. (*Nature Communications*, 2013)
+   found it in premalignant cirrhotic macronodules before they become cancer
+   at all, calling it "the earliest recurrent genetic event identified in
+   cirrhotic preneoplastic lesions so far"; Schulze et al. (*Nature
+   Genetics*, 2015) confirmed the ordering directly against this organ's two
+   branch genes: "Although TERT promoter mutations were already frequent at
+   early stages, CTNNB1 and TP53 mutation frequencies increased significantly
+   with progression." The in-product trunk note for TERT was written to say
+   this explicitly rather than reuse "present in every region" language that
+   would be actively wrong here — HCC's own regional-heterogeneity story
+   (rule 6 below) is about TP53/CTNNB1, not about TERT being everywhere at
+   once.
+6. **A gene pair can follow a third mutation-framing model — "general rule,
+   with a documented exception" — distinct from both rule 3's *competing*
+   and rule 4's *cooperating* patterns.** HCC's TP53 and CTNNB1 mutations are
+   "largely considered to occur in a mutually exclusive manner" (Friemel et
+   al., *BMC Clinical Pathology*, 2016, citing the foundational two-pathway
+   paper, Laurent-Puig et al., *Gastroenterology*, 2001), each defining a
+   distinct molecular phenotype the way HGSOC/TNBC's TP53 or ccRCC's VHL
+   define one — but unlike Lung's KRAS/EGFR/ALK/ROS1, this exclusivity is not
+   absolute, and the atlas represents both the rule and a real, documented
+   exception rather than only the clean version. Friemel et al. (2016) is
+   itself a case report finding a CTNNB1 mutation and a TP53 mutation
+   together in one heterogeneous tumor, stating outright: "Intratumor
+   heterogeneity challenges the concept of CTNNB1 and TP53 gene mutations
+   being mutually exclusive molecular classifiers in HCC." Both the rule and
+   the exception are wired into the TP53/CTNNB1 branch notes in-product, not
+   left in a code comment only — the same standard ccRCC's convergent-
+   evolution finding was held to (rule 11 below, Kidney/ccRCC sources), now
+   applied to a finding that qualifies a rule rather than just illustrating
+   one. Don't flatten this to "TP53 and CTNNB1 are mutually exclusive" the
+   next time this organ's content is touched — the exception is real and
+   sourced, not a hedge.
+7. **Mutation model vocabulary** (established and should stay consistent):
    - **Trunk** — present in ~all tumor cells; the founding/earliest driver event.
    - **Branch** — arose within one anatomical site/subclone, not all of them.
    - **Private** — unique to one sampled cell; illustrates ongoing heterogeneity.
@@ -221,7 +290,7 @@ screen pair per organ:
    - Each mutation entry needs: gene/event name, class (driver/passenger),
      a frequency or CCF figure where one exists, and a one-line plain-language
      "why this matters" note (no jargon dump).
-6. Ovary/HGSOC reference sources already used, for continuity:
+8. Ovary/HGSOC reference sources already used, for continuity:
    - TCGA, *Nature*, 2011 (integrated genomic analysis of ovarian carcinoma —
      TP53 ~96%, recurrent CDK12/NF1/RB1 alterations, CCNE1 amplification).
    - McPherson et al., *Nature Genetics*, 2016 (multi-site whole-genome
@@ -229,7 +298,7 @@ screen pair per organ:
      BRCA1/2 pathway loss and HR-deficiency framing).
    - Real ovarian carcinoma subtype shares: HGSOC ~70%, endometrioid ~10%,
      clear-cell ~10%, mucinous ~3%, low-grade serous <5%.
-7. Breast/TNBC reference sources, for continuity:
+9. Breast/TNBC reference sources, for continuity:
    - TCGA, *Nature*, 2012 (comprehensive molecular portraits of human breast
      tumors — basal-like/TNBC TP53 ~80%, PIK3CA ~9% in basal-like vs ~39%
      across breast cancer overall, EGFR amplification ~23% of basal-like
@@ -291,7 +360,7 @@ screen pair per organ:
      metastases" — the lower-liver finding is strongest for basal-like, not
      TNBC as a whole, and the in-product comment reflects that distinction
      rather than flattening it.
-8. Lung/LUAD reference sources, for continuity:
+10. Lung/LUAD reference sources, for continuity:
    - **TCGA (Cancer Genome Atlas Research Network), *Nature*, 2014**
      ("Comprehensive molecular profiling of lung adenocarcinoma"; PMID
      25079552, PMCID PMC4231481, open access). **Primary trunk-mutation
@@ -374,7 +443,7 @@ screen pair per organ:
      alternative NSCLC driver oncogene) must never be added to LUAD's
      branch/private-pool lists, no matter how well-sourced its own frequency
      is, because KRAS is already this cancer's trunk mutation.
-9. Kidney/ccRCC reference sources — **every citation in this section was
+11. Kidney/ccRCC reference sources — **every citation in this section was
    verified directly at the source before being written into the app, not
    after (see data rule 4 above for why that discipline matters here
    specifically — this organ's genes cooperate rather than compete, which is
@@ -480,6 +549,173 @@ screen pair per organ:
      ~15%, Chromophobe ~5% — standard NCI/WHO-style figures, same treatment
      (no individual citation fetch) as every other cancer's subtype-share
      list in this file.
+12. Liver/HCC reference sources — **every citation in this section was
+    verified directly at the source before being written into the app, the
+    standard held from the start rather than corrected after the fact (see
+    the LUAD correction record above for what "after the fact" looks like).
+    This organ needed two novel checks no prior organ did: a temporal, not
+    spatial, trunk justification (data rule 5), and a "general rule plus
+    documented exception" mutation-framing model (data rule 6).**
+    - **Nault et al., *Nature Communications*, 2013** ("High frequency of
+      telomerase reverse-transcriptase promoter somatic mutations in
+      hepatocellular carcinoma and preneoplastic lesions"; PMID 23887712,
+      PMCID PMC3731665, open access). Confirmed directly from the full text:
+      TERT promoter mutations in 59% of 305 HCCs (179/305) — not the task
+      prompt's suggested ~49%, a real, precise, directly-confirmed figure
+      used in place of it, same "verify, then use what's actually confirmed"
+      standard as every prior correction in this file. Confirmed the
+      temporal-trunk claim directly: 5 of 20 (25%) cirrhotic macronodules —
+      premalignant, not yet HCC — carried TERT promoter mutations, "the
+      earliest recurrent genetic event identified in cirrhotic preneoplastic
+      lesions so far." The task's suggested HBV ~32%/HCV ~66% split also
+      didn't hold up as stated: the paper's own Table 1 gives raw counts
+      (49 of 68 total HCV+ patients had TERT mutations; 26 of 67 total HBV+
+      patients did), computed directly into ~72%/~39% rather than quoting
+      the paper's own percentages verbatim, since those describe a different
+      statistic (etiology composition *within* the mutated group, not
+      TERT-mutation rate *within* each etiology) — confirmed by requesting
+      the complete table, not a percentage-shaped excerpt of it, after an
+      initial extraction attempt returned an internally-inconsistent
+      percentage that turned out to be exactly this mismatch.
+    - **Representativeness cross-check (post-hoc, before committing this
+      organ):** because 59% was anchoring both the trunk percentage and the
+      temporal-ordering claim, it was checked against Nault's own cohort
+      composition (N=305, two *French* hospitals, surgically resected —
+      i.e. resectable disease specifically — etiology skewed toward alcohol
+      at 39% over HBV 22%/HCV 26%, Sanger-sequenced) and against independent
+      cohorts rather than assumed globally representative: Schulze et al.
+      (2015, also French) found ~60%; TCGA (*Nature*, 2017, mixed US
+      cohort, N=196, PMID 28622513) found 44% (87/196); an HBV-dominant
+      Asian cohort (Aizimuaji et al., *World Journal of Gastrointestinal
+      Oncology*, 2025, N=66, PMID 41480220) found only 39.4% (Sanger) to
+      45.5% (digital PCR). The spread (~39–61%) tracks Nault's *own*
+      etiology finding — their HCV+ patients had far higher TERT rates than
+      their HBV+ patients — so a French, alcohol/HCV-skewed cohort running
+      high and an HBV-dominant cohort running low is exactly what the
+      biology predicts, not an unexplained discrepancy needing resolution
+      one way or the other. Kept 59% as the headline figure (still real,
+      precise, and from the same paper the temporal claim depends on) but
+      both the in-product `ccf` string and note now state the real
+      cross-cohort range explicitly, the same "note real variability, don't
+      present one number as universal" treatment LUAD's KRAS (~30–37%) and
+      ccRCC's VHL figures already use. A separately-referenced ~49% pooled
+      meta-analysis figure (from a >4,000-case multi-source review) could
+      not be located after eight distinct searches across Europe PMC,
+      Crossref, and Semantic Scholar (rate-limited) — noted honestly here
+      rather than fabricating a citation for it; the four independently-
+      confirmed cohorts above already establish the real variability that
+      figure would have illustrated, even without pinning its exact source.
+    - **Schulze et al., *Nature Genetics*, 2015** ("Exome sequencing of
+      hepatocellular carcinomas identifies new mutational signatures and
+      potential therapeutic targets"; PMID 25822088, PMCID PMC4587544, open
+      access). Confirmed directly the specific temporal-ordering sentence
+      the task asked for: "Although TERT promoter mutations were already
+      frequent at early stages, CTNNB1 and TP53 mutation frequencies
+      increased significantly with progression" — the source for TERT being
+      trunk for a *temporal* reason, the standing note in data rule 5. Also
+      one of the four cohorts in the representativeness cross-check above.
+    - **Guichard et al., *Nature Genetics*, 2012** ("Integrated analysis of
+      somatic mutations and focal copy-number changes identifies key genes
+      and pathways in hepatocellular carcinoma"; PMID 22561517, PMCID
+      PMC3819251, not open access but full text confirmed accessible).
+      Single coherent source for every branch/private gene frequency used
+      in-product, all confirmed directly from the same cohort rather than
+      stitched together from papers with different methodologies: CTNNB1
+      32.8%, TP53 20.8%, AXIN1 15.2%, ARID1A 16.8%, ARID2 5.6%, NFE2L2 6.4%.
+      TP53's figure closely matches the task's suggested ~21%; CTNNB1's real,
+      confirmed 32.8% does not match the task's suggested ~40%, and the
+      lower, verified figure was used instead. Also the source for the
+      mechanistic-fit checks data rule 6 required: confirmed directly that
+      "CTNNB1, AXIN1 and APC gene alterations were mutually exclusive (only
+      one HCC was mutated for both CTNNB1 and AXIN1)" — AXIN1 is an
+      *alternative* route to the same Wnt/β-catenin activation CTNNB1
+      mutation already provides, not a cooperating event, and was excluded
+      from the private pool for exactly that reason (see the in-code comment
+      above `REGIONS_HCC` for the full reasoning — this is the one gene from
+      the task's own suggested list that got dropped after verification,
+      the same "don't just trust the gene name" standard that caught
+      ESR1/MDM4 and LUAD's SMAD4/PTEN, caught before shipping this time).
+      ARID1A ("a significant association with CTNNB1 mutations") and NFE2L2
+      ("6 out of 8 NFE2L2 mutated HCC were also mutated for CTNNB1,
+      P=0.015") were both confirmed to cooperate with CTNNB1, not compete —
+      safe for the shared private pool. ARID2's cooperation with CTNNB1 was
+      confirmed via independent, more recent work (multiomics analyses
+      naming "CTNNB1-ARID2 comutations" as a recurring HCC pattern), since
+      this 2012 paper's own text didn't address that specific pair directly.
+    - **Laurent-Puig et al., *Gastroenterology*, 2001** ("Genetic alterations
+      associated with hepatocellular carcinomas define distinct pathways of
+      hepatocarcinogenesis"; PMID 11375957, not open access). The
+      foundational two-pathway paper Friemel et al. (2016, below) cites as
+      the origin of the "largely considered... mutually exclusive" framing:
+      confirmed directly that HCC divides into a chromosomally-stable group
+      (beta-catenin/CTNNB1 mutation, chromosome 8p loss) and a chromosomally-
+      unstable group (AXIN1 and p53 frequently mutated together) — the
+      source for framing TP53/CTNNB1 as two distinct phenotypes, not just
+      two individually-common genes.
+    - **Friemel et al., *BMC Clinical Pathology*, 2016** ("Liver cancer with
+      concomitant TP53 and CTNNB1 mutations: a case report"; PMCID
+      PMC4888639, open access). Confirmed directly and in full: a mixed
+      hepatocellular/cholangiocellular carcinoma where "a p.D32V mutation in
+      exon 3 of the CTNNB1 gene occurred concomitantly with a TP53 intron
+      7/exon 8 splice site mutation" in the tumor's hepatocellular component,
+      with the paper stating outright that "intratumor heterogeneity
+      challenges the concept of CTNNB1 and TP53 gene mutations being
+      mutually exclusive molecular classifiers in HCC." This is the source
+      for data rule 6's documented exception — confirmed directly rather
+      than paraphrased from the task's own summary, exactly as the task
+      asked, and wired into both the TP53 and CTNNB1 branch notes in-product
+      rather than left as a comment only.
+    - **Katyal et al., *Radiology*, 2000** ("Extrahepatic metastases of
+      hepatocellular carcinoma"; PMID 10966697, 403 consecutive HCC patients,
+      148 with extrahepatic metastasis, single institution [University of
+      Pittsburgh], CT-imaging-based retrospective series, not open access
+      but full abstract confirmed accessible). Confirmed directly: lung 55%
+      (81/148), abdominal lymph nodes 41% (60/148), bone 28% (41/148) — the
+      source for three of this organ's four sites. Adrenal gland is not
+      mentioned anywhere in this paper's abstract at all — confirmed by
+      requesting the complete abstract text and searching it specifically,
+      not inferred from its absence from a "most common" list. Adrenal gland
+      was still included as this organ's fourth site (per the task's own
+      suggestion) because it's independently confirmed as a real,
+      clinically-recognized HCC metastatic site via dedicated case series
+      (adrenalectomy and radiotherapy cohorts specifically for HCC-to-adrenal
+      spread), just without a population-level percentage to cite — same
+      honesty precedent as every other organ's unclaimed sites (LUAD's
+      adrenal gland, ccRCC's liver/brain).
+    - **Representativeness cross-check (post-hoc, before committing this
+      organ):** Katyal et al.'s cohort is single-institution, CT-imaging-
+      based, and now over two decades old — checked against a larger, more
+      recent, population-based study before treating it as current best
+      evidence. Found one: **Zhuang et al., *Translational Cancer
+      Research*, 2025** (PMID 41158259, PMCID PMC12554466, open access; SEER
+      registry, N=2,197, 2010–2015, restricted to patients with a *single*
+      metastatic site — a different denominator than Katyal's "any site
+      among all extrahepatic-met patients"). Confirmed directly: lung 51%
+      (1,116/2,197) — closely corroborating Katyal's 55% across 25 years and
+      two different methodologies (clinical CT imaging vs. SEER registry
+      coding) — but bone 43% (938/2,197), notably higher than Katyal's 28%.
+      Zhuang's study does not include lymph nodes as a studied site at all,
+      so Katyal's 41% lymph-node figure has no independent modern
+      corroboration either way. Kept Katyal as the primary source (still the
+      only dedicated all-sites distribution study with real lymph-node
+      data) rather than replacing it outright, since the discrepancy is
+      plausibly a denominator difference (all-sites vs. single-site-only)
+      rather than either study being simply wrong — but the Lung and Bone
+      branch notes in-product now state the corroboration and the
+      discrepancy explicitly, and the Lymph nodes note states plainly that
+      no modern study corroborates or revises that figure, rather than
+      presenting a 25-year-old single-institution number as uncontested.
+    - Standard liver anatomy facts (four lobes, hepatocytes ~80% of liver
+      mass) are treated the same "no individual citation fetch" way as every
+      cancer's subtype-share list — except the dual blood-supply split
+      (portal vein ~75%/hepatic artery ~25%), which the task explicitly
+      asked to be verified directly and was: confirmed via StatPearls,
+      "Physiology, Liver" (NCBI Bookshelf NBK535438, PMID 30571059) — an
+      exact match to the task's suggested figures, no correction needed.
+    - Real primary liver cancer shares: Hepatocellular carcinoma ~75–85%,
+      intrahepatic cholangiocarcinoma ~10–15% — standard NCI/WHO-style
+      figures, same no-individual-citation treatment as every other
+      cancer's subtype-share list.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -697,14 +933,15 @@ screen pair per organ:
   `pos3d` for its own Brain site at first and inherited the identical
   overlap with Adrenal gland — caught via screenshot, fixed by respacing
   LUAD's four `pos3d` values further apart (HGSOC's original 4-way spread
-  was the model to follow, not TNBC's). ccRCC (organ #4) designed its own
-  fresh `pos3d` values from scratch rather than copying any prior cancer's,
-  and was screenshot-verified clean (no label/mesh overlap) at the default
-  rotation — so the pattern hasn't recurred, but the underlying risk (any
-  future cancer that copies coordinates instead of designing its own) is
-  still there. Worth a real fix — e.g. a shared minimum-angular-separation
-  pass over each cancer's `REGIONS_*` — before this keeps being solved by
-  hand once per cancer.
+  was the model to follow, not TNBC's). ccRCC (organ #4) and HCC (organ #5)
+  both designed their own fresh `pos3d` values from scratch rather than
+  copying any prior cancer's, and both were screenshot-verified clean (no
+  label/mesh overlap) at the default rotation — so the pattern hasn't
+  recurred twice more, but the underlying risk (any future cancer that
+  copies coordinates instead of designing its own) is still there. Worth a
+  real fix — e.g. a shared minimum-angular-separation pass over each
+  cancer's `REGIONS_*` — before this keeps being solved by hand once per
+  cancer, now five times over.
 - Single HTML file with vanilla JS closures — the organ/cancer *screens* are
   now generalized (see Architecture notes), but there's still no build step
   and no per-organ/per-cancer file split, so the file itself keeps growing
@@ -719,19 +956,23 @@ screen pair per organ:
    layout, whether to keep the no-build-step constraint or introduce one).
 2. Extract the reusable pieces (`makeViewer`, `organicDisplace`, mutation
    panel component, breadcrumb component) into shared modules.
-3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, and Kidneys/ccRCC are all done. Pick
-   organ/cancer pair #5 and repeat the real-data-sourcing process documented
-   above — **verify every citation directly at the source before writing it
-   into the app, not after**, the standard the ccRCC pass held itself to from
-   the start rather than fixing in a follow-up correction pass the way LUAD
-   needed to. The screens themselves are ready (see the `ORGAN_DETAILS`/
-   `CANCER_DETAILS` note in Architecture notes); it should mean a data entry
-   and a `buildMesh()`, not new markup. Remember to check which mutation-
-   framing model actually applies — competing/mutually-exclusive drivers like
-   Lung's KRAS/EGFR/ALK/ROS1, or cooperating/co-occurring drivers like
-   Kidney's VHL/PBRM1/SETD2/BAP1 (data rule 4) — not every cancer will fit
-   either pattern cleanly, but check which one (if any) applies before
-   assuming the most recently added organ's pattern carries over.
+3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, Kidneys/ccRCC, and Liver/HCC are all
+   done. Pick organ/cancer pair #6 and repeat the real-data-sourcing process
+   documented above — **verify every citation directly at the source before
+   writing it into the app, not after**, the standard ccRCC and HCC both held
+   themselves to from the start rather than fixing in a follow-up correction
+   pass the way LUAD needed to. The screens themselves are ready (see the
+   `ORGAN_DETAILS`/`CANCER_DETAILS` note in Architecture notes); it should
+   mean a data entry and a `buildMesh()`, not new markup. Remember to check
+   which mutation-framing model actually applies — competing/mutually-
+   exclusive drivers like Lung's KRAS/EGFR/ALK/ROS1, cooperating/co-occurring
+   drivers like Kidney's VHL/PBRM1/SETD2/BAP1, or a "general rule with a
+   documented exception" like Liver's TP53/CTNNB1 (data rules 3/4/6) — not
+   every cancer will fit any of these three patterns cleanly, but check
+   before assuming the most recently added organ's pattern carries over.
+   Also check whether the new organ's trunk mutation is truncal for the
+   usual spatial reason or a temporal one like Liver's TERT (data rule 5) —
+   don't reuse "present in every region" language by default.
 4. Done: the body screen now loads real static meshes (Blender's "Human Base
    Meshes" bundle, `assets/*.glb`) instead of procedural primitives — the
    third asset source tried, after MakeHuman (abandoned, source-topology
