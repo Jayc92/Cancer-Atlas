@@ -15,7 +15,7 @@ tool that implies it's showing one real patient's data.
 A single-file HTML prototype (`cancer-atlas.html`) built in Claude.ai using vanilla
 JS + three.js (0.185.1, loaded as an ES module via an import map — see Architecture
 notes; there is no global-script build anymore), no build step, no backend. It
-proves out the full navigation pattern end-to-end for **six** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **seven** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -40,9 +40,12 @@ screen pair per organ:
   show a "coming soon" toast + marker pulse when clicked, to demonstrate the
   intended pattern without needing content for every organ yet. Sex-specific
   organs (Ovaries — female; Prostate — male) only get hotspots on the
-  applicable body;
+  applicable body — confirmed directly for Prostate, not assumed, when this
+  organ was wired up: its marker DOM proxy carries `inertAncestor:true` and a
+  zeroed bounding rect while the Female body is active, the same pattern
+  every sex-inapplicable organ marker already uses.
   Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, Lungs,
-  Kidneys, Liver, and Brain are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
+  Kidneys, Liver, Brain, and Prostate are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
   dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary);
   Lungs routes to a `LatheGeometry` profile that pinches to a radius of 0 at both
   poles, so it closes into a solid tapered point at apex/base with no separate cap
@@ -106,6 +109,16 @@ screen pair per organ:
   organ's first point — an explicit non-arises-here contrast, stated as such)
   — only Glioblastoma is wired, Lower-grade astrocytoma, Oligodendroglioma,
   and Meningioma show "profile coming soon."
+  **Prostate**: rounded walnut-shaped ellipsoid, points are Peripheral zone /
+  Transition zone / Central zone / Prostatic urethra — Peripheral zone gets
+  the "arises here" framing every prior organ's first point uses (~75% of
+  cases, StatPearls NBK540987), Transition zone is deliberately the opposite:
+  a contrast point stating this is where BPH, not cancer, most often
+  develops, the same not-arises-here contrast Liver's Bile ducts and Brain's
+  Cerebral cortex points already draw — only Acinar adenocarcinoma is wired,
+  the other four real-but-vanishingly-rare subtypes (Ductal, Mucinous,
+  Signet ring cell, Neuroendocrine — see data rule 16) show "profile coming
+  soon."
 - **Cancer screen** — likewise one screen for whichever cancer is currently
   selected (`enterCancerScreen(cancerId)` calls `initSiteViewer(cancerId)`,
   which rebuilds the canvas/blobs/legend from `CANCER_DETAILS[cancerId]` if a
@@ -161,6 +174,25 @@ screen pair per organ:
   changes "site" to "region" throughout the panel/label text via a new,
   backward-compatible optional field on `CANCER_DETAILS` — every other
   cancer's entries simply omit it and fall back to "site").
+  **Prostate acinar adenocarcinoma is a third, differently-shaped structural
+  departure — not a second GBM** — see data rule 15 below. This cancer DOES
+  metastasize in a real, bone-dominant way (Bubendorf et al., *Human
+  Pathology*, 2000 — 90% of hematogenous metastases, confirmed directly), so
+  the departure isn't "too rare to model" the way GBM's is. It's that the
+  disease is genuinely multifocal, with independent clonal origins per focus
+  (Fontugne et al., *JCI Insight*, 2022 — 76.5% of specimens have ≥2 foci):
+  the four "regions" (Peripheral zone A/B/C, Transition zone) are
+  independently-arising tumor foci within one gland, not distant organs and
+  not zones of one contiguous mass, `pos3d`-clustered tightly the same way
+  GBM's are, with `regionWord:'focus'`. Region names deliberately omit the
+  word "focus" themselves (e.g. "Peripheral zone A," not "Focus 1") since
+  `regionWord` already appends it wherever a name is shown standalone —
+  caught and fixed during in-browser verification, the same class of
+  double-suffix bug HCC's/GBM's dev-comment leaks were, just cosmetic instead
+  of a leaked comment. TMPRSS2-ERG fusion and SPOP mutation are this
+  cancer's two mutually-exclusive branch genes, split two-foci-each — same
+  architectural pattern as HCC's TP53/CTNNB1 and GBM's EGFR/PDGFRA, not a
+  fourth way of representing it.
 - **Breadcrumb** at the top reflects the full chain (Body › organ › cancer ›
   [site] › [cell]) and is clickable at every level.
 - **Keyboard accessibility is wired end-to-end** (commit `c5acece`) and must be
@@ -890,6 +922,150 @@ screen pair per organ:
       brain tissue itself — the same "real primary tumor of this organ
       system, different cell of origin" treatment HCC's cholangiocarcinoma
       listing already established.
+15. **A third, distinct site-model can exist for a different reason than the
+    one that produced the second — check per organ, don't assume only two
+    patterns exist now.** GBM's departure (rule 7) was "real distant
+    metastasis is too rare to model — the four 'sites' should be intratumor
+    regions of one mass instead." Prostate acinar adenocarcinoma required a
+    different check entirely: this cancer DOES metastasize in a clinically
+    real, bone-dominant way (Bubendorf et al., *Human Pathology*, 2000 — 90%
+    of hematogenous metastases in a 1,589-patient autopsy series, confirmed
+    directly) — that is not what makes this organ a departure. The real
+    departure is that prostate adenocarcinoma is genuinely **multifocal**,
+    with separate tumor foci in the same gland arising from **independent
+    clonal origins** rather than one tumor spreading locally (Fontugne et
+    al., *JCI Insight*, 2022 — 76.5% of specimens have ≥2 foci, confirmed
+    directly). This atlas now has three distinct real site-models, not two:
+    real anatomical spread (HGSOC/TNBC/LUAD/ccRCC/HCC), intratumor regions of
+    one contiguous mass (GBM), and independently-arising multifocal origins
+    within one organ (Prostate acinar adenocarcinoma) — each got its own
+    `regionWord` (default `'site'`, `'region'` for GBM, `'focus'` for
+    Prostate). **Check which of these three (or a fourth, not yet seen)
+    actually applies to any future organ's own literature before defaulting
+    to any of them** — real distant-metastasis sites is still the most
+    common case (five of seven organs so far), not a fallback to avoid just
+    because two exceptions now exist. Two related corrections this pass
+    also needed, same "verify, don't assume the task prompt's citation or
+    anecdote holds up" standard as every prior organ:
+    - **Authorship correction**: the task's suggested "Boutros et al.,
+      *Nature Genetics*, 2015" is not a real first-author paper. The actual
+      paper is Cooper CS, Eeles R, Wedge DC, Van Loo P, Gundem G, et al.
+      (*Nature Genetics*, 2015, PMID 25730763, PMC4380509) — Boutros and
+      Fraser are among 50+ coauthors. Same pattern as ccRCC's
+      Nickerson→Moore correction (rule 12).
+    - **A claim that directly contradicts a real finding, not just thin
+      evidence, gets dropped outright**: "MYCL amplification with TP53 loss"
+      does not appear in the real Cooper et al. 2015 paper at all, and TCGA's
+      own prostate paper (Cancer Genome Atlas Research Network, *Cell*, 2015,
+      PMID 26544944, PMC4695400) explicitly states "we found no focal,
+      clonal MYCL amplifications...in either data set nor in a separate set
+      of 63 untreated prostate cancer samples" — a direct contradiction.
+      Dropped entirely, no substitute needed, the cleanest rejection this
+      atlas has had.
+    - **An unverifiable specific anecdote, replaced with real population-
+      level data**: the task's suggested "documented case of one ERG+ focus
+      adjacent to a SPOP-mutated focus" does not appear in Cooper et al.
+      2015 or any later multifocality paper checked — that paper actually
+      documents the opposite kind of finding, *convergent* ERG evolution
+      across independently-arising clones, explicitly stating "we did not
+      see convergent evolution for other potential driver genes." Replaced
+      with real, corroborated discordance data instead: Fontugne et al.
+      (2022) found 59.7% (139/233) of multifocal specimens had discordant
+      ERG/SPINK1 status between foci, corroborated by Cyrta et al. (*J
+      Pathol*, 2022, PMID 35220606) and Segura-Moreno et al. (*Cancer
+      Reports*, 2023, PMID 36199157); Mehra et al. (*Cancer Research*, 2007,
+      PMID 17804708) found the ERG-specific figure (21/30, 70%, discordant
+      between foci). Same move as swapping the unverifiable Foulkes et al.
+      2010 citation for Gao/Kennecke on the TNBC pass (rule 10) — don't force
+      an unconfirmed secondhand claim, substitute real data that supports the
+      same real point.
+16. Prostate/acinar adenocarcinoma reference sources — **every citation in
+    this section was verified directly at the source before being written
+    into the app.** This organ needed the third site-model check (rule 15)
+    before any data-sourcing work started, plus a genuinely different
+    mechanistic-fit question from every prior organ: two branch genes with a
+    *soft*, one-sided cooperating relationship (not the hard mutual-
+    exclusivity of rule 3's competing-driver model or the AXIN1/NF1/RB1/
+    PIK3CA exclusions) are safe in a shared private pool, the same way HCC's
+    ARID1A/ARID2/NFE2L2 already were — checked explicitly rather than
+    defaulting to exclusion just because a cooperating relationship exists.
+    - **Cooper et al., *Nature Genetics*, 2015** ("Analysis of the genetic
+      phylogeny of multifocal prostate cancer identifies multiple independent
+      clonal expansions in neoplastic and morphologically normal prostate
+      tissue"; PMID 25730763, PMC4380509, open access). The real paper behind
+      the task's "Boutros et al." misattribution (see rule 15). Confirmed
+      directly: documents independent clonal origins across foci in the same
+      gland as real, and a real complication — convergent evolution of ERG
+      rearrangements specifically across separately-arising clones, with no
+      such convergence found "for other potential driver genes." Does not
+      mention MYCL at all, and does not contain the task's suggested
+      ERG+/SPOP-adjacent-foci case.
+    - **TCGA (Cancer Genome Atlas Research Network), *Cell*, 2015**
+      ("The Molecular Taxonomy of Primary Prostate Cancer"; PMID 26544944,
+      PMC4695400, open access). Confirmed directly: SPOP mutation ~10-11%,
+      "Tumors defined by SPOP mutations were mutually exclusive with all ETS
+      fusion-positive cases" — the source for this organ's two mutually-
+      exclusive branch genes (TMPRSS2-ERG fusion / SPOP mutation). Also
+      confirmed PTEN homozygous deletion ~15-17% with "the preponderance of
+      PTEN deletions in ERG fusion-positive cases" (a real, *differential*
+      enrichment, not an absolute exclusivity claim — safe for the shared
+      private pool for that reason), CHD1 deletion associated with the
+      SPOP-mutant subtype specifically (no overall cohort-wide percentage
+      extractable), and the explicit MYCL null finding used to drop that
+      candidate (rule 15).
+    - **Fontugne et al., *JCI Insight*, 2022** (PMID 35050902, PMC8876549,
+      open access). Confirmed directly: 76.5% (251/328) of radical
+      prostatectomy specimens had ≥2 separate tumor foci — this organ's
+      trunk `ccf` figure; 59.7% (139/233) of multifocal specimens had
+      discordant ERG/SPINK1 status between foci — the population-level
+      discordance data that replaced the unverifiable task-suggested
+      anecdote (rule 15). Also the source for SPINK1's confirmed mutual
+      exclusivity with ERG fusion status, which is why SPINK1 — despite
+      being on the task's own suggested gene list — was checked and
+      excluded from the shared private pool the same way AXIN1/NF1/RB1/
+      PIK3CA were: it competes with a branch gene already in use (ERG),
+      and the private pool draws onto every focus's cells regardless of
+      that focus's branch.
+    - **Mehra et al., *Cancer Research*, 2007** (PMID 17804708). Confirmed
+      directly: 21/30 (70%) of rearranged multifocal cases showed discordant
+      ERG status between foci — the specific ERG-only discordance figure
+      used in the ERG branch note, distinct from Fontugne's broader
+      ERG/SPINK1-combined figure above.
+    - **Cyrta et al., *J Pathol*, 2022** (PMID 35220606) and **Segura-Moreno
+      et al., *Cancer Reports*, 2023** (PMID 36199157) — both confirmed
+      directly as independent corroboration of Fontugne's interfocal
+      discordance finding, not one citation doing double duty.
+    - **Chen et al., *Nature Cancer*, 2025** (PMID 40360905). Confirmed
+      directly: "Concurrent genetic alterations in SPOP and CHD1 define a
+      unique subtype of PCa" — independent corroboration of TCGA 2015's
+      SPOP/CHD1 association, used in the CHD1 private-pool note.
+    - **Siech et al., *Annals of Surgical Oncology*, 2026** (PMID 41718902,
+      PMCID PMC13179204). Confirmed directly from the full text: of 427,055
+      SEER patients, 425,692 (99.68%) harbored acinar, 855 (0.20%) ductal,
+      324 (0.08%) mucinous, 54 (0.01%) signet ring cell, and 130 (0.03%)
+      neuroendocrine carcinoma — the source for this organ's cancer-list
+      subtype breakdown, deliberately stated as the lopsided real split it
+      is rather than forced into false symmetry with every other organ's
+      more balanced multi-way splits (HGSOC/LUAD/HCC/GBM).
+    - **Bubendorf et al., *Human Pathology*, 2000** (PMID 10836297,
+      1,589-patient autopsy study). Confirmed directly: "hematogeneous
+      metastases were present in 35% of 1,589 patients with prostate cancer,
+      with most frequent involvement being bone (90%), lung (46%), liver
+      (25%), pleura (21%), and adrenals (13%)" — the real, verified source
+      behind the commonly-repeated bone-dominance figure, deliberately NOT
+      built into a fourth drill-down level (this organ's site map already
+      represents something else — independent multifocal origins, not
+      distant spread — and forcing a real, well-sourced fact in anyway would
+      have diluted that departure rather than supporting it) but
+      acknowledged in a line of prose in the trunk note instead, so the real
+      fact isn't simply unused.
+    - **Standard prostate zonal anatomy** (peripheral zone ~70% of gland
+      volume/~75% of cancer origin, central zone surrounding the ejaculatory
+      ducts, transition zone surrounding the urethra and the site of BPH) —
+      StatPearls, "Anatomy, Abdomen and Pelvis, Prostate" (NCBI Bookshelf
+      NBK540987, PMID 31082031), confirmed directly, same no-individual-
+      citation-fetch treatment as every other organ's basic anatomy facts
+      except where a figure was specifically flagged for verification.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -1140,30 +1316,33 @@ screen pair per organ:
    layout, whether to keep the no-build-step constraint or introduce one).
 2. Extract the reusable pieces (`makeViewer`, `organicDisplace`, mutation
    panel component, breadcrumb component) into shared modules.
-3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, Kidneys/ccRCC, Liver/HCC, and
-   Brain/GBM are all done. Pick organ/cancer pair #7 and repeat the
-   real-data-sourcing process documented above — **verify every citation
-   directly at the source before writing it into the app, not after**, the
-   standard ccRCC, HCC, and GBM all held themselves to from the start rather
-   than fixing in a follow-up correction pass the way LUAD needed to. The
-   screens themselves are ready (see the `ORGAN_DETAILS`/`CANCER_DETAILS`
-   note in Architecture notes); it should mean a data entry and a
-   `buildMesh()`, not new markup. Remember to check which mutation-framing
-   model actually applies — competing/mutually-exclusive drivers like Lung's
-   KRAS/EGFR/ALK/ROS1, cooperating/co-occurring drivers like Kidney's
-   VHL/PBRM1/SETD2/BAP1, or a "general rule with a documented exception"
-   like Liver's TP53/CTNNB1 (data rules 3/4/6) — not every cancer will fit
-   any of these three patterns cleanly, but check before assuming the most
-   recently added organ's pattern carries over. Also check whether the new
-   organ's trunk mutation is truncal for the usual spatial reason or a
-   temporal one like Liver's TERT (data rule 5) — don't reuse "present in
-   every region" language by default. **Most importantly, check whether the
-   new cancer actually has real distant-metastasis sites at all before
-   building four of them** (data rule 7) — GBM didn't, and defaulting to
-   the "four distant organs" pattern without checking would have
-   misrepresented its most basic behavior. Most cancers will have real
-   sites the way five of six organs so far do; don't assume GBM's
-   intratumor-region departure is now the default either.
+3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, Kidneys/ccRCC, Liver/HCC,
+   Brain/GBM, and Prostate/acinar adenocarcinoma are all done. Pick organ/
+   cancer pair #8 and repeat the real-data-sourcing process documented
+   above — **verify every citation directly at the source before writing it
+   into the app, not after**, the standard ccRCC, HCC, GBM, and Prostate all
+   held themselves to from the start rather than fixing in a follow-up
+   correction pass the way LUAD needed to. The screens themselves are ready
+   (see the `ORGAN_DETAILS`/`CANCER_DETAILS` note in Architecture notes); it
+   should mean a data entry and a `buildMesh()`, not new markup. Remember to
+   check which mutation-framing model actually applies — competing/mutually-
+   exclusive drivers like Lung's KRAS/EGFR/ALK/ROS1, cooperating/co-occurring
+   drivers like Kidney's VHL/PBRM1/SETD2/BAP1, a "general rule with a
+   documented exception" like Liver's TP53/CTNNB1, or a *soft*, one-sided
+   cooperating relationship safe for a shared private pool like Prostate's
+   PTEN/CHD1 (data rules 3/4/6/16) — not every cancer will fit any of these
+   patterns cleanly, but check before assuming the most recently added
+   organ's pattern carries over. Also check whether the new organ's trunk
+   mutation is truncal for the usual spatial reason, a temporal one like
+   Liver's TERT, or a "no shared founder" fact-statement like Prostate's
+   (data rule 5) — don't reuse "present in every region" language by
+   default. **Most importantly, check whether the new cancer's "sites"
+   should be real distant-metastasis organs, intratumor regions of one
+   mass, or independently-arising multifocal foci** (data rules 7/15) — GBM
+   and Prostate are each a departure for a *different* reason (too rare to
+   model vs. genuinely multifocal with real metastasis besides), so don't
+   assume either exception is now the default. Most cancers will have real
+   distant-metastasis sites the way five of seven organs so far do.
 4. Done: the body screen now loads real static meshes (Blender's "Human Base
    Meshes" bundle, `assets/*.glb`) instead of procedural primitives — the
    third asset source tried, after MakeHuman (abandoned, source-topology
