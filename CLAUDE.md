@@ -12,9 +12,13 @@ drill all the way down to individual sampled cells and their mutation profiles.
 tool that implies it's showing one real patient's data.
 
 ## Current state (as of this handoff)
-A single-file HTML prototype (`cancer-atlas.html`) built in Claude.ai using vanilla
-JS + three.js (0.185.1, loaded as an ES module via an import map — see Architecture
-notes; there is no global-script build anymore), no build step, no backend. It
+A static, no-build-step prototype: `cancer-atlas.html` is a thin shell (markup + CSS +
+the three.js import map) that loads `js/main.js` as a real ES module, which in turn
+imports the rest of the app from `js/` — vanilla JS + three.js (0.185.1, via an import
+map — see Architecture notes), still no build step, no backend, no bundler. **Refactored
+from one 2,816-line file into ES modules in this pass** (the "needs modularizing" item
+this file's own Known Limitations had flagged since the three.js migration) — see
+Architecture notes' "File layout / module map" for exactly what moved where and why. It
 proves out the full navigation pattern end-to-end for **seven** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
@@ -1085,6 +1089,96 @@ screen pair per organ:
   clickable back up the chain.
 
 ## Architecture notes
+- **File layout / module map (ES-modules refactor, this pass).** `cancer-atlas.html` is now
+  a shell: `<head>` (fonts, the three.js import map, all CSS — CSS stayed inline rather than
+  splitting out, since there's no build step to make a separate stylesheet request pay for
+  itself and it's tightly coupled to one page anyway) and the unchanged `<body>` markup, ending
+  in one line, `<script type="module" src="./js/main.js"></script>`, instead of the ~2,450-line
+  inline `<script type="module">` block this file used to carry. Every module is a real
+  `export`/`import`, no bundler, servable exactly as before (`python3 -m http.server` — verified
+  directly: `Content-type: text/javascript` on every `.js` response, zero console/network
+  errors loading the split app fresh). Module map, grouped by what each layer is for:
+  - **`js/rng.js`** — `makeSeededRandom`/`seedFromKey`/`shuffleWithRandom`. Pure PRNG, no
+    DOM/THREE dependency. Used by both `viewer.js` (spike placement) and `panel.js` (cell
+    layout/mutation draws) — pulled out on its own specifically to avoid either one importing
+    the other for three unrelated functions.
+  - **`js/viewer.js`** — `makeViewer`, `organicDisplace`, `organicSpiculate`,
+    `applyMottleVertexColors`, `makeMoveTracker`, `cssVar`, `LEGACY_LIGHT_SCALE`, and the
+    `THREE.ColorManagement.enabled = false` side effect. Everything here is pure/self-contained
+    (no reference to `screen`/`currentOrganKey`/any app-level state) — confirmed by inspection
+    before extracting, not assumed from "it's in the SHARED 3D HELPERS section" alone. This is
+    the one piece of the original file that already matched the user's proposed "shared
+    viewer.js" module with zero redesign needed.
+  - **`js/accessibility.js`** — `makeActivatable`, `landFocus`. Same reasoning: pure DOM
+    helpers, no state coupling, direct lift.
+  - **`js/organs/{ovary,breast,lungs,kidneys,liver,brain,prostate}.js`** — one module per
+    organ, each exporting `organEntry` (its `ORGANS` array entry), `markerSpec` (its
+    `ORGAN_MARKER_SPECS` entry), `cancerEntries` (its `CANCERS` array entries), `organDetail`
+    (its `ORGAN_DETAILS` entry, referencing its own `buildXMesh`), and `cancerDetails` (an
+    object of its `CANCER_DETAILS` entry/entries) — plus the `buildXMesh` function itself. This
+    is the module boundary that actually addresses the tech debt Known Limitations flagged
+    ("the file itself keeps growing linearly with content"): adding organ #8 now means adding
+    one new file and one line in `js/organs/index.js`, not touching any of the other six
+    organs' files or `main.js` at all.
+  - **`js/organs/index.js`** — the registry. Imports all seven organ modules and assembles the
+    flat `ORGANS`/`CANCERS` arrays and the `ORGAN_DETAILS`/`CANCER_DETAILS`/`ORGAN_MARKER_SPECS`
+    lookup objects every other module actually consumes — nothing outside `js/organs/` imports
+    an individual organ file directly.
+  - **`js/state.js`** — every piece of shared mutable state the original single closure held
+    in bare `let`s (`screen`, `currentOrganKey`, `currentCancerId`, `txLevel`,
+    `txCurrentRegion`, `txCurrentCell`, `txPanelOpener`, the three viewer instances, the body
+    sex/group/hover/ready flags), collected into one exported `state` object so every module
+    that used to read/write a bare variable now reads/writes `state.xxx` instead — same
+    shared-mutable-reference semantics, just addressed through an object because ES module
+    bindings for a `let` are read-only outside the module that declares it (you can read
+    `import {x} from './m.js'` live, but you cannot reassign it from outside). `regionCellCache`,
+    `bodyMarkerRecords`, and `organMarkers` are exported as plain `const` arrays/objects instead,
+    since they're only ever mutated in place (`.push`, `.length = 0`) rather than reassigned, so
+    they don't need the same treatment. `siteBlobs`/`siteLabelEls` ARE reassigned wholesale on
+    dispose, so they get `export let` plus a `setSiteBlobs`/`setSiteLabelEls` pair rather than a
+    `state.` property — a live `let` binding can be read directly by any importer, just not
+    reassigned from outside its own module.
+  - **`js/breadcrumb.js`** (`renderCrumbs`) and **`js/panel.js`** (`buildRegionCells`,
+    `txRenderCellLayer`, `txOpenCell`, `txMutGroup`, `txClosePanel`, `dismissMutationPanel`,
+    `PRIVATE_RING_SHADOW`) and **`js/search.js`** (`organMatchesQuery`, `findOrganMatches`,
+    `organActionLabel`, the search input wiring) and **`js/body.js`** (the whole body viewer:
+    mesh loading, markers, sex toggle, `bodyTick`) — the four "shared UI module" splits the task
+    asked for. `panel.js` and `search.js` and `body.js` turned out to be one-directional leaves
+    (they import `state.js`/`organs/index.js`/`accessibility.js`/`rng.js` and get called BY
+    `main.js`, but never need to call back into it) — except each needs exactly one callback
+    `main.js` owns (`selectOrgan` for body/search; nothing for panel). `breadcrumb.js` is the one
+    module that genuinely needs to call back into `main.js` (a crumb click can trigger
+    `setScreen` or `txGoLevel`, both defined there). Rather than a circular import (ESM allows
+    it as long as neither side calls the other at module-evaluation time, but it's easy to get
+    subtly wrong and hard to eyeball as correct), each of these three uses a **register-once**
+    pattern: `initBreadcrumb({setScreen, txGoLevel})` / `initSearch(selectOrgan)` /
+    `initBody(selectOrgan)`, called exactly once from `main.js`'s own bootstrap sequence, storing
+    the callback(s) in a closure the module's exported functions read from thereafter — the ESM
+    equivalent of what the original single closure gave every function for free, made explicit
+    at the one seam that needed it instead of applied everywhere by default.
+  - **`js/main.js`** — the entry point: the color-management setup import side effect (via
+    `viewer.js`), `setScreen`/`selectOrgan`/`renderOrganScreen`/`renderCancerList` (screen 1→2),
+    `initOrganViewer`/`disposeOrganViewer`/`showOrganInfo`/`organTick` (screen 2's 3D viewer),
+    `initSiteViewer`/`disposeSiteViewer`/`siteTick`/`txEnterRegion`/`txGoLevel`/
+    `enterCancerScreen` (screen 3's site map), and the bootstrap sequence at the bottom
+    (`initBreadcrumb`/`initSearch`/`initBody`/the three `requestAnimationFrame` kicks/the
+    initial `renderCrumbs()`). Everything left in `main.js` either owns a piece of `state` that
+    several other modules read, or is the one place a cross-module callback needed to land —
+    it is not a dumping ground for "things I didn't feel like splitting further," and the
+    Known Limitations note used to read "no per-organ/per-cancer file split, so the file itself
+    keeps growing linearly with content" — that's specifically fixed; `main.js` itself is a
+    fixed, bounded size that doesn't grow when organ #8 is added, only `js/organs/` does.
+  - **Verbatim-preservation method, since this refactor's only real risk was a silent
+    transcription error in a citation or figure while moving it:** every gene name, `ccf`
+    string, `note`, hotspot `text`, `pos3d`, `dir`, viewer config number, and hex color was
+    diffed programmatically (`sed`-extracted exact line ranges into the new files, then a
+    normalized-line diff of every `gene:`/`ccf:`/`note:`/`text:`/`share:`/`desc:` field and
+    every `id:`/`pos3d:`/`dir:`/`class:`/`heightFrac:`/`angle:`/`active:`/`organKey:` field
+    between the pre-refactor commit and the split files) rather than trusted from having typed
+    it once — this caught a real gap on the first pass (four per-organ alias-collision-check
+    comments dropped when splitting `ORGANS` into per-organ files: lungs/breast/liver/kidneys),
+    fixed by restoring them verbatim before considering the split done. 366 text fields and 97
+    numeric/geometry fields diffed at zero differences on the final pass.
 - **Screen state machine:** top-level `screen` = `body | organ | cancer`.
   Within `cancer`, `txLevel` = `1` (site map) `| 2` (cell scatter) `| 3` (panel
   open). `renderCrumbs()` derives the full breadcrumb from both.
@@ -1098,21 +1192,26 @@ screen pair per organ:
   (title/screenLabel/legendTitle/regions/trunk/privatePool, plus an optional
   `regionWord` — default `'site'`, GBM sets `'region'` since its four
   "sites" are zones of one tumor, not distant organs; see data rule 7)
-  drives `enterCancerScreen()`/`initSiteViewer()`. `currentOrganKey`/`currentCancerId`
-  track which one is loaded; `initOrganViewer`/`initSiteViewer` no-op if asked
+  drives `enterCancerScreen()`/`initSiteViewer()`. `state.currentOrganKey`/
+  `state.currentCancerId` (see the File layout note above for why these live on
+  a shared `state` object now, not bare `let`s) track which one is loaded;
+  `initOrganViewer`/`initSiteViewer` no-op if asked
   to rebuild the one already showing, and dispose-and-rebuild (canvas +
   renderer + DOM proxies) if asked for a different one — only one organ's and
   one cancer's WebGL viewer exist in the DOM at a time. **Adding organ #3
   should mean adding an `ORGAN_DETAILS`/`CANCER_DETAILS` entry and a
-  `buildMesh()`, not a new screen.** One real ordering bug surfaced while
+  `buildMesh()`, not a new screen** — now literally a new `js/organs/*.js`
+  module, per the File layout note. One real ordering bug surfaced while
   building this: `enterCancerScreen` must call `initSiteViewer(cancerId)` (which
-  sets `currentCancerId`) **before** `setScreen('cancer')` (which calls
-  `renderCrumbs()`, which reads `CANCER_DETAILS[currentCancerId]`) — the other
-  order throws on the very first visit to a given cancer, since
-  `currentCancerId` is still whatever it was before (`null`, or the previous
-  cancer). Region ids (`REGIONS_*[i].id`) must stay unique across every
-  cancer's regions, not just within one cancer's own list — `regionCellCache`
-  is keyed by region id and shared across all cancers.
+  sets `state.currentCancerId`) **before** `setScreen('cancer')` (which calls
+  `renderCrumbs()`, which reads `CANCER_DETAILS[state.currentCancerId]`) — the
+  other order throws on the very first visit to a given cancer, since
+  `state.currentCancerId` is still whatever it was before (`null`, or the
+  previous cancer). Region ids (`REGIONS_*[i].id`) must stay unique across
+  every cancer's regions, not just within one cancer's own list (and, now,
+  not just within one organ's own module) — `regionCellCache` is keyed by
+  region id and shared across all cancers regardless of which file each
+  cancer's regions are defined in.
 - **three.js loading (migrated 2026-08-23; r128 global script → 0.185.1 ESM):**
   three ships ESM-only now, loaded via an import map with two entries — `three`
   and `three/addons/`. **The addons entry is mandatory, not decorative:**
@@ -1351,20 +1450,25 @@ screen pair per organ:
   don't reliably reach a backgrounded tab either) were all reverified
   after the change — zero regressions, zero console errors across all
   seven organ/cancer pairs.
-- Single HTML file with vanilla JS closures — the organ/cancer *screens* are
-  now generalized (see Architecture notes), but there's still no build step
-  and no per-organ/per-cancer file split, so the file itself keeps growing
-  linearly with content. Needs modularizing (one data module per organ/cancer,
-  some kind of build step) before adding much more content.
+- **FIXED (ES-modules refactor, this pass).** Single HTML file with vanilla JS
+  closures — the organ/cancer *screens* were already generalized (see
+  Architecture notes), but there was no build step and no per-organ/per-cancer
+  file split, so the file itself kept growing linearly with content. Now a real
+  `js/organs/*.js` per organ plus a small set of shared modules — see
+  Architecture notes' "File layout / module map" for the full breakdown. Still
+  no build step and no bundler, by explicit constraint, not by not having
+  gotten to it — plain ES modules resolve fine over a static file server.
 - No backend/data layer yet — everything is a hardcoded JS object per organ.
   Worth deciding early whether additional organs stay static JSON/JS or move
   to something queryable, especially if this grows past ~5-6 organs.
 
 ## Suggested next steps (priority order)
-1. Decide on and set up real project structure (framework choice, file
-   layout, whether to keep the no-build-step constraint or introduce one).
-2. Extract the reusable pieces (`makeViewer`, `organicDisplace`, mutation
-   panel component, breadcrumb component) into shared modules.
+1. Done: real project structure decided and set up (ES modules, no build step,
+   no bundler — see Architecture notes' "File layout / module map"). The
+   no-build-step constraint was kept deliberately, not left undecided.
+2. Done: `makeViewer`, `organicDisplace`, `organicSpiculate`,
+   `applyMottleVertexColors`, `makeMoveTracker` live in `js/viewer.js`; the
+   mutation panel in `js/panel.js`; the breadcrumb in `js/breadcrumb.js`.
 3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, Kidneys/ccRCC, Liver/HCC,
    Brain/GBM, and Prostate/acinar adenocarcinoma are all done. Pick organ/
    cancer pair #8 and repeat the real-data-sourcing process documented
@@ -1401,6 +1505,13 @@ screen pair per organ:
    whether organ hotspots should eventually anchor to real anatomical
    landmarks on the mesh rather than height-fraction + angle.
 
-## Source file
-The current working prototype is `cancer-atlas.html` — read it in full before
-making changes; it's the single source of truth for what's built so far.
+## Source files
+`cancer-atlas.html` is now a thin shell (markup + CSS + the three.js import map,
+~365 lines) that loads `js/main.js` as an ES module — it is no longer the single
+source of truth for the app's logic or data on its own. See Architecture notes'
+"File layout / module map" for the full `js/` breakdown before making changes:
+read the shell plus whichever module(s) the change actually touches — for a
+new organ, that's `js/organs/index.js` plus the one new organ module; for
+anything touching shared state or cross-screen wiring, `js/state.js` and
+`js/main.js`; for a citation/data correction to an existing organ, just that
+organ's own `js/organs/*.js` file.
