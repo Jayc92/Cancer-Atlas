@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { cssVar, organicDisplace } from '../viewer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { cssVar } from '../viewer.js';
 
 // active:true, plus 'triple negative'/'tnbc' aliases — searching either finds Breast, since
 // search resolves to an organ (not a cancer directly); the cancer itself is one click further,
@@ -15,28 +16,30 @@ export const cancerEntries = [
   { id:'tnbc',  name:'Triple-negative (basal-like) carcinoma', share:'~10–20% of breast carcinomas', active:true, organKey:'breast' },
 ];
 
-// A dome (partial sphere, apex at +Y) capped flat at its open base — same capping trick the
-// body torso uses, since SphereGeometry, like LatheGeometry, has no cap of its own once you cut
-// it short of a full sphere. cap/nipple are children of the dome mesh so they inherit its
-// non-uniform scale for free instead of needing their own copy of it.
+// Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
+// (account "HRA"), entry 3DPX-020977 — CC BY 4.0. Unlike the other five real-mesh organs, this
+// one is NOT traced from the Visible Human Dataset — it's a custom hand-sculpted model, expert-
+// reviewed against two anatomy textbooks (Krstić, "Human Microscopic Anatomy," 1991; Gilroy,
+// MacPherson & Ross, "Atlas of Anatomy," 2008) rather than derived from cadaver scan data.
+// Attribution (quoted from the entry page, required under CC BY 4.0): "Heidi Schlehlein 2022.
+// 3D Reference Organ for Breast (mammary gland), Female left, v1.0,
+// https://doi.org/10.48539/HBM378.VWZG.633." Full sourcing/topology history in CLAUDE.md.
+// The source mesh is 52 separate connected components, not one surface — confirmed via the
+// atlas's own ontology tags (not guessed) to be genuine individually-sculpted sub-structures
+// (nipple, areola, areolar tubercles, multiple mammary lobes, lactiferous ducts/sinuses,
+// suspensory (Cooper's) ligaments, interlobar fat), all spatially contained within the main
+// gland's own bounding volume — the same class of check that isolated Prostate's real duct
+// appendages from its gland, here confirming the *opposite* conclusion: nothing to isolate out,
+// every component is real anatomy worth keeping.
 export function buildBreastMesh(){
-  const radius = 1.0, thetaLength = Math.PI*0.62;
-  const geo = new THREE.SphereGeometry(radius, 64, 44, 0, Math.PI*2, 0, thetaLength);
-  organicDisplace(geo, 0.045, 5.5, 2.3);
-  const mat = new THREE.MeshStandardMaterial({ color:0xe8bdae, roughness:0.58, metalness:0.03 });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.scale.set(1.05, 0.92, 0.85);
-
-  const rimY = radius*Math.cos(thetaLength), rimR = radius*Math.sin(thetaLength);
-  const cap = new THREE.Mesh(new THREE.CircleGeometry(rimR*1.03, 48), mat);
-  cap.position.y = rimY; cap.rotation.x = Math.PI/2;
-  mesh.add(cap);
-
-  const nipple = new THREE.Mesh(new THREE.SphereGeometry(radius*0.09, 22, 22), mat);
-  nipple.position.y = radius*1.02;
-  mesh.add(nipple);
-
-  return mesh;
+  const loader = new GLTFLoader();
+  return new Promise((resolve, reject)=>{
+    loader.load('assets/breast.glb', (gltf)=>{
+      const mat = new THREE.MeshStandardMaterial({ color:0xe8bdae, roughness:0.58, metalness:0.03 });
+      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      resolve(gltf.scene);
+    }, undefined, reject);
+  });
 }
 
 export const organDetail = {
@@ -49,21 +52,28 @@ export const organDetail = {
   ],
   desc:'The breast sits on the chest wall over pectoralis major, made up of milk-producing lobules connected by a branching network of ducts to the nipple, all embedded in stromal and fatty tissue that gives the organ most of its bulk and shape.',
   buildMesh: buildBreastMesh,
-  hotspotScale: new THREE.Vector3(1.05, 0.92, 0.85),
-  viewer:{ theta:0.4, phi:1.05, radius:3.2, minRadius:2.0, maxRadius:5, autoRotateRadPerFrame:0.0016 },
+  // Real-world-meter GLB (bbox ~12.8x11.2x18.2cm, including the real axillary tail — see
+  // lungs.js for why minRadius/maxRadius are rescaled here rather than left at the old ~1-unit
+  // procedural values.
+  viewer:{ theta:0.4, phi:1.05, radius:0.4, minRadius:0.1, maxRadius:0.8, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of a breast, a rounded dome with a raised nipple-areola '
     + 'complex at its center, with four glowing teal points marking the structures listed after '
     + 'it. Drag to rotate, scroll to zoom.',
+  // pos: literal anchor points (meters, local mesh space) raycast against the real
+  // assets/breast.glb surface — see lungs.js for the method. Stromal/fatty tissue is anchored on
+  // the real axillary tail (the tail is predominantly fat/stroma, not a random peripheral guess);
+  // Ducts sits on the body surface immediately adjacent to the nipple/areola, where the real
+  // lactiferous ducts actually converge, distinct from the Nipple-areola point itself.
   hotspots:[
     // Directly parallel to the ovary's surface-epithelium point: this is the "arises here"
     // structure for this organ, framed the same way for the same pedagogical reason.
-    { key:'ducts', label:'Ducts', dir:[0.25,0.75,0.55],
+    { key:'ducts', label:'Ducts', pos:[0.0219,0.0444,0.0631],
       text:'The branching channels that carry milk from the lobules toward the nipple. About 85% of invasive breast cancers arise from duct cells (hence "ductal carcinoma") — directly paralleling how most ovarian cancers begin in the ovary\'s own surface epithelium rather than deeper inside the organ.' },
-    { key:'lobules', label:'Lobules', dir:[0.55,0.55,0.6],
+    { key:'lobules', label:'Lobules', pos:[0.0216,0.0016,0.0891],
       text:'Clusters of small glands that produce milk during lactation, feeding into the duct network. A smaller share of invasive cancers ("lobular carcinoma") arise here instead of in the ducts.' },
-    { key:'stroma', label:'Stromal / fatty tissue', dir:[-0.65,0.3,0.55],
+    { key:'stroma', label:'Stromal / fatty tissue', pos:[0.0515,-0.0246,-0.0450],
       text:'The fatty and connective tissue that fills the spaces between lobules and ducts — most of what actually gives the breast its size and shape, and where a lump is often first felt even when the cancer itself originated in nearby glandular tissue.' },
-    { key:'nipple', label:'Nipple-areola complex', dir:[0,1,0],
+    { key:'nipple', label:'Nipple-areola complex', pos:[0.0289,0.0508,0.0513],
       text:'Where the duct network converges and opens to the surface. A rarer form, Paget disease of the breast, presents as a skin change here and is often associated with an underlying ductal carcinoma.' },
   ],
 };

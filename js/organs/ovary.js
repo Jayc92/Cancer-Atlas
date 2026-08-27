@@ -31,12 +31,24 @@ export const cancerEntries = [
 // requestAnimationFrame never fires between tool calls. The synthetic render()-timing benchmark
 // is the real, defensible substitute, not a guess.) computeVertexNormals() already runs after
 // every displacement call, so shading was never the problem — this was a pure vertex-density fix.
+// PROPORTION FIX (real-anatomy pass, after two research passes turned up no real, non-gated
+// ovary asset worth integrating — see CLAUDE.md's "Ovary real-asset research" entry for why):
+// the scale below used to be (0.9, 1.28, 0.98) — width and thickness nearly equal, i.e. a
+// barely-elongated blob — while this very file's own `facts` panel already stated a real
+// 3.5:2:1 length:width:thickness ratio (StatPearls, "Anatomy, Abdomen and Pelvis, Ovary,"
+// confirmed directly: 3.5cm length x 2.0cm width x 1.0cm thickness) that the mesh never
+// actually matched. Y is this mesh's length axis (same convention the Hilum hotspot's `dir`
+// already assumes, near the -Y pole), so Y's scale stays 1.28 and X/Z are re-derived from the
+// verified ratio (width = length x 2/3.5, thickness = length x 1/3.5) instead of the old,
+// unsourced numbers — a visibly flatter, more almond-like result than this used to render as.
+// `hotspotScale` below is updated to match, so the `dir` vectors keep landing on the real
+// surface rather than the old (now-wrong) one.
 export function buildOvaryMesh(){
   const geo = new THREE.SphereGeometry(1, 80, 80);
   organicDisplace(geo, 0.045, 6.5, 1.7);
   const mat = new THREE.MeshStandardMaterial({ color:0xe6b6a8, roughness:0.55, metalness:0.04 });
   const mesh = new THREE.Mesh(geo, mat);
-  mesh.scale.set(0.9, 1.28, 0.98);
+  mesh.scale.set(1.28 * (2.0/3.5), 1.28, 1.28 * (1.0/3.5));
   return mesh;
 }
 
@@ -44,14 +56,14 @@ export const organDetail = {
   eyebrow:'Female Reproductive System', title:'Ovary',
   sub:'Paired organ · almond-sized · produces eggs and sex hormones',
   facts:[
-    {label:'Size', val:'~3 × 1.5 × 1 cm'},
+    {label:'Size', val:'~3.5 × 2 × 1 cm (StatPearls)'},
     {label:'Location', val:'Pelvis, either side of uterus'},
     {label:'Function', val:'Releases eggs; makes estrogen &amp; progesterone'},
     {label:'Blood supply', val:'Ovarian arteries'},
   ],
   desc:'The ovaries sit in the pelvis on either side of the uterus, each connected to a fallopian tube. Their outer surface — the site where most ovarian cancers actually begin — is covered by a single layer of epithelial cells.',
   buildMesh: buildOvaryMesh,
-  hotspotScale: new THREE.Vector3(0.9, 1.28, 0.98),
+  hotspotScale: new THREE.Vector3(1.28 * (2.0/3.5), 1.28, 1.28 * (1.0/3.5)),
   viewer:{ theta:0.5, phi:1.2, radius:4, minRadius:2.6, maxRadius:6, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of an ovary, an off-white lumpy ellipsoid, with four glowing '
     + 'teal points marking the structures listed after it. Drag to rotate, scroll to zoom.',

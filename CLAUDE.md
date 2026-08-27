@@ -49,16 +49,26 @@ screen pair per organ:
   zeroed bounding rect while the Female body is active, the same pattern
   every sex-inapplicable organ marker already uses.
   Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, Lungs,
-  Kidneys, Liver, Brain, and Prostate are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
-  dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary,
-  still procedural). **Lungs, Kidneys, Liver, Brain, and Prostate route to real
-  anatomical scans now (`assets/lungs.glb`/`kidneys.glb`/`liver.glb`/`brain.glb`/
-  `prostate.glb`, NIH 3D's Human Reference Atlas, CC BY 4.0), not the procedural
-  meshes described in earlier revisions of this file — see the "Organ mesh
-  source" entry in Architecture notes for the full sourcing/topology/decimation
-  history.** Body-marker positions on the body screen itself needed no new work
-  for any of the five — `ORGAN_MARKER_SPECS` was already placed and
-  screen-space-verified during the body-mesh integration, well before this pass;
+  Kidneys, Liver, Brain, and Prostate are all active now** — **Lungs, Kidneys,
+  Liver, Brain, Prostate, and now Breast route to real anatomical scans
+  (`assets/lungs.glb`/`kidneys.glb`/`liver.glb`/`brain.glb`/`prostate.glb`/
+  `breast.glb`, all from NIH 3D's Human Reference Atlas, CC BY 4.0), not the
+  procedural meshes described in earlier revisions of this file — see the
+  "Organ mesh source" entry in Architecture notes for the full sourcing/
+  topology/decimation history. Breast's source differs from the other five in
+  one real way, not just a footnote: it's a custom hand-sculpted model
+  (expert-reviewed against two anatomy textbooks) rather than traced from the
+  Visible Human Dataset, and its real axillary tail — an actual anatomical
+  extension toward the armpit the old capped-dome procedural mesh had no way
+  to produce — is now visible and used as the Stromal/fatty tissue hotspot's
+  anchor.** **Ovary remains procedural** — two research passes plus a third,
+  final check (this pass) found no real, freely-downloadable ovary model
+  worth integrating (see "Ovary real-asset research" in Architecture notes)
+  — but its mesh proportions are now sized to a verified real measurement
+  instead of an arbitrary shape (see the same entry). Body-marker positions
+  on the body screen itself needed no new work for any of the newly-real
+  organs — `ORGAN_MARKER_SPECS` was already placed and screen-space-verified
+  during the body-mesh integration, well before any of these organ passes;
   only each organ's own `buildMesh`/hotspots changed.
 - **Organ screen** — one screen, shown for whichever organ is currently
   selected (`renderOrganScreen(organKey)` repaints eyebrow/h1/sub/facts/desc/
@@ -68,9 +78,14 @@ screen pair per organ:
   the shared `makeViewer` helper (see Architecture notes). Four clickable
   "investigate" points raycast on click and populate an info card below the
   model. Below that: real anatomical facts, then a list of that organ's real
-  cancer subtypes with real prevalence figures. **Ovary**: organic/lumpy
-  ellipsoid, points are Surface epithelium / Cortex / Medulla / Hilum, only
-  HGSOC wired. **Breast**: capped dome mesh, points are Ducts / Lobules /
+  cancer subtypes with real prevalence figures. **Ovary**: still a procedural
+  organic/lumpy ellipsoid, but now sized to a real 3.5:2:1 length:width:
+  thickness ratio (StatPearls — see "Ovary real-asset research" in
+  Architecture notes) rather than the old, unsourced near-1:1 proportions;
+  points are Surface epithelium / Cortex / Medulla / Hilum, only HGSOC wired.
+  **Breast**: real anatomical scan (`assets/breast.glb`, a custom hand-
+  sculpted model rather than a Visible Human Dataset trace — see "Organ mesh
+  source" in Architecture notes), points are Ducts / Lobules /
   Stromal-fatty tissue / Nipple-areola complex — Ducts is deliberately framed
   in direct parallel to the ovary's Surface epithelium point ("~85% of invasive
   cancers arise here", same pedagogical shape) — only Triple-Negative (basal-
@@ -1663,6 +1678,120 @@ screen pair per organ:
   introspection that the *real* mesh was loaded, not just a plausible-looking
   render) before any of it could be trusted. The Lungs default view turned
   out to need no change; Kidneys' did, for the reason described above.
+- **Organ mesh source — Breast, added in a later pass (2026-08-27), source
+  discipline different from the prior five in a real way, not a footnote:**
+  `assets/breast.glb` is NIH 3D's "Human Reference Atlas 3D Reference Object
+  Library" entry 3DPX-020977 — CC BY 4.0, confirmed directly on the entry
+  page (`creativecommons.org/licenses/by/4.0/` badge link, same pattern as
+  every prior organ). Unlike Lungs/Kidneys/Liver/Brain/Prostate, this is
+  **not** a Visible Human Dataset trace — it's a custom hand-sculpted model,
+  expert-reviewed against two anatomy textbooks (Krstić, *Human Microscopic
+  Anatomy*, 1991; Gilroy, MacPherson & Ross, *Atlas of Anatomy*, 2008),
+  confirmed directly from the entry page's own description, not assumed from
+  the collection level. Attribution (required, quoted verbatim from the
+  entry's own attribution-instructions field, not paraphrased): "Heidi
+  Schlehlein 2022. 3D Reference Organ for Breast (mammary gland), Female
+  left, v1.0, https://doi.org/10.48539/HBM378.VWZG.633. Accessed on December
+  15, 2022." Same STL→GLB pipeline as every prior organ: downloaded via the
+  same reverse-engineered `api/submissions/<id>/runs/<uuid>/output-files/
+  <fileId>` path, verified as a valid binary STL (270,799 triangles,
+  file size matching the STL header's own triangle count exactly).
+  - **Topology: 52 connected components — investigated before assuming
+    either "junk" or "fine," the same discipline Prostate's duct appendages
+    got, landing on the opposite conclusion this time.** A scale-relative
+    degenerate-face check (median-face-area-based, same corrected method as
+    every prior organ) found a negligible 0.063% degenerate rate — no
+    repeat of the Prostate false alarm. But 52 disconnected components (vs.
+    1 for every prior organ except Prostate's 54) needed a real answer, not
+    a guess, before deciding whether to isolate anything out. Component
+    bounding boxes showed one large body (128×182×106mm — real breast scale)
+    plus many smaller pieces (17-70mm range) all spatially contained within
+    that body's own bounding volume — consistent with internal
+    sub-structures, not external junk, but not proof on its own. **Confirmed
+    via the atlas's own ontology tags** (extracted directly from the entry
+    page's embedded metadata, not guessed): 9 distinct real, individually-
+    labeled anatomical structures — Areola, left nipple, areolar tubercle
+    (a Montgomery gland), mammary lobe, Main lactiferous duct, Lactiferous
+    sinus, Set of lactiferous glands, Interlobar adipose tissue, and
+    Suspensory (Cooper's) ligament. **Conclusion: nothing to isolate out —
+    every component is real, deliberately-modeled anatomy worth keeping**,
+    the opposite of Prostate's finding but reached by the same
+    investigate-first method, not assumed either way from the component
+    count alone.
+  - **Weld + smooth-shade (before any decimation) cut the file size the same
+    way it did for every prior organ:** welded/smoothed export landed at
+    153,585 exported vertices against 135,691 true welded-mesh vertices — a
+    1.13x ratio, even tighter than Lung's 1.3x, consistent with a mostly-
+    smooth organic surface needing few genuinely hard creases. Final GLB:
+    6.94MB, no Decimate modifier applied at all.
+  - **Decimation was checked via the real render-cost benchmark, not
+    skipped or assumed unnecessary:** a synthetic THREE.js benchmark (same
+    method as every prior organ — this app's own rAF loop is unmeasurable in
+    this headless preview environment) measured 0.038ms/frame at full
+    270,693-face resolution, an order of magnitude under the already-
+    negligible numbers every prior organ measured. Combined with a file size
+    (6.94MB) already comparable to Brain's post-decimation 7.19MB, the
+    benchmark result was the actual basis for not decimating — not an
+    assumption carried over from the other four un-decimated organs.
+  - **Hotspots re-anchored via the same literal-raycast picker method as
+    every prior organ**, landing Ducts/Lobules on the main body surface,
+    Nipple-areola complex on the real nipple tip, and Stromal/fatty tissue
+    on the real axillary tail specifically (a genuine anatomical landmark
+    the old procedural dome had no equivalent for, not just "some point on
+    the periphery"). Default camera angle (`theta:0.4, phi:1.05`, unchanged
+    from the procedural mesh's own values) was checked exactly like Lungs'
+    and Kidneys' were — confirmed by screenshot to already show all four
+    hotspots and the real axillary tail on first load, needing no fix this
+    time either.
+- **Ovary real-asset research (2026-08-27) — a third, final check, plainly
+  negative, not forced into an integration.** Two prior research passes had
+  already found nothing usable (NIH 3D's own low-poly placeholder; Sketchfab's
+  real pelvic-organ MRI sets blocked behind a mandatory account signup this
+  project does not create unprompted). This pass re-checked both directly
+  rather than trusting that prior "nothing found" still holds:
+  - **NIH 3D now has a dedicated, real-organ-titled entry** — "Ovary, Female,
+    Left" (3DPX-020979) and "Ovary, Female, Right" (3DPX-020980), both HRA,
+    both CC BY 4.0, both genuinely Visible Human Dataset-sourced (confirmed
+    directly on the entry page, same bibliographic citation as every other
+    real-scan organ). This sounded, at first, like exactly the missing
+    asset. **Downloaded and checked directly rather than assumed better
+    because the sourcing looked right:** the STL is 424 triangles — the same
+    low-poly-placeholder tier as what the prior two passes had already found
+    and rejected, just reachable under a clearer title this time. Rendered
+    (`ovary_left_preview.png`) to confirm visually, not just by triangle
+    count: a faceted, featureless almond/pebble shape with zero surface
+    detail — visibly *lower* quality than the current procedural mesh's own
+    `organicDisplace`-based surface variation, not an upgrade.
+  - **Sketchfab re-checked with the "Downloadable" + open-license filters
+    applied directly** (not a plain unfiltered search): the same two
+    MRI-derived pelvic-organ sets found in the prior two passes ("Bony Pelvis
+    and Pelvic Organs from MRI," "Pelvic Organs from MRI") are still the only
+    plausible real candidates, and downloading either still requires being
+    logged in — confirmed directly this time by opening a result's page
+    while logged out and finding no download control rendered at all (only
+    Add To/Embed/Share/Report), not inferred from remembering the prior
+    passes' conclusion.
+  - **Conclusion, stated plainly rather than settled for silently: nothing
+    better than the already-known placeholder exists and is downloadable
+    without creating an account.** Per the explicit instruction that
+    produced this research pass, the fallback taken instead: real anatomical
+    *proportions* on the existing procedural mesh, not a real mesh. The old
+    `mesh.scale.set(0.9, 1.28, 0.98)` was a near-1:1 width:thickness blob
+    despite this same file's own `facts` panel already stating a real
+    "~3 × 1.5 × 1cm" size that the geometry never actually matched — an
+    inconsistency worth fixing on its own even setting the research aside.
+    Re-derived from a source checked directly for this pass (StatPearls,
+    "Anatomy, Abdomen and Pelvis, Ovary": 3.5cm length × 2.0cm width × 1.0cm
+    thickness — a real, citable figure, superseding the app's own older,
+    unsourced "~3 × 1.5 × 1cm" text, which is updated to match). Y stays the
+    length axis (matching the existing Hilum hotspot's `dir`, already near
+    the -Y pole); X/Z are rescaled to the verified 2:1 width:thickness ratio
+    off that same length. `hotspotScale` updated identically so the
+    existing `dir` vectors keep landing on the real (now-corrected) surface
+    without their own values needing to change. Visually confirmed by
+    screenshot: a noticeably flatter, more almond-like shape than the old
+    near-spherical blob, closer to what "almond-sized" in this organ's own
+    `sub` line has always claimed.
 
 ## Known limitations / tech debt
 - The male/female bodies are real static meshes now (Blender's "Human Base
