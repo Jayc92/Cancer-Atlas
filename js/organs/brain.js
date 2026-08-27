@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { cssVar, organicDisplace } from '../viewer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { cssVar } from '../viewer.js';
 
 // active:true, plus 'glioblastoma'/'gbm' aliases — checked for collision first: neither
 // string appears anywhere else in this file.
@@ -25,18 +26,22 @@ export const cancerEntries = [
   { id:'menin', name:'Meningioma',                       share:'42.6% of all primary brain/CNS tumors — the single most common, though it arises from the meninges, not brain tissue itself', active:false, organKey:'brain' },
 ];
 
-// A rounded ovoid standing in for the brain's overall bulk — same non-literal simplification
-// every organ mesh in this atlas uses (no gyri/sulci folding geometry, the same way the kidney
-// has no literal concave notch and the liver has no literal four-lobe split). A higher
-// amplitude/frequency than the smoother organs gives the surface a loosely convoluted read
-// without modeling actual cortical folds.
+// Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
+// (account "HRA"), entry 3DPX-020959 — CC BY 4.0, sourced from the Visible Human Dataset base
+// body plus the Allen Human Brain Atlas (Ding et al., 2016, J Comp Neurol 524(16):3127-3481)
+// for the brain's own internal structure, mirrored/resized to fit. Full details in CLAUDE.md.
+// This replaces the old displaced-sphere approximation, which had no real gyral/sulcal folding
+// at all — that mesh's bumpy surface was a fake noise texture, not real anatomy. The Cerebral
+// cortex hotspot below is now anchored to an actual gyrus on the real GLB.
 export function buildBrainMesh(){
-  const geo = new THREE.SphereGeometry(1, 80, 80);
-  organicDisplace(geo, 0.07, 8, 3.4);
-  const mat = new THREE.MeshStandardMaterial({ color:0xd9b3ab, roughness:0.6, metalness:0.03 });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.scale.set(1.05, 0.85, 0.95);
-  return mesh;
+  const loader = new GLTFLoader();
+  return new Promise((resolve, reject)=>{
+    loader.load('assets/brain.glb', (gltf)=>{
+      const mat = new THREE.MeshStandardMaterial({ color:0xd9b3ab, roughness:0.6, metalness:0.03 });
+      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      resolve(gltf.scene);
+    }, undefined, reject);
+  });
 }
 
 export const organDetail = {
@@ -53,23 +58,31 @@ export const organDetail = {
   // consequence of any organ in this atlas, not just an anatomy trivia point.
   desc:'The brain is organized into four lobes per hemisphere — frontal, parietal, temporal, and occipital — surrounding a ventricular system of four connected, cerebrospinal-fluid-filled cavities. Unlike every other organ in this atlas, most of the brain\'s blood vessels are sealed by the blood-brain barrier, a layer of tightly-joined endothelial cells that blocks the great majority of drugs, including most chemotherapy, from ever reaching brain tissue at a useful concentration — a central reason glioblastoma remains so difficult to treat regardless of which mutations a given tumor carries.',
   buildMesh: buildBrainMesh,
-  hotspotScale: new THREE.Vector3(1.05, 0.85, 0.95),
-  viewer:{ theta:0.5, phi:1.15, radius:3.4, minRadius:2.1, maxRadius:6, autoRotateRadPerFrame:0.0016 },
+  // Real-world-meter GLB (bbox ~14x17x15cm) — see lungs.js for why minRadius/maxRadius are
+  // rescaled here rather than left at the old ~1-unit procedural values.
+  viewer:{ theta:0.5, phi:1.15, radius:0.35, minRadius:0.09, maxRadius:0.8, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of a brain, a rounded organic form with a loosely '
     + 'convoluted surface, with four glowing teal points marking the structures listed after '
     + 'it. Drag to rotate, scroll to zoom.',
+  // pos: literal anchor points (meters, local mesh space) raycast against the real
+  // assets/brain.glb surface — see lungs.js for the method. White matter/Ventricular
+  // system/Blood-brain barrier have no distinct surface landmark of their own (they're
+  // internal/diffuse structures), so their anchors sit on real cerebral-hemisphere surface
+  // near the medial region closest to where each is anatomically found, rather than on the
+  // separate cerebellum mass — confirmed distinct from a cerebellum-surface test point before
+  // finalizing, same "don't just take whatever the raycast hits" check applied to every organ.
   hotspots:[
     // Directly parallel to every prior organ's first point — but the structure itself is
     // white matter, not the cortex a layperson might guess: confirmed directly (StatPearls,
     // "Glioblastoma") that GBM is a subcortical white matter disease first, with the cortex
     // more often secondarily involved than primarily where it starts.
-    { key:'whitematter', label:'White matter', dir:[0.3,0.1,0.85],
+    { key:'whitematter', label:'White matter', pos:[0.0583,0.0195,-0.0194],
       text:'The brain\'s inner bulk, made of the long nerve-fiber bundles connecting different regions — not the thin gray outer layer most people picture first. Glioblastoma, the most common primary brain cancer, most commonly arises here, in the subcortical white matter — directly paralleling how every other organ in this atlas has its own "arises here" structure, just one layer deeper than intuition suggests.' },
-    { key:'ventricles', label:'Ventricular system', dir:[-0.15,0.5,-0.3],
+    { key:'ventricles', label:'Ventricular system', pos:[0.0062,0.0087,0.0449],
       text:'Four connected cavities deep in the brain that produce and circulate cerebrospinal fluid. The tissue immediately lining them, the subventricular zone, is a candidate source of the neural stem and progenitor cells some research points to as glioblastoma\'s cell of origin — genuine open debate, not a settled fact, in current neuro-oncology.' },
-    { key:'cortex', label:'Cerebral cortex', dir:[0.75,-0.4,0.4],
+    { key:'cortex', label:'Cerebral cortex', pos:[0.0533,0.0540,-0.0010],
       text:'The thin, deeply folded outer layer of gray matter responsible for higher cognitive function. Unlike this atlas\'s other organs, this is deliberately NOT glioblastoma\'s "arises here" point — the disease is more often a white-matter process that secondarily reaches the cortex, not a cortical one from the start.' },
-    { key:'bbb', label:'Blood-brain barrier', dir:[-0.7,-0.3,-0.35],
+    { key:'bbb', label:'Blood-brain barrier', pos:[0.0200,-0.0038,0.0394],
       text:'A selective filter formed by tightly-joined blood-vessel cells that keeps most of the bloodstream\'s contents — including most drugs — out of healthy brain tissue. Glioblastoma partially disrupts this barrier within the tumor itself (which is why the tumor core "enhances" on contrast MRI), but the barrier stays largely intact at the tumor\'s infiltrating edges, a major reason chemotherapy struggles to reach the disease\'s full extent.' },
   ],
 };

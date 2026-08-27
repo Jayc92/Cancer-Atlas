@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { cssVar, organicDisplace } from '../viewer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { cssVar } from '../viewer.js';
 
 // active:true, plus 'nsclc'/'adenocarcinoma'/'luad' aliases — searching any of those finds
 // Lungs, same pattern as Breast below. Checked for collision first: no other organ or cancer
@@ -20,25 +21,28 @@ export const cancerEntries = [
   { id:'sclc',  name:'Small Cell Lung Cancer',    share:'~15% of all lung cancers — a separate category from NSCLC entirely', active:false, organKey:'lungs' },
 ];
 
-// A lathe-revolved, elongated lung silhouette — rounded at the apex (top), fullest through the
-// upper-mid body, tapering toward the base (bottom, where a real lung meets the diaphragm).
-// Same construction technique the body torso uses for the same reason: LatheGeometry gives
-// real taper control organicDisplace alone can't, and a revolved profile is the same level of
-// simplification the ovary (scaled sphere) and breast (partial sphere) already use — a real
-// lung isn't rotationally symmetric either, but neither is this app pretending otherwise for
-// the other two organs.
+// Real anatomy, not procedural: NIH 3D Print Exchange, "Human Reference Atlas 3D Reference
+// Object Library" (account "HRA"), entry 3DPX-020974 — traced from the Visible Human Dataset
+// (Spitzer & Whitlock, 2002). CC BY 4.0, quoted and confirmed directly on the entry page, same
+// standard applied to the body meshes above. Full sourcing, license text, decimation reasoning,
+// and the Ovary/Breast-still-procedural note are recorded in CLAUDE.md rather than repeated in
+// every one of these five organ files.
+//
+// assets/lungs.glb: STL -> Blender headless (remove_doubles weld, shade_smooth_by_angle,
+// Decimate COLLAPSE 0.4, origin_set to bounds-center) -> GLB, real-world meters. Loaded async,
+// unlike every buildMesh above — GLTFLoader has no synchronous path — so this returns a
+// Promise<THREE.Object3D> instead of an Object3D directly. initOrganViewer() in main.js wraps
+// every organ's buildMesh() result in Promise.resolve() specifically so this and the procedural
+// organs above share one code path.
 export function buildLungsMesh(){
-  const profile = [
-    [0.0,-1.08],[0.42,-0.85],[0.72,-0.55],[0.92,-0.15],
-    [0.98,0.20],[0.88,0.55],[0.62,0.82],[0.30,0.98],[0.0,1.08],
-  ];
-  const pts = profile.map(([r,y])=>new THREE.Vector2(r,y));
-  const geo = new THREE.LatheGeometry(pts, 48);
-  organicDisplace(geo, 0.035, 5, 4.1);
-  const mat = new THREE.MeshStandardMaterial({ color:0xdba9a0, roughness:0.6, metalness:0.03 });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.scale.set(0.85, 1.0, 1.0);
-  return mesh;
+  const loader = new GLTFLoader();
+  return new Promise((resolve, reject)=>{
+    loader.load('assets/lungs.glb', (gltf)=>{
+      const mat = new THREE.MeshStandardMaterial({ color:0xdba9a0, roughness:0.6, metalness:0.03 });
+      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      resolve(gltf.scene);
+    }, undefined, reject);
+  });
 }
 
 export const organDetail = {
@@ -55,21 +59,31 @@ export const organDetail = {
   // separate bronchial arteries feed the lung tissue itself with already-oxygenated blood.
   desc:'The lungs fill most of the thoracic cavity, each connected to the airway via a bronchus entering at the hilum. Uniquely among organs, the lungs have two separate blood supplies: pulmonary arteries carrying deoxygenated blood to the ~300 million alveoli for gas exchange — the one place in the body where "artery" means deoxygenated, not oxygenated — plus separate bronchial arteries that feed the lung tissue itself with oxygenated blood.',
   buildMesh: buildLungsMesh,
-  hotspotScale: new THREE.Vector3(0.85, 1.0, 1.0),
-  viewer:{ theta:0.5, phi:1.15, radius:3.6, minRadius:2.2, maxRadius:6, autoRotateRadPerFrame:0.0016 },
+  // Real-world-meter GLB (bbox ~25x15x22cm) — theta/phi still set the initial viewing angle,
+  // but radius/minRadius/maxRadius (tuned for the old ~1-2 unit procedural mesh) are replaced
+  // by initOrganViewer's frameContents() call once the model loads. minRadius/maxRadius here
+  // still matter, though: they set OrbitControls' actual zoom floor/ceiling, which frameContents
+  // never widens except upward, so they're re-scaled to this mesh's real size rather than left
+  // at the old unit-scale numbers, which would have locked the camera out of ever zooming in.
+  viewer:{ theta:0.5, phi:1.15, radius:0.5, minRadius:0.15, maxRadius:1.2, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of a lung, an elongated organic form tapering at top and '
     + 'bottom, with four glowing teal points marking the structures listed after it. Drag to '
     + 'rotate, scroll to zoom.',
+  // pos: a literal anchor point (meters, local mesh space) found by raycasting against the real
+  // assets/lungs.glb surface in a one-off picker tool, then eyeballed against render_preview.py
+  // screenshots for anatomical sense — not the old dir-vector-times-ellipsoid-scale trick, which
+  // only ever worked because the procedural lung was itself a scaled ellipsoid. Labels/text are
+  // unchanged from the procedural version; only the anchor coordinates moved.
   hotspots:[
-    { key:'bronchi', label:'Bronchi', dir:[0.35,0.1,0.9],
+    { key:'bronchi', label:'Bronchi', pos:[-0.0436,-0.0124,-0.0201],
       text:'The airway branches that carry air from the trachea into each lung, then subdividing into progressively smaller passages. Squamous cell lung carcinoma tends to arise in the larger, more central airways here.' },
     // Directly parallel to the ovary's surface-epithelium point and breast's ducts: this is
     // the "arises here" structure for this organ, framed the same way for the same reason.
-    { key:'alveoli', label:'Alveoli', dir:[0.7,-0.3,0.55],
+    { key:'alveoli', label:'Alveoli', pos:[0.0819,-0.0603,0.0819],
       text:'The ~300 million tiny air sacs where gas exchange actually happens, out at the lung\'s periphery. Adenocarcinoma, the most common lung cancer subtype, most commonly arises here — directly paralleling how ovarian cancer begins in the ovary\'s surface epithelium and breast cancer in the breast\'s ducts.' },
-    { key:'pleura', label:'Pleura', dir:[-0.6,0.35,0.65],
+    { key:'pleura', label:'Pleura', pos:[-0.1059,0.0480,0.0824],
       text:'The thin double membrane covering the lung\'s outer surface and lining the chest cavity, letting the lung expand and contract smoothly against the chest wall with each breath.' },
-    { key:'hilum', label:'Hilum', dir:[-0.85,-0.05,0.1],
+    { key:'hilum', label:'Hilum', pos:[-0.0229,-0.0002,-0.0668],
       text:'The root of the lung, on its medial surface — where the bronchus, pulmonary vessels, bronchial vessels, and nerves all enter and exit.' },
   ],
 };

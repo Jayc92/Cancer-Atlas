@@ -141,6 +141,8 @@ function disposeOrganViewer(){
   organMarkers.forEach(m=>m.el.remove());
   state.organViewer = null;
   organMarkers.length = 0;
+  const loadingEl = document.getElementById('organLoading');
+  if(loadingEl){ loadingEl.hidden = false; loadingEl.textContent = 'Loading 3D model…'; }
 }
 
 function initOrganViewer(organKey){
@@ -165,53 +167,109 @@ function initOrganViewer(organKey){
       }
     }
   });
-  state.organViewer.organKey = organKey;
+  const thisViewer = state.organViewer;
+  thisViewer.organKey = organKey;
 
   // Describe the canvas rather than the container (see the markup comment on #organViewerWrap).
   // Structure names are deliberately left out of this label now that each one is a real button
   // in the same subtree — repeating them here would make a screen reader read the list twice,
   // once as prose and once as controls.
-  const canvas = state.organViewer.renderer.domElement;
+  const canvas = thisViewer.renderer.domElement;
   canvas.setAttribute('role', 'img');
   canvas.setAttribute('aria-label', detail.viewerAria);
 
-  state.organViewer.scene.add(detail.buildMesh());
+  // Two mesh sources coexist here: Ovary/Breast's buildMesh() is procedural and synchronous
+  // (returns a THREE.Object3D directly); the five real-scan organs (Lungs/Kidneys/Liver/Brain/
+  // Prostate) load a baked GLB via GLTFLoader and return a Promise instead — same duality as
+  // body.js's static GLBs vs nothing-to-compare-to-yet. Promise.resolve() wraps either case
+  // into one path so this function doesn't need two copies of the hotspot-building logic below.
+  // #organLoading only needs to appear for the real async case, but showing/hiding it around a
+  // Promise that resolves same-tick is harmless.
+  const loadingEl = document.getElementById('organLoading');
+  if(loadingEl) loadingEl.hidden = false;
 
-  detail.hotspots.forEach(h=>{
-    const d = new THREE.Vector3(h.dir[0], h.dir[1], h.dir[2]).normalize();
-    const mMesh = new THREE.Mesh(
-      new THREE.SphereGeometry(0.06, 16, 16),
-      new THREE.MeshBasicMaterial({ color:0x35c9c1 })
-    );
-    mMesh.position.set(d.x*detail.hotspotScale.x*1.04, d.y*detail.hotspotScale.y*1.04, d.z*detail.hotspotScale.z*1.04);
-    // decay explicitly 1 (r146 changed the default to 2). This is the light the change hit
-    // hardest: at distance 1.2, inverse-square falloff blows the near field out into a halo
-    // that swallows the marker instead of ringing it.
-    const glow = new THREE.PointLight(0x35c9c1, 0.5 * LEGACY_LIGHT_SCALE, 1.2, 1);
-    glow.position.copy(mMesh.position);
-    state.organViewer.scene.add(mMesh, glow);
+  Promise.resolve(detail.buildMesh())
+    .then(mesh=>{
+      // The user may have navigated to a different organ (or back to this one, creating a new
+      // viewer instance) while this GLB was still in flight. Comparing the captured viewer
+      // reference rather than organKey catches both cases — organKey alone would miss a
+      // stale load racing a fresh one for the same organ.
+      if(state.organViewer !== thisViewer) return;
+      if(loadingEl) loadingEl.hidden = true;
+      thisViewer.scene.add(mesh);
 
-    // The DOM half of the marker. Same arrangement as the tumor-site labels: a real element per
-    // 3D point, repositioned each frame from the camera projection, carrying the button semantics
-    // the mesh cannot. Activation goes through makeActivatable to showOrganInfo — the identical
-    // function the raycast click path calls — so there is one code path and no risk of the two
-    // drifting apart.
-    const point = document.createElement('div');
-    point.className = 'organ-point';
-    const name = document.createElement('span');
-    name.className = 'opt-name';
-    name.textContent = h.label;
-    // aria-hidden: the accessible name below already says this word, and without it a screen
-    // reader announces the structure twice ("Cortex, Cortex — investigate…").
-    name.setAttribute('aria-hidden', 'true');
-    point.appendChild(name);
-    makeActivatable(point, ()=>showOrganInfo(h), {
-      label: h.label + ' — investigate this structure'
+      // Real-world-meter GLBs (tenths of a meter) sit at a wildly different scale than the
+      // procedural organs' arbitrary ~1-2 unit geometry, so detail.viewer's radius/minRadius/
+      // maxRadius (tuned for the latter) can't be reused as-is. Rather than hand-picking a new
+      // radius per organ, frame the camera to whatever the loaded mesh's own bounding sphere
+      // turns out to be — same call body.js makes against the two body GLBs, for the same
+      // reason. Hotspot markers are positioned below, after framing, so their on-screen size
+      // relative to the model is set by the same call that sized the model itself.
+      const isRealMesh = detail.hotspots.some(h=>h.pos);
+      if(isRealMesh) thisViewer.frameContents([mesh], 1.3);
+      // Marker sphere size and glow-light reach are tuned below (0.06 unit radius, 1.2 unit
+      // falloff distance) for the procedural organs' arbitrary ~1-2 unit geometry. Real-mesh
+      // organs are real-world meters (a prostate model is ~0.05m across in total), so those
+      // fixed numbers would either swallow the whole model or barely register. Scale both to
+      // the loaded mesh's own bounding-sphere radius instead — same fix frameContents() above
+      // applies to the camera, applied here to the markers.
+      const meshBoundingRadius = isRealMesh
+        ? new THREE.Box3().setFromObject(mesh).getBoundingSphere(new THREE.Sphere()).radius
+        : 1;
+      const markerRadius = isRealMesh ? meshBoundingRadius * 0.045 : 0.06;
+      const glowDistance = isRealMesh ? meshBoundingRadius * 2.4 : 1.2;
+
+      detail.hotspots.forEach(h=>{
+        let pos;
+        if(h.pos){
+          // Real-mesh organs: a literal anchor point (meters, local mesh space) found by
+          // raycasting against the actual imported GLB surface — not the ellipsoid-shaped
+          // dir*hotspotScale approximation the procedural organs below still use, which only
+          // ever worked because those organs' own geometry is a scaled ellipsoid to begin with.
+          pos = new THREE.Vector3(h.pos[0], h.pos[1], h.pos[2]);
+        } else {
+          const d = new THREE.Vector3(h.dir[0], h.dir[1], h.dir[2]).normalize();
+          pos = new THREE.Vector3(d.x*detail.hotspotScale.x*1.04, d.y*detail.hotspotScale.y*1.04, d.z*detail.hotspotScale.z*1.04);
+        }
+        const mMesh = new THREE.Mesh(
+          new THREE.SphereGeometry(markerRadius, 16, 16),
+          new THREE.MeshBasicMaterial({ color:0x35c9c1 })
+        );
+        mMesh.position.copy(pos);
+        // decay explicitly 1 (r146 changed the default to 2). This is the light the change hit
+        // hardest: at distance 1.2, inverse-square falloff blows the near field out into a halo
+        // that swallows the marker instead of ringing it.
+        const glow = new THREE.PointLight(0x35c9c1, 0.5 * LEGACY_LIGHT_SCALE, glowDistance, 1);
+        glow.position.copy(mMesh.position);
+        thisViewer.scene.add(mMesh, glow);
+
+        // The DOM half of the marker. Same arrangement as the tumor-site labels: a real element per
+        // 3D point, repositioned each frame from the camera projection, carrying the button semantics
+        // the mesh cannot. Activation goes through makeActivatable to showOrganInfo — the identical
+        // function the raycast click path calls — so there is one code path and no risk of the two
+        // drifting apart.
+        const point = document.createElement('div');
+        point.className = 'organ-point';
+        const name = document.createElement('span');
+        name.className = 'opt-name';
+        name.textContent = h.label;
+        // aria-hidden: the accessible name below already says this word, and without it a screen
+        // reader announces the structure twice ("Cortex, Cortex — investigate…").
+        name.setAttribute('aria-hidden', 'true');
+        point.appendChild(name);
+        makeActivatable(point, ()=>showOrganInfo(h), {
+          label: h.label + ' — investigate this structure'
+        });
+        container.appendChild(point);
+
+        organMarkers.push({ mesh:mMesh, data:h, el:point });
+      });
+    })
+    .catch(err=>{
+      if(state.organViewer !== thisViewer) return;
+      console.error('Failed to load organ model', organKey, err);
+      if(loadingEl) loadingEl.textContent = 'Could not load the 3D model. Check your connection and reload.';
     });
-    container.appendChild(point);
-
-    organMarkers.push({ mesh:mMesh, data:h, el:point });
-  });
 }
 
 function showOrganInfo(h){

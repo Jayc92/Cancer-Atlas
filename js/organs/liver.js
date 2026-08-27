@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { cssVar, organicDisplace } from '../viewer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { cssVar } from '../viewer.js';
 
 // active:true, plus 'hcc' alias — checked for collision first: no other organ's aliases or
 // cancer share text uses "hcc" or "hepatocellular" anywhere else in this file.
@@ -12,18 +13,21 @@ export const cancerEntries = [
   { id:'ichol', name:'Intrahepatic cholangiocarcinoma',  share:'~10–15% of primary liver cancers', active:false, organKey:'liver' },
 ];
 
-// A wide, wedge-like organic blob standing in for the liver's large, irregular bulk — same
-// level of simplification as the kidney's non-lobed sphere. No literal four-lobe geometry: the
-// "four lobes" fact is stated in text, not modeled as four separate mesh pieces, the same
-// trade-off the kidney's missing concave notch already makes for this atlas's mesh-construction
-// scope.
+// Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
+// (account "HRA"), entry 3DPX-020973 — CC BY 4.0, same sourcing/decimation discipline as Lungs
+// above. Full details in CLAUDE.md. This replaces the old unlobed sphere-blob approximation —
+// the real GLB's right/left lobe division and the fissure between them (the porta hepatis
+// region the Portal vein/Bile ducts points below are anchored near) are now real geometry, not
+// just a stated fact in the text below.
 export function buildLiverMesh(){
-  const geo = new THREE.SphereGeometry(1, 80, 80);
-  organicDisplace(geo, 0.06, 4, 7.1);
-  const mat = new THREE.MeshStandardMaterial({ color:0x7c3f30, roughness:0.55, metalness:0.04 });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.scale.set(1.2, 0.75, 0.55);
-  return mesh;
+  const loader = new GLTFLoader();
+  return new Promise((resolve, reject)=>{
+    loader.load('assets/liver.glb', (gltf)=>{
+      const mat = new THREE.MeshStandardMaterial({ color:0x7c3f30, roughness:0.55, metalness:0.04 });
+      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      resolve(gltf.scene);
+    }, undefined, reject);
+  });
 }
 
 export const organDetail = {
@@ -42,25 +46,31 @@ export const organDetail = {
   // rather than the lungs' oxygenated/deoxygenated split by direction of flow.
   desc:'The liver is the body\'s largest internal organ, divided into four lobes in the upper right abdomen. Unlike every other organ in this atlas, it receives blood from two entirely different sources at once: the portal vein, carrying nutrient-rich but oxygen-poor blood straight from the intestines (~75% of total liver blood flow), and the hepatic artery, supplying oxygen-rich blood (~25%) the way arteries do everywhere else in the body. Hepatocytes, the liver\'s main working cell type, make up roughly 80% of its total mass.',
   buildMesh: buildLiverMesh,
-  hotspotScale: new THREE.Vector3(1.2, 0.75, 0.55),
-  viewer:{ theta:0.5, phi:1.15, radius:3.6, minRadius:2.2, maxRadius:6, autoRotateRadPerFrame:0.0016 },
+  // Real-world-meter GLB (bbox ~25x17x17cm) — see lungs.js for why minRadius/maxRadius are
+  // rescaled here rather than left at the old ~1-unit procedural values.
+  viewer:{ theta:0.5, phi:1.15, radius:0.5, minRadius:0.14, maxRadius:1.2, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of a liver, a large wedge-shaped organic form, with four '
     + 'glowing teal points marking the structures listed after it. Drag to rotate, scroll to '
     + 'zoom.',
+  // pos: literal anchor points (meters, local mesh space) raycast against the real
+  // assets/liver.glb surface — see lungs.js for the method. Portal vein and Bile ducts are
+  // anchored on opposite sides of the same real fissure (the porta hepatis, where both
+  // structures genuinely enter/exit together) rather than sharing one point, so they read as
+  // two distinct investigate targets.
   hotspots:[
     // Directly parallel to the ovary's surface-epithelium point, breast's ducts, lungs'
     // alveoli, and kidney's cortex: this is the "arises here" structure for this organ.
-    { key:'hepatocytes', label:'Hepatocytes', dir:[0.85,0.2,0.4],
+    { key:'hepatocytes', label:'Hepatocytes', pos:[-0.0628,0.0181,0.0610],
       text:'The liver\'s main working cell, making up roughly 80% of its mass and carrying out most of its metabolic, synthetic, and detoxifying functions. Hepatocellular carcinoma, the most common primary liver cancer, arises directly from these cells — directly paralleling how ovarian cancer begins in the ovary\'s surface epithelium, breast cancer in the breast\'s ducts, lung adenocarcinoma in the lung\'s alveoli, and clear cell renal cell carcinoma in the kidney\'s cortex.' },
-    { key:'portal', label:'Portal vein', dir:[-0.6,-0.35,0.3],
+    { key:'portal', label:'Portal vein', pos:[-0.0228,-0.0386,-0.0061],
       text:'The large vessel carrying nutrient-rich blood from the intestines into the liver, supplying roughly three-quarters of its total blood flow. HCC has a well-documented tendency to invade directly into this vessel (portal vein tumor thrombosis) — a route of local spread distinct from the spiculated distant-metastasis sites modeled in the tumor explorer below.' },
     // Deliberate contrast point, not another "arises here" — the other primary liver cancer
     // modeled in this atlas (intrahepatic cholangiocarcinoma, currently "profile coming
     // soon") starts here instead of in hepatocytes, the same way this atlas already contrasts
     // ductal vs lobular breast cancer origin at the breast's own hotspots.
-    { key:'bileducts', label:'Bile ducts', dir:[-0.3,0.55,-0.6],
+    { key:'bileducts', label:'Bile ducts', pos:[0.0393,0.0144,0.0174],
       text:'The channels carrying bile, made by hepatocytes, out of the liver toward the gallbladder and intestine. Intrahepatic cholangiocarcinoma — the other real primary liver cancer this atlas lists, not yet wired up — arises from the cells lining these ducts instead of from hepatocytes.' },
-    { key:'capsule', label:'Hepatic capsule', dir:[0.15,-0.85,-0.35],
+    { key:'capsule', label:'Hepatic capsule', pos:[-0.0009,0.0768,0.0276],
       text:'Glisson\'s capsule — the thin fibrous membrane covering the liver\'s outer surface, richly supplied with pain-sensing nerves that a healthy liver\'s own tissue lacks, which is why liver disease is often painless until the capsule itself is stretched or irritated.' },
   ],
 };

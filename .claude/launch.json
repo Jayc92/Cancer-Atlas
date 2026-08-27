@@ -5,10 +5,8 @@
       "name": "cancer-atlas",
       "runtimeExecutable": "python3",
       "runtimeArgs": [
-        "-m",
-        "http.server",
+        "/Users/joseph.carfagno/Downloads/cancer-atlas/.claude/nocache_server.py",
         "3055",
-        "--directory",
         "/Users/joseph.carfagno/Downloads/cancer-atlas"
       ],
       "port": 3055,

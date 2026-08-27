@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { cssVar, organicDisplace } from '../viewer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { cssVar } from '../viewer.js';
 
 // active:true, aliases deliberately do NOT include "adenocarcinoma" — that bare string is
 // already claimed by Lungs above (see that entry's comment). Adding it here would make
@@ -25,16 +26,25 @@ export const cancerEntries = [
   { id:'pneuro',   name:'Neuroendocrine carcinoma',       share:'0.03% of prostate cancers (130/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
 ];
 
-// A rounded, slightly-flattened ovoid standing in for the prostate's walnut-like shape — same
-// non-literal simplification every organ mesh in this atlas uses (no literal zonal boundaries,
-// the same way the liver has no literal four-lobe split and the brain has no literal gyri).
+// Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
+// (account "HRA"), entry 3DPX-021015 — CC BY 4.0, same sourcing/decimation discipline as Lungs
+// above. Full details, including the gland-isolation process, are in CLAUDE.md. The source
+// model's raw mesh included two ~2cm paired duct-like appendages beyond the gland body itself —
+// investigated (length, taper, cross-section) rather than assumed away, and more consistent
+// with genuine ejaculatory ducts than a vas-deferens segmentation artifact, though not
+// certain either way with no ground-truth labels available. Dropped from this mesh regardless,
+// for visual consistency with every other organ's single-silhouette presentation (CLAUDE.md
+// notes it as a possible future refinement, not built into this pass) — assets/prostate.glb is
+// the gland alone.
 export function buildProstateMesh(){
-  const geo = new THREE.SphereGeometry(1, 80, 80);
-  organicDisplace(geo, 0.045, 5, 4.5);
-  const mat = new THREE.MeshStandardMaterial({ color:0xc9998e, roughness:0.55, metalness:0.04 });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.scale.set(0.9, 0.82, 0.88);
-  return mesh;
+  const loader = new GLTFLoader();
+  return new Promise((resolve, reject)=>{
+    loader.load('assets/prostate.glb', (gltf)=>{
+      const mat = new THREE.MeshStandardMaterial({ color:0xc9998e, roughness:0.55, metalness:0.04 });
+      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      resolve(gltf.scene);
+    }, undefined, reject);
+  });
 }
 
 export const organDetail = {
@@ -51,22 +61,33 @@ export const organDetail = {
   // blood-brain-barrier fact set up why that organ's screen is built around intratumor regions.
   desc:'The prostate sits in the pelvis directly below the bladder, encircling the urethra as it exits. McNeal\'s zonal model divides the gland into three regions: the peripheral zone, the largest at roughly 70% of total volume and the site of origin for about 75% of prostate cancers; the central zone, surrounding the ejaculatory ducts; and the transition zone, a smaller region around the urethra itself where benign prostatic hyperplasia — not cancer — most commonly develops. The gland\'s secretions, an alkaline fluid that protects sperm from the acidic vaginal environment, contribute substantially to semen volume.',
   buildMesh: buildProstateMesh,
-  hotspotScale: new THREE.Vector3(0.9, 0.82, 0.88),
-  viewer:{ theta:0.5, phi:1.15, radius:3.0, minRadius:1.8, maxRadius:5, autoRotateRadPerFrame:0.0016 },
+  // Real-world-meter GLB (bbox ~5.2x2.7x2.3cm, the smallest of the five) — see lungs.js for
+  // why minRadius/maxRadius are rescaled here rather than left at the old ~1-unit procedural
+  // values.
+  viewer:{ theta:0.5, phi:1.15, radius:0.13, minRadius:0.03, maxRadius:0.3, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of a prostate, a rounded walnut-shaped organic form, with '
     + 'four glowing teal points marking the structures listed after it. Drag to rotate, scroll '
     + 'to zoom.',
+  // pos: literal anchor points (meters, local mesh space) raycast against the real
+  // assets/prostate.glb surface — see lungs.js for the method. Central zone is anchored toward
+  // the specific surface region where the (now-removed) ejaculatory-duct appendages attached to
+  // the gland body, found by locating that seam's own boundary-edge centroid directly in the
+  // source mesh — a real anatomical landmark, not a guess — since the central zone is literally
+  // defined as the tissue surrounding those ducts. Peripheral/Transition/Urethra are placed
+  // relative to that same found axis, following McNeal's zonal layout (peripheral zone
+  // posterior/lateral, transition zone anterior near the base, urethra through the center
+  // toward the apex).
   hotspots:[
     // Directly parallel to every prior organ's first point — the "arises here" structure.
-    { key:'peripheral', label:'Peripheral zone', dir:[-0.3,-0.1,-0.9],
+    { key:'peripheral', label:'Peripheral zone', pos:[0.00397,-0.00170,0.00397],
       text:'The largest zone, making up roughly 70% of the gland\'s volume and wrapping around the back and sides of the urethra. About 75% of prostate adenocarcinomas arise here — directly paralleling how ovarian cancer begins in the ovary\'s surface epithelium, breast cancer in the breast\'s ducts, lung adenocarcinoma in the lung\'s alveoli, clear cell renal cell carcinoma in the kidney\'s cortex, and hepatocellular carcinoma in the liver\'s hepatocytes.' },
     // Deliberate contrast point, not another "arises here" — same technique Liver's Bile
     // ducts point and Brain's Cerebral cortex point already use.
-    { key:'transition', label:'Transition zone', dir:[0.2,0.6,0.6],
+    { key:'transition', label:'Transition zone', pos:[-0.00310,0.00828,-0.00310],
       text:'A smaller zone surrounding the urethra between the bladder neck and the peripheral zone. This is where benign prostatic hyperplasia (BPH), a common non-cancerous enlargement, most often develops — not where most cancer arises.' },
-    { key:'central', label:'Central zone', dir:[0.1,-0.7,0.5],
+    { key:'central', label:'Central zone', pos:[0.00257,0.00385,0.01285],
       text:'A cone-shaped zone surrounding the ejaculatory ducts as they pass through the gland toward the urethra. Cancer arises here least often of the three zones.' },
-    { key:'urethra', label:'Prostatic urethra', dir:[0.75,0.35,0.15],
+    { key:'urethra', label:'Prostatic urethra', pos:[-0.00055,-0.00218,-0.00055],
       text:'The section of urethra that passes directly through the gland, surrounded by the transition zone. Enlargement or a tumor pressing on this segment can cause urinary symptoms — weak stream, frequency, difficulty starting — which are actually more typical of benign transition-zone enlargement than of peripheral-zone cancer, which often causes no urinary symptoms at all until advanced.' },
   ],
 };

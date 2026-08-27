@@ -50,21 +50,16 @@ screen pair per organ:
   every sex-inapplicable organ marker already uses.
   Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, Lungs,
   Kidneys, Liver, Brain, and Prostate are all active now** — Breast routes to a real breast mesh (a capped partial-sphere
-  dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary);
-  Lungs routes to a `LatheGeometry` profile that pinches to a radius of 0 at both
-  poles, so it closes into a solid tapered point at apex/base with no separate cap
-  mesh (unlike the body torso, which needs explicit `topCap`/`botCap` discs); Kidneys
-  routes to a flattened, elongated `SphereGeometry` ellipsoid (no literal concave
-  medial notch — see Architecture notes) — the kidney marker positions on the body
-  itself needed no new work, since `ORGAN_MARKER_SPECS.kidneys` was already placed
-  and screen-space-verified during the body-mesh integration, well before this organ
-  was wired up; activating it was only the `ORGANS`/`ORGAN_DETAILS` flip. Liver
-  routes to a wide, wedge-like `SphereGeometry` ellipsoid (same non-lobed
-  simplification as the kidney's missing concave notch — the "four lobes" fact is
-  stated in text, not modeled as four mesh pieces) — its body-marker position also
-  needed no new work, same reason as Kidneys. Brain routes to a rounded, loosely
-  convoluted `SphereGeometry` ellipsoid — body-marker position, again, needed no
-  new work.
+  dome with a small nipple-apex bump, not a stretched ellipsoid like the ovary,
+  still procedural). **Lungs, Kidneys, Liver, Brain, and Prostate route to real
+  anatomical scans now (`assets/lungs.glb`/`kidneys.glb`/`liver.glb`/`brain.glb`/
+  `prostate.glb`, NIH 3D's Human Reference Atlas, CC BY 4.0), not the procedural
+  meshes described in earlier revisions of this file — see the "Organ mesh
+  source" entry in Architecture notes for the full sourcing/topology/decimation
+  history.** Body-marker positions on the body screen itself needed no new work
+  for any of the five — `ORGAN_MARKER_SPECS` was already placed and
+  screen-space-verified during the body-mesh integration, well before this pass;
+  only each organ's own `buildMesh`/hotspots changed.
 - **Organ screen** — one screen, shown for whichever organ is currently
   selected (`renderOrganScreen(organKey)` repaints eyebrow/h1/sub/facts/desc/
   cancer-list from `ORGAN_DETAILS[organKey]` before the screen becomes visible).
@@ -79,22 +74,25 @@ screen pair per organ:
   Stromal-fatty tissue / Nipple-areola complex — Ducts is deliberately framed
   in direct parallel to the ovary's Surface epithelium point ("~85% of invasive
   cancers arise here", same pedagogical shape) — only Triple-Negative (basal-
-  like) is wired, others show "profile coming soon." **Lungs**: `LatheGeometry`
-  profile (see above), points are Bronchi / Alveoli / Pleura / Hilum — Alveoli
+  like) is wired, others show "profile coming soon." **Lungs**: real anatomical
+  scan (`assets/lungs.glb` — see "Organ mesh source" in Architecture notes),
+  points are Bronchi / Alveoli / Pleura / Hilum — Alveoli
   is framed the same way as Ovary's Surface epithelium and Breast's Ducts
   ("adenocarcinoma... most commonly arises here — directly paralleling..."),
   only Adenocarcinoma is wired, the other three (Squamous cell carcinoma,
   Large cell carcinoma, Small Cell Lung Cancer — explicitly noted in its own
   `share` text as a separate category from NSCLC entirely) show "profile
-  coming soon." **Kidneys**: flattened ellipsoid, points are Cortex / Medulla /
-  Renal pelvis / Hilum — Cortex is framed the same "arises here" way as the
+  coming soon." **Kidneys**: real anatomical scan (`assets/kidneys.glb`, left
+  kidney only — see "Organ mesh source" in Architecture notes), points are
+  Cortex / Medulla / Renal pelvis / Hilum — Cortex is framed the same "arises here" way as the
   three prior organs' points — only Clear cell renal cell carcinoma is wired,
   Papillary and Chromophobe show "profile coming soon." Its retroperitoneal
   location fact gets the same second-sentence treatment Lungs' dual blood
   supply got: it's the one anatomically distinct thing about this organ
   relative to every prior one (ovary/breast are intraperitoneal-or-overlying,
-  lungs thoracic; kidneys sit behind the peritoneum entirely). **Liver**: wide
-  wedge-like ellipsoid, points are Hepatocytes / Portal vein / Bile ducts /
+  lungs thoracic; kidneys sit behind the peritoneum entirely). **Liver**: real
+  anatomical scan (`assets/liver.glb` — see "Organ mesh source" in Architecture
+  notes), points are Hepatocytes / Portal vein / Bile ducts /
   Hepatic capsule — Hepatocytes gets the "arises here" framing every prior
   organ's first point uses, Bile ducts is deliberately the opposite: a
   contrast point stating that intrahepatic cholangiocarcinoma (the organ's
@@ -105,15 +103,19 @@ screen pair per organ:
   supply than Lungs' (nutrient-rich/oxygen-poor vs. oxygen-rich, not
   oxygenated/deoxygenated by flow direction) — only Hepatocellular carcinoma
   is wired, Intrahepatic cholangiocarcinoma shows "profile coming soon."
-  **Brain**: rounded convoluted ellipsoid, points are White matter / Ventricular
-  system / Cerebral cortex / Blood-brain barrier — White matter, not Cerebral
+  **Brain**: real anatomical scan (`assets/brain.glb`, base body from the
+  Visible Human Dataset plus internal structure from the Allen Human Brain
+  Atlas — see "Organ mesh source" in Architecture notes), points are White
+  matter / Ventricular system / Cerebral cortex / Blood-brain barrier — White matter, not Cerebral
   cortex, gets the "arises here" framing (confirmed directly: StatPearls,
   "Glioblastoma," describes GBM as a subcortical white-matter disease first;
   the Cerebral cortex point is deliberately the opposite of every prior
   organ's first point — an explicit non-arises-here contrast, stated as such)
   — only Glioblastoma is wired, Lower-grade astrocytoma, Oligodendroglioma,
   and Meningioma show "profile coming soon."
-  **Prostate**: rounded walnut-shaped ellipsoid, points are Peripheral zone /
+  **Prostate**: real anatomical scan (`assets/prostate.glb`, gland body only —
+  paired duct-like appendages in the source scan were isolated out; see "Organ
+  mesh source" in Architecture notes), points are Peripheral zone /
   Transition zone / Central zone / Prostatic urethra — Peripheral zone gets
   the "arises here" framing every prior organ's first point uses (~75% of
   cases, StatPearls NBK540987), Transition zone is deliberately the opposite:
@@ -1367,6 +1369,300 @@ screen pair per organ:
   `opacity`/`pointer-events` toggling rather than `display:none`, so containers
   have valid dimensions even while "hidden" — call `.resize()` on screen
   transitions defensively anyway (see `setScreen()`).
+- **Organ mesh source — Lungs/Kidneys/Liver/Brain/Prostate, full history
+  (2026-08-27):** these five now load a real anatomical scan (`assets/lungs.glb`,
+  `kidneys.glb`, `liver.glb`, `brain.glb`, `prostate.glb`), replacing the
+  procedural `LatheGeometry`/displaced-`SphereGeometry` approximations each
+  organ used before. **Ovary and Breast deliberately were not touched in this
+  pass and remain on procedural meshes** — same partial-sphere/scaled-sphere
+  construction as always; a real-scan swap for those two is a separate,
+  not-yet-made decision, not an oversight.
+  - **Source and license, verified per organ at the source, not batch-assumed:**
+    all five come from NIH 3D's (formerly NIH 3D Print Exchange) "Human
+    Reference Atlas 3D Reference Object Library" collection, account "HRA" —
+    Lungs `3DPX-020974`, Kidneys `3DPX-020967` (left kidney only; the
+    collection has no separate right-kidney model — used generically to mean
+    "a kidney," same as the procedural version's unlabeled-side ellipsoid
+    did), Liver `3DPX-020973`, Brain `3DPX-020959`, Prostate `3DPX-021015`.
+    CC BY 4.0 on every one of the five entry pages — quoted directly per
+    organ, not inferred from the collection level. Unlike the body meshes'
+    CC0 bundle, CC BY 4.0 attribution is **legally required**, not a
+    courtesy — the `#disclaimer` text credits NIH 3D and the underlying data
+    sources by name for exactly this reason. Underlying data: the Visible
+    Human Dataset (Spitzer & Whitlock, *Visible Human Project*, 2002;
+    Spitzer, Ackerman, Scherzinger & Whitlock, 1996 for the male-specific
+    scan) for all five organs' base geometry, plus — brain only — the Allen
+    Human Brain Atlas (Ding et al., *J Comp Neurol* 524(16):3127-3481, 2016,
+    "Comprehensive Cellular-Resolution Atlas of the Adult Human Brain," 141
+    structures mirrored/resized to fit) for the brain's specific internal
+    structure.
+  - **Download path, reverse-engineered because the obvious one doesn't
+    work:** NIH 3D's entry page (`3d.nih.gov/entries/3DPX-0XXXXX`) links to a
+    download page (`3d.nih.gov/entries/download/<5-digit-id>/1.01`) whose raw
+    HTML embeds a `submissionId` and a `submissions/<id>/runs/<uuid>` path,
+    plus direct S3 URLs that 403 if fetched raw. The actual working download
+    is `3d.nih.gov/api/submissions/<submissionId>/runs/<runUuid>/output-
+    files/<fileId>` — confirmed via curl per organ, not assumed to generalize
+    from one.
+  - **Format conversion, verified lossless rather than assumed:** source
+    files are binary STL (72K-656K triangles, no UVs/rigging, matching the
+    prior research pass's figures almost exactly). Converted to GLB via
+    Blender headless (`blender --background --python`), same tool the body
+    meshes already made this project depend on at build time, not runtime.
+  - **Topology inspection, same discipline as the body-mesh MakeHuman catch,
+    including a real false alarm caught and fixed mid-pass:** a bmesh
+    BFS connected-component walk (one component per organ, no stray
+    geometry — the same class of check that caught MakeHuman's fused-thigh
+    defect and stray debug cube) plus a degenerate-face count. The first
+    pass used one fixed absolute face-area threshold (`1e-9`) across all five
+    organs and reported Prostate at **39.4% degenerate faces** — a number
+    that would be a real blocker anywhere else. Investigated rather than
+    reported or ignored: Prostate's real bounding box is far smaller than
+    the other four organs' (0.083×0.071×0.043m), and its median face area
+    (1.35e-9) is 2-3 orders of magnitude smaller than the others' (Lung
+    8.07e-8, Kidney 9.7e-7, Liver 2.9e-6, Brain 7.8e-7) — it's simply
+    tessellated far more finely per unit area, not defective. Fixed by
+    rewriting the check to threshold relative to each mesh's own median face
+    area (`median/10000`) instead of one absolute number; re-run, all five
+    organs land at a comparable, negligible 0.005%-0.70%. Non-manifold edge
+    counts were also checked (small, boundary-seam-scale numbers on all
+    five) but not treated as disqualifying on their own — a closed,
+    single-component, non-self-intersecting surface with a handful of
+    non-manifold edges at a real seam is still raycastable and renders
+    cleanly, which every render_preview.py screenshot confirmed directly
+    before integration, not just the numeric check alone.
+  - **Visual confirmation, silhouette-level, per organ before integration —
+    the actual point of this whole pass:** Blender headless render
+    (`BLENDER_WORKBENCH` engine, `STUDIO` shading — `BLENDER_EEVEE_NEXT` is
+    not a valid enum in this Blender build) at a generic camera angle scaled
+    to each object's own bounding box. Confirmed real anatomical structure
+    the procedural meshes structurally could not produce: Lung's actual
+    bilobed/trilobed shape with visible bronchial branching near the hilum;
+    Kidney's real concave hilum notch (invisible at the first camera angle —
+    only found by trying a second, more oblique one, `render_preview2.py`);
+    Liver's visible right/left lobe division with a real fissure between
+    them; Brain's real gyral folding plus a separate, distinctly-textured
+    cerebellum mass; Prostate's walnut/olive-shaped gland body (after
+    isolation — see below).
+  - **Performance, checked rather than assumed too heavy:** a synthetic
+    THREE.js benchmark (same workaround the prior mesh-detail pass used,
+    since `document.hidden` stays `true` in this headless preview
+    environment and the app's own `requestAnimationFrame` loop never fires)
+    found raw WebGL render cost was a non-issue at full resolution for all
+    five organs — every one under 0.12ms/frame. The real cost is file
+    size/load time (Brain at 54.8MB, Lung at 24.9MB as first exported), not
+    GPU cost, which reframed the whole decimation decision below as a
+    download-size problem, not a frame-rate one.
+  - **The real fix turned out to be shading, not the Decimate modifier —
+    worth recording because it wasn't the first hypothesis:** `remove_doubles`
+    (position-welding) barely shrank the exported file size at all (e.g.
+    Lung: 147,683 unique-position vertices at the Blender-mesh level, but the
+    exported GLB's own glTF accessor count — read directly from the binary
+    via `struct`/`json`, not trusted from Blender's or Three.js's own
+    reporting — was 875,288, close to `faces × 3`, i.e. almost zero index
+    sharing). Root cause: STL import has flat per-face shading, and glTF can
+    only store one normal per vertex *index* — a vertex touching two faces
+    with different normals gets re-split at export regardless of upstream
+    position-welding. Fixed by calling `shade_smooth_by_angle(angle=~35°)`
+    (Blender 4.1+/5.x; falls back to plain `shade_smooth()` if unavailable)
+    *after* welding and *before* export — lets genuinely co-planar faces
+    (a real curved organ surface) share one averaged normal and one vertex
+    index, while still splitting at genuinely sharp boundaries (e.g. where
+    two lung lobes meet). This alone cut Lung from 24.9MB to 8.18MB and Brain
+    from 54.8MB to 18.4MB with **no Decimate modifier involved yet** — a
+    shading fix, not a geometry change, confirmed by the exported accessor
+    count dropping to a much closer ~1.3x of the true vertex count (the
+    remaining gap is real hard edges, correctly still splitting).
+  - **Decimation, applied selectively, not to all five uniformly:** with
+    render cost already confirmed a non-issue and the shading fix alone
+    bringing every organ within range of the existing body-mesh baseline
+    (`female_body.glb` 1.48MB, `male_body.glb` 512KB) except two, only
+    **Brain** (COLLAPSE ratio 0.3, 653K→196K faces, 18.4MB→7.19MB) and
+    **Lung** (ratio 0.4, 292K→117K faces, 8.18MB→3.54MB) were decimated
+    further; Kidney (1.35MB), Liver (1.72MB), and Prostate (0.29MB) were left
+    at shading-fixed-only resolution since decimating them further wasn't
+    "needed" by the task's own framing, and every additional cut is a real
+    (if small) risk to the anatomical detail this pass exists to add.
+    Each decimation ratio was visually re-confirmed against its
+    pre-decimation render before being finalized — Brain's gyral folding and
+    Lung's lobe/hilum silhouette both survive at these ratios; a higher
+    ratio was not tried since these already landed in range and further
+    cuts only add risk for a size budget that's no longer under real
+    pressure.
+  - **Prostate needed an extra isolation step the other four didn't: the raw
+    scan includes duct-like appendages beyond the gland body itself.**
+    Identifying the real gland among 54 disconnected components took three
+    failed automatic heuristics before falling back to direct, manual
+    identification — recorded because the failure mode (a heuristic reports
+    success and changes nothing, or changes the wrong thing) is worth
+    recognizing early next time, not re-discovering:
+    1. An aspect-ratio-from-whole-bounding-box heuristic reported excluding a
+       component, but the re-render was pixel-identical to the original —
+       the heuristic's measurement didn't match the tip-cross-section
+       analysis that had actually found the ducts.
+    2. Explicit exclusion by the exact vertex counts of the two components
+       already positively identified as duct-like still left the render
+       unchanged — confirmed via a direct raw-STL bounding-box check that
+       several *smaller* (~1,200-1,500 vert) components among the ones kept
+       were independently spanning the same wide spatial area.
+    3. Ranking all 54 components by bounding-box *volume* and keeping only
+       those spatially contained near the largest picked a 500-vertex
+       component with a large, sparse bbox as "largest" — volume rewards
+       spread as much as mass, the same class of measurement error the
+       degenerate-face absolute-threshold bug above made.
+    - **What actually worked:** abandon automatic classification and
+      directly extract the one component *already* positively identified
+      (by `render_largest_component.py`'s bbox output matching real
+      prostate dimensions, 51.5×26.7×23.0mm) by its exact vertex count
+      (7,961) — `isolate_gland3.py`. Confirmed clean both visually (single
+      closed gland shape, no tendrils) and topologically (1 component, 0
+      degenerate faces by the corrected relative threshold, 31 non-manifold
+      edges at the real seam where the ducts used to attach).
+    - **Ejaculatory ducts vs. vas deferens — investigated per explicit
+      instruction, not left as a passing guess.** The excised appendages are
+      two ~20mm paired components with a smooth, tapering cross-section from
+      one end to the other (measured via `inspect_ducts.py`) rather than an
+      abrupt flat-cut face — consistent with a real anatomical terminus and
+      matching real ejaculatory-duct length, more so than a vas-deferens
+      segmentation artifact (which would extend well outside a
+      prostate-only model and more plausibly show a flat cut where the
+      source scan's crop boundary sliced through it). Not certain either way
+      with no ground-truth labels available. Dropped from the shipped mesh
+      either way, for visual consistency with every other organ's clean
+      single-silhouette presentation — **if this is ever revisited, a real
+      ejaculatory-duct sub-mesh is a plausible, separately-scoped future
+      refinement (with its own hotspot, sharpened against the existing
+      Prostatic urethra point so the two don't overclaim being the same
+      structure), but it was deliberately not built into this pass.**
+    - The seam's own non-manifold-edge centroid (31 edges, found directly in
+      the source mesh, not guessed) was reused as a real anatomical landmark
+      for the Central zone hotspot below — it marks where the ejaculatory
+      ducts actually entered the gland, which is literally what the central
+      zone is defined as surrounding.
+  - **Hotspot re-derivation — every organ's investigate points were
+    re-anchored from scratch against the real mesh, not carried over:** the
+    procedural organs' `dir` vectors work as literal `direction ×
+    hotspotScale` positions only because those meshes are scaled ellipsoids;
+    a real scan has no such closed form. Built a one-off interactive picker
+    (three.js + `GLTFLoader`, loaded over the project's own dev server so
+    same-origin `fetch()` works) that raycasts the real GLB on click/direction
+    and prints the local-space hit point — used to visually place each
+    point, cross-checked against the render_preview.py screenshots for
+    anatomical sense (e.g. Kidney's Hilum/Renal pelvis both land inside the
+    real concave notch; Lung's Bronchi lands on the actual small branching
+    cluster near the medial root, not just "somewhere on the mesh"). Every
+    organ's hotspots switched from `dir:[x,y,z]` (normalized, scaled by
+    `hotspotScale`) to `pos:[x,y,z]` (a literal local-space point, meters) —
+    `initOrganViewer()` in `main.js` branches on whichever field a given
+    hotspot object has, so the still-procedural Ovary/Breast keep working
+    unmodified through the same function. Labels and "arises here" framing
+    are unchanged from the procedural version for all 20 points across the
+    five organs — only the anchor coordinates moved.
+  - **Async loading, a first for the organ viewer (the body viewer already
+    had this, the organ viewer never did before now):** `GLTFLoader` has no
+    synchronous path, so each of these five `buildMesh` functions returns a
+    `Promise<THREE.Object3D>` instead of an `Object3D` directly.
+    `initOrganViewer()` wraps every organ's `buildMesh()` result in
+    `Promise.resolve()` so procedural (sync) and real-mesh (async) organs
+    share one code path. Guards against the same race body.js's loader
+    doesn't have to worry about (only one body, loaded once at startup) but
+    the organ viewer does (a user can switch organs again before a GLB
+    finishes loading): the in-flight load closes over its own
+    `state.organViewer` reference and checks it's still the current one
+    before touching the scene or `organMarkers`, rather than comparing
+    `organKey` strings, which would miss a stale load racing a fresh one for
+    the *same* organ. A `#organLoading` status element (same pattern as
+    `#bodyLoading`) covers the gap.
+  - **Camera framing and marker scale had to be re-derived, not reused,
+    because these five GLBs are real-world meters and the procedural organs
+    were an arbitrary ~1-2 unit scale:** `initOrganViewer()` calls
+    `thisViewer.frameContents([mesh], 1.3)` (the same call body.js already
+    makes against its two body GLBs) whenever any hotspot on the organ uses
+    `pos` rather than `dir` — this re-derives camera distance from the
+    mesh's own real bounding sphere instead of trusting a hardcoded
+    `opts.radius`. `minRadius`/`maxRadius` in each of the five organs'
+    `viewer:{...}` config were still hand-updated to real-meter-scale numbers
+    though, since `frameContents()` only ever widens `maxDistance`, never
+    changes `minDistance` — leaving the old ~2-unit `minRadius` in place
+    would have locked the camera out of ever zooming in close on a
+    real object that's only centimeters across. Marker sphere radius and
+    point-light falloff distance are similarly scaled off the loaded mesh's
+    own bounding-sphere radius (`× 0.045` and `× 2.4` respectively) rather
+    than the old fixed `0.06`/`1.2` unit numbers, which would have either
+    swallowed Prostate whole or barely registered against Brain.
+  - **Default camera angle (`theta`/`phi`) needed a real, per-organ check, not
+    a blanket carry-over from the procedural defaults — caught for real on
+    two of the five, not just theorized:** every organ inherited the same
+    `theta:0.5, phi:1.15` the procedural meshes had used, on the assumption
+    that camera angle is independent of what mesh is loaded. It mostly is —
+    Liver, Brain, and Prostate's hotspots (spread fairly evenly around the
+    mesh) land at least partially in view at that angle by coincidence — but
+    Kidneys' four hotspots all cluster tightly on one side (the medial/hilum
+    region — see the hotspot-anchoring note above), and at the inherited
+    angle every one of them was on the far side of the model, invisible
+    without rotating first. A hotspot a user can't see is a hotspot they
+    have no way to discover, which defeats the "click a glowing point"
+    pattern this whole app depends on — this is the same bar the Lungs
+    silhouette (below) was held to, just failing for a different reason
+    (interaction affordance, not anatomical legibility). Fixed by aiming
+    `theta`/`phi` at the hotspot cluster's own average direction
+    (`theta:-1.278, phi:1.375`), found by placing the live camera directly
+    against the real mesh and confirming by screenshot — not computed from
+    an unverified axis-conversion formula (see the caching entry below for
+    exactly how that kind of unverified-formula chasing wastes real time).
+    Lungs' own `theta:0.5, phi:1.15` needed no change at all — its default
+    view already showed the bilobed shape and bronchial cluster correctly;
+    it only ever *looked* broken because of the caching bug below, and the
+    fix there was to the dev server, not to this file.
+  - Verified after integration: full mouse + keyboard regression pass across
+    all seven organ/cancer pairs (Ovary/Breast confirmed still on their
+    unmodified procedural meshes; click-vs-drag guard, search+aliases, and
+    the male/female body toggle and Prostate's male-only scoping all
+    unaffected), plus full-organ (not just close-zoom hotspot-crop)
+    screenshots per changed organ confirming the real anatomical features
+    above are actually visible in the shipped app, not just in the
+    standalone Blender renders used to vet the source files. **Run twice,
+    for real, not as a formality:** the first full pass was quietly checking
+    stale JavaScript the whole time (see the dev-server caching entry
+    immediately below) and every one of its "confirmed" results had to be
+    re-earned under a working reload before they meant anything.
+- **Dev-server caching gap — found while chasing a camera-angle bug that
+  kept not staying fixed, worth its own entry because of how much it could
+  quietly invalidate (2026-08-27).** `python3 -m http.server` (this
+  project's whole local-preview setup — see Architecture notes) sends no
+  `Cache-Control`/`Expires`/`ETag` header at all, only `Last-Modified`. With
+  no explicit cache directive, browsers are free to apply RFC 7234
+  *heuristic* freshness off `Last-Modified` alone — meaning a JS module
+  fetched once could keep being served from the browser's own disk cache for
+  well over an hour, on every subsequent reload, **with zero network
+  request** — not stale-while-revalidating, just silently never asking the
+  server again. Caught only because a Lungs camera-angle fix kept
+  appearing to not work no matter what values were tried; direct scene
+  introspection (checking the loaded mesh's actual vertex count and
+  bounding box in the live app) eventually proved the browser was still
+  running the pre-integration procedural `buildLungsMesh` — not the GLB
+  loader — despite the file on disk, and the server's own HTTP response
+  (confirmed via `curl`), both being correct the whole time. Neither a
+  cache-busted URL on the HTML document, nor a full tab close/reopen, nor
+  even fully killing and restarting the server process fixed it — every one
+  of those leaves the *module scripts'* own cached disk entries untouched,
+  since each has its own URL with no query string and its own independent
+  cache lifetime. **Fixed at the server, not the browser side:**
+  `.claude/nocache_server.py` subclasses `SimpleHTTPRequestHandler` to add
+  `Cache-Control: no-store, must-revalidate` to every response;
+  `.claude/launch.json` now runs this instead of the bare `http.server`
+  module. This is a standing fix for the dev workflow, not a one-off
+  workaround — without it, the exact same trap (edit a file, reload, and
+  silently keep testing the old version with no error or warning of any
+  kind) is waiting for the next person who touches this project locally.
+  **Practical consequence for everything above:** the first full
+  verification pass on the five organ meshes ran, unknowingly, against
+  stale JavaScript for an unknown fraction of its length, which is why every
+  finding from that pass — including the Lungs framing "fix" itself — had
+  to be re-checked from scratch (confirmed via live vertex-count/bounding-box
+  introspection that the *real* mesh was loaded, not just a plausible-looking
+  render) before any of it could be trusted. The Lungs default view turned
+  out to need no change; Kidneys' did, for the reason described above.
 
 ## Known limitations / tech debt
 - The male/female bodies are real static meshes now (Blender's "Human Base
@@ -1504,6 +1800,21 @@ screen pair per organ:
    becomes a real complaint rather than a theoretical one, and reconsider
    whether organ hotspots should eventually anchor to real anatomical
    landmarks on the mesh rather than height-fraction + angle.
+5. Done: Lungs, Kidneys, Liver, Brain, and Prostate's own organ-screen meshes
+   now load real anatomical scans (NIH 3D's Human Reference Atlas, CC BY 4.0)
+   instead of procedural primitives — see "Organ mesh source" in Architecture
+   notes for the full sourcing/topology/decimation/hotspot-re-anchoring
+   history. **Ovary and Breast were deliberately left on their procedural
+   meshes** — not started, a separate future decision, not an oversight.
+   If picked up: NIH 3D's own collection may or may not include either organ
+   (not checked as part of this pass, since the task scope was the five
+   organs above); verify a real model exists and its license independently
+   before assuming the same source generalizes. Also open, noted but not
+   built into this pass: Prostate's isolated-out duct-like appendages are
+   more consistent with genuine ejaculatory ducts than a segmentation
+   artifact (investigated, not certain) — a real ejaculatory-duct sub-mesh
+   with its own hotspot, sharpened against the existing Prostatic urethra
+   point, is a plausible separate follow-up, not assumed necessary.
 
 ## Source files
 `cancer-atlas.html` is now a thin shell (markup + CSS + the three.js import map,

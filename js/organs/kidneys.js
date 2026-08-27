@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { cssVar, organicDisplace } from '../viewer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { cssVar } from '../viewer.js';
 
 // active:true, plus 'renal'/'ccrcc'/'clear cell' aliases — checked for collision first: no
 // other organ's aliases contain any of these strings, and organMatchesQuery only ever reads
@@ -19,20 +20,23 @@ export const cancerEntries = [
   { id:'chrcc', name:'Chromophobe renal cell carcinoma', share:'~5% of renal cell carcinomas',      active:false, organKey:'kidneys' },
 ];
 
-// A flattened, elongated ellipsoid standing in for a kidney's bean shape — same level of
-// simplification the ovary (scaled sphere) and lungs (scaled lathe) already use. No literal
-// concave medial notch: SphereGeometry + non-uniform scale can't produce one, and adding a
-// fourth mesh-construction technique to get it would be more than this pass's data-entry scope
-// warrants. The medial-side hotspots (Renal pelvis, Hilum) still land in the right *direction*
-// on the mesh surface even without the real anatomical dent there — same trade-off Ovary's
-// Medulla/Hilum points already make on an unstretched sphere.
+// Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
+// (account "HRA"), entry 3DPX-020967 — CC BY 4.0, same sourcing/decimation discipline as Lungs
+// above. Full details in CLAUDE.md. This replaces the old flattened-sphere approximation, which
+// had no literal concave medial notch (SphereGeometry + non-uniform scale can't produce one) —
+// the real GLB does, confirmed visually (render_preview2.py) before the Hilum/Renal pelvis
+// points below were anchored to it. The source scan is specifically the left kidney (the
+// collection doesn't include a separate right-kidney model); used here to represent "a kidney"
+// generically, same as the procedural version's single unlabeled-side ellipsoid did.
 export function buildKidneysMesh(){
-  const geo = new THREE.SphereGeometry(1, 80, 80);
-  organicDisplace(geo, 0.05, 6, 5.3);
-  const mat = new THREE.MeshStandardMaterial({ color:0x9c4a42, roughness:0.5, metalness:0.05 });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.scale.set(0.62, 1.0, 0.4);
-  return mesh;
+  const loader = new GLTFLoader();
+  return new Promise((resolve, reject)=>{
+    loader.load('assets/kidneys.glb', (gltf)=>{
+      const mat = new THREE.MeshStandardMaterial({ color:0x9c4a42, roughness:0.5, metalness:0.05 });
+      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      resolve(gltf.scene);
+    }, undefined, reject);
+  });
 }
 
 export const organDetail = {
@@ -49,21 +53,32 @@ export const organDetail = {
   // structures, lungs are thoracic, but the kidneys sit behind the peritoneal lining entirely.
   desc:'The kidneys sit retroperitoneally — behind the peritoneum lining the abdominal cavity, not within it, unlike every other organ modeled in this atlas so far. Each kidney filters blood through roughly 1 million nephrons, processing about 180 liters of blood a day, with the resulting urine draining into the renal pelvis before leaving via the ureter.',
   buildMesh: buildKidneysMesh,
-  hotspotScale: new THREE.Vector3(0.62, 1.0, 0.4),
-  viewer:{ theta:0.5, phi:1.15, radius:3.2, minRadius:2.0, maxRadius:5.5, autoRotateRadPerFrame:0.0016 },
+  // Real-world-meter GLB (bbox ~7x8x12cm) — see lungs.js for why minRadius/maxRadius are
+  // rescaled here rather than left at the old ~1-unit procedural values. theta/phi are NOT the
+  // same inherited default every other organ kept (0.5/1.15) — that angle put all four hotspots
+  // (clustered together on the medial/hilum side of this mesh, unlike the other four organs'
+  // more spread-out anchors) on the far side of the model, invisible without rotating first.
+  // Re-aimed at the hotspot cluster's own average direction so at least one, usually all four,
+  // are visible on load — found empirically via direct camera placement against the live mesh
+  // and confirmed by screenshot, the same standard Lungs' default view was held to.
+  viewer:{ theta:-1.278, phi:1.375, radius:0.3, minRadius:0.06, maxRadius:0.6, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of a kidney, a flattened bean-shaped organic form, with '
     + 'four glowing teal points marking the structures listed after it. Drag to rotate, scroll '
     + 'to zoom.',
+  // pos: literal anchor points (meters, local mesh space) raycast against the real
+  // assets/kidneys.glb surface — see lungs.js for the method. Hilum/Renal pelvis both land in
+  // the real concave medial notch (distinct points within it); Cortex/Medulla are the outer and
+  // more-central surface respectively.
   hotspots:[
     // Directly parallel to the ovary's surface-epithelium point, breast's ducts, and lungs'
     // alveoli: this is the "arises here" structure for this organ, framed the same way.
-    { key:'cortex', label:'Cortex', dir:[0.85,0.35,0.4],
+    { key:'cortex', label:'Cortex', pos:[-0.0292,-0.0191,-0.0244],
       text:'The outer layer of the kidney, containing the filtering unit (glomerulus) of each nephron. Clear cell renal cell carcinoma, the most common kidney cancer subtype, most commonly arises here — directly paralleling how ovarian cancer begins in the ovary\'s surface epithelium, breast cancer in the breast\'s ducts, and lung adenocarcinoma in the lung\'s alveoli.' },
-    { key:'medulla', label:'Medulla', dir:[0.3,-0.6,-0.7],
+    { key:'medulla', label:'Medulla', pos:[-0.0212,-0.0010,0.0057],
       text:'The inner layer, made up of cone-shaped renal pyramids whose tips (papillae) drain urine toward the renal pelvis — each pyramid fed by a cluster of nephrons\' collecting ducts.' },
-    { key:'pelvis', label:'Renal pelvis', dir:[-0.9,0.15,-0.2],
+    { key:'pelvis', label:'Renal pelvis', pos:[-0.0213,0.0157,0.0243],
       text:'The funnel-shaped chamber where urine collects from the renal pyramids before draining into the ureter and on to the bladder.' },
-    { key:'hilum', label:'Hilum', dir:[-0.75,-0.5,0.35],
+    { key:'hilum', label:'Hilum', pos:[-0.0193,0.0233,0.0213],
       text:'The concave medial notch where the renal artery enters and the renal vein and ureter exit — the kidney\'s only point of entry and exit.' },
   ],
 };
