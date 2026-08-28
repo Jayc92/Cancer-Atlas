@@ -216,6 +216,19 @@ screen pair per organ:
   fourth way of representing it.
 - **Breadcrumb** at the top reflects the full chain (Body › organ › cancer ›
   [site] › [cell]) and is clickable at every level.
+- **Organ library sidebar** — persistent, collapsible left rail visible across
+  all three screens (a sibling of the `.screen` divs, never a child of one).
+  One row per `ORGANS` entry in registry order (the same order search results
+  inherit), each with a static thumbnail (`assets/thumbs/<key>.png`), the
+  organ's name, its `system` label, and the same `Explore`/`Coming soon` tag
+  vocabulary the search results use. Clicking a row goes through the one
+  shared `selectOrgan` (active → organ screen; inactive → the existing toast
+  + hotspot glow, no second "coming soon" mechanism). The currently-viewed
+  organ's row is highlighted (`.current` + `aria-current="true"`) on both its
+  organ screen and its cancer screen. Open by default on desktop; collapsed
+  slide-over drawer on mobile (≤640px), auto-closing after a successful
+  navigation. See "Organ library sidebar" in Architecture notes for the full
+  layout/thumbnail/resize reasoning.
 - **Keyboard accessibility is wired end-to-end** (commit `c5acece`) and must be
   preserved when adding organs: inactive screens/layers get `inert` (screens are
   hidden via `opacity`/`pointer-events`, never `display:none`), every clickable
@@ -1155,6 +1168,16 @@ screen pair per organ:
     dispose, so they get `export let` plus a `setSiteBlobs`/`setSiteLabelEls` pair rather than a
     `state.` property — a live `let` binding can be read directly by any importer, just not
     reassigned from outside its own module.
+  - **`js/sidebar.js`** — the organ library sidebar (`initSidebar`,
+    `updateSidebarActive`). Same register-once pattern as search/body:
+    `initSidebar(selectOrgan, onLayoutChange)` is called once from `main.js`'s
+    bootstrap; the second callback re-fires `.resize()` on every live viewer
+    after a toggle, because opening/closing the rail changes every screen's
+    width and nothing else would tell the viewers (there is no ResizeObserver
+    anywhere — `viewer.js` only listens to window `resize`).
+    `updateSidebarActive()` is called from `setScreen()` so every navigation
+    path (hotspot, search, breadcrumb, sidebar itself) keeps the highlighted
+    row in sync.
   - **`js/breadcrumb.js`** (`renderCrumbs`) and **`js/panel.js`** (`buildRegionCells`,
     `txRenderCellLayer`, `txOpenCell`, `txMutGroup`, `txClosePanel`, `dismissMutationPanel`,
     `PRIVATE_RING_SHADOW`) and **`js/search.js`** (`organMatchesQuery`, `findOrganMatches`,
@@ -1743,6 +1766,96 @@ screen pair per organ:
     and Kidneys' were — confirmed by screenshot to already show all four
     hotspots and the real axillary tail on first load, needing no fix this
     time either.
+- **Organ library sidebar (2026-08-27) — the app's first persistent cross-screen
+  chrome besides the breadcrumb/disclaimer/toast.**
+  - **Layout mechanism:** `#sidebar` is a `position:absolute` left rail
+    (248px) inside `#app`, a sibling of the three `.screen` divs. On desktop
+    (`min-width:641px`), `#app:not(.sidebar-collapsed)` shifts every
+    `.screen`'s and `#header`'s `left` to 248px — the screens' width genuinely
+    shrinks, no overlay. On mobile (≤640px) the rail is a slide-over drawer
+    instead: screens keep full width, the open rail overlays them with a
+    shadow, and it starts collapsed (desktop starts open). Collapse hides the
+    rail by `transform:translateX(-100%)` — same off-canvas mechanism
+    `#txPanel` uses, never `display:none` — with the toggle tab attached to
+    the rail's right edge so it rides to the viewport's left edge when
+    collapsed. Toggle placement (mid-left vertical tab) deliberately avoids
+    the breadcrumb (top-left), `#txLegend` (bottom-left, cancer screen), and
+    `#disclaimer` (bottom-right).
+  - **Viewer resize on toggle — the one real hazard this feature had:**
+    renderers size off `container.clientWidth/clientHeight` and only listen to
+    window `resize` (no ResizeObserver), so a sidebar toggle — a layout change
+    the window never sees — must push `.resize()` to every live viewer
+    itself. `initSidebar`'s second callback does exactly that, once
+    immediately and once after the 0.28s `left`/transform transition settles.
+    Verified numerically in the live app (1280px viewport, DPR 2): body
+    canvas 2064px wide with the rail open (container 1032 = 1280−248), 2560px
+    collapsed (container 1280), back to 2064 reopened — the full chain, not
+    just "looks right."
+  - **Thumbnails are static PNG assets, not live WebGL:**
+    `assets/thumbs/<key>.png` (256×256, transparent background so the row's
+    own CSS radial-gradient backdrop shows through — the same "specimen
+    viewer" background the organ viewer uses). Rendered offline via Blender
+    headless from each organ's real shipped GLB + real shipped material color
+    + the `warmLighting` recipe (warm key toward (3,4,5), warm ambient,
+    shadows disabled to match the app's shadow-mapping-free renderer — the
+    same verification-renderer configuration the material-color pass
+    validated). Ovary, the one procedural organ, gets an exact Python port of
+    `organicDisplace(geo, 0.045, 6.5, 1.7)` plus `buildOvaryMesh`'s real
+    scale — the app's actual deterministic sine displacement, not an
+    approximation. Static assets were chosen over live-rendered thumbnails
+    (reusing `buildMesh` at runtime) deliberately: seven simultaneous small
+    WebGL scenes cost seven contexts plus seven GLB fetches (~28MB) just to
+    draw 44px images, against this project's consistent
+    simplicity-over-runtime-cost preference. Consequence: if an organ's mesh
+    or material color ever changes, its thumbnail must be re-rendered by hand
+    — there is no build step to automate it. One Blender gotcha recorded so
+    it isn't re-discovered: Prostate's mesh is ~5cm across and Blender's
+    default 0.1m camera near-clip swallowed it whole at thumbnail framing
+    distance (rendered fully transparent, caught by an opaque-pixel-count
+    check, not visually) — `clip_start` must be tightened for real-world-
+    meter organ scales.
+  - **Accessibility, matching the app's existing standard:** every row goes
+    through `makeActivatable` (role="button", tabindex="0", Enter/Space),
+    with its accessible name from `organActionLabel` — the same helper search
+    rows use, so the two never drift. The toggle is a real `<button>` (same
+    reasoning as the sex toggle: plain control, no drag gesture near it) with
+    `aria-expanded` + a state-describing `aria-label`. `#sidebarInner` gets
+    `inert` while collapsed — the rail hides by transform, which alone would
+    leave every row focusable (the `#txPanel` trap). The current organ's row
+    carries `aria-current="true"`, not just the visual highlight. Tab order:
+    the nav sits after the three screens and before `#header` in the markup,
+    for the same document-order reasoning as `#header`'s own placement —
+    forward Tab reaches screen content first, then the sidebar, then the
+    breadcrumb.
+  - **Environment note for future verification passes:** CSS transitions do
+    not advance in this project's headless preview pane (`document.hidden`
+    stays `true` — the same constraint already documented for rAF), so a
+    toggled sidebar appears "stuck" mid-transition to computed-style checks.
+    Verify layout with transitions disabled (`*{transition:none}`) or in
+    headless Chrome, where they run normally; the shipped behavior is fine.
+- **Disclaimer overflow fix (2026-08-27, found during sidebar screenshot
+  review — a latent bug, NOT a sidebar regression, verified rather than
+  assumed from timing):** `#disclaimer`'s citation text has grown with every
+  organ pass (seven organs' worth now), and its CSS never had a height cap or
+  overflow handling — measured at the pre-sidebar commit directly (a `git
+  worktree` of HEAD, served and measured in headless Chrome): 1,597px tall on
+  a 900px viewport, top at −715px, towering off the screen and overlapping
+  every 3D viewer on every screen. The width was always the designed 260px;
+  the defect was unbounded height. It went unnoticed because full-viewport
+  desktop screenshots weren't part of any prior pass's verification — the
+  sidebar pass's screenshot set was simply the first to make it unmissable.
+  Fix: `max-height:38vh; overflow-y:auto` plus `pointer-events:auto` (a
+  deliberate flip from `none` — scrolling requires it; the corner stops being
+  drag-through for the viewers, the necessary cost of CC BY attribution
+  staying reachable, since truncating legally-required credits is not an
+  option). `#app.panel-open #disclaimer` now also sets `pointer-events:none`
+  so the invisible box can't dead-zone the mutation panel's corner. The
+  element gained `role="region"`/`aria-label`/`tabindex="0"` (a scrollable
+  region needs keyboard access to meet this app's own bar) and moved from
+  first child of `#app` to last — same document-order tab-order reasoning as
+  `#header`'s own placement comment; paint position is unchanged
+  (`position:absolute`). If the disclaimer keeps growing, the next step is a
+  collapsed "Sources" toggle, not a taller cap — deferred, not decided.
 - **Ovary real-asset research (2026-08-27) — a third, final check, plainly
   negative, not forced into an integration.** Two prior research passes had
   already found nothing usable (NIH 3D's own low-poly placeholder; Sketchfab's

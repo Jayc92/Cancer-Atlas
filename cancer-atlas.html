@@ -43,10 +43,20 @@
   #crumbs .crumb.current{opacity:1;cursor:default;}
   #crumbs .crumb:not(.current):hover{opacity:.85;text-decoration:underline;}
   #crumbs .sep{color:var(--muted);opacity:.5;font-weight:400;}
-  #disclaimer{position:absolute;right:24px;bottom:18px;z-index:50;max-width:260px;font-size:10.5px;color:var(--muted);text-align:right;line-height:1.5;background:rgba(18,26,43,.72);border:1px solid var(--line);border-radius:10px;padding:10px 12px;backdrop-filter:blur(6px);pointer-events:none;transition:opacity .25s ease;}
+  /* max-height + overflow-y is load-bearing, not cosmetic: the citation text has grown with
+     every organ pass (seven organs' worth now), and with no height cap the box measured
+     1,597px tall on a 900px viewport — towering off the top of the screen and overlapping
+     every 3D viewer. A latent bug since well before the sidebar existed (verified by
+     measuring the pre-sidebar commit directly, not assumed from timing). Scrolling requires
+     pointer-events:auto, a deliberate flip from the old pointer-events:none — the corner it
+     occupies stops being drag-through for the viewers, the necessary cost of the citations
+     staying reachable (CC BY attribution is legally required, so truncating is not an option). */
+  #disclaimer{position:absolute;right:24px;bottom:18px;z-index:50;max-width:260px;max-height:38vh;overflow-y:auto;font-size:10.5px;color:var(--muted);text-align:right;line-height:1.5;background:rgba(18,26,43,.72);border:1px solid var(--line);border-radius:10px;padding:10px 12px;backdrop-filter:blur(6px);pointer-events:auto;transition:opacity .25s ease;}
   /* The mutation panel occupies the same bottom-right corner and carries its own
-     citation key, so the global disclaimer would otherwise render on top of it. */
-  #app.panel-open #disclaimer{opacity:0;}
+     citation key, so the global disclaimer would otherwise render on top of it.
+     pointer-events must follow opacity now that the disclaimer is interactive —
+     an invisible box that still swallowed clicks would dead-zone the panel's corner. */
+  #app.panel-open #disclaimer{opacity:0;pointer-events:none;}
 
   /* ================= BODY SCREEN ================= */
   #screenBody{}
@@ -189,6 +199,48 @@
   #txLegendKey{padding:14px 20px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.6;}
   #txLegendKey b{color:var(--text);}
 
+  /* ================= ORGAN LIBRARY SIDEBAR ================= */
+  /* Persistent across all three screens — a sibling of the .screen divs inside #app, never a
+     child of any one screen. Collapsed state slides the rail fully off-canvas with a transform
+     (same hide mechanism #txPanel uses), NOT display:none, and the toggle tab rides along on
+     the rail's right edge so it lands at the viewport's left edge when collapsed. */
+  #sidebar{position:absolute;top:0;bottom:0;left:0;width:248px;z-index:55;background:rgba(14,21,36,.94);border-right:1px solid var(--line);backdrop-filter:blur(8px);transform:translateX(0);transition:transform .28s ease;}
+  #app.sidebar-collapsed #sidebar{transform:translateX(-100%);}
+  #sidebarToggle{position:absolute;right:-26px;top:50%;transform:translateY(-50%);width:26px;height:64px;border:1px solid var(--line);border-left:none;border-radius:0 10px 10px 0;background:var(--panel);color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:0;}
+  #sidebarToggle:hover{color:var(--text);}
+  #sidebarInner{height:100%;overflow-y:auto;padding:18px 14px;display:flex;flex-direction:column;gap:8px;}
+  #sidebarTitle{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:2px 4px 6px;}
+  .sb-row{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid transparent;border-radius:12px;cursor:pointer;}
+  .sb-row:hover{background:var(--panel);}
+  /* Highlight for the currently-viewed organ (organ AND cancer screens — see
+     updateSidebarActive). Teal border matches .cancer-row.enabled's active-affordance color. */
+  .sb-row.current{background:var(--panel);border-color:rgba(53,201,193,.45);}
+  /* The thumb's own background is the organ viewer's radial-gradient backdrop, so the
+     transparent-background PNGs read as sitting in the same "specimen viewer" space. */
+  .sb-thumb{width:44px;height:44px;flex:none;border-radius:9px;background:radial-gradient(circle at 50% 38%,#182338 0%,#0d1320 78%);border:1px solid var(--line);object-fit:cover;}
+  .sb-meta{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;}
+  .sb-name{font-family:'Space Grotesk';font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sb-sys{font-size:10.5px;color:var(--muted);}
+  /* Same 'Explore'/'Coming soon' tag vocabulary the search results use — one convention for
+     "does this go anywhere," not a second way of saying it. */
+  .sb-tag{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);padding:2px 6px;border-radius:20px;flex:none;}
+  .sb-row.sb-active .sb-tag{color:var(--teal);border-color:rgba(53,201,193,.4);}
+
+  /* Desktop: an open sidebar reduces every screen's width (shifts the absolute-positioned
+     screens' left edge) rather than overlaying content. The left transition matches the rail's
+     transform timing; viewer resize() is re-fired after it settles (see initSidebar's caller). */
+  @media (min-width:641px){
+    #app:not(.sidebar-collapsed) .screen{left:248px;}
+    #app:not(.sidebar-collapsed) #header{left:248px;}
+    .screen{transition:opacity .4s ease, left .28s ease;}
+    #header{transition:left .28s ease;}
+  }
+  /* Mobile: the sidebar becomes a slide-over drawer instead — screens keep full width, the
+     open rail overlays them (with a shadow to read as a layer), and it starts collapsed. */
+  @media (max-width:640px){
+    #app:not(.sidebar-collapsed) #sidebar{box-shadow:30px 0 60px rgba(0,0,0,.45);}
+  }
+
   ::-webkit-scrollbar{width:8px;}
   ::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;}
 
@@ -227,7 +279,6 @@
 <body>
 <div id="app">
 
-  <div id="disclaimer">Body model and navigation are illustrative, not a medical scan. Male/female body meshes are from Blender's "Human Base Meshes" bundle (Blender Studio and community contributors, via blender.org/download/demo-files; CC0 1.0 — credited here though not legally required). Lung, kidney, liver, brain, and prostate organ meshes are from NIH 3D's "Human Reference Atlas 3D Reference Object Library" (account "HRA"; CC BY 4.0 — attribution required here, unlike the body meshes above), derived from the Visible Human Dataset (Spitzer &amp; Whitlock, <i>Visible Human Project</i>, 2002; Spitzer, Ackerman, Scherzinger &amp; Whitlock, 1996) and, for the brain specifically, additionally mirroring structure from the Allen Human Brain Atlas (Ding et al., <i>J Comp Neurol</i>, 2016). Breast organ mesh is also from NIH 3D's "Human Reference Atlas 3D Reference Object Library" (CC BY 4.0) but, unlike the five organs above, is a custom hand-sculpted model rather than derived from the Visible Human Dataset scan, expert-reviewed against Krstić, <i>Human Microscopic Anatomy</i> (1991) and Gilroy, MacPherson &amp; Ross, <i>Atlas of Anatomy</i> (2008); creator attribution (required under CC BY 4.0): Heidi Schlehlein, "3D Reference Organ for Breast (mammary gland), Female left, v1.0," 2022, doi.org/10.48539/HBM378.VWZG.633. Ovary organ mesh remains procedural, not derived from a scan or sculpt — no real, freely-downloadable ovary model was found (checked directly, not assumed) — but its proportions are now sized to a verified real measurement (StatPearls, "Anatomy, Abdomen and Pelvis, Ovary": 3.5 × 2 × 1cm), not an arbitrary shape. Ovary/HGSOC anatomy and mutation data are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016); breast/triple-negative data from TCGA (<i>Nature</i>, 2012), Yates et al. (<i>Cancer Cell</i>, 2017), a population-based metastatic-site study (Gao et al., <i>Precision Medical Sciences</i>, 2023), and a breast cancer subtype metastatic-pattern study (Kennecke et al., <i>J Clin Oncol</i>, 2010); lung/adenocarcinoma data from TCGA (<i>Nature</i>, 2014), TRACERx (Jamal-Hanjani et al., <i>NEJM</i>, 2017; Frankell et al., <i>Nature</i>, 2023), and a population-based metastatic-pattern study (Riihimäki et al., <i>Lung Cancer</i>, 2014); kidney/clear-cell renal cell carcinoma data from Moore et al. (<i>PLOS Genetics</i>, 2011), Gerlinger et al. (<i>NEJM</i>, 2012), TCGA (<i>Nature</i>, 2013), and population-based metastatic-site studies (Dabestani et al., <i>World J Urol</i>, 2016; Bianchi et al., <i>Ann Oncol</i>, 2012); liver/hepatocellular carcinoma data from Nault et al. (<i>Nature Communications</i>, 2013; cross-checked against Schulze et al., <i>Nature Genetics</i>, 2015, TCGA, <i>Nature</i>, 2017, and Aizimuaji et al., <i>World J Gastrointest Oncol</i>, 2025, for cohort-to-cohort variability), Guichard et al. (<i>Nature Genetics</i>, 2012), Laurent-Puig et al. (<i>Gastroenterology</i>, 2001), Friemel et al. (<i>BMC Clinical Pathology</i>, 2016), and population-based metastatic-site studies (Katyal et al., <i>Radiology</i>, 2000; Zhuang et al., <i>Transl Cancer Res</i>, 2025); brain/glioblastoma data from the 2021 WHO CNS tumor classification (Louis et al., <i>Neuro-Oncology</i>, 2021), TCGA (Brennan et al., <i>Cell</i>, 2013), Killela et al. (<i>PNAS</i>, 2013), Snuderl et al. (<i>Cancer Cell</i>, 2011) and Sottoriva et al. (<i>PNAS</i>, 2013) on intratumor spatial heterogeneity, CBTRUS (Price et al., <i>Neuro-Oncology</i>, 2025) for tumor-type shares, and two independent case-series sources (Majd et al., <i>The Oncologist</i>, 2024; Conejero Merchán et al., <i>Open Respiratory Archives</i>, 2026) confirming glioblastoma's extracranial metastasis rate is under 1–2% — not one real patient; prostate/acinar adenocarcinoma data from Cooper et al. (<i>Nat Genet</i>, 2015) and TCGA (<i>Cell</i>, 2015) on multifocal clonal origins and driver mutations, Fontugne et al. (<i>JCI Insight</i>, 2022), Mehra et al. (<i>Cancer Res</i>, 2007), Cyrta et al. (<i>J Pathol</i>, 2022), and Segura-Moreno et al. (<i>Cancer Reports</i>, 2023) on interfocal molecular discordance, Chen et al. (<i>Nat Cancer</i>, 2025) on the SPOP/CHD1 subtype, a large SEER histologic-subtype cohort (Siech et al., <i>Ann Surg Oncol</i>, 2026), and a population-based metastatic-site autopsy study (Bubendorf et al., <i>Hum Pathol</i>, 2000). For all seven cancers, which gene is shown at which site is a simplified teaching device: the site-pattern study establishes where spread/metastasis happens (or, for glioblastoma, where within one tumor mass regional heterogeneity happens instead, and for prostate acinar adenocarcinoma, where independently-arising tumor foci within one gland happen instead) and the genomics study the cohort-level mutation frequencies, not this specific site→gene pairing.</div>
   <!-- The toast is the only feedback for activating a "coming soon" organ or cancer, and it
        self-dismisses after 2.2s, so it has to announce itself. role="status" carries the polite
        politeness implicitly; aria-live is stated anyway because the role is easy to lose in a
@@ -348,6 +399,24 @@
     </div>
   </div>
 
+  <!-- Organ library sidebar — persistent chrome across all three screens, a sibling of the
+       .screen divs, never a child of one. Placed AFTER the screens for the same tab-order
+       reasoning as #header below: focus lands on the active screen after every navigation and
+       sequential focus runs in document order, so forward Tab reaches screen content first,
+       then this nav, then the breadcrumb — content before chrome, matching the app's
+       established flow. Rows are built by initSidebar() from the ORGANS registry (same order
+       search results inherit); the toggle is a real <button> for the same reason the sex
+       toggle's are (plain control, no drag gesture near it). #sidebarInner gets `inert` while
+       collapsed — the rail hides by transform, which alone would leave every row focusable,
+       the same trap #txPanel's own markup comment documents. -->
+  <nav id="sidebar" aria-label="Organ library">
+    <button id="sidebarToggle" aria-expanded="true" aria-controls="sidebarInner" aria-label="Collapse organ library">‹</button>
+    <div id="sidebarInner">
+      <div id="sidebarTitle">Organ library</div>
+      <div id="sidebarList"></div>
+    </div>
+  </nav>
+
   <!-- Deliberately LAST in #app, and visually unmoved: #header is position:absolute with z-index 50,
        so paint order does not depend on where it sits in the markup. The reason it sits here is the
        tab order. Focus lands on the .screen region after every navigation, and sequential focus runs
@@ -363,6 +432,15 @@
     </div>
   </div>
 
+  <!-- Moved to the END of #app (it used to be the first child) for the same document-order
+       reasoning as #header above: this is now a focusable, scrollable region (its citation
+       text outgrew any fixed height years of organ passes ago — see the #disclaimer CSS
+       comment), and as the first child it was only reachable by Shift+Tab. Last in the
+       markup, forward Tab reaches it after the screens, sidebar, and breadcrumb — reference
+       chrome at the end of the sequence. tabindex="0" is what makes the overflow scrollable
+       by keyboard at all; role/aria-label name the region so landing in a wall of citation
+       text is announced as what it is. Paint position is unchanged (position:absolute). -->
+  <div id="disclaimer" role="region" aria-label="Data sources and disclaimer" tabindex="0">Body model and navigation are illustrative, not a medical scan. Male/female body meshes are from Blender's "Human Base Meshes" bundle (Blender Studio and community contributors, via blender.org/download/demo-files; CC0 1.0 — credited here though not legally required). Lung, kidney, liver, brain, and prostate organ meshes are from NIH 3D's "Human Reference Atlas 3D Reference Object Library" (account "HRA"; CC BY 4.0 — attribution required here, unlike the body meshes above), derived from the Visible Human Dataset (Spitzer &amp; Whitlock, <i>Visible Human Project</i>, 2002; Spitzer, Ackerman, Scherzinger &amp; Whitlock, 1996) and, for the brain specifically, additionally mirroring structure from the Allen Human Brain Atlas (Ding et al., <i>J Comp Neurol</i>, 2016). Breast organ mesh is also from NIH 3D's "Human Reference Atlas 3D Reference Object Library" (CC BY 4.0) but, unlike the five organs above, is a custom hand-sculpted model rather than derived from the Visible Human Dataset scan, expert-reviewed against Krstić, <i>Human Microscopic Anatomy</i> (1991) and Gilroy, MacPherson &amp; Ross, <i>Atlas of Anatomy</i> (2008); creator attribution (required under CC BY 4.0): Heidi Schlehlein, "3D Reference Organ for Breast (mammary gland), Female left, v1.0," 2022, doi.org/10.48539/HBM378.VWZG.633. Ovary organ mesh remains procedural, not derived from a scan or sculpt — no real, freely-downloadable ovary model was found (checked directly, not assumed) — but its proportions are now sized to a verified real measurement (StatPearls, "Anatomy, Abdomen and Pelvis, Ovary": 3.5 × 2 × 1cm), not an arbitrary shape. Ovary/HGSOC anatomy and mutation data are drawn from TCGA (2011) and McPherson et al. (<i>Nat Genet</i>, 2016); breast/triple-negative data from TCGA (<i>Nature</i>, 2012), Yates et al. (<i>Cancer Cell</i>, 2017), a population-based metastatic-site study (Gao et al., <i>Precision Medical Sciences</i>, 2023), and a breast cancer subtype metastatic-pattern study (Kennecke et al., <i>J Clin Oncol</i>, 2010); lung/adenocarcinoma data from TCGA (<i>Nature</i>, 2014), TRACERx (Jamal-Hanjani et al., <i>NEJM</i>, 2017; Frankell et al., <i>Nature</i>, 2023), and a population-based metastatic-pattern study (Riihimäki et al., <i>Lung Cancer</i>, 2014); kidney/clear-cell renal cell carcinoma data from Moore et al. (<i>PLOS Genetics</i>, 2011), Gerlinger et al. (<i>NEJM</i>, 2012), TCGA (<i>Nature</i>, 2013), and population-based metastatic-site studies (Dabestani et al., <i>World J Urol</i>, 2016; Bianchi et al., <i>Ann Oncol</i>, 2012); liver/hepatocellular carcinoma data from Nault et al. (<i>Nature Communications</i>, 2013; cross-checked against Schulze et al., <i>Nature Genetics</i>, 2015, TCGA, <i>Nature</i>, 2017, and Aizimuaji et al., <i>World J Gastrointest Oncol</i>, 2025, for cohort-to-cohort variability), Guichard et al. (<i>Nature Genetics</i>, 2012), Laurent-Puig et al. (<i>Gastroenterology</i>, 2001), Friemel et al. (<i>BMC Clinical Pathology</i>, 2016), and population-based metastatic-site studies (Katyal et al., <i>Radiology</i>, 2000; Zhuang et al., <i>Transl Cancer Res</i>, 2025); brain/glioblastoma data from the 2021 WHO CNS tumor classification (Louis et al., <i>Neuro-Oncology</i>, 2021), TCGA (Brennan et al., <i>Cell</i>, 2013), Killela et al. (<i>PNAS</i>, 2013), Snuderl et al. (<i>Cancer Cell</i>, 2011) and Sottoriva et al. (<i>PNAS</i>, 2013) on intratumor spatial heterogeneity, CBTRUS (Price et al., <i>Neuro-Oncology</i>, 2025) for tumor-type shares, and two independent case-series sources (Majd et al., <i>The Oncologist</i>, 2024; Conejero Merchán et al., <i>Open Respiratory Archives</i>, 2026) confirming glioblastoma's extracranial metastasis rate is under 1–2% — not one real patient; prostate/acinar adenocarcinoma data from Cooper et al. (<i>Nat Genet</i>, 2015) and TCGA (<i>Cell</i>, 2015) on multifocal clonal origins and driver mutations, Fontugne et al. (<i>JCI Insight</i>, 2022), Mehra et al. (<i>Cancer Res</i>, 2007), Cyrta et al. (<i>J Pathol</i>, 2022), and Segura-Moreno et al. (<i>Cancer Reports</i>, 2023) on interfocal molecular discordance, Chen et al. (<i>Nat Cancer</i>, 2025) on the SPOP/CHD1 subtype, a large SEER histologic-subtype cohort (Siech et al., <i>Ann Surg Oncol</i>, 2026), and a population-based metastatic-site autopsy study (Bubendorf et al., <i>Hum Pathol</i>, 2000). For all seven cancers, which gene is shown at which site is a simplified teaching device: the site-pattern study establishes where spread/metastasis happens (or, for glioblastoma, where within one tumor mass regional heterogeneity happens instead, and for prostate acinar adenocarcinoma, where independently-arising tumor foci within one gland happen instead) and the genomics study the cohort-level mutation frequencies, not this specific site→gene pairing.</div>
 </div>
 
 <script type="module" src="./js/main.js"></script>

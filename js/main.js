@@ -12,6 +12,7 @@ import { renderCrumbs, initBreadcrumb } from './breadcrumb.js';
 import { txRenderCellLayer, txClosePanel } from './panel.js';
 import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
+import { initSidebar, updateSidebarActive } from './sidebar.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -43,6 +44,10 @@ function setScreen(name){
   if(name==='organ' && state.organViewer) state.organViewer.resize();
   if(name==='cancer' && state.siteViewer) state.siteViewer.resize();
   renderCrumbs();
+  // Every navigation path funnels through here, so this one call keeps the sidebar's
+  // highlighted row in sync no matter how the screen changed (hotspot, search, breadcrumb,
+  // or the sidebar itself).
+  updateSidebarActive();
   landFocus(activeScreen);
 }
 
@@ -494,6 +499,15 @@ function enterCancerScreen(cancerId){
 initBreadcrumb({ setScreen, txGoLevel });
 initSearch(selectOrgan);
 initBody(selectOrgan);
+// Same register-once pattern as search/body: the sidebar navigates through the one shared
+// selectOrgan. The second callback re-fires resize() on every live viewer after a sidebar
+// toggle changes the screens' width — there's no ResizeObserver anywhere (viewer.js only
+// listens to window 'resize'), so a layout change the window never saw must be pushed.
+initSidebar(selectOrgan, ()=>{
+  if(state.bodyViewer) state.bodyViewer.resize();
+  if(state.organViewer) state.organViewer.resize();
+  if(state.siteViewer) state.siteViewer.resize();
+});
 requestAnimationFrame(bodyTick);
 requestAnimationFrame(organTick);
 requestAnimationFrame(siteTick);
