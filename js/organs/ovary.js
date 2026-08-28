@@ -53,7 +53,15 @@ export const cancerEntries = [
 export function buildOvaryMesh(){
   const geo = new THREE.SphereGeometry(1, 80, 80);
   organicDisplace(geo, 0.045, 6.5, 1.7);
-  const mat = new THREE.MeshStandardMaterial({ color:0xc9ac9e, roughness:0.55, metalness:0.0 });
+  // MeshPhysicalMaterial + specularIntensity 0.15, NOT MeshStandardMaterial (clip-fix
+  // pass): this ports the missing half of the approved material verification — the
+  // Blender renders the tissue colors were verified and approved on had Specular IOR
+  // Level 0.15 baked in, but MeshStandardMaterial has no specular control at all, so the
+  // live app kept full-strength dielectric specular. Under the legacy hard-clip pipeline
+  // that blew grazing-angle fold/fissure walls to flat white (up to 26% of the lungs'
+  // on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
+  // js/viewer.js's warm-lighting comment. Color/roughness values unchanged.
+  const mat = new THREE.MeshPhysicalMaterial({ color:0xc9ac9e, roughness:0.55, metalness:0.0, specularIntensity:0.15 });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.scale.set(1.28 * (2.0/3.5), 1.28, 1.28 * (1.0/3.5));
   return mesh;

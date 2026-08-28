@@ -173,8 +173,21 @@ export function makeViewer(container, opts){
   // LEGACY_LIGHT_SCALE itself — the parked color-management pipeline decision stays parked;
   // only the light *color* and the rim light's presence change, and only for organs.
   const warm = !!opts.warmLighting;
-  scene.add(new THREE.AmbientLight(warm ? 0xfff1e0 : 0xffffff, 0.55 * LEGACY_LIGHT_SCALE));
-  const key = new THREE.DirectionalLight(warm ? 0xffddb0 : 0xffffff, 0.9 * LEGACY_LIGHT_SCALE);
+  // Warm-mode intensities are LOWER than the cool path's 0.55/0.9 on purpose (clip-fix pass):
+  // this legacy pipeline hard-clips at 1.0 per channel (ColorManagement off, LinearSRGB out,
+  // no tone mapping), and 0.55+0.9 gives a 1.45x peak diffuse factor — enough to clip the
+  // R/G channels of every paler verified tissue albedo (breast R 0.89 x 1.45 = 1.29) before
+  // specular even lands. On concave/wrinkled geometry (lung fissure, areolar indent,
+  // prostate's medial fold, brain sulci) whole light-facing, camera-grazing walls tipped past
+  // 1.0 in all three channels at once -> hard-edged blown-white plateaus, measured at up to
+  // 26% of the lungs' on-screen pixels. Latent since the original warm-lighting commit —
+  // that pass's review renders were Blender approximations with deliberately tamed specular,
+  // so the live pipeline's clipping was never in any reviewed screenshot. 0.42+0.65 = 1.07x
+  // peak keeps the brightest verified albedo just under clip; the per-organ material colors
+  // (verified against real gross-anatomy sources) are deliberately untouched, and scaling
+  // light intensity uniformly preserves their hue by construction.
+  scene.add(new THREE.AmbientLight(warm ? 0xfff1e0 : 0xffffff, (warm ? 0.42 : 0.55) * LEGACY_LIGHT_SCALE));
+  const key = new THREE.DirectionalLight(warm ? 0xffddb0 : 0xffffff, (warm ? 0.65 : 0.9) * LEGACY_LIGHT_SCALE);
   key.position.set(3, 4, 5);
   scene.add(key);
   if(!warm){

@@ -1984,6 +1984,78 @@ screen pair per organ:
     `enterHistology`, and the null===null path through the
     `builtForCancerId` check was the subtle part.
 
+- **Real-tissue material colors + warm organ lighting (commit `1162e51` — this
+  entry was written retroactively during the clip-fix pass below, which found
+  the history had never been recorded here despite the pass's own
+  documentation standard):** every organ's material color was replaced with a
+  verified real-tissue tone, each cited to a real gross-anatomy source in its
+  own organ file's comment (Brain: LMU Pressbooks; Lungs/Kidneys/Prostate/
+  Ovary: Monash Pathology / PathologyOutlines.com / IMAIOS; Liver: Johns
+  Hopkins + BCcampus; Breast: MGH Pathology), replacing colors that measured
+  as washing toward neutral gray before lighting was even applied. Added the
+  `warmLighting` opt-in to `makeViewer` (organ viewers only — body and
+  tumor-site viewers keep the cool/teal look; the color-management pipeline
+  decision stays parked). Verification was Blender-based numeric pixel
+  sampling (the pane's rAF constraint); the approved review artifacts were
+  those Blender renders — a method gap the clip-fix entry below turned out to
+  hinge on.
+
+- **Organ-viewer clip-fix pass (blown-white concave patches — root cause was
+  NOT the reported hypothesis, and NOT a regression):** hard-edged white
+  patches in concave regions (lung fissure, areolar indent, prostate's medial
+  fold, brain sulci, kidney's medial notch) were reported as a suspected
+  ambient-light regression from the sidebar/histology commits. Investigated
+  per the evidence, not the hypothesis:
+  - **Not a regression:** `git diff 1162e51..HEAD` touched no lighting or
+    material code, and a git-worktree of `1162e51` measured statistically
+    identical blowout (lungs 25.8% of on-screen mesh pixels pure white vs
+    26.3% on HEAD) — latent, not introduced.
+  - **Not (primarily) the warm lights, and not specular:** lowering warm
+    ambient+key from 0.55/0.9 to 0.42/0.65 (diffuse peak 1.45→1.07, below
+    clip for every verified albedo) helped only the lungs; rebalancing toward
+    ambient made things WORSE (higher diffuse floor = more area near clip);
+    porting the approved Blender model's specular reduction
+    (`MeshPhysicalMaterial` + `specularIntensity:0.15` — the Blender
+    verification always had Specular IOR 0.15, but `MeshStandardMaterial` has
+    no specular control, so the live app never got that half of the approved
+    material) barely moved brain/kidneys. Each hypothesis measured, kept for
+    its own justification, but none was the driver.
+  - **Actual root cause: the per-marker teal glow `PointLight`s.** Each organ
+    hotspot ships a 0.5π-intensity teal point light; the real-mesh port set
+    its reach to `meshBoundingRadius * 2.4` — the procedural original was
+    1.2 units on ~1.3-unit organs, a DESIGNED ratio of ~0.9× — so four teal
+    floodlights washed the whole organ. Worse, real-mesh markers sit at
+    raycast points exactly ON the surface (procedural markers float 4% above
+    a smooth convex ellipsoid), so concave walls hugging a marker receive the
+    light at distance ~0: full intensity under any falloff, unbounded grazing
+    specular, and additive teal (strong G+B) on warm-lit tissue (R already
+    near clip) = all three channels clipped = flat white. Kidney was worst
+    because all four of its markers cluster in the medial notch. Intensity
+    reduction (0.5→0.18) was tried and measured: plateaus shrank but stayed —
+    no intensity fixes a distance-zero light.
+  - **Fix:** glow lights removed for real-mesh organs (kept, untouched, for
+    the procedural Ovary — convex, floating markers, measured 0.0-0.5% and
+    looks as originally designed); warm lights 0.42/0.65;
+    `MeshPhysicalMaterial` + `specularIntensity:0.15` on all seven organ
+    materials (colors/roughness untouched). Dropping the marker lights moves
+    the live app TOWARD the approved material-pass renders, which modeled
+    ambient+key only — no marker lights ever appeared in an approved artifact.
+  - **Result, measured in the live pipeline (puppeteer + PIL pixel counts,
+    not Blender):** blown-white pixels 26.3%→0.0% (lungs), 24.5%→0.0%
+    (brain), 8.6%→0.0% (kidneys), 8.2%→0.0% (prostate), 5.4%→0.0% (breast),
+    2.9%→0.0% (liver); ovary 1.7%→0.5% (designed glow halo). Midtone hue
+    ratios verified in-family with each organ's cited tissue target (e.g.
+    brain R/G 1.76 vs target 1.72). Marker activation, drag-vs-click, and
+    organ→cancer navigation regression-checked on a real-mesh and a
+    procedural organ; zero page errors.
+  - **Verification-method note for every future organ-look pass:** the
+    material pass's approved artifacts were Blender approximations that (a)
+    had tamed specular the app lacked and (b) modeled no marker lights — two
+    gaps that together hid all of this. Organ-look changes must be verified
+    against the LIVE pipeline (puppeteer headless renders rAF/WebGL fine;
+    the in-app pane does not), with pixel sampling, before approval
+    screenshots go out.
+
 ## Known limitations / tech debt
 - The male/female bodies are real static meshes now (Blender's "Human Base
   Meshes" bundle, CC0 — see Architecture notes for why this is the third

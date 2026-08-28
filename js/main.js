@@ -223,7 +223,18 @@ function initOrganViewer(organKey){
         ? new THREE.Box3().setFromObject(mesh).getBoundingSphere(new THREE.Sphere()).radius
         : 1;
       const markerRadius = isRealMesh ? meshBoundingRadius * 0.045 : 0.06;
-      const glowDistance = isRealMesh ? meshBoundingRadius * 2.4 : 1.2;
+      // 0.9, not the 2.4 this shipped with (clip-fix pass): the procedural original was reach
+      // 1.2 units on ~1.3-unit-radius organs — a DESIGNED ratio of ~0.9x the bounding radius,
+      // a local ring around the marker. The real-mesh port accidentally set 2.4x, so every
+      // marker's teal glow light washed across most of the organ; four of those stacked on the
+      // warm key/ambient pushed all three channels past this legacy pipeline's hard 1.0 clip
+      // wherever concave walls (kidney's medial notch, the lung fissure, the areolar indent,
+      // prostate's fold) sat close to and facing a marker — measured as hard-edged blown-white
+      // plateaus covering up to 26% of an organ's on-screen pixels. Latent since the real-mesh
+      // pass; surfaced by the material pass's saturated warm colors (over the old near-white
+      // materials a teal wash read as a subtle ring), and never visible in that pass's approved
+      // Blender renders, which modeled ambient+key only — no marker lights.
+      const glowDistance = isRealMesh ? meshBoundingRadius * 0.9 : 1.2;
 
       detail.hotspots.forEach(h=>{
         let pos;
@@ -242,12 +253,26 @@ function initOrganViewer(organKey){
           new THREE.MeshBasicMaterial({ color:0x35c9c1 })
         );
         mMesh.position.copy(pos);
-        // decay explicitly 1 (r146 changed the default to 2). This is the light the change hit
-        // hardest: at distance 1.2, inverse-square falloff blows the near field out into a halo
-        // that swallows the marker instead of ringing it.
-        const glow = new THREE.PointLight(0x35c9c1, 0.5 * LEGACY_LIGHT_SCALE, glowDistance, 1);
-        glow.position.copy(mMesh.position);
-        thisViewer.scene.add(mMesh, glow);
+        // Glow PointLight for PROCEDURAL organs only (clip-fix pass). On real-mesh organs
+        // this light is geometrically degenerate: h.pos is a raycast point ON the surface, so
+        // the surrounding walls receive the light at distance ~0 — full intensity under any
+        // falloff, with grazing-angle specular effectively unbounded — and inside concave
+        // anatomy (kidney's medial notch holds all four of its markers, the lung fissure, the
+        // areolar indent, prostate's fold) that blew contiguous patches to flat clipped white:
+        // measured at up to 26% of an organ's on-screen pixels, and no intensity value fixes a
+        // distance-zero light (0.5 -> 0.18 was tried and measured; the plateaus shrank but
+        // stayed). The procedural original never had the problem because its markers float 4%
+        // above a smooth CONVEX ellipsoid (ovary measured 0.0% blown, so it keeps the designed
+        // light + look exactly, decay explicitly 1 per the r146 note in git history). The
+        // approved material-pass renders modeled no marker lights at all, so dropping them on
+        // real meshes moves the live app closer to the approved look, not away from it — and
+        // the DOM .organ-point dot + ring carries the marker's visible identity either way.
+        if(!isRealMesh){
+          const glow = new THREE.PointLight(0x35c9c1, 0.5 * LEGACY_LIGHT_SCALE, glowDistance, 1);
+          glow.position.copy(mMesh.position);
+          thisViewer.scene.add(glow);
+        }
+        thisViewer.scene.add(mMesh);
 
         // The DOM half of the marker. Same arrangement as the tumor-site labels: a real element per
         // 3D point, repositioned each frame from the camera projection, carrying the button semantics
