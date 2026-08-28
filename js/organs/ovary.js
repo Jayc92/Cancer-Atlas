@@ -43,10 +43,17 @@ export const cancerEntries = [
 // unsourced numbers — a visibly flatter, more almond-like result than this used to render as.
 // `hotspotScale` below is updated to match, so the `dir` vectors keep landing on the real
 // surface rather than the old (now-wrong) one.
+// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0xe6b6a8 was a pale
+// peachy-tan, again closer to generic skin tone than the organ's real surface color. Confirmed
+// against PathologyOutlines.com and IMAIOS gross-anatomy descriptions: the normal ovary's
+// surface is pale grayish-pink to white, smooth in youth and increasingly convoluted with age —
+// distinctly cooler/grayer than a warm tan. 0xc9ac9e moves the base color into that real
+// grayish-pink family, darkened slightly from a "true pale" reading so it holds its color under
+// the warm key light instead of washing to near-white the way Brain's original color did.
 export function buildOvaryMesh(){
   const geo = new THREE.SphereGeometry(1, 80, 80);
   organicDisplace(geo, 0.045, 6.5, 1.7);
-  const mat = new THREE.MeshStandardMaterial({ color:0xe6b6a8, roughness:0.55, metalness:0.04 });
+  const mat = new THREE.MeshStandardMaterial({ color:0xc9ac9e, roughness:0.55, metalness:0.0 });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.scale.set(1.28 * (2.0/3.5), 1.28, 1.28 * (1.0/3.5));
   return mesh;

@@ -19,11 +19,19 @@ export const cancerEntries = [
 // the real GLB's right/left lobe division and the fissure between them (the porta hepatis
 // region the Portal vein/Bile ducts points below are anchored near) are now real geometry, not
 // just a stated fact in the text below.
+// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0x7c3f30 was already
+// in the right family, checked and darkened slightly rather than assumed correct. Source:
+// Johns Hopkins Medicine's liver overview and a BCcampus open-textbook description, both
+// confirmed directly — the liver is "dark reddish-brown," a hue attributed specifically to its
+// dual, dense blood supply (hepatic artery plus portal vein) rather than to bile or hepatocyte
+// pigment itself. Liver reads darker than kidney in real gross specimens despite a similar hue
+// family, so 0x6b2e22 sits darker than kidney's 0x8c3a30 above, not just a copy with a
+// different label.
 export function buildLiverMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/liver.glb', (gltf)=>{
-      const mat = new THREE.MeshStandardMaterial({ color:0x7c3f30, roughness:0.55, metalness:0.04 });
+      const mat = new THREE.MeshStandardMaterial({ color:0x6b2e22, roughness:0.5, metalness:0.0 });
       gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
       resolve(gltf.scene);
     }, undefined, reject);

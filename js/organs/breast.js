@@ -31,11 +31,19 @@ export const cancerEntries = [
 // gland's own bounding volume — the same class of check that isolated Prostate's real duct
 // appendages from its gland, here confirming the *opposite* conclusion: nothing to isolate out,
 // every component is real anatomy worth keeping.
+// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0xe8bdae was a peachy-
+// tan, closer to generic skin tone than actual breast parenchyma. Real breast tissue on cut
+// surface is a mix of pale yellowish-cream fat and firmer white-to-tan fibroglandular tissue —
+// confirmed against MGH Pathology's (learn.mghpathology.org) description of normal breast
+// tissue as predominantly adipose (yellow) interspersed with white fibrous/glandular tissue,
+// not a uniform peach. 0xe3d3a0 shifts the base color toward that real pale yellow-cream
+// direction while staying light enough to read as the fattier tissue that dominates the
+// organ's bulk, and richened slightly so it doesn't wash toward white under the warm key light.
 export function buildBreastMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/breast.glb', (gltf)=>{
-      const mat = new THREE.MeshStandardMaterial({ color:0xe8bdae, roughness:0.58, metalness:0.03 });
+      const mat = new THREE.MeshStandardMaterial({ color:0xe3d3a0, roughness:0.6, metalness:0.0 });
       gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
       resolve(gltf.scene);
     }, undefined, reject);

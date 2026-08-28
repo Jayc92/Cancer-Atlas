@@ -151,7 +151,7 @@ function initOrganViewer(organKey){
   const detail = ORGAN_DETAILS[organKey];
   const container = document.getElementById('organViewerWrap');
   state.organViewer = makeViewer(container, {
-    ...detail.viewer, autoRotate:true,
+    ...detail.viewer, autoRotate:true, warmLighting:true,
     onClick:(e, cont)=>{
       const rect = cont.getBoundingClientRect();
       const mouse = new THREE.Vector2(

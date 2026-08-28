@@ -28,11 +28,19 @@ export const cancerEntries = [
 // points below were anchored to it. The source scan is specifically the left kidney (the
 // collection doesn't include a separate right-kidney model); used here to represent "a kidney"
 // generically, same as the procedural version's single unlabeled-side ellipsoid did.
+// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0x9c4a42 was already a
+// reasonable reddish-brown direction, but checked and richened rather than assumed correct.
+// Source: Monash University's online pathology atlas (epath.med.monash.edu.au) and a BCcampus
+// open-textbook description, both confirmed directly — a normal kidney's cut surface is
+// "reddish-brown... reflecting the rich capillary network of the nephrons and the high blood
+// flow through the glomerular capillaries," with the cortex a lighter red-brown than the
+// darker medulla. 0x8c3a30 keeps the same real hue family, pushed slightly more saturated so
+// it holds up under the organ viewer's lighting rather than washing paler.
 export function buildKidneysMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/kidneys.glb', (gltf)=>{
-      const mat = new THREE.MeshStandardMaterial({ color:0x9c4a42, roughness:0.5, metalness:0.05 });
+      const mat = new THREE.MeshStandardMaterial({ color:0x8c3a30, roughness:0.55, metalness:0.0 });
       gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
       resolve(gltf.scene);
     }, undefined, reject);

@@ -163,15 +163,29 @@ export function makeViewer(container, opts){
 
   // Intensities are written as their original hand-tuned values × LEGACY_LIGHT_SCALE so the
   // numbers a future reader recognises from the design pass stay legible in the source.
-  scene.add(new THREE.AmbientLight(0xffffff, 0.55 * LEGACY_LIGHT_SCALE));
-  const key = new THREE.DirectionalLight(0xffffff, 0.9 * LEGACY_LIGHT_SCALE);
+  //
+  // opts.warmLighting is an organ-viewer-only opt-in (set by initOrganViewer in main.js,
+  // never by body.js or the tumor-site viewer), added specifically so the real-tissue material
+  // colors on the seven organs (see each js/organs/*.js buildXMesh — verified against real
+  // gross-anatomy sources, not guessed, same discipline as every citation in this app) don't
+  // get lit by the same cool-white key + teal rim that were originally tuned against the old,
+  // paler procedural colors. This does NOT touch THREE.ColorManagement, outputColorSpace, or
+  // LEGACY_LIGHT_SCALE itself — the parked color-management pipeline decision stays parked;
+  // only the light *color* and the rim light's presence change, and only for organs.
+  const warm = !!opts.warmLighting;
+  scene.add(new THREE.AmbientLight(warm ? 0xfff1e0 : 0xffffff, 0.55 * LEGACY_LIGHT_SCALE));
+  const key = new THREE.DirectionalLight(warm ? 0xffddb0 : 0xffffff, 0.9 * LEGACY_LIGHT_SCALE);
   key.position.set(3, 4, 5);
   scene.add(key);
-  // 4th arg is decay, explicit because its default flipped 1 → 2 in r146. This teal rim light
-  // is a broad wash across the whole model, so inverse-square falloff would extinguish it.
-  const rim = new THREE.PointLight(0x35c9c1, 1.1 * LEGACY_LIGHT_SCALE, 20, 1);
-  rim.position.set(-4, -2, -3);
-  scene.add(rim);
+  if(!warm){
+    // 4th arg is decay, explicit because its default flipped 1 → 2 in r146. This teal rim
+    // light is a broad wash across the whole model, so inverse-square falloff would
+    // extinguish it. Dropped entirely in warm mode — a cool teal accent is the exact thing
+    // the warm-material treatment is moving away from, not something to warm-tint in place.
+    const rim = new THREE.PointLight(0x35c9c1, 1.1 * LEGACY_LIGHT_SCALE, 20, 1);
+    rim.position.set(-4, -2, -3);
+    scene.add(rim);
+  }
 
   // --- Camera control: real OrbitControls ---------------------------------------------------
   // Attached to the container, not to renderer.domElement, for two reasons. The canvas fills

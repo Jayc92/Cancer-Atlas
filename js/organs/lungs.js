@@ -34,11 +34,20 @@ export const cancerEntries = [
 // Promise<THREE.Object3D> instead of an Object3D directly. initOrganViewer() in main.js wraps
 // every organ's buildMesh() result in Promise.resolve() specifically so this and the procedural
 // organs above share one code path.
+//
+// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0xdba9a0 was a pale
+// peachy-tan, closer to skin tone than lung tissue. Real fresh adult lung is pinkish-gray, not
+// tan — confirmed across gross-pathology sources (a normal adult lung is "pinkish-gray" with
+// mottled grayish patches from anthracosis, harmless carbon-pigment deposition present in
+// nearly all adults from lifelong particulate exposure — corroborated by Monash Pathology's
+// anthracosis notes and PathologyOutlines.com's description of the same pigment pattern).
+// 0xb08d90 is a real, more-saturated dusty pink-gray, not tan — picked to survive lighting
+// without washing toward white, same fix as Brain's material.
 export function buildLungsMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/lungs.glb', (gltf)=>{
-      const mat = new THREE.MeshStandardMaterial({ color:0xdba9a0, roughness:0.6, metalness:0.03 });
+      const mat = new THREE.MeshStandardMaterial({ color:0xb08d90, roughness:0.65, metalness:0.0 });
       gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
       resolve(gltf.scene);
     }, undefined, reject);

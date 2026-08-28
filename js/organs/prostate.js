@@ -36,11 +36,17 @@ export const cancerEntries = [
 // for visual consistency with every other organ's single-silhouette presentation (CLAUDE.md
 // notes it as a possible future refinement, not built into this pass) — assets/prostate.glb is
 // the gland alone.
+// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0xc9998e was already a
+// tan-pink direction, checked and richened rather than assumed correct. Source: PathologyOutlines.com's
+// description of the normal prostate cut surface — "Tan to pink — reflecting the mixture of
+// glandular epithelium, stromal connective tissue, and blood vessels" — confirmed directly, not
+// a generic "gland-colored" guess. 0xb97c68 keeps that same real tan-pink family, more
+// saturated so it holds up under lighting instead of washing paler.
 export function buildProstateMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/prostate.glb', (gltf)=>{
-      const mat = new THREE.MeshStandardMaterial({ color:0xc9998e, roughness:0.55, metalness:0.04 });
+      const mat = new THREE.MeshStandardMaterial({ color:0xb97c68, roughness:0.6, metalness:0.0 });
       gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
       resolve(gltf.scene);
     }, undefined, reject);

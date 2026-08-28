@@ -33,11 +33,20 @@ export const cancerEntries = [
 // This replaces the old displaced-sphere approximation, which had no real gyral/sulcal folding
 // at all — that mesh's bumpy surface was a fake noise texture, not real anatomy. The Cerebral
 // cortex hotspot below is now anchored to an actual gyrus on the real GLB.
+// MATERIAL COLOR (real-tissue pass, verified before picking, not guessed): the old 0xd9b3ab
+// was already directionally "pinkish-tan" on paper but too pale/desaturated to survive any
+// real lighting — confirmed by sampling actual rendered pixels, not by eye, which is exactly
+// the bug this pass exists to fix. Source: LMU Pressbooks, "Human Physiology," ch. 6.3 Brain
+// Structure — "Gray matter is not necessarily gray. It can be pinkish because of blood
+// content, or even slightly tan..." — quoted directly, not paraphrased from memory. This
+// mesh's entire visible surface is cortex (gray matter), so that's the tone that applies here,
+// not a generic "brain-colored" guess. 0xc17055 is a real, saturated pinkish-tan that samples
+// correctly (confirmed numerically) instead of washing toward neutral gray-white.
 export function buildBrainMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/brain.glb', (gltf)=>{
-      const mat = new THREE.MeshStandardMaterial({ color:0xd9b3ab, roughness:0.6, metalness:0.03 });
+      const mat = new THREE.MeshStandardMaterial({ color:0xc17055, roughness:0.7, metalness:0.0 });
       gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
       resolve(gltf.scene);
     }, undefined, reject);
