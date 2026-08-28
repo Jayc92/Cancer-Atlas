@@ -129,10 +129,36 @@ const PRIVATE_POOL_CCRCC = [
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
 ];
 
+// HISTOLOGY (microscopic-view data — every claim verified directly at the source):
+// PathologyOutlines' clear cell RCC page confirms "compact nests and sheets of cells with
+// clear cytoplasm and distinct membrane," alveolar (nested) among the architectural
+// patterns, a "prominent but delicate capillary network" of "arborizing small, thin walled
+// vessels" — and uses "chicken wire" for that vasculature repeatedly and diagnostically
+// (papillary RCC "lacks prominent delicate chicken wire vasculature"; chromophobe and
+// oncocytoma each lack it too), so the nickname below is the field's real usage, not
+// embellishment. The WHY of the clearing is from a peer-reviewed source (Pei et al., Appl
+// Immunohistochem Mol Morphol, 2020): cytoplasm "filled with glycogen and lipids, which
+// demonstrate clear appearance after being dissolved during tissue processing" — the cells
+// aren't empty in life; processing empties them.
+const HISTOLOGY_CCRCC = {
+  intro: 'Clear cell renal cell carcinoma is named for exactly what the microscope shows: compact nests and sheets of cells whose cytoplasm looks optically empty. The cells are not empty in life — they are filled with glycogen and lipid, which dissolve during tissue processing and leave the clear appearance behind. Wrapping the nests is a prominent but delicate network of arborizing, thin-walled capillaries — "chicken wire" vasculature, distinctive enough that its absence points to a different kidney tumor.',
+  ariaSummary: 'Stylized microscopic field: eight rounded nests packed with cells whose cytoplasm is white and optically clear, each cell outlined crisply with a small, dark, round nucleus. Thin red capillary lines trace around every nest, forming a delicate interconnecting network between them — the chicken-wire vasculature.',
+  citation: 'PathologyOutlines.com, "Clear cell" (kidney); clearing mechanism: Pei et al., Appl Immunohistochem Mol Morphol, 2020.',
+  features: [
+    { key:'clearcells', label:'Clear cytoplasm',
+      text:'Optically clear cells with distinct membranes and small round nuclei. The clearing is an artifact of processing — glycogen and lipid that filled the cytoplasm in life dissolve out, leaving the empty look the tumor is named for.' },
+    { key:'nests', label:'Nested architecture',
+      text:'Compact nests and sheets (alveolar pattern) — one of several architectures this tumor takes, alongside solid, tubular and microcystic growth.' },
+    { key:'vessels', label:'"Chicken wire" vasculature',
+      text:'A prominent but delicate network of arborizing, thin-walled capillaries encasing the nests — an important diagnostic feature, and one whose absence argues for papillary or chromophobe carcinoma instead.' },
+  ],
+};
+
 export const cancerDetails = {
   ccrcc: {
     title:'Clear Cell Renal Cell Carcinoma', screenLabel:'Clear cell renal cell carcinoma — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_CCRCC, trunk:TRUNK_CCRCC, privatePool:PRIVATE_POOL_CCRCC,
+    histology: HISTOLOGY_CCRCC,
   },
 };

@@ -192,11 +192,39 @@ const PRIVATE_POOL_GBM = [
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
 ];
 
+// HISTOLOGY (microscopic-view data — every claim verified directly at the source): the WHO
+// CNS5 summary this organ already cites (Louis et al., Neuro-Oncology, 2021) states the
+// diagnostic rule verbatim as five OR-joined criteria — glioblastoma, IDH-wildtype "should
+// be diagnosed... if there is microvascular proliferation or necrosis or TERT promoter
+// mutation or EGFR gene amplification or +7/−10 chromosome copy number changes" — so
+// necrosis and MVP are literally diagnostic criteria here, not just descriptions, and the
+// intro says so. PathologyOutlines' GBM page confirms both features' morphology directly:
+// pseudopalisading as "neoplastic cells surrounding central necrosis" (with "microvascular
+// proliferation or necrosis is required for a histologic diagnosis of GBM"), and MVP as
+// "multilayered, small caliber vessels with glomeruloid appearance." The "garland-like
+// arrangement of hypercellular tumor nuclei" phrasing is from Wippold et al., AJNR, 2006
+// (PMID 17110662) — the pseudopalisade-specific source, checked because "dense rows of
+// nuclei" was originally an unverified paraphrase.
+const HISTOLOGY_GBM = {
+  intro: 'Glioblastoma’s two defining microscopic features are pseudopalisading necrosis — garland-like, hypercellular rims of tumor nuclei lining up around irregular necrotic zones — and microvascular proliferation: multilayered, small-caliber vessels piled into glomeruloid tufts. Under the WHO 2021 classification these are diagnostic criteria, not just descriptions: in an IDH-wildtype diffuse astrocytic glioma, either one is sufficient on its own to make the diagnosis.',
+  ariaSummary: 'Stylized microscopic field: a pale, irregular serpentine band of necrosis crosses the middle, its borders rimmed on both sides by densely packed, elongated dark nuclei standing perpendicular to the edge — the pseudopalisades. Away from the band, the field is diffusely hypercellular with small irregular tumor nuclei. Two rounded tufts of piled-up small red vessels — glomeruloid microvascular proliferation — sit in opposite corners.',
+  citation: 'Louis et al., Neuro-Oncology, 2021 (WHO CNS5); PathologyOutlines.com, "Glioblastoma, IDH wild type"; Wippold et al., AJNR, 2006.',
+  features: [
+    { key:'palisading', label:'Pseudopalisading necrosis',
+      text:'Neoplastic cells surrounding central necrosis in garland-like, hypercellular rims. This is one of the WHO 2021 diagnostic criteria: an IDH-wildtype diffuse astrocytic glioma with necrosis is glioblastoma, full stop.' },
+    { key:'mvp', label:'Microvascular proliferation',
+      text:'Multilayered, small-caliber vessels with a glomeruloid appearance — the other histologic criterion. Either this or necrosis suffices for the diagnosis, alongside the three molecular routes (TERT promoter mutation, EGFR amplification, +7/−10 chromosome changes).' },
+    { key:'hypercell', label:'Hypercellular tumor',
+      text:'Densely packed, irregularly oriented tumor nuclei fill the field between the landmark features — the diffusely infiltrative background this tumor grows as.' },
+  ],
+};
+
 export const cancerDetails = {
   gbm: {
     title:'Glioblastoma', screenLabel:'Glioblastoma — intratumor region explorer',
     legendTitle:'Regions within one tumor (GBM rarely metastasizes)',
     regionWord:'region',
     regions:REGIONS_GBM, trunk:TRUNK_GBM, privatePool:PRIVATE_POOL_GBM,
+    histology: HISTOLOGY_GBM,
   },
 };

@@ -13,6 +13,7 @@ import { txRenderCellLayer, txClosePanel } from './panel.js';
 import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
+import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -456,6 +457,10 @@ function txEnterRegion(regionIdx){
   // tab order to match what is on screen. Same reasoning as setScreen().
   txSiteViewerEl.toggleAttribute('inert', true);
   txCellLayer.toggleAttribute('inert', false);
+  // Entering any region always starts at the cell scatter, never in a histology mode left
+  // over from the previous region/cancer; the toggle only appears at this level.
+  resetHistologyMode();
+  showHistologyToggle();
   renderCrumbs();
   // Entering a site inerts the viewer that holds the site label just activated, and this path
   // goes through neither setScreen nor txGoLevel, so it needs its own landing point.
@@ -472,6 +477,11 @@ function txGoLevel(lv){
     txCaptionText.textContent = '';
     txCellLayer.toggleAttribute('inert', true);
     txSiteViewerEl.toggleAttribute('inert', false);
+    // The microscopic view is a level-2 mode; leaving level 2 tears it down and hides its
+    // toggle. Order matters: state.txLevel is already 1 here, so resetHistologyMode()'s
+    // applyMode(false) won't fight the cell-layer state this block just set.
+    resetHistologyMode();
+    hideHistologyToggle();
     if(state.siteViewer){ setTimeout(()=>{ state.siteViewer.autoRotate = true; }, 200); }
     // Stepping back to the site map inerts the cell layer, so the cell that focus would
     // otherwise return to is gone. Land on the screen. Level 2 needs no equivalent: the cell
@@ -508,6 +518,7 @@ initSidebar(selectOrgan, ()=>{
   if(state.organViewer) state.organViewer.resize();
   if(state.siteViewer) state.siteViewer.resize();
 });
+initHistology();
 requestAnimationFrame(bodyTick);
 requestAnimationFrame(organTick);
 requestAnimationFrame(siteTick);

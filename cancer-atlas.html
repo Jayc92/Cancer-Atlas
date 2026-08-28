@@ -176,6 +176,60 @@
   #txHint{position:absolute;right:24px;top:78px;z-index:20;text-align:right;max-width:240px;font-size:12px;color:var(--muted);line-height:1.5;}
   #txHint b{color:var(--text);font-weight:600;}
 
+  /* ---------- Microscopic (histology) view — cancer screen, level 2 ---------- */
+  /* A peer VIEW MODE of the cell-scatter layer, not a deeper drill level: same
+     opacity/pointer-events/inert swap mechanics the site-viewer <-> cell-layer transition
+     uses, breadcrumb depth unchanged. z-index 6 beats #txCenterCaption's 5 (the "22 sampled
+     cells" caption belongs to the cell view, not this one) and stays under #txLegend (20)
+     and #txPanel (30). */
+  #txHistologyLayer{position:absolute;inset:0;z-index:6;opacity:0;pointer-events:none;transition:opacity .45s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:84px 20px 74px;}
+  #txHistologyLayer.active{opacity:1;pointer-events:auto;}
+  /* The slide is deliberately LIGHT on this dark app: H&E histology is bright-field
+     microscopy, and a dark-tinted rendition would falsify the medium the visual is
+     explicitly evoking. The app's design system still owns all the chrome around it
+     (frame border, info card, toggle); only the specimen field itself is bright. The
+     third width term keeps slide+card inside short viewports (#app min-height 580). */
+  #histSlideWrap{position:relative;width:min(660px,92vw,calc((100vh - 300px)*1.6));aspect-ratio:8/5;background:#f6edf0;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.35);}
+  #histSlideWrap svg{display:block;width:100%;height:100%;}
+  /* Feature labels sit ON the light slide, so they invert to dark-on-light for contrast —
+     the one place the app's light-text-on-navy chrome rules don't apply, deliberately. */
+  .hist-label{position:absolute;transform:translate(-50%,-50%);font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.04em;color:#3c2b52;background:rgba(255,255,255,.85);border:1px solid rgba(60,43,82,.45);padding:3px 8px;border-radius:20px;white-space:nowrap;cursor:pointer;}
+  .hist-label:hover{background:#fff;border-color:#3c2b52;}
+  #histInfoCard{width:min(660px,92vw);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-height:58px;}
+  #histInfoCard .hi-title{font-family:'Space Grotesk';font-size:14px;font-weight:600;margin-bottom:4px;}
+  #histInfoCard .hi-text{font-size:12.5px;color:#c4cee0;line-height:1.55;}
+  #histInfoCard .hi-cite{font-family:'IBM Plex Mono';font-size:10px;color:var(--muted);margin-top:7px;line-height:1.5;}
+  #txHistologyToggle{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:25;font-family:'IBM Plex Sans';font-size:12.5px;font-weight:600;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:9px 18px;cursor:pointer;}
+  /* The site legend keys the 3D site map's colors — meaningless over the histology slide,
+     and it physically overlaps the info card's citation line. Hidden by the same
+     opacity/pointer-events discipline screens use (it holds no focusable controls, so no
+     inert needed). The .hist-open class is toggled by applyMode() in js/histology.js. */
+  #screenCancer.hist-open #txLegend{opacity:0;pointer-events:none;}
+  #txLegend{transition:opacity .25s ease;}
+  /* The center caption belongs to the cell-scatter view ("N sampled cells · coral ring…");
+     the histology layer is transparent between slide and card, so on narrow screens the
+     stale caption ghosted through the gap. Never focusable, so opacity alone suffices. */
+  #screenCancer.hist-open #txCenterCaption{opacity:0;}
+  /* Same reasoning as #app.panel-open #disclaimer above, applied to the histology mode: the
+     info card carries its own citation line (plus the not-a-real-micrograph note), and on
+     mobile the floating disclaimer physically overlapped the card's text. General-sibling
+     combinator works because #screenCancer and #disclaimer are both direct children of #app,
+     screen first. pointer-events must follow opacity — the disclaimer is interactive now. */
+  #screenCancer.hist-open ~ #disclaimer{opacity:0;pointer-events:none;}
+  @media (max-width:640px){
+    /* At this width the breadcrumb wraps to 3-4 lines and the flex-centered slide collided
+       with its last line, while the long info card ran under the (now-hidden) disclaimer
+       corner. Pin content below the wrapped crumbs and let the layer scroll instead of
+       centering. Touch-scroll only, deliberately: desktop never overflows (the slide's
+       min() width term already reserves vertical room), so no keyboard-scroll gap is
+       introduced on the surface where keyboards actually live. */
+    /* bottom padding clears the fixed Microscopic-view toggle, so the card's citation
+       line is fully readable at end of scroll rather than parked behind the button */
+    #txHistologyLayer{justify-content:flex-start;padding:232px 12px 96px;overflow-y:auto;}
+  }
+  #txHistologyToggle:hover{color:var(--text);border-color:var(--muted);}
+  #txHistologyToggle[aria-pressed="true"]{color:var(--teal);border-color:rgba(53,201,193,.4);}
+
   #txPanel{position:absolute;top:0;right:0;height:100%;width:360px;max-width:88vw;background:var(--panel);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:30;display:flex;flex-direction:column;box-shadow:-30px 0 60px rgba(0,0,0,.35);}
   #txPanel.open{transform:translateX(0);}
   #txPanelHead{padding:20px 20px 14px;border-bottom:1px solid var(--line);position:relative;}
@@ -373,7 +427,31 @@
       <!-- Starts inert: the cell layer keeps its 22 dots in the DOM after you step back out
            to the site map, and opacity:0 alone would leave them all in the tab order. -->
       <div id="txCellLayer" inert></div>
+      <!-- Microscopic view — a peer view mode of the cell layer above (toggled by
+           #txHistologyToggle below), not a fourth drill level; breadcrumb depth stays at the
+           site level. Starts inert for the same reason the cell layer does. Contents (slide
+           wrapper, feature labels, info card) are built by js/histology.js per cancer.
+           role="group" on the slide wrapper (not role="img") for the same trap documented on
+           every viewer wrapper: it holds the real .hist-label buttons, and role="img" would
+           collapse them out of the accessibility tree — the SVG inside gets role="img" with a
+           real text summary of the architecture instead. -->
+      <div id="txHistologyLayer" inert>
+        <div id="histSlideWrap" role="group" aria-label="Stylized microscopic view"></div>
+        <!-- Same live-region reasoning as #organInfoCard: activating a feature label rewrites
+             this card in place with no navigation and no focus move, so without aria-live a
+             keyboard user gets silence for their Enter press. -->
+        <div id="histInfoCard" role="region" aria-label="Histological feature details" aria-live="polite">
+          <div class="hi-title" id="hiTitle"></div>
+          <div class="hi-text" id="hiText"></div>
+          <div class="hi-cite" id="hiCite"></div>
+        </div>
+      </div>
     </div>
+    <!-- Real <button> for the same reason the sex toggle's are: a plain toggle with no drag
+         gesture near it. aria-pressed carries the mode; the visible text stays fixed so the
+         announced name doesn't flip meaning mid-toggle. Hidden except at the cell-scatter
+         level (managed by main.js's txEnterRegion/txGoLevel). -->
+    <button id="txHistologyToggle" type="button" aria-pressed="false" hidden>Microscopic view</button>
     <div id="txHint"><b>Drag</b> to rotate the tumor · <b>click</b> a colored cluster to enter that site · <b>click</b> a cell to view its mutations</div>
     <div id="txLegend">
       <div class="lg-title" id="txLegendTitle"></div>

@@ -199,11 +199,41 @@ const PRIVATE_POOL_PROSTATE = [
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
 ];
 
+// HISTOLOGY (microscopic-view data — every claim verified directly at the source): pattern
+// definitions confirmed against the exact papers: Epstein et al., Am J Surg Pathol, 2016
+// (the ISUP 2014 consensus — "Gleason pattern 4 includes cribriform, fused, and poorly
+// formed glands," cribriform assigned to pattern 4 "regardless of morphology") and Epstein
+// et al., Eur Urol, 2016 (Grade Group table: pattern 3 = "only individual discrete
+// well-formed glands"; pattern 5 = "lack of gland formation (or with necrosis)"), plus
+// PathologyOutlines' Gleason grading page ("single, separate glands"; "retention of at
+// least a wisp of stroma intervening between neighboring glands"). Two verified framing
+// constraints shaped this view: (1) real tumors genuinely contain multiple coexisting
+// patterns — that is WHY the score sums a primary and secondary pattern — but no source
+// describes an ordered 3→4→5 gradient in one field, so the intro labels this a SCHEMATIC
+// COMPOSITE of the grading spectrum, never "a typical field"; (2) the "sum of the two most
+// prevalent patterns" rule is stated for prostatectomy — needle biopsies grade the worst
+// pattern as secondary regardless of amount — so the intro says "primary plus secondary"
+// without asserting the second slot is always the second-most-prevalent.
+const HISTOLOGY_PROSTATE = {
+  intro: 'A schematic composite of the modern Gleason grading spectrum — not one typical field. Pattern 3: individual, discrete, well-formed glands, each separated by at least a wisp of stroma. Pattern 4: poorly formed, fused, cribriform (sieve-like) and glomeruloid glands. Pattern 5: essentially no gland formation — ragged sheets, cords and single cells. Real tumors genuinely contain multiple coexisting patterns — the Gleason score sums the primary and secondary ones — though not usually arranged as an ordered left-to-right gradient like this.',
+  ariaSummary: 'Stylized microscopic field presented as a schematic left-to-right grading spectrum. Left: half a dozen small, separate, well-formed gland rings with open lumens — Gleason pattern 3. Middle: one large cribriform mass, a confluent sheet of tumor cells punched through with multiple rounded lumens, plus a short chain of fused glands — pattern 4. Right: a solid sheet of tumor dissolving downward into scattered single infiltrating cells — pattern 5.',
+  citation: 'Epstein et al., Am J Surg Pathol, 2016 (ISUP 2014 consensus); Epstein et al., Eur Urol, 2016; PathologyOutlines.com, "Gleason grading."',
+  features: [
+    { key:'p3', label:'Gleason pattern 3',
+      text:'Only individual, discrete, well-formed glands — single and separate, each retaining at least a wisp of intervening stroma. The lowest pattern still assigned in modern grading (patterns 1 and 2 are no longer used).' },
+    { key:'p4', label:'Gleason pattern 4',
+      text:'Poorly formed, fused, cribriform and glomeruloid glands. The large sieve-like mass here is cribriform growth — a confluent sheet of tumor cells punched through with multiple lumens — which the ISUP 2014 consensus assigns to pattern 4 regardless of morphology.' },
+    { key:'p5', label:'Gleason pattern 5',
+      text:'Lack of gland formation: ragged sheets, cords and dissociated single cells infiltrating the stroma. Comedonecrosis within cribriform structures also qualifies, though none is drawn here.' },
+  ],
+};
+
 export const cancerDetails = {
   acinar: {
     title:'Acinar Adenocarcinoma', screenLabel:'Prostate acinar adenocarcinoma — tumor explorer',
     legendTitle:'Independent tumor foci within one gland (not distant metastases)',
     regionWord:'focus',
     regions:REGIONS_PROSTATE, trunk:TRUNK_PROSTATE, privatePool:PRIVATE_POOL_PROSTATE,
+    histology: HISTOLOGY_PROSTATE,
   },
 };

@@ -149,10 +149,36 @@ const PRIVATE_POOL_LUAD = [
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
 ];
 
+// HISTOLOGY (microscopic-view data — every claim verified directly at the source): the five
+// growth patterns and predominant-pattern rule come from the classification itself — Travis
+// et al., J Thorac Oncol, 2015 (the 2015 WHO paper, PMID 26291008) and the IASLC/ATS/ERS
+// classification it adopted (Travis et al., J Thorac Oncol, 2011: invasive adenocarcinomas
+// "classified by predominant pattern" across lepidic/acinar/papillary/micropapillary/solid).
+// The multi-pattern visual field is not a compromise but the honest rendering: the WHO paper
+// itself says these tumors "frequently are composed of complex heterogeneous mixtures of
+// patterns," and Travis 2011 notes >90% were "mixed subtype" under the old 2004 system.
+// Acinar as the most common predominant pattern is from Yoshizawa et al., Mod Pathol, 2011
+// (232/514 = 45% of a landmark stage I cohort — the largest single group). Pattern
+// one-liners confirmed at PathologyOutlines' "Adenocarcinoma overview."
+const HISTOLOGY_LUAD = {
+  intro: 'Invasive lung adenocarcinoma is classified into five WHO growth patterns — lepidic, acinar, papillary, micropapillary and solid — by whichever pattern predominates, because real tumors are frequently complex heterogeneous mixtures. Three of the five are drawn side by side here: acinar (round glands invading fibrous stroma — the most common predominant pattern, 45% in the landmark stage I cohort), lepidic (tumor cells lining intact alveolar walls — the low-grade end), and solid (sheets with no gland formation — the high-grade end, alongside micropapillary, neither of which is drawn).',
+  ariaSummary: 'Stylized microscopic field showing three lung adenocarcinoma growth patterns side by side. Left: half a dozen discrete round glands with open lumens invading pale fibrous stroma — the acinar pattern. Middle: thin branching alveolar walls studded with small tumor nuclei, the airspaces between them preserved — the lepidic pattern. Right: a dense sheet of tumor cells with no gland formation — the solid pattern.',
+  citation: 'Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS); Yoshizawa et al., Mod Pathol, 2011; PathologyOutlines.com, "Adenocarcinoma overview."',
+  features: [
+    { key:'acinar', label:'Acinar pattern',
+      text:'Gland-forming: round to oval glands invading fibrous stroma. The most common predominant pattern — 232 of 514 tumors (45%) in the landmark stage I cohort — and intermediate-grade, along with papillary.' },
+    { key:'lepidic', label:'Lepidic pattern',
+      text:'Tumor cells proliferating along intact alveolar walls, lacking architectural complexity — growth that preserves the lung’s own scaffolding. The low-grade end of the five patterns.' },
+    { key:'solid', label:'Solid pattern',
+      text:'Sheets of neoplastic cells with no recognizable gland formation — the high-grade end of the spectrum, together with the micropapillary pattern (not drawn here).' },
+  ],
+};
+
 export const cancerDetails = {
   luad: {
     title:'Lung Adenocarcinoma', screenLabel:'Lung adenocarcinoma — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_LUAD, trunk:TRUNK_LUAD, privatePool:PRIVATE_POOL_LUAD,
+    histology: HISTOLOGY_LUAD,
   },
 };

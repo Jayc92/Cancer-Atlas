@@ -191,10 +191,42 @@ const PRIVATE_POOL_HCC = [
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
 ];
 
+// HISTOLOGY (microscopic-view data — every claim verified directly at the source, and this
+// one REJECTED the task prompt's own numbers rather than trusting them): the suggested
+// "trabecular ~70% / solid ~20% / pseudoglandular ~10% / macrotrabecular ~1%" frequencies
+// could not be confirmed anywhere real, and the ordering is actively contradicted —
+// PathologyOutlines lists the "4 principal growth patterns (in decreasing order of
+// frequency)" as trabecular, PSEUDOGLANDULAR, solid, macrotrabecular, i.e. pseudoglandular
+// above solid, with no percentages at all. The citable frequency facts are: trabecular is
+// the most common pattern (PathologyOutlines; Acad Pathol, 2024, PMID 38433777), "50% of
+// cases have mixed patterns" (PathologyOutlines — the same heterogeneity honesty LUAD's
+// block carries), and the macrotrabecular-massive subtype was 12% of Ziol et al.'s cohort
+// (Hepatology, 2018: "16% of surgically resected samples, 8.5% of liver biopsy samples,"
+// defined by >50% macrotrabecular architecture "more than six cells thick," and "an
+// independent predictor of early and overall recurrence") — NOT the ~1% suggested.
+// Trabecular morphology: plates >3 cells thick (PathologyOutlines' reticulin note)
+// separated by "sinusoid-like blood spaces lined by a single layer of endothelial cells"
+// (World J Clin Cases, 2022, PMID 35127901); "resembling normal liver tissue" per
+// Schlageter et al., World J Gastroenterol, 2014.
+const HISTOLOGY_HCC = {
+  intro: 'Hepatocellular carcinoma grows in four principal patterns — in decreasing order of frequency: trabecular, pseudoglandular, solid and macrotrabecular — and half of all cases mix more than one. Drawn here is the most common, the trabecular pattern: a caricature of normal liver architecture, with tumor cells stacked in plates more than three cells thick, separated by sinusoid-like blood spaces lined by a single layer of flattened endothelial cells. The rare macrotrabecular-massive variant (plates more than six cells thick, ~12% of one landmark cohort) independently predicts early recurrence.',
+  ariaSummary: 'Stylized microscopic field: four thick, gently curving cords of pink polygonal tumor cells run roughly horizontally across the field, each plate several cells thick with round central purple nuclei. Pale sinusoid-like spaces separate the cords, dotted with occasional small red blood cells and lined sparsely by thin, flattened, dark endothelial nuclei along the plate edges.',
+  citation: 'PathologyOutlines.com, "Hepatocellular carcinoma overview"; Ziol et al., Hepatology, 2018; Acad Pathol, 2024 (PMID 38433777); World J Clin Cases, 2022.',
+  features: [
+    { key:'trabeculae', label:'Trabecular plates',
+      text:'Tumor cells stacked in plates more than three cells thick — a thickened caricature of normal liver plates, and the most common of this cancer’s four growth patterns. When plates exceed six cells thick across most of a tumor, that is the macrotrabecular-massive variant: ~12% of a landmark cohort and an independent predictor of early recurrence.' },
+    { key:'sinusoids', label:'Sinusoid-like spaces',
+      text:'The blood spaces separating the plates, lined by a single layer of flattened endothelial cells — the tumor’s echo of the liver’s own sinusoidal circulation.' },
+    { key:'hepatocytes', label:'Tumor hepatocytes',
+      text:'Polygonal cells with round central nuclei, still recognizably hepatocyte-like — this pattern is literally described as resembling normal liver tissue, which is part of what can make well-differentiated cases diagnostically subtle.' },
+  ],
+};
+
 export const cancerDetails = {
   hcc: {
     title:'Hepatocellular Carcinoma', screenLabel:'Hepatocellular carcinoma — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_HCC, trunk:TRUNK_HCC, privatePool:PRIVATE_POOL_HCC,
+    histology: HISTOLOGY_HCC,
   },
 };

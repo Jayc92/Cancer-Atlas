@@ -1906,6 +1906,84 @@ screen pair per organ:
     near-spherical blob, closer to what "almond-sized" in this organ's own
     `sub` line has always claimed.
 
+- **Microscopic (histology) view — cancer screen, level 2 (`js/histology.js` +
+  a `histology` data block per cancer in each `js/organs/*.js`):** a
+  procedurally generated, stylized 2D evocation of each cancer's real,
+  documented H&E architecture — the 2D cousin of `organicDisplace`'s
+  principle: generate real variation procedurally instead of shipping stock
+  imagery (this app has never used any). Key decisions and facts:
+  - **Data layer:** each active cancer's `cancerDetails.<id>` carries
+    `histology: { intro, ariaSummary, citation, features:[{key,label,text}] }`.
+    Every architectural claim was verified DIRECTLY at the source before being
+    written in (three parallel research passes with verbatim quotes), same
+    standard as every other citation. Notable verification outcomes, recorded
+    in each organ file's comment block: HGSOC's "fibrovascular cores" was
+    checked and REJECTED (the phrase attaches to low-grade serous and
+    endometrial serous descriptions, not HGSOC — the drawing deliberately
+    omits a vessel core); the task prompt's suggested HCC pattern percentages
+    (~70/20/10/1%) were checked and REJECTED — no source carries them and
+    PathologyOutlines' explicit frequency ordering (trabecular >
+    pseudoglandular > solid > macrotrabecular) contradicts their implied
+    order; the citable HCC frequency facts are "most common" (trabecular),
+    "50% of cases have mixed patterns," and macrotrabecular-massive = 12% of
+    Ziol et al.'s cohort (Hepatology, 2018) with independently-worse
+    recurrence — not "~1%". GBM's necrosis/microvascular proliferation are
+    WHO 2021 DIAGNOSTIC CRITERIA (five OR-joined criteria, Louis et al.,
+    verified verbatim), not just descriptions — the in-product text says so.
+    Prostate's 3→4→5 field is labeled a "schematic composite of the grading
+    spectrum," never "a typical field" (verification found patterns genuinely
+    coexist — that's why the score sums primary+secondary — but no source
+    describes an ordered gradient in one field), and the score wording avoids
+    asserting the secondary slot is always second-most-prevalent (needle
+    biopsies grade the worst pattern as secondary instead).
+  - **Rendering:** seeded SVG generators in `js/histology.js`, one per cancer
+    id (`hgsoc/tnbc/luad/ccrcc/hcc/gbm/acinar`), 800×500 viewBox, deterministic
+    via `makeSeededRandom(seedFromKey('histology-'+id))`. The H&E palette is
+    content color (depicting the stain), deliberately NOT design-system vars;
+    the slide is deliberately LIGHT on the dark app because H&E is
+    bright-field microscopy — chrome around it stays design-system. LUAD and
+    HCC both use multi-pattern honesty framing (LUAD draws three of the five
+    WHO patterns as labeled zones — "frequently … complex heterogeneous
+    mixtures" per the WHO paper itself; HCC draws trabecular, the most
+    common, with the other three named in text).
+  - **Interaction/placement:** a view MODE of the cell-scatter level, not a
+    fourth drill level — `#txHistologyToggle` (real button, `aria-pressed`,
+    visible only at level 2) swaps `#txCellLayer` ↔ `#txHistologyLayer` with
+    the same opacity/inert discipline as every other layer swap; breadcrumb
+    depth unchanged. Feature labels are `makeActivatable` DOM buttons over
+    the SVG; clicking one rewrites `#histInfoCard` (aria-live, same
+    reasoning as `#organInfoCard`). Toggling from level 3 dismisses the
+    mutation panel first (it describes a cell that's no longer on screen)
+    and pins focus back on the toggle, since the panel's own focus-restore
+    aims at a cell dot the mode-switch just inerted. `txEnterRegion` resets
+    to cells + shows the toggle; `txGoLevel(1)` resets + hides it.
+    In hist mode the site legend, center caption, and floating disclaimer
+    are hidden (`#screenCancer.hist-open` CSS) — the legend keys the 3D site
+    map, the caption belongs to the cell view, and the disclaimer follows
+    the exact `#app.panel-open` precedent (the card carries its own citation
+    plus a fixed "stylized illustration … not a real patient micrograph"
+    line, data rule 2 applied to a visual).
+  - **Accessibility:** the SVG gets `role="img"` + `ariaSummary` (a real
+    textual walk of what's drawn — the non-sighted user's equivalent of the
+    visual, not just labeled points); the slide wrapper stays `role="group"`
+    (NOT `role="img"`) for the same collapse-the-buttons trap documented on
+    every viewer wrapper.
+  - **Bugs caught during this pass's own verification, all fixed:** GBM's
+    top-left vascular tuft and Prostate's cribriform lumens were initially
+    hidden under their own centered labels (anchors moved off the
+    structures; prostate's lumens also enlarged/densified — a near-solid
+    cribriform mass would depict pattern 5 in the pattern-4 slot);
+    mobile (≤640px) had the wrapped 4-line breadcrumb clipping the slide and
+    the disclaimer overlapping the card (layer pins below crumbs +
+    scrolls, touch-only by design since desktop never overflows); the cell
+    layer's caption ghosted through the transparent layer gap. One
+    harness-only artifact worth knowing: puppeteer's `isMobile` viewport
+    switch RELOADS the page mid-session — a programmatic `.click()` on the
+    then-hidden toggle threw on `CANCER_DETAILS[null]`; unreachable by real
+    interaction (hidden buttons take no clicks/focus) but guarded anyway in
+    `enterHistology`, and the null===null path through the
+    `builtForCancerId` check was the subtle part.
+
 ## Known limitations / tech debt
 - The male/female bodies are real static meshes now (Blender's "Human Base
   Meshes" bundle, CC0 — see Architecture notes for why this is the third

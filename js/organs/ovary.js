@@ -107,10 +107,36 @@ const PRIVATE_POOL_HGSOC = [
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
 ];
 
+// HISTOLOGY (microscopic-view data — every claim verified directly at the source, same
+// standard as every citation above): PathologyOutlines' HGSOC page confirms "hierarchical
+// papillary branching, glandular and cribriform patterns," solid masses "with slit-like
+// spaces (fusion of papillae)," pleomorphism worded exactly as "> 3x variation in size,"
+// "necrosis is frequent," and psammoma bodies as "variable" — versus "frequent" on its
+// LOW-grade page, so the psammoma text below keeps that honest contrast. The mitotic
+// threshold comes from the two-tier system's own primary source (Malpica et al., Am J Surg
+// Pathol, 2004: ">12 mitoses per 10 HPFs," explicitly SECONDARY to nuclear atypia — worded
+// that way below rather than as a freestanding cutoff). "Fibrovascular cores" was checked
+// and deliberately NOT claimed: sources attach that phrase to low-grade serous and
+// endometrial serous, not to HGSOC's own microscopic description.
+const HISTOLOGY_HGSOC = {
+  intro: 'High-grade serous carcinoma grows as hierarchical branching papillae with glandular and solid areas, separated by narrow slit-like spaces that form where papillae fuse. Nuclei are markedly pleomorphic — more than 3-fold size variation, with bizarre and multinucleated forms — mitoses exceed 12 per 10 high-power fields (the grading system’s secondary criterion, after nuclear atypia), and necrosis is frequent.',
+  ariaSummary: 'Stylized microscopic field: three large branching papillary fronds in pale pink stroma, each rimmed by purple tumor nuclei of visibly unequal sizes — some three times larger than their neighbors. Narrow white slit-like spaces separate the fronds. Two small concentric, lamellated calcified spherules (psammoma bodies) sit between them.',
+  citation: 'PathologyOutlines.com, "High grade serous carcinoma" (ovary); grading criteria: Malpica et al., Am J Surg Pathol, 2004.',
+  features: [
+    { key:'papillae', label:'Papillary architecture',
+      text:'Hierarchical branching papillae with glandular and solid growth. Where papillae fuse, the narrow slit-like spaces characteristic of this tumor open up between them.' },
+    { key:'pleomorphism', label:'Pleomorphic nuclei',
+      text:'Nuclear size varies more than 3-fold within one tumor, with large, bizarre and multinucleated forms — the primary criterion separating high-grade from low-grade serous carcinoma. The mitotic rate (>12 per 10 high-power fields) is the secondary criterion.' },
+    { key:'psammoma', label:'Psammoma body',
+      text:'A concentrically lamellated, calcified spherule. Variable in high-grade serous carcinoma — classically frequent in its low-grade counterpart — which is why only a couple appear here rather than dominating the field.' },
+  ],
+};
+
 export const cancerDetails = {
   hgsoc: {
     title:'High-Grade Serous Carcinoma', screenLabel:'High-grade serous carcinoma — tumor explorer',
     legendTitle:'Sites (real intraperitoneal spread pattern)',
     regions:REGIONS_HGSOC, trunk:TRUNK_HGSOC, privatePool:PRIVATE_POOL_HGSOC,
+    histology: HISTOLOGY_HGSOC,
   },
 };

@@ -160,10 +160,36 @@ const PRIVATE_POOL_TNBC = [
   { gene:'PTEN loss', class:'driver', note:'Removes a brake on the PI3K growth pathway — a route to the same growth advantage PIK3CA mutations reach by a different door, and more frequent in basal-like tumors than PIK3CA mutation itself.' },
 ];
 
+// HISTOLOGY (microscopic-view data — every claim verified directly at the source): the
+// morphology-defining study for the basal-like subtype (Livasy et al., Mod Pathol, 2006,
+// PMID 16341146) reports "markedly elevated mitotic count," "geographic tumor necrosis"
+// (17/23 tumors), "pushing margin of invasion" (14/23) and "stromal lymphocytic response"
+// as the features significantly associated with this subtype; PathologyOutlines' invasive-
+// NST page confirms "large and solid nests or syncytial infiltrative growth pattern with
+// little associated stroma" for basal-like tumors and names the "prominent tumor associated
+// lymphocytic (TIL) infiltrate" directly; Salgado et al. (Ann Oncol, 2015 — the
+// International TILs Working Group consensus) is the real source for TILs carrying
+// prognostic/predictive weight in triple-negative disease specifically. "Geographic" (not
+// just "central") is the verified word for the necrosis.
+const HISTOLOGY_TNBC = {
+  intro: 'Basal-like / triple-negative tumors grow as solid nests and sheets with little gland formation and little intervening stroma, markedly elevated mitotic counts, and map-like zones of geographic necrosis. Distinctively, small dark tumor-infiltrating lymphocytes (TILs) thread between the tumor cells — an immune infiltrate whose density carries real prognostic weight in this subtype. Margins are often pushing and circumscribed rather than infiltrative.',
+  ariaSummary: 'Stylized microscopic field: dense solid sheets of pink tumor cells with large, variably sized purple nuclei and no gland formation. A pale, map-like necrotic zone occupies the upper right, containing faint ghost outlines of dead cells. Three clusters of much smaller, dark round lymphocytes sit threaded between the tumor cells.',
+  citation: 'Livasy et al., Mod Pathol, 2006; PathologyOutlines.com, "Invasive breast carcinoma of no special type"; TILs: Salgado et al., Ann Oncol, 2015.',
+  features: [
+    { key:'sheets', label:'Solid sheets',
+      text:'Large solid nests with syncytial growth and little associated stroma — minimal to no gland formation, the opposite of the duct-forming architecture that gives lower-grade breast cancers their name.' },
+    { key:'necrosis', label:'Geographic necrosis',
+      text:'Map-like zones of dead tumor tissue with ghost outlines of the cells that died — present in 17 of 23 basal-like tumors in the study that defined this subtype’s morphology.' },
+    { key:'tils', label:'Tumor-infiltrating lymphocytes',
+      text:'Small, dark immune cells threaded between the far larger tumor cells. Their density carries prognostic — and potentially treatment-predictive — significance specifically in triple-negative disease (International TILs Working Group, 2015).' },
+  ],
+};
+
 export const cancerDetails = {
   tnbc: {
     title:'Triple-Negative Breast Cancer', screenLabel:'Triple-negative breast cancer — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_TNBC, trunk:TRUNK_TNBC, privatePool:PRIVATE_POOL_TNBC,
+    histology: HISTOLOGY_TNBC,
   },
 };
