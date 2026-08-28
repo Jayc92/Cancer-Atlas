@@ -19,7 +19,7 @@ map — see Architecture notes), still no build step, no backend, no bundler. **
 from one 2,816-line file into ES modules in this pass** (the "needs modularizing" item
 this file's own Known Limitations had flagged since the three.js migration) — see
 Architecture notes' "File layout / module map" for exactly what moved where and why. It
-proves out the full navigation pattern end-to-end for **seven** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **ten** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -346,7 +346,11 @@ screen pair per organ:
    this explicitly rather than reuse "present in every region" language that
    would be actively wrong here — HCC's own regional-heterogeneity story
    (rule 6 below) is about TP53/CTNNB1, not about TERT being everywhere at
-   once.
+   once. **Pancreas/PDAC is the second organ whose trunk is temporal (rule 18
+   below): KRAS is already mutated in ~92–95% of even the earliest, lowest-
+   grade PanIN precursor lesions, flat across every grade — it comes first in
+   time. GBM's IDH-wildtype status is a third, classifier-shaped variant.
+   Check which justification actually applies per organ; three now exist.**
 6. **A gene pair can follow a third mutation-framing model — "general rule,
    with a documented exception" — distinct from both rule 3's *competing*
    and rule 4's *cooperating* patterns.** HCC's TP53 and CTNNB1 mutations are
@@ -1100,6 +1104,273 @@ screen pair per organ:
       NBK540987, PMID 31082031), confirmed directly, same no-individual-
       citation-fetch treatment as every other organ's basic anatomy facts
       except where a figure was specifically flagged for verification.
+17. Colon/colorectal adenocarcinoma reference sources — **every citation in
+    this section was verified directly at the source before being written into
+    the app. This organ contributes a FOURTH mutation-framing model (standing
+    note): a real but MODEST statistical anti-correlation, strictly between
+    rule 3's hard *competing* exclusivity and simple independence.**
+    - **THE KRAS×TP53 ANTI-CORRELATION (standing constraint for this organ):**
+      KRAS and TP53 are individually two of CRC's commonest mutations but
+      co-occur LESS than chance predicts — pooled OR 0.69 (95% CI 0.51–0.95,
+      p=0.02, n=638 across nine studies; Domingo et al., *J Pathol*, 2013,
+      Supplementary Table S4, read from the actual deposited xlsx, not the
+      abstract), multivariate OR 0.55–0.56 in the VICTOR cohort. It is NOT
+      exclusivity: ~17% of tumors carry both, 8 of the 9 pooled studies were
+      individually non-significant, and in metastatic surgical cohorts
+      RAS/TP53 co-mutation is a recognized adverse subgroup at ~28–31% (Chun
+      et al., *Ann Surg*, 2019, N=401). Design consequence, applied and to be
+      preserved: KRAS and TP53 are branch genes of DIFFERENT sites (separate
+      subclones), NEITHER may ever be added to this cancer's shared private
+      pool, and both notes state the statistic with its size. The same tables
+      supply the two calibration contrasts wired into the notes: KRAS×BRAF is
+      near-total exclusion (OR 0.02; 1 of 303 KRAS-mutant tumors, p=2e-16) —
+      **BRAF must never appear anywhere in this cancer's ledger**, same
+      standing class as LUAD's EGFR rule — and KRAS×PIK3CA is strong
+      CO-occurrence (OR 4.0, P=4.4e-11), which is what makes PIK3CA safe as a
+      coexisting branch. PIK3CA is also negatively associated with TP53 (OR
+      0.36) — second reason both live at their own sites, not in the pool.
+    - **Trunk: APC** — 81% of non-hypermutated vs 51% of hypermutated CRC
+      (TCGA, *Nature*, 2012; 16% of CRCs are hypermutated — the qualifier is
+      mandatory); WNT pathway altered in 93%. **Citation-trail correction the
+      task's own brief needed:** Fearon & Vogelstein (*Cell*, 1990) NEVER
+      names APC (the gene was cloned in 1991; the paper says "the familial
+      adenomatous polyposis gene on chromosome 5q") and its own section
+      heading is "Accumulation, Rather Than Order, Is Most Important" —
+      APC-comes-first cites Powell et al. (*Nature*, 1992: present in adenomas
+      "as small as 0.5 cm," frequency constant across progression); TP53-late
+      cites Vogelstein et al. (*NEJM*, 1988: 17p loss "usually lost only in
+      carcinomas," 75%).
+    - **Liver-metastasis figures — the highest-stakes correction of this pass;
+      the task brief's numbers were effectively swapped and inflated.** The
+      brief said ~25% at presentation rising toward ~50% lifetime. Verified:
+      synchronous liver metastasis is **14.0–17.7%** across five national
+      registries (Johannsen et al., *JAMA Netw Open*, 2025, Denmark N=72,722;
+      Reboux et al., 2022, France N=26,813 — whose Discussion explicitly
+      rebuts higher figures; Engstrand et al., 2018, Sweden; Hackl et al.,
+      2014, Germany; Manfredi et al., 2006, Burgundy), and 5-year cumulative
+      incidence is **~20–27%** — the ~50% figure is rejected in print ("the
+      incidence of CRCLM was lower than the 50% often cited in the
+      literature," Engstrand et al., *BMC Cancer*, 2018). Portal-venous
+      mechanism confirmed (Wong et al., 2022; Imai et al., 2019).
+    - **Sites (one source, one denominator):** Riihimäki et al. (*Sci Rep*,
+      2016, PMID 27416752, Swedish national cohort, N=49,096): among
+      metastatic colon-cancer patients, liver 70%, thorax 32%, peritoneum 21%,
+      nervous system 5%. The denominator ("of the ~30% with recorded
+      metastases") is stated in-product per note — mixing it with all-patient
+      rates is exactly how the debunked "half get liver mets" figure
+      propagates. Supplementary: Segelman et al. (*Br J Surg*, 2012) 8.3%
+      peritoneal carcinomatosis of all patients; Christensen et al. (2016)
+      brain 1.55% pooled; Qiu et al. (2015) SEER at-diagnosis rates.
+    - **Branch frequencies:** KRAS ~35–45% (34% stage II/III Domingo; 44%
+      metastatic MSS Yaeger et al., *Cancer Cell*, 2018 — cohort stage, not
+      disagreement); TP53 60% non-hypermutated/20% hypermutated (TCGA)/78%
+      metastatic MSS (Yaeger); SMAD4 has NO canonical figure — 8.6% full
+      sequencing (Fleming et al., 2013, n=744) to 12% hotspot panel (Mehrvarz
+      Sarshekeh et al., 2017 — a PLoS One author-name-only erratum exists,
+      checked, no data corrected) to 16.2% metastatic (Wang et al., *Cancers*,
+      2022, PMID 35892903 — NOT 35892997, a wireless-sensor-network paper;
+      caught at verification), stated as an assay/cohort range; PIK3CA 14–15%
+      (91/590 population-based Nosho et al., 2008; 105/757 Rosty et al., 2013;
+      hotspot mechanism Ikenoue et al., 2005).
+    - **Private pool (dedicated verification pass + two literature sweeps):**
+      FBXW7 (11% nHM, TCGA Fig 1b), TCF7L2 ("deleted or mutated in 12%",
+      TCGA; 9% mutation-only), AMER1/FAM123B (7%, TCGA) — all three have
+      PUBLISHED positive APC co-occurrence (Cornish et al., *Nature*, 2024,
+      2,023 genomes: +0.086**, +0.066*, and SOX9 +0.081**; Li et al., *Cancer
+      Science*, 2025, n=6,530: APC–KRAS–FBXW7–AMER1 named as an MSS
+      co-occurrence set). **SOX9 checked and EXCLUDED** — no published
+      constraint, but direct computation on three cohorts' deposited data
+      found a TP53 anti-correlation that replicates and survives Bonferroni
+      (pooled OR 0.32, p<0.0001) — same conflict class as HCC's AXIN1, caught
+      by computation instead of citation. **ARID1A excluded** (~5% MSS vs ~34%
+      MSI — any mixed figure is contaminated — and not among the 96 dNdScv
+      drivers in Nunes et al., *Nature*, 2024). TCGA's FBXW7-metastasis
+      "never co-occurred (P=0.0019)" claim was investigated: the absolute
+      reading is refuted (FBXW7 in 5.7% of 476 resected liver metastases,
+      Kawaguchi et al., 2021), a relative depletion directionally replicates.
+      **Timing honesty (recorded decision):** Nunes et al. (*Nature*, 2024)
+      times TCF7L2/FBXW7/SOX9 as EARLY/clonal — the private tier here
+      illustrates per-cell heterogeneity, not late timing, and the FBXW7 note
+      says so; the documented late/subclonal genes (TRPS1, GNAS, CEP170) have
+      figure-only frequencies and unchecked constraints and were not used.
+    - **Anatomy:** ~5 ft (StatPearls NBK507857) / ~1.5 m (Skok et al., 2025) /
+      3–5 ft range (Santucci & Velez, 2024) — range stated; six-segment
+      sequence needs two chapters (NBK507857 omits the rectum; NBK470577
+      completes it); 1–2 L chyme → 200–250 mL feces (the one self-contained
+      water figure — the "up to 5 L/day" capacity figure from the same source
+      measures something else and is deliberately not shown beside it);
+      SMA/IMA watershed kept soft ("near the splenic flexure") because
+      sources genuinely disagree (StatPearls: splenic flexure; an
+      embryological source: distal third of transverse colon). Hotspot set =
+      the verified-strongest four: mucosa/glandular epithelium (origin:
+      Zheng et al., 2020 + ~85% CIN/APC framing, Drage & Mino-Kenudson,
+      *Cells*, 2026), crypts of Lieberkühn (~15 million, ~2,000 cells each,
+      stem-cell niche — same source), teniae coli & haustra (StatPearls
+      spelling "teniae"; causal link from Santucci & Velez), muscularis
+      propria (cited via AJCC T2/T3 staging, the clean route — the bare
+      anatomical term was uncited anywhere).
+18. Pancreas/PDAC reference sources — **every citation verified directly at
+    the source. This organ is the atlas's THIRD temporal trunk (see rule 5)
+    and its cascade carries a mandatory modern caveat.**
+    - **Two wrong PMIDs in the task brief caught before shipping:** Hruban
+      progression model is PMID 10955772 (11106242 is a Wilms'-tumor paper;
+      the Hruban paper itself is inaccessible — AACR 403, no PubMed abstract —
+      so the classical model is attested via Notta 2016, which states it
+      verbatim); Iacobuzio-Donahue SMAD4/metastasis is PMID 19273710
+      (19581604 is a CMAJ cardiovascular-spending paper).
+    - **Trunk: KRAS 93%** (140/150, TCGA/Raphael et al., *Cancer Cell*, 2017,
+      hotspots at ~30,000x depth; "90% to 95%", Wood et al., 2022; "near
+      ubiquitous", Waddell et al., *Nature*, 2015) — the most near-universal
+      ONCOGENE trunk in the atlas (HGSOC's TP53, a tumor suppressor, reaches
+      ~96%; worded that way in-product rather than overclaiming "cleaner than
+      TP53"). Temporal: flat at ~92–95% from PanIN-1A onward (Kanda et al.,
+      2012, pyrosequencing 92.0/92.3/93.3/95.4% by grade; Hosoda et al.,
+      2017) — the old rising gradient (36→44→87%, Löhr 2005) was an
+      assay-sensitivity artifact; never reintroduce it.
+    - **The classical cascade is real but NOT four ordered steps (standing
+      note):** Notta et al. (*Nature*, 2016) states the model verbatim —
+      "KRAS, followed by CDKN2A, then TP53 and SMAD4" — then refutes its
+      universality: "neither gradual nor follows the accepted mutation
+      order"; "Two-thirds of tumours harbour complex rearrangement patterns
+      ... consistent with punctuated equilibrium ... the simultaneous, rather
+      than sequential, knockout of canonical preneoplastic genetic drivers."
+      Safe form (used in-product): a relative THREE-tier ordering — KRAS
+      earliest; CDKN2A early-to-intermediate (already lost in 30% of
+      PanIN-1A, Wilentz 1998 — the tiers OVERLAP); TP53 and SMAD4 late
+      (grouped by every source: Wilentz 2000, Hosoda 2017, Maitra 2003) —
+      labeled the CLASSICAL model with the Notta caveat alongside. Not safe:
+      four discrete steps, rising per-grade frequencies, non-overlapping
+      tiers, or sequential-acquisition as the universal mechanism.
+    - **Counting-rule discipline (both wide ranges are method, not
+      contradiction, and each ccf string states its rule):** CDKN2A 35%
+      (mutations+SVs, Waddell 2015) to 98% (Rb/p16 pathway incl. promoter
+      hypermethylation, Schutte 1997); SMAD4 31% (mutations+SVs, Waddell) vs
+      ~50% classical incl. homozygous deletion — deletion is the DOMINANT
+      mechanism (25/84, Hahn et al., *Science*, 1996). TP53 70–74% (Redston
+      1994; Waddell 2015 — two cohorts 21 years apart converging).
+    - **SMAD4 metastasis association worded precisely:** Dpc4 status "highly
+      correlated with the presence of widespread metastasis but not with
+      locally destructive tumors (P = .007)" in 76 rapid autopsies
+      (Iacobuzio-Donahue et al., *J Clin Oncol*, 2009) — "associated with,"
+      never "drives."
+    - **Excluded from the private pool: BRAF, GNAS, CTNNB1** — TCGA 2017
+      analyzed the 10 KRAS-wild-type tumors and found them concentrated there
+      as ALTERNATIVE drivers (6/10 carried an alternative RAS-MAPK
+      activator). GATA6/MYC amplification: real, but NO citable percentage —
+      left out entirely. Pool used (all verified): KDM6A 18%, RNF43 10%,
+      PREX2 10% (all Waddell 2015, 100 whole genomes), TGFBR2 4.1% (Goggins
+      1998), BRCA1/2 5–10% (Wood 2022; TCGA germline).
+    - **Sites (Oweira et al., *World J Gastroenterol*, 2017, SEER 2010–2013,
+      N=13,233 stage IV at diagnosis):** liver 76%, lung 19.9%, distant
+      lymph nodes 9.4% — presentation frequencies, sum >100% because 33.7%
+      multi-organ. **Peritoneum modeled with NO number** because the source
+      says so itself ("peritoneal deposits ... not detailed in the SEER
+      database") — same honesty class as LUAD's adrenal gland. Yachida et
+      al. (*Nature*, 2010) timing confirmed: 11.7 y initiation→parental
+      clone, +6.8 y→metastatic seeding, +2.7 y→death (7-autopsy series plus
+      model; stated with that caveat).
+    - **Anatomy:** divisions are head/neck/body/tail with the uncinate
+      process part of the head, NOT a fifth division (StatPearls NBK532912 +
+      Pancreapedia agree); two-thirds of PDACs arise in the head (StatPearls
+      NBK518996, verbatim); exocrine mass is a LIVE source conflict —
+      Pancreapedia ">95%" vs StatPearls "~80%" — stated in-product as a
+      discrepancy (HCC bone-figure precedent); "arises from the ductal
+      epithelium via PanIN precursors" is safe, but the CELL of origin is
+      explicitly controversial (acinar-to-ductal metaplasia — Wood 2022), so
+      the duct hotspot's wording claims the epithelium and the precursor,
+      never the founding cell type.
+19. Stomach/diffuse-type gastric adenocarcinoma reference sources — **every
+    citation verified directly at the source. The organ's cancer list IS the
+    Lauren classification, and the wired subtype is a deliberate, recorded
+    choice.**
+    - **The circulating Lauren split "54/32/15" is a MIS-CITATION CHAIN,
+      rejected:** Hu et al. (2012) cites Polkowski et al. (1999) — a
+      41-patient ESOPHAGEAL/GEJ cohort whose real figures are 54% intestinal
+      / 32% MIXED / 15% DIFFUSE; the diffuse and mixed values were transposed
+      en route and applied to the wrong organ (the 54+32+15=101% rounding
+      artifact is the tell). Real figures used: KGCA 2009 nationwide surgical
+      survey (N=14,658, *J Gastric Cancer*, 2011): intestinal 50.0% / diffuse
+      39.0% / mixed 10.9%; Dutch population data (van der Kaaij et al., 2020,
+      N=32,312): 55%/44%. Cross-series ranges: 46–57 / 22.5–44 / 11–21%.
+      Do not use SEER for Lauren shares (two SEER studies disagree wildly and
+      exclude mixed by design).
+    - **Why diffuse is the wired type (recorded decision):** its driving
+      lesion — E-cadherin/cell-adhesion loss — is a mechanism class no other
+      atlas cancer has; the CDH1 → discohesion → signet-ring → linitis
+      plastica chain is verified end to end; its slide is genuinely distinct
+      (intestinal-type is BY DEFINITION "similar to intestinal
+      adenocarcinoma" — a colon-slide repeat); and intestinal incidence is
+      falling while diffuse holds/rises.
+    - **Trunk: CDH1 inactivation** — 37% of TCGA's genomically-stable subtype
+      (which is 73% diffuse-type, P=7.5e-17 — TCGA, *Nature*, 2014); 56.3%
+      somatic mutation in sporadic diffuse (9/16, and 0/7 intestinal —
+      Machado et al., *Oncogene*, 2001) + promoter hypermethylation as the
+      second, non-mutational route (56.3% same series; the "second hit" in
+      >half of mutation carriers — Grady et al., *Nat Genet*, 2000); germline
+      = HDGC (Guilford et al., *Nature*, 1998; Blair et al., *Lancet Oncol*,
+      2020). NOT near-universal — trunk in the LUAD-KRAS sense
+      (subtype-defining driver), stated in the ccf string.
+    - **Branch pair: RHOA mutation and CLDN18–ARHGAP fusion — strict
+      TCGA-stated mutual exclusivity** ("The CLDN18–ARHGAP fusions were
+      mutually exclusive with RHOA mutations and were enriched in genomically
+      stable tumours"; 15% + 15%, together 30% of the subtype) — split two
+      sites each, the GBM EGFR/PDGFRA architecture. Do not extend the
+      exclusivity to CDH1 (a review asserts the trio; TCGA documents only the
+      pair).
+    - **Excluded, each for a verified molecular-subtype reason:** ARID1A (83%
+      MSI / 73% EBV vs 11% non-EBV/MSS — wrong subtypes — AND "negatively
+      associated with mutations in TP53", Wang K et al., *Nat Genet*, 2011,
+      with TP53 in this pool); PIK3CA (EBV-defining, 80%); RNF43
+      (MSI-associated); ERBB2/CCNE1-class amplifications (CIN =
+      intestinal-side). Private pool used: TP53 ~50% overall (van Beek et
+      al., 2018 — placed with the precise note that its home subtype is CIN
+      at 71%, not this one; sequencing shows no Lauren-axis association
+      either way), APC and SMAD4 (TCGA's 25 significantly mutated gastric
+      genes; no clean subtype percentage → none shown).
+    - **Claims checked and NOT used:** "diffuse is more common in women" —
+      NOT CONFIRMED (incidence M/F 1.07 vs intestinal 2.65, Derakhshan et
+      al., *Gut*, 2009; diffuse is sex-EQUAL); "TP53 defines the intestinal
+      type" — contested on the Lauren axis across three sources (clean only
+      on the CIN molecular axis); a StatPearls sentence ("Intestinal-type
+      cancers may be associated with signet-ring cells") that contradicts its
+      own chapter and every other source — flagged as a source error; H.
+      pylori is "equally associated with the intestinal or diffuse type"
+      (Huang 1998) — only the Correa CASCADE is intestinal-specific.
+    - **Sites (Riihimäki et al., *Oncotarget*, 2016, N=7,559):** among
+      metastatic patients — liver 48%, peritoneum 32%, lung 15%, bone 12%,
+      with the diffuse-relevant flip stated in-product: signet-ring histology
+      shifts to peritoneum (58% vs 28%, OR 2.3) and away from liver (16% vs
+      53%, OR 0.3) and lung (OR 0.4). Zheng et al. (2008, N=814): peritoneal
+      spread 10.0% diffuse vs 3.4% intestinal. Thomassen et al. (2014):
+      peritoneal carcinomatosis in 14% of ALL patients. **Lymph nodes are
+      real but deliberately NOT a modeled site** — the source explicitly
+      excluded nodal metastases from its distribution, so no citable
+      percentage exists (PDAC's-peritoneum honesty class, resolved the
+      opposite way because four quantified sites exist). **Krukenberg tumor**
+      (ovary) carried in the Bone site's note: two-thirds of cases have
+      stomach primaries (Kiyokawa et al., 2006, N=120); non-intestinal
+      Lauren type OR 3.4 and signet-ring components OR 3.3 (Li et al., 2020,
+      N=1,696 women); no site-distribution percentage citable (registry
+      groups ovary into "other").
+    - **Anatomy:** five regions citable (two PMC sources verbatim) with
+      StatPearls' four-region variant flagged in-product; J-shape is Gray's
+      1918 verbatim (with its own "no one form can be described as typical"
+      caveat); dimensions from Cunningham 1905 (25–27.5 cm distended length,
+      10–11.2 cm greatest diameter, 7.5–12.5 cm cardia–pylorus chord) and
+      Gray's (greater curvature 4–5x the lesser); capacity: measured MRI
+      empty volumes (25±18 mL Grimm 2018; 35±7 mL Mudie 2014 — the folkloric
+      "~50 mL" was checked and NOT found citable), 2–3 L StatPearls, ~4 L
+      OpenStax; the inner oblique muscle layer "is unique to the stomach"
+      (StatPearls NBK482334, the organ's distinguishing-fact slot); origin =
+      "arises from the glandular epithelium of the gastric mucosa" (World J
+      Surg Oncol, 2009). **Gastric SEROSAL color: an honest gap** — no
+      fetchable source states it in words; the mesh color is a flagged
+      inference from continuous GI serosa descriptions (colon "pink-tan and
+      smooth", Cureus 2022), recorded in stomach.js and here — and, after
+      the first review round asked for it, USER-FACING too: one sentence in
+      the #disclaimer sources panel and a closing note in the Stomach organ
+      description itself (data rule 2's say-what's-illustrative standard,
+      applied to a material color for the first time).
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -1906,6 +2177,113 @@ screen pair per organ:
     near-spherical blob, closer to what "almond-sized" in this organ's own
     `sub` line has always claimed.
 
+- **Organ mesh source — Colon/Pancreas (2026-08-28): a BETTER pipeline than the
+  five originals, plus a deliberate provenance-over-convention call.**
+  `assets/colon.glb` (3DPX-021005, Large Intestine, MALE) and
+  `assets/pancreas.glb` (3DPX-020983, Pancreas, Female) are NIH 3D HRA entries
+  (CC BY 4.0, verified per entry page), but unlike Lungs/Kidneys/Liver/Brain/
+  Prostate they are the ORIGINAL HRA-authored GLBs served by
+  `3d.nih.gov/api/files/<inputFileId>` (the entry JSON at `api/entries/<id>`
+  carries the file id) — no STL, no Blender conversion, byte-identical to
+  upstream (sha256 84a66fb4… / edb41456…, checkable against the source), which
+  preserves the HRA's NAMED sub-meshes the STL route flattens (colon: ten —
+  caecum, ileocecal valve, vermiform appendix, ascending/hepatic flexure/
+  transverse/splenic flexure/descending/sigmoid colon, rectum; pancreas: five —
+  head, neck, body, tail, uncinate process). 34,178 and 12,894 triangles —
+  no decimation needed (Prostate ships at a comparable scale and every
+  render-cost benchmark so far has been noise-dominated).
+  - **Male colon, deliberately — provenance beat the female-variant
+    convention:** the female large-intestine model's own documentation says
+    verbatim it is "not based on direct imaging data, as no suitable source
+    was available at the time," while the male is "primarily based on
+    colonoscopy-derived data provided by Arie Kaufman (Stony Brook
+    University)." Real imaging won; used generically for both sexes (the
+    left-kidney precedent). The pancreas keeps the female convention —
+    there, convention and Visible-Human provenance agree.
+  - **HRA GLBs are authored in body-space** (each organ's bbox centered where
+    the organ sits in a standing body — the pancreas ~26cm above the origin),
+    and `applyFraming()` orbits the ORIGIN, so each buildMesh recenters
+    `gltf.scene` by its bbox center at load. Hotspot `pos` values are derived
+    in that recentered frame — computed directly from the named sub-mesh
+    VERTICES (anterior-most vertex near each anatomical target), newly
+    possible because the sub-meshes survive, instead of the hand-held raycast
+    picker the first five organs needed.
+  - **Stomach: procedural, deliberately (Ovary precedent), and the search was
+    real:** the HRA library contains NO stomach (confirmed four ways: all 80
+    NIH 3D entries enumerated, HRA reference-organs API, HRA LOD catalog,
+    live search — the stomach is outside HRA/HuBMAP scope, no ASCT+B table).
+    NIH 3D's only stomach (3DPX-021124) has four mutually contradictory
+    attributions and GLB metadata exposing a Sketchfab artist sculpt;
+    BodyParts3D's is 1,810 triangles with a self-contradictory license (site
+    CC BY 4.0, embedded OBJ header still CC BY-SA 2.1 Japan); Z-Anatomy is
+    CC BY-SA copyleft. **Best rejected candidate, kept on file:** Open
+    Anatomy's SPL Liver Atlas `Model_41_Stomach.vtk` — real CT-derived,
+    35,088 points, login-free — but under the 3D Slicer BSD-style license
+    whose distribution terms require reproducing the entire license text
+    prefaced by a mandated sentence: a second license regime alongside the
+    clean CC BY story, left as a user decision, not adopted. The procedural
+    build is a swept tube (CatmullRom axis + arc-length-stationed radius
+    profile + hemisphere end caps + organicDisplace) sized to VERIFIED
+    dimensions — Gray's 1918 J-shape, Cunningham 1905 lengths/diameters,
+    greater-curvature 4–5x ratio (see data rule 19) — with two real bugs
+    caught by measurement: inverted triangle winding (raycast hit the far
+    wall; normals inward) and a radius profile initially indexed by
+    control-point number while the curve samples by ARC LENGTH, which slid
+    every radius to the wrong station (thin fundus, fat pylorus).
+    **Silhouette revision (first review round): the reviewer was right that
+    the first build read as a blob, and the root cause was geometric, not a
+    tuning nudge** — the tube's end "caps" were single pole-vertex fans,
+    i.e. CONES, so a wide fundus end could only ever render as a
+    taper-to-a-tip (the wider the radius, the worse; the narrow pylorus hid
+    the same defect). Both ends are now real hemisphere caps (three
+    intermediate rings + pole, slightly squashed 0.92 along the axis), the
+    axis STARTS at the dome's equator (the cap supplies everything above
+    it), the radius falloff after the body is much steeper (0.052 → 0.038 →
+    0.026 → 0.017 m — the antral narrowing), the axis hook is tighter (the
+    lesser curvature goes genuinely concave), and the pyloric tube is longer
+    and climbs, ending ~8.5cm above the greater curvature's lowest point.
+    Revised measurements, checked not eyeballed: ~29cm axis length — inside
+    the 26–34cm range Cunningham attributes to the authorities he surveys,
+    just past his own 25–27.5cm headline figure, stated as such — 10.4cm
+    greatest diameter, ~11.6cm cardia–pylorus chord. Delta re-verification
+    on the live pipeline after the reshape: 4/4 hotspots visible at the
+    default rotation, blown-white 0.00%, zero page errors; thumbnail
+    re-rendered from the same geometry. Its hotspots use `pos` anchors computed from
+    the same parameterization — the `isRealMesh` branch keys on pos-vs-dir,
+    not on mesh provenance, so a procedural organ gets frameContents + scaled
+    markers + no glow lights (correct: these anchors sit ON the surface,
+    where a point light degenerates — see the clip-fix entry).
+  - **Thumbnails** for all three were re-rendered with a rewritten Blender
+    script (`render_thumb.py`, Cycles, warm sun 0xffddb0 + world ambient
+    0xfff1e0, film transparent, 256px), CALIBRATED against the shipped
+    liver.png (sun 3.5 / ambient 1.2 / pad 0.74 reproduces its coverage and
+    red channel; the shipped thumbs predate the clip-fix specular taming, so
+    new thumbs run slightly less white-lifted in G/B — closer to today's live
+    look, accepted). Gotchas hit for real: Blender's OBJ import axis options
+    do NOT produce the identity you'd expect (the stomach OBJ is exported
+    with a 180-degree-about-Z pre-compensation; verified by rendering marker
+    spheres at known anatomical coordinates, not by eyeballing silhouettes);
+    the glTF import path has no such quirk (verified the same marker way on
+    the colon).
+  - **Body markers: a raycast trap discovered and worked around** —
+    heightFrac values below ~0.46 at moderate off-axis angles let
+    `findBodySurfaceAnchor`'s inward ray slip through the thigh gap and land
+    on the far buttock surface (wrong side of the body, one or both sexes).
+    Found by probing a height/angle grid against both meshes after the
+    colon's marker landed mid-pelvis; the colon spec (0.48/-50) was chosen
+    from that grid. New-organ markers: pancreas 0.58/0 (epigastrium), stomach
+    0.585/-32 (LUQ, mirroring the liver's +40 across the midline per the
+    app's existing marker-side convention), colon 0.48/-50. Verified by
+    front-view screenshot on both sexes; the tightest marker pair on either
+    body remains the pre-existing Ovaries pair.
+  - **Site-map `pos3d` design got a real method this pass** (see Known
+    limitations): the three new cancers' spreads were optimized for
+    PROJECTED separation at the site viewer's default camera (theta 0.6,
+    phi 1.15) rather than raw 3D distance, after the colon's first spread —
+    3D-min-distance 2.09, matching prior organs — still visually merged two
+    blob pairs at the default rotation. Projected min separation now: CRC
+    1.75, PDAC 1.68, GDIFF 1.97 units.
+
 - **Microscopic (histology) view — cancer screen, level 2 (`js/histology.js` +
   a `histology` data block per cancer in each `js/organs/*.js`):** a
   procedurally generated, stylized 2D evocation of each cancer's real,
@@ -2096,7 +2474,17 @@ screen pair per organ:
   The underlying risk (any future cancer that copies coordinates instead of
   designing its own) is still there — a shared minimum-angular-separation
   pass over each cancer's `REGIONS_*` would close it structurally, not yet
-  done. **GBM (organ #6) and Prostate (organ #7) are the two deliberate
+  done. **The three-organ pass (Colon/Pancreas/Stomach) upgraded the design
+  method, though: raw 3D pairwise distance is NOT sufficient — CRC's first
+  spread had min 3D distance 2.09 (better than HGSOC's 1.6) and still merged
+  two blob pairs on screen, because the separating vectors were
+  depth-dominant at the default camera. The metric that works is PROJECTED
+  pairwise distance at the site viewer's default camera (theta 0.6, phi
+  1.15, screen-up = world-Y is the rotation-invariant axis); the three new
+  cancers' spreads were optimized against it (projected minima 1.75/1.68/
+  1.97) and screenshot-verified at the exact default rotation via a camera
+  reset, not a timing race against the auto-rotate. Use this method for
+  every future cancer.** **GBM (organ #6) and Prostate (organ #7) are the two deliberate
   exceptions to "spread the four `pos3d` values apart" — do not "fix"
   either's clustering thinking it's an oversight.** Both are clustered
   tightly *on purpose* (data rules 7 and 15) so their blobs visually merge
@@ -2158,9 +2546,23 @@ screen pair per organ:
    `applyMottleVertexColors`, `makeMoveTracker` live in `js/viewer.js`; the
    mutation panel in `js/panel.js`; the breadcrumb in `js/breadcrumb.js`.
 3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, Kidneys/ccRCC, Liver/HCC,
-   Brain/GBM, and Prostate/acinar adenocarcinoma are all done. Pick organ/
-   cancer pair #8 and repeat the real-data-sourcing process documented
-   above — **verify every citation directly at the source before writing it
+   Brain/GBM, Prostate/acinar adenocarcinoma, and — added in one shared pass
+   (2026-08-28) — Colon/colorectal adenocarcinoma, Pancreas/PDAC, and
+   Stomach/diffuse-type gastric adenocarcinoma are all done. **The next organ
+   planned is Skin/Melanoma, explicitly deferred to its own pass because it
+   needs a structural decision FIRST (like GBM's and Prostate's) before any
+   data work: how to represent an organ that covers the whole body (skin
+   patch? layered cross-section?), including what its body-screen hotspot
+   means. Known constraints already stated for it: BRAF V600E ~50% trunk
+   (verify; not comparable to PDAC's KRAS), BRAF/NRAS near-mutual exclusivity
+   (~0.6% co-occurrence in a 677-patient study — verify directly) with a
+   real documented exception (rare class III BRAF variants co-occurring with
+   NRAS; the HCC TP53/CTNNB1 rule-plus-exception pattern), documented
+   brain-metastasis predilection, and CDKN2A/PTEN/TERT-promoter as
+   branch/private candidates. If the representation question turns out to be
+   more involved than expected, stop and report options rather than
+   committing unilaterally.** For any organ after that, pick pair #12 and
+   repeat the real-data-sourcing process documented above — **verify every citation directly at the source before writing it
    into the app, not after**, the standard ccRCC, HCC, GBM, and Prostate all
    held themselves to from the start rather than fixing in a follow-up
    correction pass the way LUAD needed to. The screens themselves are ready

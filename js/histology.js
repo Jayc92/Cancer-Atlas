@@ -447,6 +447,233 @@ function genProstate(g, rnd){
   ];
 }
 
+function genCRC(g, rnd){
+  // Colorectal adenocarcinoma: complex/cribriform glands, "dirty" necrosis INSIDE gland
+  // lumens, desmoplastic stroma at the invasive edge. Two verification-driven constraints
+  // shape this drawing (see colon.js's histology block for sources): (1) cribriform
+  // architecture is a pattern of GLANDULAR DIFFERENTIATION here, not a high-grade marker —
+  // WHO 6th ed. (2026) says so explicitly, the opposite of what prostate's pattern-4
+  // cribriform connotes two generators up, so the intro text carries that distinction
+  // rather than letting the two slides silently imply the same meaning; (2) dirty necrosis
+  // is characteristic/suggestive of colorectal origin, NOT specific to it — framed that way
+  // in the feature text, never as diagnostic.
+  // faint loose stroma background
+  for(let i=0;i<8;i++){
+    const y = 20+rnd()*460;
+    g.appendChild(el('path', {d:`M0 ${y} Q ${180+rnd()*160} ${y+(rnd()*2-1)*36} ${VB.w} ${y+(rnd()*2-1)*44}`, fill:'none', stroke:HE.stroma, 'stroke-width':3+rnd()*4, opacity:0.45}));
+  }
+  // Two large complex glands whose lumens hold dirty necrosis: ring of tall columnar tumor
+  // cells around a lumen filled with granular eosinophilic debris + nuclear dust.
+  const dirty = [{cx:250, cy:150, r:78}, {cx:565, cy:330, r:66}];
+  dirty.forEach(dg=>{
+    g.appendChild(el('path', {d:blobPath(dg.cx, dg.cy, dg.r+26, (dg.r+26)*0.88, 0.10, 14, rnd, 0), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1.3}));
+    g.appendChild(el('path', {d:blobPath(dg.cx, dg.cy, dg.r, dg.r*0.85, 0.12, 12, rnd, 0), fill:HE.bg, stroke:HE.cytoLn, 'stroke-width':1}));
+    // the "dirty" content: granular debris + karyorrhectic dust filling the lumen
+    g.appendChild(el('path', {d:blobPath(dg.cx, dg.cy, dg.r*0.82, dg.r*0.68, 0.22, 12, rnd, 0.4), fill:HE.necro, opacity:0.95}));
+    for(let i=0;i<Math.round(dg.r*0.85);i++){
+      const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*dg.r*0.72;
+      g.appendChild(el('circle', {cx:dg.cx+Math.cos(a)*r, cy:dg.cy+Math.sin(a)*r*0.8, r:0.9+rnd()*1.7, fill:HE.debris, opacity:0.75}));
+    }
+    // tall columnar rim cells: elongated nuclei oriented radially (polarity partly lost —
+    // a few deliberately skewed off-axis rather than a perfectly ordered picket fence)
+    const n = Math.round(dg.r*0.42);
+    for(let i=0;i<n;i++){
+      const a = i/n*Math.PI*2 + rnd()*0.15;
+      const rr = dg.r + 13;
+      const nx = dg.cx+Math.cos(a)*rr, ny = dg.cy+Math.sin(a)*rr*0.88;
+      const ang = a*180/Math.PI + 90 + (rnd()<0.25 ? (rnd()*2-1)*40 : (rnd()*2-1)*10);
+      g.appendChild(el('ellipse', {cx:nx, cy:ny, rx:2.3, ry:5.2, transform:`rotate(${ang.toFixed(0)} ${nx} ${ny})`, fill:HE.nuc, opacity:0.92}));
+    }
+  });
+  // A cribriform gland (upper right): one epithelial mass punched through with several
+  // lumens — sharing walls, no intervening stroma. Glandular differentiation, not grade.
+  const crib = {cx:600, cy:112, rx:92, ry:70};
+  g.appendChild(el('path', {d:blobPath(crib.cx, crib.cy, crib.rx, crib.ry, 0.10, 12, rnd, 0), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1.2}));
+  const clumens = [];
+  let att = 0;
+  while(clumens.length < 7 && att < 400){
+    att++;
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.72;
+    const lx = crib.cx+Math.cos(a)*crib.rx*r, ly = crib.cy+Math.sin(a)*crib.ry*r;
+    const lr = 10+rnd()*6;
+    if(clumens.some(L=>Math.hypot(L.x-lx,L.y-ly) < L.r+lr+5)) continue;
+    clumens.push({x:lx,y:ly,r:lr});
+  }
+  clumens.forEach(L=>{ g.appendChild(el('circle', {cx:L.x, cy:L.y, r:L.r, fill:HE.bg, stroke:HE.cytoLn, 'stroke-width':1})); });
+  for(let i=0;i<40;i++){
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.88;
+    const x = crib.cx+Math.cos(a)*crib.rx*r, y = crib.cy+Math.sin(a)*crib.ry*r;
+    if(clumens.some(L=>Math.hypot(L.x-x,L.y-y) < L.r+3)) continue;
+    g.appendChild(el('circle', {cx:x, cy:y, r:2.9+rnd()*1.1, fill:HE.nuc, opacity:0.9}));
+  }
+  // A few smaller angulated/fused glands mid-field — "complex" architecture between the
+  // two big set-pieces.
+  [[430,205,14],[472,242,11],[398,262,13],[120,330,15],[172,382,12]].forEach(p=>{
+    drawGlandRing(g, p[0], p[1], p[2], rnd, {nucMin:3, nucMax:4.6});
+  });
+  // Desmoplastic stroma at the invasive edge (bottom band): dense, sweeping spindle-cell
+  // stroma with elongated fibroblast nuclei aligned along the sweep, one small tumor gland
+  // caught advancing into it.
+  g.appendChild(el('path', {d:`M0 ${430} Q ${VB.w*0.3} ${402} ${VB.w*0.62} ${436} T ${VB.w} ${424} L ${VB.w} ${VB.h} L 0 ${VB.h} Z`, fill:HE.stroma, stroke:HE.stromaLn, 'stroke-width':1.2, opacity:0.95}));
+  for(let i=0;i<46;i++){
+    const x = rnd()*VB.w;
+    const yBase = 430 + Math.sin(x/120)*10;
+    const y = yBase + 12 + rnd()*(VB.h-yBase-18);
+    const ang = -8 + Math.sin(x/140)*14 + (rnd()*2-1)*10;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:7.5, ry:1.7, transform:`rotate(${ang.toFixed(0)} ${x} ${y})`, fill:HE.nucDark, opacity:0.7}));
+  }
+  drawGlandRing(g, 322, 458, 13, rnd, {nucMin:3.2, nucMax:4.8});
+  return [
+    // anchored between the two dirty-necrosis glands' rims, not on a lumen — the debris IS
+    // the feature, so the label sits beside the upper gland rather than covering its contents
+    {key:'dirtynecrosis', x:250, y:248},
+    {key:'glands',        x:600, y:196},
+    {key:'desmoplasia',   x:120, y:470},
+  ];
+}
+
+function genPDAC(g, rnd){
+  // Pancreatic ductal adenocarcinoma: the field is MOSTLY stroma — desmoplastic stroma can
+  // make up "up to 90% of the tumour volume" (see pancreas.js's histology block), so unlike
+  // every other generator here the tumor is the minority element by design. Scattered,
+  // haphazardly oriented, deceptively well-differentiated glands; one gland immediately
+  // adjacent to a muscular artery (a real Hruban & Klimstra diagnostic clue — with their own
+  // caveat that it is "not by itself diagnostic"); perineural invasion (~80-90% of resected
+  // cases): tumor glands wrapping a nerve.
+  // dominant desmoplastic background: layered sweeping collagen bands + spindle fibroblasts
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.75}));
+  for(let i=0;i<16;i++){
+    const y = 10+rnd()*480;
+    g.appendChild(el('path', {d:`M0 ${y} Q ${140+rnd()*200} ${y+(rnd()*2-1)*40} ${420+rnd()*80} ${y+(rnd()*2-1)*30} T ${VB.w} ${y+(rnd()*2-1)*46}`, fill:'none', stroke:HE.stromaLn, 'stroke-width':2+rnd()*3.5, opacity:0.55}));
+  }
+  for(let i=0;i<120;i++){
+    const x = rnd()*VB.w, y = rnd()*VB.h;
+    const ang = Math.sin(x/150)*24 + (rnd()*2-1)*22;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:6.5, ry:1.5, transform:`rotate(${ang.toFixed(0)} ${x} ${y})`, fill:HE.nucDark, opacity:0.55}));
+  }
+  // haphazard neoplastic glands: well-formed rings at random orientations and spacings —
+  // the point is the ARRANGEMENT (random, no lobular organization), and how normal each
+  // individual gland looks despite the disease's lethality
+  const glands = [
+    {x:120, y:95,  r:17}, {x:335, y:70,  r:13}, {x:585, y:150, r:16},
+    {x:215, y:255, r:14}, {x:475, y:300, r:18}, {x:120, y:420, r:13},
+    {x:700, y:415, r:14},
+  ];
+  glands.forEach(s=>{
+    // slight elliptical squash at a random angle so no two glands sit in the same
+    // orientation — the "haphazard arrangement" criterion drawn literally
+    const gg = el('g', {transform:`rotate(${(rnd()*90-45).toFixed(0)} ${s.x} ${s.y})`});
+    g.appendChild(gg);
+    drawGlandRing(gg, s.x, s.y, s.r, rnd, {nucMin:3, nucMax:4.4});
+  });
+  // one incomplete lumen: a gland whose epithelial ring is deliberately broken open so the
+  // lumen touches stroma directly (Hruban & Klimstra's "incomplete lumina")
+  const inc = {x:645, y:60, r:15};
+  g.appendChild(el('path', {d:`M ${inc.x-inc.r-9} ${inc.y} A ${inc.r+9} ${inc.r+9} 0 1 1 ${inc.x+((inc.r+9)*0.5).toFixed(1)} ${inc.y+((inc.r+9)*0.87).toFixed(1)}`, fill:'none', stroke:HE.cyto, 'stroke-width':16, 'stroke-linecap':'round'}));
+  for(let i=0;i<9;i++){
+    const a = 0.35 + i/9*Math.PI*1.5;
+    g.appendChild(el('circle', {cx:inc.x+Math.cos(a)*(inc.r+4), cy:inc.y+Math.sin(a)*(inc.r+4), r:3.2+rnd()*1, fill:HE.nuc, opacity:0.92}));
+  }
+  // muscular artery with a neoplastic gland immediately against its wall
+  const art = {x:310, y:395, r:26};
+  g.appendChild(el('circle', {cx:art.x, cy:art.y, r:art.r, fill:HE.cytoLite, stroke:HE.vesselDk, 'stroke-width':2}));
+  g.appendChild(el('circle', {cx:art.x, cy:art.y, r:art.r-8, fill:'none', stroke:HE.vessel, 'stroke-width':5, opacity:0.85}));
+  g.appendChild(el('circle', {cx:art.x, cy:art.y, r:art.r-15, fill:HE.bg, stroke:HE.vesselDk, 'stroke-width':1}));
+  for(let i=0;i<5;i++){
+    const a = rnd()*Math.PI*2;
+    g.appendChild(el('circle', {cx:art.x+Math.cos(a)*(art.r-15)*0.5, cy:art.y+Math.sin(a)*(art.r-15)*0.5, r:2.2, fill:HE.vessel, opacity:0.85}));
+  }
+  drawGlandRing(g, art.x+art.r+16, art.y-6, 12, rnd, {nucMin:3.2, nucMax:4.6});
+  // perineural invasion: a wavy nerve bundle with a tumor gland hugging its curve
+  const nerve = {x0:520, y0:455, x1:790, y1:395};
+  g.appendChild(el('path', {d:`M ${nerve.x0} ${nerve.y0} C ${nerve.x0+80} ${nerve.y0-38}, ${nerve.x1-90} ${nerve.y1+40}, ${nerve.x1} ${nerve.y1}`, fill:'none', stroke:HE.cytoLite, 'stroke-width':17, 'stroke-linecap':'round'}));
+  g.appendChild(el('path', {d:`M ${nerve.x0} ${nerve.y0} C ${nerve.x0+80} ${nerve.y0-38}, ${nerve.x1-90} ${nerve.y1+40}, ${nerve.x1} ${nerve.y1}`, fill:'none', stroke:HE.cytoLn, 'stroke-width':1.2, opacity:0.8, 'stroke-dasharray':'7 5'}));
+  for(let t=0.12; t<0.95; t+=0.16){
+    const nx = nerve.x0 + (nerve.x1-nerve.x0)*t;
+    const ny = nerve.y0 + (nerve.y1-nerve.y0)*t + Math.sin(t*Math.PI)* -22;
+    g.appendChild(el('ellipse', {cx:nx, cy:ny, rx:4.4, ry:1.6, transform:`rotate(${(-14+(rnd()*2-1)*14).toFixed(0)} ${nx} ${ny})`, fill:HE.nucDark, opacity:0.8}));
+  }
+  const png = el('g', {transform:'rotate(28 610 420)'});
+  g.appendChild(png);
+  drawGlandRing(png, 610, 420, 11, rnd, {nucMin:3.2, nucMax:4.6});
+  return [
+    {key:'stroma',     x:150, y:180},
+    // beside the gland cluster, not on any single ring — the arrangement is the feature
+    {key:'haphazard',  x:480, y:222},
+    // above the nerve's curve, not on it — same off-the-structure anchoring GBM's mvp and
+    // prostate's cribriform labels needed (centered labels hid what they named)
+    {key:'perineural', x:648, y:475},
+  ];
+}
+
+function genGDiffuse(g, rnd){
+  // Diffuse-type (WHO: poorly cohesive) gastric adenocarcinoma: the defining feature is the
+  // ABSENCE of the architecture every other adenocarcinoma generator above draws — no glands
+  // anywhere in this field, only discohesive single cells and loose files infiltrating the
+  // stroma, many with signet-ring morphology ("a central, optically clear, globoid droplet
+  // of cytoplasmic mucin with an eccentrically placed nucleus" — see stomach.js's histology
+  // block for sources). Stroma is drawn but deliberately NOT labeled as a feature: diffuse
+  // gastric cancer does show marked desmoplasia, but labeling it here would read as a repeat
+  // of PDAC's signature slide two generators up — the discohesion and the signet rings are
+  // what make THIS cancer's field its own.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.6}));
+  for(let i=0;i<12;i++){
+    const y = 15+rnd()*470;
+    g.appendChild(el('path', {d:`M0 ${y} Q ${200+rnd()*180} ${y+(rnd()*2-1)*34} ${VB.w} ${y+(rnd()*2-1)*40}`, fill:'none', stroke:HE.stromaLn, 'stroke-width':2+rnd()*3, opacity:0.5}));
+  }
+  for(let i=0;i<70;i++){
+    const x = rnd()*VB.w, y = rnd()*VB.h;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:6, ry:1.5, transform:`rotate(${((rnd()*2-1)*30).toFixed(0)} ${x} ${y})`, fill:HE.nucDark, opacity:0.5}));
+  }
+  // signet-ring cells: large, round, optically-clear mucin globule filling the cytoplasm,
+  // nucleus crushed into a crescent against the membrane. Drawn at real prominence — this
+  // is the cancer's signature object and exists in no other generator in this file.
+  const signets = [];
+  let att = 0;
+  while(signets.length < 15 && att < 900){
+    att++;
+    const x = 45+rnd()*(VB.w-90), y = 45+rnd()*(VB.h-90);
+    const r = 15+rnd()*9;
+    if(signets.some(s=>Math.hypot(s.x-x,s.y-y) < s.r+r+26)) continue;
+    signets.push({x,y,r});
+  }
+  signets.forEach(s=>{
+    const a = rnd()*Math.PI*2; // which way the nucleus is shoved
+    g.appendChild(el('circle', {cx:s.x, cy:s.y, r:s.r, fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1.4}));
+    // the mucin droplet: a faint inner sheen ring so the vacuole reads as full, not empty
+    g.appendChild(el('circle', {cx:s.x-s.r*0.22, cy:s.y-s.r*0.22, r:s.r*0.5, fill:'#ffffff', opacity:0.5}));
+    // eccentric crescent nucleus, flattened along the cell membrane
+    const nx = s.x+Math.cos(a)*s.r*0.68, ny = s.y+Math.sin(a)*s.r*0.68;
+    const ang = a*180/Math.PI + 90;
+    g.appendChild(el('ellipse', {cx:nx, cy:ny, rx:s.r*0.52, ry:s.r*0.20, transform:`rotate(${ang.toFixed(0)} ${nx} ${ny})`, fill:HE.nucDark, opacity:0.95}));
+  });
+  // discohesive non-signet tumor cells: single cells and short indian-file rows percolating
+  // between stroma bands — never rings, never shared walls
+  for(let i=0;i<60;i++){
+    const x = 25+rnd()*(VB.w-50), y = 25+rnd()*(VB.h-50);
+    if(signets.some(s=>Math.hypot(s.x-x,s.y-y) < s.r+14)) continue;
+    drawCell(g, x, y, 6.5, 3.2+rnd()*1.4, rnd, {nucOffset:2});
+  }
+  for(let f=0; f<4; f++){
+    const x0 = 60+rnd()*(VB.w-260), y0 = 60+rnd()*(VB.h-140);
+    const ang = (rnd()*2-1)*0.5;
+    for(let k2=0;k2<5;k2++){
+      const x = x0 + Math.cos(ang)*k2*17, y = y0 + Math.sin(ang)*k2*17;
+      if(signets.some(s=>Math.hypot(s.x-x,s.y-y) < s.r+13)) continue;
+      drawCell(g, x, y, 6, 3.4+rnd()*1, rnd, {nucOffset:1.5});
+    }
+  }
+  // pick label anchors off actual drawn objects: nearest signet to the upper-left third
+  let best = signets[0], bd = 1e9;
+  signets.forEach(s=>{ const d = Math.hypot(s.x-210, s.y-150); if(d<bd){bd=d; best=s;} });
+  return [
+    // beside the chosen signet-ring cell, not on it — the clear vacuole is the feature
+    {key:'signet',       x:best.x, y:best.y+best.r+22},
+    {key:'discohesion',  x:600, y:120},
+    {key:'infiltration', x:170, y:420},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -455,6 +682,9 @@ const GENERATORS = {
   hcc:    genHCC,
   gbm:    genGBM,
   acinar: genProstate,
+  crc:    genCRC,
+  pdac:   genPDAC,
+  gdiff:  genGDiffuse,
 };
 
 // ------------------------------------------------------------
