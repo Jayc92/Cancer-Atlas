@@ -213,7 +213,11 @@ function buildBodyMarkers(){
     (organ.sexes || []).forEach(sex=>{
       const group = sex === 'female' ? state.femaleBodyGroup : state.maleBodyGroup;
       const bbox = sex === 'female' ? femaleBbox : maleBbox;
-      spec.points.forEach(point=>{
+      // A point may carry its own optional `sexes` filter on top of the organ-level one —
+      // added for Skin, whose marker sits at a DIFFERENT verified site per sex (trunk in men,
+      // lower leg in women — CONCORD-3; see skin.js's markerSpec comment). Every other
+      // organ's points omit the field and keep the original both-bodies behavior unchanged.
+      spec.points.filter(point => !point.sexes || point.sexes.includes(sex)).forEach(point=>{
         const anchor = findBodySurfaceAnchor(group, bbox, point.heightFrac, point.angle);
         const mesh = new THREE.Mesh(
           // Scaled to this mesh's real-world-meter units (~1.7 tall) — 0.03 is the same

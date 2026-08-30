@@ -674,6 +674,123 @@ function genGDiffuse(g, rnd){
   ];
 }
 
+function genMelanoma(g, rnd){
+  // Cutaneous melanoma, superficial spreading type — the first slide in this file with a
+  // skin surface on it: an epidermis band across the top, an undulating dermal-epidermal
+  // junction, and everything the verification pass confirmed for SSM (see skin.js's
+  // histology block): irregular junctional nests, pagetoid single cells climbing the
+  // epidermis, a dermal invasive component with dusty brown melanin and melanophages, one
+  // mitotic figure, and the Breslow gauge — a measurement annotation, drawn as a thin
+  // technical ruler (deliberately not tissue-colored) from the top of the granular layer to
+  // the deepest invasive cell. Deliberately ABSENT: solar elastosis — that is a lentigo
+  // maligna (high cumulative sun damage) background finding, and PathologyOutlines classes
+  // SSM as low-CSD; drawing it would put the wrong subtype's background under this field.
+  // Melanin brown is an assembled inference (dusty/granular pigment + eumelanin brown-black),
+  // recorded in skin.js's histology comment.
+  const PIG = '#8a5a3c', PIGDK = '#5f3c26';
+  // dermis background
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  for(let i=0;i<10;i++){
+    const y = 170+rnd()*310;
+    g.appendChild(el('path', {d:`M0 ${y} Q ${180+rnd()*220} ${y+(rnd()*2-1)*26} ${VB.w} ${y+(rnd()*2-1)*30}`, fill:'none', stroke:HE.stromaLn, 'stroke-width':2+rnd()*2.5, opacity:0.45}));
+  }
+  // dermal-epidermal junction: undulating rete-ridge boundary, effaced/irregular over the
+  // tumor-bearing left two-thirds (amplitude jitter), calmer at the right edge
+  const dej = [];
+  for(let x=0; x<=VB.w; x+=20){
+    const calm = x>600 ? 0.45 : 1;
+    dej.push([x, 128 + (16 + rnd()*14*calm)*Math.sin(x*0.035 + 0.6) * calm + (rnd()*2-1)*7*calm]);
+  }
+  // epidermis band: top of viewBox down to the DEJ polyline
+  let epiD = 'M0 0 L800 0';
+  for(let i=dej.length-1;i>=0;i--) epiD += ` L${dej[i][0]} ${dej[i][1].toFixed(1)}`;
+  g.appendChild(el('path', {d:epiD+' Z', fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  // stratum corneum: thin lamellar strip at the very top; the granular layer sits just under
+  // it — the Breslow gauge's top tick anchors to that level (y≈22)
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:16, fill:HE.cyto, opacity:0.8}));
+  for(let i=0;i<26;i++){
+    const y = 3+rnd()*11;
+    g.appendChild(el('path', {d:`M${rnd()*VB.w*0.9} ${y} q 30 ${(rnd()*2-1)*3} 62 0`, fill:'none', stroke:HE.cytoLn, 'stroke-width':1, opacity:0.6}));
+  }
+  // resident keratinocyte nuclei: small, orderly, sparse — the calm the tumor disrupts
+  for(let i=0;i<120;i++){
+    const x = rnd()*VB.w;
+    const dy = dej[Math.min(dej.length-1, Math.round(x/20))][1];
+    const y = 22 + rnd()*(dy-30);
+    if(y > dy-8) continue;
+    g.appendChild(el('circle', {cx:x, cy:y, r:2.1+rnd()*0.9, fill:HE.nuc, opacity:0.45}));
+  }
+  // irregular junctional nests: variably sized/shaped clusters riding the DEJ, focally
+  // confluent on the left; each = a pigmented blob + crowded dark atypical nuclei
+  const nests = [
+    {x:95,  rx:42, ry:26}, {x:175, rx:30, ry:20}, {x:225, rx:52, ry:30},
+    {x:330, rx:24, ry:16}, {x:415, rx:38, ry:24}, {x:520, rx:20, ry:14},
+  ];
+  nests.forEach(n=>{
+    const dy = dej[Math.min(dej.length-1, Math.round(n.x/20))][1];
+    const cy = dy - n.ry*0.25 + rnd()*6;
+    g.appendChild(el('path', {d:blobPath(n.x, cy, n.rx, n.ry, 0.3, 10, rnd, rnd()*1.2), fill:PIG, opacity:0.35, stroke:HE.cytoLn, 'stroke-width':1}));
+    const count = Math.round(n.rx*n.ry/38);
+    for(let k=0;k<count;k++){
+      const a = rnd()*Math.PI*2, r = Math.sqrt(rnd());
+      drawCell(g, n.x+Math.cos(a)*n.rx*r*0.8, cy+Math.sin(a)*n.ry*r*0.8, 6.5, 3.6+rnd()*2.2, rnd, {nucFill:HE.nucDark, nucOffset:1.5, cytoOpacity:0.5});
+    }
+    n.cy = cy;
+  });
+  // pagetoid spread: single atypical melanocytes with a clear halo, scattered UP into the
+  // spinous/granular levels above the nests — where melanocytes do not belong
+  for(let i=0;i<13;i++){
+    const x = 40+rnd()*520;
+    const dy = dej[Math.min(dej.length-1, Math.round(x/20))][1];
+    const y = 26 + rnd()*(dy-58);
+    g.appendChild(el('circle', {cx:x, cy:y, r:7+rnd()*2, fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1}));
+    g.appendChild(el('circle', {cx:x, cy:y, r:3.6+rnd()*1.2, fill:HE.nucDark, opacity:0.95}));
+  }
+  // dermal invasive component: loose sheets of large epithelioid cells with dusty brown
+  // pigment descending under the main nest cluster; absence of maturation = the deep cells
+  // stay as big as the superficial ones
+  const invaders = [];
+  for(let i=0;i<46;i++){
+    const t = rnd();
+    const x = 120 + rnd()*340 + t*90;
+    const y = 165 + t*195 + rnd()*24;
+    invaders.push({x, y});
+  }
+  // the deepest invasive cell — placed explicitly; the Breslow gauge's bottom tick aligns
+  // to this exact depth
+  const deepest = {x:400, y:382};
+  invaders.push(deepest);
+  invaders.forEach(c=>{
+    drawCell(g, c.x, c.y, 8.5+rnd()*2, 4.4+rnd()*2.4, rnd, {nucFill:HE.nucDark, nucOffset:2, cytoFill:HE.cyto});
+    if(rnd()<0.5) g.appendChild(el('circle', {cx:c.x+(rnd()*2-1)*6, cy:c.y+(rnd()*2-1)*6, r:1.1+rnd()*1.2, fill:PIG, opacity:0.8}));
+  });
+  // melanophages: darkly pigmented macrophages in the papillary dermis, hoovering up melanin
+  for(let i=0;i<9;i++){
+    const x = 90+rnd()*470, y = 160+rnd()*90;
+    g.appendChild(el('path', {d:blobPath(x, y, 6+rnd()*3, 5+rnd()*2, 0.35, 8, rnd, 0), fill:PIGDK, opacity:0.85}));
+  }
+  // one dermal mitotic figure (drawable per the verification; NOT an AJCC-8 T1 criterion, so
+  // it stays unlabeled garnish): a condensed double-bar of chromosomes
+  g.appendChild(el('rect', {x:236, y:262, width:3, height:11, fill:HE.nucDark, transform:'rotate(24 237 267)'}));
+  g.appendChild(el('rect', {x:243, y:262, width:3, height:11, fill:HE.nucDark, transform:'rotate(-18 244 267)'}));
+  // Breslow gauge: thin technical ruler from the granular layer (just under the corneum) to
+  // the deepest invasive cell's depth — annotation styling, deliberately not tissue-colored
+  const GX = 716, yTop = 22, yBot = deepest.y;
+  const RULER = '#41527a';
+  g.appendChild(el('line', {x1:GX, y1:yTop, x2:GX, y2:yBot, stroke:RULER, 'stroke-width':2}));
+  g.appendChild(el('line', {x1:GX-14, y1:yTop, x2:GX+14, y2:yTop, stroke:RULER, 'stroke-width':2}));
+  g.appendChild(el('line', {x1:GX-14, y1:yBot, x2:GX+14, y2:yBot, stroke:RULER, 'stroke-width':2}));
+  for(let y=yTop+30; y<yBot-8; y+=30) g.appendChild(el('line', {x1:GX-5, y1:y, x2:GX+5, y2:y, stroke:RULER, 'stroke-width':1.4, opacity:0.7}));
+  // dashed guide from the deepest cell to the gauge's bottom tick, so the measurement's
+  // anchor is visually explicit
+  g.appendChild(el('line', {x1:deepest.x+14, y1:deepest.y, x2:GX-16, y2:yBot, stroke:RULER, 'stroke-width':1.2, 'stroke-dasharray':'5 5', opacity:0.7}));
+  return [
+    {key:'breslow',  x:GX-4, y:214},
+    {key:'pagetoid', x:315,  y:52},
+    {key:'nests',    x:225,  y:(nests[2].cy||150)+44},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -685,6 +802,7 @@ const GENERATORS = {
   crc:    genCRC,
   pdac:   genPDAC,
   gdiff:  genGDiffuse,
+  melanoma: genMelanoma,
 };
 
 // ------------------------------------------------------------

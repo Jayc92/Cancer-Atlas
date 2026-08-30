@@ -19,7 +19,7 @@ map — see Architecture notes), still no build step, no backend, no bundler. **
 from one 2,816-line file into ES modules in this pass** (the "needs modularizing" item
 this file's own Known Limitations had flagged since the three.js migration) — see
 Architecture notes' "File layout / module map" for exactly what moved where and why. It
-proves out the full navigation pattern end-to-end for **ten** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **eleven** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -1371,6 +1371,270 @@ screen pair per organ:
       the #disclaimer sources panel and a closing note in the Stomach organ
       description itself (data rule 2's say-what's-illustrative standard,
       applied to a material color for the first time).
+20. Skin/cutaneous melanoma reference sources — **every citation verified
+    directly at the source (four dedicated verification passes before any
+    build work: anatomy/subtypes, genomics, metastatic pattern, histology/
+    layer-colors). This organ is a structural departure on a NEW AXIS — organ
+    representation, not the site model (do not conflate it with GBM's or
+    Prostate's departures, which are about what the four cancer-screen blobs
+    mean):** skin is the first organ that is not a discrete organ mass, so
+    its organ screen is a schematic layered CROSS-SECTION BLOCK (epidermis /
+    pigmented basal band / dermis / hypodermis, undulating rete-ridge
+    junction, hair follicles with emerging shafts), while its cancer screen
+    uses the ORDINARY real-distant-metastasis site model (family 1, like
+    eight of the other ten cancers — melanoma metastasizes hard; no
+    `regionWord`). Decided at a pre-build checkpoint with the reviewer, like
+    Prostate's gland-vs-ducts and the Stomach asset question.
+    - **A NEW asset-rejection class, third in the taxonomy** (not "no asset
+      exists" — Ovary/Stomach — and not "license regime" — Open Anatomy):
+      **structurally unsuitable real asset.** The HRA publishes whole-body
+      Skin reference organs (3DPX-020986 Female / 3DPX-021016 Male, CC BY
+      4.0, Visible Human-derived). The female GLB was downloaded (12,246,132
+      bytes) and its JSON chunk parsed directly: ONE mesh, 191,322 vertices,
+      no sub-structure, bbox 0.97×1.67×0.33 m — a body-shaped outer-surface
+      shell with zero layer information. Rejected on measurement: the organ
+      screen's whole job for melanoma is the layered structure (melanocyte
+      location, Breslow depth), which a shell cannot show, and a second
+      full-body figure would duplicate the body screen the user just left,
+      at 8.3x the size of the entire female body model. Kept on file if a
+      whole-body distribution view is ever wanted.
+    - **Sex-differentiated body marker — the first organ whose marker sits
+      at a DIFFERENT place per sex, and it is registry data:** "the trunk
+      was the most common location in men (range 31%-58%) and the lower
+      limbs and hips in women (26%-40%)" (Di Carlo et al., CONCORD-3,
+      Eur J Cancer, 2025, N=1,578,482, 59 countries — verbatim). Male
+      marker: upper anterior chest (0.78/+33 — front-visible by review
+      decision; hotspot dots are DOM overlays with no occlusion culling but
+      the 3D anchor sphere IS depth-occluded, so a back anchor would be the
+      one marker whose sphere hides at the default view; the anterior trunk
+      is equally inside the verified category). Female marker: lower leg
+      (0.17/+75). Mechanism: `markerSpec.points[]` entries may now carry an
+      optional `sexes` filter (one-line, backward-compatible body.js
+      change). **The leg marker's side-on angle is geometric necessity:**
+      findBodySurfaceAnchor's ray passes through the body's central axis,
+      and at calf height the legs straddle it — a front-on ray threads the
+      gap and misses (the colon pass's thigh-gap trap in pure form); only a
+      near-side-on ray (≳60°) intersects the near leg. The placement
+      asymmetry is explained to the user in the organ description.
+    - **Trunk: BRAF V600E + TERT promoter (two entries, GBM precedent),
+      honestly framed as NOT near-universal:** BRAF 52% (TCGA, Cell, 2015,
+      N=318), real cohort range 43–70% (Colombino 2012 primaries 43%; Jakob
+      2012 47% of 677; Haluska 2006 ~60–70% of SSM) — stated in the ccf
+      string, never rounded to look like PDAC's KRAS. V600E = ~72% of BRAF
+      mutations (Jakob's printed 71.9%). Earliest event: "the earliest and
+      most common genetic alteration in human melanoma" (Dankort 2009,
+      verbatim); 82% of benign nevi carry it (63/77, Pollock 2003 — which
+      writes **V599E**, the pre-renumbering name; quote it as written or
+      flag the renumbering, never silently modernize). TERT promoter:
+      **75% of the BRAF subtype specifically** (39/52, TCGA Table 1), 71%
+      of the Huang 2013 discovery cohort; C228T/C250T are mutually
+      exclusive UV-signature C>T transitions at a dipyrimidine motif
+      (Huang, verbatim) — the atlas's fourth temporal-trunk instance (rule
+      5) and its SECOND organ whose trunk gene is literally TERT: melanoma
+      and HCC were flagged side by side in the same 2013 Huang screen (5/6
+      melanoma, 4/6 HCC cell lines), a real cross-organ thread stated in
+      the product text. Horn 2013's 33% is PRIMARY tumors vs 85% metastatic
+      tissue in the same paper — a specimen-type difference, NOT
+      discovery-vs-replication; never frame it the latter way. Timing
+      pillar: Shain et al., NEJM, 2015 (37-tumor evolutionary series,
+      abstract verbatim): 77% of intermediate lesions/melanomas in situ
+      carry TERT promoter mutations; benign lesions harbor BRAF V600E
+      exclusively; "Biallelic inactivation of CDKN2A emerged exclusively in
+      invasive melanomas"; PTEN and TP53 "only in advanced primary
+      melanomas."
+    - **THE DEFINING HARD EXCLUSION — NRAS must never appear anywhere in
+      this cancer's ledger** (the LUAD-EGFR standing class): 4 of 677
+      tumors (0.6%) carried both BRAF and NRAS activating mutations —
+      **source is Jakob et al., Cancer, 2012 (PMID 22180178), NOT Colombino
+      as the task brief guessed** (Colombino's cohort is 291 tissues/132
+      patients and reports no double-mutant figure; the attribution was
+      traced through a citing review's reference list and verified in the
+      primary). TCGA independently: exactly one double-mutant in 318,
+      p < 1e-15. **The documented exception is real but CANNOT touch this
+      tumor:** class 3 BRAF mutants (low-activity/kinase-dead — D594 etc.)
+      DO co-occur with RAS because they require it; V600E is class 1,
+      RAS-independent (Yao et al., Nature, 2017, Table 1 — per-variant,
+      definitive). With V600E as trunk the exclusion is hard; the exception
+      lives in the trunk note as prose (HCC rule-plus-exception precedent,
+      resolved the opposite way: prose, not a modeled exception). Second
+      documented route, also prose: treatment pressure — NRAS-mutant
+      resistant subclones under BRAF inhibitors, "but not through secondary
+      mutations in B-RAF(V600E)" (Nazarian 2010).
+    - **Branch pair: CDKN2A loss + PTEN loss — COOPERATING (rule 4),
+      verified for this cancer, not inherited:** PTEN loss positively
+      co-occurs with BRAF (Tsao 2004: 80% of PTEN-altered lines also
+      BRAF-mutant; TCGA: "PTEN mutations and deletions were more frequent
+      in BRAF-mutant melanomas"; computed OR 3.39, p=3.1e-05 on the
+      PanCancer re-processing, pipeline validated against six paper-stated
+      figures first). Dankort 2009 mouse: BRAF V600E alone = benign
+      hyperplasia that never progresses; + Pten silencing = melanoma "with
+      100% penetrance, short latency and with metastases" — a branch
+      mutation doing exactly what the model says. CDKN2A is
+      subtype-orthogonal ("nearly evenly distributed across subtypes,"
+      TCGA) and ~60% of the BRAF subtype counting mut/del/hypermethylation
+      (Table 1; deletion-dominant — label it "loss," the LUAD/GBM
+      convention). 15.6% of BRAF-hotspot tumors carry BOTH (computed) — the
+      two-sites-each split reflects real co-occurrence. The NRASxPTEN
+      exclusion trend's popular mechanism ("NRAS activates PI3K itself") is
+      NOT verbatim anywhere fetched — sources say "epistatic" (Tsao) and
+      RAS functions "portioned by mutations in the pathways lying
+      downstream" (Haluska, whose three-way partition is the citable
+      version: "In general, melanomas carry a mutated NRAS, a mutated BRAF,
+      or concurrent BRAF and PTEN mutations").
+    - **Private pool (ranked by verified safety): PPP6C R264C** (~10% BRAF
+      subtype; "exclusively in tumors with mutations in BRAF or NRAS" —
+      Krauthammer 2012, a documented co-occurrence REQUIREMENT, the
+      cleanest profile in the atlas; UVB hot spot per Hodis), **ARID2**
+      (~15% all-mutations / 7% LoF-only — two counting rules, both stated),
+      **IDH1 R132** (~6%; the only candidate in all four TCGA subtype
+      columns; same gene as GBM's diagnostic classifier, carrying no
+      classifying weight here — the cross-organ echo is in the note),
+      **TP53** (~10% of BRAF subtype with TCGA's own printed caveat "TP53
+      wild-type in ~90% of BRAF subtype" stated in the ccf; late per
+      Shain), **TTN passenger** (with melanoma's Alexandrov 2013 framing:
+      UV/tobacco cancers "exhibited the highest prevalence" of somatic
+      mutations — the atlas's heaviest mutation burden).
+    - **Excluded, each for a verified reason:** NF1 (anti-correlated with
+      hot-spot BRAF, p=1.93e-9 TCGA verbatim; alternative MAPK driver; also
+      one of Yao's two class-3 partners — trunk-note prose only); KIT (0%
+      on non-chronically-sun-damaged skin, Curtin 2006 verbatim; Triple-WT-
+      defining per TCGA — belongs to the acral/mucosal/CSD forms, mentioned
+      in the trunk note's site-variation prose); HRAS/KRAS (TCGA verbatim
+      mutual exclusivity); RB1 (SOFT, mechanistic-fit class — TCGA Table 1
+      lists it only in the NF1 column, and it duplicates CDKN2A's pathway;
+      computed OR 0.67 p=0.39 NOT significant, so never record it as an
+      exclusivity); **MAP2K1 — excluded for pathway redundancy and its
+      BRAF/MEK-inhibitor resistance role, explicitly NOT exclusivity: the
+      data trend TOWARD co-occurrence (computed OR 1.59, 16
+      double-positives; the only contrary evidence is n=2 in Hodis).
+      Recording MAP2K1 as "mutually exclusive with BRAF" would be
+      unsupported — this is the atlas's first exclusion whose stated ground
+      is redundancy while the statistics lean the other way**; RAC1 P29S
+      (admissible but outranked: ~2x depleted in BRAF-mutant tumors,
+      Krauthammer 12.5%-vs-6.2% verbatim, and documented as EARLY — cuts
+      against per-cell private framing).
+    - **Sites (Riihimäki et al., Cancer Med, 2018, PMID 30328287 — the
+      same Swedish-registry group/infrastructure as the colon and stomach
+      site sources; their all-cancers capstone is what covers melanoma;
+      there is no melanoma-specific Riihimäki paper, checked against the
+      author's full 47-item PubMed record):** N=4,923 metastatic melanoma
+      patients; of metastatic patients, multi-site counting, EXTRANODAL by
+      design. Verbatim sex-split: Nervous system 49% M / 44% F, Lung 41/39,
+      Liver 29/27, Skin (distant) 18/22 — modeled as the four sites,
+      mapping exactly onto AJCC-8 M1d/M1b/M1c/M1a (Gershenwald 2017).
+      **Bone (18/16) is the stated omission** (skin outranks it in women,
+      ties in men, and is the melanoma-distinctive site). **Distant lymph
+      nodes: real, M1a-grouped, and carry NO number anywhere** — the
+      frequency source excluded nodes by design and the one population
+      study covering them (Abdel-Rahman 2018) is paywalled; stated in the
+      Skin site note. "Nervous system" is ICD-10 C79.3/4, slightly broader
+      than brain — stated, not silently renamed. The site name "Skin
+      (distant)" carries the AJCC distinction in its note: distant
+      skin/soft-tissue (M1a) is a different entity from satellite/
+      in-transit disease (stage III, intralymphatic, Gershenwald verbatim
+      definitions).
+    - **Brain-predilection framing — the denominators are the whole game:**
+      "highest rate per incident case" is FALSE (lung wins: 19.9% vs
+      melanoma's 6.9%, Barnholtz-Sloan 2004); the verified claims shipped:
+      among patients METASTATIC AT DIAGNOSIS melanoma has the highest
+      proportion with brain mets of any primary (28.2%, Cagney et al.,
+      Neuro Oncol, 2017 — **PMID 28444227; the task brief's 28666227 is a
+      chromatography paper, caught before anything cited it**); nervous
+      system is melanoma's own #1 site (Riihimäki, prose verbatim); 44% of
+      advanced-melanoma trial patients developed brain mets (Davies 2011 —
+      denominator is "regional or systemic metastatic" trial patients, not
+      pure stage IV). The "~75% at autopsy" figure survives ONLY at review
+      level (citation chains traced to secondary sources; the 2020
+      review's "75%" cites Davies, whose own abstract says 44%) — carried
+      in-product explicitly as a review estimate. AJCC-8's M1d category
+      (CNS, new in the 8th edition) is cited as the staging-level evidence
+      of brain's special status.
+    - **Cancer list = the real skin-cancer landscape with the death
+      asymmetry stated where users see it:** melanoma ~2% of skin cancers
+      but >80% of deaths (NCI PDQ verbatim — **the commonly-repeated "~75%
+      of skin-cancer deaths" is the WRONG number**, and the underlying
+      mortality source is Weinstock 1991, old but still what NCI carries);
+      BCC/SCC = 5,434,193 keratinocyte carcinomas in 3,315,554 US patients
+      (2012, Rogers 2015) with **BCC:SCC treated ratio 1.0 in Medicare —
+      the folkloric "BCC is 4x SCC" is NOT what the study found, do not
+      ship it**; Merkel cell 0.7/100,000 (StatPearls). **Melanoma subtype
+      shares carry a denominator trap, resolved in the share text:** "SSM
+      ~70%" holds only among subtype-SPECIFIED melanomas (~50% of SEER
+      records are NOS, Bradford 2009 stated outright; against ALL
+      registrations SSM is 36%, CONCORD-3 2022). Shares shown are COMPUTED
+      from Bradford's SEER-17 incidence rates (SSM 68.4 / NM 15.1 / LMM
+      14.3 / ALM 2.1% of specified) — which corroborate the aging SEER
+      Training Module's SSM/NM but CONTRADICT its LMM ~5% (real ~14%) and
+      ALM ~8% (real ~2%); the module's "ALM = up to 70% of melanomas in
+      Blacks" is superseded by Bradford's registry 36%. **Nodular = 15–20%
+      of primaries but ~40% of melanoma deaths (StatPearls verbatim) — in
+      the share text by review decision,** the TNBC-organotropism class of
+      surfaced asymmetry.
+    - **The acral equity fact (trunk-note prose):** ALM's absolute
+      incidence is the SAME in Black and non-Hispanic White Americans (1.8
+      per million person-years each, Bradford verbatim) — it dominates in
+      darker skin by proportion (36% vs 1%) only because UV-driven subtypes
+      are rarer; "sun exposure has not been shown to be a risk factor for
+      ALM." The equivalence is documented for Black-vs-NHW specifically
+      (Hispanic Whites higher at 2.5, Asian/Pacific Islanders lower at 1.1)
+      — do not over-generalize it.
+    - **Site-variation claims: Curtin 2005's circulating four-way BRAF
+      split (59/11/23/11%) is UNVERIFIABLE** (NEJM paywall, no open-access
+      restatement — the Foulkes 2010 failure mode) and is not used; its
+      abstract's combined "81%... BRAF or N-RAS" IS verbatim-usable, and
+      **Curtin 2006 (JCO, PMID 16908931) carries the whole site-variation
+      claim verbatim** (BRAF/NRAS "commonly mutated in melanomas on
+      intermittently sun-exposed skin," infrequent on acral/mucosal/CSD
+      skin; KIT 39%/36%/28% there but 0% on non-CSD skin) — the citation
+      used.
+    - **Citation-trail defect worth remembering: TCGA 2015 itself
+      mis-cites Pollock 2003 twice** (for BRAF/NRAS anti-correlation and
+      for BRAF-PTEN co-occurrence; its only Pollock reference is the nevi
+      paper, which addresses neither claim — reference list extracted and
+      checked). Both claims are sound (TCGA measured them in its own
+      cohort; both independently reproduced by computation) — cite TCGA's
+      own data or Tsao/Goel, never TCGA's Pollock attribution. Same class
+      as the prostate pass's Cooper-as-"Boutros" catch, one level deeper:
+      a landmark paper's own reference list carrying the error.
+    - **Histology (SSM depicted):** Breslow definition has three
+      independent verbatim sources (PathologyOutlines "Invasive melanoma";
+      Gontijo 2026; Asato 2024) and the superlative is "THE most important
+      prognostic factor" — **"the SINGLE most important" is unsupported**
+      (one source names ulceration as the other key indicator; worded
+      accordingly). **The AJCC-8 paper (Gershenwald) contains NEITHER the
+      granular-layer definition NOR the superlative** — verified by
+      full-text search; cite it only for staging mechanics. **Solar
+      elastosis is a lentigo-maligna background finding — SSM is low-CSD
+      (PathologyOutlines classification), so the slide deliberately omits
+      it.** Melanin's drawn brown is an assembled two-source inference
+      (dusty/granular pigment + eumelanin "brown-black"), recorded in the
+      skin.js histology comment. The task brief's Smoller PMID was off by
+      one (16446714, not ...15 — a nevi paper); Smoller is not used as a
+      quote source (paywalled, criteria not in abstract).
+    - **Anatomy (block + facts):** three layers with 4-vs-5 strata
+      distinction (StatPearls); epidermis avascular verbatim from OPENSTAX
+      (StatPearls only implies it — attribute correctly); measured
+      epidermal thickness 31.2–596.6 µm (Lintzeri 2022 meta-analysis, 133
+      studies) vs the textbook "0.05–1.5 mm" (SEER Training Modules —
+      tradition, its 1.5 mm palm figure ~2.5x the measured pooled max;
+      both stated, labeled); dermis 1.5–4 mm rests on SEER alone (no
+      dermal-thickness meta-analysis exists — checked); surface area
+      1.5–2 m² (Jebbawi 2020); **"~15% of body weight" is UNCONFIRMABLE**
+      (sources scatter 5–10% / one-sixth / ~2.7 kg — no percentage is
+      claimed anywhere); melanocyte density 1,000–2,000/mm²,
+      race-independent, 1:10 basal ratio vs 1:30–40 per epidermal melanin
+      unit (Brenner 2008 + Cichorek 2013 — two different real ratios, do
+      not merge); the skin-tone equity fact is double-sourced (Brenner
+      verbatim + StatPearls Histology verbatim) and stated in the desc,
+      the facts panel, AND the basal-band color choice. **Layer colors:
+      dermis WHITE/ivory (Liu 2023 human graft prep, corroborated
+      Heitzmann 2024; the conventional diagram PINK could not be verified
+      in any fetched source and is deliberately not used — recorded in
+      skin.js and the disclaimer); fat light-yellow (surgical figure
+      captions — the weakest sourcing tier in this organ, flagged as
+      such); surface tone = one mid-brown point on a real continuum,
+      stated in-product.** De novo vs nevus-associated: 70.9%/29.1%
+      (Pampena 2017 meta-analysis, I²=99% flagged — quote as "about").
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -2284,6 +2548,62 @@ screen pair per organ:
     blob pairs at the default rotation. Projected min separation now: CRC
     1.75, PDAC 1.68, GDIFF 1.97 units.
 
+- **Organ mesh source — Skin (2026-08-28): procedural schematic cross-section
+  block, a NEW rejection class, and the live viewer's first near-plane catch.**
+  `buildSkinMesh()` in `js/organs/skin.js` builds four stacked layer slabs
+  (epidermis / pigmented basal band / dermis / hypodermis) from shared
+  interface-height functions (`surfY`/`dejY`/`dhY` — undulating rete-ridge
+  junction, lobular fat boundary), plus two hair follicles with emerging
+  shafts (the "this is skin, not geological strata" legibility feature — the
+  stomach J-hook lesson applied in advance). The hotspot `pos` anchors are
+  computed FROM THE SAME functions at module load (one step stronger than the
+  stomach's transcribed-from-parameterization values — they cannot drift).
+  Faces get their own vertices per slab (top grid / bottom grid / four wall
+  strips) so `computeVertexNormals` keeps the cut edges crisp — the walls ARE
+  the cut faces the representation exists to show. Asset decision and layer
+  colors are data rule 20's story (measured rejection of the real HRA
+  whole-body skin shell; verified white dermis / yellow fat).
+  - **Near-plane trap, live-viewer edition:** `makeViewer`'s camera is
+    `PerspectiveCamera(38, 1, 0.1, 100)` — near plane 0.1 m. A true-scale 3cm
+    block frames the camera ~7cm out, INSIDE the near plane: the mesh
+    renders as floating clipped fragments (missing layers, see-through
+    gaps). Same class as the Blender thumbnail near-clip gotcha already
+    recorded for Prostate, but in the app itself — no prior organ was small
+    enough to trigger it (Prostate, the previous smallest, frames at ~21cm).
+    Fix: the block renders at `SCALE = 5` presentation scale
+    (`group.scale.setScalar`), the one organ whose absolute rendered size is
+    deliberately not a real-world claim (the user-facing wording — organ desc
+    and disclaimer — states that neither overall size nor layer proportions
+    are to scale, broadened from thickness-only phrasing at final review;
+    hotspot anchors multiply by the same SCALE since markers are scene-level,
+    not mesh children). **If an organ smaller
+    than ~8cm is ever added at true scale, this trap fires again — scale it
+    or make the near plane adaptive in frameContents (an open, undecided
+    alternative).**
+  - **Per-sex marker points:** `body.js` now filters a spec's points by an
+    optional per-point `sexes` field (one line, backward-compatible; only
+    skin uses it — see data rule 20 for the epidemiology and the leg
+    marker's geometric side-on-angle necessity).
+  - **Thumbnail — the atlas's first multi-material one:**
+    `render_thumb_multi.py` (same calibrated recipe as `render_thumb.py`:
+    sun 3.5 / ambient 1.2 / pad 0.74, Cycles, transparent film) imports a
+    manifest of per-part OBJs exported from the live page with each part's
+    own color/roughness, using the stomach pass's verified `v -x z y` OBJ
+    axis convention (det +1, no face flip).
+  - **Verification (live pipeline):** all four hotspots visible at the
+    default rotation; blown-white 0.00% (PIL pixel counts on the headless-
+    Chrome screenshot — note the in-page canvas readback used by regress.js
+    reports meshPx 0 for this organ, a non-preserved-drawing-buffer
+    artifact, so the PIL number is the real one); layer cut-face colors
+    pixel-sampled (dermis 0xf2eee6 renders (213,189,158) on the front cut
+    face — near the whitest this warm-lit legacy pipeline can show, R/G 1.13
+    vs ~1.06-1.10 for a theoretically pure-white albedo); melanoma site
+    spread designed by the projected-separation method at 2.15 units
+    (best of any cancer); search aliases skin/melanoma/mole/cutaneous/
+    epidermis/derm all resolve uniquely; full 11-organ battery 99 checks
+    with the only 2 failures the documented GBM/Prostate deliberate-
+    clustering flags.
+
 - **Microscopic (histology) view — cancer screen, level 2 (`js/histology.js` +
   a `histology` data block per cancer in each `js/organs/*.js`):** a
   procedurally generated, stylized 2D evocation of each cancer's real,
@@ -2484,7 +2804,9 @@ screen pair per organ:
   cancers' spreads were optimized against it (projected minima 1.75/1.68/
   1.97) and screenshot-verified at the exact default rotation via a camera
   reset, not a timing race against the auto-rotate. Use this method for
-  every future cancer.** **GBM (organ #6) and Prostate (organ #7) are the two deliberate
+  every future cancer. Melanoma (organ #11) did: its first spread had
+  projected minimum 1.43 and visually merged two blobs — exactly the trap —
+  and shipped at 2.15 (the highest yet), screenshot-verified.** **GBM (organ #6) and Prostate (organ #7) are the two deliberate
   exceptions to "spread the four `pos3d` values apart" — do not "fix"
   either's clustering thinking it's an oversight.** Both are clustered
   tightly *on purpose* (data rules 7 and 15) so their blobs visually merge
@@ -2546,22 +2868,13 @@ screen pair per organ:
    `applyMottleVertexColors`, `makeMoveTracker` live in `js/viewer.js`; the
    mutation panel in `js/panel.js`; the breadcrumb in `js/breadcrumb.js`.
 3. Ovary/HGSOC, Breast/TNBC, Lungs/LUAD, Kidneys/ccRCC, Liver/HCC,
-   Brain/GBM, Prostate/acinar adenocarcinoma, and — added in one shared pass
-   (2026-08-28) — Colon/colorectal adenocarcinoma, Pancreas/PDAC, and
-   Stomach/diffuse-type gastric adenocarcinoma are all done. **The next organ
-   planned is Skin/Melanoma, explicitly deferred to its own pass because it
-   needs a structural decision FIRST (like GBM's and Prostate's) before any
-   data work: how to represent an organ that covers the whole body (skin
-   patch? layered cross-section?), including what its body-screen hotspot
-   means. Known constraints already stated for it: BRAF V600E ~50% trunk
-   (verify; not comparable to PDAC's KRAS), BRAF/NRAS near-mutual exclusivity
-   (~0.6% co-occurrence in a 677-patient study — verify directly) with a
-   real documented exception (rare class III BRAF variants co-occurring with
-   NRAS; the HCC TP53/CTNNB1 rule-plus-exception pattern), documented
-   brain-metastasis predilection, and CDKN2A/PTEN/TERT-promoter as
-   branch/private candidates. If the representation question turns out to be
-   more involved than expected, stop and report options rather than
-   committing unilaterally.** For any organ after that, pick pair #12 and
+   Brain/GBM, Prostate/acinar adenocarcinoma, Colon/colorectal
+   adenocarcinoma, Pancreas/PDAC, Stomach/diffuse-type gastric
+   adenocarcinoma, and — added in its own pass (2026-08-28) after a
+   pre-build representation checkpoint — Skin/cutaneous melanoma are all
+   done (eleven pairs; see data rule 20 for skin's organ-representation
+   departure, the cross-section block, and the sex-differentiated body
+   marker). For the next organ, pick pair #12 and
    repeat the real-data-sourcing process documented above — **verify every citation directly at the source before writing it
    into the app, not after**, the standard ccRCC, HCC, GBM, and Prostate all
    held themselves to from the start rather than fixing in a follow-up

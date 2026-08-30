@@ -13,6 +13,7 @@ import * as prostate from './prostate.js';
 import * as colon from './colon.js';
 import * as pancreas from './pancreas.js';
 import * as stomach from './stomach.js';
+import * as skin from './skin.js';
 
 // Order matches the original single-file ORGANS array exactly for the first seven (ovary,
 // brain, lungs, breast, liver, kidneys, prostate) — not load-bearing for correctness (filter/
@@ -20,7 +21,7 @@ import * as stomach from './stomach.js';
 // query ever matches more than one organ), but kept identical anyway rather than relying on
 // that reasoning to justify a silent reorder. Colon, pancreas, and stomach are appended in
 // the order their shared pass added them, same as prostate was appended in its own pass.
-const ORGAN_MODULES = [ovary, brain, lungs, breast, liver, kidneys, prostate, colon, pancreas, stomach];
+const ORGAN_MODULES = [ovary, brain, lungs, breast, liver, kidneys, prostate, colon, pancreas, stomach, skin];
 
 // `aliases` exists because searching the label alone is too literal: the organ screen
 // titles itself "Ovary" (singular) while the label is "Ovaries", so the one wired organ
