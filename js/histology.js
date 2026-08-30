@@ -791,6 +791,108 @@ function genMelanoma(g, rnd){
   ];
 }
 
+function genOCCC(g, rnd){
+  // Ovarian clear-cell carcinoma — deliberately distinct from BOTH of the slides it could be
+  // confused with. vs genHGSOC: papillae here are SMALL and ROUND with no hierarchical
+  // branching, a single-cell rim, and cores swollen with dense hyaline material (DeLair 2011:
+  // "small and round and lacking hierarchical branching... stratification of more than 3
+  // cells"; Diagnostics 2021 fig legend: "small and regular papillae, frequently hyalinized");
+  // nuclei are drawn UNIFORM (narrow radius band, no right-skewed atypia) and exactly one
+  // mitotic figure appears (usually <5/10 HPF vs serous >12 — same-source contrast); no
+  // psammoma bodies (a serous feature; no source attributes them to OCCC). vs genCCRCC (the
+  // other "clear cell"): no chicken-wire capillary re-stroke — that network is the KIDNEY
+  // tumor's signature — and the architecture is tubulocystic + papillary, not packed solid
+  // nests. Mixed-in eosinophilic (pink) cells are deliberate: clear cytoplasm alone is not
+  // the diagnostic criterion (Diagnostics 2021), so a uniformly clear field would overclaim.
+  const HYAL = '#e2a9bb'; // dense hyaline basement-membrane material — deeper eosin than stroma
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  g.appendChild(el('path', {d:blobPath(400, 250, 420, 275, 0.08, 14, rnd, 0), fill:HE.stroma, opacity:0.45}));
+
+  // helper: one lining/rim cell, uniform-nucleus discipline (3.4–4.5px — the anti-HGSOC rule)
+  const uNuc = ()=>3.4 + rnd()*1.1;
+
+  // --- tubulocystic pattern: two cystic spaces with hobnail lining ---
+  const cysts = [
+    {cx:170, cy:135, rx:128, ry:92, rot:-0.12},
+    {cx:125, cy:388, rx:98,  ry:66, rot: 0.2},
+  ];
+  cysts.forEach(c=>{
+    const d = blobPath(c.cx, c.cy, c.rx, c.ry, 0.09, 14, rnd, c.rot);
+    // single-layer cuboidal lining band, then the open lumen
+    g.appendChild(el('path', {d, fill:HE.cytoLite, stroke:HE.clearLn, 'stroke-width':1.3}));
+    g.appendChild(el('path', {d:blobPath(c.cx, c.cy, c.rx*0.82, c.ry*0.78, 0.09, 14, rnd, c.rot), fill:HE.bg}));
+    // lining nuclei: most sit in the band; every third is a HOBNAIL — nucleus displaced
+    // INWARD past the lumen edge so it visibly bulges into the space (the citable phrase is
+    // "eccentric, rounded, and bulbous nuclei" — J Cancer 2021)
+    const per = Math.round(2*Math.PI*Math.sqrt((c.rx*c.rx+c.ry*c.ry)/2) / 15);
+    for(let i=0;i<per;i++){
+      const a = i/per*Math.PI*2;
+      const hob = (i%3===0);
+      const rr = hob ? 0.72 : 0.9; // hobnail nuclei ride inside the lumen boundary
+      const px = Math.cos(a)*c.rx*rr, py = Math.sin(a)*c.ry*rr;
+      const x = c.cx + px*Math.cos(c.rot) - py*Math.sin(c.rot);
+      const y = c.cy + px*Math.sin(c.rot) + py*Math.cos(c.rot);
+      if(hob){
+        // scant pale cytoplasm trailing the bulging nucleus
+        g.appendChild(el('circle', {cx:x, cy:y, r:6.4+rnd()*1.4, fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1}));
+      }
+      g.appendChild(el('circle', {cx:x, cy:y, r:hob ? uNuc()+0.8 : uNuc(), fill:HE.nuc, opacity:0.92}));
+    }
+  });
+
+  // --- papillary pattern: small ROUND papillae, hyaline-swollen cores, single-cell rims ---
+  const paps = [
+    {cx:452, cy:104, r:54},
+    {cx:592, cy:88,  r:46},
+    {cx:520, cy:222, r:50},
+    {cx:668, cy:196, r:40},
+  ];
+  paps.forEach(p=>{
+    // core FIRST and WIDE: the dense hyaline material occupies most of the papilla — drawn
+    // deliberately wider than the single cell layer riding on it (the depictable half of the
+    // diagnostic triad: complex papillae + hyaline cores + hyaline bodies)
+    const dOut = blobPath(p.cx, p.cy, p.r, p.r*0.92, 0.07, 12, rnd, rnd()*0.5);
+    g.appendChild(el('path', {d:dOut, fill:HE.cytoLite, stroke:HE.clearLn, 'stroke-width':1.2}));
+    g.appendChild(el('path', {d:blobPath(p.cx, p.cy, p.r*0.72, p.r*0.66, 0.1, 10, rnd, rnd()*0.5), fill:HYAL, stroke:'#d093a8', 'stroke-width':1.4, opacity:0.95}));
+    // the ≤3-cell-layer rule drawn as ONE clean rim layer, uniform nuclei
+    const per = Math.max(9, Math.round(p.r*0.42));
+    for(let i=0;i<per;i++){
+      const a = i/per*Math.PI*2 + rnd()*0.12;
+      const x = p.cx + Math.cos(a)*p.r*0.88, y = p.cy + Math.sin(a)*p.r*0.82;
+      g.appendChild(el('circle', {cx:x, cy:y, r:uNuc(), fill:HE.nuc, opacity:0.92}));
+    }
+  });
+
+  // --- solid pattern: a sheet of clear cells with eosinophilic cells mixed in ---
+  const sheet = {cx:568, cy:398, rx:200, ry:88};
+  const dSheet = blobPath(sheet.cx, sheet.cy, sheet.rx, sheet.ry, 0.1, 14, rnd, 0.05);
+  g.appendChild(el('path', {d:dSheet, fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1.2}));
+  for(let i=-13;i<=13;i++){
+    for(let j=-6;j<=6;j++){
+      const x = sheet.cx + i*15 + (rnd()*2-1)*3.5, y = sheet.cy + j*14 + (rnd()*2-1)*3.5;
+      if(((x-sheet.cx)/(sheet.rx*0.86))**2 + ((y-sheet.cy)/(sheet.ry*0.84))**2 > 1) continue;
+      const pink = rnd() < 0.16; // the verified mixed field: mostly clear, some eosinophilic
+      g.appendChild(el('circle', {cx:x, cy:y, r:8.2+rnd()*2.2, fill:pink?HE.cyto:HE.clear, stroke:pink?HE.cytoLn:HE.clearLn, 'stroke-width':1.1}));
+      g.appendChild(el('circle', {cx:x+(rnd()*2-1)*2.6, cy:y+(rnd()*2-1)*2.6, r:uNuc()-0.6, fill:HE.nuc, opacity:0.9}));
+    }
+  }
+  // exactly ONE mitotic figure (melanoma's condensed double-bar idiom) — the point IS its
+  // loneliness: usually <5 per 10 HPF here, >12 in the serous slide two doors down
+  g.appendChild(el('rect', {x:497, y:381, width:3, height:11, fill:HE.nucDark, transform:'rotate(22 498 386)'}));
+  g.appendChild(el('rect', {x:504, y:381, width:3, height:11, fill:HE.nucDark, transform:'rotate(-16 505 386)'}));
+
+  // --- hyaline bodies: free-standing dense spheres between structures (triad, part 3) ---
+  [{x:328,y:186,r:9},{x:352,y:322,r:7},{x:700,y:296,r:8},{x:262,y:262,r:6}].forEach(h=>{
+    g.appendChild(el('circle', {cx:h.x, cy:h.y, r:h.r, fill:HYAL, stroke:'#c98ba2', 'stroke-width':1.6}));
+  });
+
+  return [
+    {key:'hyalpap', x:520, y:222},
+    {key:'hobnail', x:170, y:135},
+    {key:'uniform', x:568, y:398},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -803,6 +905,7 @@ const GENERATORS = {
   pdac:   genPDAC,
   gdiff:  genGDiffuse,
   melanoma: genMelanoma,
+  clear:  genOCCC,
 };
 
 // ------------------------------------------------------------

@@ -19,7 +19,7 @@ map — see Architecture notes), still no build step, no backend, no bundler. **
 from one 2,816-line file into ES modules in this pass** (the "needs modularizing" item
 this file's own Known Limitations had flagged since the three.js migration) — see
 Architecture notes' "File layout / module map" for exactly what moved where and why. It
-proves out the full navigation pattern end-to-end for **eleven** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **twelve** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -1636,6 +1636,172 @@ screen pair per organ:
       stated in-product.** De novo vs nevus-associated: 70.9%/29.1%
       (Pampena 2017 meta-analysis, I²=99% flagged — quote as "about").
 
+21. Ovary/clear-cell carcinoma (OCCC) reference sources — **every citation
+    verified directly at the source (four dedicated verification passes
+    before any build work: ARID1A trunk, PIK3CA cooperation, spread
+    pattern, histology/gene fit). Second wired cancer under one organ —
+    HGSOC untouched; the architecture needed zero structural change, only
+    data.** Trunk anchor: **ARID1A loss ~49% (205/421, Bolton, Clin Cancer
+    Res, 2022 — the largest sequenced cohort), honest range ~40–65%;
+    discovery figures 46% (55/119, Wiegand, NEJM, 2010) and 57% (24/42,
+    Jones, Science, 2010), BOTH sequencing; biallelic 45.1% (46/102, Chao,
+    BMC Cancer, 2024).** The atlas's FIFTH temporal trunk and the first
+    documented in a benign precursor: ARID1A protein absent from the
+    endometriotic cyst lining in DIRECT CONTINUITY with the carcinoma in
+    31/31 informative cases while distant endometriosis retains it (Ayhan,
+    Int J Gynecol Cancer, 2012); clone-level corroboration in Wiegand
+    (17/42 contiguous vs 0/52 distant clones). Deliberately NOT claimed:
+    "ARID1A loss is a general feature of cancer-free endometriosis"
+    (Anglesio 2017: 2/39 deep-infiltrating lesions, one at 8% VAF, lesion
+    class carries "virtually no risk of malignant transformation";
+    Yamamoto 2012: 22/22 solitary endometrioses ARID1A-intact) and "the
+    single first event" (Chao puts ARID1A/PIK3CA/TERT/KRAS in one early-
+    clonal tier; Gan 2023 argues KRAS earlier).
+    - **Task-brief corrections (all verified at source):** "ARID1A 43–78%"
+      is wrong at both ends — 78% traces to NO primary (it is Bennett
+      2021's background-precursor frequency, not an ARID1A figure), 43% is
+      Ge 2021's MMR-intact subgroup only. **"IHC reads higher than
+      sequencing" is BACKWARDS** — in Wiegand itself IHC 42% vs sequencing
+      46%; 13 verified IHC cohorts span 15–69%, bracketing not exceeding.
+      "PIK3CA ~30–46%" also wrong at both ends (real span 28.5–54%; 33%
+      and 46% are the SAME paper's mixed-vs-purified arms, a DNA-purity
+      artifact — Kuo, Am J Pathol, 2009). **Bolton's own abstract says
+      PIK3CA 49% while its Results say 45% (188/421 = 44.7%) — cite the
+      Results.** Bolton also prints one internally contradictory sentence
+      asserting co-occurrence AND exclusivity for overlapping gene sets
+      (Supplementary Fig. S7, unverifiable) — never quote it; only its
+      quantified TP53/ARID1A OR is usable.
+    - **Second trunk entry = TP53 STATUS (GBM classifier-entry precedent):
+      "usually wild-type here," ~15% (Kuo 2009, n=97; 16%, N=71 Bolton) vs
+      HGSOC's 96% founding event** — the atlas's two ovarian cancers are
+      near-opposites on this gene, and multi-hit-ARID1A tumors are the
+      least likely to mutate TP53 (OR 0.21, 95% CI 0.07–0.54). Platinum
+      contrast carried in this note with the verified nuance: **the
+      response deficit lives in the platinum-SENSITIVE setting (ORR 51.3%
+      vs 76.0% HGSOC, Watanabe, J Obstet Gynaecol Res, 2026); in resistant
+      relapse they are indistinguishable (18.2% vs 15.6%) — "OCCC is
+      platinum-resistant" as a blanket claim is NOT supported and NOT
+      stated.** (That paper's Table 4 PFI row labels are INVERTED vs its
+      own abstract/body; the abstract figures are authoritative. Sugiyama
+      2000's oft-quoted "11.1%" response rate is paywalled-unverifiable —
+      dropped.)
+    - **Branch = the cooperation model the user asked for, verified to the
+      mouse:** PIK3CA 45% on the primary site — ARID1A-only mice: 0 tumors
+      over ~1 year; PIK3CA-only: 80% hyperplasia, 0 tumors; double mutant:
+      77% (23/30) at median 7.5 weeks, sustained-IL-6 mechanism (Chandler,
+      Nat Commun, 2015; independent one-hit-insufficient replication Guan,
+      JNCI, 2014 — whose ARID1A+PTEN arm yields ENDOMETRIOID, not clear
+      cell). Two popular glosses FAIL at source and are not used: "IL-6
+      rises only when both mutations present" (each alone raises it) and
+      "ARID1A loss unleashes PI3K signaling" ("did not further enhance").
+      Other branches: KRAS ~17% (17/102 Chao; range 5–21%; **Mayr 2006
+      must NEVER be cited for OCCC KRAS — its only KRAS mutations were
+      serous+mucinous, zero clear-cell, despite Mabuchi's table saying
+      5%**), ZNF217 amplification 31–36% (clear-cell-specific vs serous,
+      positively associated with ARID1A loss P=0.028 — Kuo, Clin Cancer
+      Res, 2010; Huang, Mod Pathol, 2014), PPP2R1A ~7–19% with R183W
+      hotspot 11/16 (Chao). KRAS and PPP2R1A deliberately sit in
+      DIFFERENT regions, never one cell: PPP2R1A R183W can paradoxically
+      enhance RAS-MAPK signaling, so they are not co-drawn unchecked.
+    - **Private pool = a flagged structural departure: TWO passengers,
+      ZERO drivers — the first driverless pool in the atlas — because no
+      additional recurrent driver survives fit-checking.** PTEN excluded
+      (pathway redundancy with PIK3CA, melanoma-MAP2K1 class, PLUS the
+      mouse histotype divergence above; the circulating "PTEN deletions
+      37%" is really IHC protein loss 15/40, Hashiguchi 2006); CTNNB1
+      excluded (wrong entity — 53% in low-grade ovarian ENDOMETRIOID vs 3%
+      here, the GBM-ATRX class); **TERT promoter excluded on the strongest
+      statistics in the atlas: mutually exclusive with BOTH trunk
+      (p=4.4×10⁻⁹, Wu, J Pathol, 2014; replicated p=1.3×10⁻⁷ Chao, P=0.003
+      Huang 2015) AND branch partner (p=0.0019) — and absent from
+      contiguous endometriosis, i.e. a LATE event**; **ARID1B excluded on
+      a NEW rejection class, #4 in the mutation-fit taxonomy: synthetic-
+      lethal dependency — ARID1A-deficient cells REQUIRE functional ARID1B
+      to survive (Helming, Nat Med, 2014), so drawing its loss depicts a
+      cell that cannot live**; SMARCA4 insufficient (Bolton's own authors:
+      driver capacity "requires further study"; 0/68 protein loss); MET
+      insufficient (true amplification 6%, not "37%" — that figure
+      conflates DISH copy-gain with amplification AND its source paper
+      carries a 2026 correction saying the underlying data for six figures
+      are unavailable); dMMR prose-only (3–6% per-tumor subset). **TTN
+      deliberately absent — zero TTN mentions across four OCCC cohorts
+      totalling 634 tumors; passenger slots instead ship the verified
+      quiet-genome story (median 46 non-silent mutations, clock-like
+      SBS1/SBS5 dominant — Chao) and OBSCN R3140Q labeled explicitly as a
+      single-tumor observation (Yang, Neoplasia, 2020 supplementary).**
+    - **Site model — the gating question, answered with primary sources
+      BOTH ways: same routes, different timing. Family 1, NO departure.**
+      Kondo (J Gynecol Oncol, 2020; 166 recurrences from the 619-patient
+      JGOG3017 trial): "No CCC-specific recurrence site was identified."
+      Rose 1989 autopsy (n=428): sites "nearly identical" across
+      histotypes. A departure needs a hard number and the numbers refuse:
+      GBM departed at <1–2% extracranial spread; OCCC has 35.5% distant
+      recurrence. What IS different (legend line + framing, no per-site %
+      in UI per the kidneys-pass rule): **72.4% localized+regional at
+      diagnosis vs 22.1% HGSOC (Peres, JNCI, 2019, n=28,118 — USE COUNTS:
+      the printed 78.9% HGS-distant fails its own arithmetic, 13,898/
+      17,837=77.9%, column sums to 101%), ~90–93% unilateral (Tanaka 2016;
+      2026 Chinese cohort) vs serous 70.5% bilateral.** Sites: ovary/
+      endometriotic-cyst primary (74% pathology-confirmed endometriosis,
+      Parra-Herran 2019 — method-dependent: ~40% clinical/MRI; never blend
+      the two), pelvis (13/13 single-site recurrences pelvic, Hemman
+      2022), peritoneum (54.2%, THE most frequent recurrence site — kept
+      against the temptation to swap in a distant organ), retroperitoneal
+      nodes (33.1%; node-only 18% Hogen 2019; para-aortic > pelvic in four
+      series; **nodal involvement NOT higher than serous — 7.9% vs 13.6%
+      Chan 2008 — the region note says so**). Endometriosis association:
+      OR 3.05 (2.43–3.84), strongest of any subtype, HGSOC null (1.13,
+      p=0.13) — Pearce, Lancet Oncol, 2012, self-reported caveat. Recurs
+      multi-site: 62%/62%/64.4% across three continents. NOT usable: Ye
+      2020's per-LESION site table (its "4.9% peritoneal" contradicts
+      Kondo because 61 lesions ≠ 45 patients + surgical selection);
+      "better OS at stage I" (false for OS — Peres localized 81.7 vs 84.0,
+      Matsuo HR 0.62 p=0.24; true ONLY for PFS 84.7% vs 66.9%). Projected
+      separation (CRC method, default camera): **2.02 units — second-best
+      in the atlas (melanoma 2.15); live-probe min label separation 210px/
+      0.233 canvas heights, no box overlaps** (HGSOC ships at 110.7px).
+    - **Histology — PathologyOutlines was UNREACHABLE for this pass (HTTP
+      429, Retry-After 86400, four attempts over two days), so the
+      morphologic load rests on the WHO-2020-based review (Diagnostics,
+      2021, PMC8070731 — chosen because it describes OCCC and HGSOC in the
+      SAME paper: <5 vs >12 mitoses/10 HPF is a same-source contrast),
+      DeLair (Am J Surg Pathol, 2011, n=155, abstract-verified), Uekuri
+      (Oncol Lett, 2013).** Drawn: small ROUND papillae, no hierarchical
+      branching, ≤3 cell layers, cores EXPANDED by dense hyaline material
+      (the direct negation of the HGSOC slide's branching fronds);
+      hobnail cells as "eccentric, rounded, bulbous nuclei" bulging into
+      lumens (the only citable ovarian phrasing — the "scant-cytoplasm
+      bulging-nucleus" definition exists only in a URINARY-tract source,
+      not usable); mixed clear+eosinophilic+flattened cells (a uniformly
+      clear field would overclaim — rare OCCCs are entirely eosinophilic);
+      UNIFORM nuclei (atypia "frequently present, but never diffusely" —
+      DeLair) with exactly ONE mitotic figure; free-standing hyaline
+      bodies (never "eosinophilic hyaline globules" — sources say hyaline
+      bodies). NOT drawn: psammoma bodies (serous feature, no OCCC
+      source); any papillary/tubulocystic/solid percentage split (NONE
+      exists — only the rank "papillary and tubulocystic most frequent" is
+      citable; a made-up split would repeat the rejected liver-%s error);
+      chicken-wire vasculature (that is ccRCC's signature). **The ccRCC
+      "clear cell" echo is a PARTIAL overlap, stated as such: OCCC
+      clearing is attributed to glycogen (hedged "includes" in the only
+      attributing source); ccRCC's is glycogen AND lipid with the lipid
+      tied to VHL/HIF — not "the same substance," and kidneys.js's slide
+      text is not echoed verbatim.** HNF1B/Napsin A are protein markers —
+      prose-only if ever added, never ledger entries.
+    - **Search: "clear cell" is now a deliberate two-organ disambiguation
+      (Kidneys + Ovaries — both really have one), and the Enter key was
+      fixed to auto-navigate ONLY on a unique match** — it used to take
+      matches[0], a live pre-existing bug ("carcinoma" matched five
+      organs, "adenocarcinoma" four, "cell" two, "crc" two) that would
+      have silently rerouted "clear cell" to Ovaries because ovary loads
+      first. The false "collision-free by design" comments in
+      js/organs/index.js and kidneys.js were corrected in place. 'occc'/
+      'ovarian clear cell' resolve uniquely to Ovaries; 'ccrcc'/'renal
+      cell carcinoma' uniquely to Kidneys. Share text: ~10% (9.6%,
+      2,695/28,118 Peres) with the Japan asymmetry stated in the row
+      (26.9% — Machida 2019; its US 8.4% is four-subtype-restricted, which
+      is why the headline stays Peres's complete-denominator 9.6%).
+
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
   `#101a30`), panels `#121a2b` / `#0e1524`, hairline borders `#24314a`.
@@ -2872,7 +3038,7 @@ screen pair per organ:
    adenocarcinoma, Pancreas/PDAC, Stomach/diffuse-type gastric
    adenocarcinoma, and — added in its own pass (2026-08-28) after a
    pre-build representation checkpoint — Skin/cutaneous melanoma are all
-   done (eleven pairs; see data rule 20 for skin's organ-representation
+   done (twelve pairs; see data rule 20 for skin's organ-representation
    departure, the cross-section block, and the sex-differentiated body
    marker). For the next organ, pick pair #12 and
    repeat the real-data-sourcing process documented above — **verify every citation directly at the source before writing it

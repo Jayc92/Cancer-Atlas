@@ -2,10 +2,14 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { cssVar } from '../viewer.js';
 
-// active:true, plus 'renal'/'ccrcc'/'clear cell' aliases — checked for collision first: no
-// other organ's aliases contain any of these strings, and organMatchesQuery only ever reads
-// organ.label/organ.aliases, never CANCERS[].name — so "clear cell" resolving to Kidneys
-// can't collide with Ovary's "Clear-cell carcinoma" cancer, which isn't searchable at all.
+// active:true, plus 'renal'/'ccrcc'/'clear cell' aliases. HISTORY: this comment used to argue
+// "clear cell" could safely resolve to Kidneys alone because Ovary's Clear-cell carcinoma
+// "isn't searchable at all" — true only while that cancer sat inactive. Since the OCCC pass
+// activated it, ovary.js carries the same 'clear cell'/'clear cell carcinoma' aliases ON
+// PURPOSE: a query that genuinely fits two organs shows both as a disambiguation list, and
+// search.js's Enter key now only auto-navigates on a unique match. 'ccrcc', 'renal', and
+// 'renal cell carcinoma' still resolve uniquely here; 'occc'/'ovarian clear cell' uniquely
+// to Ovaries.
 export const organEntry = { key:'kidneys', label:'Kidneys', system:'Urinary', active:true, sexes:['female','male'], aliases:['kidney','kidneys','renal','ccrcc','clear cell','clear cell carcinoma','renal cell carcinoma'] };
 
 export const markerSpec = { points:[{heightFrac:0.53, angle:-50}, {heightFrac:0.53, angle:50}] };

@@ -51,8 +51,16 @@ export function initSearch(selectOrgan){
     if(e.key==='Enter'){
       const q = searchInput.value.trim().toLowerCase();
       if(!q) return;
-      const match = findOrganMatches(q)[0];
-      if(match){ selectOrgan(match.key); searchResults.classList.remove('show'); }
+      const matches = findOrganMatches(q);
+      // Auto-navigate ONLY on a unique match. This used to take matches[0], which silently
+      // picked whichever organ loads first in ORGAN_MODULES whenever a query matched several —
+      // a live bug even before the ovary gained its "clear cell" aliases ("carcinoma" matched
+      // five organs, "adenocarcinoma" four, and Enter jumped to one of them without saying
+      // so). Now Ovaries and Kidneys legitimately share "clear cell" — both really have a
+      // clear-cell carcinoma — so an ambiguous Enter keeps the results list open (it is
+      // already rendered by the input handler) and lets the user pick.
+      if(matches.length===1){ selectOrgan(matches[0].key); searchResults.classList.remove('show'); }
+      else if(matches.length>1){ renderSearch(q, selectOrgan); }
     }
   });
 }

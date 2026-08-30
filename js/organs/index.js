@@ -16,11 +16,16 @@ import * as stomach from './stomach.js';
 import * as skin from './skin.js';
 
 // Order matches the original single-file ORGANS array exactly for the first seven (ovary,
-// brain, lungs, breast, liver, kidneys, prostate) — not load-bearing for correctness (filter/
-// find don't care about array order, and every alias set is designed collision-free so no
-// query ever matches more than one organ), but kept identical anyway rather than relying on
-// that reasoning to justify a silent reorder. Colon, pancreas, and stomach are appended in
-// the order their shared pass added them, same as prostate was appended in its own pass.
+// brain, lungs, breast, liver, kidneys, prostate) — not load-bearing for correctness: filter/
+// find don't care about array order, and since the OCCC pass the search Enter key no longer
+// auto-picks the first match when a query hits several organs (it keeps the results list open
+// instead). NOTE the claim this comment used to make — "every alias set is designed
+// collision-free so no query ever matches more than one organ" — was tested during that pass
+// and found FALSE long before OCCC: "carcinoma" matches five organs, "adenocarcinoma" four,
+// "cell" two (hepatoCELLular), "crc" two (cCRCc). Multi-match is a real, handled UI state
+// (the results list shows all matches), and "clear cell" now intentionally matches both
+// Kidneys and Ovaries because both genuinely have a clear-cell carcinoma. Colon, pancreas,
+// and stomach are appended in the order their shared pass added them, same as prostate.
 const ORGAN_MODULES = [ovary, brain, lungs, breast, liver, kidneys, prostate, colon, pancreas, stomach, skin];
 
 // `aliases` exists because searching the label alone is too literal: the organ screen
