@@ -893,6 +893,119 @@ function genOCCC(g, rnd){
   ];
 }
 
+function genSeminoma(g, rnd){
+  // Seminoma — sheets/nests divided into lobules by thin fibrovascular septa, and the septa
+  // are the point: a lymphocytic infiltrate running through them is this tumor's single most
+  // recognizable low-power feature (verified: "nests and sheets with intercepting thin
+  // fibrovascular septa which have lymphocytes," PMC6906820). Cells are drawn LARGE, uniform,
+  // and clear-to-eosinophilic — deliberately NOT right-skewed/pleomorphic the way HGSOC's or
+  // this same pass's Bladder slide are; uniformity is itself a verified, named contrast with
+  // this atlas's more atypical tumors. One multinucleated syncytiotrophoblast floats in a
+  // lobule, per the source's own "sometimes syncytiotrophoblasts" — drawn exactly once, the
+  // same restrained "occasional, not the point" treatment OCCC's own single mitotic figure got.
+  const lobules = [
+    {cx:190, cy:145, rx:150, ry:120, rot:-0.1},
+    {cx:560, cy:120, rx:170, ry:110, rot: 0.15},
+    {cx:210, cy:380, rx:165, ry:105, rot: 0.05},
+    {cx:590, cy:375, rx:180, ry:110, rot:-0.08},
+  ];
+  const uNuc = ()=>5.6 + rnd()*1.6; // uniform band — the anti-pleomorphism rule for this tumor
+  lobules.forEach(l=>{
+    const d = blobPath(l.cx, l.cy, l.rx, l.ry, 0.09, 14, rnd, l.rot);
+    g.appendChild(el('path', {d, fill:HE.stroma, opacity:0.5}));
+    const inner = blobPath(l.cx, l.cy, l.rx*0.9, l.ry*0.9, 0.09, 14, rnd, l.rot);
+    g.appendChild(el('path', {d:inner, fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+    // packed large polygonal cells, clear-to-eosinophilic mix, distinct borders
+    for(let i=0;i<26;i++){
+      const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.78;
+      const px = Math.cos(a)*l.rx*r, py = Math.sin(a)*l.ry*r;
+      const x = l.cx + px*Math.cos(l.rot) - py*Math.sin(l.rot);
+      const y = l.cy + px*Math.sin(l.rot) + py*Math.cos(l.rot);
+      const pink = rnd() < 0.35;
+      drawCell(g, x, y, 12.5+rnd()*2.5, uNuc(), rnd, {cytoFill: pink?HE.cyto:HE.clear, cytoStroke: pink?HE.cytoLn:HE.clearLn});
+    }
+  });
+  // one syncytiotrophoblast: a larger, darker, multinucleated cell — occasional, not the rule
+  const st = {x:560, y:150};
+  g.appendChild(el('ellipse', {cx:st.x, cy:st.y, rx:22, ry:17, fill:HE.cyto, stroke:HE.vesselDk, 'stroke-width':1.6, opacity:0.95}));
+  [[-8,-4],[7,-6],[-2,7]].forEach(([dx,dy])=>{
+    g.appendChild(el('circle', {cx:st.x+dx, cy:st.y+dy, r:5.2, fill:HE.nucDark}));
+  });
+  // fibrovascular septa between lobules, carrying the lymphocytic infiltrate
+  const septa = [
+    {x1:340, y1:180, x2:420, y2:220}, {x1:280, y1:260, x2:340, y2:330}, {x1:430, y1:250, x2:480, y2:300},
+  ];
+  septa.forEach(s=>{
+    g.appendChild(el('line', {x1:s.x1, y1:s.y1, x2:s.x2, y2:s.y2, stroke:HE.stromaLn, 'stroke-width':22, 'stroke-linecap':'round', opacity:0.55}));
+    for(let i=0;i<9;i++){
+      const t = i/8, x = s.x1+(s.x2-s.x1)*t + (rnd()*2-1)*8, y = s.y1+(s.y2-s.y1)*t + (rnd()*2-1)*8;
+      g.appendChild(el('circle', {cx:x, cy:y, r:3+rnd()*1, fill:HE.lymph}));
+    }
+  });
+  return [
+    {key:'sheets',      x:190, y:145},
+    {key:'lymphocytes', x:370, y:250},
+    {key:'cytology',    x:590, y:375},
+  ];
+}
+
+function genBladderUC(g, rnd){
+  // High-grade invasive urothelial carcinoma — a papillary frond with a real fibrovascular
+  // core, covered by DISORDERED, piled-up cells (no clean single rim — the loss-of-polarity
+  // finding drawn as literal multi-layer disorder, the opposite of HGSOC's/OCCC's neat rims),
+  // plus invasive nests infiltrating stroma below it. Nuclei are markedly pleomorphic and
+  // hyperchromatic (right-skewed size + a darker fraction), with several mitotic figures —
+  // "frequent," verified — deliberately more than OCCC's lonely single figure, the contrast
+  // that source's own wording draws. No umbrella-cell layer is drawn at all: their absence in
+  // high-grade disease is the honest point, not an omission to fix.
+  g.appendChild(el('path', {d:blobPath(400, 250, 380, 240, 0.06, 12, rnd, 0), fill:HE.stroma, opacity:0.4}));
+  // the papillary frond: fibrovascular core (a thin vessel-toned line) inside a stroma body
+  const frond = {cx:220, cy:150, rx:145, ry:210, rot:-0.15};
+  const coreD = blobPath(frond.cx, frond.cy, frond.rx*0.34, frond.ry*0.82, 0.14, 12, rnd, frond.rot);
+  g.appendChild(el('path', {d:blobPath(frond.cx, frond.cy, frond.rx, frond.ry, 0.14, 16, rnd, frond.rot), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1.2}));
+  g.appendChild(el('path', {d:coreD, fill:HE.stroma, stroke:HE.vessel, 'stroke-width':1.6}));
+  // disordered, piled-up covering cells — three loosely-radial, jittered "layers", not one rim
+  for(let ring=0; ring<3; ring++){
+    const per = 16 - ring*3;
+    for(let i=0;i<per;i++){
+      const a = i/per*Math.PI*2 + rnd()*0.5;
+      const rr = (0.55 + ring*0.16 + (rnd()*2-1)*0.06);
+      const px = Math.cos(a)*frond.rx*rr, py = Math.sin(a)*frond.ry*rr;
+      const x = frond.cx + px*Math.cos(frond.rot) - py*Math.sin(frond.rot) + (rnd()*2-1)*6;
+      const y = frond.cy + px*Math.sin(frond.rot) + py*Math.cos(frond.rot) + (rnd()*2-1)*6;
+      const dark = rnd() < 0.4;
+      const nr = 4 + rnd()*rnd()*8; // right-skewed: pleomorphic, occasional huge atypical
+      drawCell(g, x, y, 9+rnd()*3, nr, rnd, {nucFill: dark?HE.nucDark:HE.nuc, nucOffset:3});
+    }
+  }
+  // invasive nests/tongues below the frond, infiltrating pale stroma
+  const nests = [
+    {cx:520, cy:330, rx:110, ry:70, rot:0.2}, {cx:610, cy:200, rx:80, ry:60, rot:-0.3}, {cx:470, cy:430, rx:90, ry:55, rot:0.1},
+  ];
+  nests.forEach(n=>{
+    const d = blobPath(n.cx, n.cy, n.rx, n.ry, 0.22, 13, rnd, n.rot);
+    g.appendChild(el('path', {d, fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1.2}));
+    for(let i=0;i<16;i++){
+      const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.75;
+      const px = Math.cos(a)*n.rx*r, py = Math.sin(a)*n.ry*r;
+      const x = n.cx + px*Math.cos(n.rot) - py*Math.sin(n.rot);
+      const y = n.cy + px*Math.sin(n.rot) + py*Math.cos(n.rot);
+      const dark = rnd() < 0.4;
+      drawCell(g, x, y, 8+rnd()*2.5, 4+rnd()*rnd()*7, rnd, {nucFill: dark?HE.nucDark:HE.nuc, nucOffset:2.5});
+    }
+  });
+  // frequent mitoses — several figures, deliberately more than OCCC's single lonely one
+  [[300,120,10],[560,300,-25],[500,410,35],[640,180,-8]].forEach(([x,y,rot])=>{
+    g.appendChild(el('rect', {x:x-4, y:y-6, width:3, height:12, fill:HE.nucDark, transform:`rotate(${rot} ${x} ${y})`}));
+    g.appendChild(el('rect', {x:x+2, y:y-6, width:3, height:12, fill:HE.nucDark, transform:`rotate(${-rot*0.7} ${x+4} ${y})`}));
+  });
+  return [
+    {key:'papillary', x:220, y:150},
+    {key:'nuclei',    x:300, y:75},
+    {key:'invasion',  x:520, y:330},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -906,6 +1019,8 @@ const GENERATORS = {
   gdiff:  genGDiffuse,
   melanoma: genMelanoma,
   clear:  genOCCC,
+  seminoma: genSeminoma,
+  uc:     genBladderUC,
 };
 
 // ------------------------------------------------------------

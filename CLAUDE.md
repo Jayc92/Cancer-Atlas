@@ -19,7 +19,7 @@ map — see Architecture notes), still no build step, no backend, no bundler. **
 from one 2,816-line file into ES modules in this pass** (the "needs modularizing" item
 this file's own Known Limitations had flagged since the three.js migration) — see
 Architecture notes' "File layout / module map" for exactly what moved where and why. It
-proves out the full navigation pattern end-to-end for **twelve** organ/cancer pairs,
+proves out the full navigation pattern end-to-end for **fourteen** organ/cancer pairs,
 sharing one organ screen and one cancer screen between them (see the
 `ORGAN_DETAILS`/`CANCER_DETAILS` entry in Architecture notes) rather than one
 screen pair per organ:
@@ -1801,6 +1801,268 @@ screen pair per organ:
       2,695/28,118 Peres) with the Japan asymmetry stated in the row
       (26.9% — Machida 2019; its US 8.4% is four-subtype-restricted, which
       is why the headline stays Peres's complete-denominator 9.6%).
+22. Testis/seminoma reference sources — **organs #13/#14, added together with
+    Bladder/Urothelial carcinoma (rule 24). Every citation verified directly
+    at the source**, including anatomy (StatPearls' "Anatomy, Abdomen and
+    Pelvis: Testes," NBK470201, and its "Male Genitourinary Tract" chapter,
+    NBK562291, fetched separately for the rete testis/mediastinum testis
+    detail the Testes chapter itself doesn't carry).
+    - **Site model — GATED and RESOLVED before building: stays in the
+      ordinary real-anatomical-spread family, no new region-word.** The
+      candidate departure was seminoma's real, sequenced, contiguous chain
+      (abdomen → chest → neck, Wood et al., *J Urol*, 1996: "The contiguous
+      nature of disease spread from abdomen to chest and neck in seminoma is
+      confirmed"). Ruling: the site-model taxonomy has never been about
+      whether spread has internal order — it's about what KIND of thing the
+      four blobs represent (real distant destinations vs. GBM's intratumor
+      regions vs. Prostate's independent foci). A sequenced chain of real
+      lymph-node stations plus one real distant hematogenous site is still
+      real anatomical spread; seminoma clears neither GBM's (<1–2%
+      extracranial) nor Prostate's (76.5% multifocal) numeric departure bar.
+      The real finding is encoded through `pos3d` (true anatomical height,
+      caudal→cranial — not a literal straight line, since Lung sits at
+      chest height alongside Mediastinal nodes rather than "above" the
+      neck) and prose, not new schema. Primary geography anchor: Paly et
+      al. (*J Urol*, 2013, PMID 23321493, 145 nodes/90 patients) — 84%
+      para-aortic, 9% common iliac, 7% pelvic, 99% within 2.5cm of the
+      aorta below T12/L1. Wood 1996 used ONLY for the qualitative
+      contiguous-ordering claim and the seminoma-vs-NSGCT lung-metastasis
+      contrast (9% vs 40%) — its own station-level percentages were judged,
+      on a closer read, to carry real ambiguity about whether they describe
+      marginal prevalence or a conditional/template relationship between
+      stations, so none of those specific numbers are used.
+    - **Trunk — i(12p)/12p gain, corrected mid-verification from an initial
+      precursor-documented framing to the actual invasion-defining one.**
+      i(12p) is absent from GCNIS by definition and appears only once
+      invasion occurs (Fichtner et al., 2026, PMC12700052: "the isochromosome
+      12p develops during the progression of a GCNIS to an invasive TGCT";
+      Ravisankar et al., 2026, PMID 42628849: i(12p) is "a hallmark of
+      invasive germ cell tumors that is absent in GCNIS," with its own FISH
+      series' seminoma components negative for i(12p) all showing polysomy 12
+      instead — "these are mutually exclusive alterations," a real alternate
+      route to the same net gain). **Two different quantities, not one
+      range**: i(12p) specifically, 87% (114/131, TCGA/Shen et al., *Cell
+      Rep*, 2018), with the 17 i(12p)-negative tumors all retaining ≥4 copies
+      of 12p; 12p gain BY ANY MECHANISM, ~73% (536-specimen FISH series,
+      PMID 33798590). Framed explicitly as a different KIND of genomic event
+      — a whole-arm chromosomal gain, not a point mutation — with the real
+      cross-reference to this atlas's other non-point-mutation trunk/branch
+      event, Prostate's TMPRSS2-ERG fusion.
+    - **Branch — KIT (~5–35% depending on cohort/whether pure-seminoma-
+      restricted) at the two proximal sites, KRAS (~14%, TCGA) at the two
+      distal sites — the same "two real genes, four sites, repeat each
+      twice" structure Prostate's TMPRSS2-ERG/SPOP split already
+      established**, here because the two co-occur (6 TCGA seminomas carried
+      both) rather than because they're exclusive like Prostate's pair. KIT
+      range anchors: Coffey et al. (2008, n=220, the largest single cohort)
+      5.1% exon 17; TCGA ~18% of its full 137-tumor cohort, ~35% within the
+      72-tumor pure-seminoma subset specifically — stated as two different
+      denominators, not one number. **No bilateral-disease claim is made**:
+      Biermann et al. (2007, PMID 17768701) reports KIT exon 17 enriched in
+      bilateral TGCT (63.6% vs 6.4%); Coffey et al. (2008, larger bilateral
+      n=32) reports 3.1% and states "We find no evidence for an increased
+      frequency of KIT mutations in bilateral TGCT" — two primary sources in
+      direct conflict, so the claim is dropped entirely rather than hedged.
+    - **Private pool — PIK3CB admitted on real but thinner evidence (~7.4%,
+      2/27, a real-world sequencing cohort, PMC12469615, reported alongside
+      KIT/KRAS with no documented conflict against either) plus the standard
+      TTN passenger. NRAS deliberately excluded** despite being real and
+      TCGA-significant (4%, "exclusively in seminomas except for one KRAS
+      mutation in an NSGCT") — TCGA: "mutations in KRAS and NRAS co-existed
+      in only one seminoma," a near-mutual-exclusivity with the KRAS branch
+      gene. Because the private pool draws into cells at every site
+      regardless of that site's branch gene, NRAS would randomly co-occur
+      with KRAS-branch cells at the rate the real data says essentially
+      doesn't happen — the same same-tumor-co-occurrence-conflict check
+      OCCC's private-pool exclusions already established, applied here for
+      the first time against a NEAR- rather than fully-exclusive pair.
+    - **Distinctive facts led with, not buried:** quiet genome (median 0.5
+      mutations/Mb, TCGA — this atlas's second "quiet genome" cancer after
+      OCCC's median-46-mutations story; worth naming as a standing pattern
+      only if a third instance ever justifies it, not yet); and the cure-rate
+      story, verified better than the task brief's own framing — there is
+      **no poor-prognosis IGCCCG risk category at all for metastatic
+      seminoma** (Beyer et al., *Ann Oncol*, 2021 update, PMID 33729863,
+      n=2,451): 5-year OS 95% good-risk, 88% intermediate-risk. Carried in
+      the `cancerEntries.share` text (this atlas's existing convention for a
+      second, more important fact riding alongside a share percentage —
+      Skin's melanoma entry does the same with its death-share) and repeated
+      in the Trunk panel's own note.
+    - **GCNIS-as-precursor — the task brief's "nearly all cases" framing
+      checked and NOT shipped as a flat percentage.** The natural-history
+      case for GCNIS as a real precursor is strong and verified (von der
+      Maase et al., *Int J Androl*, 1986: of men under contralateral
+      surveillance, biopsy-proven CIS carried a 50% risk of invasive cancer
+      at 5 years, while 0 of 473 men WITHOUT it developed any), but the one
+      clean empirical figure for how often GCNIS is actually FOUND adjacent
+      to a primary tumor on pathological review is lower than "nearly all"
+      — 78.7% (85/108, a 2019 pathological-evaluation series) — and is
+      stated as that real number, with the honest reason for the gap
+      (detection depends on how many sections are sampled, and invasive
+      tumor can overgrow the very lesion it arose from) rather than rounded
+      up to match the brief's premise.
+    - **Body-marker placement hit a real, more extreme version of the
+      ray-through-the-thigh-gap trap this file's own Colon marker comment
+      already documents — caught by live probing, not assumed fine from one
+      screenshot.** The scrotum sits right at the groin crease where the two
+      legs are closest together, so the first values tried (±18–30deg at
+      heightFrac 0.36–0.42) produced two markers projecting to the IDENTICAL
+      pixel at every heightFrac from 0.30–0.39, and only 2px apart at
+      0.42/±30. A live angle sweep (same probing technique the Colon pass
+      used) found real separation only from ±55–60deg onward; shipped at
+      heightFrac 0.40 / ±65deg, ~55px apart on the male body.
+23. **Apparent exclusivity that dissolves under stratification — a named,
+    generalizable check, structurally a Simpson's-paradox pattern in
+    mutation data.** Before building a two-entry "divergent pathway" model
+    (two active cancer entries, or a two-way branch split presented as real
+    biological either/or) on ANY correlation or anti-correlation finding,
+    **verify it holds within the relevant strata (stage, grade, subtype) —
+    not just in the pooled cohort.** A correlation that is significant
+    pooled but vanishes within every stratum checked is very likely a
+    cohort-composition artifact, not a biological exclusivity — and treating
+    it as biology would hard-code a statistical artifact into the app as if
+    it were established fact, a categorically different and more dangerous
+    error than a wrong percentage or a misattributed paper, because it looks
+    exactly like good data until stratified. **The case that surfaced this
+    (Bladder/Urothelial carcinoma, rule 24):** the FGFR3/TP53 anti-
+    correlation is significant pooled (OR 0.25) and within pT1 (OR 0.47,
+    Neuzillet et al., *PLoS ONE*, 2012, PMC3521761, 535+382 tumours) — but
+    "no dependence was detected in the five tumour groups considered," and
+    is explicitly ABSENT within pTa alone (OR 0.56, p=0.12) and within MIBC
+    alone (OR 0.99, p=0.35). Building two cancer entries on "FGFR3 path vs.
+    TP53 path" would have modeled a stage confound as if it were two
+    distinct diseases. Checking this is now a required step whenever a
+    design gate involves a correlation/anti-correlation finding, the same
+    standing weight as the mechanistic-fit check in rule 1 and the
+    cooperating-vs-competing check in rule 4 — not a one-off Bladder note.
+24. Bladder/urothelial carcinoma reference sources — **organ #14, added
+    together with Testis/Seminoma (rule 22). Every citation verified directly
+    at the source**, including anatomy (StatPearls' "Anatomy, Abdomen and
+    Pelvis: Bladder," NBK531465).
+    - **Design gate — ONE cancer entry, not two, per rule 23's standing
+      check.** The candidate two-entry model (an "FGFR3-pathway"/NMIBC entry
+      and a "TP53-pathway"/MIBC entry, mirroring Ovary's two active cancers)
+      was rejected once the pooled FGFR3/TP53 anti-correlation was checked
+      by stage and dissolved (see rule 23 for the numbers). Two further
+      structural reasons: NMIBC/MIBC is a STAGE, not a histologic entity, and
+      this atlas's `share` field reads as a histologic percentage — building
+      two entries on a stage split would have silently relabeled a stage as
+      a different cancer; and a real, stage-INDEPENDENT trunk event was
+      sitting right there once looked for (TERT promoter, below). Ruling:
+      one entry, "Urothelial carcinoma," two-entry trunk (TERT + a
+      pathway-divergence status entry, the same GBM-classifier/OCCC-status
+      architecture), FGFR3/TP53 as branch genes at different sites.
+    - **Trunk — TERT promoter mutation, the atlas's THIRD TERT-trunk cancer
+      (after Melanoma and HCC), and explicitly stage-independent** —
+      Rachakonda et al. (*PLoS ONE*, 2013, PMC3808633, n=327): 65.4%
+      (214/327), "with even distribution across different stages and
+      grades," verbatim; Allory et al. (*Eur Urol*, 2014): 70%/79% across
+      two independent cohorts, C228T alone 83%, "not associated with
+      clinical or pathologic parameters," and MORE frequent specifically in
+      FGFR3-mutant tumours (p=0.0002) — a real positive association with one
+      of the branch genes, stated as cooperation because that's what the
+      source shows. Second trunk entry, pathway-divergence status, carries
+      the rule-23 stratification nuance directly in its own note.
+    - **CDKN2A — the 22%-vs-32/33% discrepancy RECONCILED, not shipped as an
+      unresolved range or forced to one side.** Computed directly in both
+      major TCGA cohort versions (`blca_tcga_pub_2017` and
+      `blca_tcga_pan_can_atlas_2018`, both n=408): deep deletion 33.3%
+      (136/408) and 31.9% (130/408) respectively — the two versions AGREE,
+      ruling out cohort/platform as the cause. Retrieved the paper's own
+      sentence (NCBI efetch, after Europe PMC's `fullTextXML` returned 0
+      bytes for this PMC id — the fallback this atlas now uses whenever that
+      happens): **"The most common recurrent (22%) focal deletion (copy
+      number &lt;1) contained CDKN2A."** Same event, two real definitions:
+      22% = focal deletion at a strict absolute copy-number-&lt;1 threshold
+      (TCGA's own criterion); ~32–33% = GISTIC's "putative deep deletion," a
+      thresholded relative call. Both figures shipped, with the definitional
+      reason for the gap stated — the same resolution pattern as OCCC's
+      ARID1A/PIK3CA range differences (identify the real cause of variation,
+      don't pick a side), one level cleaner since this one fully resolved
+      rather than needing the LUAD-style both-figures-unresolved fallback.
+    - **Gene-to-site map is evidence-driven from one source's full
+      exclusivity/co-occurrence table** (TCGA, *Cell*, 2017): CDKN2A is
+      mutually exclusive with TP53 and RB1 (q&lt;0.2) — kept at different
+      sites than TP53 — but CO-OCCURS with FGFR3 in 7% of tumors ("which may
+      be MIBCs that have progressed from non-invasive tumors") — carried in
+      each gene's own note, not modeled as a shared site, since this
+      schema's branch slot is one gene per site. ERBB2 is anti-correlated
+      with FGFR3 specifically in metastatic disease (OR 0.47, p=0.010,
+      n=1,014, "complementary distribution") — kept at a different site than
+      FGFR3 for that reason. RB1 co-occurs with TP53 (q&lt;0.2) but was not
+      given its own site — carried in TP53's note instead, since the schema
+      has four site-slots and five real evidence-backed candidate genes
+      (FGFR3/TP53/CDKN2A/ERBB2/RB1) for them.
+    - **Sites — real bone-dominant metastatic pattern, explicitly cross-
+      referenced to Prostate's own bone-dominant spread** (Bone 38.3% /
+      Lymph nodes 36.8% / Lung 33.5% / Liver 22.6% of metastatic patients,
+      n=4,317, Wang et al., *Front Oncol*, 2023, PMC10605465 — same
+      bladder-primary SEER cohort as the subtype shares; denominators differ
+      per site since not every metastatic record reports every site).
+      TP53 placed at Bone specifically because Alessandrino et al. (2020,
+      PMID 32228295, n=103) found TP53 mutation associated with osseous
+      metastases (RR 1.9, P=.02) and lymphadenopathy (RR 1.7, P=.002) — a
+      real, sourced reason for that placement, not narrative convenience.
+      **First pos3d pass produced a real but tight 80px minimum projected
+      separation** (Lymph nodes~Lung, live-probed) — passing the no-overlap
+      check but tighter than this atlas's post-CRC standard; X/Z widened and
+      Y de-clustered for Lymph nodes/Lung/Liver, re-probed to 114px minimum
+      (Bone~Lung), in line with luad/tnbc/melanoma's own 96–112px band.
+    - **Subtype shares and the lateral-wall-not-trigone origin finding, both
+      from the same bladder-primary cohort** (Wang et al., 2023): Urothelial
+      carcinoma ~92% (48,789/53,142) vs. Neuroendocrine ~3.2% (1,683),
+      Squamous cell ~3.1% (1,667), Adenocarcinoma ~1.9% (1,003) — ordered by
+      the source's real counts, not textbook convention (this cohort's
+      neuroendocrine count is very slightly ahead of squamous cell, the
+      reverse of the usual teaching order). Lateral wall is the real most
+      common site of tumor ORIGIN (8,056 of a ~19,000-tumor subsite
+      breakdown, more than double the trigone's 2,977) — stated plainly in
+      the organ description and the Bladder wall hotspot's own text, rather
+      than letting the trigone's real anatomical distinctiveness (the only
+      real 3D GLB sub-mesh landmark for this fact) imply false primacy.
+    - **Bladder mesh is a REAL asset, not procedural** — NIH 3D's Human
+      Reference Atlas 3D Reference Object Library (CC BY 4.0), male
+      urinary-bladder reference organ (`assets/bladder.glb`), Visible-Human-
+      Dataset-derived like Lungs/Kidneys/Liver/Brain/Prostate. No
+      individually-documented creator/DOI was found for this asset (checked
+      directly, the same way Colon/Pancreas's DOIs were found) — attributed
+      at the level the source actually documents, same as the five organs
+      above it, rather than inventing a citation. Its six real, separately-
+      named anatomical sub-meshes (bladder neck, dome, trigone, both
+      ureteral orifices, each carrying its own UBERON/FMA ontology id) are
+      used directly for hotspot placement: every anchor is that sub-mesh's
+      real vertex centroid, computed from the binary buffer (**a real
+      glTF-parsing bug caught and fixed mid-computation: accessor-level
+      `byteOffset` is additive to its bufferView's own `byteOffset`, not a
+      replacement for it — a naive parse that ignored the accessor-level
+      offset put the trigone sub-mesh's centroid far outside its own
+      accessor-declared bounding box before the fix**), nudged outward from
+      the mesh's overall centroid. **A second real bug in the same pipeline,
+      caught during REVIEW rather than before shipping**: the first nudge
+      factor (1.35, tuned by eye against the two large sub-meshes, dome/
+      base1) pushed the two SMALL, tight sub-meshes past their own real
+      geometry — a live rotated screenshot in the review packet showed
+      Bladder neck floating visibly off the mesh silhouette; checked
+      numerically and confirmed Neck (114 vertices, an 8mm-tall taper)
+      landed below its own sub-mesh's bounding-box minimum, and Ureteral
+      orifices exceeded its own bbox too, less visibly. Re-swept down to
+      1.15 — the largest factor at which all four points stay within their
+      own sub-mesh's real bounding box, confirmed numerically before
+      reshipping. **Lesson for any future real-GLB organ using this
+      centroid-nudge technique: verify the nudge factor against each
+      sub-mesh's own bounding box individually, not just visually against
+      the largest one** — a factor safe for a sub-mesh with thousands of
+      vertices spanning a wide patch can push a tiny, tightly-clustered
+      sub-mesh clean off its own surface.
+    - **Histology — PathologyOutlines was unreachable again (HTTP 429, the
+      same block Testis and OCCC both hit), so the morphologic load rests on
+      a 2026 open-access grading review (PMC12700064) that quotes the WHO
+      1973/2004 criteria directly.** High-grade invasive disease is drawn,
+      not low-grade, because it matches this organ's own trunk framing
+      ("almost all MIBC cases are high grade," verbatim, same source).
+      Umbrella-cell loss is drawn as a real, named contrast ("umbrella cells
+      often -" in high grade vs "+" in low grade, the source's own table),
+      not left as a prose caveat.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
