@@ -50,9 +50,12 @@ screen pair per organ:
   every sex-inapplicable organ marker already uses.
   Brain/Lungs/Breast/Liver/Kidneys appear on both. **Ovaries, Breast, Lungs,
   Kidneys, Liver, Brain, and Prostate are all active now** — **Lungs, Kidneys,
-  Liver, Brain, Prostate, and now Breast route to real anatomical scans
+  Liver, Brain, Prostate, and now Breast route to real anatomical meshes
   (`assets/lungs.glb`/`kidneys.glb`/`liver.glb`/`brain.glb`/`prostate.glb`/
-  `breast.glb`, all from NIH 3D's Human Reference Atlas, CC BY 4.0), not the
+  `breast.glb` — kidneys/liver/brain/prostate/breast from NIH 3D's Human
+  Reference Atlas, CC BY 4.0; lungs, since 2026-09-01, is "Realistic Human
+  Lungs" by the Sketchfab artist neshallads, CC BY 4.0, swapped in for its
+  sculpted interlobar fissures — see the dated lungs-swap entry), not the
   procedural meshes described in earlier revisions of this file — see the
   "Organ mesh source" entry in Architecture notes for the full sourcing/
   topology/decimation history. Breast's source differs from the other five in
@@ -90,7 +93,9 @@ screen pair per organ:
   in direct parallel to the ovary's Surface epithelium point ("~85% of invasive
   cancers arise here", same pedagogical shape) — only Triple-Negative (basal-
   like) is wired, others show "profile coming soon." **Lungs**: real anatomical
-  scan (`assets/lungs.glb` — see "Organ mesh source" in Architecture notes),
+  mesh (`assets/lungs.glb` — since 2026-09-01 the artist-sculpted neshallads/
+  Sketchfab model with real interlobar fissures and its own baked textures,
+  no longer the HRA/VHD scan; see "Organ mesh source" in Architecture notes),
   points are Bronchi / Alveoli / Pleura / Hilum — Alveoli
   is framed the same way as Ovary's Surface epithelium and Breast's Ducts
   ("adenocarcinoma... most commonly arises here — directly paralleling..."),
@@ -2023,7 +2028,9 @@ screen pair per organ:
     - **Bladder mesh is a REAL asset, not procedural** — NIH 3D's Human
       Reference Atlas 3D Reference Object Library (CC BY 4.0), male
       urinary-bladder reference organ (`assets/bladder.glb`), Visible-Human-
-      Dataset-derived like Lungs/Kidneys/Liver/Brain/Prostate. No
+      Dataset-derived like Kidneys/Liver/Brain/Prostate (and Lungs at the
+      time this entry was written — Lungs alone has since moved to a
+      Sketchfab source; see the 2026-09-01 lungs-swap entry). No
       individually-documented creator/DOI was found for this asset (checked
       directly, the same way Colon/Pancreas's DOIs were found) — attributed
       at the level the source actually documents, same as the five organs
@@ -2063,6 +2070,30 @@ screen pair per organ:
       Umbrella-cell loss is drawn as a real, named contrast ("umbrella cells
       often -" in high grade vs "+" in low grade, the source's own table),
       not left as a prose caveat.
+25. **Lungs texture tone is artist-authored, NOT independently verified
+    against a gross-anatomy color reference — a disclosed, accepted
+    limitation, not an oversight (2026-09-01).** Every flat material color in
+    this atlas is either verified against a real gross-anatomy/pathology
+    description (ovary, prostate, most organs) or explicitly flagged as its
+    file's "weakest-sourced parameter" (testis, bladder, skin's hypodermis).
+    The lungs mesh swap (see the dated 2026-09-01 lungs-swap entry in
+    Architecture notes for the full provenance) replaced the previous flat
+    hex — `0xb08d90`, which HAD been color-verified in the real-tissue pass —
+    with the neshallads asset's native baked textures, whose tone runs
+    notably redder than that verified pink-gray and traces to the artist's
+    palette, not to any anatomical color source. The tradeoff was accepted
+    deliberately: per-texel surface/normal/specular detail (and the sculpted
+    fissures) was the entire reason this asset was sourced over the
+    alternative, and stripping the textures to restore a verified flat color
+    would discard exactly that. Standing implications: (a) do not cite the
+    lungs' on-screen color as verified anywhere — it is the one organ whose
+    surface color is currently artist-authored; (b) if a future pass wants to
+    close this gap, the options are recoloring the baked base-color maps
+    toward a verified reference (preserving detail, changing hue) or
+    documenting a real source that supports the current tone — not silently
+    accepting it as if it had been verified; (c) this rule is the
+    discoverable, standing record of the limitation — the narrative
+    lungs-swap entry cross-references it, and neither supersedes the other.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -2627,6 +2658,17 @@ screen pair per organ:
     stale JavaScript the whole time (see the dev-server caching entry
     immediately below) and every one of its "confirmed" results had to be
     re-earned under a working reload before they meant anything.
+  - **SUPERSEDED FOR LUNGS (2026-09-01): `assets/lungs.glb` is no longer the
+    HRA/VHD-derived mesh this entry built.** The HRA lung model ships no
+    interlobar fissures at all — and the HRA library has no alternative lung
+    asset (source exhausted, not under-searched) — so Lungs alone moved to
+    "Realistic Human Lungs" by the Sketchfab artist neshallads (CC BY 4.0,
+    license verified verbatim on the model page). Everything in this entry
+    stays accurate for Kidneys/Liver/Brain/Prostate and as the history of
+    how the OLD lungs.glb was built; the full swap write-up (weld/component
+    identification, kept-vs-dropped pieces, license, texture color-space
+    decision, re-anchored hotspots, size flag) is the dated 2026-09-01 entry
+    near the end of this file.
 - **Dev-server caching gap — found while chasing a camera-angle bug that
   kept not staying fixed, worth its own entry because of how much it could
   quietly invalidate (2026-08-27).** `python3 -m http.server` (this
@@ -2874,7 +2916,8 @@ screen pair per organ:
   `assets/colon.glb` (3DPX-021005, Large Intestine, MALE) and
   `assets/pancreas.glb` (3DPX-020983, Pancreas, Female) are NIH 3D HRA entries
   (CC BY 4.0, verified per entry page), but unlike Lungs/Kidneys/Liver/Brain/
-  Prostate they are the ORIGINAL HRA-authored GLBs served by
+  Prostate as built in that pass (Lungs has since left HRA sourcing entirely
+  — 2026-09-01 lungs-swap entry) they are the ORIGINAL HRA-authored GLBs served by
   `3d.nih.gov/api/files/<inputFileId>` (the entry JSON at `api/entries/<id>`
   carries the file id) — no STL, no Blender conversion, byte-identical to
   upstream (sha256 84a66fb4… / edb41456…, checkable against the source), which
@@ -3351,6 +3394,138 @@ screen pair per organ:
     set for these two, a single-organ set for the other 15) — a strictly
     more precise check than "zero collisions" that doesn't flag this app's
     own by-design behavior as broken.
+
+- **Lungs mesh swap — "Realistic Human Lungs" (neshallads, Sketchfab) replaces
+  the HRA/VHD-derived lungs.glb (2026-09-01; developed alongside the
+  material/lighting realism pass above and committed as its own commit
+  immediately after it, following the same human screenshot review — this
+  commit also carries the post-review 2048->1024px normal-map downscale,
+  A/B-verified indistinguishable, 14.9MB -> 9.4MB):**
+  - **Why:** the HRA lung mesh has no interlobar fissures — the most
+    identifying external feature of lung anatomy — and the HRA library has no
+    other lung asset (exhausted, not under-searched). The replacement has the
+    fissures SCULPTED INTO THE GEOMETRY, verified by flat-shaded renders and
+    concave-crease tracing, not read off a thumbnail: a deep oblique plus a
+    subtler mid-height horizontal fissure on the right lung (two =
+    anatomically correct), one oblique groove on the left; each lung stays
+    one watertight piece (grooves, not disconnected lobes).
+  - **Source/license:** "Realistic Human Lungs" by Sketchfab user neshallads
+    — license quoted verbatim on its model page ("CC Attribution / Creative
+    Commons Attribution", i.e. CC BY 4.0; attribution legally required).
+    `#disclaimer` updated: lungs removed from the NIH-3D/VHD credit list
+    (kidney/liver/brain/prostate stay), new credit + model URL added
+    (sketchfab.com/3d-models/realistic-human-lungs-ce09f4099a68467880f46e61eb9a3531).
+    **Texture tone caveat: the baked color is artist-authored, not
+    color-verified the way the previous flat hex was — see data rule 25, the
+    standing record of that accepted limitation.**
+  - **Build (Blender 5.2 headless, script pattern cribbed from the bladder
+    pass's component analysis):** import source GLB (17.1MB, two mesh objects
+    24,166 + 9,288 raw verts) -> weld each object (remove_doubles, threshold
+    = bbox_diagonal x 1e-5) -> separate by loose parts -> identify the 5 TRUE
+    components BY WELDED VERTEX COUNT (object names after separation are
+    unreliable): trachea+main bronchi 13,215v KEEP; larynx 5,396v DROP;
+    thyroid gland 4,513v DROP; left lung 4,461v (bbox center x>0) KEEP;
+    right lung 4,412v (x<0, and larger than the left in every bbox dimension,
+    matching real right-lung anatomy) KEEP. Sidedness asserted in-script, not
+    assumed. Imported materials/textures untouched. Centering BAKED into the
+    export (world-bbox center -> origin, verified by re-importing the
+    exported file: center (0,0,0), glTF-frame dims 0.2233 x 0.3687 x
+    0.1423m) — matching lungs.js's own convention (the old lungs.glb was
+    origin-centered too; buildLungsMesh has never done the
+    gltf.scene.position.sub(center) node-recenter colon/pancreas need).
+  - **A Blender API trap caught mid-build, recorded so the next mesh pass
+    doesn't re-learn it:** `Object.bound_box` does NOT refresh after directly
+    editing `mesh.vertices[i].co` (even after `mesh.update()`) — the first
+    anchor pass silently filtered vertex height-bands against pre-shift bbox
+    limits and landed two "fissure" candidates on the apex band and the
+    cardiac impression instead. Every geometric query was redone against
+    bboxes computed from the vertex data itself, on the re-imported exported
+    GLB, so the shipped anchor coordinates are provably in the file's own
+    frame.
+  - **Size, flagged rather than hidden: 14.9MB, vs the old mesh's 3.5MB —
+    a 4.2x asset-weight increase and this app's largest file.** Textures
+    dominate (13.6MB of the 14.9; over half of that is the two 2048px normal
+    maps at 3.4MB + 5.1MB). Deliberately NOT recompressed in this pass —
+    that's an owner decision, and the two normal maps are the obvious first
+    lever if it has to shrink. The kept subset did shed the larynx/thyroid
+    GEOMETRY, but not their texture bytes: both dropped components share the
+    airway's material and texture atlas, so no image could drop out of the
+    export (the 17.1 -> 14.9MB saving is geometry plus glTF re-packing only).
+  - **Materials — the one real-mesh organ OFF the shared recipe (owner
+    decision made before integration, not an omission):** buildLungsMesh no
+    longer overrides the imported material with the flat verified-hex
+    MeshPhysicalMaterial and no longer calls applyTissueMottleVertexColors —
+    that recipe exists to fake surface variation on untextured scan geometry,
+    and this asset ships real baked color/normal/AO/specular maps that a
+    painted-on gray-multiplier mottle would fight. The material-pass entry
+    above still says "all nine real-scan organs" — true when written; as of
+    this entry lungs runs on the asset's own materials and the other eight
+    are untouched (verified by git diff scope: this pass edits lungs.js
+    only among organ files). The GLB carries KHR_materials_specular, so
+    GLTFLoader builds MeshPhysicalMaterial with a real per-texel
+    specularIntensity map — the imported material arrives WITH the specular
+    control the clip-fix pass had to add by hand elsewhere. The verified
+    dusty pink-gray 0xb08d90 now lives only in the sidebar thumbnail
+    (re-rendered via `.claude/render_thumb.py`, which renders every organ as
+    its flat tissue hex by design).
+  - **Color space — tested live, both ways, numbers recorded (the trap the
+    pipeline comment at the top of viewer.js implies but had never hit,
+    because no organ had textures before):** this pipeline never re-encodes
+    output (ColorManagement off, LinearSRGB out, no tone mapping), but
+    sRGB-TAGGED TEXTURES STILL GET GPU-DECODED to linear on sampling — so
+    GLTFLoader's default sRGB tag on the baseColor map gamma-crushes the
+    baked colors exactly once, with no round trip. Measured on the live
+    default view: loader default = mesh mean RGB (118,35,34), a dark
+    oversaturated blood-red, R/G 3.4; `map.colorSpace = THREE.NoColorSpace`
+    = (153,80,73), R/G 1.9 — matching the model's authored soft mottled
+    pink-red (its own textures under neutral Cycles light in this pass's
+    build renders). NoColorSpace shipped — the same untouched-bytes
+    treatment every hand-picked hex in this app already gets under this
+    pipeline (LinearSRGBColorSpace on the map would behave identically;
+    NoColorSpace is the explicit opt-out). Side-by-side capture in the
+    review packet.
+  - **Hotspots re-anchored; labels and educational text untouched (all four
+    are source-verified and did not move):** anchors derived GEOMETRICALLY in
+    the build scripts and verified per-anchor against their own geometry (the
+    Bladder lesson), then re-checked numerically in the LIVE app against the
+    loaded GLB (nearest-vertex distances: alveoli/pleura/hilum 0.05-0.08mm =
+    exact mesh vertices; bronchi 1.1mm = the airway component's vertex
+    centroid, an interior reference point inside the trachea). Bronchi =
+    airway vertex centroid (just above the bifurcation); Alveoli =
+    most-lateral left-lung vertex in the lower-middle height band (the
+    periphery its text describes); Pleura = a vertex ON the right lung's
+    oblique fissure groove — found by concave-crease clustering (signed
+    dihedral angle < -0.30 rad) after hull-depth search proved the wrong
+    tool (the mediastinal/cardiac concavity out-deepens the fissures on BOTH
+    lungs, ~38-39mm vs the fissures' 2-4mm groove depth), then confirmed with
+    marked renders; anatomically honest placement too, since the visceral
+    pleura lines the interlobar fissures. Hilum = the right-lung vertex
+    nearest the airway component (0.5mm gap — literally where the bronchus
+    meets the lung). All four dots on-screen at the default camera, verified
+    live (and re-verified by the regression harness's own visibility check).
+  - **Viewer params re-derived by the Bladder convention (old value x
+    bbox-largest-dim ratio, not fresh guesses):** old mesh 0.2511m largest
+    dim -> new assembly 0.3687m = x1.468: minRadius 0.15 -> 0.22, maxRadius
+    1.2 -> 1.76, nominal radius 0.5 -> 0.73 (moot once frameContents runs).
+    viewerAria rewritten to describe what is now actually on screen (paired
+    lungs joined by trachea/bronchi, visible fissure grooves) — a visual
+    description, not sourced medical content, so it tracks the model.
+  - **Verification, live pipeline (puppeteer + real headless Chrome against
+    the repo's own nocache server, per the standing verification-method
+    rule):** blown-white 0.000% at all 10 sampled rotation angles including
+    vertical tilts (preserveDrawingBuffer shim active; real mesh-pixel counts
+    1,574-2,776 per frame, not a zeroed buffer). Full regression
+    (/tmp harness, 146 checks): 2 failures = exactly the two documented
+    pre-existing GBM + Prostate/acinar label-overlap flags. One harness gap
+    found while running it, worth recording: that harness never got the
+    preserveDrawingBuffer shim, so all 13 of its blown-white checks pass
+    VACUOUSLY on meshPx=0; re-run with only the shim added: lungs 0.00% on
+    real 2,447 mesh px, every other organ 0.00% except Ovary's designed
+    0.36% glow halo and the already-documented angle-dependent Testis 1.20%
+    (testis.js untouched by anything in this working tree). Before/after,
+    close-zoom, and rotated fissure-silhouette screenshots (the fissures
+    being visible is the point of the whole swap) in
+    `~/Downloads/cancer-atlas-lungs-integration-review/`.
 
 ## Known limitations / tech debt
 - The male/female bodies are real static meshes now (Blender's "Human Base

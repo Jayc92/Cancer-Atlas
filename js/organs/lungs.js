@@ -21,42 +21,79 @@ export const cancerEntries = [
   { id:'sclc',  name:'Small Cell Lung Cancer',    share:'~15% of all lung cancers — a separate category from NSCLC entirely', active:false, organKey:'lungs' },
 ];
 
-// Real anatomy, not procedural: NIH 3D Print Exchange, "Human Reference Atlas 3D Reference
-// Object Library" (account "HRA"), entry 3DPX-020974 — traced from the Visible Human Dataset
-// (Spitzer & Whitlock, 2002). CC BY 4.0, quoted and confirmed directly on the entry page, same
-// standard applied to the body meshes above. Full sourcing, license text, decimation reasoning,
-// and the Ovary/Breast-still-procedural note are recorded in CLAUDE.md rather than repeated in
-// every one of these five organ files.
+// Real anatomy, not procedural — and, unlike every other real-scan organ in this app, NOT from
+// the NIH 3D "Human Reference Atlas" library: "Realistic Human Lungs" by neshallads
+// (Sketchfab), license verified verbatim on its model page ("CC Attribution / Creative Commons
+// Attribution" — i.e. CC BY 4.0, attribution legally required and carried in #disclaimer),
+// https://sketchfab.com/3d-models/realistic-human-lungs-ce09f4099a68467880f46e61eb9a3531.
+// WHY THE SWAP (2026-09-01, replacing the HRA/VHD-derived mesh this file used since the
+// real-mesh pass): the HRA lung mesh has NO interlobar fissures at all — the single anatomical
+// feature a lungs model is most obviously missing — and the HRA library offers no alternative
+// (source exhausted, not under-searched). This model has them SCULPTED INTO THE GEOMETRY,
+// verified by flat-shaded component renders, not read off the thumbnail: a deep oblique fissure
+// plus a subtler mid-height horizontal fissure on the right lung (two fissures = anatomically
+// correct) and one oblique groove on the left — each lung still one watertight piece, grooves,
+// not disconnected lobes. Full provenance/analysis in CLAUDE.md's organ-mesh-source history.
 //
-// assets/lungs.glb: STL -> Blender headless (remove_doubles weld, shade_smooth_by_angle,
-// Decimate COLLAPSE 0.4, origin_set to bounds-center) -> GLB, real-world meters. Loaded async,
-// unlike every buildMesh above — GLTFLoader has no synchronous path — so this returns a
-// Promise<THREE.Object3D> instead of an Object3D directly. initOrganViewer() in main.js wraps
-// every organ's buildMesh() result in Promise.resolve() specifically so this and the procedural
-// organs above share one code path.
+// assets/lungs.glb: source GLB -> Blender 5.2 headless -> weld each mesh object
+// (remove_doubles, threshold = bbox_diagonal x 1e-5), separate by loose parts, then identify
+// the TRUE components BY WELDED VERTEX COUNT (object names after separation are unreliable):
+// KEPT trachea+main bronchi (13,215v), left lung (4,461v, bbox-center x>0), right lung
+// (4,412v, x<0 — and the larger of the two in every bbox dimension, matching real right-lung
+// anatomy); DROPPED larynx (5,396v) and thyroid gland (4,513v) — real anatomy, wrong organ for
+// this viewer. Original materials/textures preserved untouched. Centering BAKED into the GLB
+// (world-bbox center -> origin, verified by re-import), matching this file's own convention —
+// the old lungs.glb was origin-centered too, and buildLungsMesh has never done the
+// gltf.scene.position.sub(center) node-recenter colon.js/pancreas.js need. Real-world meters:
+// assembly 0.223 x 0.369 x 0.142m (the 0.369 is trachea-top to lung-base). 14.9MB on disk vs
+// the old mesh's 3.5MB — textures dominate (13.6MB, over half of it the two 2048px normal
+// maps); size flagged as an open decision in the review packet, deliberately not recompressed
+// here. Loaded async, unlike the procedural buildMesh functions — GLTFLoader has no synchronous
+// path — so this returns a Promise<THREE.Object3D>; initOrganViewer() in main.js wraps every
+// organ's buildMesh() result in Promise.resolve() so both kinds share one code path.
 //
-// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0xdba9a0 was a pale
-// peachy-tan, closer to skin tone than lung tissue. Real fresh adult lung is pinkish-gray, not
-// tan — confirmed across gross-pathology sources (a normal adult lung is "pinkish-gray" with
-// mottled grayish patches from anthracosis, harmless carbon-pigment deposition present in
-// nearly all adults from lifelong particulate exposure — corroborated by Monash Pathology's
-// anthracosis notes and PathologyOutlines.com's description of the same pigment pattern).
-// 0xb08d90 is a real, more-saturated dusty pink-gray, not tan — picked to survive lighting
-// without washing toward white, same fix as Brain's material.
+// MATERIALS — the asset's own baked textures, kept; the shared organ recipe deliberately NOT
+// applied (owner decision made before integration, not an omission): every other real-scan
+// organ replaces its imported material with a flat verified-tissue-color MeshPhysicalMaterial
+// plus applyTissueMottleVertexColors — a recipe that exists to fake surface variation on
+// untextured scan geometry. This asset ships real baked color/normal/AO/specular maps, so the
+// authored textures ARE the material. Honest caveat, stated not smoothed over: the artist's
+// baked tone is a mottled pink-RED, visibly redder than the "pinkish-gray" gross-pathology
+// tone the old flat 0xb08d90 was verified against — the swap trades that one verified average
+// color for real per-texel variation the flat hex never had (that hex now lives on only in the
+// sidebar thumbnail, which renders every organ as its flat tissue color by design). Painting a
+// procedural gray-multiplier mottle over a real texture would fight it, so neither
+// the material override nor the mottle call is made for this organ. The GLB carries
+// KHR_materials_specular, so GLTFLoader builds MeshPhysicalMaterial with a real
+// specularIntensity map — the imported material already has the specular control the clip-fix
+// pass had to add by hand elsewhere; measured blown-white stayed 0.0% at every sampled angle.
+//
+// COLOR SPACE — tested live, not assumed, because this app's pipeline is the unusual one
+// (viewer.js: ColorManagement.enabled=false + LinearSRGBColorSpace out, no tone mapping —
+// i.e. no output re-encode). GLTFLoader tags baseColor maps SRGBColorSpace, which uploads
+// them as sRGB internal format: the GPU DECODES them to linear on sampling — that half still
+// happens with ColorManagement off — but nothing re-encodes on the way out, so the texture
+// gets gamma-crushed exactly once with no round trip. Measured on the live default view:
+// loader-default sRGB gave mesh mean RGB (118,35,34) — a dark, oversaturated blood-red,
+// R/G 3.4 — vs (153,80,73), R/G 1.9, with the decode disabled; the source model's authored
+// look (its own textures under neutral light in the build pass's Cycles renders) is the soft
+// mottled pink-red the second one shows. So the decode is disabled below: NoColorSpace ==
+// "leave the authored sRGB bytes alone", the same already-encoded-in/unencoded-out treatment
+// every hand-picked hex color in this app gets under this pipeline (LinearSRGBColorSpace on
+// the map would behave identically here; NoColorSpace is used as the explicit opt-out).
+// Rejected alternative — loader default sRGB — kept as a side-by-side capture in the
+// integration review packet. Non-color maps (normal/AO/roughness/specular) are already
+// NoColorSpace-equivalent from the loader and are untouched.
 export function buildLungsMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/lungs.glb', (gltf)=>{
-      // MeshPhysicalMaterial + specularIntensity 0.15, NOT MeshStandardMaterial (clip-fix
-      // pass): this ports the missing half of the approved material verification — the
-      // Blender renders the tissue colors were verified and approved on had Specular IOR
-      // Level 0.15 baked in, but MeshStandardMaterial has no specular control at all, so the
-      // live app kept full-strength dielectric specular. Under the legacy hard-clip pipeline
-      // that blew grazing-angle fold/fissure walls to flat white (up to 26% of the lungs'
-      // on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
-      // js/viewer.js's warm-lighting comment. Color/roughness values unchanged.
-      const mat = new THREE.MeshPhysicalMaterial({ color:0xb08d90, roughness:0.65, metalness:0.0, specularIntensity:0.15 });
-      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      gltf.scene.traverse(o=>{
+        if(o.isMesh && o.material && o.material.map){
+          o.material.map.colorSpace = THREE.NoColorSpace;
+          o.material.map.needsUpdate = true;
+        }
+      });
       resolve(gltf.scene);
     }, undefined, reject);
   });
@@ -76,31 +113,47 @@ export const organDetail = {
   // separate bronchial arteries feed the lung tissue itself with already-oxygenated blood.
   desc:'The lungs fill most of the thoracic cavity, each connected to the airway via a bronchus entering at the hilum. Uniquely among organs, the lungs have two separate blood supplies: pulmonary arteries carrying deoxygenated blood to the ~300 million alveoli for gas exchange — the one place in the body where "artery" means deoxygenated, not oxygenated — plus separate bronchial arteries that feed the lung tissue itself with oxygenated blood.',
   buildMesh: buildLungsMesh,
-  // Real-world-meter GLB (bbox ~25x15x22cm) — theta/phi still set the initial viewing angle,
-  // but radius/minRadius/maxRadius (tuned for the old ~1-2 unit procedural mesh) are replaced
-  // by initOrganViewer's frameContents() call once the model loads. minRadius/maxRadius here
-  // still matter, though: they set OrbitControls' actual zoom floor/ceiling, which frameContents
-  // never widens except upward, so they're re-scaled to this mesh's real size rather than left
-  // at the old unit-scale numbers, which would have locked the camera out of ever zooming in.
-  viewer:{ theta:0.5, phi:1.15, radius:0.5, minRadius:0.15, maxRadius:1.2, autoRotateRadPerFrame:0.0016 },
-  viewerAria:'Three-dimensional model of a lung, an elongated organic form tapering at top and '
-    + 'bottom, with four glowing teal points marking the structures listed after it. Drag to '
-    + 'rotate, scroll to zoom.',
-  // pos: a literal anchor point (meters, local mesh space) found by raycasting against the real
-  // assets/lungs.glb surface in a one-off picker tool, then eyeballed against render_preview.py
-  // screenshots for anatomical sense — not the old dir-vector-times-ellipsoid-scale trick, which
-  // only ever worked because the procedural lung was itself a scaled ellipsoid. Labels/text are
-  // unchanged from the procedural version; only the anchor coordinates moved.
+  // Real-world-meter GLB — theta/phi still set the initial viewing angle, but radius is
+  // replaced by initOrganViewer's frameContents() call once the model loads. minRadius/
+  // maxRadius still matter (OrbitControls' zoom floor/ceiling, which frameContents never
+  // widens except upward). Rescaled for the new asset by the Bladder-precedent derivation —
+  // old values x the ratio of bbox largest dimensions, not fresh guesses: old mesh 0.2511m
+  // largest dim with 0.15/1.2, new assembly 0.3687m -> x1.468 -> 0.22/1.76 (radius 0.73 by
+  // the same ratio, moot once frameContents runs).
+  viewer:{ theta:0.5, phi:1.15, radius:0.73, minRadius:0.22, maxRadius:1.76, autoRotateRadPerFrame:0.0016 },
+  // Rewritten with the asset swap: the old text described the previous mesh ("an elongated
+  // organic form tapering at top and bottom" — and before that, the procedural single-lung
+  // ellipsoid). This is a visual description of the model, not sourced medical content, so it
+  // has to track what is actually on screen now: both lungs plus the airway.
+  viewerAria:'Three-dimensional model of the paired lungs joined by the trachea and main '
+    + 'bronchi, mottled pinkish-red with visible interlobar fissure grooves, with four glowing '
+    + 'teal points marking the structures listed after it. Drag to rotate, scroll to zoom.',
+  // pos: literal anchor points (meters, local mesh space of the origin-centered GLB) — derived
+  // GEOMETRICALLY from the welded components in the Blender build script (Bladder precedent:
+  // verify each anchor against its own geometry numerically, don't eyeball one and assume the
+  // rest), then confirmed in the live app both numerically (nearest-vertex distance per anchor
+  // against the loaded GLB, all <=1mm) and visually (all four dots at the default camera).
+  // Labels/text unchanged — all source-verified; only the anchor coordinates moved:
+  //   bronchi = the airway component's own vertex centroid (sits inside the trachea just above
+  //             the bifurcation, where the main bronchi begin);
+  //   alveoli = most-lateral left-lung vertex in the lower-middle height band (the periphery,
+  //             which is exactly where the text places the alveoli);
+  //   pleura  = a vertex ON the right lung's oblique fissure groove, found as a concave-crease
+  //             cluster (signed dihedral angle) and confirmed by marked renders — the visceral
+  //             pleura really does line the interlobar fissures, so the marker showcasing the
+  //             new mesh's defining feature is also anatomically honest;
+  //   hilum   = the right-lung vertex nearest the airway component (0.5mm gap — literally
+  //             where the bronchus meets the lung).
   hotspots:[
-    { key:'bronchi', label:'Bronchi', pos:[-0.0436,-0.0124,-0.0201],
+    { key:'bronchi', label:'Bronchi', pos:[-0.0042,0.0394,0.0179],
       text:'The airway branches that carry air from the trachea into each lung, then subdividing into progressively smaller passages. Squamous cell lung carcinoma tends to arise in the larger, more central airways here.' },
     // Directly parallel to the ovary's surface-epithelium point and breast's ducts: this is
     // the "arises here" structure for this organ, framed the same way for the same reason.
-    { key:'alveoli', label:'Alveoli', pos:[0.0819,-0.0603,0.0819],
+    { key:'alveoli', label:'Alveoli', pos:[0.1114,-0.1309,0.0158],
       text:'The ~300 million tiny air sacs where gas exchange actually happens, out at the lung\'s periphery. Adenocarcinoma, the most common lung cancer subtype, most commonly arises here — directly paralleling how ovarian cancer begins in the ovary\'s surface epithelium and breast cancer in the breast\'s ducts.' },
-    { key:'pleura', label:'Pleura', pos:[-0.1059,0.0480,0.0824],
+    { key:'pleura', label:'Pleura', pos:[-0.0890,-0.0634,0.0453],
       text:'The thin double membrane covering the lung\'s outer surface and lining the chest cavity, letting the lung expand and contract smoothly against the chest wall with each breath.' },
-    { key:'hilum', label:'Hilum', pos:[-0.0229,-0.0002,-0.0668],
+    { key:'hilum', label:'Hilum', pos:[-0.0362,-0.0215,0.0134],
       text:'The root of the lung, on its medial surface — where the bronchus, pulmonary vessels, bronchial vessels, and nerves all enter and exit.' },
   ],
 };
