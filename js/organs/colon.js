@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
+import { cssVar } from '../viewer.js';
 
 // active:true. Alias collision check (same convention as every prior organ): no other organ's
 // aliases use "colon", "colorectal", "bowel", "rectum", "sigmoid", or "crc". The bare word
@@ -29,45 +29,61 @@ export const cancerEntries = [
   { id:'clymph', name:'Lymphoma',                  share:'part of the remaining &lt;10% of colonic malignancies — no individual share figure claimed here', active:false, organKey:'colon' },
 ];
 
-// Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
-// (account "HRA"), entry 3DPX-021005 (Large Intestine, MALE) — CC BY 4.0, verified directly on
-// the entry page. **Deliberate departure from the female-variant convention** the five shared
-// HRA organs before this one all follow, made on provenance grounds and recorded here and in
-// CLAUDE.md rather than slipped in: the FEMALE large-intestine model's own documentation says
-// verbatim it is "not based on direct imaging data, as no suitable source was available at the
-// time," while the male model is "primarily based on colonoscopy-derived data provided by Arie
-// Kaufman (Stony Brook University)," aligned to the Visible Human Male. A real-imaging male
-// colon beats a synthetic female one for an atlas whose whole point is real anatomy — same
-// used-generically reasoning as the Kidneys' left-kidney-only model. Used for both sexes'
-// navigation; colorectal cancer is not sex-specific.
-// UNLIKE the five original HRA organs, this is the ORIGINAL HRA-authored GLB served by
-// api/files/ (not an STL run through Blender) — byte-identical to upstream (sha256 84a66fb4…,
-// 34,178 triangles), preserving ten NAMED sub-meshes (caecum, ileocecal valve, vermiform
-// appendix, ascending colon, hepatic flexure, transverse colon, splenic flexure, descending
-// colon, sigmoid colon, rectum) the STL route would have flattened. Authored in HRA body-space
-// (bbox centered ~19cm above the body origin) — recentered at load, see below.
+// REPLACED (2026-09-02, colon-swap pass): assets/colon.glb is no longer the HRA large-intestine
+// model. The HRA asset — colonoscopy-derived, byte-identical to upstream, with ten named
+// sub-meshes — modeled the colon's PATH and caliber but not its two most identifying external
+// features: a landmark-fidelity audit found haustra only FAINT (soft bulges, not crisp pouches)
+// and taeniae coli fully ABSENT, while this file's own Teniae hotspot text and viewerAria were
+// describing a "segmented, haustrated" silhouette the mesh barely showed. The source was
+// confirmed exhausted before replacing it: no decimation ever occurred (the shipped file WAS
+// upstream), and HRA's newer v1.3 hash-matches v1.2's vertex data exactly (position-data md5
+// 8b4d2481..., both) — a source gap, not a processing loss. Full diagnostic in the
+// landmark-audit packet and CLAUDE.md's colon-swap entry.
+// CURRENT SOURCE: "Small and large intestine" by Sketchfab artist antonia.sundberg — license
+// verified TWICE (the file's own embedded asset.extras: "CC-BY-4.0"; the live model page:
+// "CC Attribution / Creative Commons Attribution"), made for a scientific-illustration course
+// at Malardalen University. Only the two Tjocktarm (large intestine) meshes are used — the
+// Tunntarm (small intestine) mesh is dropped entirely, same out-of-scope reasoning as the lungs
+// swap dropping larynx/thyroid. The two Tjocktarm meshes join+weld into exactly ONE connected
+// component (109,400 raw -> 102,178 welded verts; 7,222 UV-seam duplicates — the same false-
+// split pattern as the lungs' 16/7), i.e. one continuous cecum-to-rectum tube with REAL
+// geometric haustra, a taenia band, the appendix, and the rectum. Build: Blender headless —
+// isolate, join, weld, STRIP the source's FBX empty hierarchy (its ancestor nodes carry 0.1 and
+// 0.037 scales that transform_apply does NOT bake; leaving them made the mesh render at ~1.7mm,
+// caught by an in-app probe showing the camera inside the mesh's bounding sphere), center to
+// origin, scale 0.000968 calibrating the frame to the old real-scale asset's 0.45m height —
+// resulting real-world dims 0.396 x 0.45 x 0.195m, verified by walking the EXPORTED file's own
+// node hierarchy (accessor min/max alone validated vertex space while world space was
+// microscopic — the second real bug this build caught). Orientation verified by x-sign
+// color-coded flat renders, not assumed from camera algebra: cecum+appendix at x<0 (patient's
+// right, viewer-left at the default camera), descending at x>0, transverse top, rectum
+// bottom-center reaching lowest — matching the viewerAria below exactly.
 export function buildColonMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/colon.glb', (gltf)=>{
-      // MeshPhysicalMaterial + specularIntensity — same clip-fix-pass material recipe as every
-      // organ (see liver.js for the full mechanism note), roughness/specularIntensity both
-      // revised by the material/lighting realism pass (roughness x0.82, specularIntensity
-      // 0.15->0.25, per-vertex tissue mottle amplitude 0.28 — full recipe, clip-safety reasoning,
-      // and the transmission investigation's null result are in liver.js's canonical comment and
-      // this pass's dated CLAUDE.md entry). Color: pale pink serosal surface per the gross-
-      // anatomy description cited in CLAUDE.md's organ entry (verified before picking, same
-      // real-tissue rule as every prior organ) — lighter and pinker than the stomach's tone so
-      // the three new digestive organs don't read as one material; color itself untouched by
-      // this pass. Seed 9.1 (organ #7 in ORGAN_MODULES' order x1.3).
-      const mat = new THREE.MeshPhysicalMaterial({ color:0xc99f92, roughness:0.49, metalness:0.0, specularIntensity:0.25, vertexColors:true });
-      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 9.1); } });
-      // Recenter HRA body-space → origin so OrbitControls (origin-targeted) rotate the organ
-      // about its own center. Hotspot pos values below are in this recentered frame. NOTE for
-      // the mottle call above: this only recenters the gltf.scene NODE's position, not the
-      // underlying BufferGeometry's own vertex data — applyTissueMottleVertexColors is written
-      // to recompute its own per-sub-mesh bounding box specifically because of this (see its
-      // comment in viewer.js), so it stays correct regardless of which happens first.
+      // NATIVE BAKED MATERIALS, not the shared organ recipe — decided by live A/B, not by lungs
+      // analogy (both paths were rendered and compared per the swap spec): the source carries a
+      // real 2048px NORMAL MAP on a second UV set — per-texel surface detail of the same class
+      // that justified native materials for Lungs — and the recipe path would discard it. The
+      // recipe variant rendered acceptably (haustra/taeniae are geometry and survive either
+      // way) but visibly flatter in the haustral creases. Costs, disclosed: the base-color tone
+      // is artist-authored, NOT the previously verified 0xc99f92 serosal pink — recorded as its
+      // own dated CLAUDE.md data rule (the lungs rule-25 pattern), see there.
+      // COLORSPACE: GLTFLoader's default sRGB tag gamma-crushes under this app's no-reencode
+      // pipeline (mesh mean RGB (101,36,25) vs (143,83,63) with the tag removed — the identical
+      // failure mode, numbers, and fix as the lungs swap; see lungs.js's fuller comment). The
+      // normal map is untouched (loaders leave non-color maps linear already).
+      gltf.scene.traverse(o=>{
+        if(o.isMesh && o.material && o.material.map){
+          o.material.map.colorSpace = THREE.NoColorSpace;
+          o.material.map.needsUpdate = true;
+        }
+      });
+      // Centering is BAKED into the exported asset (origin-centered, single root node, no
+      // transforms — verified by walking the exported file's own hierarchy), so the old HRA
+      // node-recenter is no longer needed; kept as a guard (it computes ~zero and subtracts it)
+      // so a future asset that ISN'T pre-centered still behaves.
       const box = new THREE.Box3().setFromObject(gltf.scene);
       const center = box.getCenter(new THREE.Vector3());
       gltf.scene.position.sub(center);
@@ -102,7 +118,7 @@ export const organDetail = {
   // the two measure different things and read as a contradiction side by side.
   desc:'The large intestine frames the abdomen like a question mark: from the cecum in the lower right — where the ileocecal valve admits digested material from the small intestine and the vermiform appendix hangs below — it ascends the right side, crosses under the liver and stomach as the transverse colon, descends the left side, and curls through the sigmoid colon into the rectum. About 5 feet (~1.5 m) long, it converts the 1–2 liters of liquid chyme it receives each day into 200–250 mL of semisolid feces, absorbing water and electrolytes as colonic bacteria produce vitamins. Its arterial supply changes hands near the splenic flexure — the superior mesenteric artery feeds everything proximal, the inferior mesenteric artery everything distal — marking the embryological boundary between midgut and hindgut.',
   buildMesh: buildColonMesh,
-  // Real-world-meter GLB (bbox ~26 x 45 x 22cm, the tallest organ model in the atlas) —
+  // Real-world-meter GLB (bbox ~40 x 45 x 20cm, calibrated to the prior asset's 0.45m frame height) —
   // minRadius/maxRadius rescaled to real meters, same reasoning as every real-mesh organ.
   viewer:{ theta:0.5, phi:1.15, radius:0.9, minRadius:0.22, maxRadius:2.2, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of the large intestine, a segmented, haustrated tube '
@@ -110,20 +126,21 @@ export const organDetail = {
     + 'top, descending colon at the right, sigmoid colon and rectum at the bottom center — with '
     + 'four glowing teal points marking the structures listed after it. Drag to rotate, scroll '
     + 'to zoom.',
-  // pos: literal anchor points (meters, recentered mesh space) — derived directly from the
-  // GLB's own NAMED sub-mesh vertices (each the anterior-most vertex near its target region;
-  // see pancreas.js for why this per-structure derivation is newly possible). One point per
-  // quadrant of the colonic frame so all four are visible at the default camera angle —
-  // verified by screenshot, per the Kidneys lesson.
+  // pos: literal anchor points (meters, origin-centered mesh space) — the new asset has no
+  // named sub-meshes (one welded tube), so each anchor is the anterior-most REAL VERTEX of a
+  // geometrically-selected band of its target segment (sigmoid / ascending / transverse /
+  // descending), segment identity verified by the x-sign color-coded orientation renders
+  // rather than assumed. One point per quadrant of the colonic frame so all four are visible
+  // at the default camera angle — verified live, per the Kidneys lesson.
   hotspots:[
     // The "arises here" point every organ leads with — anchored on the sigmoid colon.
-    { key:'mucosa', label:'Mucosa & glandular epithelium', pos:[-0.0014,-0.0962,0.0609],
+    { key:'mucosa', label:'Mucosa & glandular epithelium', pos:[0.0469,-0.1202,0.0353],
       text:'The colon\'s inner lining: a single layer of columnar absorptive cells and mucus-secreting goblet cells, with no villi. Colorectal adenocarcinoma — the predominant colonic malignancy — originates from the glandular epithelium of this mucosa, directly paralleling how ovarian cancer begins in the surface epithelium, lung adenocarcinoma in the alveoli, and pancreatic cancer in the ductal epithelium. The vast majority (~85%) follow the chromosomal-instability pathway, initiated by truncating APC mutations.' },
-    { key:'crypts', label:'Crypts of Lieberkühn', pos:[0.0912,0.0328,0.0128],
+    { key:'crypts', label:'Crypts of Lieberkühn', pos:[-0.1313,-0.0497,0.0501],
       text:'The adult colon contains approximately 15 million of these straight tubular glands, each an involution of the epithelium about 2,000 cells strong, sheltering the stem-cell compartment at its base. That protected niche is exactly where the adenoma story begins: an APC-mutant stem cell at a crypt base can found the clone that becomes a polyp — and, over years, a cancer.' },
-    { key:'teniae', label:'Teniae coli & haustra', pos:[0.0050,0.1113,0.1122],
+    { key:'teniae', label:'Teniae coli & haustra', pos:[0.0275,0.1621,0.0971],
       text:'The teniae coli are three longitudinal bands of smooth muscle running along the colon\'s outer wall; their contraction, together with the circular muscle layer, draws the colon into the pouch-like sacculations called haustra — the segmented, caterpillar-like silhouette visible on this model, and the feature that most distinguishes the large intestine\'s outside from the small intestine\'s smooth surface.' },
-    { key:'muscularis', label:'Muscularis propria', pos:[-0.0962,0.0453,0.0526],
+    { key:'muscularis', label:'Muscularis propria', pos:[0.1308,-0.0498,0.0304],
       text:'The colon wall\'s muscular engine — an inner circular and an outer longitudinal smooth-muscle layer. In cancer staging this layer is the yardstick of invasion depth: a tumor invading into it is T2, and one breaking through it into the surrounding pericolorectal tissue is T3 — the difference between a cancer still contained by the bowel wall and one that has escaped it.' },
   ],
 };

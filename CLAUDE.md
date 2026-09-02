@@ -2094,6 +2094,23 @@ screen pair per organ:
     accepting it as if it had been verified; (c) this rule is the
     discoverable, standing record of the limitation — the narrative
     lungs-swap entry cross-references it, and neither supersedes the other.
+26. **Colon texture tone is artist-authored, NOT independently verified — the
+    second organ under the rule-25 pattern (2026-09-02).** The colon mesh swap
+    (dated entry in Architecture notes) replaced the HRA asset — whose flat
+    material used the verified pale-pink serosal hex `0xc99f92` — with the
+    antonia.sundberg asset's native baked textures, kept because the source
+    carries a real 2048px normal map (per-texel surface detail, the same
+    justification class as Lungs) and because the live A/B showed visibly
+    richer haustral-crease shading than the recipe path. The baked tone (a
+    salmon-pink, mesh mean RGB (143,83,63) under the app's lighting after the
+    colorspace fix) traces to the artist's palette, not to a gross-anatomy
+    color source. Same standing implications as rule 25: never cite the
+    colon's on-screen color as verified; the two closure paths (recolor the
+    base-color map toward the verified reference, or source-verify the
+    current tone) remain open; the narrative colon-swap entry
+    cross-references this rule and neither supersedes the other. If a THIRD
+    organ ever lands here, consider folding rules 25/26 into one standing
+    "native-texture tone" rule with a per-organ list.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -2913,6 +2930,10 @@ screen pair per organ:
 
 - **Organ mesh source — Colon/Pancreas (2026-08-28): a BETTER pipeline than the
   five originals, plus a deliberate provenance-over-convention call.**
+  **SUPERSEDED FOR COLON (2026-09-02): `assets/colon.glb` is no longer this HRA
+  asset — see the dated colon-swap entry below (haustra faint / taeniae absent,
+  source confirmed exhausted). The pipeline notes here remain accurate for
+  Pancreas, and as the historical record of how the colon shipped 08-28..09-02.**
   `assets/colon.glb` (3DPX-021005, Large Intestine, MALE) and
   `assets/pancreas.glb` (3DPX-020983, Pancreas, Female) are NIH 3D HRA entries
   (CC BY 4.0, verified per entry page), but unlike Lungs/Kidneys/Liver/Brain/
@@ -3526,6 +3547,64 @@ screen pair per organ:
     close-zoom, and rotated fissure-silhouette screenshots (the fissures
     being visible is the point of the whole swap) in
     `~/Downloads/cancer-atlas-lungs-integration-review/`.
+
+- **Colon mesh swap — "Small and large intestine" (antonia.sundberg, Sketchfab)
+  replaces the HRA large-intestine model (2026-09-02; developed directly after a
+  landmark-fidelity audit of the five unaudited real-scan organs — Brain/Kidneys/
+  Liver/Pancreas passed, Colon was the one failure):**
+  - **Why:** the HRA colon models the tube's path and caliber but its haustra are
+    only FAINT (soft bulges, not crisp pouches) and its taeniae coli are ABSENT —
+    while colon.js's own Teniae hotspot text and viewerAria described a
+    "segmented, haustrated" silhouette. (The landmark-audit packet's own claim
+    that "no hotspot references taeniae" was WRONG — corrected there; the gap was
+    a real content mismatch, not just visual fidelity.) Source confirmed
+    exhausted before replacing: never decimated (shipped file WAS upstream), and
+    HRA's newer large-intestine v1.3 hash-matches v1.2's vertex data exactly
+    (position md5 8b4d2481..., both) despite a changed filename prefix.
+  - **Source/license, double-checked:** "Small and large intestine" by Sketchfab
+    artist antonia.sundberg — the file's own embedded asset.extras says
+    "CC-BY-4.0" AND the live model page says "CC Attribution / Creative Commons
+    Attribution" (both read directly). Made for a scientific-illustration course
+    at Malardalen University. Disclaimer updated: colon credit swapped to
+    sundberg with model URL; Pancreas keeps its HRA/DOI credit (the old combined
+    colon+pancreas sentence was split).
+  - **Build (Blender headless):** only the two Tjocktarm (large-intestine) meshes
+    used; Tunntarm (small intestine) dropped (lungs larynx/thyroid reasoning).
+    The two Tjocktarm meshes join+weld to exactly ONE connected component
+    (109,400 -> 102,178 verts; 7,222 UV-seam duplicates — the lungs 16/7 false-
+    split pattern again), i.e. one continuous cecum-to-rectum tube with real
+    geometric haustra, a modeled taenia band, appendix and rectum. Centered to
+    origin, scaled 0.000968 to calibrate frame height to the old real-scale
+    asset's 0.45m; final dims 0.396 x 0.45 x 0.195m.
+  - **TWO REAL BUGS caught during the build, both worth the record:** (1) the
+    source's FBX empty hierarchy carries ancestor scales (0.1 and 0.037) that
+    transform_apply does NOT bake — the first export rendered at ~1.7mm world
+    size, caught by an in-app probe showing camDist(0.22) INSIDE the mesh's
+    bounding sphere; fix = unparent + delete empties before export. (2) my own
+    "authoritative" GLB verification parsed accessor min/max (vertex space)
+    without walking node transforms — it validated a microscopic asset. The
+    verifier now multiplies through the exported hierarchy; standing lesson:
+    accessor bounds are NOT world bounds.
+  - **Materials — decided by live A/B, not lungs analogy:** native baked
+    textures kept BECAUSE the source carries a real 2048px normal map on a
+    second UV set (per-texel detail, the lungs justification class) and the
+    recipe path rendered visibly flatter in the haustral creases; the recipe
+    variant was actually rendered and compared, not assumed worse. Same
+    sRGB-tag gamma-crush as lungs, same fix (map.colorSpace = NoColorSpace;
+    mesh mean RGB (101,36,25) -> (143,83,63)). Tone is artist-authored, NOT the
+    verified 0xc99f92 serosal pink — data rule 26 is the standing record.
+  - **Orientation verified by x-sign color-coded flat renders, not camera
+    algebra:** cecum+appendix at x<0 = patient's right = viewer-left at the
+    default camera; descending x>0; transverse top; rectum bottom-center —
+    matching the existing viewerAria exactly (which needed no change). All four
+    hotspots re-anchored to real vertices of geometrically-selected segment
+    bands (sigmoid / ascending / transverse / descending), verified live at the
+    default camera; hotspot TEXT untouched (all verified content).
+  - **Size:** 687KB -> 9.17MB (geometry dominates: 102k welded verts + normals
+    + 2 UV sets; textures only ~2.5MB of it). Under the 10MB lungs-precedent
+    bar but a 13x jump, flagged at review. Verified: 0.000%% blown-white across
+    16 deterministic angles; full regression 146 checks / 2 pre-existing
+    documented failures; thumbnail re-rendered with the old verified hex.
 
 ## Known limitations / tech debt
 - The male/female bodies are real static meshes now (Blender's "Human Base
