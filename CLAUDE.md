@@ -2852,6 +2852,32 @@ screen pair per organ:
   introspection that the *real* mesh was loaded, not just a plausible-looking
   render) before any of it could be trusted. The Lungs default view turned
   out to need no change; Kidneys' did, for the reason described above.
+- **Regression harness — `.claude/regress.js` (moved into the repo during the
+  Thyroid pass, 2026-09-02; previously lived only at
+  /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was
+  wiped).** Usage: `node .claude/regress.js [outDir] [port]` against the
+  nocache dev server (port also settable via `ATLAS_PORT`; puppeteer-core
+  resolved normally or via `PUPPETEER_CORE`, Chrome via `CHROME_PATH`).
+  The move exists because of a closed defect worth remembering: the suite's
+  per-organ blown-white checks had passed VACUOUSLY since before the Lungs
+  pass — readPixels in a separate evaluate reads a cleared buffer, so
+  meshPx was always 0, and pct '0' passes the <1.0% bar. The gap the Lungs
+  entry recorded ("that harness never got the preserveDrawingBuffer shim,
+  so all 13 of its blown-white checks pass VACUOUSLY on meshPx=0") was
+  never fixed in the suite file itself — the shim lived only in scratch
+  scripts (bladder_tune.js, thy_shots.js), and every pass since re-derived
+  real numbers independently while the standing checks stayed meaningless.
+  Fixed in this file: the shim, PLUS a guard requiring meshPx > 0 so a
+  zeroed buffer FAILS loudly instead of passing as 0% if this ever breaks
+  again. The fixed suite reproduces the Lungs-era one-off almost exactly
+  (lungs 2,452 mesh px vs recorded 2,447; ovary halo 0.34% vs 0.36%;
+  testis 1.19% vs 1.20%) — and therefore surfaces testis's documented
+  angle-dependent ~1.2% blip as a REAL failure. Honest baseline is now
+  **161 checks / 3 failures** (GBM + acinar label overlaps + testis
+  blown-white); testis disposition (fix the material, adjust the bar, or
+  keep as documented baseline flag #3) is an open decision. Historical
+  Lungs/Colon blown-white claims stand — both had dedicated real-pixel
+  measurements outside the suite.
 - **Organ mesh source — Breast, added in a later pass (2026-08-27), source
   discipline different from the prior five in a real way, not a footnote:**
   `assets/breast.glb` is NIH 3D's "Human Reference Atlas 3D Reference Object
