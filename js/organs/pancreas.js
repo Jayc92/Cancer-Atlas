@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { cssVar } from '../viewer.js';
+import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true. Alias collision check (same convention as every prior organ): no other organ's
 // aliases or share text uses "pancreas", "pancreatic", or "pdac" anywhere — and the bare word
@@ -48,17 +48,26 @@ export function buildPancreasMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/pancreas.glb', (gltf)=>{
-      // MeshPhysicalMaterial + specularIntensity 0.15 — same clip-fix-pass material recipe
-      // as every organ (see liver.js for the full mechanism note). Color: the pancreas is
-      // the palest organ in this atlas by design, not by accident — gross-anatomy sources
-      // describe a pale, lobulated, tan-to-yellowish gland (citation in CLAUDE.md's organ
-      // entry; verified before picking, same real-tissue rule as every prior organ), a real
-      // visual contrast with the liver's dark red-brown two rows up the sidebar.
-      const mat = new THREE.MeshPhysicalMaterial({ color:0xd8b98e, roughness:0.62, metalness:0.0, specularIntensity:0.15 });
-      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      // MeshPhysicalMaterial + specularIntensity — same clip-fix-pass material recipe as
+      // every organ (see liver.js for the full mechanism note), roughness/specularIntensity
+      // both revised by the material/lighting realism pass (roughness x0.82, specularIntensity
+      // 0.15->0.25, per-vertex tissue mottle amplitude 0.28 — full recipe, clip-safety
+      // reasoning, and the transmission investigation's null result are in liver.js's canonical
+      // comment and this pass's dated CLAUDE.md entry). Color: the pancreas is the palest organ
+      // in this atlas by design, not by accident — gross-anatomy sources describe a pale,
+      // lobulated, tan-to-yellowish gland (citation in CLAUDE.md's organ entry; verified before
+      // picking, same real-tissue rule as every prior organ), a real visual contrast with the
+      // liver's dark red-brown two rows up the sidebar; color itself untouched by this pass.
+      // Seed 10.4 (organ #8 in ORGAN_MODULES' order x1.3).
+      const mat = new THREE.MeshPhysicalMaterial({ color:0xd8b98e, roughness:0.51, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 10.4); } });
       // Recenter: HRA body-space → origin, so the origin-targeted OrbitControls rotate the
       // gland about its own center. Hotspot pos values below are in this recentered frame
       // (they were derived from the GLB's own vertices with the same bbox-center subtraction).
+      // NOTE for the mottle call above: this only recenters the gltf.scene NODE's position, not
+      // the underlying BufferGeometry's own vertex data — applyTissueMottleVertexColors
+      // recomputes its own per-sub-mesh bounding box for exactly this reason (see its comment in
+      // viewer.js), so it stays correct regardless of which happens first.
       const box = new THREE.Box3().setFromObject(gltf.scene);
       const center = box.getCenter(new THREE.Vector3());
       gltf.scene.position.sub(center);

@@ -151,6 +151,68 @@ export function applyMottleVertexColors(geometry, colorHex, seed){
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 }
 
+// ORGAN REALISM PASS (dated entry in CLAUDE.md carries the full recipe/measurements) — ports
+// the PATCHY-NOISE TECHNIQUE above, not the function itself, onto the nine real-scan organ
+// meshes. Two changes from applyMottleVertexColors, both deliberate:
+//
+// 1. MULTIPLICATIVE DARKENING MASK, not a lerp toward a second stored color. Vertex colors and
+//    material.color multiply in this renderer's fragment shader (`diffuseColor.rgb *= vColor`,
+//    same chunk MeshStandardMaterial and MeshPhysicalMaterial both use) — which is exactly why
+//    the tumor-blob material above never sets its own `color` at all (default white, so
+//    material.color * vColor === vColor, the vertex color IS the final color). Every organ
+//    material here keeps its own verified, cited real-tissue `color` hex, so baking that same
+//    hex into the vertex-color attribute would make the shader multiply the color by itself
+//    (0.55 * 0.55, not 0.55) — silently darkening the ENTIRE mesh, not just the mottled patches.
+//    Confirmed by reasoning through the shader chunk before writing this, not discovered by a
+//    bad screenshot. The fix: this function's vertex-color attribute holds a plain (m,m,m)
+//    gray multiplier, m<=1 always, applied on TOP of the organ's own untouched material.color —
+//    m=1 (no change) across most of the surface, dipping toward `1-amplitude` inside patches.
+//    This is also what makes the port clip-safe by construction: a multiplier that can only
+//    ever be <=1 can only ever REDUCE a vertex's rendered brightness relative to the unmottled
+//    base, never push it closer to this pipeline's hard 1.0 clip ceiling — worth stating
+//    explicitly given the clip-fix pass this same file documents above. Scaling every channel by
+//    the same factor also leaves hue and HSV saturation exactly unchanged (only value drops),
+//    which is why this reads as "less blood flow / a shadowed fold," not a color-family shift.
+//
+// 2. BOUNDING-BOX-RECENTERED direction, not raw-position-normalized. applyMottleVertexColors'
+//    `nx=x/len` treats the geometry's raw position attribute as already centered at its own
+//    local origin — true for the tumor blobs (a fresh IcosahedronGeometry, always centered at
+//    (0,0,0)) but NOT guaranteed for an imported GLB: colon.js and pancreas.js recenter the
+//    *node* (`gltf.scene.position.sub(center)`) after load, which leaves the underlying
+//    BufferGeometry's own position attribute exactly as authored — still ~19-26cm off-origin in
+//    HRA body-space for those two. Feeding that raw offset into the same sin/cos basis biases
+//    almost every vertex into a narrow slice of the curve instead of spreading patches across
+//    the surface. Recomputing the direction from the geometry's OWN bounding box (per-axis,
+//    centered and half-extent-normalized to roughly [-1,1]) fixes this for every organ
+//    regardless of where its vertex data sits, at the cost of one extra `computeBoundingBox()`
+//    per sub-mesh — negligible next to this app's own mesh-resolution budget (see the
+//    mesh-geometry-resolution entry below: every organ mesh benchmarked under 0.08ms/frame at
+//    far higher vertex counts than this adds).
+export function applyTissueMottleVertexColors(geometry, seed, opts){
+  opts = opts || {};
+  const amplitude = opts.amplitude != null ? opts.amplitude : 0.28;
+  const freq = opts.freq || 13;
+  geometry.computeBoundingBox();
+  const bb = geometry.boundingBox;
+  const center = bb.getCenter(new THREE.Vector3());
+  const size = bb.getSize(new THREE.Vector3());
+  // Floored the same defensive way organicDisplace floors a zero-length direction vector
+  // (`|| 1`) — guards a flat/degenerate sub-mesh axis from dividing toward infinity; none of
+  // the nine organs' real sub-meshes are actually this thin, but a shared helper shouldn't
+  // assume that of every future caller.
+  const halfX = Math.max(size.x/2, 1e-6), halfY = Math.max(size.y/2, 1e-6), halfZ = Math.max(size.z/2, 1e-6);
+  const pos = geometry.attributes.position;
+  const colors = new Float32Array(pos.count*3);
+  for(let i=0;i<pos.count;i++){
+    const nx=(pos.getX(i)-center.x)/halfX, ny=(pos.getY(i)-center.y)/halfY, nz=(pos.getZ(i)-center.z)/halfZ;
+    const t = Math.sin(nx*freq+seed*1.7) * Math.cos(ny*(freq+1.2)+seed*2.3) * Math.sin(nz*(freq-1.4)+seed*3.1);
+    const patch = Math.max(0, (t-0.05)/0.95);
+    const m = 1 - patch*amplitude;
+    colors[i*3]=m; colors[i*3+1]=m; colors[i*3+2]=m;
+  }
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+}
+
 export function makeViewer(container, opts){
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);

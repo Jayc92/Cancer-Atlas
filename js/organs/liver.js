@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { cssVar } from '../viewer.js';
+import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true, plus 'hcc' alias — checked for collision first: no other organ's aliases or
 // cancer share text uses "hcc" or "hepatocellular" anywhere else in this file.
@@ -27,20 +27,59 @@ export const cancerEntries = [
 // pigment itself. Liver reads darker than kidney in real gross specimens despite a similar hue
 // family, so 0x6b2e22 sits darker than kidney's 0x8c3a30 above, not just a copy with a
 // different label.
+//
+// MATERIAL/LIGHTING REALISM PASS (dated CLAUDE.md entry carries the full measured numbers for
+// all nine real-scan organs; this comment is the canonical mechanism note every other organ's
+// own file points back to, the same role this file's clip-fix comment below already plays):
+// three shared-parameter changes, applied uniformly across brain/lungs/breast/liver/kidneys/
+// prostate/colon/pancreas/bladder — only the PARAMETERS are shared; each organ keeps its own
+// verified color and its own roughness/specularIntensity starting point, exactly like
+// specularIntensity:0.15 was uniform but color/roughness were not in the clip-fix pass.
+// 1. ROUGHNESS x0.82 (glossier). Applied as a multiplier, not a flat subtraction, so every
+//    organ's own relative ordering (liver glossiest, brain mattest) is preserved rather than
+//    compressed toward one value. See the CLAUDE.md entry for the actual measured blown-white%
+//    this candidate produced on all nine organs before it was accepted as final.
+// 2. specularIntensity 0.15 -> 0.25 (stronger, tighter highlights). This is the riskier half of
+//    the two, and the one the task this pass exists to do warned about directly: lower
+//    roughness concentrates the same specular energy into a smaller, brighter peak rather than
+//    spreading it out, so this and (1) push toward the SAME clip ceiling the original clip-fix
+//    pass tuned this pipeline to sit just under — verified iteratively (change, screenshot,
+//    measure blown-white%, adjust), not tuned once by eye and assumed safe.
+// 3. Per-vertex tissue mottle via applyTissueMottleVertexColors (js/viewer.js) — ported from
+//    that file's applyMottleVertexColors (used today for the tumor-site blobs) but reworked into
+//    a pure darkening MULTIPLIER rather than a lerp toward a second stored color, specifically
+//    so it can never raise a pixel toward clip; see that function's own comment for the full
+//    reasoning, including why a real GLB's off-origin vertex data needed a bounding-box
+//    recentering step the tumor blobs' own centered geometry never needed. amplitude:0.28 and
+//    freq:13 (the technique's default) are shared across all nine; only `seed` differs per
+//    organ, so no two organs' patch phase repeats identically — this file's seed is 5.2 (organ
+//    #4 in ORGAN_MODULES' declared order x1.3, the same arbitrary-but-deterministic convention
+//    every other organ's own seed comment below follows).
+// TRANSMISSION — investigated directly on this pass (tested live on the Kidneys viewer, not
+// assumed): js/viewer.js's makeViewer sets neither `scene.environment` nor `scene.background`,
+// and the renderer is constructed `alpha:true` with nothing behind it in the WebGL scene itself
+// (the visible gradient behind the canvas is a CSS background on the DOM container, invisible to
+// three.js's own render). MeshPhysicalMaterial's `transmission` had zero measurable visual
+// effect at transmission:0.15/thickness:0.05/ior:1.4 AND at a deliberately extreme
+// transmission:0.7/thickness:0.3/ior:1.4 — screenshots at both settings were pixel-for-pixel
+// indistinguishable by eye from the untouched baseline. Not shipped on any of the nine organs;
+// shipping a parameter with a measured null effect would misrepresent this pass's own recipe as
+// doing more than it does.
 export function buildLiverMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/liver.glb', (gltf)=>{
-      // MeshPhysicalMaterial + specularIntensity 0.15, NOT MeshStandardMaterial (clip-fix
-      // pass): this ports the missing half of the approved material verification — the
-      // Blender renders the tissue colors were verified and approved on had Specular IOR
-      // Level 0.15 baked in, but MeshStandardMaterial has no specular control at all, so the
-      // live app kept full-strength dielectric specular. Under the legacy hard-clip pipeline
-      // that blew grazing-angle fold/fissure walls to flat white (up to 26% of the lungs'
-      // on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
-      // js/viewer.js's warm-lighting comment. Color/roughness values unchanged.
-      const mat = new THREE.MeshPhysicalMaterial({ color:0x6b2e22, roughness:0.5, metalness:0.0, specularIntensity:0.15 });
-      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      // MeshPhysicalMaterial + specularIntensity (clip-fix pass, now 0.25 — see the realism-pass
+      // comment above), NOT MeshStandardMaterial: this ports the missing half of the approved
+      // material verification — the Blender renders the tissue colors were verified and
+      // approved on had Specular IOR Level baked in, but MeshStandardMaterial has no specular
+      // control at all, so the live app kept full-strength dielectric specular. Under the legacy
+      // hard-clip pipeline that blew grazing-angle fold/fissure walls to flat white (up to 26% of
+      // the lungs' on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
+      // js/viewer.js's warm-lighting comment. Color unchanged; roughness and specularIntensity
+      // both revised by the realism pass above.
+      const mat = new THREE.MeshPhysicalMaterial({ color:0x6b2e22, roughness:0.41, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 5.2); } });
       resolve(gltf.scene);
     }, undefined, reject);
   });

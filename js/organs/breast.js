@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { cssVar } from '../viewer.js';
+import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true, plus 'triple negative'/'tnbc' aliases — searching either finds Breast, since
 // search resolves to an organ (not a cancer directly); the cancer itself is one click further,
@@ -39,20 +39,34 @@ export const cancerEntries = [
 // not a uniform peach. 0xe3d3a0 shifts the base color toward that real pale yellow-cream
 // direction while staying light enough to read as the fattier tissue that dominates the
 // organ's bulk, and richened slightly so it doesn't wash toward white under the warm key light.
+// MATERIAL/LIGHTING REALISM PASS — shared recipe (roughness x0.82, specularIntensity 0.15->0.25,
+// per-vertex tissue mottle at amplitude 0.28) applied uniformly across all nine real-scan
+// organs; full mechanism, clip-safety reasoning, and the transmission investigation's null
+// result are in liver.js's own comment (the canonical write-up) and this pass's dated CLAUDE.md
+// entry. Color unchanged (0xe3d3a0 stays the verified pale yellow-cream tone) — worth flagging
+// that this is the palest verified albedo in the atlas (R 0.89) and therefore the tightest
+// clip-headroom case of all nine organs; checked with that in mind, not by analogy alone. Seed
+// 3.9 (organ #3 in ORGAN_MODULES' order x1.3). This mesh's 52 separate sub-components (nipple,
+// areola, lobes, ducts, ligaments, interlobar fat — see the sourcing comment above) each get
+// their own applyTissueMottleVertexColors call via the same traverse loop that assigns the
+// shared material, each normalized against its OWN sub-mesh bounding box rather than one global
+// box — see that function's own comment in viewer.js for why a per-sub-mesh box is what makes
+// the recentering step correct here at all.
 export function buildBreastMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/breast.glb', (gltf)=>{
-      // MeshPhysicalMaterial + specularIntensity 0.15, NOT MeshStandardMaterial (clip-fix
-      // pass): this ports the missing half of the approved material verification — the
-      // Blender renders the tissue colors were verified and approved on had Specular IOR
-      // Level 0.15 baked in, but MeshStandardMaterial has no specular control at all, so the
-      // live app kept full-strength dielectric specular. Under the legacy hard-clip pipeline
-      // that blew grazing-angle fold/fissure walls to flat white (up to 26% of the lungs'
-      // on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
-      // js/viewer.js's warm-lighting comment. Color/roughness values unchanged.
-      const mat = new THREE.MeshPhysicalMaterial({ color:0xe3d3a0, roughness:0.6, metalness:0.0, specularIntensity:0.15 });
-      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      // MeshPhysicalMaterial + specularIntensity (clip-fix pass, now 0.25 — realism-pass
+      // comment above), NOT MeshStandardMaterial: this ports the missing half of the approved
+      // material verification — the Blender renders the tissue colors were verified and
+      // approved on had Specular IOR Level baked in, but MeshStandardMaterial has no specular
+      // control at all, so the live app kept full-strength dielectric specular. Under the legacy
+      // hard-clip pipeline that blew grazing-angle fold/fissure walls to flat white (up to 26% of
+      // the lungs' on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
+      // js/viewer.js's warm-lighting comment. Color unchanged; roughness and specularIntensity
+      // both revised by the realism pass above.
+      const mat = new THREE.MeshPhysicalMaterial({ color:0xe3d3a0, roughness:0.49, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 3.9); } });
       resolve(gltf.scene);
     }, undefined, reject);
   });

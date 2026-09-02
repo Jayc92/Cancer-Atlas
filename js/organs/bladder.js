@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { cssVar } from '../viewer.js';
+import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true. Alias collision check against every existing organ's aliases, including this
 // same pass's new Testis entries: "bladder"/"urinary bladder"/"urothelial"/"urothelial
@@ -63,12 +63,19 @@ export const cancerEntries = [
 // no fetched source gave a gross color for bladder mucosa or wall specifically (same gap Testis
 // hit for testicular parenchyma). 0xd9a8a0 is a plain pale pink-tan, the commonly-illustrated
 // tone for bladder mucosa, chosen the same honest way as Testis's color and Skin's hypodermis.
+// MATERIAL/LIGHTING REALISM PASS — shared recipe (roughness x0.82, specularIntensity 0.15->0.25,
+// per-vertex tissue mottle at amplitude 0.28) applied uniformly across all nine real-scan
+// organs; full mechanism, clip-safety reasoning, and the transmission investigation's null
+// result are in liver.js's own comment (the canonical write-up) and this pass's dated CLAUDE.md
+// entry. Color unchanged (0xd9a8a0 stays the plain pale pink-tan placeholder this file's own
+// MATERIAL COLOR comment above already flags as its weakest-sourced parameter — the realism
+// pass doesn't touch that gap either way). Seed 11.7 (organ #9 in ORGAN_MODULES' order x1.3).
 export function buildBladderMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/bladder.glb', (gltf)=>{
-      const mat = new THREE.MeshPhysicalMaterial({ color:0xd9a8a0, roughness:0.58, metalness:0.0, specularIntensity:0.15 });
-      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      const mat = new THREE.MeshPhysicalMaterial({ color:0xd9a8a0, roughness:0.48, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 11.7, {freq:4}); } });
       resolve(gltf.scene);
     }, undefined, reject);
   });

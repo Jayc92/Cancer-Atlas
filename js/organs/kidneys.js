@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { cssVar } from '../viewer.js';
+import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true, plus 'renal'/'ccrcc'/'clear cell' aliases. HISTORY: this comment used to argue
 // "clear cell" could safely resolve to Kidneys alone because Ovary's Clear-cell carcinoma
@@ -40,20 +40,32 @@ export const cancerEntries = [
 // flow through the glomerular capillaries," with the cortex a lighter red-brown than the
 // darker medulla. 0x8c3a30 keeps the same real hue family, pushed slightly more saturated so
 // it holds up under the organ viewer's lighting rather than washing paler.
+// MATERIAL/LIGHTING REALISM PASS — shared recipe (roughness x0.82, specularIntensity 0.15->0.25,
+// per-vertex tissue mottle at amplitude 0.28) applied uniformly across all nine real-scan
+// organs; full mechanism, clip-safety reasoning, and the transmission investigation's null
+// result are in liver.js's own comment (the canonical write-up) and this pass's dated CLAUDE.md
+// entry. Color unchanged (0x8c3a30 stays the verified reddish-brown tone). Seed 6.5 (organ #5
+// in ORGAN_MODULES' order x1.3). Kidneys was the second-worst organ in the original clip-fix
+// pass (8.6% blown-white, all four markers clustered in its medial notch) — checked with that
+// history in mind, not assumed safe by analogy. The live transmission investigation this pass's
+// comment above refers to was run against THIS organ's own viewer specifically (both a
+// transmission:0.15 and a deliberately extreme transmission:0.7 pass, screenshotted and
+// reverted before this file's own material line was ever edited for real).
 export function buildKidneysMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/kidneys.glb', (gltf)=>{
-      // MeshPhysicalMaterial + specularIntensity 0.15, NOT MeshStandardMaterial (clip-fix
-      // pass): this ports the missing half of the approved material verification — the
-      // Blender renders the tissue colors were verified and approved on had Specular IOR
-      // Level 0.15 baked in, but MeshStandardMaterial has no specular control at all, so the
-      // live app kept full-strength dielectric specular. Under the legacy hard-clip pipeline
-      // that blew grazing-angle fold/fissure walls to flat white (up to 26% of the lungs'
-      // on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
-      // js/viewer.js's warm-lighting comment. Color/roughness values unchanged.
-      const mat = new THREE.MeshPhysicalMaterial({ color:0x8c3a30, roughness:0.55, metalness:0.0, specularIntensity:0.15 });
-      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      // MeshPhysicalMaterial + specularIntensity (clip-fix pass, now 0.25 — realism-pass
+      // comment above), NOT MeshStandardMaterial: this ports the missing half of the approved
+      // material verification — the Blender renders the tissue colors were verified and
+      // approved on had Specular IOR Level baked in, but MeshStandardMaterial has no specular
+      // control at all, so the live app kept full-strength dielectric specular. Under the legacy
+      // hard-clip pipeline that blew grazing-angle fold/fissure walls to flat white (up to 26% of
+      // the lungs' on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
+      // js/viewer.js's warm-lighting comment. Color unchanged; roughness and specularIntensity
+      // both revised by the realism pass above.
+      const mat = new THREE.MeshPhysicalMaterial({ color:0x8c3a30, roughness:0.45, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 6.5); } });
       resolve(gltf.scene);
     }, undefined, reject);
   });

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { cssVar } from '../viewer.js';
+import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true, aliases deliberately do NOT include "adenocarcinoma" — that bare string is
 // already claimed by Lungs above (see that entry's comment). Adding it here would make
@@ -42,20 +42,27 @@ export const cancerEntries = [
 // glandular epithelium, stromal connective tissue, and blood vessels" — confirmed directly, not
 // a generic "gland-colored" guess. 0xb97c68 keeps that same real tan-pink family, more
 // saturated so it holds up under lighting instead of washing paler.
+// MATERIAL/LIGHTING REALISM PASS — shared recipe (roughness x0.82, specularIntensity 0.15->0.25,
+// per-vertex tissue mottle at amplitude 0.28) applied uniformly across all nine real-scan
+// organs; full mechanism, clip-safety reasoning, and the transmission investigation's null
+// result are in liver.js's own comment (the canonical write-up) and this pass's dated CLAUDE.md
+// entry. Color unchanged (0xb97c68 stays the verified tan-pink tone). Seed 7.8 (organ #6 in
+// ORGAN_MODULES' order x1.3).
 export function buildProstateMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/prostate.glb', (gltf)=>{
-      // MeshPhysicalMaterial + specularIntensity 0.15, NOT MeshStandardMaterial (clip-fix
-      // pass): this ports the missing half of the approved material verification — the
-      // Blender renders the tissue colors were verified and approved on had Specular IOR
-      // Level 0.15 baked in, but MeshStandardMaterial has no specular control at all, so the
-      // live app kept full-strength dielectric specular. Under the legacy hard-clip pipeline
-      // that blew grazing-angle fold/fissure walls to flat white (up to 26% of the lungs'
-      // on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
-      // js/viewer.js's warm-lighting comment. Color/roughness values unchanged.
-      const mat = new THREE.MeshPhysicalMaterial({ color:0xb97c68, roughness:0.6, metalness:0.0, specularIntensity:0.15 });
-      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      // MeshPhysicalMaterial + specularIntensity (clip-fix pass, now 0.25 — realism-pass
+      // comment above), NOT MeshStandardMaterial: this ports the missing half of the approved
+      // material verification — the Blender renders the tissue colors were verified and
+      // approved on had Specular IOR Level baked in, but MeshStandardMaterial has no specular
+      // control at all, so the live app kept full-strength dielectric specular. Under the legacy
+      // hard-clip pipeline that blew grazing-angle fold/fissure walls to flat white (up to 26% of
+      // the lungs' on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
+      // js/viewer.js's warm-lighting comment. Color unchanged; roughness and specularIntensity
+      // both revised by the realism pass above.
+      const mat = new THREE.MeshPhysicalMaterial({ color:0xb97c68, roughness:0.49, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 7.8); } });
       resolve(gltf.scene);
     }, undefined, reject);
   });

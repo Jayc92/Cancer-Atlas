@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { cssVar } from '../viewer.js';
+import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true. Alias collision check (same convention as every prior organ): no other organ's
 // aliases use "colon", "colorectal", "bowel", "rectum", "sigmoid", or "crc". The bare word
@@ -50,15 +50,24 @@ export function buildColonMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/colon.glb', (gltf)=>{
-      // MeshPhysicalMaterial + specularIntensity 0.15 — same clip-fix-pass material recipe as
-      // every organ (see liver.js for the full mechanism note). Color: pale pink serosal
-      // surface per the gross-anatomy description cited in CLAUDE.md's organ entry (verified
-      // before picking, same real-tissue rule as every prior organ) — lighter and pinker than
-      // the stomach's tone so the three new digestive organs don't read as one material.
-      const mat = new THREE.MeshPhysicalMaterial({ color:0xc99f92, roughness:0.6, metalness:0.0, specularIntensity:0.15 });
-      gltf.scene.traverse(o=>{ if(o.isMesh) o.material = mat; });
+      // MeshPhysicalMaterial + specularIntensity — same clip-fix-pass material recipe as every
+      // organ (see liver.js for the full mechanism note), roughness/specularIntensity both
+      // revised by the material/lighting realism pass (roughness x0.82, specularIntensity
+      // 0.15->0.25, per-vertex tissue mottle amplitude 0.28 — full recipe, clip-safety reasoning,
+      // and the transmission investigation's null result are in liver.js's canonical comment and
+      // this pass's dated CLAUDE.md entry). Color: pale pink serosal surface per the gross-
+      // anatomy description cited in CLAUDE.md's organ entry (verified before picking, same
+      // real-tissue rule as every prior organ) — lighter and pinker than the stomach's tone so
+      // the three new digestive organs don't read as one material; color itself untouched by
+      // this pass. Seed 9.1 (organ #7 in ORGAN_MODULES' order x1.3).
+      const mat = new THREE.MeshPhysicalMaterial({ color:0xc99f92, roughness:0.49, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 9.1); } });
       // Recenter HRA body-space → origin so OrbitControls (origin-targeted) rotate the organ
-      // about its own center. Hotspot pos values below are in this recentered frame.
+      // about its own center. Hotspot pos values below are in this recentered frame. NOTE for
+      // the mottle call above: this only recenters the gltf.scene NODE's position, not the
+      // underlying BufferGeometry's own vertex data — applyTissueMottleVertexColors is written
+      // to recompute its own per-sub-mesh bounding box specifically because of this (see its
+      // comment in viewer.js), so it stays correct regardless of which happens first.
       const box = new THREE.Box3().setFromObject(gltf.scene);
       const center = box.getCenter(new THREE.Vector3());
       gltf.scene.position.sub(center);

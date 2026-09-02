@@ -3182,6 +3182,176 @@ screen pair per organ:
     the in-app pane does not), with pixel sampling, before approval
     screenshots go out.
 
+- **Material/lighting realism pass — roughness, specularIntensity, per-vertex
+  tissue mottle, all nine real-scan organs (2026-08-31; reviewed and approved
+  on the before/after screenshots per this project's own oldest standing rule,
+  committed together with the Bladder mottle-frequency tune below. Lungs'
+  file itself ships in the FOLLOWING commit: the lungs mesh swap developed
+  alongside this pass replaced its material with the new asset's native baked
+  textures, superseding this recipe for that one organ — see the lungs-swap
+  entry added there):**
+  - **Scope:** brain, lungs, breast, liver, kidneys, prostate, colon,
+    pancreas, bladder — every real-scan `MeshPhysicalMaterial` organ.
+    Deliberately NOT touched: Ovary/Skin/Stomach/Testis (still procedural)
+    and the tumor-site blob material in `main.js`'s `initSiteViewer`
+    (confirmed untouched by `git diff --stat` before this entry was written).
+  - **The recipe, applied as shared PARAMETERS only — each organ keeps its
+    own verified color and its own roughness/specularIntensity starting
+    point, the same convention `specularIntensity:0.15` already set in the
+    clip-fix pass above:**
+    - Roughness × 0.82 per organ (glossier, ordering preserved): brain
+      0.70→0.57, lungs 0.65→0.53, breast 0.60→0.49, liver 0.50→0.41, kidneys
+      0.55→0.45, prostate 0.60→0.49, colon 0.60→0.49, pancreas 0.62→0.51,
+      bladder 0.58→0.48.
+    - `specularIntensity` 0.15→0.25 (uniform), tighter/brighter highlights.
+    - New `applyTissueMottleVertexColors(geometry, seed, opts)` (`viewer.js`,
+      next to `applyMottleVertexColors`) — amplitude 0.28, freq 13 (shared
+      defaults) on all nine; only `seed` differs per organ (1.3/2.6/3.9/
+      5.2/6.5/7.8/9.1/10.4/11.7 for brain/lungs/breast/liver/kidneys/
+      prostate/colon/pancreas/bladder — organ's position in `ORGAN_MODULES`
+      × 1.3, deterministic-but-arbitrary, not tuned per organ).
+  - **Why (1) and (2) are the risky half, checked with that risk in mind, not
+    tuned once by eye:** this pipeline still has no tone mapping
+    (`ColorManagement.enabled=false`, `LinearSRGBColorSpace` out, per the
+    top of `viewer.js`), so it still hard-clips at 1.0/channel exactly the
+    way the clip-fix entry above found. Breast's `0xe3d3a0` is this atlas's
+    palest verified channel (R 0.89 — the same figure the clip-fix pass's own
+    warm-lighting comment cites) — at the current warm ambient+key (0.42+0.65
+    = 1.07× peak), that's 0.952 diffuse before specular even lands, ~0.048 of
+    headroom. Lower roughness concentrates the same specular energy into a
+    smaller, brighter peak rather than spreading it out — it does NOT reduce
+    clip risk, it raises it, on top of specularIntensity's own direct
+    increase. Both were verified iteratively against the live pipeline, not
+    assumed safe by analogy with the already-fixed clip-fix numbers.
+  - **Mottle is clip-safe by construction, and deliberately NOT a port of
+    `applyMottleVertexColors`' lerp-toward-necrotic technique:** vertex
+    colors and `material.color` multiply in this renderer's fragment shader
+    (`diffuseColor.rgb *= vColor`), so baking each organ's own real hex into
+    the vertex-color attribute (the necrotic-mottle function's approach)
+    would square that color at every unmottled vertex — silently darkening
+    the WHOLE mesh, not just the patches; the tumor-blob material never sets
+    its own `color` for exactly this reason (defaults to white, so
+    `material.color * vColor === vColor`). `applyTissueMottleVertexColors`
+    instead writes a plain `(m,m,m)` gray MULTIPLIER, `m<=1` always, on top
+    of each organ's own untouched `color:` — 1.0 (no change) across most of
+    the surface, dipping toward `1-amplitude` inside patches. A multiplier
+    that can only ever be ≤1 can only ever reduce a vertex's brightness
+    relative to the unmottled base — provably unable to push a pixel closer
+    to this pipeline's 1.0 clip ceiling, independent of the roughness/
+    specularIntensity risk above. Also recenters against each sub-mesh's OWN
+    bounding box rather than normalizing raw vertex position to a unit
+    sphere the way the tumor-blob version does (correct only because that
+    geometry is a freshly-constructed Icosahedron always centered at its own
+    origin) — colon.js and pancreas.js recenter the gltf *node*, not the
+    underlying `BufferGeometry`'s own position attribute, which stays
+    ~19-26cm off-origin in HRA body-space; feeding that raw offset into the
+    same sin/cos basis would have biased the pattern into a narrow slice of
+    the curve instead of spreading patches across the surface.
+  - **Transmission — investigated directly, not shipped:** `makeViewer` sets
+    neither `scene.environment` nor `scene.background`, and the renderer is
+    `alpha:true` with nothing behind these meshes in the WebGL scene itself
+    (confirmed by reading `viewer.js` directly; the visible gradient behind
+    each organ canvas is a CSS background on the DOM container, invisible to
+    three's own render). Tested live on the Kidneys viewer at two settings —
+    `transmission:0.15/thickness:0.05/ior:1.4`, then a deliberately extreme
+    `transmission:0.7/thickness:0.3/ior:1.4` — and both were pixel-for-pixel
+    indistinguishable from the untouched baseline by eye, with identical
+    blown-white/dark-pixel counts. Not shipped on any of the nine organs:
+    with a measured null effect, shipping it would misrepresent this pass's
+    own recipe as doing more than it does. Matches this same file's earlier
+    B.3 diagnostic finding (`cancer-atlas-lungs-realism-diagnostic` packet)
+    that `transmission`/`thickness`/`ior` are real, available properties in
+    this exact three@0.185.1 build and simply unused — now confirmed unused
+    for a specific, tested reason rather than left as an open question.
+  - **Clipping verification, iterative, measured in the live pipeline** —
+    puppeteer + real headless Chrome, same discipline the clip-fix entry
+    above established, plus one new harness finding worth recording for the
+    next pass: reading pixels back via a separate `page.evaluate()` call
+    reliably returned all-zero `(0,0,0,0)` on every organ despite the model
+    rendering correctly in a `page.screenshot()` of the same frame — Chrome
+    is free to clear/discard the WebGL drawing buffer any time after it is
+    presented when `preserveDrawingBuffer` defaults to false, and by the
+    time a later CDP task runs, several `rAF` ticks have already gone by.
+    Fixed with a harness-only `getContext` shim forcing
+    `preserveDrawingBuffer:true` on every WebGL context the page creates —
+    does not change what the app itself renders, only whether the buffer
+    survives being read after the fact. With that fix: all nine organs
+    measured 0.00% blown-white across a ~44° autoRotate sweep (5 samples,
+    2s spacing); the three worst organs from the original clip-fix pass
+    (lungs 26.3%, brain 24.5%, kidneys 8.6% pre-fix) plus breast (this
+    atlas's palest verified channel) were additionally swept ~198° (12
+    samples, 3s spacing, over half a full rotation) — still 0.00% on all
+    four. Real, unused margin, not a knife-edge pass.
+  - **No organ needed different numeric treatment to clear the clip bar —
+    all nine pass under the identical shared parameters with real margin.**
+    One purely aesthetic (non-clipping) observation, stated plainly rather
+    than smoothed over: Bladder's mottle reads visibly denser/more
+    "stippled" than the other eight in side-by-side screenshots. Its GLB is
+    the smallest and almost certainly lowest-vertex-density asset here
+    (199KB total vs. Liver's 1.7MB) — the shared spatial frequency (13)
+    under-samples on a sparser mesh, producing a more faceted, dot-like
+    pattern rather than the smoother patches visible on denser meshes like
+    Liver or Breast. Not a numeric exception (same amplitude/freq/formula as
+    every other organ) — a mesh-resolution interaction worth knowing about,
+    not a defect worth re-tuning this pass's shared recipe over.
+    (RESOLVED in review before commit: the reviewer asked for a Bladder-only
+    frequency tune — freq 13 -> 4 on Bladder's own call site, shared
+    function/amplitude/every other organ untouched — live-probed smooth and
+    organic across 4 rotation angles, 0.000% blown-white across 5; the
+    dot-grid read is gone.)
+  - **Regression suite, rebuilt fresh** (this pass's own
+    `/tmp/material-pass/regress.js`, not a checked-in harness): 138 checks
+    across all 13 active organs (mesh renders, blown-white <1.0%, 4
+    hotspots), all 14 active cancers (4 site labels, no label overlap except
+    the two documented exceptions below, ≥20 sampled cells, mutation panel
+    has "Trunk" and no "undefined", ≥3 histology features), and 17
+    alias-search terms — 137 passed. The two documented pre-existing
+    label-overlap exceptions (GBM and Prostate/acinar, both deliberately
+    clustered per this file's own "Tumor-site blob positions" entry) were
+    excluded from the overlap gate rather than allowed to fail it, per that
+    entry's own standing rule. **One new finding surfaced, and left
+    unfixed as out of scope:** `organ:testis blown-white <1.0%` failed at
+    one sampled rotation angle (1.209%). Confirmed via `git diff --stat`
+    that `testis.js` (and `ovary.js`/`skin.js`/`stomach.js`) are completely
+    untouched by this pass; a dedicated 20-sample/28.5-second sweep on
+    Testis alone shows blown-white oscillating between 0.01% and 1.2%
+    depending on rotation angle — a genuine, pre-existing, angle-dependent
+    characteristic of Testis's own procedural material and the shared
+    cool-lighting rig it uses (not `warmLighting`), surfaced only because
+    this pass's harness samples multiple rotation angles rather than one
+    frame. Testis is explicitly out of scope for this pass (procedural, not
+    one of the nine real-scan organs) — flagged here for whoever next
+    touches that organ, not fixed under this pass's own mandate.
+  - **Two harness-methodology alias-search failures caught and fixed before
+    they were mistaken for regressions, recorded because the next pass will
+    hit the same traps otherwise:** an early harness version reported every
+    one of the 17 alias-search checks as a zero-match failure — root cause
+    was running those checks with `#screenCancer` still active, at which
+    point `#searchInput` (which lives inside `#screenBody`, per
+    `cancer-atlas.html`) sits `inert`; fixed by reloading to the body screen
+    first. A separate early version reported "mutation panel has Trunk"
+    failing on every cancer but one — root cause was reading
+    `#txPanelBody.innerText` (which reflects the rendered, CSS-transformed
+    text: `.grp-title` renders as "TRUNK MUTATIONS" via `text-transform:
+    uppercase`) against a case-sensitive `/Trunk/` regex; the one apparent
+    pass was a coincidental match against an unrelated, properly-capitalized
+    "Trunk panel" cross-reference inside Bladder's own prose note, not the
+    check actually working. Fixed with a case-insensitive `/trunk/i`. Neither
+    was a real app defect at any point.
+  - **Alias-check wording departure, stated rather than silently
+    mis-implemented:** the task brief for this pass asked for "zero
+    collisions" across 17 alias terms including "adenocarcinoma" and "clear
+    cell" — but this file's own Architecture notes (index.js's own comment)
+    already document both as DELIBERATE multi-organ matches (adenocarcinoma:
+    Lungs/Colon/Pancreas/Stomach, all four real aliases; clear cell:
+    Kidneys/Ovaries, both real clear-cell carcinomas). Verified directly
+    against every organ's own `aliases` array before writing the harness,
+    not assumed from the brief. The regression suite instead asserts the
+    exact expected matching organ SET per term (the documented multi-organ
+    set for these two, a single-organ set for the other 15) — a strictly
+    more precise check than "zero collisions" that doesn't flag this app's
+    own by-design behavior as broken.
+
 ## Known limitations / tech debt
 - The male/female bodies are real static meshes now (Blender's "Human Base
   Meshes" bundle, CC0 — see Architecture notes for why this is the third
