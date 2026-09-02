@@ -2111,6 +2111,135 @@ screen pair per organ:
     cross-references this rule and neither supersedes the other. If a THIRD
     organ ever lands here, consider folding rules 25/26 into one standing
     "native-texture tone" rule with a per-organ list.
+27. Thyroid reference sources — **organ #15, papillary + follicular added
+    together as the app's second two-active-entry organ (the Ovary
+    precedent, not Bladder's design-gate rejection), gate-approved on WHO
+    2022's own classification language (2026-09-02).** Every citation
+    verified verbatim at source during Phase 2; the full verification record
+    is in the session transcript, and the load-bearing anchors are:
+    - **Shares, one denominator:** Lim et al., JAMA, 2017 (SEER-9,
+      n=77,276): papillary 64,625 (83.6%), follicular 8,359 (10.8%),
+      medullary 1,685 (2.2%), anaplastic 975 (1.3%) — and anaplastic's
+      asymmetry, 471/2,371 = 19.9% of thyroid-cancer deaths, stated in its
+      inactive share row (skin's nodular-share precedent).
+    - **Entity split:** Baloch et al., Endocr Pathol, 2022 (PMID 35288841,
+      the WHO 2022 overview), verbatim: PTCs "represent the BRAF-like
+      malignancies, whereas invasive encapsulated follicular variant PTC and
+      follicular thyroid carcinoma represent the RAS-like malignancies."
+      Same source family: NIFTP is no longer carcinoma; oncocytic carcinoma
+      is now a distinct third entity — historical "80–85% papillary" shares
+      predate these moves, which is why the Lim registry denominator is the
+      one used.
+    - **PTC numbers (all TCGA, Cell, 2014, PMC4243044, results-text
+      verbatims):** BRAF 248/402 (61.7%), mostly V600E; BRAF/NRAS/HRAS/KRAS
+      "virtually mutually exclusive" (Fisher p=1.1×10⁻⁵, MEMo p<0.01), one
+      driver in 300/402 (74.6%), "having more than one mutation confers no
+      clonal advantage"; RET fusions 6.8%; RAS 52/402 (12.9%), codons 12/61;
+      TERT promoter 36/384 (9.4%; 27 C228T/1 C228A/8 C250T), NOT associated
+      with BRAF or fusions, recurrence-risk p=7×10⁻⁸ holding within BRAF
+      tumors; SCNA classes: quiet 72.9%, 22q-del 9.9% (NF2+CHEK2; 70 tumors
+      22q-loss, 5 CHEK2-mutant, 4 both, p=0.0035), 1q-amp 14.8%
+      (TCV p<0.0001 + BRAF p<0.05 enriched, higher MACIS/stage); PPM1D/CHEK2
+      SMGs "occurred concomitant with MAPK-pathway driver mutations";
+      EIF1AX 1.5% exclusive with RAS/BRAF → REJECTED from the model (the
+      LUAD-EGFR class); mutation density 0.41 non-synonymous/Mb, correlated
+      with age p=5.2×10⁻¹⁸; thyroglobulin 11/402 (2.7%), not an SMG (the
+      pool's TTN-logic passenger); unknown-driver fraction 25%→3.5%.
+    - **FTC structure is the Prostate status-trunk pattern, forced by**
+      Nikiforova et al., J Clin Endocrinol Metab, 2003 (PMID 12727991):
+      RAS 49%, PAX8–PPARγ 36%, both 3% — "two distinct and virtually
+      nonoverlapping molecular pathways"; follicular ADENOMAS carry RAS at
+      48%, which is why genotype cannot call malignancy and the histology
+      slide is built on the capsule criterion instead. Modern frequencies:
+      Hsia et al., J Pers Med, 2025 (PMC12843263; AACR GENIE, n=168): NRAS
+      57 (33.9%, Q61R 63% of those), TERT 38 (22.6%, all promoter, adults
+      only), DICER1 26 (15.5%; pediatric 44.4% vs adult 4.6%), HRAS 20
+      (11.9%), PTEN 18 (10.7%), ATM 13 (7.7%), KMT2D 12 (7.1%); NRAS more
+      frequent in metastatic samples (42.4% vs 29.2%). **Build-time
+      exclusivity discovery: NRAS–DICER1 mutually exclusive (p=0.02, zero
+      co-occurring samples; NRAS–HRAS p<0.001) → DICER1 appears NOWHERE in
+      the modeled NRAS-founded tumor** — its pediatric-third-road story
+      lives in the trunk note only. GENIE's TP53 row (n=22, "6.5%") fails
+      its own arithmetic (22/168=13.1%) and was not shipped. FVPTC straddle
+      quantified from Zhu et al., Am J Clin Pathol, 2003 (PMID 12866375):
+      FV = RAS 43%/RET-PTC 3%, non-FV = RET-PTC 28%/RAS 0%.
+    - **Route contrast, one same-source table** (Luvhengo et al.,
+      Biomedicines, 2023, PMC10135557): lymph-node mets PTC "Common
+      (20–90%)" vs FTC "Rare (<10%)"; hematogenous FTC "Frequent (29%)" vs
+      PTC "Rare (9%)"; FTC distant sites verbatim "bone, lung, and brain";
+      nodal mets in supposed FTC → re-review slides for missed FVPTC;
+      capsular/vascular invasion as the FTC-vs-adenoma criterion, FNA
+      structurally unable to make the diagnosis; lateral-neck nodal disease
+      27% at presentation and ~10% presenting metastatic from StatPearls
+      "Papillary Thyroid Carcinoma" (NBK536943, also the PTC nuclear-feature
+      verbatims: Orphan Annie eyes, grooves, pseudo-inclusions, psammoma
+      bodies, fibrovascular stalks — where HGSOC's slide deliberately does
+      NOT draw fibrovascular cores, PTC's deliberately DOES).
+    - **Anatomy:** StatPearls NBK470452 (isthmus at 2nd–3rd tracheal rings;
+      pyramidal lobe in 28–55%; C5–T1; superior thyroid artery = external
+      carotid's first branch) and NBK551659 (follicles, colloid =
+      thyroglobulin, C cells neural-crest-derived → medullary contrast).
+      **Do NOT cite StatPearls for thyroid size:** its own sentence (~25 g
+      AND 6.6 mL) is internally inconsistent 3.6×. Size claims anchor to
+      Lin et al., Biol Trace Elem Res, 2023 (PMC10620313): median total
+      volume 8.26 mL, upper reference 19.06 mL, ellipsoid constant 0.479 —
+      which also refutes the common "each lobe 5×3×2 cm" paraphrase
+      (implies 28.7 mL total, i.e. a goitre).
+    - **Mesh decisions (andycopo55/UJAT asset, CC BY 4.0, embedded-metadata
+      verified):** gland isolated from the neck assembly by texture-colour
+      class + measured trim planes; UNIFORM scale to the verified 8.26 mL
+      (anisotropic correction rejected — no verifiable target length);
+      proportion trade disclosed in the HTML disclaimer (lobe length 2.77 cm
+      short of textbook, depth correspondingly deep, per-lobe width 1.34 vs
+      1.31 cm reference); isthmus verified as geometry by pure-coordinate
+      measurement (midline-bridging band ~1 cm tall, thin AP, 0.96 cm
+      posterior tracheal concavity); NO pyramidal lobe in the mesh (zero
+      midline bridging above the band) → fourth hotspot is Superior pole,
+      as the integration spec permitted; all four hotspot anchors are
+      measured mesh coordinates on anterior-facing surface; color texture
+      resampled 2048→1024px (3.99→1.67 MB) under the lungs downscale
+      protocol, same-camera live deltas mean 0.15–0.34/255 within the lungs
+      pass's own band, geometry byte-identical and re-verified post-swap.
+    - **Integration found and fixed an app-wide latent bug:** the shared
+      viewer camera's near plane was 0.1 m while frameContents() computes
+      camera distance purely from bounding radius with no floor — any real
+      mesh under ~3 cm bounding radius frames the camera INSIDE its own
+      near plane (thyroid framed to 9.6 cm; prostate, the previous
+      smallest, escapes at ~12.5 cm). Because artist meshes ship
+      doubleSided, the failure renders as a convincing sliced-open shell,
+      not a blank view — from behind, the anterior wall's interior reads as
+      a clean solid organ. Caught because front and back silhouettes
+      disagreed, which an opaque closed mesh cannot do. Fix: near 0.1→0.01
+      in makeViewer (js/viewer.js), full regression green after. Standing
+      lesson: a "correct-looking" single-angle render is not proof — check
+      opposite views agree, and check camera distance > near plane whenever
+      an organ is smaller than anything shipped before.
+    - **Structural adaptations of the approved Phase-2 plan, made because
+      the app needs four region branches per cancer (disclosed at review,
+      cheap to swap):** PTC promotes PPM1D + CHEK2 from pool to branches
+      (they are the only verified BRAF-co-occurring candidates left; pool
+      backfills with the clock-like entry + thyroglobulin); FTC keeps the
+      approved pool (TERT + PTEN) verbatim and fills its last two branch
+      slots with ATM + KMT2D, hedged in-product as recurrent-but-
+      unadjudicated. PAX8–PPARγ is drawn at a metastatic site as "the other
+      road" with explicit not-in-this-tumor framing (the approved
+      "branch genes at different sites" design, prostate's license).
+28. **The quiet-genome pattern — a named, standing content pattern
+    (anticipated by the Testis pass, formalized this build, 2026-09-02).**
+    Three atlas cancers now teach that a tumor's mutation LIST can be
+    nearly empty without the tumor being any less real: ovarian clear-cell
+    (median 46 non-silent mutations, clock-like signatures), seminoma
+    (~0.5 mutations/Mb), and papillary thyroid carcinoma (0.41
+    non-synonymous/Mb, age-correlated p=5.2×10⁻¹⁸ — the quietest yet).
+    Standing implications: (a) when an organ's genome is quiet, say so as a
+    led-with teaching fact, not an apology — the private pool is the place
+    (clock-like/background entries, zero invented drivers); (b) never pad a
+    quiet genome's pool by importing another cancer's passenger (the
+    OCCC-TTN precedent: verify the passenger exists in THIS disease's
+    cohorts or use the organ's own big-gene equivalent — thyroid uses
+    thyroglobulin, verified 2.7% and non-SMG in TCGA); (c) the pattern is a
+    cross-atlas teaching contrast with the loud genomes (melanoma, bladder)
+    — cross-reference it when a fourth lands.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward

@@ -1006,6 +1006,141 @@ function genBladderUC(g, rnd){
   ];
 }
 
+function genPTC(g, rnd){
+  // Papillary thyroid carcinoma — the diagnosis-on-the-nuclei slide. Fronds here DO carry a
+  // drawn red fibrovascular core: "a central fibrovascular stalk covered by a neoplastic
+  // epithelial lining" is this entity's verbatim source language (StatPearls NBK536943) —
+  // the deliberate inverse of genHGSOC above, where that phrase was checked and found to
+  // belong to OTHER serous entities, so its fronds are plain stroma. Nuclei are drawn as the
+  // source's own list: enlarged/elongated, crowded and overlapping, chromatin cleared with
+  // peripheral margination (open circles with a dark rim — "Orphan Annie eyes"), grooves on
+  // some, two intranuclear cytoplasmic pseudo-inclusions. Sizes stay in a narrow band: the
+  // verified features are clearing/grooves/crowding, NOT the >3x pleomorphism that defines
+  // HGSOC, so no right-skewed size trick here. Psammoma bodies drawn without apology — they
+  // sit on this tumor's diagnostic-feature list where HGSOC's page says only "variable."
+  const fronds = [
+    {cx:240, cy:150, rx:190, ry:46, rot:-0.22},
+    {cx:560, cy:190, rx:150, ry:42, rot: 0.42},
+    {cx:360, cy:375, rx:210, ry:50, rot:-0.04},
+  ];
+  fronds.forEach(f=>{
+    const d = blobPath(f.cx, f.cy, f.rx, f.ry, 0.14, 16, rnd, f.rot);
+    g.appendChild(el('path', {d, fill:HE.stroma, stroke:HE.stromaLn, 'stroke-width':1.4}));
+    // the fibrovascular stalk: a red vessel core running the frond's long axis
+    const cosR = Math.cos(f.rot), sinR = Math.sin(f.rot), L = f.rx*0.74;
+    g.appendChild(el('line', {
+      x1:f.cx - L*cosR, y1:f.cy - L*sinR, x2:f.cx + L*cosR, y2:f.cy + L*sinR,
+      stroke:HE.vessel, 'stroke-width':7, 'stroke-linecap':'round', opacity:0.85,
+    }));
+    g.appendChild(el('line', {
+      x1:f.cx - L*cosR, y1:f.cy - L*sinR, x2:f.cx + L*cosR, y2:f.cy + L*sinR,
+      stroke:HE.vesselDk, 'stroke-width':2.2, 'stroke-linecap':'round', opacity:0.7,
+    }));
+    // crowded, overlapping epithelial rim of cleared nuclei — spacing deliberately tighter
+    // than the frond perimeter strictly fits (the "crowding and overlap" criterion)
+    const per = Math.round(2*Math.PI*Math.sqrt((f.rx*f.rx+f.ry*f.ry)/2) / 9.5);
+    for(let i=0;i<per;i++){
+      const a = i/per*Math.PI*2;
+      const px = Math.cos(a)*f.rx*1.05, py = Math.sin(a)*f.ry*1.14;
+      const x = f.cx + px*cosR - py*sinR;
+      const y = f.cy + px*sinR + py*cosR;
+      const nr = 5.2 + rnd()*1.8;                  // enlarged, narrow size band
+      const rot = rnd()*180;
+      // Orphan Annie eye: cleared center, chromatin marginated to a dark rim
+      g.appendChild(el('ellipse', {
+        cx:x, cy:y, rx:nr, ry:nr*(0.62+rnd()*0.22), // elongated
+        transform:`rotate(${rot.toFixed(0)} ${x} ${y})`,
+        fill:HE.clear, stroke:HE.nuc, 'stroke-width':1.9, opacity:0.95,
+      }));
+      if(rnd() < 0.3){ // nuclear groove: a fold across the cleared face
+        g.appendChild(el('line', {
+          x1:x-nr*0.55, y1:y, x2:x+nr*0.55, y2:y,
+          transform:`rotate(${rot.toFixed(0)} ${x} ${y})`,
+          stroke:HE.nuc, 'stroke-width':1.1, opacity:0.8,
+        }));
+      }
+    }
+  });
+  // two intranuclear cytoplasmic pseudo-inclusions: a pink pocket punched into the nucleus —
+  // drawn exactly twice, the "occasional, not the rule" treatment (OCCC's single mitosis)
+  [{x:240+190*1.05*Math.cos(0)*Math.cos(-0.22), y:150+190*1.05*Math.cos(0)*Math.sin(-0.22)},
+   {x:560, y:190-42*1.14}].forEach(p=>{
+    g.appendChild(el('ellipse', {cx:p.x, cy:p.y, rx:6.4, ry:5.2, fill:HE.clear, stroke:HE.nuc, 'stroke-width':2, opacity:0.98}));
+    g.appendChild(el('circle', {cx:p.x, cy:p.y, r:2.9, fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':0.8}));
+  });
+  // psammoma bodies: same concentric-lamella technique as HGSOC's, drawn as full members of
+  // the diagnostic picture rather than rarities
+  [{x:680, y:352, r:18},{x:118, y:300, r:13}].forEach(p=>{
+    for(let r=p.r; r>2; r-=p.r/3.4){
+      g.appendChild(el('circle', {cx:p.x, cy:p.y, r:r, fill:'none', stroke:'#8f76a8', 'stroke-width':2.2, opacity:0.9}));
+    }
+  });
+  return [
+    {key:'papillae', x:360, y:375},
+    {key:'nuclei',   x:560, y:145},
+    {key:'psammoma', x:680, y:352},
+  ];
+}
+
+function genFTC(g, rnd){
+  // Follicular thyroid carcinoma — the diagnosis-at-a-boundary slide, a genuinely new
+  // concept for this atlas: nothing about the cells is drawn as malignant, because nothing
+  // about them IS (verified: FNA/IHC/sequencing all fail to separate FTC from adenoma —
+  // PMC10135557). The slide's whole story is the capsule: an encapsulated nodule of small
+  // crowded follicles, one full-thickness mushroom breach, one plugged capsular vessel.
+  // Small helper: a follicle = ring of lining nuclei around a colloid center.
+  const follicle = (x, y, r, colloidFill)=>{
+    g.appendChild(el('circle', {cx:x, cy:y, r:r, fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+    g.appendChild(el('circle', {cx:x, cy:y, r:r*0.55, fill:colloidFill, opacity:0.9}));
+    const n = Math.max(6, Math.round(r*0.85));
+    for(let i=0;i<n;i++){
+      const a = i/n*Math.PI*2 + rnd()*0.2;
+      g.appendChild(el('ellipse', {
+        cx:x+Math.cos(a)*r*0.8, cy:y+Math.sin(a)*r*0.8, rx:2.6, ry:2.1,
+        fill:HE.nuc, opacity:0.92,
+      }));
+    }
+  };
+  // surrounding normal gland for contrast: large, placid, colloid-rich follicles (the
+  // "spherical... storage compartments filled with colloid" of StatPearls NBK551659)
+  [{x:95,y:85,r:52},{x:250,y:60,r:40},{x:700,y:80,r:56},{x:120,y:430,r:46},{x:715,y:445,r:50},{x:520,y:462,r:38}].forEach(f=>{
+    follicle(f.x, f.y, f.r, HE.cyto);
+  });
+  // the encapsulated tumor nodule: thick fibrous capsule drawn as a heavy ring
+  const nod = {cx:390, cy:255, rx:215, ry:150};
+  const capsule = blobPath(nod.cx, nod.cy, nod.rx, nod.ry, 0.05, 18, rnd, 0.1);
+  g.appendChild(el('path', {d:capsule, fill:HE.bg, stroke:HE.stromaLn, 'stroke-width':16, opacity:0.95}));
+  g.appendChild(el('path', {d:capsule, fill:'none', stroke:HE.stroma, 'stroke-width':8, opacity:0.9}));
+  // inside: small, crowded, back-to-back follicles — the pattern an adenoma reproduces exactly
+  for(let i=0;i<46;i++){
+    const a = rnd()*Math.PI*2, rr = Math.sqrt(rnd())*0.82;
+    const x = nod.cx + Math.cos(a)*nod.rx*rr, y = nod.cy + Math.sin(a)*nod.ry*rr;
+    follicle(x, y, 12+rnd()*5, HE.cytoLite);
+  }
+  // CAPSULAR INVASION: a full-thickness mushroom of tumor punching through the right side of
+  // the capsule — the tongue is drawn after the capsule so its fill breaks the ring visibly
+  const tx = nod.cx + nod.rx*0.98, ty = nod.cy - 20;
+  const tongue = blobPath(tx+34, ty, 52, 34, 0.12, 12, rnd, 0.05);
+  g.appendChild(el('path', {d:tongue, fill:HE.bg, stroke:HE.cytoLn, 'stroke-width':1.2}));
+  follicle(tx+22, ty-8, 13, HE.cytoLite);
+  follicle(tx+46, ty+8, 12, HE.cytoLite);
+  follicle(tx+30, ty+18, 10, HE.cytoLite);
+  // VASCULAR INVASION: a vessel at the capsule's far edge with a plug of tumor cells inside
+  const vx = 660, vy = 385;
+  g.appendChild(el('ellipse', {cx:vx, cy:vy, rx:46, ry:26, fill:'#f3d9d9', stroke:HE.vesselDk, 'stroke-width':3}));
+  const plug = blobPath(vx-8, vy, 24, 14, 0.15, 10, rnd, 0);
+  g.appendChild(el('path', {d:plug, fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  for(let i=0;i<8;i++){
+    const a = rnd()*Math.PI*2, rr = Math.sqrt(rnd());
+    g.appendChild(el('ellipse', {cx:vx-8+Math.cos(a)*20*rr, cy:vy+Math.sin(a)*10*rr, rx:2.6, ry:2.1, fill:HE.nuc}));
+  }
+  return [
+    {key:'follicles', x:390, y:255},
+    {key:'capsule',   x:tx+34, y:ty},
+    {key:'vessel',    x:vx, y:vy},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -1021,6 +1156,8 @@ const GENERATORS = {
   clear:  genOCCC,
   seminoma: genSeminoma,
   uc:     genBladderUC,
+  ptc:    genPTC,
+  ftc:    genFTC,
 };
 
 // ------------------------------------------------------------

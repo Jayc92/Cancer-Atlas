@@ -16,6 +16,7 @@ import * as stomach from './stomach.js';
 import * as skin from './skin.js';
 import * as testis from './testis.js';
 import * as bladder from './bladder.js';
+import * as thyroid from './thyroid.js';
 
 // Order matches the original single-file ORGANS array exactly for the first seven (ovary,
 // brain, lungs, breast, liver, kidneys, prostate) — not load-bearing for correctness: filter/
@@ -28,7 +29,7 @@ import * as bladder from './bladder.js';
 // (the results list shows all matches), and "clear cell" now intentionally matches both
 // Kidneys and Ovaries because both genuinely have a clear-cell carcinoma. Colon, pancreas,
 // and stomach are appended in the order their shared pass added them, same as prostate.
-const ORGAN_MODULES = [ovary, brain, lungs, breast, liver, kidneys, prostate, colon, pancreas, stomach, skin, testis, bladder];
+const ORGAN_MODULES = [ovary, brain, lungs, breast, liver, kidneys, prostate, colon, pancreas, stomach, skin, testis, bladder, thyroid];
 
 // `aliases` exists because searching the label alone is too literal: the organ screen
 // titles itself "Ovary" (singular) while the label is "Ovaries", so the one wired organ

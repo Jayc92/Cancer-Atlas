@@ -215,7 +215,17 @@ export function applyTissueMottleVertexColors(geometry, seed, opts){
 
 export function makeViewer(container, opts){
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  // Near plane 0.01, not 0.1. applyFraming() slides the camera to (boundingRadius · padding)
+  // / sin(halfFov) with no floor tied to the near plane, so a real mesh small enough frames the
+  // camera to INSIDE its own near plane and everything nearer than the plane is clipped away.
+  // The thyroid — the first true-scale mesh under ~5 cm — frames to 9.6 cm, inside the old
+  // 10 cm near. And because artist meshes ship doubleSided, the failure isn't an obvious blank
+  // view but a convincing sliced-open shell: from behind, the inside of the anterior wall reads
+  // as a clean solid organ. Caught only because the front view disagreed with the back view,
+  // which an opaque closed mesh cannot do. 0.01 clears every organ down to ~1 cm bounding
+  // radius at its zoom floor; at these scene scales (organs cm–dm, bodies ~2 m, far 100) the
+  // depth-buffer precision cost is far below anything visible.
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 100);
   const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
   // Pairs with ColorManagement.enabled = false at the top of this module: no decode going in,
