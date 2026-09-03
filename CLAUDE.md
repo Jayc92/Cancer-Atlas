@@ -2599,9 +2599,13 @@ screen pair per organ:
   quantization gate CAUGHT visible normal banding on the female shoulder
   (mean px delta 10.77/255 vs raw) — the -vn 8 default octahedral normals,
   not position loss; -vn 12 fixed it (delta 0.049/255, pair 4.64 MB) —
-  **standing lesson: meshopt-compress smooth untextured bodies with
-  -vn 12, and gate any recompression on a raw-vs-compressed zone capture,
-  not on file size alone.** (5) Verified on the exact shipped bytes:
+  **standing lesson — THE GATE IS THE RULE, THE VALUE IS
+  NOT: always gate compression on a raw-vs-compressed zone capture at the
+  viewer's real zoom, never on file size or triangle counts (both pass on
+  a mesh with banded normals). -vn 12 is a fact about THIS geometry — a
+  large smooth sculpted body, octahedral banding's best case — not a
+  project default; the organ meshes must derive their own precision
+  against the same gate when their compression pass runs.** (5) Verified on the exact shipped bytes:
   regression 161/3 = documented baseline, body markers 15/16 visible,
   zero findBodySurfaceAnchor misses at any level, sex-toggle camera
   bit-identical. Residual observation for the visual-audit pass: a faint
@@ -3034,7 +3038,12 @@ screen pair per organ:
   (lungs 2,452 mesh px vs recorded 2,447; ovary halo 0.34% vs 0.36%;
   testis 1.19% vs 1.20%) — and therefore surfaces testis's documented
   angle-dependent ~1.2% blip as a REAL failure. **Baseline is therefore
-  161 checks / 3 failures, all three documented and ACCEPTED: the GBM and
+  163 checks / 3 failures (161 + two body-mesh-resolution guards added after
+  the Multires-L2 upgrade: they assert 338,720 tris per body through the
+  live app — the only guard on body.js's documented silent re-export traps
+  now that meshopt hides triangle counts from raw-GLB parsing; a wrong-level
+  export passes every other check because markers re-derive by raycast),
+  all three failures documented and ACCEPTED: the GBM and
   Prostate/acinar label overlaps (deliberately clustered site designs,
   standing since their own passes) and testis blown-white ~1.2%
   (accepted 2026-09-02 after a diagnostic-only characterization — packet

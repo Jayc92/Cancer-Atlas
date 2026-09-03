@@ -69,6 +69,24 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     await page.screenshot({ path: path.join(OUT, `01_body_${sex}.png`) });
   }
 
+  // ---- body mesh resolution guard ----
+  // The bodies ship at Multires level 2 (338,720 tris each, meshopt-compressed). body.js
+  // documents TWO silent re-export traps (multires levels regressing, bbox centering), and a
+  // wrong-level export would pass every check above — markers re-derive by raycast against
+  // whatever surface they're given, so 161 greens prove nothing about resolution. The old
+  // raw-GLB triangle-count check can't see through EXT_meshopt_compression, so assert the
+  // count through the live app instead: this is the ONLY guard on the documented gotcha.
+  // L0 = 21,160, L1 = 84,680, L2 = 338,720 — exact, not a tolerance band.
+  const bodyTris = await page.evaluate(async () => {
+    const { state } = await import('./js/state.js');
+    const count = (g) => { let tris = 0; g.traverse(o => {
+      if (o.isMesh && o.geometry.attributes.position.count > 600 && o.geometry.index) tris += o.geometry.index.count / 3; });
+      return tris; };
+    return { female: count(state.femaleBodyGroup), male: count(state.maleBodyGroup) };
+  });
+  check('body mesh resolution female', bodyTris.female === 338720, `${bodyTris.female} tris (want 338,720 = Multires L2)`);
+  check('body mesh resolution male', bodyTris.male === 338720, `${bodyTris.male} tris (want 338,720 = Multires L2)`);
+
   // ---- per-organ pass ----
   const organKeys = await page.evaluate(async () => {
     const m = await import('./js/organs/index.js');
