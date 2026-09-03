@@ -213,6 +213,27 @@ function initOrganViewer(organKey){
       // relative to the model is set by the same call that sized the model itself.
       const isRealMesh = detail.hotspots.some(h=>h.pos);
       if(isRealMesh) thisViewer.frameContents([mesh], 1.3);
+      // Ground staging, sized from the mesh's own bounding box — so it needs no per-organ number
+      // and works unchanged across both scene scales in this app (real-mesh organs in real-world
+      // meters, the procedural organs' arbitrary ~1-2 units), the same problem frameContents()
+      // and markerRadius below each solve by measuring rather than hardcoding.
+      //
+      // EXCEPT the testis, excluded on a measurement, not on taste. Its plinth is geometrically
+      // unable to fit the establishing shot: the mesh is a hanging structure whose bounding box
+      // is dominated by height (2.20 units tall over a near-square 1.38×1.38 footprint), so the
+      // camera frames the HEIGHT and the organ's lowest point already lands at pixel ~300 of a
+      // 318px frame — while the near-square footprint demands a disc of radius 1.07 to contain
+      // it. Projected at the default pitch (near-rim drop ≈ 0.65·r, consistent across all 14
+      // organs), any disc that stays inside the frame needs r ≤ 0.21, five times smaller than
+      // the footprint. Rendered proof: the full disc exits the frame on three sides and reads
+      // as a dark silhouette behind the organ, not as staging; the contact shadow alone sits at
+      // the organ's lowest point and is out of frame entirely, indistinguishable from nothing.
+      // The other 13 organs measure clear of the frame on every edge (ground_fit, 2026-09-03).
+      // REVISIT TRIGGER: this exclusion rests on framing that is itself flagged as suspicious
+      // for the Prompt-5 audit (organ near frame edges, a hotspot marker half-cut at the top).
+      // If that audit changes the testis framing, re-test the plinth — do not inherit this
+      // exclusion past the condition that justified it.
+      if(organKey !== 'testis') thisViewer.addGround([mesh]);
       // Marker sphere size and glow-light reach are tuned below (0.06 unit radius, 1.2 unit
       // falloff distance) for the procedural organs' arbitrary ~1-2 unit geometry. Real-mesh
       // organs are real-world meters (a prostate model is ~0.05m across in total), so those
@@ -449,6 +470,13 @@ function initSiteViewer(cancerId){
   // origin than the ovary mesh does, so a hardcoded radius clipped the topmost blob
   // (Omentum) off the viewport at 16:9.
   state.siteViewer.frameContents(siteBlobs.map(b=>b.mesh));
+  // NO addGround() here, deliberately, and the omission is the finding rather than an oversight.
+  // Ground staging was built and rendered for this viewer before being rejected on the render:
+  // the site map is four abstract blobs POSITIONED TO ENCODE A SPREAD PATTERN, not objects
+  // resting on anything, so the blobs sit at four different heights — with a plinth under them,
+  // three of the four visibly float above the disc while one touches it, which reads as a
+  // rendering fault rather than as a diagram. A plinth answers "where is down" for a specimen;
+  // this viewer has no down to answer. The organ and body viewers do, and they keep it.
 }
 
 function siteTick(){

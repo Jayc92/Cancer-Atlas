@@ -3042,15 +3042,77 @@ screen pair per organ:
   double-decode fix would now itself be the bug). Light intensities
   deliberately UNCHANGED — raising energy and restoring the stripped glow
   lights is a separate, individually-gated pass against the new zero-clip
-  baseline. **Standing conditions from the ruling: (1) re-measure the
-  operator after the environment-map pass lands — AgX's win partly offsets
-  the current warm rig's saturation push, which an env map changes;
+  baseline. **Standing conditions from the ruling: (1) DISCHARGED by the
+  env-map pass (2026-09-03, next entry): the operator was re-measured at the
+  shipped env 0.25 and AgX re-confirmed — but its winning MECHANISM flipped
+  (it now undershoots cited saturation on 6 of 9 rather than offsetting an
+  over-saturating rig), so the P2 rationale must not be carried into any
+  later lighting change as a rule of thumb; the next rig change re-measures;
   (2) measurement scripts must echo their parsed configuration back and
   assert it matches the request — a zsh word-split silently no-op'd an
   entire operator comparison and was caught only because byte-identical
   results across four operators is implausible on its face; a partial
   swallow would have produced plausible wrong numbers. A run that cannot
-  state what it measured must not produce a number.**
+  state what it measured must not produce a number.
+  (3) Added at the env-map ruling: measurement scripts must READ identity,
+  not infer it. Three self-caught bugs in three passes were one failure —
+  a script that looked like it knew what it was looking at: the zsh
+  word-split above, a Float32Array readback of a HalfFloat render target
+  (INVALID_OPERATION leaves the buffer zeroed, which reads as "the texture
+  is black"), and a geometry-type staging heuristic
+  (CylinderGeometry/PlaneGeometry) that mislabelled the skin slab's hair
+  shafts as staging and misread the testis plinth as clipped. The fix shape
+  is always the same: replace the inference with a fact the code exposes —
+  staging is now the named group `groundStaging` reachable via the viewer's
+  `ground()` accessor, and anything separating staging from anatomy uses
+  that, never geometry type.**
+- **Environment map + ground staging (2026-09-03), the pass the pipeline
+  correction was gating.** scene.environment is now a 256×128 linear-float
+  equirect gradient derived from the design tokens through cssVar() — floor
+  `--bg`, horizon `--panel`, sky `--text`; accents deliberately excluded from
+  the illumination spectrum — at scene.environmentIntensity 0.25, with a
+  `--line` plinth + baked radial contact shadow added per viewer. Key
+  findings, all measured (packet: /tmp/atlas-verify/p3/): **(a) PMREM
+  resolution cliff** — PMREMGenerator's cube face is equirectWidth/4 and its
+  blur chain floor is LOD_MIN=4 (16-texel face); below W=64 the roughness
+  mips are never written and diffuse IBL evaluates to EXACTLY ZERO, silently
+  (probe: 0.0 at W=32/48, 120.75 at W=64, converged ±0.2% above). This also
+  retroactively corrects the reference-app premise: thebuggeddev/anatomy
+  ships a 16-wide map (cube face 4, below the floor), so its env map almost
+  certainly lights nothing and "they have IBL, we don't" was wrong on both
+  halves. **(b) Intensity 0.25** — minimax of the pale/dark albedo split
+  (curves cross at 0.25: pale 0.043 / dark 0.042), and it dominates 0.20 on
+  hue (4.40 vs 4.47) and value (−0.052 vs −0.054) for 0.001 of |dSat|; a
+  single GLOBAL level, per-material-class envMapIntensity refused because
+  the disagreement is between albedos inside one class and a per-lightness
+  env would assert pale tissues sit in a dimmer room. Light intensities
+  UNCHANGED (dVal negative at every level; blown 0 everywhere). **(c)
+  Operator re-measured at the shipped config** — AgX |dSat| 0.043 vs ACES
+  0.079 / control 0.107 / Neutral 0.207, blown 0 under all four; AgX stands,
+  Neutral still worst by 5×, control best on hue (3.67° vs 4.40°) but 2.5×
+  worse on saturation with no headroom (P2: control clipped 247px at ×1.35
+  where every operator held zero). Mechanism flip recorded in condition (1)
+  above. **(d) Staging per viewer** — body YES (figure stands on the disc),
+  organ YES for 13/14 (all discs measured fully in-frame, addGround
+  provably never moves the camera), tumour site map NO (blob heights encode
+  spread pattern), and **testis EXCLUDED on a geometric impossibility**: its
+  box is height-dominated (2.20 over a 1.38×1.38 near-square footprint), so
+  framing puts the organ's lowest point at ~pixel 300/318 while containing
+  the footprint needs disc r=1.07; at the default pitch (near-rim drop
+  ≈0.65·r, consistent across all 14) any disc that fits needs r≤0.21, 5×
+  too small — the full disc reads as a dark silhouette cut on three sides,
+  shadow-only sits entirely out of frame. REVISIT TRIGGER at the call site:
+  if the Prompt-5 audit changes the testis framing, re-test the plinth.
+  Staging is named (`groundStaging` → `groundPlinth`/`groundContactShadow`)
+  and exposed as viewer.ground(), which returns null where staging is
+  deliberately absent. Regression after the pass: 163/2, exactly the
+  documented baseline (GBM + acinar label overlaps), zero new failures.
+  Carried to Prompt 5 (blocker recorded there): headless captures compose
+  organs off-centre while the live pane is correct — the suspected
+  mechanism is the applyFraming()/hasFramed latch (resize() only re-frames
+  if !hasFramed), and initSidebar's resize-on-toggle path would hit the
+  same latch LIVE, which is the ten-minute check that decides rig artefact
+  vs shipping bug before any absolute visual judgement is made.
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was

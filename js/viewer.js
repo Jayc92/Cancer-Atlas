@@ -28,10 +28,15 @@ import { makeSeededRandom, seedFromKey } from './rng.js';
 //     lighting crushed dark albedos (the very effect the old comment measured in reverse).
 //     Accepted at review with the pale-organ cost inspected (~10-15% dimmer, no regression
 //     read; the testis glow halos tame from blown blooms to soft accents).
-//   - CONDITION recorded at the ruling: re-measure the operator after the environment-map
-//     pass lands — AgX's win is partly offsetting the current warm rig's saturation push,
-//     and an env map changes that push. Glow-light restoration is a separate pass with its
-//     own gate against the new zero-clip baseline.
+//   - CONDITION DISCHARGED (2026-09-03, env-map pass): the operator was re-measured against
+//     the env-mapped scene at the shipped intensity 0.25 — AgX mean |dSat| 0.043 vs ACES
+//     0.079, control 0.107, Neutral 0.207; blown pixels 0 under all four. AgX re-confirmed.
+//     BUT THE MECHANISM FLIPPED while the verdict held: in the P2 rig AgX won by offsetting
+//     an over-saturating warm rig; under env it UNDERSHOOTS cited saturation on 6 of 9 cited
+//     organs (worst testis -0.087). "AgX offsets the rig's saturation push" is therefore no
+//     longer true and must not be carried into any later lighting change as a rule of thumb —
+//     the next rig change re-measures, it does not reason from P2. Glow-light restoration is
+//     still a separate pass with its own gate against the new zero-clip baseline.
 THREE.ColorManagement.enabled = true;
 
 // The former LEGACY_LIGHT_SCALE = π is retired (2026-09-03). It existed to compensate for
@@ -45,6 +50,119 @@ THREE.ColorManagement.enabled = true;
 // Small helper every organ/cancer data module reads its region/site colors through, so those
 // modules never hardcode a hex value that could drift from the design-system CSS variables.
 export function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+// --- Environment map: a gradient derived from the design system, not an imported HDRI ---------
+// Every light in this file is a point/directional/ambient source, which means indirect light is
+// a flat constant: an ambient term adds the SAME irradiance to a surface facing the viewer and
+// one facing into a fold. A real room does not do that, and it is why concave organ geometry
+// (lung fissure, kidney hilum, prostate fold) has always read flatter than the surrounding
+// convex surface. An image-based environment gives direction-varying indirect light for free.
+//
+// DERIVATION — the three stops are read from the app's own CSS custom properties through
+// cssVar(), the same channel every organ module reads its region colours through, so the
+// "room" the organs sit in cannot drift from the UI they sit inside:
+//   floor   --bg      #0b0f1a   the page background, i.e. what is actually behind the canvas
+//   horizon --panel   #121a2b   the panel chrome that visually surrounds the viewer
+//   sky     --text    #e7ecf6   the brightest token in the system; the only one bright enough
+//                               to function as a light source rather than a tint
+// --teal (and every other accent) is DELIBERATELY EXCLUDED from the illumination spectrum.
+// Accents exist to make UI state legible; putting one in the env map would push a hue onto
+// every tissue albedo in the app, and those albedos are individually cited against real
+// gross-anatomy sources. The three tokens above are all neutral-to-cool greys of the same
+// family, so this map varies mostly in VALUE — which is the property being added here.
+//
+// Built as LINEAR-LIGHT FLOAT data, not sRGB bytes, on purpose. scene.environment is handed to
+// PMREMGenerator internally, and an 8-bit texture's colour-space tag has to survive that
+// conversion for the result to mean what it says; Color.setStyle() with ColorManagement on
+// already returns linear working-space components, so writing those into a FloatType texture
+// makes the decode explicit here instead of assumed downstream.
+//
+// RESOLUTION IS A CORRECTNESS CONSTRAINT, NOT A QUALITY DIAL. PMREMGenerator sizes its cube face
+// at equirectWidth/4 and its blur chain starts at LOD_MIN = 4, i.e. a 16-texel face. Below that
+// the roughness mips are never written, and diffuse IBL — which samples those mips — evaluates to
+// exactly ZERO while mip 0 still holds real colour, so the map looks present and lights nothing.
+// A white roughness-0.5 probe sphere lit by env alone, measured through this exact code path:
+//     W=32 -> 0.0      W=48 -> 0.0      W=64 -> 120.75      W=256 -> 120.65     W=512 -> 120.60
+// So W must be >= 64, and above 64 the response is converged to within 0.2% for a gradient with no
+// high-frequency content. W=256 is two octaves clear of the cliff, because the failure at the cliff
+// is silent: no warning, no error, just unlit geometry.
+//
+// The same cliff retroactively corrects the premise this feature was built on. The reference app
+// (thebuggeddev/anatomy) ships its gradient at SIXTEEN texels wide — cube face 4, further below
+// the floor than the 32 first tried here — so by the measurement above its env map almost
+// certainly contributes nothing, and its look comes from baked albedo textures plus its light
+// rig alone. "The gap against the reference is that they have IBL and we don't" was wrong on
+// both halves; recorded so nobody re-imports its dimensions as a known-good reference.
+//
+// Row 0 of a DataTexture is v=0, and three.js's equirectUv() maps v=0 to -Y: the data is filled
+// FLOOR-FIRST, upward. Getting this backwards renders a plausible-looking scene lit from below.
+const ENV_HORIZON_V = 0.45;  // slightly below the equator, so the bright half reads as "above"
+// ENV_INTENSITY — MEASURED, not chosen by eye. Swept 0 / 0.08 / 0.15 / 0.20 / 0.25 / 0.32 / 0.40 /
+// 0.50 under AgX at exposure 1.0, comparing each of the 9 cited-albedo organs' lit face against its
+// cited albedo in HSV. Hue error and value error both improve monotonically as env rises
+// (|dHue| 4.73 -> 4.05, dVal -0.063 -> -0.041), so on those two axes alone more is always better.
+// Saturation splits the organs in two and pulls in opposite directions:
+//     mean |dSat|, pale organs (cited V >= 0.70)   0.034 -> 0.056   worsens with env
+//     mean |dSat|, dark organs (kidneys, liver)    0.074 -> 0.014   improves with env
+// Adding broadband indirect light desaturates every albedo it touches, which corrects the two dark
+// organs (rendered ABOVE cited saturation) and degrades the seven pale ones (rendered BELOW it).
+// The two curves cross at 0.25 — pale 0.043, dark 0.042 — so 0.25 is the minimax point: it is the
+// level that minimises the error of whichever group is worse off. Neither 0.20 (dark 0.049) nor
+// 0.32 (pale 0.047) is as good by that test, and aggregate |dSat| is flat across the whole
+// 0.15-0.32 span (0.042-0.044), so the aggregate cannot pick a value and the split has to.
+// The minimax choice also happens to dominate its lower neighbour outright: against 0.20 it wins
+// hue (4.40 vs 4.47) and value (-0.052 vs -0.054) and concedes 0.001 of mean |dSat| — so 0.25
+// stands on three axes, not one (accepted at review on exactly that reading).
+//
+// This is a single GLOBAL level, deliberately. The disagreement above is between pale and dark
+// ALBEDOS, and both groups live inside one material class (B), so a per-material-class
+// envMapIntensity cannot address it; and varying env by albedo lightness would assert that pale
+// tissues sit in a dimmer room than dark ones, while also making a fidelity delta attributable to a
+// per-organ fudge factor rather than to the cited albedo it is supposed to test.
+//
+// Light intensities are UNCHANGED. dVal stays negative at every level measured, i.e. the renders sit
+// below cited value rather than above it, and the blown-pixel count is 0 for all 14 organs at every
+// env level and under all four tone-mapping operators. Env is closing an existing value deficit,
+// not adding brightness that has to be paid for elsewhere.
+const ENV_INTENSITY = 0.25;
+// One map for every viewer. All three derive from the same CSS tokens, so three copies would be
+// identical by construction; each renderer still runs its own PMREM conversion, which is per-
+// renderer state, but the 512 KB source is built once.
+let sharedEnvTexture = null;
+export function getEnvTexture(){
+  if(sharedEnvTexture) return sharedEnvTexture;
+  const floorColor = new THREE.Color().setStyle(cssVar('--bg'));
+  const horizonColor = new THREE.Color().setStyle(cssVar('--panel'));
+  const skyColor = new THREE.Color().setStyle(cssVar('--text'));
+  const W = 256, H = 128;
+  const data = new Float32Array(W * H * 4);
+  const c = new THREE.Color();
+  for(let y=0; y<H; y++){
+    const v = (y + 0.5) / H;
+    if(v < ENV_HORIZON_V){
+      c.copy(floorColor).lerp(horizonColor, v / ENV_HORIZON_V);
+    } else {
+      // Smoothstep above the horizon rather than a straight ramp: the upper half is the half
+      // with enough radiance to show a seam in a specular highlight on a smooth serosal surface.
+      const t = (v - ENV_HORIZON_V) / (1 - ENV_HORIZON_V);
+      c.copy(horizonColor).lerp(skyColor, t * t * (3 - 2 * t));
+    }
+    for(let x=0; x<W; x++){
+      const i = (y * W + x) * 4;
+      data[i] = c.r; data[i+1] = c.g; data[i+2] = c.b; data[i+3] = 1;
+    }
+  }
+  const tex = new THREE.DataTexture(data, W, H, THREE.RGBAFormat, THREE.FloatType);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  // Linear, not the DataTexture default of Nearest: PMREM samples this map as a continuous
+  // function, and nearest-filtering a gradient feeds it stair steps to blur.
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  // colorSpace left at NoColorSpace: the data above IS linear working-space light.
+  tex.needsUpdate = true;
+  sharedEnvTexture = tex;
+  return tex;
+}
 
 // ============================================================
 // SHARED INTERACTION HELPER
@@ -239,6 +357,13 @@ export function makeViewer(container, opts){
   renderer.toneMappingExposure = 1.0;
   container.appendChild(renderer.domElement);
 
+  // Indirect light. See getEnvTexture() above for the derivation of the map itself, and the
+  // ENV_INTENSITY block beside it for how the intensity below was chosen.
+  // opts.envIntensity === 0 disables it (an explicit control for measurement runs), which is
+  // why the test is against null rather than falsy.
+  scene.environment = getEnvTexture();
+  scene.environmentIntensity = opts.envIntensity != null ? opts.envIntensity : ENV_INTENSITY;
+
   // Intensities below are the original hand-tuned design values with the retired π folded in
   // at full precision (see the pipeline comment at the top of this file) — numerically
   // identical to what every prior pass shipped and reviewed.
@@ -383,6 +508,9 @@ export function makeViewer(container, opts){
   // yields a nonsense distance. So remember the request and let resize() retry it once
   // the container actually has dimensions.
   let framingMeshes = null, framingPadding = 1.12, hasFramed = false;
+  // Held so a second addGround() call replaces the staging instead of stacking a second plinth
+  // inside the first (organ viewers are reused across sidebar selections, not rebuilt per organ).
+  let groundGroup = null;
 
   // Pull the camera back far enough that everything in `framingMeshes` fits the frame.
   // The rig always looks at the origin, so distance is measured from there rather than
@@ -491,6 +619,103 @@ export function makeViewer(container, opts){
       if(padding) framingPadding = padding;
       return applyFraming();
     },
+    // Ground staging: a plinth disc plus a baked contact shadow, sized from the meshes given.
+    // Purpose is depth cueing, not realism — a mesh floating in an empty void has nothing to
+    // anchor its scale or its "down" against, which is the same reason the env map above exists.
+    // Deliberately a BAKED gradient rather than a real shadow map: one directional light casting
+    // a real shadow would need a shadow camera fitted per organ (organs here span ~1cm to ~30cm
+    // bounding radius), and would put a hard-edged shape under an organ whose own silhouette is
+    // the thing being examined. A soft radial darkening reads as contact without asserting a
+    // shape the geometry doesn't have.
+    //
+    // Cannot affect picking, by construction: all three raycast sites in this app intersect
+    // EXPLICIT mesh arrays (main.js organMarkers.map(m=>m.mesh) and siteBlobs.map(b=>b.mesh),
+    // body.js visible.map(r=>r.mesh)) rather than scene.children, so geometry added here is
+    // invisible to every hit test. Nor does it affect framing: applyFraming() measures
+    // framingMeshes, which is whatever the caller passed to frameContents() — never the scene.
+    addGround(meshes){
+      if(groundGroup){ scene.remove(groundGroup); groundGroup = null; }
+      const box = new THREE.Box3();
+      meshes.forEach(mesh=>{ mesh.updateMatrixWorld(); box.expandByObject(mesh); });
+      if(box.isEmpty()) return null;
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      // Radius = the smallest disc that CONTAINS the footprint, plus 10%. Stated geometrically
+      // rather than as a tuned fraction of one axis, because a fraction of max(x,z) is only
+      // right at one footprint aspect ratio: it oversizes a wedge-shaped organ (liver, footprint
+      // 0.247 x 0.170 m) while barely covering an elongated one (colon, 0.396 x 0.195 m — its
+      // caecum hung off the front edge). Half the footprint diagonal is the circumscribing
+      // radius for any aspect ratio, and the 10% is the visible margin.
+      const radius = 0.5 * Math.hypot(size.x, size.z) * 1.10;
+      const height = radius * 0.10;
+      groundGroup = new THREE.Group();
+      // Named, and reachable through the viewer as ground() below, because "staging" is not
+      // inferable from geometry type. Anything that walks the scene to separate staging from
+      // anatomy — the regression harness, any colour measurement that must exclude the plinth —
+      // would otherwise test for CylinderGeometry/PlaneGeometry and catch real meshes: the skin
+      // slab's hair shafts are cylinders too. Guessing by type mislabelled 4 anatomy meshes on
+      // skin and misread the testis entirely.
+      groundGroup.name = 'groundStaging';
+
+      // --line, not --panel-2, and this was measured rather than picked. --panel-2 is DARKER than
+      // the viewer pane it sits in, so a disc made of it renders below the background luminance
+      // and reads as a hole punched in the panel, not a surface — 39-52% of the staging area came
+      // out darker than the surrounding panel across thyroid/liver/colon, and the contact shadow
+      // on top of it made a black smudge. --line is the design system's surface-delineation
+      // token and renders 6-20 lum ABOVE the pane, so the disc reads as something lit. Same
+      // trial also showed the shadow is useless WITHOUT the disc (a soft black gradient over a
+      // dark void is invisible): the two are one element, not two independent options.
+      const plinth = new THREE.Mesh(
+        new THREE.CylinderGeometry(radius, radius, height, 64),
+        new THREE.MeshStandardMaterial({
+          color: new THREE.Color(cssVar('--line')), roughness: 0.92, metalness: 0.0
+        })
+      );
+      plinth.name = 'groundPlinth';
+      plinth.position.set(center.x, box.min.y - height/2, center.z);
+      groundGroup.add(plinth);
+
+      // 256² is well past sufficient for a radial gradient that is then magnified and blurred by
+      // nothing — the smoothness comes from the gradient itself, not from texel count.
+      const cnv = document.createElement('canvas');
+      cnv.width = cnv.height = 256;
+      const ctx = cnv.getContext('2d');
+      const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+      // Peak 0.28 over the --line plinth: 0.40 was trialled and reads heavy under a small organ
+      // (thyroid), 0.18 is invisible; 0.28 was the value that read as contact on all three trial
+      // organs at once. Mid stop at 0.36x peak keeps the falloff from looking like a hard disc.
+      grad.addColorStop(0.00, 'rgba(0,0,0,0.28)');
+      grad.addColorStop(0.55, 'rgba(0,0,0,0.10)');
+      grad.addColorStop(1.00, 'rgba(0,0,0,0.00)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 256, 256);
+      const shadowTex = new THREE.CanvasTexture(cnv);
+      shadowTex.colorSpace = THREE.SRGBColorSpace;
+      // Plane half-extent 0.95·radius, so its edges sit just inside the plinth rim on the axes.
+      // Its corners reach 1.34·radius, past the rim — invisible because the gradient is fully
+      // transparent well before there, which is cheaper than clipping to a disc.
+      const shadow = new THREE.Mesh(
+        new THREE.PlaneGeometry(radius * 1.9, radius * 1.9),
+        // toneMapped:false — this is a compositing element, not a lit surface; running a
+        // black-to-transparent overlay through AgX would lift its core off black.
+        // depthWrite:false keeps it from occluding anything that draws after it.
+        new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, toneMapped: false })
+      );
+      shadow.name = 'groundContactShadow';
+      shadow.rotation.x = -Math.PI / 2;
+      // Epsilon scaled to the model, not absolute: these viewers span two orders of magnitude of
+      // scene scale, and a fixed offset that clears z-fighting on the bodies would float visibly
+      // above the plinth on the ovary.
+      shadow.position.set(center.x, box.min.y + radius * 0.003, center.z);
+      groundGroup.add(shadow);
+
+      scene.add(groundGroup);
+      return groundGroup;
+    },
+    // Read access to the staging, so callers can hide or inspect it without pattern-matching on
+    // geometry type. Returns null in the viewers that deliberately have no plinth (the tumour site
+    // map), which is a meaningful answer rather than a missing one.
+    ground(){ return groundGroup; },
     resize,
     project(vec3){
       const v = vec3.clone().project(camera);

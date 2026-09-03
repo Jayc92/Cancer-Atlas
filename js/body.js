@@ -205,6 +205,9 @@ export function initBody(selectOrgan){
       state.maleBodyGroup.visible = false;
       // Framed against BOTH bodies at once so toggling sex never has to move the camera.
       state.bodyViewer.frameContents([state.femaleBodyGroup, state.maleBodyGroup], 1.25);
+      // Staged against BOTH bodies for the same reason the framing is: the plinth must not
+      // resize or shift when the sex toggle flips, and the two bodies differ in width.
+      state.bodyViewer.addGround([state.femaleBodyGroup, state.maleBodyGroup]);
 
       buildBodyMarkers();
 
