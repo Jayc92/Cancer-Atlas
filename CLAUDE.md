@@ -2578,6 +2578,41 @@ screen pair per organ:
 - **Body mesh source — full history, honestly, because it took three tries
   (2026-08-24/25):** `assets/female_body.glb` / `assets/male_body.glb` come
   from **Blender's "Human Base Meshes" bundle** now, not MakeHuman.
+  **SUPERSEDED FOLLOW-UP (2026-09-03, Multires-upgrade pass): the faceting
+  problem below is FIXED and the replacement-asset hunt is CLOSED.** The
+  shipped GLBs are now the bundle's Multires level 2 surfaces (338,720 tris
+  each), meshopt-compressed — not a new asset, the same CC0 bundle exported
+  at the resolution it was sculpted toward. The chain that got there, each
+  step measured: (1) the bundle re-downloaded from download.blender.org
+  (v1.4.1 zip; its own README still reads "Version 1.4", and the stale
+  Rain-Rig LICENSE quirk documented above is still present); (2) the export
+  pipeline REPRODUCED first — a fresh L0 export matched the shipped GLBs to
+  0.00007 mm mean per-vertex, after rediscovering the undocumented
+  bbox-centering step now recorded in body.js next to the multires-levels
+  gotcha; (3) L0/L1/L2 compared at all four problem zones (shoulder, elbow,
+  knee, hand) per sex at the legal minRadius-0.9 zoom: L0 fails everywhere,
+  L1 fixes ~80% but leaves banding on the female shoulder ball, female
+  thigh/knee, and forearms, L2 resolves everything (sculpted fingernails and
+  knuckle relief emerge); (4) L2's raw 36.75 MB pair priced POST-compression
+  per the reviewer's decision rule (<= ~10 MB -> ship L2) instead of
+  deferring to the compression pass: gltfpack -cc gave 4.03 MB but the
+  quantization gate CAUGHT visible normal banding on the female shoulder
+  (mean px delta 10.77/255 vs raw) — the -vn 8 default octahedral normals,
+  not position loss; -vn 12 fixed it (delta 0.049/255, pair 4.64 MB) —
+  **standing lesson: meshopt-compress smooth untextured bodies with
+  -vn 12, and gate any recompression on a raw-vs-compressed zone capture,
+  not on file size alone.** (5) Verified on the exact shipped bytes:
+  regression 161/3 = documented baseline, body markers 15/16 visible,
+  zero findBodySurfaceAnchor misses at any level, sex-toggle camera
+  bit-identical. Residual observation for the visual-audit pass: a faint
+  vertical quad-flow striping on the thighs under grazing light exists in
+  the RAW L2 too — a property of the sculpt's topology, not compression.
+  js/body.js now registers MeshoptDecoder (load-bearing: a compressed GLB
+  with no decoder fails to load entirely). One toolchain note: these two
+  files can no longer be parsed by the raw-GLB accessor scripts used in
+  review packets; verify body geometry through the live app (the organ
+  GLBs remain uncompressed until the dedicated compression pass decides
+  otherwise).
   1. **First: a MakeHuman bake. Abandoned — a source-topology defect, not a
      pipeline bug.** MakeHuman's base mesh plus its `macrodetails` blend-shape
      `.target` files (both CC0, verified via `LICENSE.md` and per-file

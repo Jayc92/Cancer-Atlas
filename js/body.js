@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { state, bodyMarkerRecords } from './state.js';
 import { makeViewer } from './viewer.js';
 import { ORGANS, ORGAN_MARKER_SPECS } from './organs/index.js';
@@ -41,9 +42,16 @@ import { organActionLabel } from './search.js';
 // triangles each in the Blender file) — far too heavy for a browser GLB. `assets/*.glb` were
 // exported at **Multires level 0** (the base cage: 10,582 verts / 21,160 triangles each,
 // topology-identical to level 3 — checked at both levels before exporting, not assumed). If
-// this ever needs re-exporting, force `modifier.levels = 0` (and `sculpt_levels`/
+// this ever needs re-exporting, force `modifier.levels = N` (and `sculpt_levels`/
 // `render_levels` too) before `export_scene.gltf(..., export_apply=True)`, or the export
-// silently regresses back to the 677K-vertex resolution. Real-world scale now (meters, ~1.7
+// silently regresses back to the 677K-vertex resolution. SECOND re-export gotcha, hit and
+// fixed in the Multires-upgrade pass (2026-09-03): the bundle lays the bodies out in a row
+// (object locations x = -2.264 male / -1.34 female, feet at z=0), and the shipped GLBs are
+// BBOX-CENTERED TO THE WORLD ORIGIN — the offset lives in the exported node's translation,
+// not the vertex data, so centering the local mesh alone is not enough. Subtract
+// R_node^-1 @ world_bbox_center from the POSITION accessor (or clear the node translation
+// AND center locally). Reproduction proof standard: a fresh L0 export after both gotchas
+// matched the originally shipped GLBs to 0.00007mm mean per-vertex. Real-world scale now (meters, ~1.7
 // tall) instead of MakeHuman's arbitrary ~17-unit body — `makeViewer` opts below are scaled
 // accordingly; don't reuse the old radius/minRadius/maxRadius numbers.
 //
@@ -178,6 +186,13 @@ export function initBody(selectOrgan){
   });
 
   const loader = new GLTFLoader();
+  // The body GLBs ship meshopt-compressed (EXT_meshopt_compression, gltfpack -cc): the L2
+  // Multires pair is 36.75MB raw but 4.03MB compressed — cheaper than even the uncompressed
+  // L1 compromise (9.56MB), which is what made shipping full L2 the right call. A compressed
+  // GLB with no decoder registered fails to LOAD (a broken body, not a degraded one), so this
+  // registration is load-bearing. Decoder is WASM inside three's own examples tree — same CDN
+  // the import map already trusts.
+  loader.setMeshoptDecoder(MeshoptDecoder);
   const loadOne = (url)=>new Promise((resolve, reject)=>loader.load(url, (gltf)=>resolve(gltf.scene), undefined, reject));
 
   Promise.all([loadOne('assets/female_body.glb'), loadOne('assets/male_body.glb')])
