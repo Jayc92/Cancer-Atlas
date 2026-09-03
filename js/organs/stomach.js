@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { organicDisplace } from '../viewer.js';
 import { cssVar } from '../viewer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // active:true. Alias collision check (same convention as every prior organ): no other organ's
 // aliases use "stomach", "gastric", "signet", "linitis", or "diffuse". "gastric adenocarcinoma"
@@ -61,142 +61,62 @@ export const cancerEntries = [
 //   license, whose distribution terms require reproducing the entire license text: a second
 //   license regime, flagged for review rather than silently adopted (swapping it in later is a
 //   contained change if wanted).
-// So: a swept-tube J built to VERIFIED real dimensions rather than an arbitrary blob —
-// "In the erect posture the empty stomach is somewhat J-shaped" (Gray's Anatomy, 1918), with
-// Gray's own caveat that "no one form can be described as typical"; distended length "about 10
-// to 11 inches (25 to 27.5 cm.)" and greatest diameter "not more than 4 to 4.5 inches (10 to
-// 11.2 cm.)" (Cunningham's Text-book of Anatomy, 1905); the direct cardia-to-pylorus chord
-// "varies from 3 to 5 inches (7.5 to 12.5 cm.)" (same); the greater curvature "four or five
-// times as long as the lesser curvature" (Gray's, 1918). This mesh: ~29cm along its axis —
-// inside the 26-34cm range Cunningham attributes to the authorities he surveys, just past his
-// own 25-27.5cm headline figure — 10.4cm greatest diameter, ~11.6cm cardia-pylorus chord, a
-// fundus dome overhanging the cardia level, and the pylorus riding ~8.5cm above the greater
-// curvature's most dependent point — each checked against those
-// quotes, not eyeballed. Single-silhouette convention (no esophageal or duodenal stubs), same
-// reasoning as Prostate's dropped duct appendages.
-// MATERIAL COLOR — one honest gap, stated rather than papered over: no fetchable source states
-// a color for the normal gastric SEROSA in words (the gross-anatomy classics describe the
-// serous coat's extent, not its color; the mucosa is "of a pinkish tinge at the pyloric end,
-// and of a red or reddish-brown color over the rest" — Gray's, 1918 — but that is the INSIDE).
-// The exterior tone used here (0xc08a7c, a deeper pink-tan than the colon's) is a flagged
-// INFERENCE from continuous GI serosa descriptions ("pink-tan and smooth" colon serosa,
-// Cureus, 2022; "red-tan and glistening" jejunal serosa, CRSLS, 2022), not a verified quote —
-// the one organ color in this atlas carried as inference, recorded here and in CLAUDE.md.
-// SILHOUETTE REVISION (review feedback, pre-commit): the first build was dimensionally
-// correct but read as a rounded blob, and two geometry causes were found rather than
-// nudged at: (1) the end "caps" were single pole-vertex FANS — i.e. cones — so any wide
-// fundus end necessarily rendered as a taper-to-a-tip instead of a dome (the wider the
-// fundus radius, the worse); both ends now get real HEMISPHERE caps (three intermediate
-// rings + pole), which is what finally makes the fundus a blunt dome and the pylorus a
-// rounded knob. (2) The radius taper was too gradual and the axis bend too gentle for the
-// antral narrowing and J-hook to register. This profile fixes the READ, keeping every
-// verified dimension: a much steeper radius falloff after the body (0.052 → 0.038 → 0.026
-// → 0.017 — the antral narrowing), a tighter axis hook whose inner edge goes genuinely
-// concave (the lesser curvature, with an incisura-like sweep where body meets antrum), and
-// a longer two-station pyloric tube that climbs — the pylorus ends ~8.5cm above the
-// greater curvature's lowest point. The axis now STARTS at the dome's equator (the
-// hemisphere cap supplies everything above it).
-const STOMACH_AXIS = [
-  [ 0.056,  0.080,  0.003],   // fundus dome equator (the hemisphere cap rises above this)
-  [ 0.058,  0.052,  0.006],   // widest zone (fundus/upper body)
-  [ 0.042, -0.005,  0.010],   // body
-  [ 0.012, -0.058,  0.010],   // lower body, entering the hook
-  [-0.030, -0.078,  0.004],   // the bend — greater curvature's most dependent stretch
-  [-0.066, -0.055, -0.002],   // antrum, climbing toward the patient's right
-  [-0.080, -0.030, -0.002],   // pyloric canal
-  [-0.086, -0.018, -0.002],   // pylorus end — the hook's high end (rounded by its own cap)
-];
-const STOMACH_RADII = [0.046, 0.052, 0.047, 0.038, 0.026, 0.017, 0.011, 0.008];
-const STOMACH_SEED = 4.2;
-
+// RESOLVED (Sketchfab-era hunt, 2026-09-02): the procedural mesh below this comment's history
+// is GONE — assets/stomach.glb is now REAL: "Realistic Stomach" by Brain Diagno (Sketchfab,
+// CC BY 4.0, verified three ways: live page, public API requirements text, and the GLB's own
+// embedded asset.extras — the label is the AUTHOR'S OWN). Provenance is the weakest of any
+// adopted asset (a medical-visualization artist, no institutional supervision), so adoption
+// rests on MEASURED landmark fidelity, not author authority: flat-shaded texture-free renders
+// prove as GEOMETRY the convex greater curvature, concave lesser curvature with incisura
+// notch, fundus mass, antral taper, and open-lumen esophageal + duodenal stubs (mouths are
+// modeled rims on a surface that stays closed). The Sketchfab-visible stippling and vessel
+// tracery are TEXTURE-ONLY (dihedral mean 2.63°) — disclosed; nothing load-bearing rides on
+// them. Topology as shipped: ONE connected component, ZERO boundary edges, ZERO non-manifold
+// edges, watertight, outward-wound. 35,226 verts (32,480 welded) / 64,960 tris.
+// HUNT NOTE recorded for the next pass: the highest-viewed "Realistic Human Stomach"
+// (neshallads — the same artist as our Lungs asset) is CC BY-NC and was rejected on license;
+// a second candidate ("Digestive System | Human Anatomy" by adimed) carried a CC BY label but
+// its own description admits it is a REUPLOAD of that NC model — a reupload cannot relicense
+// someone else's NC work, so its embedded CC-BY-4.0 extras tag is meaningless. Rejection
+// class: license-laundered reupload. Check reupload provenance, not just the label.
+// SCALE — length-class anchor (volume-anchor REJECTED for this organ, opposite of Ovary's
+// reasoning: gastric volume is state-dependent by two orders of magnitude, 25±18 mL empty to
+// 2–4 L full, so no single volume is "the" stomach): the greatest inscribed J-plane diameter
+// is anchored to 10.4 cm — Cunningham's 1905 mid-range ("not more than 4 to 4.5 inches
+// (10 to 11.2 cm.)"), the same figure the retired procedural mesh used. At that one anchor,
+// everything else lands inside cited bands unforced: overall extent 25.4 × 17.6 × 7.8 cm
+// (Cunningham's 25–27.5 cm length headline, including both stubs), antero-posteriorly
+// flattened 0.75:1 (real stomachs are; a symmetric tube would be 1:1), and enclosed volume
+// 216 mL — a coherent moderately-distended state. NOT claimed: Gray's "greater curvature
+// four or five times as long as the lesser" — the measurable mouth-to-mouth arc ratio (1.45)
+// includes both tube stubs and is not comparable; the qualitative asymmetry is proven in the
+// flat renders instead. The duodenal segment is LONG (a stylized C-loop): kept with
+// disclosure (Lungs kept its trachea, Colon its rectum stub; trimming would re-open a
+// watertight mesh), and it gives the Pyloric sphincter hotspot its anatomical context.
+// Export frame: J-plane → XY with the esophagus upper-LEFT and duodenum exiting RIGHT —
+// matching the app's mirror-view body-marker convention (patient-right renders image-right).
+//
+// MATERIAL COLOR — the old procedural's honest gap stays RECORDED because it still applies to
+// recipe-material variants: no fetchable source states a color for the normal gastric SEROSA
+// in words (Gray's 1918 colors the INSIDE mucosa only); 0xc08a7c was a flagged INFERENCE from
+// continuous GI serosa descriptions (pink-tan colon serosa, Cureus 2022; red-tan glistening
+// jejunal serosa, CRSLS 2022). The shipped material is decided by live A/B/B-prime evidence —
+// see the review packet — with the same disclosure discipline either way: the artist's baked
+// texture tone is artist-authored, NOT independently color-verified (Lungs/Colon rule-25/26
+// class), and the recipe tone is the inference above.
 export function buildStomachMesh(){
-  const pts = STOMACH_AXIS.map(p => new THREE.Vector3(p[0], p[1], p[2]));
-  const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
-  const SEGS = 72, AROUND = 48, CAP_RINGS = 3;
-  const frames = curve.computeFrenetFrames(SEGS, false);
-  // radius profile: Catmull-Rom over the control radii, stationed at each control point's
-  // ARC-LENGTH fraction along the axis — getPointAt(t) below is arc-length-parameterized, so
-  // indexing the radii by control-point NUMBER instead would slide every radius to the wrong
-  // station (the control points are not evenly spaced: the fundus segment is short, the body
-  // segments long). Caught when the first render showed a thin fundus and a fat pylorus.
-  const stations = [0];
-  for(let i=1;i<pts.length;i++) stations.push(stations[i-1] + pts[i].distanceTo(pts[i-1]));
-  const total = stations[stations.length-1];
-  for(let i=0;i<stations.length;i++) stations[i] /= total;
-  const radiusAt = (t)=>{
-    const n = STOMACH_RADII.length - 1;
-    let i = 0;
-    while(i < n-1 && t > stations[i+1]) i++;
-    const u = Math.min(Math.max((t - stations[i]) / (stations[i+1] - stations[i]), 0), 1);
-    const r0 = STOMACH_RADII[Math.max(i-1,0)], r1 = STOMACH_RADII[i],
-          r2 = STOMACH_RADII[Math.min(i+1,n)], r3 = STOMACH_RADII[Math.min(i+2,n)];
-    // standard Catmull-Rom basis
-    return 0.5*((2*r1) + (-r0+r2)*u + (2*r0-5*r1+4*r2-r3)*u*u + (-r0+3*r1-3*r2+r3)*u*u*u);
-  };
-  // Assemble the full ring list first — hemisphere cap rings at the fundus end, the swept
-  // tube, hemisphere cap rings at the pylorus end — then tessellate uniformly. 0.92 slightly
-  // squashes both domes along the axis so they read organic rather than geometrically perfect.
-  const rings = []; // each: {P, N, B, r}
-  const t0 = curve.getTangentAt(0), t1 = curve.getTangentAt(1);
-  const Pstart = curve.getPointAt(0), Pend = curve.getPointAt(1);
-  const rStart = STOMACH_RADII[0], rEnd = STOMACH_RADII[STOMACH_RADII.length-1];
-  const N0 = frames.normals[0], B0 = frames.binormals[0];
-  const N1 = frames.normals[SEGS], B1 = frames.binormals[SEGS];
-  for(let k=CAP_RINGS; k>=1; k--){
-    const a = (k/(CAP_RINGS+1))*(Math.PI/2); // polar angle from the equator toward the pole
-    rings.push({
-      P: Pstart.clone().addScaledVector(t0, -rStart*0.92*Math.sin(a)),
-      N: N0, B: B0, r: rStart*Math.cos(a),
-    });
-  }
-  for(let i=0;i<=SEGS;i++){
-    const t = i/SEGS;
-    rings.push({ P: curve.getPointAt(t), N: frames.normals[i], B: frames.binormals[i], r: radiusAt(t) });
-  }
-  for(let k=1; k<=CAP_RINGS; k++){
-    const a = (k/(CAP_RINGS+1))*(Math.PI/2);
-    rings.push({
-      P: Pend.clone().addScaledVector(t1, rEnd*0.92*Math.sin(a)),
-      N: N1, B: B1, r: rEnd*Math.cos(a),
-    });
-  }
-  const positions = [], indices = [];
-  rings.forEach(ring=>{
-    for(let j=0;j<AROUND;j++){
-      const a = j/AROUND*Math.PI*2;
-      positions.push(
-        ring.P.x + (ring.N.x*Math.cos(a) + ring.B.x*Math.sin(a))*ring.r,
-        ring.P.y + (ring.N.y*Math.cos(a) + ring.B.y*Math.sin(a))*ring.r,
-        ring.P.z + (ring.N.z*Math.cos(a) + ring.B.z*Math.sin(a))*ring.r
-      );
-    }
+  const loader = new GLTFLoader();
+  return new Promise((resolve, reject)=>{
+    loader.load('assets/stomach.glb', (gltf)=>{
+      gltf.scene.traverse(o=>{
+        if(o.isMesh && o.material && o.material.map){
+          o.material.map.colorSpace = THREE.NoColorSpace;
+          o.material.map.needsUpdate = true;
+        }
+      });
+      resolve(gltf.scene);
+    }, undefined, reject);
   });
-  for(let i=0;i<rings.length-1;i++){
-    for(let j=0;j<AROUND;j++){
-      const a = i*AROUND+j, b = i*AROUND+(j+1)%AROUND, c = (i+1)*AROUND+j, d = (i+1)*AROUND+(j+1)%AROUND;
-      indices.push(a,b,c, b,d,c);
-    }
-  }
-  // pole vertices closing both hemispheres
-  const lastRing = rings.length-1;
-  const pole0 = positions.length/3;
-  positions.push(Pstart.x - t0.x*rStart*0.92, Pstart.y - t0.y*rStart*0.92, Pstart.z - t0.z*rStart*0.92);
-  const pole1 = positions.length/3;
-  positions.push(Pend.x + t1.x*rEnd*0.92, Pend.y + t1.y*rEnd*0.92, Pend.z + t1.z*rEnd*0.92);
-  for(let j=0;j<AROUND;j++){
-    indices.push(pole0, (j+1)%AROUND, j);
-    indices.push(pole1, lastRing*AROUND+j, lastRing*AROUND+(j+1)%AROUND);
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geo.setIndex(indices);
-  geo.computeVertexNormals();
-  // Same deterministic organic surface treatment as the procedural Ovary — amplitude is
-  // FRACTIONAL (radial scale), so 0.022 on this ~10cm-from-origin mesh is ~2mm of wobble at
-  // the extremities, a serosal-surface irregularity rather than a shape change.
-  organicDisplace(geo, 0.022, 14, STOMACH_SEED);
-  const mat = new THREE.MeshPhysicalMaterial({ color:0xc08a7c, roughness:0.58, metalness:0.0, specularIntensity:0.15 });
-  return new THREE.Mesh(geo, mat);
 }
 
 export const organDetail = {
@@ -216,7 +136,7 @@ export const organDetail = {
   // figures: the folkloric "~50 mL empty" was checked and NOT found citable; the measured MRI
   // values (25 ± 18 mL, Grimm et al., 2018; 35 ± 7 mL, Mudie et al., 2014) are used instead,
   // with StatPearls' 2-3 L and OpenStax's ~4 L for the distended end.
-  desc:'The stomach hangs below the diaphragm as a J-shaped pouch — in the classic erect, empty posture at least; Gray\'s Anatomy itself cautions that "no one form can be described as typical." Food enters at the cardia (level of the tenth thoracic vertebra, left of the midline), the dome-shaped fundus rises above and to the left under the diaphragm, and the body sweeps down the long convex greater curvature — four to five times the length of the short, concave lesser curvature — before the antrum narrows to the pylorus, right of the midline, where a muscular sphincter meters food into the duodenum. Uniquely in the digestive tract, its wall carries three muscle layers; the extra inner oblique layer churns food against gastric juice acidified to pH 1.5–3.5. Gastric adenocarcinoma arises from the glandular epithelium of its mucosal lining. One note about this 3D model itself: it is procedural — built to published dimensions rather than derived from a scan — and its pink-tan surface tone is an inference from published descriptions of neighboring digestive-tract organs\' outer surfaces, because no anatomical source states the stomach\'s own serosal color in words.',
+  desc:'The stomach hangs below the diaphragm as a J-shaped pouch — in the classic erect, empty posture at least; Gray\'s Anatomy itself cautions that "no one form can be described as typical." Food enters at the cardia (level of the tenth thoracic vertebra, left of the midline), the dome-shaped fundus rises above and to the left under the diaphragm, and the body sweeps down the long convex greater curvature — four to five times the length of the short, concave lesser curvature — before the antrum narrows to the pylorus, right of the midline, where a muscular sphincter meters food into the duodenum. Uniquely in the digestive tract, its wall carries three muscle layers; the extra inner oblique layer churns food against gastric juice acidified to pH 1.5–3.5. Gastric adenocarcinoma arises from the glandular epithelium of its mucosal lining. One note about this 3D model itself: it is an artist-authored anatomical model (not a scan), adopted after its J-shape, fundus, and antral landmarks were verified as real geometry against the classic published descriptions — and its surface tone comes from the artist\'s own painted texture, which is not independently color-verified, because no anatomical source states the stomach\'s serosal color in words.',
   buildMesh: buildStomachMesh,
   // Procedural mesh in real meters (~18 x 20 x 10cm envelope) — pos-anchored hotspots put it
   // through the same frameContents/scaled-marker path as the real-scan organs (that branch
@@ -225,23 +145,28 @@ export const organDetail = {
   // the surface, where a point light degenerates to distance zero (see main.js's clip-fix
   // comment). minRadius/maxRadius are real-meter values.
   viewer:{ theta:0.5, phi:1.15, radius:0.42, minRadius:0.12, maxRadius:1.0, autoRotateRadPerFrame:0.0016 },
-  viewerAria:'Three-dimensional model of a stomach, a smooth J-shaped pouch — the rounded fundus '
-    + 'dome at the upper right of the view, the body descending along its long outer curve, the '
-    + 'antrum and pylorus tapering up toward the lower left — with four glowing teal points '
+  viewerAria:'Three-dimensional model of a real stomach — the esophagus entering at the upper '
+    + 'left, the body sweeping down its long convex greater curvature, and the antrum narrowing '
+    + 'to the pylorus before the duodenum curls away to the right — with four teal points '
     + 'marking the structures listed after it. Drag to rotate, scroll to zoom.',
-  // pos: literal anchor points (meters) on this procedural mesh's own generated surface —
-  // computed from the identical curve/radius parameterization above (then nudged by the same
-  // deterministic organicDisplace formula), not raycast approximations. Verified visible at
-  // the default camera angle by screenshot, per the Kidneys lesson.
+  // pos: measured anchor points (meters) on the real mesh's surface — direction-scored argmax
+  // picks on the final exported frame (the Bladder/Thyroid/Ovary real-anchor standard), placed
+  // against the organ's actual regions: pits mid-body anterior face; rugae low over the greater
+  // curvature; muscularis on the fundus shoulder (wall-layer hotspots are representative
+  // surface points — their texts already say the layer is within the wall); pylorus snapped to
+  // the visible ANTRAL NECK where the body constricts into the duodenal loop (verified against
+  // the flat-shade render — a first pick 2.8 cm from the duodenal mouth landed mid-duodenum
+  // because the C-loop is long; the neck is the anatomy, not a fixed offset). All four
+  // front-visible at the default camera, verified by screenshot.
   hotspots:[
     // The "arises here" point every organ leads with.
-    { key:'pits', label:'Gastric pits & glands', pos:[0.0550, 0.0500, 0.0585],
+    { key:'pits', label:'Gastric pits & glands', pos:[-0.09125, -0.01464, 0.03707],
       text:'The mucosal surface is dotted with millions of gastric pits, each the mouth of a gland: parietal cells secreting hydrochloric acid and intrinsic factor, chief cells secreting pepsinogen — activated to pepsin by that same acid. Gastric adenocarcinoma arises from the glandular epithelium of this mucosa, directly paralleling how colorectal cancer begins in the colon\'s glandular lining and pancreatic cancer in the ductal epithelium.' },
-    { key:'rugae', label:'Rugae', pos:[0.0320, -0.0080, 0.0549],
+    { key:'rugae', label:'Rugae', pos:[-0.02190, -0.07736, 0.02393],
       text:'The large accordion folds the mucosa and submucosa collapse into when the stomach is empty — flattening out as it fills, part of how a resting volume of a few tens of milliliters stretches to hold liters. In the diffuse type of gastric cancer, extensive infiltration of the wall can efface these folds entirely: the rigid, non-distensible "leather bottle" stomach (linitis plastica).' },
-    { key:'muscle', label:'Muscularis externa', pos:[-0.0150, -0.0920, 0.0304],
+    { key:'muscle', label:'Muscularis externa', pos:[-0.12282, 0.00013, 0.00390],
       text:'Three smooth-muscle layers — longitudinal, circular, and an inner oblique layer found nowhere else in the GI tract — churn food against gastric juice. In cancer staging this wall is the yardstick: a tumor invading the muscularis propria is T2, and the diffuse type characteristically spreads within these wall layers rather than growing as a mass into the lumen.' },
-    { key:'pylorus', label:'Pyloric sphincter', pos:[-0.0800, -0.0260, 0.0077],
+    { key:'pylorus', label:'Pyloric sphincter', pos:[0.04043, 0.02988, 0.01036],
       text:'The circular muscle layer thickens here into the sphincter that meters chyme into the duodenum — holding each ~30 mL portion of the antrum\'s contents until it is liquid enough to pass. G cells in this region secrete gastrin, the hormone that drives the parietal cells\' acid production upstream.' },
   ],
 };

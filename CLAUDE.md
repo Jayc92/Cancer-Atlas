@@ -2296,6 +2296,76 @@ screen pair per organ:
     - Near-plane note: a true-scale ~2.8 cm ovary frames the camera to
       ~8 cm — safe only because of the Thyroid pass's near 0.1→0.01 fix
       (this organ would have been the second casualty).
+30. Stomach real-mesh swap — **"Realistic Stomach" by Brain Diagno
+    (Sketchfab, CC BY 4.0, 2026-09-03), replacing the procedural swept-tube
+    J; the atlas's 12th real mesh and its weakest-provenance adoption,
+    accepted on MEASURED landmark fidelity, not author authority.**
+    NUMBERING ERRATUM (reviewer-caught at this commit's gate, recorded here
+    as the living correction since the affected titles are pushed history):
+    the registry has 14 ORGANS and 16 CANCER PAIRS. The Testis/Bladder
+    commit title's "organs #13-14" were pair numbers (organ count was 13
+    after that pass), and Thyroid's "organ (#15)" — also in rule 27's
+    opening — inherited the +1 drift: thyroid is the 14TH ORGAN, carrying
+    pairs #15-16. Real-mesh count as of this commit: 12 of 14 (Skin is a
+    deliberate schematic, Testis procedural). Count from the registry
+    (js/organs/index.js ORGAN_MODULES), never from prior labels.
+    - **License verified three ways** (page, API requirements text, embedded
+      asset.extras — the label is the author's own). Two standing lessons
+      from the hunt: (a) **license-laundered reupload, a named rejection
+      subtype** — a "CC BY" copy of neshallads' CC BY-NC stomach whose own
+      description admits the source; a reuploader's license selection cannot
+      relicense NC work, and Sketchfab's embedded extras echo the uploader's
+      claim, so CHECK REUPLOAD PROVENANCE, NOT THE LABEL (caught twice this
+      pass: the user's first download was that exact file — refused on
+      embedded-identity check before any geometry work). (b) neshallads —
+      the Lungs artist — publishes their stomach as NC; same artist does not
+      mean same license. Also rejected: Dundee CAHID's 5.2M-tri "stomach"
+      (an Artec scan OF A PLASTIC TEACHING MANNEQUIN, organ occluded),
+      Splanchnology (CC BY-SA), Sketchfab-Standard-licensed models.
+    - **Topology (cleanest source of any pass):** one component, ZERO
+      boundary edges, ZERO non-manifold edges, watertight, outward-wound;
+      35,226 verts (32,480 welded) / 64,960 tris; tube mouths are modeled
+      rims (open-lumen look on a closed surface) — the two >40° dihedral rim
+      rings ARE the esophageal/duodenal mouths and served as measurement
+      endpoints.
+    - **Landmarks are GEOMETRY** (flat-shade proven): greater/lesser
+      curvature asymmetry with incisura, fundus, antral taper. The stippling
+      and vessel tracery are TEXTURE-ONLY (dihedral mean 2.63°) — disclosed;
+      nothing load-bearing rides on them.
+    - **Scale: length-class anchor, volume REJECTED** (opposite of Ovary,
+      principled: gastric volume is state-dependent 25±18 mL → 2–4 L, no
+      single volume is "the" stomach). Greatest inscribed J-plane diameter
+      → 10.4 cm (Cunningham 1905 mid-range, the retired procedural's own
+      figure) puts everything else in cited bands unforced: 25.4 × 17.6 ×
+      7.8 cm overall (Cunningham 25–27.5 length headline, stubs included),
+      AP-flattened 0.75:1, enclosed volume 216 mL (coherent moderate fill).
+      NOT claimed: Gray's 4–5× curvature ratio — the measurable
+      mouth-to-mouth arc ratio (1.45) includes both stubs and is not
+      comparable. Duodenal loop is LONG: kept with disclosure (trim would
+      re-open a watertight mesh; it gives the pylorus hotspot context).
+    - **Material A ships — decided by a THREE-WAY live test** (A native /
+      B recipe / B′ gloss-boosted recipe at roughness 0.36 + spec 0.6,
+      reviewer-requested structure): the recipe's tissue mottle, tuned on
+      smaller organs, reads as artificial leopard spots on this large
+      smooth form; B′'s gloss does not rescue it; A's baked vessel speckle +
+      normal map read as tissue. Recipe-scale lesson: mottle frequency is
+      organ-scale-sensitive — do not assume the recipe transfers to large
+      smooth organs. Wet-sheen ceiling documented at review: the reference-
+      photo gloss is offline path-tracing; this pipeline has no envmap and
+      SSS/transmission measured pixel-identical (material pass), so
+      roughness/specular are the only levers and both sit under clip
+      guardrails. A's texture tone is artist-authored, NOT color-verified
+      (rule-25/26 class); the old serosal-color-inference note is retired
+      with the procedural mesh and recorded in the disclaimer.
+    - Textures downscaled 4096²→1024² ×3 (31.04 → 4.24 MB) under the lungs
+      protocol: same-camera live deltas mean 0.15–0.40/255, p99 ≤ 3.3.
+    - Hotspots re-anchored as measured coords; pylorus snapped to the
+      visible ANTRAL NECK (first pick "2.8 cm from the duodenal mouth"
+      landed mid-duodenum because the C-loop is long — anatomy beats fixed
+      offsets); wall-layer hotspots are representative surface points, texts
+      already say the layer is within the wall. Export frame matches the
+      app's mirror-view convention (duodenum image-right). No glow/precedent
+      consequences: stomach was already pos-anchored (isRealMesh true).
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
