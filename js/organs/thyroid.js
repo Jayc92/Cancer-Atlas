@@ -69,15 +69,18 @@ export const cancerEntries = [
 // baked texture with colorSpace = NoColorSpace (the legacy-pipeline double-decode fix those
 // two organs established); B = the app recipe (MeshPhysicalMaterial + tissue-mottle vertex
 // colors). A ships: the baked texture carries painted follicular mottling and vessel tinting
-// that recipe B flattens to a uniform tone, and under NoColorSpace its warm red-brown reads
-// correctly under the warm key light. See the review packet's side-by-side.
+// that recipe B flattens to a uniform tone, and under the then-shipping NoColorSpace fix its
+// warm red-brown read correctly under the warm key light. See the review packet's side-by-side.
+// [PIPELINE CORRECTION 2026-09-03: NoColorSpace was the LEGACY pipeline's double-decode
+// fix; under the corrected colour-managed pipeline (see js/viewer.js top comment) it would
+// itself cause the wrong render, so the map now ships SRGBColorSpace — the glTF default.]
 export function buildThyroidMesh(){
   const loader = new GLTFLoader();
   return new Promise((resolve, reject)=>{
     loader.load('assets/thyroid.glb', (gltf)=>{
       gltf.scene.traverse(o=>{
         if(o.isMesh && o.material && o.material.map){
-          o.material.map.colorSpace = THREE.NoColorSpace;
+          o.material.map.colorSpace = THREE.SRGBColorSpace;
           o.material.map.needsUpdate = true;
         }
       });

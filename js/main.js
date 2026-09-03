@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 
 import { state, organMarkers, siteBlobs, setSiteBlobs, siteLabelEls, setSiteLabelEls } from './state.js';
-import { makeViewer, organicSpiculate, applyMottleVertexColors, LEGACY_LIGHT_SCALE } from './viewer.js';
+import { makeViewer, organicSpiculate, applyMottleVertexColors } from './viewer.js';
 import { ORGANS, CANCERS, ORGAN_DETAILS, CANCER_DETAILS } from './organs/index.js';
 import { makeActivatable, landFocus } from './accessibility.js';
 import { renderCrumbs, initBreadcrumb } from './breadcrumb.js';
@@ -268,7 +268,7 @@ function initOrganViewer(organKey){
         // real meshes moves the live app closer to the approved look, not away from it — and
         // the DOM .organ-point dot + ring carries the marker's visible identity either way.
         if(!isRealMesh){
-          const glow = new THREE.PointLight(0x35c9c1, 0.5 * LEGACY_LIGHT_SCALE, glowDistance, 1);
+          const glow = new THREE.PointLight(0x35c9c1, 1.5707963267948966, glowDistance, 1);  // 0.5π folded (LEGACY_LIGHT_SCALE retired)
           glow.position.copy(mMesh.position);
           thisViewer.scene.add(glow);
         }

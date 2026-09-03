@@ -90,7 +90,9 @@ export function buildLungsMesh(){
     loader.load('assets/lungs.glb', (gltf)=>{
       gltf.scene.traverse(o=>{
         if(o.isMesh && o.material && o.material.map){
-          o.material.map.colorSpace = THREE.NoColorSpace;
+          // PIPELINE CORRECTION 2026-09-03: was NoColorSpace (the legacy double-decode fix, see this
+          // file's history + CLAUDE.md); corrected pipeline needs the glTF-default sRGB decode.
+          o.material.map.colorSpace = THREE.SRGBColorSpace;
           o.material.map.needsUpdate = true;
         }
       });

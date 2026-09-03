@@ -2070,7 +2070,7 @@ screen pair per organ:
       Umbrella-cell loss is drawn as a real, named contrast ("umbrella cells
       often -" in high grade vs "+" in low grade, the source's own table),
       not left as a prose caveat.
-25. **Lungs texture tone is artist-authored, NOT independently verified
+25. (Pipeline note 2026-09-03: this rule's NoColorSpace workaround is retired — the corrected pipeline ships SRGBColorSpace; tone provenance below unchanged.) **Lungs texture tone is artist-authored, NOT independently verified
     against a gross-anatomy color reference — a disclosed, accepted
     limitation, not an oversight (2026-09-01).** Every flat material color in
     this atlas is either verified against a real gross-anatomy/pathology
@@ -2094,7 +2094,7 @@ screen pair per organ:
     accepting it as if it had been verified; (c) this rule is the
     discoverable, standing record of the limitation — the narrative
     lungs-swap entry cross-references it, and neither supersedes the other.
-26. **Colon texture tone is artist-authored, NOT independently verified — the
+26. (Same pipeline note as rule 25: NoColorSpace retired 2026-09-03.) **Colon texture tone is artist-authored, NOT independently verified — the
     second organ under the rule-25 pattern (2026-09-02).** The colon mesh swap
     (dated entry in Architecture notes) replaced the HRA asset — whose flat
     material used the verified pale-pink serosal hex `0xc99f92` — with the
@@ -3017,6 +3017,40 @@ screen pair per organ:
   introspection that the *real* mesh was loaded, not just a plausible-looking
   render) before any of it could be trusted. The Lungs default view turned
   out to need no change; Kidneys' did, for the reason described above.
+- **Colour-managed pipeline correction — {ColorManagement on + sRGB output +
+  AgXToneMapping @ exposure 1.0} (2026-09-03), superseding the parked
+  "reproduce the r128 look" decision.** Landed on a measurement record, not
+  taste (packet: cancer-atlas-p2-pipeline-report): the legacy pipeline was
+  identity only for the flat-lit case (historical colour verifications stay
+  valid for what they measured); its shading maths ran in gamma space and
+  its 1.0/channel hard clip was the root cause of the blown-white bug
+  class. Corrected {CM+sRGB} leaves the lit-face palette statistically
+  unmoved (hue 4.8° vs 4.9°, sat dev 0.397 vs 0.378 against cited albedos).
+  Operator chosen from a measured four-way (control/ACES/Neutral/AgX):
+  **AgX best sat fidelity (0.174 — better than legacy's own 0.378); Neutral,
+  the pre-favoured candidate, WORST (0.594 — its preserve-saturation
+  guarantee faithfully preserves this warm rig's overshoot); ACES
+  hue-rotates the darkest reds. All three operators: ZERO blown pixels at
+  lights ×1.35 across 14 organs × 12 angles** — so fidelity alone decided.
+  Exposure 1.0; "match legacy brightness" was measured and rejected as the
+  wrong target (per-organ ratios ×0.85–1.76: legacy's gamma-space lighting
+  CRUSHED dark albedos — liver/kidneys brightening is the correction
+  working, accepted at review with the pale organs individually inspected;
+  testis's blown glow blooms tame to soft accents). LEGACY_LIGHT_SCALE
+  retired (π folded into full-precision literals, numerically identical);
+  NoColorSpace → SRGBColorSpace on the four textured organs (the legacy
+  double-decode fix would now itself be the bug). Light intensities
+  deliberately UNCHANGED — raising energy and restoring the stripped glow
+  lights is a separate, individually-gated pass against the new zero-clip
+  baseline. **Standing conditions from the ruling: (1) re-measure the
+  operator after the environment-map pass lands — AgX's win partly offsets
+  the current warm rig's saturation push, which an env map changes;
+  (2) measurement scripts must echo their parsed configuration back and
+  assert it matches the request — a zsh word-split silently no-op'd an
+  entire operator comparison and was caught only because byte-identical
+  results across four operators is implausible on its face; a partial
+  swallow would have produced plausible wrong numbers. A run that cannot
+  state what it measured must not produce a number.**
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was
@@ -3037,13 +3071,22 @@ screen pair per organ:
   again. The fixed suite reproduces the Lungs-era one-off almost exactly
   (lungs 2,452 mesh px vs recorded 2,447; ovary halo 0.34% vs 0.36%;
   testis 1.19% vs 1.20%) — and therefore surfaces testis's documented
-  angle-dependent ~1.2% blip as a REAL failure. **Baseline is therefore
-  163 checks / 3 failures (161 + two body-mesh-resolution guards added after
-  the Multires-L2 upgrade: they assert 338,720 tris per body through the
-  live app — the only guard on body.js's documented silent re-export traps
-  now that meshopt hides triangle counts from raw-GLB parsing; a wrong-level
-  export passes every other check because markers re-derive by raycast),
-  all three failures documented and ACCEPTED: the GBM and
+  angle-dependent ~1.2% blip as a REAL failure. **Baseline is now
+  163 checks / 2 failures** (161 + two body-mesh-resolution guards added
+  after the Multires-L2 upgrade: they assert 338,720 tris per body through
+  the live app — the only guard on body.js's documented silent re-export
+  traps now that meshopt hides triangle counts from raw-GLB parsing; a
+  wrong-level export passes every other check because markers re-derive by
+  raycast). History of the third flag: from the harness fix until the
+  pipeline correction (2026-09-03) the baseline was 163/3, the extra
+  failure being testis blown-white — documented and accepted below. **The
+  pipeline correction resolved it for a pre-flight-predicted reason** (the
+  glow+key sum that used to hard-clip sits under the ceiling in linear
+  space and compresses under AgX; measured 2.38% → 0.08% at {CM+sRGB}
+  alone, 0.00% with the operator; verified 163/2 on the landed bytes with
+  testis at 0.00% on 9,860 real mesh px). Flag #3 is therefore fully
+  HISTORICAL — the glow lights still exist on testis, they simply no
+  longer clip. The two remaining accepted failures: the GBM and
   Prostate/acinar label overlaps (deliberately clustered site designs,
   standing since their own passes) and testis blown-white ~1.2%
   (accepted 2026-09-02 after a diagnostic-only characterization — packet

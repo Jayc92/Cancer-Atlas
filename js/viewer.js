@@ -2,44 +2,45 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { makeSeededRandom, seedFromKey } from './rng.js';
 
-// --- Rendering-pipeline compatibility with the r128-era look -------------------------------
-// Three defaults changed between r128 and 0.185.1 that alter how this scene *looks* without
-// touching a single line of scene code. Measured on the ovary viewer, the version bump alone
-// took mean opaque RGB from [244,217,202] to [149,124,115] — a 39% luminance drop, pale pink
-// to muddy brown — while the opaque-pixel count stayed within 0.07%, proving the camera and
-// geometry were untouched and only shading changed. The three causes:
-//
-//   1. ColorManagement.enabled defaults true (r152). Material colours given as sRGB hex are
-//      now gamma-decoded into a linear working space before lighting. Since this scene's
-//      lights sum to well under 1.0, the decode darkens far more than the output encode
-//      brightens back, so the net effect is a big loss.
-//   2. WebGLRenderer.outputColorSpace replaced outputEncoding, defaulting to sRGB (r152).
-//   3. PointLight.decay defaults 2 instead of 1 (r146) — inverse-square instead of linear
-//      falloff. On the four marker glows (distance 1.2) that turned tight highlights into
-//      blown-out halos, because within r < 1 the 1/r² term explodes.
-//
-// This scene's lights were hand-tuned by eye against the un-managed r128 pipeline, and the
-// palette in CLAUDE.md is a signed-off design system, so the goal here is to reproduce that
-// appearance rather than re-tune the design against new defaults. Both of these are supported
-// opt-outs, not workarounds. The trade-off is deliberate and worth knowing: with colour
-// management off, a hex value handed to a THREE material is no longer guaranteed to match the
-// same hex in CSS. That is already how this file behaved on r128, and every colour in it was
-// picked under those conditions, so switching now would change the look, not correct it.
-// Turning these back on is a visual-design decision, and it means re-tuning all five lights.
-THREE.ColorManagement.enabled = false;
+// --- Colour-managed rendering pipeline (unparked 2026-09-03, by measurement) ---------------
+// This file shipped for its whole life on the "legacy identity" pipeline: ColorManagement
+// OFF, LinearSRGB output, no tone mapping — deliberately, to preserve the r128-era hand-tuned
+// look (the old comment here recorded a measured 39% luminance drop when the three.js upgrade
+// first flipped the defaults, and parked the redesign as "would change the look, not correct
+// it"). That parking rationale is now SUPERSEDED by a measurement record (the P2 pipeline
+// report, 2026-09-03), whose findings are the contract for the values below:
+//   - The legacy pipeline was an IDENTITY pipeline only for the flat-lit case (no decode in,
+//     no encode out), so the repo's historical colour verifications remain valid for what
+//     they measured. What was wrong was the SHADING: every gradient, terminator, and light
+//     mix computed in gamma space — and a hard clip at 1.0/channel with no rolloff, the
+//     documented root cause of the blown-white bug class (clip-fix pass: intensities dimmed
+//     to 0.42/0.65, marker glow lights stripped from real meshes, 26%-of-lungs plateaus).
+//   - Corrected {CM on + sRGB out} leaves the lit-face palette statistically unmoved vs
+//     legacy (mean hue delta 4.8° vs 4.9°; sat dev 0.397 vs 0.378 against cited albedos) —
+//     the correction does not move the signed-off colours where they were verified.
+//   - Operator chosen on numbers, not defaults: AgX measured BEST saturation fidelity to the
+//     cited albedos (dev 0.174 — better than legacy's own 0.378); Neutral, the pre-favoured
+//     candidate, measured WORST (0.594 — it faithfully preserves this warm rig's saturation
+//     overshoot); ACES hue-rotates the darkest reds. All three operators measured ZERO blown
+//     pixels at lights ×1.35 across 14 organs × 12 angles, so the choice reduced to fidelity.
+//   - Exposure 1.0: "match legacy brightness" is the wrong target — dark organs (liver,
+//     kidneys) render brighter under the corrected pipeline BECAUSE legacy's gamma-space
+//     lighting crushed dark albedos (the very effect the old comment measured in reverse).
+//     Accepted at review with the pale-organ cost inspected (~10-15% dimmer, no regression
+//     read; the testis glow halos tame from blown blooms to soft accents).
+//   - CONDITION recorded at the ruling: re-measure the operator after the environment-map
+//     pass lands — AgX's win is partly offsetting the current warm rig's saturation push,
+//     and an env map changes that push. Glow-light restoration is a separate pass with its
+//     own gate against the new zero-clip baseline.
+THREE.ColorManagement.enabled = true;
 
-// The fourth changed default, and the one with no opt-out at all: r155 deleted
-// WebGLRenderer.useLegacyLights and made physically correct lighting the only mode (the property
-// is not merely deprecated in 0.185.1 — it does not appear in the build). Light contribution now
-// carries the 1/π normalisation the legacy path omitted, so every intensity in this file, all of
-// which were tuned by eye under the legacy path, reads about π times too dim.
-//
-// π is not a guess here. Measuring the ovary viewer against the r128 baseline gave per-channel
-// ratios of 2.74 / 2.89 / 2.93 — below π, and rising as the channel gets darker, which is what
-// you expect when the *reference* is the clipped one: the bright r128 render saturated at 255 in
-// places, so it understates the true ratio most in the channel closest to the ceiling.
-// Multiplying by π and re-measuring is the check, and it is the check that follows below.
-export const LEGACY_LIGHT_SCALE = Math.PI;
+// The former LEGACY_LIGHT_SCALE = π is retired (2026-09-03). It existed to compensate for
+// r155 deleting useLegacyLights (physically-correct lighting carries a 1/π the legacy path
+// omitted), and the derivation below it was sound — but under the corrected pipeline it is
+// no longer a "legacy compensation", it is simply part of the light energy the design needs.
+// The π is folded into the literal intensities at full precision (0.42π, 0.65π, 0.55π, 0.9π,
+// 1.1π, and main.js's glow 0.5π), numerically identical to what shipped, so the constant and
+// its misleading name are gone without changing a single rendered value.
 
 // Small helper every organ/cancer data module reads its region/site colors through, so those
 // modules never hardcode a hex value that could drift from the design-system CSS variables.
@@ -228,22 +229,29 @@ export function makeViewer(container, opts){
   const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 100);
   const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
-  // Pairs with ColorManagement.enabled = false at the top of this module: no decode going in,
-  // so no encode coming out. Setting only one of the two would leave the pipeline lopsided.
-  renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+  // Pairs with ColorManagement.enabled = true at the top of this module: decode going in,
+  // encode coming out. Setting only one of the two would leave the pipeline lopsided — that
+  // sentence survives from the legacy comment because it cuts both ways.
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  // AgX at exposure 1.0 — measured choice, not a default; see the pipeline comment at the
+  // top of this file for the numbers and the re-measure-after-envmap condition.
+  renderer.toneMapping = THREE.AgXToneMapping;
+  renderer.toneMappingExposure = 1.0;
   container.appendChild(renderer.domElement);
 
-  // Intensities are written as their original hand-tuned values × LEGACY_LIGHT_SCALE so the
-  // numbers a future reader recognises from the design pass stay legible in the source.
+  // Intensities below are the original hand-tuned design values with the retired π folded in
+  // at full precision (see the pipeline comment at the top of this file) — numerically
+  // identical to what every prior pass shipped and reviewed.
   //
   // opts.warmLighting is an organ-viewer-only opt-in (set by initOrganViewer in main.js,
   // never by body.js or the tumor-site viewer), added specifically so the real-tissue material
   // colors on the seven organs (see each js/organs/*.js buildXMesh — verified against real
   // gross-anatomy sources, not guessed, same discipline as every citation in this app) don't
   // get lit by the same cool-white key + teal rim that were originally tuned against the old,
-  // paler procedural colors. This does NOT touch THREE.ColorManagement, outputColorSpace, or
-  // LEGACY_LIGHT_SCALE itself — the parked color-management pipeline decision stays parked;
-  // only the light *color* and the rim light's presence change, and only for organs.
+  // paler procedural colors. (Historical note: this opt-in predates the colour-managed
+  // pipeline and deliberately did not touch it while it was parked; the pipeline has since
+  // been corrected — see the top of this file.) Only the light *color* and the rim light's
+  // presence differ between modes, and only for organs.
   const warm = !!opts.warmLighting;
   // Warm-mode intensities are LOWER than the cool path's 0.55/0.9 on purpose (clip-fix pass):
   // this legacy pipeline hard-clips at 1.0 per channel (ColorManagement off, LinearSRGB out,
@@ -258,8 +266,13 @@ export function makeViewer(container, opts){
   // peak keeps the brightest verified albedo just under clip; the per-organ material colors
   // (verified against real gross-anatomy sources) are deliberately untouched, and scaling
   // light intensity uniformly preserves their hue by construction.
-  scene.add(new THREE.AmbientLight(warm ? 0xfff1e0 : 0xffffff, (warm ? 0.42 : 0.55) * LEGACY_LIGHT_SCALE));
-  const key = new THREE.DirectionalLight(warm ? 0xffddb0 : 0xffffff, (warm ? 0.65 : 0.9) * LEGACY_LIGHT_SCALE);
+  // PRESENT-TENSE CODA (pipeline correction, 2026-09-03): the hard ceiling this paragraph
+  // works around is GONE — AgX tone mapping compresses instead of clipping, measured at zero
+  // blown pixels with these lights ×1.35 across all organs and angles. The 0.42/0.65 values
+  // are RETAINED anyway: raising light energy (and restoring the stripped marker glow lights)
+  // is a separate, individually-gated pass, not a free rider on the pipeline switch.
+  scene.add(new THREE.AmbientLight(warm ? 0xfff1e0 : 0xffffff, warm ? 1.319468914507713 : 1.7278759594743864));  // 0.42π / 0.55π folded
+  const key = new THREE.DirectionalLight(warm ? 0xffddb0 : 0xffffff, warm ? 2.0420352248333655 : 2.827433388230814);  // 0.65π / 0.9π folded
   key.position.set(3, 4, 5);
   scene.add(key);
   if(!warm){
@@ -267,7 +280,7 @@ export function makeViewer(container, opts){
     // light is a broad wash across the whole model, so inverse-square falloff would
     // extinguish it. Dropped entirely in warm mode — a cool teal accent is the exact thing
     // the warm-material treatment is moving away from, not something to warm-tint in place.
-    const rim = new THREE.PointLight(0x35c9c1, 1.1 * LEGACY_LIGHT_SCALE, 20, 1);
+    const rim = new THREE.PointLight(0x35c9c1, 3.455751918948773, 20, 1);  // 1.1π folded
     rim.position.set(-4, -2, -3);
     scene.add(rim);
   }
