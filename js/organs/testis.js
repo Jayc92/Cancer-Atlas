@@ -42,7 +42,16 @@ export const cancerEntries = [
 ];
 
 // PROCEDURAL — no HRA/NIH 3D reference-organ entry exists for testis (all 81 entries in the
-// Human Reference Atlas reference-organ library were checked; none is a testis). Built like
+// Human Reference Atlas reference-organ library were checked; none is a testis). A
+// Sketchfab-focused hunt (2026-09-03, run after the same playbook replaced Ovary and Stomach)
+// was ALSO negative — the pre-registered "keep procedural" outcome's first firing. Recorded so
+// no future pass redoes it: the only anatomically-real candidate ("Anatomy of Human Testis",
+// 209.9k tris, the sole model with genuine testis+epididymis anatomy) is CC BY-NC-SA;
+// TrentPierce's popular "Testicles" is an external SCROTUM (wrong object); ahmed17's
+// 3.96M-tri "male genital system" renders testes as featureless spheres (worse than this
+// mesh); and the edu360/xpdemy "male reproductive system" pair is a rule-30
+// license-laundering suspect (identical 44,916 tris under different uploaders). Full field
+// + live-viewer confirmations: the cancer-atlas-testis-source-hunt packet. Built like
 // Ovary, not like Skin: this is a solid ellipsoid gland with four decorative surface hotspots,
 // the same representational job Ovary already does for a similarly-sized paired reproductive
 // organ, so it uses Ovary's `dir`+hotspotScale convention (arbitrary design-unit mesh scale,
