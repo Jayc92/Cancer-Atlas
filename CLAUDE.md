@@ -2872,10 +2872,37 @@ screen pair per organ:
   again. The fixed suite reproduces the Lungs-era one-off almost exactly
   (lungs 2,452 mesh px vs recorded 2,447; ovary halo 0.34% vs 0.36%;
   testis 1.19% vs 1.20%) — and therefore surfaces testis's documented
-  angle-dependent ~1.2% blip as a REAL failure. Honest baseline is now
-  **161 checks / 3 failures** (GBM + acinar label overlaps + testis
-  blown-white); testis disposition (fix the material, adjust the bar, or
-  keep as documented baseline flag #3) is an open decision. Historical
+  angle-dependent ~1.2% blip as a REAL failure. **Baseline is therefore
+  161 checks / 3 failures, all three documented and ACCEPTED: the GBM and
+  Prostate/acinar label overlaps (deliberately clustered site designs,
+  standing since their own passes) and testis blown-white ~1.2%
+  (accepted 2026-09-02 after a diagnostic-only characterization — packet
+  ~/Downloads/cancer-atlas-testis-blownwhite-diagnostic/). The testis
+  characterization, proven by isolation rather than inferred: an
+  84-sample deterministic angle sweep (harness-verbatim measurement)
+  fails only inside one θ15–45° × φ55–85° window — the camera aligned
+  with the key light's own (3,4,5) axis (θ31.0/φ55.5) — which CONTAINS
+  the default view, hence the suite's reproducible ~1.19%; far side
+  0.00%. Glow PointLights off → 0.00%; key light off → 0.03%; material
+  specular 0.15→0 → no effect (that candidate eliminated); hiding the
+  marker spheres nearly DOUBLES the count because they occlude the
+  hottest core — the blown ring sits on the organ surface around each
+  marker. Mechanism: the DESIGNED procedural marker-glow halo (Ovary's
+  same mechanism, 0.34% under this suite) clipping on the atlas's palest
+  procedural albedo (0xd6b98f, R 0.839 × 1.07 warm-diffuse peak ≈ 0.90
+  before the teal glow lands). Accepted because the pixels were looked
+  at: smooth radial white→yellow→tan falloff that reads as an
+  intentional glow affordance around clickable markers, not broken
+  rendering; it is marker-associated light, not tissue-color rendering,
+  so no anatomical-fidelity claim is touched; and the scoped-tweak
+  alternative (reduce glow 0.5 intensity / 1.2 reach) would spend a
+  visual change plus an Ovary re-verify purely to keep the <1.0% bar a
+  clean invariant — a testing-tidiness concern, not a quality problem.
+  If a future pass changes procedural marker glow, the organ lighting,
+  or testis's material/albedo, re-run the sweep (driver pattern:
+  /tmp/atlas-verify/testis_sweep.js — freeze autoRotate, spherical
+  camera at framed distance, forced render, harness-verbatim readback)
+  before assuming this flag still covers the number.** Historical
   Lungs/Colon blown-white claims stand — both had dedicated real-pixel
   measurements outside the suite.
 - **Organ mesh source — Breast, added in a later pass (2026-08-27), source
