@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { cssVar, organicDisplace } from '../viewer.js';
+import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // "clear cell"/"clear cell carcinoma" are DELIBERATELY shared with kidneys.js — both organs
 // really do have a clear-cell carcinoma, and a query that genuinely matches two organs should
@@ -26,65 +27,62 @@ export const cancerEntries = [
   { id:'lgsc',  name:'Low-grade serous carcinoma',   share:'<5% of ovarian carcinomas',  active:false, organKey:'ovary' },
 ];
 
-// hotspotScale mirrors whatever non-uniform mesh.scale the organ's buildMesh() applies, so a
-// hotspot's `dir` vector lands on the mesh's actual (stretched) surface rather than on the
-// surface of the unstretched unit sphere/dome the direction was computed against.
+// MESH (real, the atlas's first MRI-derived organ; fourth real artist/scan Sketchfab-era
+// asset after Lungs, Colon, Thyroid): the LEFT ovary isolated from "Pelvic Organs from MRI"
+// by audreybyrd, CC BY 4.0 — license verified three ways (live page, public API requirements
+// text, and the GLB's own embedded asset.extras). Source provenance, page verbatim: "derived
+// from a high-resolution MRI of a 25-year-old cis-female woman using Avizo and Blender
+// processing... produced at the Oklahoma State University Biomedical Imaging Laboratory in
+// conjunction with the OSU Center for Health Sciences Center Neuroanatomy Laboratory in
+// Spring of 2022." Isolation facts (all measured, not assumed): the source's named
+// `ovaries_2` node is three ARBITRARY ~65,532-vertex index-buffer chunks, not organ meshes —
+// welding (131,880 → 22,132 verts) resolves FIVE components: both ovary outer shells plus
+// three smaller closed surfaces proven INTERIOR by ray-parity containment (internal
+// follicles / corpus luteum captured by the segmentation; dropped — invisible in opaque
+// rendering, documented here rather than silently discarded). The left shell ships (22,038
+// tris, one component — more surface character: a deep mesovarian crease field; it also held
+// the largest internal structure, plausibly that cycle's active side). PCA-oriented (long
+// axis vertical, crease field fronting +Z, proper rotation det +1), bbox-centered, uniformly
+// rescaled so its closed-mesh volume is EXACTLY 7.7 mL — Kelsey et al., PLoS ONE, 2013
+// (n=59,994): peak ovarian volume 7.7 mL (95% CI 6.5–9.2) at age 20. Precision note, stated
+// rather than smoothed: 7.7 mL is the model's PEAK at age 20, the nearest well-established
+// landmark — not a literal age-25 value (Kelsey's curve declines gently after 20, so the
+// 25-year-old specimen's true model value sits slightly below). Length-anchoring to the
+// textbook 3.5 cm was computed and REJECTED: it implies 15.5 mL, double the reference.
+// PROPORTION DISCLOSURE (stronger footing than Thyroid's stylization trade): at 7.7 mL this
+// mesh is 2.71 × 2.77 × 2.05 cm — plump and near-round (1 : 0.98 : 0.74) vs the StatPearls
+// excised-almond reference 3.5 × 2 × 1 (1 : 0.57 : 0.29) the old procedural mesh was built
+// to. This is real anatomical variation between in-situ imaging and an idealized reference
+// shape — a live ovary compressed by neighboring pelvic structures, imaged in place — not an
+// asset falling short of a citation. Disclosed in the HTML disclaimer in those terms.
 //
-// MESH-DETAIL PASS (tech-debt/quality pass): every organ SphereGeometry bumped 48→80 segments
-// (2401→6561 vertices), LatheGeometry 32→48 radial segments, and the breast dome/cap/nipple
-// proportionally. organicDisplace's own sine-based wobble (freq up to 8 on Brain) was
-// genuinely under-resolved at 48 segments — visible faceting on the lit highlight, confirmed by
-// screenshot before touching anything, not assumed from the "looks rough" complaint alone.
-// Performance checked directly, not assumed safe: a synthetic THREE.WebGLRenderer benchmark
-// (same organicDisplace/organicSpiculate code, isolated from the app) measured raw render() cost
-// from 48 up to 192 segments — every level stayed under 0.04ms/frame, noise-dominated, no
-// scaling trend — so 80 sits with enormous headroom to spare, not maxed out just because the
-// budget allows it. (This app's own rAF loop can't be measured directly in this headless
-// preview environment — document.hidden reports true even when the tab is fronted, so
-// requestAnimationFrame never fires between tool calls. The synthetic render()-timing benchmark
-// is the real, defensible substitute, not a guess.) computeVertexNormals() already runs after
-// every displacement call, so shading was never the problem — this was a pure vertex-density fix.
-// PROPORTION FIX (real-anatomy pass, after two research passes turned up no real, non-gated
-// ovary asset worth integrating — see CLAUDE.md's "Ovary real-asset research" entry for why):
-// the scale below used to be (0.9, 1.28, 0.98) — width and thickness nearly equal, i.e. a
-// barely-elongated blob — while this very file's own `facts` panel already stated a real
-// 3.5:2:1 length:width:thickness ratio (StatPearls, "Anatomy, Abdomen and Pelvis, Ovary,"
-// confirmed directly: 3.5cm length x 2.0cm width x 1.0cm thickness) that the mesh never
-// actually matched. Y is this mesh's length axis (same convention the Hilum hotspot's `dir`
-// already assumes, near the -Y pole), so Y's scale stays 1.28 and X/Z are re-derived from the
-// verified ratio (width = length x 2/3.5, thickness = length x 1/3.5) instead of the old,
-// unsourced numbers — a visibly flatter, more almond-like result than this used to render as.
-// `hotspotScale` below is updated to match, so the `dir` vectors keep landing on the real
-// surface rather than the old (now-wrong) one.
-// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0xe6b6a8 was a pale
-// peachy-tan, again closer to generic skin tone than the organ's real surface color. Confirmed
-// against PathologyOutlines.com and IMAIOS gross-anatomy descriptions: the normal ovary's
-// surface is pale grayish-pink to white, smooth in youth and increasingly convoluted with age —
-// distinctly cooler/grayer than a warm tan. 0xc9ac9e moves the base color into that real
-// grayish-pink family, darkened slightly from a "true pale" reading so it holds its color under
-// the warm key light instead of washing to near-white the way Brain's original color did.
+// MATERIAL — A/B decided on evidence (Lungs/Colon/Thyroid protocol): A = the asset's own
+// material, which is a flat MRI-segmentation red (baseColorFactor 0.93/0.23/0.23, no
+// texture; the source declares ONLY baseColorFactor, so glTF's metallic=1 default applies —
+// shipped in the GLB de-metaled as the usable faithful reading, disclosed). B = the app
+// recipe: the previously verified grayish-pink 0xc9ac9e (PathologyOutlines + IMAIOS
+// gross-anatomy verification, done in the real-tissue pass and still valid — the color
+// describes the ORGAN, not the old mesh) + tissue mottle + specularIntensity 0.25 (the
+// material-pass standard for real meshes; the old 0.15 predates that pass). B ships: flat
+// segmentation red is a labeling convention, not a tissue color, and carries no texture
+// detail worth preserving — the opposite trade from Lungs/Colon/Thyroid, where artist-baked
+// texture beat the recipe. See the review packet's side-by-side.
 export function buildOvaryMesh(){
-  const geo = new THREE.SphereGeometry(1, 80, 80);
-  organicDisplace(geo, 0.045, 6.5, 1.7);
-  // MeshPhysicalMaterial + specularIntensity 0.15, NOT MeshStandardMaterial (clip-fix
-  // pass): this ports the missing half of the approved material verification — the
-  // Blender renders the tissue colors were verified and approved on had Specular IOR
-  // Level 0.15 baked in, but MeshStandardMaterial has no specular control at all, so the
-  // live app kept full-strength dielectric specular. Under the legacy hard-clip pipeline
-  // that blew grazing-angle fold/fissure walls to flat white (up to 26% of the lungs'
-  // on-screen pixels, measured). Full mechanism + light-intensity half of the fix:
-  // js/viewer.js's warm-lighting comment. Color/roughness values unchanged.
-  const mat = new THREE.MeshPhysicalMaterial({ color:0xc9ac9e, roughness:0.55, metalness:0.0, specularIntensity:0.15 });
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.scale.set(1.28 * (2.0/3.5), 1.28, 1.28 * (1.0/3.5));
-  return mesh;
+  const loader = new GLTFLoader();
+  return new Promise((resolve, reject)=>{
+    loader.load('assets/ovary.glb', (gltf)=>{
+      const mat = new THREE.MeshPhysicalMaterial({ color:0xc9ac9e, roughness:0.55, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 2.6); } });
+      resolve(gltf.scene);
+    }, undefined, reject);
+  });
 }
 
 export const organDetail = {
   eyebrow:'Female Reproductive System', title:'Ovary',
   sub:'Paired organ · almond-sized · produces eggs and sex hormones',
   facts:[
-    {label:'Size', val:'~3.5 × 2 × 1 cm (StatPearls)'},
+    {label:'Size', val:'~7.7 mL peak reproductive-age volume (Kelsey 2013)'},
     {label:'Location', val:'Pelvis, either side of uterus'},
     {label:'Function', val:'Releases eggs; makes estrogen &amp; progesterone'},
     {label:'Blood supply', val:'Ovarian arteries'},
@@ -97,18 +95,28 @@ export const organDetail = {
   // vs NO association with high-grade serous, OR 1.13 p=0.13, same pooled 13-study analysis).
   desc:'The ovaries sit in the pelvis on either side of the uterus, each connected to a fallopian tube. Their outer surface — the site where most ovarian cancers begin — is covered by a single layer of epithelial cells. Not every ovarian cancer starts there, though: clear-cell and endometrioid carcinomas instead arise from endometriosis, patches of uterine-lining tissue growing where they shouldn\'t.',
   buildMesh: buildOvaryMesh,
-  hotspotScale: new THREE.Vector3(1.28 * (2.0/3.5), 1.28, 1.28 * (1.0/3.5)),
-  viewer:{ theta:0.5, phi:1.2, radius:4, minRadius:2.6, maxRadius:6, autoRotateRadPerFrame:0.0016 },
-  viewerAria:'Three-dimensional model of an ovary, an off-white lumpy ellipsoid, with four glowing '
-    + 'teal points marking the structures listed after it. Drag to rotate, scroll to zoom.',
+  viewer:{ theta:0.5, phi:1.2, radius:0.12, minRadius:0.03, maxRadius:0.3, autoRotateRadPerFrame:0.0016 },
+  viewerAria:'Three-dimensional model of a real left ovary reconstructed from an MRI scan — a '
+    + 'grayish-pink rounded organ with an uneven, gently folded surface — with four teal points '
+    + 'marking the structures listed after it. Drag to rotate, scroll to zoom.',
+  // Anchors are measured mesh coordinates (metres, exported-GLB frame: long axis +Y, the
+  // mesovarian crease field fronting +Z) — each the argmax of a direction score over the
+  // final geometry, the Bladder/Thyroid real-anchor standard, replacing the old
+  // dir-times-ellipsoid approximation (hotspotScale is gone with it; nothing else read it).
+  // The HILUM anchor is derived from the source assembly itself: the direction from this
+  // ovary's centroid toward the uterus (its real medial attachment side) — which lands ON
+  // the crease field, because that relief IS the mesovarian border in the segmentation.
+  // Cortex and Medulla are depth layers with no single surface point; their anchors are
+  // representative surface positions (cortex on the free surface it underlies; medulla at
+  // the near-silhouette limb) and each hotspot's text already says the layer is beneath.
   hotspots:[
-    { key:'surface', label:'Surface epithelium', dir:[0.28,0.6,0.85],
+    { key:'surface', label:'Surface epithelium', pos:[-0.00807,0.00805,0.00786],
       text:'A single layer of cells covering the ovary\'s outer surface. Most ovarian cancers, including high-grade serous carcinoma, are now thought to arise here or in the adjacent fallopian tube. Clear-cell and endometrioid carcinomas are the exception — they begin in endometriosis, displaced uterine-lining tissue, rather than in this layer.' },
-    { key:'cortex', label:'Cortex', dir:[0.88,0.12,0.25],
+    { key:'cortex', label:'Cortex', pos:[0.01224,-0.00292,0.00352],
       text:'The outer functional layer, packed with follicles at every stage of development — from resting to nearly ready to release an egg.' },
-    { key:'medulla', label:'Medulla', dir:[-0.35,0.15,-0.85],
+    { key:'medulla', label:'Medulla', pos:[-0.01266,-0.00122,0.00448],
       text:'The core of the ovary, deep to the cortex — loose connective tissue carrying the blood vessels, lymphatics, and nerves that supply it.' },
-    { key:'hilum', label:'Hilum', dir:[0.05,-1,0.12],
+    { key:'hilum', label:'Hilum', pos:[-0.00249,0.01130,0.00757],
       text:'Where the ovary attaches to its supporting ligament — the entry and exit point for its blood supply and nerves.' },
   ],
 };

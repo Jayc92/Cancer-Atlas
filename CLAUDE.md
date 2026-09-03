@@ -2240,6 +2240,62 @@ screen pair per organ:
     thyroglobulin, verified 2.7% and non-SMG in TCGA); (c) the pattern is a
     cross-atlas teaching contrast with the loud genomes (melanoma, bladder)
     — cross-reference it when a fourth lands.
+29. Ovary real-mesh swap — **the atlas's first MRI-derived organ (left
+    ovary from "Pelvic Organs from MRI" by audreybyrd, CC BY 4.0,
+    2026-09-02), replacing the procedural mesh after a fourth,
+    Sketchfab-focused hunt succeeded where three prior hunts (HRA/NIH 3D)
+    conclusively failed.** Decisions and their evidence:
+    - **Provenance (page verbatim, three-channel license check):**
+      high-resolution MRI of a 25-year-old woman, OSU Biomedical Imaging
+      Laboratory + Center for Health Sciences Neuroanatomy Laboratory,
+      Spring 2022, Avizo+Blender segmentation. License verified on the live
+      page, via the public API ("Author must be credited. Commercial use is
+      allowed."), and in embedded asset.extras.
+    - **Named nodes are NOT organ meshes:** the source's `ovaries_2` node is
+      three arbitrary ~65,532-vertex index-buffer chunks (Sketchfab 16-bit
+      split) — one chunk's bbox spans "44 cm" merely because it holds
+      leftover triangles from BOTH distant ovaries. Weld first (131,880 →
+      22,132 verts), THEN decompose: five components — two ovary outer
+      shells + three smaller closed surfaces PROVEN interior by ray-parity
+      containment (internal follicles / corpus luteum captured by the
+      segmentation; dropped, disclosed in the disclaimer). Standing lesson:
+      a labeled node in a downloaded assembly tells you the REGION, not the
+      topology — weld and decompose before believing it.
+    - **Left shell shipped** (22,038 tris, one component; richer surface
+      character — the crease field is the MESOVARIAN BORDER, confirmed by
+      deriving the medial direction from the assembly's own uterus centroid,
+      which lands exactly on it; the Hilum hotspot anchors there). Right
+      shell (17,606 tris) documented as the cleaner alternative.
+    - **Scale is volume-anchored, not length-anchored:** exactly 7.7 mL —
+      Kelsey et al., PLoS ONE, 2013 (n=59,994): PEAK ovarian volume 7.7 mL
+      (95% CI 6.5–9.2) AT AGE 20. State it as the nearest well-established
+      landmark, NOT an age-25 match (the curve declines gently after 20;
+      the specimen is 25). Length-anchoring to the textbook 3.5 cm was
+      computed and rejected — it implies 15.5 mL, double the reference.
+    - **Proportion disclosure, in-situ framing (stronger footing than
+      Thyroid's stylization trade):** 2.71 × 2.77 × 2.05 cm, near-round
+      (1:0.98:0.74) vs the StatPearls excised-almond 3.5×2×1 (1:0.57:0.29).
+      This is real anatomical variation between in-situ imaging (live organ
+      compressed by pelvic neighbors) and an idealized reference shape —
+      write it as that, never as "the asset falls short of the citation."
+    - **Material B ships (first B verdict; Lungs/Colon/Thyroid chose A):**
+      the source's flat segmentation red (0.93/0.23/0.23, no texture, glTF
+      metallic-1 default) is a labeling convention, not a tissue color —
+      nothing to preserve. Recipe uses the previously verified grayish-pink
+      0xc9ac9e (PathologyOutlines/IMAIOS — the verification describes the
+      ORGAN, so it survives the mesh swap) + mottle + specularIntensity
+      0.25 (material-pass standard; the old 0.15 predated that pass).
+    - **Glow-halo retirement:** pos-anchored hotspots flip isRealMesh, so
+      the ovary's designed marker-glow PointLights are gone by design
+      (clip-fix rule). Ovary's 0.34% halo — formerly the living precedent
+      cited by Testis's accepted baseline flag — is retired; the Testis
+      flag now stands on its own reasoning (rewritten in this same change,
+      see the harness entry). Hotspot anchors are measured on-surface
+      coordinates; Cortex/Medulla are depth layers anchored at disclosed
+      representative surface points (their texts already say "beneath").
+    - Near-plane note: a true-scale ~2.8 cm ovary frames the camera to
+      ~8 cm — safe only because of the Thyroid pass's near 0.1→0.01 fix
+      (this organ would have been the second casualty).
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -2887,10 +2943,17 @@ screen pair per organ:
   specular 0.15→0 → no effect (that candidate eliminated); hiding the
   marker spheres nearly DOUBLES the count because they occlude the
   hottest core — the blown ring sits on the organ surface around each
-  marker. Mechanism: the DESIGNED procedural marker-glow halo (Ovary's
-  same mechanism, 0.34% under this suite) clipping on the atlas's palest
-  procedural albedo (0xd6b98f, R 0.839 × 1.07 warm-diffuse peak ≈ 0.90
-  before the teal glow lands). Accepted because the pixels were looked
+  marker. Mechanism: the DESIGNED procedural marker-glow halo clipping on
+  the atlas's palest procedural albedo (0xd6b98f, R 0.839 × 1.07
+  warm-diffuse peak ≈ 0.90 before the teal glow lands). [Historical note:
+  this flag originally cited Ovary's 0.34% halo as the living precedent
+  for the same mechanism; the Ovary real-mesh swap (rule 29) retired that
+  halo — pos-anchored real meshes carry no glow lights — making Testis
+  the atlas's ONLY glow-halo organ. The acceptance stands unchanged on
+  its own three reasons below, which never depended on Ovary's number;
+  the 0.34% figures elsewhere in this entry are historical measurements
+  from the harness-fix cross-validation and remain true as records of
+  that run.] Accepted because the pixels were looked
   at: smooth radial white→yellow→tan falloff that reads as an
   intentional glow affordance around clickable markers, not broken
   rendering; it is marker-associated light, not tissue-color rendering,
