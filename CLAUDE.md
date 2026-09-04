@@ -3699,16 +3699,39 @@ screen pair per organ:
   manifest's `backfill` block — a backfilled identifier asserts "this
   metadata resolves uniquely to this paper", NOT "this paper was
   verified to support the claim", and never carries entry-time weight);
-  13 NO-MATCH (author+year yields zero hits — the strong entry-time-
-  error candidates, human triage first, on-screen first); 11 AMBIGUOUS
-  (multiple passers, refused); 97 NO-FIELD-MATCH (hits exist but none
+  13 NO-MATCH — TRIAGED SAME DAY AND THE PILE EMPTIED: all 13 were
+  EXTRACTOR artefacts, not entry-time errors. 10 were journal-name
+  fragments parsed as authors ("Gastroenterol 2025", "Hepatology 2018",
+  "PNAS 2013"…) — reclassified parse-noise with the triage reason
+  recorded; 3 were real citations with mangled author tokens (compound
+  surname "Mehrvarz Sarshekeh" split; "Sottoriva et al. (PNAS," and
+  "Louis et al., Neuro-Oncology" patterns), and all 3 re-resolved
+  UNIQUELY under the SAME gate with corrected tokens: 28267766
+  Mehrvarz Sarshekeh/PLoS One/SMAD4, 23412337 Sottoriva/PNAS/GBM
+  heterogeneity, 34185076 Louis/WHO-2021 classification. Louis
+  additionally needed the source line's journal constraint because
+  bare "Louis[au] AND 2021[dp]" hit retmax truncation — the retrieval-
+  miss mechanism attributed to the no-field-match pile, demonstrated
+  live on a known-real target. ZERO new entry-time errors: the
+  Wang/Park defect class does NOT recur in the auto-detectable band.
+  The detector coming back clean AFTER triage is a finding, not a
+  disappointment — and the triage step is mandatory before reading any
+  no-match count as a defect count, because the pipeline's own parser
+  was the dominant defect source in its own flag pile. 11 AMBIGUOUS
+  (multiple passers, refused — several are two REAL same-author-same-
+  year papers, e.g. Shain 2015, Gershenwald 2017, Pollock 2003, which
+  need the claim itself to disambiguate: epi-pass work; Park 2023 is
+  already identifier-carrying in `entries` from the durability pass,
+  refusal correct, no action); 97 NO-FIELD-MATCH (hits exist but none
   pass all fields — NOT a defect list: common-surname retrieval misses
   and title-topic strictness; means "not auto-resolvable", nothing
-  more); 21 parse-noise. Identifier coverage roughly DOUBLES in one
-  sweep: 41 → 87 identifier-carrying sources. Epi-pass triage order:
-  the 13 no-match, then the 11 ambiguous, then user-facing
-  no-field-match — with the taxonomy's expectation set: fix
-  attribution errors, downgrade dangling pointers and content errors.
+  more); 21 parse-noise at extraction + 10 reclassified at triage.
+  Identifier coverage roughly DOUBLES in one sweep: 41 → 90
+  identifier-carrying sources (46 sweep + 3 triage corrections).
+  Epi-pass triage order after the pile emptied: the 11 ambiguous, then
+  user-facing no-field-match — with the taxonomy's expectation set:
+  fix attribution errors, downgrade dangling pointers and content
+  errors.
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell

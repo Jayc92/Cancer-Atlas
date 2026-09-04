@@ -571,12 +571,13 @@
    "author": "Gastroenterol",
    "year": "2025",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/stomach.js:253",
     "js/organs/colon.js:122"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Machlowska",
@@ -696,11 +697,12 @@
    "author": "Reports",
    "year": "2023",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": true,
    "refs": [
     "js/organs/prostate.js:219"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Bubendorf",
@@ -862,11 +864,16 @@
    "author": "Sarshekeh",
    "year": "2017",
    "journal": "PLoS One",
-   "status": "no-match",
+   "status": "backfilled",
    "userFacing": true,
    "refs": [
     "js/organs/colon.js:210"
-   ]
+   ],
+   "pmid": "28267766",
+   "resolvedTitle": "Association of SMAD4 mutation with patient demographics, tumor characteristics, and clinical outcomes in colorectal cancer.",
+   "resolvedJournal": "PloS one",
+   "method": "eutils multi-field, author token corrected from source line (extractor artefact)",
+   "resolved": "2026-09-04"
   },
   {
    "author": "Wang",
@@ -1078,11 +1085,12 @@
    "author": "Androl",
    "year": "1986",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/testis.js:101"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Coffey",
@@ -1904,11 +1912,12 @@
    "author": "Pathology",
    "year": "2014",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/pancreas.js:245"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Jamal-Hanjani",
@@ -1941,11 +1950,12 @@
    "author": "Discovery",
    "year": "2018",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/lungs.js:192"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Awad",
@@ -2069,12 +2079,13 @@
    "author": "Genetics",
    "year": "2015",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/liver.js:157",
     "js/organs/liver.js:194"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Oncology",
@@ -2142,21 +2153,23 @@
    "author": "Prevention",
    "year": "2025",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/liver.js:207"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Genetics",
    "year": "2012",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/liver.js:222"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Guichard",
@@ -2196,11 +2209,12 @@
    "author": "Hepatology",
    "year": "2018",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/liver.js:267"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "Schlageter",
@@ -2241,21 +2255,27 @@
    "author": "Archives",
    "year": "2026",
    "journal": null,
-   "status": "no-match",
+   "status": "parse-noise",
    "userFacing": false,
    "refs": [
     "js/organs/brain.js:128"
-   ]
+   ],
+   "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
    "author": "PNAS",
    "year": "2013",
    "journal": null,
-   "status": "no-match",
+   "status": "backfilled",
    "userFacing": false,
    "refs": [
     "js/organs/brain.js:152"
-   ]
+   ],
+   "pmid": "23412337",
+   "resolvedTitle": "Intratumor heterogeneity in human glioblastoma reflects cancer evolutionary dynamics.",
+   "resolvedJournal": "Proceedings of the National Academy of Sciences of the United States of America",
+   "method": "eutils multi-field, author token corrected from source line (extractor artefact)",
+   "resolved": "2026-09-04"
   },
   {
    "author": "Brennan",
@@ -2304,13 +2324,18 @@
    "author": "Neuro-Oncology",
    "year": "2021",
    "journal": null,
-   "status": "no-match",
+   "status": "backfilled",
    "userFacing": true,
    "refs": [
     "js/organs/brain.js:209",
     "js/organs/brain.js:219",
     "js/organs/brain.js:234"
-   ]
+   ],
+   "pmid": "34185076",
+   "resolvedTitle": "The 2021 WHO Classification of Tumors of the Central Nervous System: a summary.",
+   "resolvedJournal": "Neuro-oncology",
+   "method": "eutils multi-field, author token corrected + journal constraint from source line (extractor artefact; bare-surname query hit retmax truncation)",
+   "resolved": "2026-09-04"
   },
   {
    "author": "Killela",
@@ -2568,5 +2593,6 @@
    "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
    "resolved": "2026-09-04"
   }
- ]
+ ],
+ "_backfill_triage": "Flag-pile triage (2026-09-04): all 13 no-match records were EXTRACTOR ARTEFACTS, not entry-time errors \u2014 10 journal-name fragments parsed as authors (J Gastroenterol, Hepatology, PNAS, ...) and 3 real citations with mangled author tokens (compound surname 'Mehrvarz Sarshekeh' split; 'Sottoriva et al. (PNAS,' and 'Louis et al., Neuro-Oncology' patterns). All 3 re-resolved uniquely under the SAME multi-field gate with corrected tokens (28267766, 23412337, 34185076; Louis additionally needed the source line's journal constraint because bare 'Louis[au] AND 2021[dp]' hit retmax truncation \u2014 the retrieval-miss mechanism attributed to the no-field-match pile, demonstrated live). ZERO new entry-time errors found: the Wang/Park defect class does not recur in the auto-detectable band. The 11 ambiguous are honest refusals: several are two REAL same-author-same-year papers (Shain 2015, Gershenwald 2017, Pollock 2003) needing the claim itself to disambiguate \u2014 epi-pass work; and Park 2023 Curr Oncol is already identifier-carrying in `entries` from the durability pass (PMC10605465), so the refusal is correct and no action is needed."
 }
