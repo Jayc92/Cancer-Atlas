@@ -336,7 +336,9 @@ export function applyTissueMottleVertexColors(geometry, seed, opts){
   // { box: THREE.Box3 in WORLD space, matrixWorld: this mesh's world matrix } and every part
   // then samples ONE shared field — continuous by construction. Single-mesh callers change
   // nothing. (Bladder shares this latent mechanism across its 6 sub-meshes but shows no visible
-  // seam at its freq-4 pattern scale, so its look — signed off — is deliberately left alone.)
+  // seam at its freq-4 pattern scale, so its look — signed off — is deliberately left alone.
+  // If bladder's mottle FREQUENCY is ever retuned, expect the boundary seam to surface: the fix
+  // is the same opts.frame union box pancreas.js passes, and the explanation is this comment.)
   geometry.computeBoundingBox();
   const bb = geometry.boundingBox;
   const frame = opts.frame || null;
