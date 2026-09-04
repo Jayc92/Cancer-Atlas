@@ -3352,6 +3352,71 @@ screen pair per organ:
   capture that barely photographed its subject must not produce a
   judgement (the condition-(2)/(3) family, applied to framing). Evidence:
   /tmp/atlas-verify/p6/ (32 shots + telemetry.json + lungs_pose_probe).
+- **Prompt-5 visual-quality audit — RUN, RULED, CLOSED (2026-09-03; audit
+  only, no app changes).** Two-phase per the ruling: phase one judged all
+  16 subjects (14 organs + 2 bodies, 48 captures: default/close/floor per
+  organ, default/torso/leg per body) from the images BEFORE consulting
+  the inherited docket — with the honesty caveat on the record that the
+  auditor authored the docket, so literal coldness was unavailable; what
+  partly redeems it is five findings that were on no list (pancreas
+  sub-mesh seam at close zoom; brain gyri faceting at floor zoom; DOM
+  marker discs don't scale with camera distance and occlude anatomy at
+  close zoom; bladder floats conspicuously off its plinth and fills <5%
+  of its default frame; kidneys/breast/liver become blank colour walls at
+  floor zoom). RIG: plinth-plane check + coverage guard on every capture.
+  The guard's v1 COUNTED STAGING PIXELS — the exact blind spot it was
+  built to close — found via its own disclosure, fixed to subject-only
+  counting (staging hidden via ground(), marker spheres excluded), and
+  the full capture re-run: 47/48 over floor, with bladder/default now
+  honestly UNDER floor (18,963 vs 20k) — an app fact confirming the
+  composition finding; bladder's surface verdict rests on its close shot
+  (221k px). RANKING (forced, best→worst): lungs, stomach, colon,
+  body_male, body_female, brain, kidneys, prostate, skin, pancreas,
+  liver, breast, bladder, ovaries, thyroid, testis. PASS ×10; MARGINAL
+  bladder/breast/liver/ovaries; fail-adjacent: THYROID (superior-pole
+  shard/flap debris + UV smear — the only defect visible at the DEFAULT
+  view, on a textured asset) and TESTIS (featureless procedural
+  ellipsoid, overfilled framing, marker half-cut). Bottom-three
+  characterisation: testis = material + framing (procedural by design);
+  thyroid = source-mesh debris (asset cleanup); ovaries = rectangular
+  shading patches at close zoom, attributed by three-state isolation
+  (present in BOTH mottle-only and AO-only at identical spots; the mottle
+  formula is continuous and cannot make corners) ⇒ PRE-EXISTING mesh
+  tessellation/normal steps, accentuated but not created by 4B. DOCKET:
+  aspect-flip RETIRED with mechanism (at 1200/1150-wide the aspect
+  crosses 1.0 after a sidebar toggle — 1.22→0.97 — and the body still
+  fits with ≥281px margins: the sphere fit is sized by the tall axis, so
+  the flip only bites content with on-screen ratio near 1; the body is
+  ~0.38, unreachable at any usable width); testis framing caught cold;
+  female thigh striping reproduced ONLY under grazing light from behind
+  (faint quad-flow bands) — RULED: clears the bar; liver flatness caught
+  cold at rank 11 (waxy sheen) — per standing ruling, path is a remeshed
+  manifold if ever pursued, never a lower k; prostate pits seen faintly —
+  tolerable; weld≠topology CONFIRMED (brain floor-faceting, weld −895
+  predicted nothing). PRE-REGISTERED PREDICTION CONFIRMED with a
+  gradation sharper than registered: the textured four took ranks 1–3
+  (skin schematic aside), all eight untextured organs are monochrome, and
+  the AO organs escape only at DEFAULT distance — shading carries them
+  until the camera gets close, and then nothing does: albedo's value is
+  concentrated exactly where the audit found the failures. And the
+  ranking taught what the prediction couldn't: thyroid has texture and
+  ranked 15th — albedo is NECESSARY, NOT SUFFICIENT; a visible defect
+  trumps a present strength. RULINGS (at review): ZOOM CLAMP — NO. It
+  fixes only the floor-only failures, the real failures (thyroid, testis,
+  ovary rectangles) sit above any workable clamp, and the clamp is the
+  reference app's EVASION (minDistance 4.8 on a 3.8-unit model hides its
+  meshes); seven passes fixed mechanisms rather than hiding symptoms —
+  re-ask after albedo. FIX QUEUE: Tier 1 (cheap, now) = scale the DOM
+  marker discs by camera distance (best value in the queue) + testis
+  framing (carries the plinth re-test trigger). Tier 2 = ONE asset-
+  hygiene pass, not four tickets: thyroid debris (severity lead), ovary
+  tessellation, pancreas seam, brain floor faceting — the merge-and-
+  recompute-normals items deferred from the first conversation, now
+  correctly at the top of the queue. Tier 3 = ALBEDO for the untextured
+  organs — a work stream, not a fix; open design question (no usable
+  UVs on scan meshes), to be designed collaboratively, not prompted
+  cold. Evidence: /tmp/atlas-verify/p5/ (shots, sheets, guard.json,
+  aspect-flip numbers, thigh grazing set, ovary attribution set).
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was
