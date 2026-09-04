@@ -3614,7 +3614,29 @@ screen pair per organ:
   table re-runs on the new instrument to correct the recorded reasoning
   (the AgX VERDICT is not in question; it won by 2–5× margins). Queue
   after this commit: HRA licence home → operator re-measurement → extras
-  assertions → Wang.
+  assertions → Wang. QUEUE OUTCOMES (same day): (1) HRA RESOLVED — the
+  per-model NIH 3D pages were the wrong verification surface; the durable
+  instrument is the project-level statement on
+  humanatlas.io/3d-reference-library, verbatim: "All HRA 3D reference
+  objects are released under Attribution 4.0 International (CC BY 4.0)",
+  with the formal Browne et al. HuBMAP CCF 3D Reference Object Library
+  citation — archived in the manifest, escalation closed for all seven
+  assets. (2) OPERATOR RE-MEASUREMENT on the geometric instrument
+  CONFIRMS the standing warning rather than retracting it: AgX undershoot
+  survives at exactly 6 of 9 (same 3/6 split), magnitudes smaller (worst
+  −0.043 vs −0.087 — the old selector exaggerated but did not create the
+  effect), and AgX's fidelity win WIDENS (0.029 vs ACES 0.090, control
+  0.114, Neutral 0.220). viewer.js's condition block carries the
+  confirmation coda. (3) EXTRAS-PRESERVATION ASSERTIONS added to both
+  transform scripts (mesh_hygiene.py, bake_ao.py): source asset.extras
+  are captured, re-injected into the derived GLB post-export, and
+  verified — a transform that would ship a derived asset without its
+  source attribution now fails loudly. (4) WANG HUNT EXHAUSTED: six
+  strategies across three engines including full-text number searches —
+  zero. Blast radius is all four bladder subtype shares AND its
+  metastatic-site figures. Re-source candidates identified (statistics
+  ruling: re-source or remove, no middle); the user-facing content edit
+  is held for review.
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was

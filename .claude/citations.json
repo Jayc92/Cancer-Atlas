@@ -89,10 +89,10 @@
    "id": "lic-hra-family",
    "cls": "licence",
    "claim": "HRA reference organs (kidneys, liver, brain, prostate, pancreas 3DPX-020983, bladder, breast 3DPX-020977) CC BY 4.0 via NIH 3D",
-   "url": "https://3d.nih.gov/entries/3DPX-020983",
-   "quote": "3DPX-020983 | Pancreas, Female | Created by HRA",
+   "url": "https://humanatlas.io/3d-reference-library",
+   "quote": "License | All HRA 3D reference objects are released under Attribution 4.0 International (CC BY 4.0). || Citation: Browne, Kristen, Leonard E. Cross, Bruce W. Herr II, Elizabeth G. Record, Ellen M. Quardokus, Andreas Bueckle, and Katy Borner. HuBMAP CCF 3D Reference Object Library.",
    "retrieved": "2026-09-04",
-   "status": "quote-absent",
+   "status": "verified",
    "code_refs": [
     "js/organs/pancreas.js",
     "js/organs/kidneys.js",
@@ -102,8 +102,8 @@
     "js/organs/bladder.js",
     "js/organs/breast.js:20"
    ],
-   "sha": "96f47b4c39f37b3d",
-   "notes": "ESCALATED: entry page verifies identity (title/creator/ID) but renders NO licence text today, including after expanding Attribution Instructions. The CC BY 4.0 claim for six shipped assets is currently reachable-but-quote-absent at the recorded verification surface. Needs: locate the licence statement's actual home (HRA portal / API / bulk metadata) and archive it. Breast (3DPX-020977) belongs to this family too, with a recorded attribution quote ('Heidi Schlehlein 2022...') quoted from the entry page \u2014 that quote's presence on today's page not re-checked (time-boxed)."
+   "sha": "34213743475573cc",
+   "notes": "RESOLVED (2026-09-04): the per-model NIH 3D entry pages were the WRONG verification surface \u2014 they verify identity but render no licence text. The durable instrument is the PROJECT-LEVEL licence on the HRA 3D Reference Object Library page (humanatlas.io/3d-reference-library), quoted verbatim above, governing all seven shipped HRA assets (kidneys, liver, brain, prostate, pancreas, bladder, breast). Source-class policy applied to licences: prefer the permanently-addressed project statement over per-item pages."
   },
   {
    "id": "epi-waddell-2015",
@@ -195,13 +195,13 @@
    "url": null,
    "quote": null,
    "retrieved": "2026-09-04",
-   "status": "not-relocated",
+   "status": "not-relocated-exhausted",
    "code_refs": [
     "js/organs/bladder.js:27",
     "js/organs/bladder.js:36"
    ],
    "sha": null,
-   "notes": "THREE time-boxed searches (PubMed x2, Bing x1) failed to relocate. HIGH STAKES: the bladder screen's headline share rests on it. Needs a deeper hunt before any downgrade decision; do NOT substitute a lookalike. RULED 2026-09-04: statistics cannot be downgraded to illustrative \u2014 re-source from a durably-addressed publication or remove the share from the screen; no middle. Queued after HRA licence home."
+   "notes": "HUNT EXHAUSTED (2026-09-04): six strategies across three engines \u2014 PubMed x2, Bing x1, Europe PMC x3 including FULL-TEXT number searches for both 53142 and 48789 across all indexed literature \u2014 zero hits. The citation as recorded (Wang et al., Front Oncol 2023) cannot be located. Per the statistics ruling: RE-SOURCE OR REMOVE, no middle. Blast radius: all four bladder subtype shares (uc ~92%, blnec ~3.2%, blscc ~3.1%, bladc ~1.9% \u2014 all on the N=53,142 denominator) AND the bladder metastatic-site figures cite this paper. Re-source candidates identified (e.g. Halaseh 2022, Cureus, PMID 36042998, open access) \u2014 each replacement share must be verified at the NEW source and the on-screen numbers changed to what that source actually reports. User ruling pending on re-source vs remove; content edit held for review as a user-facing change."
   },
   {
    "id": "anat-lmu-brain",

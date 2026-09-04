@@ -26,6 +26,48 @@ sc.cycles.use_denoising = False
 meshes = [o for o in bpy.data.objects if o.type == 'MESH']
 # organ-scale ray cap from the union bbox diagonal
 import mathutils
+
+
+# --- asset.extras preservation (citation-durability ruling, 2026-09-04) ------------------------
+# The colon/thyroid isolation re-exports silently DROPPED the embedded licence extras their
+# provenance claims cite — the ovary pipeline preserved them and is the model. This makes
+# preservation an ASSERTED INVARIANT rather than a hope: capture the source GLB's asset.extras
+# before Blender touches it; after export, re-inject them into the output GLB's JSON chunk and
+# re-read to verify. A transform that would ship a derived asset without its source's embedded
+# attribution now FAILS LOUDLY instead. (Condition (3): read identity, don't infer it.)
+def _read_glb_asset(path):
+    import struct as _st, json as _js
+    d = open(path, 'rb').read()
+    ln = _st.unpack('<I', d[12:16])[0]
+    return _js.loads(d[20:20+ln]).get('asset', {})
+
+def _inject_asset_extras(path, extras):
+    import struct as _st, json as _js
+    d = open(path, 'rb').read()
+    ln = _st.unpack('<I', d[12:16])[0]
+    j = _js.loads(d[20:20+ln])
+    j.setdefault('asset', {})['extras'] = extras
+    nj = _js.dumps(j, separators=(',', ':')).encode()
+    pad = (4 - len(nj) % 4) % 4
+    nj += b' ' * pad
+    rest = d[20+ln:]
+    total = 12 + 8 + len(nj) + len(rest)
+    out = b'glTF' + _st.pack('<II', 2, total) + _st.pack('<I', len(nj)) + b'JSON' + nj + rest
+    open(path, 'wb').write(out)
+
+def preserve_extras(src_path, dst_path):
+    src_extras = _read_glb_asset(src_path).get('extras')
+    if not src_extras:
+        print('EXTRAS: source carries none — nothing to preserve')
+        return
+    if _read_glb_asset(dst_path).get('extras') == src_extras:
+        print('EXTRAS: preserved by exporter')
+        return
+    _inject_asset_extras(dst_path, src_extras)
+    assert _read_glb_asset(dst_path).get('extras') == src_extras, \
+        'EXTRAS INJECTION FAILED — refusing to ship a derived asset without its source attribution'
+    print('EXTRAS: re-injected into the derived GLB and verified')
+
 pts = [o.matrix_world @ mathutils.Vector(c) for o in meshes for c in o.bound_box]
 mn = mathutils.Vector((min(p[i] for p in pts) for i in range(3)))
 mx = mathutils.Vector((max(p[i] for p in pts) for i in range(3)))
@@ -51,3 +93,4 @@ for o in meshes:
 bpy.ops.export_scene.gltf(filepath=DST, export_format='GLB', export_vertex_color='ACTIVE',
                           export_all_vertex_colors=False, export_yup=True)
 print('EXPORTED:', DST)
+preserve_extras(SRC, DST)

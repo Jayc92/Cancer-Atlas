@@ -35,7 +35,13 @@ import { makeSeededRandom, seedFromKey } from './rng.js';
 //     an over-saturating warm rig; under env it UNDERSHOOTS cited saturation on 6 of 9 cited
 //     organs (worst testis -0.087). "AgX offsets the rig's saturation push" is therefore no
 //     longer true and must not be carried into any later lighting change as a rule of thumb —
-//     the next rig change re-measures, it does not reason from P2. Glow-light restoration is
+//     the next rig change re-measures, it does not reason from P2.
+//   - RE-MEASURED ON THE GEOMETRIC INSTRUMENT (2026-09-04, citation-durability pass) after the
+//     old top-luminance-quartile selector was shown to bias toward desaturated highlights: the
+//     undershoot finding SURVIVES — 6 of 9 below cited, the same 3/6 split — with smaller
+//     magnitudes (worst -0.043 vs the -0.087 recorded; the old selector exaggerated the effect
+//     but did not create it), and AgX's fidelity win WIDENS (mean |dSat| 0.029 vs ACES 0.090,
+//     control 0.114, Neutral 0.220). The warning above is confirmed, not retracted. Glow-light restoration is
 //     still a separate pass with its own gate against the new zero-clip baseline.
 THREE.ColorManagement.enabled = true;
 
