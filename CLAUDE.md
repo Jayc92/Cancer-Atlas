@@ -3134,12 +3134,29 @@ screen pair per organ:
   toggle the sidebar — findable, where "reshape to portrait" invites a
   tablet test and a false all-clear. The fix is design work, not a patch
   (re-frame-on-resize would snap the user's zoom; a correct fix re-fits
-  only when content would clip, or only before the user has zoomed); (b) the headless off-centre organ captures are hereby
-  bounded to a capture-rig artefact — not the latch (aspect pinned), not
-  projection/DPR (probed correct at dpr 1 and 2), identical before/after
-  the env pass — cause unidentified, harmless to comparative metrics, but
-  find it before trusting absolute composition judgements from headless
-  sheets.
+  only when content would clip, or only before the user has zoomed); (b) RESOLVED (2026-09-03, pre-4A at the user's
+  sequencing ruling — a capture rig that clips content off-frame would
+  false-pass 4A's raw-vs-compressed gate on banding in the clipped-off
+  region): the headless off-centre captures were never the renderer —
+  they were the PHOTOGRAPH. Puppeteer's element/clip screenshot path
+  (puppeteer-core 25.9.0 + Chrome 152, dpr-INdependent) applies a
+  transient device-metrics override at a different width (~1405 element /
+  ~1313 clip), the app relayouts to it (margin:auto centring shifts
+  #organViewerWrap left by exactly (1500−W)/2 — fingerprint-matched to
+  0.09px against a width sweep), the capture rasterises that transient
+  layout at pre-capture clip coordinates, and the layout recovers <400ms
+  later. Plain full-viewport page.screenshot() never does this, so
+  `.claude/regress.js` was never affected. FIX: pass
+  `captureBeyondViewport: false` on every element/clip screenshot —
+  measured: layout does not move and the capture is correct. GATE run
+  post-fix (capture_gate/, 14 organs, DOM dots hidden so PNG and buffer
+  compare like-for-like): PNG content box agrees with the drawing-buffer
+  content box to ≤1 device px on every edge, 14/14, full organ in frame
+  with positive margins everywhere (testis top margin 8px — its known
+  edge-hugging framing, P5 item). One measurement gotcha recorded with
+  it: the wrap's 18px border-radius arc defeats a straight-inset border
+  exclusion (its --line pixels drag a content scan to full-frame); mask
+  the corner squares. Review renders regenerated on the fixed rig.
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was
