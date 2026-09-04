@@ -404,13 +404,16 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
    ],
    "window": "corrective",
    "windowMarkers": [
     "mis-?citation"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Acta Pathol Microbiol Scand"
   },
   {
    "author": "Hu",
@@ -947,13 +950,16 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
-    "year",
-    "topic:title"
+    "journal:line-read",
+    "topic:title",
+    "year"
    ],
    "window": "caveated",
    "windowMarkers": [
     "not\\s+confirmed"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "JCI Insight"
   },
   {
    "author": "Pathol",
@@ -1002,13 +1008,16 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
-    "year",
-    "topic:title"
+    "journal:line-read",
+    "topic:title",
+    "year"
    ],
    "window": "caveated",
    "windowMarkers": [
     "not\\s+confirmed"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Human Pathology"
   },
   {
    "author": "Epstein",
@@ -1211,13 +1220,16 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
    ],
    "window": "caveated",
    "windowMarkers": [
     "\\bdisputed\\b"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "NEJM"
   },
   {
    "author": "Fleming",
@@ -1603,7 +1615,9 @@
     "author",
     "topic:query",
     "year"
-   ]
+   ],
+   "triage": "class audit 2026-09-04: MULTI-MENTION window \u2014 the record conflates two real same-author-same-year citations (Nunes et al., Nature, 2024 and Nunes et al., Molecular Cancer, 2024), both with journals on the line. The resolved pmid matches the Molecular Cancer mention; the Nature mention is unresolved at record level. Extraction v2 splits per-mention.",
+   "journalOnLine": "Nature + Molecular Cancer (two mentions)"
   },
   {
    "author": "Arends",
@@ -1635,9 +1649,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:title",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Cureus"
   },
   {
    "author": "Biol",
@@ -1678,7 +1695,9 @@
     "author",
     "topic:title",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": null
   },
   {
    "author": "Shen",
@@ -1824,7 +1843,9 @@
     "author",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": null
   },
   {
    "author": "Allory",
@@ -1845,7 +1866,9 @@
     "author",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": null
   },
   {
    "author": "Rogers",
@@ -2034,7 +2057,9 @@
     "author",
     "year",
     "topic:triage"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": null
   },
   {
    "author": "Jebbawi",
@@ -2084,6 +2109,7 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
    ],
@@ -2091,7 +2117,9 @@
    "windowMarkers": [
     "\\bpaywall",
     "could\\s+not\\s+be\\s+verified"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "NEJM"
   },
   {
    "author": "Curtin",
@@ -2136,9 +2164,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "JCO"
   },
   {
    "author": "Haluska",
@@ -2497,9 +2528,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Nat Genet"
   },
   {
    "author": "Krauthammer",
@@ -2517,9 +2551,13 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "triage": "class audit 2026-09-04: duplicate record (same ref, same resolution).",
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Nat Genet"
   },
   {
    "author": "Hodis",
@@ -2607,9 +2645,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:title",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "An Bras Dermatol"
   },
   {
    "author": "Waqar",
@@ -2627,9 +2668,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:title",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Cureus"
   },
   {
    "author": "Gastroenterology",
@@ -2706,16 +2750,20 @@
    "refs": [
     "js/organs/pancreas.js:206"
    ],
-   "pmid": "10793075",
-   "resolvedTitle": "Genetic, immunohistochemical, and clinical features of medullary carcinoma of the pancreas: A newly described and characterized entity.",
-   "resolvedJournal": "Am J Pathol",
-   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "pmid": "10766191",
+   "resolvedTitle": "Loss of expression of Dpc4 in pancreatic intraepithelial neoplasia: evidence that DPC4 inactivation occurs late in neoplastic progression.",
+   "resolvedJournal": "Cancer research",
+   "method": "manual re-resolution after class audit (author+year+journal:line-read+topic:word-boundary+title:human)",
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
     "year",
-    "topic:title"
-   ]
+    "journal:line-read",
+    "topic:word-boundary",
+    "title:human"
+   ],
+   "triage": "class audit 2026-09-04: sweep-2 backfill 10793075 was the WRONG same-author-same-year paper (medullary carcinoma, Am J Pathol) \u2014 the source line says Cancer Res and makes a PanIN-3/DPC4 claim; journal was on the line, extractor missed it, weak substring topic carried the third slot. Re-resolved with the line-read journal + word-boundary topic, single passer, title read by hand.",
+   "journalOnLine": "Cancer Res"
   },
   {
    "author": "Iacobuzio-Donahue",
@@ -2749,16 +2797,19 @@
     "js/organs/pancreas.js:208",
     "js/organs/pancreas.js:210"
    ],
-   "pmid": "28697656",
-   "resolvedTitle": "Impact of liver transplantation on the risk of second malignant tumors among hepatocellular carcinoma patients.",
-   "resolvedJournal": "Expert Rev Gastroenterol Hepatol",
-   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "pmid": "28348494",
+   "resolvedTitle": "Prognostic value of site-specific metastases in pancreatic adenocarcinoma: A Surveillance Epidemiology and End Results database analysis.",
+   "resolvedJournal": "World journal of gastroenterology",
+   "method": "manual re-resolution after class audit (author+year+topic:word-boundary+title:human)",
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
     "year",
-    "topic:title"
-   ]
+    "topic:word-boundary",
+    "title:human"
+   ],
+   "triage": "class audit 2026-09-04: sweep-2 backfill 28697656 was the WRONG Oweira paper (HCC liver-transplant second malignancies) \u2014 the claim is pancreatic stage-IV SEER N=13,233; no journal on the line. Re-resolved with word-boundary topics: exactly one of 15 candidates passed (substring matching would have passed several), title read by hand.",
+   "journalOnLine": null
   },
   {
    "author": "Redston",
@@ -2810,9 +2861,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Cancer Res"
   },
   {
    "author": "Caldas",
@@ -2851,9 +2905,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Cancer Res"
   },
   {
    "author": "Wood",
@@ -2925,9 +2982,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Nature"
   },
   {
    "author": "Goggins",
@@ -2945,9 +3005,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Cancer Res"
   },
   {
    "author": "Wood",
@@ -3053,9 +3116,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
-    "year",
-    "topic:title"
-   ]
+    "journal:line-read",
+    "topic:title",
+    "year"
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "NEJM"
   },
   {
    "author": "Frankell",
@@ -3318,7 +3384,9 @@
     "author",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": null
   },
   {
    "author": "Research",
@@ -3582,7 +3650,7 @@
    "author": "PNAS",
    "year": "2013",
    "journal": null,
-   "status": "backfilled",
+   "status": "entry-time-identifier",
    "userFacing": false,
    "refs": [
     "js/organs/brain.js:152"
@@ -3590,12 +3658,11 @@
    "pmid": "23412337",
    "resolvedTitle": "Intratumor heterogeneity in human glioblastoma reflects cancer evolutionary dynamics.",
    "resolvedJournal": "Proceedings of the National Academy of Sciences of the United States of America",
-   "method": "eutils multi-field, author token corrected from source line (extractor artefact)",
-   "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
     "year"
-   ]
+   ],
+   "triage": "class audit 2026-09-04: the source line carries PMID 23412337 on the citation itself \u2014 entry-time, extraction miss (the \u00b12-line census missed it because the stale results file still said no-match, which the census filter excluded). Triage resolution had independently converged on the same PMID \u2014 validation datum."
   },
   {
    "author": "Brennan",
@@ -3648,9 +3715,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Cancer Cell"
   },
   {
    "author": "Sottoriva",
@@ -3668,9 +3738,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "PNAS"
   },
   {
    "author": "Neuro-Oncology",
@@ -3690,9 +3763,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
-    "year",
-    "topic:title"
-   ]
+    "journal:line-read",
+    "topic:title",
+    "year"
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "Neuro-Oncology"
   },
   {
    "author": "Killela",
@@ -3710,9 +3786,12 @@
    "resolved": "2026-09-04",
    "fieldsChecked": [
     "author",
+    "journal:line-read",
     "topic:query",
     "year"
-   ]
+   ],
+   "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
+   "journalOnLine": "PNAS"
   },
   {
    "author": "Wippold",
@@ -4052,5 +4131,7 @@
  "_backfill_triage": "Flag-pile triage (2026-09-04): all 13 no-match records were EXTRACTOR ARTEFACTS, not entry-time errors \u2014 10 journal-name fragments parsed as authors (J Gastroenterol, Hepatology, PNAS, ...) and 3 real citations with mangled author tokens (compound surname 'Mehrvarz Sarshekeh' split; 'Sottoriva et al. (PNAS,' and 'Louis et al., Neuro-Oncology' patterns). All 3 re-resolved uniquely under the SAME multi-field gate with corrected tokens (28267766, 23412337, 34185076; Louis additionally needed the source line's journal constraint because bare 'Louis[au] AND 2021[dp]' hit retmax truncation \u2014 the retrieval-miss mechanism attributed to the no-field-match pile, demonstrated live). ZERO new entry-time errors found: the Wang/Park defect class does not recur in the auto-detectable band. The 11 ambiguous are honest refusals: several are two REAL same-author-same-year papers (Shain 2015, Gershenwald 2017, Pollock 2003) needing the claim itself to disambiguate \u2014 epi-pass work; and Park 2023 Curr Oncol is already identifier-carrying in `entries` from the durability pass (PMC10605465), so the refusal is correct and no action is needed.",
  "_gate_audit": "Gate-strength audit (2026-09-04): the sweep-1 gate's conditional fields did unstated work. Effective strength of the 46 sweep-1 backfills: 24 author+year+journal+topic, 13 author+year+journal, 6 author+year+topic, 3 author+year ONLY. Zero journal-mismatches is structural, not suspicious: when a journal was recorded it was enforced INSIDE the query ([ta] field), so a journal mismatch presents as zero hits, not as a post-hoc mismatch. The A+Y-only class was tested against ground truth and FAILED 2/3: one backfill attached a plant-genetics paper to a thyroid line whose true PMID sat on the next source line; one attached an unrelated methods paper to a NEGATED mention inside an authorship-correction comment. On every backfill testable against an entry-time identifier, the >=3-field machinery went 4/4 correct (Jakob, Livasy, Luvhengo via sweep-1; Wippold via sweep-2) and A+Y-only went 2/2 wrong. RULE ADOPTED: automated backfill requires at least three agreeing fields; author+year+uniqueness alone is never sufficient. Every backfilled entry now carries fieldsChecked \u2014 the strength actually applied, not the strength specified.",
  "_polarity_guard": "Polarity guard (.claude/citation_polarity.py, 2026-09-04, born from the Boutros failure class): a token-matching pass has no notion of a claim's polarity \u2014 an authorship correction, a \"checked and NOT confirmed\" caveat, and a straight assertion carry the same author-plus-year tokens. The guard classifies WINDOWS (corrective / caveated / clean) and its contract is flag-then-human-read: window-level regexes cannot tell a negated mention (Colombino) from its correction target (Jakob) two tokens later, so it never auto-acts. Validated under standing condition (7) \u2014 the self-test proves it fires on four known-corrective fixtures AND stays silent on three known-clean ones before any scan is trusted, and the scan refuses to run on a failing self-test. Scan of all 188 records: 152 clean / 9 corrective / 27 caveated; every flagged record now carries `window` + `windowMarkers`. Mention-level reads of flagged backfilled/entry-time records: all keep (Jakob is the correction TARGET; Lauren is asserted beside a frequency-chain correction; Hu 2012 is cited AS the mis-citer \u2014 identifier correct, but the epi pass must not verify the transposed figures against it as if asserted; Boutros was already retracted and the guard catches its window \u2014 the class-definer detected). THE EPI PASS MUST CONSUME THESE FLAGS: any flagged window gets a human mention-level polarity read before verifying, resolving, or \"fixing\" anything in it.",
- "_extractor_audit": "Extractor audit (2026-09-04, seed=42, n=30 of 188, each parse compared to its source line by hand). Per-field: AUTHOR 24/30 correct (5 journal-name-as-author fragments, all screened/triaged downstream; 1 LIVE author-order error \u2014 \"Li, Kang & Tang\" extracted as Tang, refused downstream only by luck of ambiguity). YEAR 30/30. JOURNAL RECALL 11/25 = 44% \u2014 the big one: 25 of 30 sampled citations carry a journal on the line, the extractor recorded 11; the \"journal-when-recorded\" gate qualifier concealed a harvest failure, and at least 6 sampled RESIDUE records (Moore/PLOS Genetics, Mariette/Gastric Cancer, Mehra/Cancer Research, Zhuang/Transl Cancer Res, Salgado/Ann Oncol, Wiegand/NEJM) have their unharvested journal sitting on the source line \u2014 re-extraction converts residue to resolvable. Journal precision 11/11 (no false journals). TOPICS defective ~11/30 (empty where strong words existed, or polluted by neighbouring entries' vocabulary). REF LINE: systematic +1 offset in ~29/30 (deterministic window-indexing bug; downstream windows absorbed it; refs NOT blanket-mutated \u2014 fix belongs in the extractor, and this offset is why identifiers \"on the next line\" were missed while the ref pointed AT that line). DOWNSTREAM: sampled backfill precision 11/12 title-verified (Arends retracted). Every number in the backfill pass inherits these rates; coverage claims should be read as \"126 identifier-carrying, of which one sampled-and-verified subset ran 11/12\"."
+ "_extractor_audit": "Extractor audit (2026-09-04, seed=42, n=30 of 188, each parse compared to its source line by hand). Per-field: AUTHOR 24/30 correct (5 journal-name-as-author fragments, all screened/triaged downstream; 1 LIVE author-order error \u2014 \"Li, Kang & Tang\" extracted as Tang, refused downstream only by luck of ambiguity). YEAR 30/30. JOURNAL RECALL 11/25 = 44% \u2014 the big one: 25 of 30 sampled citations carry a journal on the line, the extractor recorded 11; the \"journal-when-recorded\" gate qualifier concealed a harvest failure, and at least 6 sampled RESIDUE records (Moore/PLOS Genetics, Mariette/Gastric Cancer, Mehra/Cancer Research, Zhuang/Transl Cancer Res, Salgado/Ann Oncol, Wiegand/NEJM) have their unharvested journal sitting on the source line \u2014 re-extraction converts residue to resolvable. Journal precision 11/11 (no false journals). TOPICS defective ~11/30 (empty where strong words existed, or polluted by neighbouring entries' vocabulary). REF LINE: systematic +1 offset in ~29/30 (deterministic window-indexing bug; downstream windows absorbed it; refs NOT blanket-mutated \u2014 fix belongs in the extractor, and this offset is why identifiers \"on the next line\" were missed while the ref pointed AT that line). DOWNSTREAM: sampled backfill precision 11/12 title-verified (Arends retracted). Every number in the backfill pass inherits these rates; coverage claims should be read as \"126 identifier-carrying, of which one sampled-and-verified subset ran 11/12\".",
+ "_vulnerable_class_audit": "Exhaustive no-journal-backfill audit (2026-09-04): the substring topic defect meant a defective check was carrying a third of the gate's weight wherever journal was not checked. All 29 such entries title-read by hand against their source lines. 24 verified (19 mentions also had their journal ON the line, hand-recovered into fieldsChecked as journal:line-read \u2014 the 44% extractor recall made \"no journal in fieldsChecked\" ambiguous between not-present and not-harvested; journalOnLine now records which). TWO wrong backfills found and re-resolved (Wilentz 2000, Oweira 2017 \u2014 both pancreas, both same-author-same-year collisions that substring topics let through). One entry-time reclassification (PNAS/Sottoriva \u2014 PMID on its own line). One multi-mention record (Nunes 2024 \u2014 two real papers, v2 splits). One duplicate noted. Total wrong backfills found across all audits: 4 (Zhu, Arends by sample; Wilentz, Oweira by exhaustion) \u2014 every one lived in the no-journal class, zero in the journal-checked classes.",
+ "_epi_pass_contract": "EPI-PASS VERDICT CONTRACT (ruled 2026-09-04): three states, not two \u2014 VERIFIED (the source supports the claim as shipped), FAILED (the source exists and contradicts or lacks the claim), and NOT-A-SOURCE-CLAIM (the mention cites a paper to say something ABOUT it, not to draw a fact FROM it: corrective mentions, mis-citer exhibits like Hu 2012, documented-unverifiable notes like Curtin 2005). A binary pass would check \"does Hu 2012 contain 54/32/15\", find no, and report a defect against a line that already says the figures are wrong \u2014 misreading corrective mentions in both directions. The polarity scan flags 36 windows (9 corrective, 27 caveated); every flagged window gets a human mention-level read that may assign NOT-A-SOURCE-CLAIM before any automated verify/fail verdict is recorded."
 }
