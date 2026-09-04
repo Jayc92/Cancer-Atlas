@@ -233,7 +233,50 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
 
   fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(report, null, 1));
   const fails = report.checks.filter(c => !c.ok).length;
-  console.log(`\n==== DONE: ${report.checks.length} checks, ${fails} failures, ${report.errors.length} page errors ====`);
+  // --- CITATION STRUCTURAL CHECKS (citation-durability pass, 2026-09-04) --------------------
+  // Deterministic and OFFLINE by design: no live link-checking here (a network dependency would
+  // flake on the same rate limits the durability pass hit; periodic link-checking belongs in a
+  // separate opt-in script). These catch the two failures that actually shipped:
+  //   - a claim with no record   (bladder's uncited colour)
+  //   - a record pointing nowhere (pancreas's dangling CLAUDE.md citation)
+  // Standing condition (3) applied to provenance: read identity, don't infer it.
+  try {
+    const fsMod = require('fs');
+    const manifest = JSON.parse(fsMod.readFileSync(new URL('./citations.json', require('url').pathToFileURL(__dirname + '/')), 'utf8'));
+    check('citations: manifest parses', Array.isArray(manifest.entries) && manifest.entries.length > 0,
+      `${manifest.entries.length} entries`);
+    // reverse direction: every manifest entry's code_refs resolve to real files
+    let badRefs = [];
+    for (const e of manifest.entries) {
+      for (const ref of (e.code_refs || [])) {
+        const file = ref.split(':')[0];
+        if (!fsMod.existsSync(file)) badRefs.push(`${e.id} -> ${ref}`);
+      }
+    }
+    check('citations: every entry points at a real file', badRefs.length === 0, badRefs.join('; '));
+    // forward direction, scoped to the two fully-swept classes:
+    // (a) every mottle organ's material.color has a colour-class entry
+    const mottleOrgans = ['bladder','brain','breast','kidneys','liver','ovary','pancreas','prostate'];
+    const colourIds = new Set(manifest.entries.filter(e => e.cls === 'colour').map(e => e.id));
+    const missingColour = mottleOrgans.filter(o => !colourIds.has('col-' + o));
+    check('citations: every mottle organ colour has a manifest entry', missingColour.length === 0, missingColour.join(','));
+    // (b) every shipped GLB is covered by a licence-class entry (bodies incl.)
+    const glbs = fsMod.readdirSync('assets').filter(f => f.endsWith('.glb')).map(f => f.replace('.glb',''));
+    const licRefs = manifest.entries.filter(e => e.cls === 'licence').flatMap(e => (e.code_refs || []).join(' ') + ' ' + e.claim);
+    const covered = (g) => licRefs.some(t => t.includes(g.replace('_body','').replace('female','').replace('male','')) || t.toLowerCase().includes(g.replace('_','').replace('body','')));
+    const uncovered = glbs.filter(g => {
+      const organ = g.replace('female_body','bodies').replace('male_body','bodies').replace('.glb','');
+      return !manifest.entries.some(e => e.cls === 'licence' &&
+        ((e.claim + ' ' + (e.code_refs||[]).join(' ')).toLowerCase().includes(organ === 'bodies' ? 'body' : organ)));
+    });
+    check('citations: every shipped GLB has a licence entry', uncovered.length === 0, uncovered.join(','));
+    // no entry may be BOTH downgraded and still claim verified language in code? (recorded as
+    // notes; enforcement of code-comment wording is Phase-4 follow-up, not a structural check)
+  } catch (e) {
+    check('citations: structural checks ran', false, String(e).slice(0, 120));
+  }
+  const fails2 = report.checks.filter(c => !c.ok).length;
+  console.log(`\n==== DONE: ${report.checks.length} checks, ${fails2} failures, ${report.errors.length} page errors ====`);
   if (report.errors.length) console.log(JSON.stringify(report.errors.slice(0, 10), null, 1));
   await browser.close();
 })().catch(e => { console.error('HARNESS ERROR', e); process.exit(1); });

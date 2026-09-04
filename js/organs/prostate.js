@@ -37,12 +37,15 @@ export const cancerEntries = [
 // for visual consistency with every other organ's single-silhouette presentation (CLAUDE.md
 // notes it as a possible future refinement, not built into this pass) — assets/prostate.glb is
 // the gland alone.
-// MATERIAL COLOR (real-tissue pass, verified before picking): the old 0xc9998e was already a
-// tan-pink direction, checked and richened rather than assumed correct. Source: PathologyOutlines.com's
-// description of the normal prostate cut surface — "Tan to pink — reflecting the mixture of
-// glandular epithelium, stromal connective tissue, and blood vessels" — confirmed directly, not
-// a generic "gland-colored" guess. 0xb97c68 keeps that same real tan-pink family, more
-// saturated so it holds up under lighting instead of washing paler.
+// MATERIAL COLOR — DOWNGRADED to illustrative; the recorded attribution is BAD (citation-
+// durability pass, 2026-09-04; manifest col-prostate). The material pass recorded:
+// PathologyOutlines.com, "Tan to pink — reflecting the mixture of glandular epithelium,
+// stromal connective tissue, and blood vessels", "confirmed directly". Re-verification found
+// that quote on NO PathologyOutlines page: the current prostate grossing and histology pages
+// carry no colour text, the Wayback snapshot of 2025-08-20 — PREDATING the material pass —
+// carries none either, and a site-wide exact-phrase search returns zero. The quote was never
+// at the named source. Per the downgrade-over-substitution ruling, no lookalike source was
+// shopped in: 0xb97c68 stands as an illustrative tan-pink-family value.
 // MATERIAL/LIGHTING REALISM PASS — shared recipe (roughness x0.82, specularIntensity 0.15->0.25,
 // per-vertex tissue mottle at amplitude 0.28) applied uniformly across all nine real-scan
 // organs; full mechanism, clip-safety reasoning, and the transmission investigation's null

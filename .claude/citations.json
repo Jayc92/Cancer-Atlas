@@ -1,0 +1,333 @@
+{
+ "_schema": "cancer-atlas citation manifest v1 (citation-durability pass, 2026-09-04)",
+ "_method": "status: verified = claim re-verified at source on `retrieved` date; verified-partial = source/series located, specific figure not re-read; quote-absent = source reachable but quoted text not present; not-relocated = time-boxed search failed; unreproducible = recorded verification leg cannot be re-run from the repo; downgraded = claim reduced to illustrative per Ruling 1. Text quotes only, never images (Ruling 2).",
+ "entries": [
+  {
+   "id": "lic-lungs",
+   "cls": "licence",
+   "claim": "lungs.glb CC BY 4.0, 'Realistic Human Lungs' by neshallads",
+   "url": "https://sketchfab.com/3d-models/realistic-human-lungs-ce09f4099a68467880f46e61eb9a3531",
+   "quote": "License: | CC Attribution | Creative Commons Attribution",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/lungs.js:26"
+   ],
+   "sha": "eefc4d61151f7bd8"
+  },
+  {
+   "id": "lic-stomach",
+   "cls": "licence",
+   "claim": "stomach.glb CC BY 4.0, 'Realistic Stomach' by Brain Diagno; embedded asset.extras carry author/license/source",
+   "url": "https://sketchfab.com/3d-models/realistic-stomach-07859d72489d4f818e508b3738ab7449",
+   "quote": "License: | CC Attribution | Creative Commons Attribution || extras.license: CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/stomach.js"
+   ],
+   "sha": "ad665b6cd32a2b77",
+   "notes": "embedded extras re-verified from a131649 master (durable leg present)"
+  },
+  {
+   "id": "lic-ovary",
+   "cls": "licence",
+   "claim": "ovary.glb derived from 'Pelvic Organs from MRI' by audreybyrd, CC BY 4.0; MRI provenance quote",
+   "url": "https://sketchfab.com/3d-models/pelvic-organs-from-mri-2610b30793ed47a5baa18b2994bdee6b",
+   "quote": "License: CC Attribution || 'This is a 3-D model derived from a high-resolution MRI of a 25-year-old cis-female woman using Avizo and Blender processing. The imaging was produced at the Oklahoma State University Biomedical Imaging Laboratory...'",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/ovary.js:31"
+   ],
+   "sha": "0e7990babf3714db",
+   "notes": "GOLD STANDARD: page + provenance quote + embedded extras all re-verified; the isolation pipeline preserved extras in the derived GLB"
+  },
+  {
+   "id": "lic-colon",
+   "cls": "licence",
+   "claim": "colon.glb CC BY 4.0, 'Small and large intestine' by antonia.sundberg (Malardalen University course)",
+   "url": "https://sketchfab.com/3d-models/small-and-large-intestine-8a1ca8e3ca224cdeb9264674416bde38",
+   "quote": "This model was part of a course in scientific illustration held at Malardalen University in Eskilstuna, Sweden. | License: | CC Attribution | Creative Commons Attribution",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/colon.js:43"
+   ],
+   "sha": "4f0755aaf265d080",
+   "notes": "URL RECOVERED THIS PASS (was never recorded in-repo). The claim's second leg ('the file's own embedded asset.extras: CC-BY-4.0') is UNREPRODUCIBLE from the repo: the shipped master is a Blender re-export that dropped the extras. Remediation candidate: re-embed attribution extras in derived GLBs, as the ovary pipeline did."
+  },
+  {
+   "id": "lic-thyroid",
+   "cls": "licence",
+   "claim": "thyroid.glb CC BY 4.0, 'TIROIDES ANDREA DACS UJAT' by andycopo55 (UJAT)",
+   "url": "https://sketchfab.com/3d-models/tiroides-andrea-dacs-ujat-1e1f5ab5d1f348dba7ef3215b22cc37f",
+   "quote": "License: | CC Attribution | Creative Commons Attribution",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/thyroid.js:39"
+   ],
+   "sha": "9b3c5bbbef98da56",
+   "notes": "URL RECOVERED THIS PASS. Embedded-extras leg unreproducible from repo (dropped in re-export), same as colon."
+  },
+  {
+   "id": "lic-bodies",
+   "cls": "licence",
+   "claim": "male/female body meshes CC0, Blender 'Human Base Meshes' bundle",
+   "url": "https://www.blender.org/download/demo-files/",
+   "quote": "Human Base Meshes ... 49 MB - CC0 ... Blender Studio and community contributions",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/body.js:24"
+   ],
+   "sha": "342d8de6c84a091a",
+   "notes": "page live; current wording is the compact '49 MB - CC0' rather than the longer sentence recorded at verification"
+  },
+  {
+   "id": "lic-hra-family",
+   "cls": "licence",
+   "claim": "HRA reference organs (kidneys, liver, brain, prostate, pancreas 3DPX-020983, bladder, breast 3DPX-020977) CC BY 4.0 via NIH 3D",
+   "url": "https://3d.nih.gov/entries/3DPX-020983",
+   "quote": "3DPX-020983 | Pancreas, Female | Created by HRA",
+   "retrieved": "2026-09-04",
+   "status": "quote-absent",
+   "code_refs": [
+    "js/organs/pancreas.js",
+    "js/organs/kidneys.js",
+    "js/organs/liver.js",
+    "js/organs/brain.js",
+    "js/organs/prostate.js",
+    "js/organs/bladder.js",
+    "js/organs/breast.js:20"
+   ],
+   "sha": "96f47b4c39f37b3d",
+   "notes": "ESCALATED: entry page verifies identity (title/creator/ID) but renders NO licence text today, including after expanding Attribution Instructions. The CC BY 4.0 claim for six shipped assets is currently reachable-but-quote-absent at the recorded verification surface. Needs: locate the licence statement's actual home (HRA portal / API / bulk metadata) and archive it. Breast (3DPX-020977) belongs to this family too, with a recorded attribution quote ('Heidi Schlehlein 2022...') quoted from the entry page \u2014 that quote's presence on today's page not re-checked (time-boxed)."
+  },
+  {
+   "id": "epi-waddell-2015",
+   "cls": "epidemiological",
+   "claim": "Waddell et al., Nature 2015: 100 PDAC whole genomes",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25719666/",
+   "quote": "Whole genomes redefine the mutational landscape of pancreatic cancer ... whole-genome sequencing and copy number variation (CNV) analysis of 100 pancreatic ductal adenocarcinomas (PDACs)",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/pancreas.js"
+   ],
+   "sha": "75bdd402181d0a4f"
+  },
+  {
+   "id": "epi-oweira-2017",
+   "cls": "epidemiological",
+   "claim": "Oweira et al. 2017, SEER, N=13,233 stage-IV pancreatic cancer site frequencies",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Oweira+pancreatic+cancer+metastases+SEER+2017",
+   "quote": "Prognostic value of site-specific metastases in pancreatic adenocarcinoma: A Surveillance Epidemiology and End Results database analysis ... A total of 13233 patients with stage IV pancreatic cancer",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/pancreas.js"
+   ],
+   "sha": "9e6d883e79415261",
+   "notes": "World J Gastroenterol 2017; N verbatim in abstract"
+  },
+  {
+   "id": "epi-peres-2019",
+   "cls": "epidemiological",
+   "claim": "Peres et al., JNCI 2019, n=28,118 epithelial ovarian cancers (SEER 2004-2014)",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Peres+2019+JNCI+ovarian+carcinoma+histotype+stage+survival",
+   "quote": "Invasive Epithelial Ovarian Cancer Survival by Histotype and Disease Stage ... data on 28 118 incident epithelial ovarian cancer cases diagnosed in 2004-2014 from SEER",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/ovary.js:188"
+   ],
+   "sha": "1c29b0f4ba827f82"
+  },
+  {
+   "id": "epi-dicarlo-2022",
+   "cls": "epidemiological",
+   "claim": "melanoma survival, N=1,578,482 adults, 59 countries (CONCORD-3)",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/?term=melanoma+survival+CONCORD+59+countries",
+   "quote": "Does the morphology of cutaneous melanoma help to explain the international differences in survival? Results from 1 578 482 adults diagnosed during 2000-2014 in 59 countries (CONCORD-3). Di Carlo V, et al. Br J Dermatol. 2022",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/skin.js:16",
+    "js/organs/skin.js:48"
+   ],
+   "sha": "bd3367ea74b060a2",
+   "notes": "both figures verbatim in the paper TITLE"
+  },
+  {
+   "id": "epi-johannsen-2025",
+   "cls": "epidemiological",
+   "claim": "Denmark N=72,722, synchronous CRC liver metastasis 14-17.7% family",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Johannsen+colorectal+liver+metastases+Denmark+2025",
+   "quote": "Liver Metastases and Survival Among Patients With Colorectal Cancer. Johannsen IR, Boysen AK, Nielsen MF, Mortensen FV, Kirkegard J. JAMA Netw Open. 2025",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/colon.js:163"
+   ],
+   "sha": "d31b3c9daee7e6fe",
+   "notes": "existence/authors/journal verified; N=72,722 not re-read from abstract (time-boxed)"
+  },
+  {
+   "id": "epi-kgca-2009",
+   "cls": "epidemiological",
+   "claim": "KGCA nationwide survey (2009 data), N=14,658, Lauren-type shares",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/?term=Korean+Gastric+Cancer+Association+nationwide+survey+2009+gastric+cancer",
+   "quote": "series verified: 'Korean Gastric Cancer Association Nationwide Survey on Gastric Cancer in 2014' / '...Surgically Treated Gastric Cancers in 2019' appear as an ongoing indexed series",
+   "retrieved": "2026-09-04",
+   "status": "verified-partial",
+   "code_refs": [
+    "js/organs/stomach.js:28"
+   ],
+   "sha": "5d12b70c0367a189",
+   "notes": "series located; the 2009-data edition itself not opened (time-boxed)"
+  },
+  {
+   "id": "epi-wang-2023",
+   "cls": "epidemiological",
+   "claim": "Wang et al., Front Oncol 2023: 48,789/53,142 (~92%) bladder-primary carcinomas urothelial",
+   "url": null,
+   "quote": null,
+   "retrieved": "2026-09-04",
+   "status": "not-relocated",
+   "code_refs": [
+    "js/organs/bladder.js:27",
+    "js/organs/bladder.js:36"
+   ],
+   "sha": null,
+   "notes": "THREE time-boxed searches (PubMed x2, Bing x1) failed to relocate. HIGH STAKES: the bladder screen's headline share rests on it. Needs a deeper hunt before any downgrade decision; do NOT substitute a lookalike. RULED 2026-09-04: statistics cannot be downgraded to illustrative \u2014 re-source from a durably-addressed publication or remove the share from the screen; no middle. Queued after HRA licence home."
+  },
+  {
+   "id": "anat-lmu-brain",
+   "cls": "anatomical-source",
+   "claim": "gray matter colour range (also the brain colour-range bound)",
+   "url": "https://lmu.pressbooks.pub/humanphysiology/chapter/6-3/",
+   "quote": "Gray matter is not necessarily gray. It can be pinkish because of blood content, or even slightly tan, depending on how long the tissue has been preserved.",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/brain.js:37"
+   ],
+   "sha": "f2917e33c5ae2b66"
+  },
+  {
+   "id": "col-brain",
+   "cls": "colour",
+   "claim": "brain mean 0xc17055 within cited pink-to-tan family; range derivable",
+   "url": "https://lmu.pressbooks.pub/humanphysiology/chapter/6-3/",
+   "quote": "(see anat-lmu-brain)",
+   "retrieved": "2026-09-04",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/brain.js:37"
+   ],
+   "sha": "c8f94236e31fea10"
+  },
+  {
+   "id": "col-kidneys",
+   "cls": "colour",
+   "claim": "kidneys 0x8c3a30 reddish-brown; cortex lighter than medulla (range basis)",
+   "url": null,
+   "quote": "verification-time record: 'reddish-brown... cortex a lighter red-brown than the darker medulla' (Monash epath + BCcampus)",
+   "retrieved": "2026-09-04",
+   "status": "not-relocated",
+   "code_refs": [
+    "js/organs/kidneys.js:36"
+   ],
+   "sha": "493da2c760a8b66c",
+   "notes": "Monash atlas unreachable; exact phrase unindexed"
+  },
+  {
+   "id": "col-breast",
+   "cls": "colour",
+   "claim": "breast 0xe3d3a0 pale yellow-cream; adipose-yellow vs fibrous-white (range basis)",
+   "url": null,
+   "quote": "verification-time record: MGH Pathology, 'predominantly adipose (yellow) interspersed with white fibrous/glandular tissue'",
+   "retrieved": "2026-09-04",
+   "status": "not-relocated",
+   "code_refs": [
+    "js/organs/breast.js:35"
+   ],
+   "sha": "175cfbb13da5deb3",
+   "notes": "re-access time-boxed, not attempted this pass"
+  },
+  {
+   "id": "col-prostate",
+   "cls": "colour",
+   "claim": "prostate 0xb97c68 'Tan to pink' per PathologyOutlines",
+   "url": "https://www.pathologyoutlines.com/topic/prostatehistology.html",
+   "quote": null,
+   "retrieved": "2026-09-04",
+   "status": "downgraded",
+   "code_refs": [
+    "js/organs/prostate.js:40"
+   ],
+   "sha": null,
+   "notes": "BAD ATTRIBUTION, evidenced: current page carries no colour text; Wayback 2025-08-20 snapshot (predating the material pass) carries none either; site-wide exact-phrase search returns zero. Per Ruling 1: downgrade to illustrative tan-pink family; do not substitute."
+  },
+  {
+   "id": "col-bladder",
+   "cls": "colour",
+   "claim": "bladder 0xd9a8a0",
+   "url": null,
+   "quote": null,
+   "retrieved": "2026-09-04",
+   "status": "downgraded",
+   "code_refs": [
+    "js/organs/bladder.js:65"
+   ],
+   "sha": null,
+   "notes": "NO SOURCE EXISTS (the module's own comment says so: 'no fetched source gave a gross color'). Illustrative value; must be disclosed wherever provenance claims are made, not only in a code comment."
+  },
+  {
+   "id": "col-pancreas",
+   "cls": "colour",
+   "claim": "pancreas 0xd8b98e 'pale, lobulated, tan-to-yellowish'",
+   "url": null,
+   "quote": null,
+   "retrieved": "2026-09-04",
+   "status": "downgraded",
+   "code_refs": [
+    "js/organs/pancreas.js"
+   ],
+   "sha": null,
+   "notes": "DANGLING CITATION since first commit 3c78c88: comment points at a CLAUDE.md entry that contains neither the hex nor colour prose; source never named. PathologyOutlines normal-pancreas page checked today: no gross colour text. Downgrade to illustrative; fix the dangling pointer."
+  },
+  {
+   "id": "col-liver",
+   "cls": "colour",
+   "claim": "liver 0x6b2e22 'dark reddish-brown' (JHM + BCcampus)",
+   "url": null,
+   "quote": "verification-time record: 'dark reddish-brown'",
+   "retrieved": "2026-09-04",
+   "status": "verified-partial",
+   "code_refs": [
+    "js/organs/liver.js:23"
+   ],
+   "sha": "0cabefa1720dbe9a",
+   "notes": "point descriptor only \u2014 supports the MEAN, no range; source re-access not attempted this pass"
+  },
+  {
+   "id": "col-ovary",
+   "cls": "colour",
+   "claim": "ovary 0xc9ac9e grayish-pink (PathologyOutlines/IMAIOS)",
+   "url": null,
+   "quote": "verification-time record: 'grayish-pink'",
+   "retrieved": "2026-09-04",
+   "status": "not-relocated",
+   "code_refs": [
+    "js/organs/ovary.js:64"
+   ],
+   "sha": "f38cebc430a1f8f3",
+   "notes": "compound point descriptor; cited pages 404 under guessed URLs today"
+  }
+ ],
+ "_limits": "THE MANIFEST MAKES RECORDS DURABLE, NOT TRUE. A quote entered wrongly at creation time is preserved faithfully, hashed, and dated forever \u2014 initial verification is the single point of failure, and it has demonstrably failed once (col-prostate: a quote recorded as 'confirmed directly' that was never at the named source, evidenced by a Wayback snapshot predating the verification). The structural checks cannot reach that class; nothing can, except care at entry.",
+ "_ruling_statistics": "Downgrade-to-illustrative works only for values with an honest illustrative home (colour). It does NOT work for statistics: a user reads '~92%' as fact regardless of labelling. For statistical claims the options are RE-SOURCE (durably-addressed) or REMOVE from the screen \u2014 no middle."
+}

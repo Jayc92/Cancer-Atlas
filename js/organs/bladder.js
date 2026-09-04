@@ -62,10 +62,12 @@ export const cancerEntries = [
 // a guess" discipline as Prostate's central-zone point, one step more precise since these
 // centroids come from named ontology-tagged geometry rather than a manually-located seam.
 // Overall bounding box: 6.38 x 3.99 x 7.23 cm — a plausible partially-filled adult bladder.
-// MATERIAL COLOR: the weakest-sourced parameter in this file, flagged rather than dressed up —
-// no fetched source gave a gross color for bladder mucosa or wall specifically (same gap Testis
-// hit for testicular parenchyma). 0xd9a8a0 is a plain pale pink-tan, the commonly-illustrated
-// tone for bladder mucosa, chosen the same honest way as Testis's color and Skin's hypodermis.
+// MATERIAL COLOR — FORMALLY DOWNGRADED to illustrative (citation-durability pass, 2026-09-04;
+// manifest entry col-bladder in .claude/citations.json). This comment always said it: no
+// fetched source gave a gross color for bladder mucosa or wall specifically (same gap Testis
+// hit). 0xd9a8a0 is a plain pale pink-tan, the commonly-illustrated tone, chosen the same
+// honest way as Testis's color and Skin's hypodermis. The downgrade is now also disclosed in
+// the user-facing #disclaimer (tissue colours illustrative except where cited), not only here.
 // MATERIAL/LIGHTING REALISM PASS — shared recipe (roughness x0.82, specularIntensity 0.15->0.25,
 // per-vertex tissue mottle at amplitude 0.28) applied uniformly across all nine real-scan
 // organs; full mechanism, clip-safety reasoning, and the transmission investigation's null

@@ -3548,6 +3548,73 @@ screen pair per organ:
   close. Regression 163/2 = baseline. Evidence: /tmp/atlas-verify/t2/
   (diagnoses, position-identity checks, before/after pairs, seam
   isolation, zone gates).
+- **Citation-durability pass — RUN AND RULED (2026-09-04). Tier 3 held;
+  this pass outranked it.** Opened by Tier 3 Phase 1's incidental finding
+  (1-in-8 colour citations verifiable at source) and re-scoped by class
+  because that sample was colour only for an incidental reason. CENSUS:
+  719 citation-carrying lines — epidemiological 372 (126 distinct
+  sources), licence 152 (5 families), anatomical 126, colour 69.
+  VERIFICATION RATES (stratified sample, dated 2026-09-04, three-state:
+  verified / reachable-but-quote-absent / unreachable): epidemiology ≈78%
+  (Waddell's 100 genomes, Oweira's N=13,233, Peres's n=28,118 all
+  verbatim in abstracts; Di Carlo's melanoma cohort verbatim IN THE
+  PAPER'S TITLE — 1,578,482 adults, 59 countries; Johannsen at JAMA Netw
+  Open 2025; KGCA series located) versus colour 12.5% — THE PREDICTION
+  CONFIRMED: DOI-bearing sources are durable by design, teaching pages
+  are not. SOURCE-CLASS POLICY adopted from it: any claim that must stay
+  verifiable prefers a permanently-addressed source. LICENCES split by
+  the same axis: all four Sketchfab artist pages verified verbatim
+  ("CC Attribution" live on each; colon's and thyroid's never-recorded
+  URLs RECOVERED into the manifest), Blender CC0 verified — but the HRA
+  FAMILY (SEVEN of twelve organ GLBs: kidneys, liver, brain, prostate,
+  pancreas, bladder, breast) is QUOTE-ABSENT: entry pages verify identity
+  and render no licence text at all, escalated as the only item with an
+  obligation attached; lead: HRA's DOI-bearing release records, not the
+  per-model pages. And the colon/thyroid embedded-extras verification
+  legs are UNREPRODUCIBLE from the repo — the isolation re-exports
+  DROPPED the extras the claims cite (ovary's pipeline preserved them =
+  the model; extras-preservation assertions queued for mesh_hygiene.py
+  and bake_ao.py). THE MANIFEST (.claude/citations.json, 23 entries:
+  quotes, URLs, retrieval dates, hashes; text only, never images) makes
+  records DURABLE, NOT TRUE — initial verification is the single point of
+  failure and it demonstrably failed once: PROSTATE's "Tan to pink…
+  confirmed directly" was NEVER at the named source (today's pages carry
+  no colour text; the Wayback snapshot of 2025-08-20, predating the
+  material pass, carries none; site-wide exact-phrase search returns
+  zero). A bad citation entered during a two-way-verification pass and
+  survived review — care at entry is the only defence for that class.
+  PHASE-4 DOWNGRADES applied per the downgrade-over-substitution ruling:
+  prostate (bad attribution, evidenced three ways), bladder (never had a
+  source; now disclosed in the user-facing #disclaimer, not only in a
+  code comment), pancreas (dangling pointer since first commit — the
+  attribution failed, the description stands as illustrative). RULING ON
+  STATISTICS: downgrade-to-illustrative works only where an illustrative
+  home exists (colour); a statistic reads as fact regardless of label,
+  so Wang et al. Front Oncol 2023 (the bladder screen's 48,789/53,142 ≈
+  92% urothelial share, NOT RELOCATED after three time-boxed searches) is
+  RE-SOURCE OR REMOVE, no middle — queued. STRUCTURAL CHECKS added to
+  regress.js (manifest parses; every entry resolves to a real file; every
+  mottle colour and every shipped GLB has an entry) — deterministic,
+  offline, no live link-checking; they catch a claim-with-no-record and a
+  record-pointing-nowhere, the two failures that shipped. BASELINE
+  163/2 → 167/2, the one legitimate move. GEOMETRIC LIT-REGION SELECTOR
+  (the standing exception) implemented and ADOPTED WITH REBASELINE: the
+  old top-luminance-quartile selector is photometric — a function of the
+  measurand — and its bias is now measured: at a=0 the geometric selector
+  (view-space normal·light > 0.6 from a MeshNormalMaterial pass, staging
+  hidden by identity) tracks recorded hue to ≤1.1° on all nine cited
+  organs while saturation moves TOWARD cited on exactly brain
+  (0.053→0.021), kidneys (0.038→0.009), and testis (0.087→0.043) — the
+  three organs whose lit-region brightness distribution is most distorted
+  (baked AO ×2, glow halos ×1): the quartile was preferentially sampling
+  desaturated highlights. The geometric a=0 record (geo_a0) is the new
+  reference; this is an instrument change, never a silent swap.
+  CONSEQUENCE QUEUED: the P3 "AgX undershoots cited saturation on 6 of 9"
+  mechanism-flip finding may be selector artefact — the four-operator
+  table re-runs on the new instrument to correct the recorded reasoning
+  (the AgX VERDICT is not in question; it won by 2–5× margins). Queue
+  after this commit: HRA licence home → operator re-measurement → extras
+  assertions → Wang.
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was

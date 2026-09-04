@@ -62,8 +62,11 @@ export function buildPancreasMesh(){
       // reasoning, and the transmission investigation's null result are in liver.js's canonical
       // comment and this pass's dated CLAUDE.md entry). Color: the pancreas is the palest organ
       // in this atlas by design, not by accident — gross-anatomy sources describe a pale,
-      // lobulated, tan-to-yellowish gland (citation in CLAUDE.md's organ entry; verified before
-      // picking, same real-tissue rule as every prior organ), a real visual contrast with the
+      // lobulated, tan-to-yellowish gland — DOWNGRADED to illustrative (citation-durability
+      // pass, 2026-09-04; manifest col-pancreas): the original comment claimed "citation in
+      // CLAUDE.md's organ entry", but no such entry ever existed (dangling since first commit
+      // 3c78c88) and the describing source was never named. The words remain a fair gross
+      // description; the ATTRIBUTION is what failed. A real visual contrast with the
       // liver's dark red-brown two rows up the sidebar; color itself untouched by this pass.
       // Seed 10.4 (organ #8 in ORGAN_MODULES' order x1.3).
       const mat = new THREE.MeshPhysicalMaterial({ color:0xd8b98e, roughness:0.51, metalness:0.0, specularIntensity:0.25, vertexColors:true });
