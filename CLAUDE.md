@@ -3113,7 +3113,10 @@ screen pair per organ:
   sin(halfAngle), no pixel term), so the hasFramed latch admits stale
   framing only when the container's ASPECT changes after framing. Organ
   viewer: #organViewerWrap pins aspect-ratio:1/1 in CSS, so the latch is
-  STRUCTURALLY UNREACHABLE there at any window size — measured live:
+  STRUCTURALLY UNREACHABLE there at any window size (exact to container
+  SIZE; to aspect, exact up to integer clientWidth/clientHeight rounding —
+  a CSS square can land 318×317, <0.4% jitter, absorbed by the 1.3
+  padding) — measured live:
   container 318×318 and margins byte-identical across both toggle
   directions on the three widest plinth ratios (pancreas/prostate/breast),
   camera untouched. Body viewer: latch REACHABLE (inset:0; aspect
@@ -3122,11 +3125,16 @@ screen pair per organ:
   the fit's limiting angle is vertical while aspect stays >1, and the
   sidebar's 248px cannot push it below 1 (margins 567→443, nowhere near
   the edge); site viewer is the same inset:0 class. RESIDUAL for Prompt 5:
-  (a) the one live edge — a landscape→portrait window reshape on the
-  body/site screens flips the limiting axis and can clip; the fix is
-  design work, not a patch (re-frame-on-resize would snap the user's zoom;
-  a correct fix re-fits only when content would clip, or only before the
-  user has zoomed); (b) the headless off-centre organ captures are hereby
+  (a) the live edge on body/site screens is NOT "portrait reshape" as
+  such — it is anything that pushes the container aspect through 1.0
+  after framing, flipping the limiting axis, and the sidebar toggle
+  contributes 248px toward the flip (framed wide + toggled narrower
+  reaches it at a WIDER window than reshape alone). The concrete P5 test
+  case: narrowest window where the body viewer is still usable, THEN
+  toggle the sidebar — findable, where "reshape to portrait" invites a
+  tablet test and a false all-clear. The fix is design work, not a patch
+  (re-frame-on-resize would snap the user's zoom; a correct fix re-fits
+  only when content would clip, or only before the user has zoomed); (b) the headless off-centre organ captures are hereby
   bounded to a capture-rig artefact — not the latch (aspect pinned), not
   projection/DPR (probed correct at dpr 1 and 2), identical before/after
   the env pass — cause unidentified, harmless to comparative metrics, but

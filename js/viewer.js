@@ -567,11 +567,17 @@ export function makeViewer(container, opts){
     // re-framing here would snap the user's zoom back mid-inspection. The staleness this
     // latch admits is bounded, and was measured (2026-09-03, pre-push latch check): the fit
     // above is purely angular, so it goes stale only if the container's ASPECT changes after
-    // framing. The organ wrap pins aspect-ratio:1/1 in CSS — stale framing is unreachable
-    // there at any window size. The body/site wraps (inset:0) do change aspect on sidebar
-    // toggle, measured harmless (fit limited by vFov and desktop aspect stays >1 in both
-    // toggle states); the one live edge is a landscape->portrait window reshape flipping the
-    // limiting axis, which is Prompt-5 scope together with any clip-aware re-fit design.
+    // framing. The organ wrap pins aspect-ratio:1/1 in CSS, so its aspect cannot change with
+    // layout — exactly invariant to container SIZE, and invariant to aspect up to integer
+    // clientWidth/clientHeight rounding (a CSS square can still land 318x317, a <0.4% aspect
+    // jitter, orders of magnitude inside the 1.3 framing padding). The body/site wraps
+    // (inset:0) genuinely change aspect. The live trigger there is not "portrait windows" as
+    // such — it is ANYTHING that pushes the aspect through 1.0 after framing, flipping which
+    // axis limits the fit, and the sidebar toggle contributes 248px toward that flip: framed
+    // wide + toggled narrower reaches it at a WIDER window than window-reshape alone. Measured
+    // harmless at 1500x980 (aspect stays >1 in both toggle states, margins 567->443); the
+    // Prompt-5 test case is the narrowest usable window PLUS a sidebar toggle, and any fix is
+    // clip-aware re-fit design (this latch is load-bearing), not re-frame-on-resize.
     if(!hasFramed) applyFraming();
   }
   resize();
