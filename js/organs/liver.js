@@ -86,6 +86,15 @@ export function buildLiverMesh(){
       // js/viewer.js's warm-lighting comment. Color unchanged; roughness and specularIntensity
       // both revised by the realism pass above.
       const mat = new THREE.MeshPhysicalMaterial({ color:0x6b2e22, roughness:0.41, metalness:0.0, specularIntensity:0.25, vertexColors:true });
+      // LIVER IS EXCLUDED from the 4B baked-AO pass — the only mottle organ that is. Its GLB
+      // ships with NO COLOR_0, so the aoBaked branch in applyTissueMottleVertexColors never
+      // engages and the mottle behaves exactly as before. The exclusion is a measured negative,
+      // not an oversight: baking AO on this mesh paints the VISIBLE surface with near-black
+      // blotches (interpenetrating twin-surface geometry occludes patches of the outer skin at
+      // millimetre range), and on a medical atlas those read as hepatic lesions — false
+      // pathology, instantly disqualifying. Shorter ray caps cannot fix mm-distance occluders.
+      // Revisit only if the liver mesh is ever rebuilt as a single clean manifold; evidence at
+      // the 4B entry in CLAUDE.md.
       gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 5.2); } });
       resolve(gltf.scene);
     }, undefined, reject);

@@ -311,6 +311,22 @@ export function applyTissueMottleVertexColors(geometry, seed, opts){
   opts = opts || {};
   const amplitude = opts.amplitude != null ? opts.amplitude : 0.28;
   const freq = opts.freq || 13;
+  // --- Baked per-vertex AO composition (4B) -------------------------------------------------
+  // If the GLB shipped a COLOR_0 attribute, it is the offline-baked ambient occlusion
+  // (grey, ao in [0,1]; bake recorded in the 4B entry — Cycles, fixed seed, from the a131649
+  // masters). It is stashed once under 'aoBaked' so this function stays IDEMPOTENT: the
+  // composed 'color' written below would otherwise be read back as AO on a second call and
+  // compound. Composition is multiplicative with a strength knob k (opts.aoStrength):
+  //     final = m × (1 − k·(1 − ao)),   m ≤ 1, k ∈ [0,1], ao ∈ [0,1]
+  // Both factors are ≤ 1, so the mottle's clip-safe-by-construction property survives
+  // unconditionally — the same reason the mottle itself is safe. k lives HERE, not in the
+  // bake, so per-organ tuning (or disabling: k = 0 reproduces the pre-4B look exactly) never
+  // requires re-baking an asset.
+  if(!geometry.getAttribute('aoBaked') && geometry.getAttribute('color')){
+    geometry.setAttribute('aoBaked', geometry.getAttribute('color'));
+  }
+  const bakedAO = geometry.getAttribute('aoBaked') || null;
+  const aoStrength = opts.aoStrength != null ? opts.aoStrength : (bakedAO ? 1.0 : 0.0);
   geometry.computeBoundingBox();
   const bb = geometry.boundingBox;
   const center = bb.getCenter(new THREE.Vector3());
@@ -327,7 +343,11 @@ export function applyTissueMottleVertexColors(geometry, seed, opts){
     const t = Math.sin(nx*freq+seed*1.7) * Math.cos(ny*(freq+1.2)+seed*2.3) * Math.sin(nz*(freq-1.4)+seed*3.1);
     const patch = Math.max(0, (t-0.05)/0.95);
     const m = 1 - patch*amplitude;
-    colors[i*3]=m; colors[i*3+1]=m; colors[i*3+2]=m;
+    // getX denormalizes uint8/uint16 attributes itself in three 0.185, so ao is [0,1] whether
+    // COLOR_0 arrived as float or as gltfpack's quantized normalized bytes.
+    const ao = bakedAO ? (1 - aoStrength * (1 - bakedAO.getX(i))) : 1;
+    const v = m * ao;
+    colors[i*3]=v; colors[i*3+1]=v; colors[i*3+2]=v;
   }
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 }

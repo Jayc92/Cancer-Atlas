@@ -3234,6 +3234,67 @@ screen pair per organ:
   gltfpack does. Evidence: /tmp/atlas-verify/p4/
   (compress_matrix, zone captures + diffs, parse timing, worst-zone
   strips, Blender import test).
+- **4B baked ambient occlusion — 7 of the 8 mottle organs, liver excluded
+  on a measured negative (2026-09-03).** Composition decided by MECHANISM
+  before any bake, per the prompt's gate: AO multiplies into the SAME
+  vertex-colour attribute — the GLB ships raw per-vertex AO as COLOR_0,
+  applyTissueMottleVertexColors stashes it once as 'aoBaked' (idempotent
+  re-application) and writes final = m × (1 − k·(1−ao)). Both factors ≤ 1
+  so the mottle's clip-safe-by-construction property survives
+  unconditionally; k (aoStrength) lives in JS so per-organ tuning or
+  disabling (k=0 = pre-4B exact) never re-bakes an asset. Replacement was
+  rejected (mottle is albedo variation, AO is occlusion — different jobs)
+  and a second attribute was rejected (needs onBeforeCompile shader
+  patching for zero mathematical benefit — grey factors commute). Bake =
+  `.claude/bake_ao.py` (Blender 5.2 Cycles CPU, 128 samples, seed 0, ray
+  cap 0.5×bbox-diag, POINT-domain colour attribute, all sub-meshes kept
+  in-scene so they occlude each other), run against the a131649 masters —
+  masters + script = the reproducible transform. **The pre-registered
+  negative landed, but not where predicted**: vertex-density BANDING was
+  never observed, not even on the sparsest mesh (bladder, 5.5K verts —
+  smooth gradients in AO-only isolation). The real failure mode is
+  INTERPENETRATING SEGMENTATION SHELLS: buried/twin surfaces bake black,
+  so whole-mesh AO means are misleading (brain 0.050, kidneys 0.070) while
+  the VISIBLE surface reads correctly — visibility filters to the bright
+  mode (brain's sulcal walls hold most vertices; its gyral crowns bake ~1
+  and the sulci gain real depth — the single biggest visual win of the
+  pass). LIVER is the one organ where the artefact reaches visible skin:
+  near-black blotches at millimetre-range twin-surface occlusion, reading
+  as HEPATIC LESIONS — false pathology on a medical atlas, instantly
+  disqualifying, and no ray cap fixes mm-distance occluders. Excluded (no
+  COLOR_0 in its GLB, exclusion comment at the liver.js call site;
+  revisit only if the mesh is rebuilt as a clean manifold). Palette
+  fidelity survives k=1.0: lit-face |dSat| moves ≤0.012 on every baked
+  organ vs the env_025 record (brain IMPROVES 0.063→0.053), dVal shifts
+  ≤0.016, blown 0 (p3measure tag ao_k10). Cost: +287KB across the 7
+  (assets total ~19.81MB); COLOR_0 survives gltfpack -kn -cc at 8-bit
+  quantization (composed attribute mean identical to 3 decimals; node
+  name-sets unchanged). Regression 163/2 = baseline exactly. RESOLVED AT
+  REVIEW — k=1.0 ships globally, by the ruling's decision rule rather
+  than taste: because liver proved the bakes contain a NON-ANATOMICAL
+  occlusion component (twin shells) that k scales identically with the
+  real component, the test is binary — does any dark region read as a
+  LESION (discrete focal object with an edge on otherwise-normal tissue)
+  rather than a SHADOW? Applied over the AO-only isolations (the most
+  sensitive detector: no albedo to hide in) at front + below-equator
+  reveal poses on all seven organs: 7/7 PASS — every AO-added dark
+  region is continuous and follows anatomical form. The only discrete
+  dark marks found (two small edged pits on the prostate near the base)
+  are present at k=0 in identical position/shape — pre-existing MESH
+  geometry, not AO; noted for the P5 audit. Per-organ k deviations:
+  none needed — held to one number until an organ forces it (per-organ k
+  would assert "this bake is more contaminated," a measurable claim, but
+  only liver measured that way and liver is excluded outright). TWO P5
+  CARRY-FORWARDS: (a) liver is now the only mottle organ without AO and
+  will read FLATTER than its neighbours — deliberate, not defective;
+  if the audit fails it on flatness the fix is a remeshed asset without
+  interpenetrating shells (asset work), never a lower global k; (b) the
+  prostate's two dark pits, above. FOR THE RECORD, three passes running:
+  the pre-registered negative landed each time but never where predicted
+  (Neutral-wins → Neutral worst; bladder banding → liver twin shells;
+  -kn ratio cost → texture domination). The predictions are consistently
+  wrong about WHERE; pre-registering one is consistently right about
+  THAT — keep pre-registering.
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was
