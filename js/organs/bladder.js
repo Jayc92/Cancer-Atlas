@@ -24,8 +24,16 @@ export const markerSpec = { points:[{heightFrac:0.475, angle:0}] };
 
 // Real bladder-primary denominators, ALL FOUR from the same source and the same cohort
 // definition — chosen specifically so the shares are internally consistent with each other and
-// with the metastatic-site figures cited later in this file (Wang et al., Front Oncol, 2023,
-// PMC10605465, SEER 2010+: 48,789 conventional urothelial carcinoma + 1,683 neuroendocrine
+// with the metastatic-site figures cited later in this file (Park, Curr Oncol, 2023,
+// doi:10.3390/curroncol30100656, PMC10605465, SEER 2010+: 48,789 conventional urothelial
+// carcinoma + 1,683 neuroendocrine — CITATION METADATA CORRECTED at the durability pass,
+// 2026-09-04: this was recorded as "Wang et al., Front Oncol", BOTH author and journal wrong —
+// "Wang J." is an entry in the paper's own reference list, a transcription slip at entry. The
+// PMCID was correct all along and is what recovered it after six metadata-based searches
+// failed; every figure below re-verified VERBATIM at the permanent address ("A total of 48,789
+// patients with conventional UC, 1683 with NEC, 1667 with SCC, and 1003 with ADC were
+// identified"; the paper is a SEER 17-registry extraction, 2010+, i.e. registry data, and
+// 53,142 is this atlas's computed sum of the four counts, not a figure the paper prints).
 // carcinoma + 1,667 squamous cell carcinoma + 1,003 adenocarcinoma, all confirmed BLADDER-
 // PRIMARY in that paper's own methods, not pooled with renal-pelvis/ureteral tumors). Ordered by
 // the real counts rather than by textbook convention — the source's own numbers put
@@ -33,7 +41,7 @@ export const markerSpec = { points:[{heightFrac:0.475, angle:0}] };
 // cohort, the opposite of the usual "SCC then ADC then small-cell" teaching order, so the real
 // order is what's shown rather than the assumed one.
 export const cancerEntries = [
-  { id:'uc',      name:'Urothelial carcinoma',        share:'~92% of bladder-primary carcinomas (48,789/53,142, Wang et al., 2023)', active:true,  organKey:'bladder' },
+  { id:'uc',      name:'Urothelial carcinoma',        share:'~92% of bladder-primary carcinomas (48,789/53,142, Park, Curr Oncol, 2023, SEER)', active:true,  organKey:'bladder' },
   { id:'blnec',   name:'Neuroendocrine carcinoma',     share:'~3.2% of bladder-primary carcinomas (1,683/53,142) — rare and aggressive', active:false, organKey:'bladder' },
   { id:'blscc',   name:'Squamous cell carcinoma',      share:'~3.1% of bladder-primary carcinomas (1,667/53,142)', active:false, organKey:'bladder' },
   { id:'bladc',   name:'Adenocarcinoma',               share:'~1.9% of bladder-primary carcinomas (1,003/53,142)', active:false, organKey:'bladder' },
@@ -107,7 +115,7 @@ export const organDetail = {
   // "The mesonephric ducts and ureteric buds connect to the posterior bladder wall and form a
   // part of the trigone," StatPearls), but it is NOT where most urothelial carcinoma actually
   // starts. That honor belongs to the lateral walls (8,056 of a real ~19,000-tumor
-  // origin-subsite breakdown — more than double the trigone's 2,977, Wang et al., 2023) — a
+  // origin-subsite breakdown — more than double the trigone's 2,977, Park, Curr Oncol, 2023) — a
   // real finding stated plainly rather than let the trigone's anatomical distinctiveness imply
   // false primacy.
   desc:'The bladder is a muscular reservoir in the lesser pelvis, distending upward into the abdomen as it fills with up to about 500 mL of urine before the urge to void becomes hard to ignore. Its entire inner surface is lined by urothelium — transitional epithelium whose cells flatten out to accommodate a filling bladder and round back up once it empties — and urothelial carcinoma can arise anywhere along that lining. Real registry data shows the lateral walls are actually its single most common site of origin, ahead of the trigone, the smooth triangular patch of fixed, non-distensible wall bounded by the two ureteral openings above and the internal urethral opening below — developmentally distinct from the rest of the bladder, formed in part from the same embryonic ducts that become the ureters. This cancer does not have one dominant founding mutation the way most cancers in this atlas do: it splits early into two molecularly distinct roads, one running through FGFR3 and staying largely non-invasive, the other through TP53 and turning aggressive — a split covered where the mutation panel can show it properly.',
@@ -170,7 +178,7 @@ export const organDetail = {
 // move this atlas already used for GBM's IDH-status entry and OCCC's TP53-status entry, not a
 // new pattern.
 // SITES — four real, well-quantified metastatic destinations, all from the SAME bladder-primary
-// cohort as the subtype shares above (Wang et al., 2023, among the 8.8% of 48,789 conventional-
+// cohort as the subtype shares above (Park, Curr Oncol, 2023, among the 8.8% of 48,789 conventional-
 // UC patients with any metastasis, n=4,317 with a recorded site; no significant difference by
 // histology): bone 38.3% (1,608/4,194), lymph nodes 36.8% (792/2,153), lung 33.5% (1,399/4,181),
 // liver 22.6% (948/4,190) — denominators differ per site because not every metastatic record

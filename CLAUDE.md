@@ -3631,12 +3631,50 @@ screen pair per organ:
   transform scripts (mesh_hygiene.py, bake_ao.py): source asset.extras
   are captured, re-injected into the derived GLB post-export, and
   verified — a transform that would ship a derived asset without its
-  source attribution now fails loudly. (4) WANG HUNT EXHAUSTED: six
-  strategies across three engines including full-text number searches —
-  zero. Blast radius is all four bladder subtype shares AND its
-  metastatic-site figures. Re-source candidates identified (statistics
-  ruling: re-source or remove, no middle); the user-facing content edit
-  is held for review.
+  source attribution now fails loudly. (4) WANG — RESOLVED, and the
+  "hunt exhausted" verdict was WRONG in an instructive way: the code
+  comment carried a PMCID (PMC10605465) that six metadata-based searches
+  never used, and it resolved on the first attempt. The paper is real —
+  Hyung Kyu Park, Current Oncology 2023, doi:10.3390/curroncol30100656 —
+  and the recorded "Wang et al., Front Oncol" got BOTH author and
+  journal wrong ("Wang J." is an entry in the paper's own reference
+  list: a transcription slip at entry). Every figure re-verified
+  VERBATIM at the permanent address: all four subtype counts in one
+  sentence, bone 38.3% for UC, SEER 17-registry extraction 2010+ —
+  registry data, answering the cohort-vs-population category question;
+  53,142 is the atlas's computed sum, never printed in the paper (why
+  the full-text number search returned zero). Citation metadata
+  corrected across bladder.js. THIS IS THE THIRD ENTRY-TIME CITATION
+  ERROR (prostate's quote, pancreas's pointer, this attribution) in a
+  ~dozen-item sample: the entry-time error rate — not rot — is the
+  epidemiological class's real risk, and it is unbounded on this sample.
+  QUEUED PROGRAMME: a fuller epidemiological verification pass,
+  prioritised by user-facing prominence (numbers rendered on screen
+  before numbers in comments; a wrong on-screen figure is something a
+  person carries away). The one mitigating pattern is now policy: the
+  citation that carried a permanent identifier was recoverable; the ones
+  carrying only page names were not — RECORD THE PERMANENT IDENTIFIER
+  (PMID/PMCID/DOI) IN THE CITATION ITSELF, always.
+- **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
+  pre-registered as legitimate and final: close-zoom monochrome
+  accepted, on a documented citation limit.** The range-capable set fell
+  from four organs to three (brain, plus kidneys and breast on qualified
+  verification-time records) when prostate's colour citation proved a
+  bad attribution — and the two organs the pass most wanted, bladder
+  (13th in the audit) and ovary (14th), are unrecoverable: bladder has
+  no colour source at all and ovary's descriptor is a point, not a
+  range. A delivery bake-off run on three mid-ranking organs would
+  choose a mechanism on geometry unrepresentative of the organs that
+  need it most — the same reason the pass was held at four. Stated
+  plainly, because it is the honest shape of the result: THE CITATION
+  DISCIPLINE THAT MAKES THIS PROJECT CREDIBLE IS PRECISELY WHAT
+  FORECLOSES ITS MOST-WANTED VISUAL IMPROVEMENT. The albedo gap is real,
+  the P5 audit measured it correctly, and the project cannot fill it
+  without inventing colour. That is not the discipline failing — it is
+  the discipline working, and being expensive. Reopening conditions, for
+  the record: a citable colour RANGE surfacing for bladder or ovary
+  (nothing in the current queue can produce one), or a policy change on
+  illustrative colour variation that only the user can make.
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was

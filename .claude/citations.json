@@ -189,19 +189,19 @@
    "notes": "series located; the 2009-data edition itself not opened (time-boxed)"
   },
   {
-   "id": "epi-wang-2023",
+   "id": "epi-park-2023",
    "cls": "epidemiological",
-   "claim": "Wang et al., Front Oncol 2023: 48,789/53,142 (~92%) bladder-primary carcinomas urothelial",
-   "url": null,
-   "quote": null,
+   "claim": "bladder subtype shares (48,789 UC + 1,683 NEC + 1,667 SCC + 1,003 ADC; atlas-computed sum 53,142) and metastatic-site figures \u2014 Park, Curr Oncol 2023 (SEER 17, 2010+)",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10605465/",
+   "quote": "Do Histology and Primary Tumor Location Influence Metastatic Patterns in Bladder Cancer? Curr Oncol. 2023;30(10):9078-9089. doi:10.3390/curroncol30100656 || \"A total of 48,789 patients with conventional UC, 1683 with NEC, 1667 with SCC, and 1003 with ADC were identified\" || bone metastasis rate ... urothelial carcinoma (UC) (38.3%)",
    "retrieved": "2026-09-04",
-   "status": "not-relocated-exhausted",
+   "status": "verified",
    "code_refs": [
     "js/organs/bladder.js:27",
     "js/organs/bladder.js:36"
    ],
-   "sha": null,
-   "notes": "HUNT EXHAUSTED (2026-09-04): six strategies across three engines \u2014 PubMed x2, Bing x1, Europe PMC x3 including FULL-TEXT number searches for both 53142 and 48789 across all indexed literature \u2014 zero hits. The citation as recorded (Wang et al., Front Oncol 2023) cannot be located. Per the statistics ruling: RE-SOURCE OR REMOVE, no middle. Blast radius: all four bladder subtype shares (uc ~92%, blnec ~3.2%, blscc ~3.1%, bladc ~1.9% \u2014 all on the N=53,142 denominator) AND the bladder metastatic-site figures cite this paper. Re-source candidates identified (e.g. Halaseh 2022, Cureus, PMID 36042998, open access) \u2014 each replacement share must be verified at the NEW source and the on-screen numbers changed to what that source actually reports. User ruling pending on re-source vs remove; content edit held for review as a user-facing change."
+   "sha": "631f222238be6eb0",
+   "notes": "RESOLVED \u2014 ENTRY-TIME DOUBLE MIS-CITATION, data intact: recorded as \"Wang et al., Front Oncol 2023\"; the paper is by Hyung Kyu Park in Current Oncology (\"Wang J.\" is an entry in the paper's own reference list \u2014 a transcription slip at entry). Six metadata-based searches failed BECAUSE the metadata was wrong; the PMCID recorded in the code was correct all along and resolved it on the first attempt \u2014 the permanent-identifier policy vindicated in miniature. All four counts re-verified verbatim; SEER 17-registry extraction 2010+ = registry data, answering the cohort-vs-population category question; 53,142 is the atlas-computed sum, not printed in the paper (why full-text number search failed). Site figures are conditioned \"of metastatic patients\" in the on-screen text, matching the evidence class. Citation metadata corrected across bladder.js 2026-09-04. THIRD entry-time citation error found (prostate quote, pancreas pointer, this) \u2014 the entry-time error rate is the real finding; the epidemiological class needs a fuller pass prioritised by user-facing prominence."
   },
   {
    "id": "anat-lmu-brain",
