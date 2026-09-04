@@ -288,6 +288,16 @@ function initOrganViewer(organKey){
         // approved material-pass renders modeled no marker lights at all, so dropping them on
         // real meshes moves the live app closer to the approved look, not away from it — and
         // the DOM .organ-point dot + ring carries the marker's visible identity either way.
+        //
+        // DO NOT READ THE ABOVE AS A CONSTRAINT AGX LIFTED. The distance-zero/clip framing is
+        // obsolete under the corrected pipeline, but the verdict is not: re-measured 2026-09-03
+        // (Prompt-6 evaluation, CLAUDE.md) with the light correctly OFFSET along the surface
+        // normal at 0.04R and 0.10R, blown pixels read 0 in every condition — and the organ
+        // still floods 50-75% teal-dominant, WORSE with more offset. Four clustered markers ×
+        // 0.9R reach means the organ is lit BY the accent colour, which pushes hue onto cited
+        // albedos — standing condition (5). The old diagnosis was correct about what it saw
+        // (geometry + clipping) and incomplete about why the feature cannot work (an accent in
+        // the illumination path). No offset, intensity, or tone curve fixes the colour.
         if(!isRealMesh){
           const glow = new THREE.PointLight(0x35c9c1, 1.5707963267948966, glowDistance, 1);  // 0.5π folded (LEGACY_LIGHT_SCALE retired)
           glow.position.copy(mMesh.position);

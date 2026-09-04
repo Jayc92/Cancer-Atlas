@@ -3078,7 +3078,19 @@ screen pair per organ:
   second copy drifts. That silently makes "history at and before a131649
   is immutable" a CORRECTNESS requirement, not hygiene: a squash, rebase,
   force-push, or large-blob history purge would destroy the masters with
-  no error and no visible loss. Do none of those on this repository.**
+  no error and no visible loss. Do none of those on this repository.
+  (5) Generalised at the Prompt-6 ruling from two independent findings
+  with one cause: NOTHING TINTED WITH AN ACCENT COLOUR MAY ENTER THE
+  ILLUMINATION PATH — no accent-coloured light, env-map stop, or any
+  other illumination tint — because illumination pushes its hue onto
+  every cited albedo it reaches, and the albedos are individually cited.
+  The env-map derivation excluded accents on principle (P3); the glow
+  measurement converted the principle to numbers (P6: a teal PointLight
+  at ANY offset turns 50–75% of an organ's pixels teal-dominant, with
+  blown-pixel counts reading 0 throughout). This rule is what to cite
+  when the next instance arrives — a hover highlight, a selection glow,
+  a tumour-map site indicator: accent identity belongs on unlit/DOM
+  elements (dots, rings, toneMapped:false markers), never on lights.**
 - **Environment map + ground staging (2026-09-03), the pass the pipeline
   correction was gating.** scene.environment is now a 256×128 linear-float
   equirect gradient derived from the design tokens through cssVar() — floor
@@ -3295,6 +3307,51 @@ screen pair per organ:
   -kn ratio cost → texture domination). The predictions are consistently
   wrong about WHERE; pre-registering one is consistently right about
   THAT — keep pre-registering.
+- **Prompt-6 glow-restoration evaluation — DO NOT RESTORE, measured
+  (2026-09-03; fenced in-page evaluation, ZERO source changes — the
+  shipped procedural-only glow branch is already the right code).**
+  Conditions: the shipped glow params (0x35c9c1, 0.5π, reach 0.9R, decay
+  1) injected onto the four concave-zone organs (kidneys/lungs/breast/
+  prostate) at h.pos + n̂·{0, 0.04R, 0.10R}, normals read from each
+  marker's nearest surface vertex (identity, not centroid inference),
+  vs the shipped no-glow control, at zone-aimed + default poses.
+  THE FAILURE CLASS CHANGED UNDERNEATH THE CANDIDATE FIX — fourth pass
+  running where the pre-registered negative lands somewhere else: the
+  expected residual was soft BLOOM at concave zones (luminance), and
+  blown-pixel counts are 0 in EVERY condition (the old detector is
+  formally dead under AgX, exactly as the prompt predicted). The actual
+  disqualifier is HUE: teal-dominant pixels jump from ~1-2% (the marker
+  dots themselves) to 50-75% of the organ under glow — kidneys 4,185 →
+  127,875 px, prostate 1,634 → 176,710, breast 4,791 → 106,024 — and the
+  renders show it plainly: mint-green floods across the hilum, the
+  plinth glowing cyan, cited albedos surviving as islands. Four markers
+  cluster in one zone, each light reaches 0.9R, so the organ is lit BY
+  the accent — this is the env-map derivation's own exclusion argument
+  ("putting an accent in the illumination pushes a hue onto every cited
+  albedo") now measured as fact rather than stated as principle. THE
+  NORMAL-OFFSET FIX IS BACKWARDS for this failure: it cures the
+  distance-zero geometry but INCREASES contamination monotonically
+  (off10 worst everywhere — more unoccluded solid angle), and it washes
+  out exactly the concave-zone AO depth 4B just shipped. Marker identity
+  remains the DOM dot + ring plus the 3D sphere, unchanged; the approved
+  material-pass look modelled no marker lights. Restoration would need a
+  redesign (tiny reach, non-accent colour) that no longer resembles the
+  authored feature — out of scope by the prompt's own fence. The lungs
+  zone-pose caveat (7.8K mesh px) was diagnosed before filing rather than
+  carried: the fissure markers sit low, so the naive cluster-direction
+  pose dropped the camera BELOW THE PLINTH (camera y −0.496 vs plinth y
+  −0.192) and the disc occluded the organ — hiding staging via
+  viewer.ground() multiplied subject pixels 14.8× (7,841 → 116,309),
+  prediction stated before the run. Verdict unaffected (the other three
+  organs each independently disqualify), but it is a RIG REQUIREMENT FOR
+  THE P5 AUDIT, where every organ must stand on its own evidence: (a)
+  close-zoom pose machinery must keep the camera above the plinth plane
+  or hide staging by name for the shot — the plinth is staging, not
+  subject; (b) every capture carries a minimum-subject-coverage guard
+  that FAILS LOUDLY below a floor instead of feeding a verdict — a
+  capture that barely photographed its subject must not produce a
+  judgement (the condition-(2)/(3) family, applied to framing). Evidence:
+  /tmp/atlas-verify/p6/ (32 shots + telemetry.json + lungs_pose_probe).
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was
