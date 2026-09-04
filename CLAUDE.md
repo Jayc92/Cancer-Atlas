@@ -3732,6 +3732,53 @@ screen pair per organ:
   user-facing no-field-match — with the taxonomy's expectation set:
   fix attribution errors, downgrade dangling pointers and content
   errors.
+  GATE-STRENGTH AUDIT + SWEEP 2 (2026-09-04, both user-pushed before
+  accepting the residue). The audit question — how much unstated work
+  was "journal-when-recorded" doing — had a sharp answer: effective
+  strength of the 46 sweep-1 backfills was 24 A+Y+J+T / 13 A+Y+J /
+  6 A+Y+T / 3 A+Y-ONLY. Zero journal-mismatches is STRUCTURAL, not
+  clean luck: a recorded journal was enforced inside the query ([ta]),
+  so a mismatch presents as zero hits, never as the dedicated status.
+  The A+Y-only class was then tested against ground truth and failed
+  2/3: "Zhu 2003" (thyroid) had been backfilled to a PLANT-GENETICS
+  paper while its true PMID 12866375 sat on the next source line, and
+  "Boutros 2015" (prostate) was a NEGATED MENTION inside an authorship-
+  correction comment — the line itself says the cited paper does not
+  exist — decorated with an unrelated methods paper. Both retracted.
+  On every backfill testable against an entry-time identifier the
+  ≥3-field machinery went 4/4 correct (Jakob, Livasy, Luvhengo by
+  sweep-1; Wippold by sweep-2, converging on the exact PMIDs already
+  in the source) and A+Y-only went 2/2 wrong. RULE: automated backfill
+  needs at least three agreeing fields; author+year+uniqueness alone
+  is never sufficient. Every backfilled entry now carries
+  fieldsChecked — the strength ACTUALLY applied (a run that can't
+  state what it measured shouldn't report a number). NEW EXTRACTOR
+  DEFECT CLASS surfaced by the audit: multi-line citation
+  parentheticals — five records (Zhu, Luvhengo, Jakob, Livasy,
+  Wippold) carried their identifiers ON the citation's continuation
+  line and were harvested as identifier-less; all five reclassified
+  entry-time. Corollary lesson: negated mentions inside correction
+  comments must not be harvested as citations.
+  SWEEP 2 on the 97 no-field-match (the Louis case proved the
+  retrieval leaky — a retrieval miss and a metadata error land in the
+  same pile): retmax 8→100 with the esearch count recorded; topic
+  terms IN the query (All Fields) with the instrument recorded per
+  entry (topic:title vs topic:query); Crossref as a second engine;
+  identity-dedupe across engines (title-token Jaccard ≥0.7), union
+  must contain EXACTLY ONE paper. Result (337 s, 97/97): 37
+  RESOLVED — the "not-auto-resolvable" label had been ~38% query
+  artefact — incl. Wippold (validation) and Curtin 2005 → 16291983,
+  exactly the NEJM paper whose CLAIM the source documents as
+  paywall-unverifiable (identifier ≠ claim verification, the recorded
+  semantics). Residue now characterised, not lumped: 39 AMBIGUOUS-2
+  (genuine multi-passer collisions — 0 identity-dedupe suspects on
+  audit, several are two real same-author-same-year papers), 11
+  SATURATED (pubmed count>100, exhaustiveness unclaimable), 10
+  ZERO-PASS (candidates exist, none pass all fields — the true
+  gate-fail residue). COVERAGE: 46 entry-time + 80 backfilled = 126
+  of ~211 (≈60%, from 19% at harvest). The 11 sweep-1 ambiguous stay
+  refused (user ruling: genuinely-two-real-papers is exactly the case
+  only the claim can settle — epi-pass work by construction).
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
