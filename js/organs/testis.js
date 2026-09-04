@@ -109,7 +109,14 @@ export const organDetail = {
   desc:'The testes are the male gonads, suspended in the scrotum by the spermatic cord. Inside, seminiferous tubules make up most of the organ\'s volume — spermatogenesis happens along their walls, supported by Sertoli cells, while the surrounding interstitial tissue holds the testosterone-producing Leydig cells. Almost every testicular germ cell tumor, seminoma included, is accepted as arising from germ cell neoplasia in situ (GCNIS): a preinvasive lesion that reliably precedes invasion (0 of 473 men without it went on to develop cancer in a classic surveillance series) and that pathological review finds adjacent to the tumor in most, though not quite all, resected specimens (78.7% in one directly-verified series) — the gap being a detection limit, not evidence the lesion is sometimes truly absent.',
   buildMesh: buildTestisMesh,
   hotspotScale: new THREE.Vector3(1.1 * (2.5/4), 1.1, 1.1 * (2.5/4)),
-  viewer:{ theta:0.5, phi:1.2, radius:3.6, minRadius:2.3, maxRadius:5.5, autoRotateRadPerFrame:0.0016 },
+  // radius 4.4, not the 3.6 this shipped with (Tier 1b, 2026-09-03): testis is the one organ
+  // frameContents never touches (procedural, no h.pos hotspots), so this hardcoded distance IS
+  // its framing — and at 3.6 the 1.1-semi-axis ellipsoid filled 89% of the frame's half-height,
+  // edge-to-edge with a marker half-cut (P5 audit, rank 16/16 partly on framing). 4.4 is not a
+  // taste number: it is frameContents' own fit applied by hand — needed = r×1.3/sin(fov/2) =
+  // 1.1×1.3/sin(19°) = 4.39 — so the procedural organ now sits in its frame exactly as every
+  // real-mesh organ does. minRadius unchanged (zoom-in floor is a separate question).
+  viewer:{ theta:0.5, phi:1.2, radius:4.4, minRadius:2.3, maxRadius:5.5, autoRotateRadPerFrame:0.0016 },
   viewerAria:'Three-dimensional model of a testis, a smooth tan ellipsoid, with four glowing teal '
     + 'points marking the structures listed after it. Drag to rotate, scroll to zoom.',
   hotspots:[

@@ -3090,7 +3090,14 @@ screen pair per organ:
   blown-pixel counts reading 0 throughout). This rule is what to cite
   when the next instance arrives — a hover highlight, a selection glow,
   a tumour-map site indicator: accent identity belongs on unlit/DOM
-  elements (dots, rings, toneMapped:false markers), never on lights.**
+  elements (dots, rings, toneMapped:false markers), never on lights.
+  (6) Recorded at the Tier-1 marker fix: WHEN THE INTERACTION IS A
+  RAYCAST, AUDITING THE DOM AUDITS THE WRONG OBJECT. The 24×24 DOM
+  proxies passed every prior a11y pass while the actual pointer target —
+  the raycast marker sphere — projected at 6–12px at the default view on
+  every organ. Any future a11y check in this project measures the
+  PROJECTED SIZE OF THE ACTUAL HIT TARGET (the thing the click handler
+  tests), not the element carrying the ARIA.**
 - **Environment map + ground staging (2026-09-03), the pass the pipeline
   correction was gating.** scene.environment is now a 256×128 linear-float
   equirect gradient derived from the design tokens through cssVar() — floor
@@ -3417,6 +3424,50 @@ screen pair per organ:
   UVs on scan meshes), to be designed collaboratively, not prompted
   cold. Evidence: /tmp/atlas-verify/p5/ (shots, sheets, guard.json,
   aspect-flip numbers, thigh grazing set, ovary attribution set).
+- **Tier 1 — marker scaling law + testis framing (2026-09-04).** The
+  audit's marker finding, measured, inverted the expected fix: the DOM
+  proxy was the COMPLIANT element (24×24, keyboard/AT, pointer-events:
+  none) and the world-sized sphere was both the pointer target (canvas
+  raycast) and the occluder — projecting 6–12px at the DEFAULT view
+  (under the WCAG 2.5.8 24px floor at the distance every user starts
+  from; a live a11y failure on the app's primary interaction, surviving
+  every prior a11y pass because the audited element was never the thing
+  anyone clicks — standing condition (6)) and 30–118px at the zoom floor
+  (the P5 occlusion). THE LAW: the visible sphere holds a constant
+  projected diameter (organ 11px, body 23px — the medians of the approved
+  defaults, so the look moves ≤ ~1.4px), scaled per frame in the tick
+  loops; the pointer is a 24px-diameter SCREEN-SPACE hit test replacing
+  the raycast in all three paths (organ click, body click, body hover),
+  with far-side click-through preserved and DEPTH breaking ties among
+  in-radius candidates — restoring the raycast's front-marker priority,
+  verified on a real crowded pair (breast at yaw 2.62: midpoint click
+  selects the near marker). COMPLIANCE IS QUALIFIED, NOT ASSERTED: over
+  a 12-yaw sweep, 12 of 14 organs have marker pairs crossing under 24px
+  at some rotation angle (worst breast 2.2px) — transient projective
+  crowding during auto-rotation shrinks the effective target to the
+  Voronoi split. Recorded with the mitigations: the old raycast was
+  strictly worse in the same alignments (5.5px spheres fully occlude),
+  depth priority gives the crowd to the visible marker, and the 24×24
+  DOM proxies are WCAG 2.5.8 equivalent controls. Site map: NO conflict
+  (blobs are organ-scale targets; labels non-interactive). Verified
+  14/14: 11px at default AND floor on every organ, floor occlusion
+  ≤0.26% of subject, click/miss-reject/keyboard pass (harness lesson:
+  the app's click is pointerdown-on-container + pointerup-on-window
+  through tracker.isClick(); a bare 'click' event is invisible to it).
+  TESTIS FRAMING: the one organ frameContents never touches (procedural,
+  no h.pos) — its hardcoded radius IS its framing. radius 3.6 → 4.4, not
+  taste: frameContents' own fit applied by hand (1.1×1.3/sin 19° = 4.39),
+  so the procedural organ obeys the real-mesh convention; occupancy
+  89%→72% of frame height, all margins healthy, top marker no longer
+  cut; skin untouched (narrow fix chosen precisely to avoid re-verifying
+  a passing organ). PLINTH RE-TEST fired per the P3 trigger: STILL
+  excluded — the footprint disc (r=1.07 at the base plane) now overruns
+  only the bottom edge, by 23px (~7% of frame height) vs 5× before. A
+  SUB-FOOTPRINT disc would fit inside the overrun and is CONSIDERED AND
+  REJECTED, not unexplored: Prompt 3's staging rule is footprint-
+  circumscribing, and breaking a staging convention for one organ costs
+  more than the plinth is worth. Regression 163/2 = baseline. Evidence:
+  /tmp/atlas-verify/t1/.
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was

@@ -137,13 +137,24 @@ export function initBody(selectOrgan){
         ((e.clientX-rect.left)/rect.width)*2-1,
         -((e.clientY-rect.top)/rect.height)*2+1
       );
-      const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(mouse, state.bodyViewer.camera);
+      // Screen-space hit test at the 24px WCAG target, same law as main.js's organ markers
+      // (see MARKER_PROJECTED_PX there): the body spheres projected ~23px at the default
+      // framing but ~17px zoomed fully out — the pointer target dipped under the floor exactly
+      // when markers are hardest to see. `mouse` kept for parity with the site viewer's handler.
+      const cx = e.clientX-rect.left, cy = e.clientY-rect.top;
       const visible = bodyMarkerRecords.filter(r=>r.sex===state.currentBodySex);
-      const hits = raycaster.intersectObjects(visible.map(r=>r.mesh));
-      if(hits.length){
-        const hit = visible.find(r=>r.mesh===hits[0].object);
-        selectOrganRef(hit.key);
+      // Depth tie-break among in-radius candidates, same reasoning as main.js's organ click:
+      // the raycast this replaces gave the front marker priority when two lined up.
+      const candidates = [];
+      visible.forEach(r=>{
+        const pt = state.bodyViewer.project(r.mesh.position);
+        const d = Math.hypot(pt.x-cx, pt.y-cy);
+        if(d<=BODY_MARKER_HIT_RADIUS_PX) candidates.push(r);
+      });
+      if(candidates.length){
+        const cam = state.bodyViewer.camera.position;
+        candidates.sort((a,b)=>cam.distanceTo(a.mesh.position)-cam.distanceTo(b.mesh.position));
+        selectOrganRef(candidates[0].key);
       }
     }
   });
@@ -164,11 +175,22 @@ export function initBody(selectOrgan){
       ((e.clientX-rect.left)/rect.width)*2-1,
       -((e.clientY-rect.top)/rect.height)*2+1
     );
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, state.bodyViewer.camera);
+    const cx = e.clientX-rect.left, cy = e.clientY-rect.top;
     const visible = bodyMarkerRecords.filter(r=>r.sex===state.currentBodySex);
-    const hits = raycaster.intersectObjects(visible.map(r=>r.mesh));
-    const hit = hits.length ? visible.find(r=>r.mesh===hits[0].object) : null;
+    // Same in-radius + depth-priority rule as the click path, so hover always previews
+    // exactly the marker a click would select.
+    const cands = [];
+    visible.forEach(r=>{
+      const pt = state.bodyViewer.project(r.mesh.position);
+      const d = Math.hypot(pt.x-cx, pt.y-cy);
+      if(d<=BODY_MARKER_HIT_RADIUS_PX) cands.push(r);
+    });
+    let hit = null;
+    if(cands.length){
+      const cam = state.bodyViewer.camera.position;
+      cands.sort((a,b)=>cam.distanceTo(a.mesh.position)-cam.distanceTo(b.mesh.position));
+      hit = cands[0];
+    }
     if(hit !== state.hoveredBodyMarker){
       if(state.hoveredBodyMarker) state.hoveredBodyMarker.el.classList.remove('hover');
       state.hoveredBodyMarker = hit;
@@ -283,16 +305,28 @@ function toggleBodySex(sex){
   state.bodyViewer.renderer.domElement.setAttribute('aria-label', bodyCanvasLabel());
 }
 
+// Same two-scaling-laws fix as the organ markers (see main.js MARKER_PROJECTED_PX): the body
+// spheres hold a constant projected diameter — 23px, what the approved default framing already
+// showed — and the pointer paths above use the 24px screen-space target instead of a raycast.
+const BODY_MARKER_PROJECTED_PX = 23;
+const BODY_MARKER_HIT_RADIUS_PX = 12;
+const BODY_MARKER_BASE_R = 0.03;
+
 export function bodyTick(){
   if(state.screen==='body' && state.bodyViewer){
     state.bodyViewer.update();
     state.bodyViewer.renderer.render(state.bodyViewer.scene, state.bodyViewer.camera);
     if(state.bodyReady){
+      const bCam = state.bodyViewer.camera;
+      const bH = state.bodyViewer.renderer.domElement.clientHeight || 1;
+      const bTan = Math.tan(bCam.fov * Math.PI / 360);
       bodyMarkerRecords.forEach(r=>{
         if(r.sex !== state.currentBodySex) return;
         const p = state.bodyViewer.project(r.mesh.position);
         r.el.style.left = p.x+'px';
         r.el.style.top = p.y+'px';
+        const d = bCam.position.distanceTo(r.mesh.position);
+        r.mesh.scale.setScalar((BODY_MARKER_PROJECTED_PX / bH) * d * bTan / BODY_MARKER_BASE_R);
       });
     }
   }

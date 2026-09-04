@@ -151,6 +151,34 @@ function disposeOrganViewer(){
   if(loadingEl){ loadingEl.hidden = false; loadingEl.textContent = 'Loading 3D model…'; }
 }
 
+// --- Marker scaling law (Tier 1a, 2026-09-03) -------------------------------------------------
+// Every marker renders twice under two different scaling laws: a world-sized 3D sphere (grows on
+// screen as the camera approaches) and a CSS-sized DOM proxy (constant 24px, keyboard/AT target,
+// pointer-events:none). They agreed at exactly one distance — the default framing — and were
+// measured wrong at both ends everywhere else: the sphere, which is ALSO the pointer target (the
+// canvas click path raycast it), projected at 6-12px at the default view — under the WCAG 2.5.8
+// 24px target minimum at the distance every user starts from — and ballooned to 30-118px at the
+// zoom floor, occluding the anatomy (the P5 audit's marker finding, measured across all 14
+// organs in /tmp/atlas-verify/t1/markers.json).
+// The law that satisfies both bounds at every distance:
+//   - the VISIBLE sphere holds a constant projected diameter (MARKER_PROJECTED_PX, chosen as the
+//     median of what the approved default views already showed, so the default look is unchanged
+//     to within ~1px) — scaled per frame in organTick;
+//   - the POINTER target is a screen-space hit test of MARKER_HIT_RADIUS_PX around each marker's
+//     projected centre (24px diameter = the WCAG floor), replacing the sphere raycast — so the
+//     pointer target no longer shrinks with world geometry at all. Markers on the far side stay
+//     clickable through the organ, exactly as the raycast behaved (see the organTick comment).
+// COMPLIANCE IS QUALIFIED, NOT ABSOLUTE: the 24px target is nominal. As the organ rotates,
+// marker pairs cross in projection, and while crowded the effective target shrinks to the
+// Voronoi split — measured over a 12-yaw sweep, 12 of 14 organs have a pair under 24px at some
+// angle (worst: breast 2.2px). Transient by construction (auto-rotation separates them), the
+// depth tie-break below gives the crowded case to the marker the user can actually see, the old
+// raycast was strictly worse in the same alignments (5.5px spheres fully occlude — the back
+// marker was unclickable), and the 24×24 DOM proxies provide the identical function as
+// WCAG 2.5.8's equivalent-control path. Any future a11y pass must re-measure the PROJECTED HIT
+// TARGET, not the DOM — see the standing condition recorded at this fix.
+const MARKER_PROJECTED_PX = 11;
+const MARKER_HIT_RADIUS_PX = 12;
 function initOrganViewer(organKey){
   if(organKey === state.organViewer?.organKey) return; // already built for this organ
   disposeOrganViewer();
@@ -164,12 +192,24 @@ function initOrganViewer(organKey){
         ((e.clientX-rect.left)/rect.width)*2-1,
         -((e.clientY-rect.top)/rect.height)*2+1
       );
-      const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(mouse, state.organViewer.camera);
-      const hits = raycaster.intersectObjects(organMarkers.map(m=>m.mesh));
-      if(hits.length){
-        const hit = organMarkers.find(m=>m.mesh===hits[0].object);
-        showOrganInfo(hit.data);
+      const cx = e.clientX-rect.left, cy = e.clientY-rect.top;
+      // All markers within the 24px-diameter screen target (see the marker scaling law above),
+      // then DEPTH breaks the tie: the raycast this replaces took hits[0] — nearest along the
+      // ray — so a front marker always beat the far-side one lined up behind it, and with the
+      // constant-size law the two are visually identical, so the user's only sane expectation
+      // is "the one in front". (In the zone where this differs from nearest-screen-distance,
+      // the old 5.5px spheres registered no hit at all, so no legacy behaviour is contradicted.)
+      // `mouse` above is kept for parity with the other viewers' handlers.
+      const candidates = [];
+      organMarkers.forEach(m=>{
+        const pt = state.organViewer.project(m.mesh.position);
+        const d = Math.hypot(pt.x-cx, pt.y-cy);
+        if(d<=MARKER_HIT_RADIUS_PX) candidates.push(m);
+      });
+      if(candidates.length){
+        const cam = state.organViewer.camera.position;
+        candidates.sort((a,b)=>cam.distanceTo(a.mesh.position)-cam.distanceTo(b.mesh.position));
+        showOrganInfo(candidates[0].data);
       }
     }
   });
@@ -229,10 +269,14 @@ function initOrganViewer(organKey){
       // as a dark silhouette behind the organ, not as staging; the contact shadow alone sits at
       // the organ's lowest point and is out of frame entirely, indistinguishable from nothing.
       // The other 13 organs measure clear of the frame on every edge (ground_fit, 2026-09-03).
-      // REVISIT TRIGGER: this exclusion rests on framing that is itself flagged as suspicious
-      // for the Prompt-5 audit (organ near frame edges, a hotspot marker half-cut at the top).
-      // If that audit changes the testis framing, re-test the plinth — do not inherit this
-      // exclusion past the condition that justified it.
+      // REVISIT TRIGGER FIRED (Tier 1b, 2026-09-04): the framing changed (testis.js radius
+      // 3.6 -> 4.4, the frameContents convention applied by hand) and the plinth was re-tested
+      // as required. STILL EXCLUDED: the footprint-circumscribing disc (r = 1.07 at the base
+      // plane) now overruns only the frame's bottom edge, by 23px (~7% of frame height) — no
+      // longer 5x impossible, but still clipped. A SUB-footprint disc would fit inside that
+      // overrun and is considered-and-rejected: the staging rule is footprint-circumscribing
+      // (addGround's radius derivation), and breaking the convention for one organ costs more
+      // than the plinth is worth. Re-test again only if the framing changes again.
       if(organKey !== 'testis') thisViewer.addGround([mesh]);
       // Marker sphere size and glow-light reach are tuned below (0.06 unit radius, 1.2 unit
       // falloff distance) for the procedural organs' arbitrary ~1-2 unit geometry. Real-mesh
@@ -324,7 +368,7 @@ function initOrganViewer(organKey){
         });
         container.appendChild(point);
 
-        organMarkers.push({ mesh:mMesh, data:h, el:point });
+        organMarkers.push({ mesh:mMesh, data:h, el:point, baseR:markerRadius });
       });
     })
     .catch(err=>{
@@ -355,10 +399,17 @@ function organTick(){
     // meshes and never the organ body. Culling back-facing points for the keyboard would make it
     // stricter than the pointer, which is the wrong direction for this fix. The model auto-rotates,
     // so every point comes round to the front within a few seconds regardless.
+    const mvCam = state.organViewer.camera;
+    const mvH = state.organViewer.renderer.domElement.clientHeight || 1;
+    const mvTan = Math.tan(mvCam.fov * Math.PI / 360);
     organMarkers.forEach(m=>{
       const p = state.organViewer.project(m.mesh.position);
       m.el.style.left = p.x+'px';
       m.el.style.top = p.y+'px';
+      // Constant projected diameter (the marker scaling law above): world diameter needed for
+      // MARKER_PROJECTED_PX at this marker's current depth, over the sphere's base diameter.
+      const d = mvCam.position.distanceTo(m.mesh.position);
+      m.mesh.scale.setScalar((MARKER_PROJECTED_PX / mvH) * d * mvTan / m.baseR);
     });
   }
   requestAnimationFrame(organTick);
