@@ -3107,12 +3107,31 @@ screen pair per organ:
   and exposed as viewer.ground(), which returns null where staging is
   deliberately absent. Regression after the pass: 163/2, exactly the
   documented baseline (GBM + acinar label overlaps), zero new failures.
-  Carried to Prompt 5 (blocker recorded there): headless captures compose
-  organs off-centre while the live pane is correct — the suspected
-  mechanism is the applyFraming()/hasFramed latch (resize() only re-frames
-  if !hasFramed), and initSidebar's resize-on-toggle path would hit the
-  same latch LIVE, which is the ten-minute check that decides rig artefact
-  vs shipping bug before any absolute visual judgement is made.
+  The framing-latch question (parked as Prompt 5's opening blocker) was
+  RESOLVED pre-push (2026-09-03, /tmp/atlas-verify/p3/sidebar_latch.js +
+  body_latch.js): applyFraming()'s fit is purely ANGULAR (radius·padding /
+  sin(halfAngle), no pixel term), so the hasFramed latch admits stale
+  framing only when the container's ASPECT changes after framing. Organ
+  viewer: #organViewerWrap pins aspect-ratio:1/1 in CSS, so the latch is
+  STRUCTURALLY UNREACHABLE there at any window size — measured live:
+  container 318×318 and margins byte-identical across both toggle
+  directions on the three widest plinth ratios (pancreas/prostate/breast),
+  camera untouched. Body viewer: latch REACHABLE (inset:0; aspect
+  1.5306→1.2776 across a toggle with camera provably unmoved —
+  resize-without-reframe confirmed live) but HARMLESS at desktop layouts:
+  the fit's limiting angle is vertical while aspect stays >1, and the
+  sidebar's 248px cannot push it below 1 (margins 567→443, nowhere near
+  the edge); site viewer is the same inset:0 class. RESIDUAL for Prompt 5:
+  (a) the one live edge — a landscape→portrait window reshape on the
+  body/site screens flips the limiting axis and can clip; the fix is
+  design work, not a patch (re-frame-on-resize would snap the user's zoom;
+  a correct fix re-fits only when content would clip, or only before the
+  user has zoomed); (b) the headless off-centre organ captures are hereby
+  bounded to a capture-rig artefact — not the latch (aspect pinned), not
+  projection/DPR (probed correct at dpr 1 and 2), identical before/after
+  the env pass — cause unidentified, harmless to comparative metrics, but
+  find it before trusting absolute composition judgements from headless
+  sheets.
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was

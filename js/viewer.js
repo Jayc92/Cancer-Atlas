@@ -562,7 +562,16 @@ export function makeViewer(container, opts){
     // shown), so fall back to the clamped h rather than dividing into a zero and producing a
     // rotateSpeed of 0 that would silently disable dragging.
     controls.rotateSpeed = HAND_ROLLED_RAD_PER_PX * h / (2 * Math.PI);
-    // Retry a framing request that couldn't be satisfied before layout existed.
+    // Retry a framing request that couldn't be satisfied before layout existed. Framing is
+    // deliberately NOT re-run on later resizes: applyFraming() overrides camera distance, so
+    // re-framing here would snap the user's zoom back mid-inspection. The staleness this
+    // latch admits is bounded, and was measured (2026-09-03, pre-push latch check): the fit
+    // above is purely angular, so it goes stale only if the container's ASPECT changes after
+    // framing. The organ wrap pins aspect-ratio:1/1 in CSS — stale framing is unreachable
+    // there at any window size. The body/site wraps (inset:0) do change aspect on sidebar
+    // toggle, measured harmless (fit limited by vFov and desktop aspect stays >1 in both
+    // toggle states); the one live edge is a landscape->portrait window reshape flipping the
+    // limiting axis, which is Prompt-5 scope together with any clip-aware re-fit design.
     if(!hasFramed) applyFraming();
   }
   resize();
