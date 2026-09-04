@@ -3468,6 +3468,86 @@ screen pair per organ:
   circumscribing, and breaking a staging convention for one organ costs
   more than the plinth is worth. Regression 163/2 = baseline. Evidence:
   /tmp/atlas-verify/t1/.
+- **Tier 2 — asset-hygiene pass: brain FIXED, pancreas FIXED, thyroid
+  PARTIALLY FIXED + escalated, ovary ESCALATED untouched (2026-09-04;
+  transforms in `.claude/mesh_hygiene.py`, run against the a131649
+  masters — masters + script = the chain, bake_ao.py's contract).**
+  DIAGNOSIS FIRST, and it redistributed the tickets: BRAIN — 78% of its
+  vertices were exact position-duplicates (156,631 of 201,588 across
+  50,967 positions) with normal divergence to 180°: the floor-zoom
+  faceting was split normals, exactly the tolerance-merge case. OVARY —
+  a PERFECTLY CLEAN manifold (zero non-manifold edges, zero duplicated
+  positions, smooth shared normals, 0.50mm mean edge): the rectangles are
+  per-vertex colour interpolation over genuinely coarse tessellation —
+  the pre-registered escalation ("subdividing a real-scan mesh is a
+  fidelity decision"), so NOTHING was changed. RULED at review: closed as
+  TIER-3 EVIDENCE, not a hygiene ticket — ovary's density is the
+  measured lower bound at which per-vertex colour visibly quantises, and
+  it converts Tier-3 option 1 from "try and see" into a SCREENING TEST.
+  Measured (mean projected edge at the close audit pose, 0.45×default,
+  318px canvas): ovary = 5.9px = the calibrated FAIL threshold. Screen
+  of the eight mottle organs: bladder 6.4 / brain 6.2 / kidneys 6.0 —
+  FAIL, coarser than the calibrated failure; prostate 5.2 / pancreas
+  5.0 / liver 4.1 — MARGINAL; breast 1.6 — pass. Per-vertex albedo is
+  screened OUT as the general mechanism before any bake code exists —
+  three organs sit above the threshold and only one clears it with
+  margin, at exactly the zoom where the P5 audit located all of
+  albedo's value. PANCREAS — 288 positions
+  shared across the five named sub-meshes, 43 with >20° divergence; and
+  the visible seam SURVIVED the normals weld, because it was never a
+  normals problem: isolation renders show AO-only seamless across the
+  boundary and mottle-only carrying the line — the mottle recipe
+  normalises its sin/cos field to EACH sub-mesh's own bounding box, so
+  the pattern phase-jumps at every part boundary. THYROID — not "some
+  shards": 373 disconnected open fragments (largest 319 of 3,199 faces,
+  316 confetti components of 1–4 faces, 2,769 boundary edges), a
+  patchwork its texture holds together visually. FIXES, none of which
+  moves a vertex (topology/attribute repairs, not smoothing — landmark-
+  safe by construction and verified numerically: brain and pancreas
+  fixed-vs-master unique position sets differ by ZERO points; thyroid by
+  exactly the 10 debris vertices): brain = weld at 1e-6m + all-smooth
+  normals (verts 201,588→95,924, faces exactly preserved; floor-zoom
+  facets → smooth organic shading, identical silhouette; shipped file
+  DROPS 572KB); pancreas = (a) cross-object normal weld at all 288
+  boundary positions with the node structure untouched (the -kn
+  provenance rule respected literally) + (b) the real fix, runtime: the
+  mottle helper now accepts opts.frame (a WORLD-space union box + each
+  mesh's matrixWorld — world-space because compressed GLBs carry
+  dequantisation transforms on wrapper nodes) so multi-mesh organs
+  sample ONE continuous field; pancreas.js passes the union frame; the
+  seam is gone in the after renders. Bladder shares the mechanism
+  latently across its 6 sub-meshes but shows no visible seam at freq 4 —
+  left alone deliberately (no defect, signed-off look). THYROID = proud-
+  debris deletion only: 15 floating micro-components (23 faces) beyond
+  the 95th-percentile radius removed; raising the ceiling 25→100 faces
+  deleted the SAME 15, proving the remaining visible flaps are ROOTED in
+  large anatomy-carrying fragments — carving those is a judgment cut on
+  a real-scan asset, ESCALATED and RULED at review: ACCEPT THE
+  REDUCED STATE. Explicit-face-list cuts REJECTED on an anatomical
+  specific — the rooted flaps sit at the superior pole and isthmus,
+  which is exactly where a PYRAMIDAL LOBE lives (present in roughly half
+  of people); variant-vs-artefact there is an anatomist's call not
+  available in this loop, and the failure mode is deleting real anatomy
+  from a medical atlas. Re-unwrap+rebake ELIMINATED on provenance, not
+  deferred: thyroid.js records the asset as a Sketchfab artist scene
+  ("TIROIDES ANDREA DACS UJAT") isolated by texture-colour
+  classification — the painted texture atlas IS the only colour source,
+  so a re-unwrap re-projects the same smear onto more islands without
+  adding information. THE PATH IS A RE-SOURCE HUNT, opened as its own
+  tracked item under the full license-verification playbook with a
+  pre-registered negative — the Ovary/Stomach/Testis standard. Tier-3
+  planning note recorded with it: thyroid is textured and ranked 15/16 —
+  it is the COUNTEREXAMPLE to "albedo solves the bottom of the ranking"
+  (its problem is geometry), not an instance of it. PIPELINE RE-RUN per the prompt's constraint 2:
+  AO re-baked from the fixed brain and pancreas (means consistent with
+  4B), gltfpack -kn -cc, COLOR_0 + name-sets verified, zone gate 3/3 at
+  -vn 8 (the newly-smooth brain was the banding suspect — worst zone
+  0.830, well clear). The thyroid texture was re-encoded by the Blender
+  round-trip (size −452B; the byte-identity invariant of 4A does not
+  survive a mesh edit by necessity) — visually verified at default and
+  close. Regression 163/2 = baseline. Evidence: /tmp/atlas-verify/t2/
+  (diagnoses, position-identity checks, before/after pairs, seam
+  isolation, zone gates).
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was

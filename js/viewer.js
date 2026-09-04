@@ -327,10 +327,21 @@ export function applyTissueMottleVertexColors(geometry, seed, opts){
   }
   const bakedAO = geometry.getAttribute('aoBaked') || null;
   const aoStrength = opts.aoStrength != null ? opts.aoStrength : (bakedAO ? 1.0 : 0.0);
+  // --- Mottle frame (Tier 2, 2026-09-04) ---------------------------------------------------
+  // By default the sin/cos pattern is normalised to THIS geometry's own bounding box — which on
+  // a multi-sub-mesh organ makes the pattern DISCONTINUOUS at every sub-mesh boundary: each part
+  // re-normalises to its own box, so the phase jumps where parts meet. That was the pancreas
+  // "seam" the P5 audit found (attributed by isolation: AO-only renders seamlessly across the
+  // same boundary; mottle-only shows the line). Multi-mesh callers pass opts.frame =
+  // { box: THREE.Box3 in WORLD space, matrixWorld: this mesh's world matrix } and every part
+  // then samples ONE shared field — continuous by construction. Single-mesh callers change
+  // nothing. (Bladder shares this latent mechanism across its 6 sub-meshes but shows no visible
+  // seam at its freq-4 pattern scale, so its look — signed off — is deliberately left alone.)
   geometry.computeBoundingBox();
   const bb = geometry.boundingBox;
-  const center = bb.getCenter(new THREE.Vector3());
-  const size = bb.getSize(new THREE.Vector3());
+  const frame = opts.frame || null;
+  const center = frame ? frame.box.getCenter(new THREE.Vector3()) : bb.getCenter(new THREE.Vector3());
+  const size = frame ? frame.box.getSize(new THREE.Vector3()) : bb.getSize(new THREE.Vector3());
   // Floored the same defensive way organicDisplace floors a zero-length direction vector
   // (`|| 1`) — guards a flat/degenerate sub-mesh axis from dividing toward infinity; none of
   // the nine organs' real sub-meshes are actually this thin, but a shared helper shouldn't
@@ -338,8 +349,13 @@ export function applyTissueMottleVertexColors(geometry, seed, opts){
   const halfX = Math.max(size.x/2, 1e-6), halfY = Math.max(size.y/2, 1e-6), halfZ = Math.max(size.z/2, 1e-6);
   const pos = geometry.attributes.position;
   const colors = new Float32Array(pos.count*3);
+  const w = frame ? new THREE.Vector3() : null;
   for(let i=0;i<pos.count;i++){
-    const nx=(pos.getX(i)-center.x)/halfX, ny=(pos.getY(i)-center.y)/halfY, nz=(pos.getZ(i)-center.z)/halfZ;
+    // With a shared frame the sample point must be in the frame's (world) space — compressed
+    // GLBs carry dequantisation transforms on wrapper nodes, so locals are NOT world-aligned.
+    let px = pos.getX(i), py = pos.getY(i), pz = pos.getZ(i);
+    if(frame){ w.set(px, py, pz).applyMatrix4(frame.matrixWorld); px = w.x; py = w.y; pz = w.z; }
+    const nx=(px-center.x)/halfX, ny=(py-center.y)/halfY, nz=(pz-center.z)/halfZ;
     const t = Math.sin(nx*freq+seed*1.7) * Math.cos(ny*(freq+1.2)+seed*2.3) * Math.sin(nz*(freq-1.4)+seed*3.1);
     const patch = Math.max(0, (t-0.05)/0.95);
     const m = 1 - patch*amplitude;

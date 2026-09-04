@@ -67,7 +67,17 @@ export function buildPancreasMesh(){
       // liver's dark red-brown two rows up the sidebar; color itself untouched by this pass.
       // Seed 10.4 (organ #8 in ORGAN_MODULES' order x1.3).
       const mat = new THREE.MeshPhysicalMaterial({ color:0xd8b98e, roughness:0.51, metalness:0.0, specularIntensity:0.25, vertexColors:true });
-      gltf.scene.traverse(o=>{ if(o.isMesh){ o.material = mat; applyTissueMottleVertexColors(o.geometry, 10.4); } });
+      // Shared mottle frame across the five named sub-meshes (Tier 2): per-mesh frames made the
+      // pattern jump at the body/head boundary — the audit's "seam", which survived the normals
+      // weld because it was never a normals problem (AO-only renders the same boundary
+      // seamlessly). One union box in world space; each part samples the same field.
+      gltf.scene.updateMatrixWorld(true);
+      const mottleMeshes = [];
+      gltf.scene.traverse(o=>{ if(o.isMesh) mottleMeshes.push(o); });
+      const unionBox = new THREE.Box3();
+      mottleMeshes.forEach(o=>unionBox.expandByObject(o));
+      mottleMeshes.forEach(o=>{ o.material = mat;
+        applyTissueMottleVertexColors(o.geometry, 10.4, { frame:{ box: unionBox, matrixWorld: o.matrixWorld } }); });
       // Recenter: HRA body-space → origin, so the origin-targeted OrbitControls rotate the
       // gland about its own center. Hotspot pos values below are in this recentered frame
       // (they were derived from the GLB's own vertices with the same bbox-center subtraction).
