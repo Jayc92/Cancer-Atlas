@@ -3065,7 +3065,20 @@ screen pair per organ:
   is always the same: replace the inference with a fact the code exposes —
   staging is now the named group `groundStaging` reachable via the viewer's
   `ground()` accessor, and anything separating staging from anatomy uses
-  that, never geometry type.**
+  that, never geometry type. Applied to raw-GLB tooling at the 4A ruling:
+  any script that parses GLB accessor BUFFERS directly must first check
+  the JSON chunk's extensionsUsed for EXT_meshopt_compression and REFUSE
+  to proceed if present — a compressed buffer parsed as raw floats yields
+  plausible wrong numbers, the geometry-type heuristic in different
+  clothes. (JSON-chunk metadata — names, accessor counts, extensions — is
+  uncompressed and stays fair game either way.)
+  (4) Recorded at the 4A masters ruling: GIT HISTORY IS THE RAW-ASSET
+  ARCHIVE — `git show a131649:assets/<organ>.glb` reproduces any
+  uncompressed master byte-exactly, and no second copy is kept because a
+  second copy drifts. That silently makes "history at and before a131649
+  is immutable" a CORRECTNESS requirement, not hygiene: a squash, rebase,
+  force-push, or large-blob history purge would destroy the masters with
+  no error and no visible loss. Do none of those on this repository.**
 - **Environment map + ground staging (2026-09-03), the pass the pipeline
   correction was gating.** scene.environment is now a 256×128 linear-float
   equirect gradient derived from the design tokens through cssVar() — floor
@@ -3157,6 +3170,70 @@ screen pair per organ:
   it: the wrap's 18px border-radius arc defeats a straight-inset border
   exclusion (its --line pixels drag a content scan to full-frame); mask
   the corner squares. Review renders regenerated on the fixed rig.
+- **4A asset compression — 12 organ GLBs meshopt-compressed, gltfpack 1.2
+  `-kn -cc` (2026-09-03).** assets/ organ payload 43.72MB → 19.52MB
+  (2.24×): mesh-only organs compress 4.19–6.09×; the textured four are
+  image-dominated so much lower (lungs 1.13×, thyroid 1.06×, stomach
+  1.99×, colon 2.56×). The 4.5× preview number was plain `-cc` on bladder
+  alone and carried node-merging — superseded by this measured table (user
+  amendment: never carry a preview measured with flags you won't ship).
+  **`-kn` is REQUIRED, not optional**: plain `-cc` merges named nodes
+  (bladder's six VH_M_* ontology-named sub-meshes → one "Mesh_0") —
+  runtime-safe (no getObjectByName in js/organs/; hotspot anchors are
+  baked literal coords derived offline from the named centroids) but it
+  destroys the named segmentation the provenance packets verify against.
+  With `-kn` the full name-set survives on all 12 (verified by JSON-chunk
+  comparison), at +0.01MB total. **`-vn 8` defaults suffice — zone gate
+  12/12**: raw-vs-compressed drawing-buffer diff, 8 poses/organ at the
+  closest permitted zoom (controls.minDistance), 16×16 zone map, gate =
+  worst-zone mean < 3.0 and global mean < 1.0 against the body pass's
+  banding reference (10.77) — worst was liver 2.64, visually confirmed as
+  a whisper-level smooth shading shift (max Δ6/255, no banding structure
+  at 8× amplification); lungs' 315 px>8 is isolated silhouette-edge
+  rasterisation jitter from re-indexing, not a coherent zone. `-vn 12`
+  (+0.75MB) is measured waste here — the marching-cubes prediction held.
+  THE THRESHOLD IS ONE-SIDED: 3.0 is calibrated from a single known-bad
+  point (10.77), which establishes where bad lives, not where the
+  boundary sits — passing under 3.0 is necessary, not sufficient, and any
+  future recompression landing in the 2–3 band gets the amplified visual
+  check (as liver 2.64 did here), never a green tick from the number
+  alone.
+  Textured four: image bufferView bytes sha1-IDENTICAL raw vs compressed
+  (`-cc` only, NO `-tc`/KTX2 — no KTX2Loader exists in this app, and the
+  fresh NoColorSpace→sRGB migration was verified by the zone gate rather
+  than assumed safe; UV quantization -vt 12 is covered by the same gate).
+  MeshoptDecoder registered in all 12 organ loaders (body.js pattern;
+  harmless against raw, load-bearing against compressed). **Blender
+  premise STALE, workaround dropped**: Blender 5.2.0 LTS imports
+  EXT_meshopt_compression natively (bladder round-trip: tris exact
+  10,073=10,073, verts −2 standard weld, bbox Δ~1e-4) and
+  `.claude/render_thumb.py` rendered a compressed GLB correctly with zero
+  modification. Load time: fetch −24.2MB and total parseAsync 252ms →
+  238ms (meshopt decode is cheaper than parsing the larger raw buffers) —
+  no tradeoff. Regression on compressed assets: 163/2 = baseline exactly.
+  BUDGET SIGNPOST: the corpus is now TEXTURE-DOMINATED — lungs 1.13× and
+  thyroid 1.06× mean their remaining bytes are almost all image data,
+  which -cc structurally cannot touch. If budget pressure ever returns,
+  the lever is texture dimensions or encoding, NOT compression flags;
+  gltfpack has nothing left to give here.
+  **Vertex-count provenance ruling: recorded counts are AS-SOURCED** (the
+  raw master, addressable forever via `git show a131649:assets/X.glb`);
+  gltfpack welds duplicate vertices so shipped accessor totals differ on
+  six organs: bladder 5,515→5,513, brain 201,588→200,693, kidneys
+  38,034→38,028, lungs 23,462→23,224, pancreas 26,351→25,757, thyroid
+  3,220→3,210 (breast, colon, liver, ovary, prostate, stomach unchanged).
+  A verification against a shipped file that hits one of these numbers is
+  seeing the weld, not a discrepancy. AND THE WELD DELTAS ARE NOT A
+  TOPOLOGY-HEALTH SIGNAL (P5 carry-forward): gltfpack welds only vertices
+  identical across ALL attributes, so a seam split with divergent normals
+  — precisely the configuration that produces faceting — survives
+  compression untouched. Brain's −895 says the source carried redundancy;
+  it says nothing about whether brain shades smoothly. If the P5 audit
+  finds faceting anywhere, the weld count will not have predicted it, and
+  the fix is a tolerance-based merge plus normal recompute, not anything
+  gltfpack does. Evidence: /tmp/atlas-verify/p4/
+  (compress_matrix, zone captures + diffs, parse timing, worst-zone
+  strips, Blender import test).
 - **Regression harness — `.claude/regress.js` (moved into the repo during the
   Thyroid pass, 2026-09-02; previously lived only at
   /tmp/atlas-verify/regress.js with no git history, rebuilt whenever /tmp was

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 // "clear cell"/"clear cell carcinoma" are DELIBERATELY shared with kidneys.js — both organs
 // really do have a clear-cell carcinoma, and a query that genuinely matches two organs should
@@ -69,6 +70,12 @@ export const cancerEntries = [
 // texture beat the recipe. See the review packet's side-by-side.
 export function buildOvaryMesh(){
   const loader = new GLTFLoader();
+  // The organ GLBs ship meshopt-compressed (EXT_meshopt_compression, gltfpack -kn -cc;
+  // 4A pass, 2026-09-03). A compressed GLB with no decoder registered fails to LOAD --
+  // a broken organ, not a degraded one -- so this registration is load-bearing, same as
+  // body.js's. Decoder is WASM inside three's own examples tree, same CDN the import map
+  // already trusts. Harmless against an uncompressed GLB, so wiring precedes the asset swap.
+  loader.setMeshoptDecoder(MeshoptDecoder);
   return new Promise((resolve, reject)=>{
     loader.load('assets/ovary.glb', (gltf)=>{
       const mat = new THREE.MeshPhysicalMaterial({ color:0xc9ac9e, roughness:0.55, metalness:0.0, specularIntensity:0.25, vertexColors:true });

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { cssVar } from '../viewer.js';
 
 // active:true. Alias collision check (same convention as every prior organ): no other organ's
@@ -60,6 +61,12 @@ export const cancerEntries = [
 // bottom-center reaching lowest — matching the viewerAria below exactly.
 export function buildColonMesh(){
   const loader = new GLTFLoader();
+  // The organ GLBs ship meshopt-compressed (EXT_meshopt_compression, gltfpack -kn -cc;
+  // 4A pass, 2026-09-03). A compressed GLB with no decoder registered fails to LOAD --
+  // a broken organ, not a degraded one -- so this registration is load-bearing, same as
+  // body.js's. Decoder is WASM inside three's own examples tree, same CDN the import map
+  // already trusts. Harmless against an uncompressed GLB, so wiring precedes the asset swap.
+  loader.setMeshoptDecoder(MeshoptDecoder);
   return new Promise((resolve, reject)=>{
     loader.load('assets/colon.glb', (gltf)=>{
       // NATIVE BAKED MATERIALS, not the shared organ recipe — decided by live A/B, not by lungs

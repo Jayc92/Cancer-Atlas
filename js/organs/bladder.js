@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true. Alias collision check against every existing organ's aliases, including this
@@ -39,7 +40,9 @@ export const cancerEntries = [
 ];
 
 // REAL ANATOMY, not procedural — Human Reference Atlas 3D Reference Object Library, entry
-// "urinary-bladder-male" v1.2, CC BY 4.0 (assets/bladder.glb, 199,044 bytes). A female-body
+// "urinary-bladder-male" v1.2, CC BY 4.0 (assets/bladder.glb — 199,044 bytes AS-SOURCED; the
+// shipped file is meshopt-compressed since the 4A pass, 47,556 bytes, raw master at
+// `git show a131649:assets/bladder.glb` — see CLAUDE.md's 4A entry). A female-body
 // counterpart also exists at the same license (urinary-bladder-female v1.2) but was not used:
 // with no anatomical reason to prefer one sex's mesh for a single representative "Explore"
 // viewer — every other dual-sex internal organ in this app (Kidneys, Liver, Lungs, Breast)
@@ -72,6 +75,12 @@ export const cancerEntries = [
 // pass doesn't touch that gap either way). Seed 11.7 (organ #9 in ORGAN_MODULES' order x1.3).
 export function buildBladderMesh(){
   const loader = new GLTFLoader();
+  // The organ GLBs ship meshopt-compressed (EXT_meshopt_compression, gltfpack -kn -cc;
+  // 4A pass, 2026-09-03). A compressed GLB with no decoder registered fails to LOAD --
+  // a broken organ, not a degraded one -- so this registration is load-bearing, same as
+  // body.js's. Decoder is WASM inside three's own examples tree, same CDN the import map
+  // already trusts. Harmless against an uncompressed GLB, so wiring precedes the asset swap.
+  loader.setMeshoptDecoder(MeshoptDecoder);
   return new Promise((resolve, reject)=>{
     loader.load('assets/bladder.glb', (gltf)=>{
       const mat = new THREE.MeshPhysicalMaterial({ color:0xd9a8a0, roughness:0.48, metalness:0.0, specularIntensity:0.25, vertexColors:true });

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 
 // active:true, plus 'renal'/'ccrcc'/'clear cell' aliases. HISTORY: this comment used to argue
@@ -53,6 +54,12 @@ export const cancerEntries = [
 // reverted before this file's own material line was ever edited for real).
 export function buildKidneysMesh(){
   const loader = new GLTFLoader();
+  // The organ GLBs ship meshopt-compressed (EXT_meshopt_compression, gltfpack -kn -cc;
+  // 4A pass, 2026-09-03). A compressed GLB with no decoder registered fails to LOAD --
+  // a broken organ, not a degraded one -- so this registration is load-bearing, same as
+  // body.js's. Decoder is WASM inside three's own examples tree, same CDN the import map
+  // already trusts. Harmless against an uncompressed GLB, so wiring precedes the asset swap.
+  loader.setMeshoptDecoder(MeshoptDecoder);
   return new Promise((resolve, reject)=>{
     loader.load('assets/kidneys.glb', (gltf)=>{
       // MeshPhysicalMaterial + specularIntensity (clip-fix pass, now 0.25 — realism-pass

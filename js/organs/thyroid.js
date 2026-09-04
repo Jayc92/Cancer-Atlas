@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { cssVar } from '../viewer.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 // Alias-collision check (the standing check from the ovary/kidneys "clear cell" pass): none of
 // these terms appears in any other organ's alias list. 'papillary' is claimed here alone and
@@ -76,6 +77,12 @@ export const cancerEntries = [
 // itself cause the wrong render, so the map now ships SRGBColorSpace — the glTF default.]
 export function buildThyroidMesh(){
   const loader = new GLTFLoader();
+  // The organ GLBs ship meshopt-compressed (EXT_meshopt_compression, gltfpack -kn -cc;
+  // 4A pass, 2026-09-03). A compressed GLB with no decoder registered fails to LOAD --
+  // a broken organ, not a degraded one -- so this registration is load-bearing, same as
+  // body.js's. Decoder is WASM inside three's own examples tree, same CDN the import map
+  // already trusts. Harmless against an uncompressed GLB, so wiring precedes the asset swap.
+  loader.setMeshoptDecoder(MeshoptDecoder);
   return new Promise((resolve, reject)=>{
     loader.load('assets/thyroid.glb', (gltf)=>{
       gltf.scene.traverse(o=>{
