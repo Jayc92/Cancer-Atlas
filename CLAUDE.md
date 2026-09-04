@@ -3651,10 +3651,38 @@ screen pair per organ:
   QUEUED PROGRAMME: a fuller epidemiological verification pass,
   prioritised by user-facing prominence (numbers rendered on screen
   before numbers in comments; a wrong on-screen figure is something a
-  person carries away). The one mitigating pattern is now policy: the
-  citation that carried a permanent identifier was recoverable; the ones
-  carrying only page names were not — RECORD THE PERMANENT IDENTIFIER
-  (PMID/PMCID/DOI) IN THE CITATION ITSELF, always.
+  person carries away). The one mitigating pattern is now policy — and
+  RULED THE PRIMARY RULE, subsuming the source-class preference: RECORD
+  THE PERMANENT IDENTIFIER (PMID/PMCID/DOI) IN THE CITATION ITSELF,
+  always. "Prefer permanently-addressed sources" only helps when you
+  choose the source; the identifier rule works regardless of source
+  quality — a weak source with a DOI stays recoverable, an excellent
+  source recorded as a page title does not. TWO CORRECTIONS RECORDED AT
+  THE PARK RESOLUTION: (a) the "hunt exhausted" verdict was wrong (the
+  identifier was in the comment all along); (b) the category diagnosis
+  behind the re-source ruling was ALSO wrong — it reasoned from
+  N=53,142 to "cohort" to "cohort N cannot support a population claim",
+  but 53,142 was the atlas's own computed sum and the source was
+  already a SEER 17-registry extraction: the category error never
+  existed, and the ruling reached the right outcome by an incorrect
+  route. THE THREE ENTRY-TIME DEFECT SHAPES, separated because only one
+  is fixable: ATTRIBUTION ERROR (Park — right source, wrong metadata;
+  recoverable FROM the identifier), DANGLING POINTER (pancreas —
+  reference to nothing; detect and downgrade only), CONTENT ERROR
+  (prostate — quote never at the source; detect and downgrade only).
+  The epi pass's realistic output is therefore: correct the attribution
+  errors, downgrade or remove the other two shapes — do not burn budget
+  hunting sources that were never there. SEQUENCING: HARVEST IDENTIFIERS
+  FIRST, structurally, before verifying anything — RUN 2026-09-04:
+  of ~211 paper-type epidemiological source keys (regex-approximate;
+  some keys are journal-name fragments), 41 carry an identifier
+  somewhere with the citation and ~170 do not — IDENTIFIER COVERAGE
+  ≈19%, i.e. four of five epidemiological sources are UNRECOVERABLE-IF-
+  WRONG, with three entry-time errors already found in a sample of
+  twelve. The partition (/tmp/atlas-verify/cite/identifier_harvest.json)
+  is the pass's scope statement: the recoverable minority can be
+  repaired later; the unrecoverable majority is where verification
+  effort and any downgrades must concentrate, on-screen figures first.
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
