@@ -3097,7 +3097,24 @@ screen pair per organ:
   the raycast marker sphere — projected at 6–12px at the default view on
   every organ. Any future a11y check in this project measures the
   PROJECTED SIZE OF THE ACTUAL HIT TARGET (the thing the click handler
-  tests), not the element carrying the ARIA.**
+  tests), not the element carrying the ARIA.
+  (7) Adopted at the extractor-audit ruling (2026-09-04), generalising a
+  fix invented once at 4A (the L0-cage swap that proved the
+  triangle-count guard fails loudly) after the pattern reached FOUR
+  instances: A CHECK THAT REPORTS ZERO MUST BE DEMONSTRATED CAPABLE OF
+  REPORTING NON-ZERO BEFORE ITS ZERO IS BELIEVED. The four: the
+  blown-pixel gate reading 0 while teal flooded 50–75% of the organ
+  (P6); the coverage guard counting staging pixels (P5); the photometric
+  lit-face selector sampling the quantity it measured (Tier 3); and
+  "zero journal-mismatches" in the backfill sweep, unreachable by
+  construction because a recorded journal was enforced inside the query
+  and mismatches presented as zero hits. Every one reported clean
+  because it structurally could not report otherwise. Discipline: every
+  new detector ships with a demonstration that it fires on a known
+  positive (a fixture, a deliberately broken input, a swapped asset)
+  and stays silent on a known negative, BEFORE its first real zero is
+  accepted. First application at birth: citation_polarity.py refuses to
+  scan unless its self-test proves both directions.**
 - **Environment map + ground staging (2026-09-03), the pass the pipeline
   correction was gating.** scene.environment is now a 256×128 linear-float
   equirect gradient derived from the design tokens through cssVar() — floor
@@ -3779,6 +3796,63 @@ screen pair per organ:
   of ~211 (≈60%, from 19% at harvest). The 11 sweep-1 ambiguous stay
   refused (user ruling: genuinely-two-real-papers is exactly the case
   only the claim can settle — epi-pass work by construction).
+  EXTRACTOR AUDIT + POLARITY GUARD (2026-09-04, the three extractions
+  from the ground-truth ruling, executed same day). The extractor was
+  the least-validated component in the pipeline — two defect classes
+  found by accident, downstream, while looking for something else — so
+  it got the direct audit: seed=42, n=30 of 188, every parse compared
+  to its source line BY HAND (full verdicts in the manifest's
+  _extractor_audit). Rates: AUTHOR 24/30 (5 journal-as-author
+  fragments, all screened downstream; 1 LIVE author-order error —
+  "Li, Kang & Tang" → Tang — refused downstream only by luck); YEAR
+  30/30; JOURNAL RECALL 11/25 = 44% — the headline: 25 of 30 sampled
+  citations carry a journal ON the line and the extractor recorded 11,
+  so the gate's "journal-when-recorded" qualifier concealed a harvest
+  failure and ran 3-field where 4 were available; six sampled RESIDUE
+  records (Moore/PLOS Genetics, Mariette/Gastric Cancer, Mehra/Cancer
+  Research, Zhuang/Transl Cancer Res, Salgado/Ann Oncol, Wiegand/NEJM)
+  have their unharvested journal sitting on the source line —
+  re-extraction converts residue to resolvable. TOPICS defective
+  ~11/30 (empty-where-available or polluted by neighbouring entries).
+  REF LINE systematically +1 in ~29/30 — one deterministic
+  window-indexing bug that ALSO explains the "identifier on the next
+  line" misses: the ref pointed AT the identifier's line while the
+  parse ran elsewhere. Refs deliberately NOT blanket-mutated (windows
+  absorbed the offset; the fix belongs in the extractor). DOWNSTREAM
+  DAMAGE measured, not assumed: the 13 sampled backfills were
+  title-verified — 11/12 correct, ONE RETRACTED: "Arends 2026"
+  (colorectal grading, Histopathology — journal on the line, missed)
+  had been backfilled to a Streptococcus pneumoniae paper in ISME J
+  because the topic gate matched 'colon' as a SUBSTRING of
+  'colonization'. Word-boundary topic matching is required in any
+  future sweep. Backfilled now 79; coverage 46+79 = 125 of ~211.
+  POLARITY GUARD (.claude/citation_polarity.py): the Boutros failure
+  is a CLASS — a token-matcher has no notion of claim polarity, and
+  the epi pass reads the same lines. The guard classifies windows
+  (corrective/caveated/clean), contract = flag-then-human-read (a
+  window regex cannot tell the negated mention Colombino from its
+  correction target Jakob two tokens later — pretending otherwise
+  would be a confident wrong answer). Validated under condition (7)
+  AT BIRTH: self-test proves it fires on four known-corrective
+  fixtures and stays silent on three known-clean ones; the scan
+  REFUSES to run on a failing self-test — and the first self-test run
+  caught a mislabelled FIXTURE (the guard was right, my label was
+  wrong: "checked and NOT found citable" IS a rejected claim).
+  Scan: 152 clean / 9 corrective / 27 caveated across all 188; flags
+  written into the manifest (`window` + `windowMarkers`); mention-
+  level reads of all flagged backfilled/entry-time records: all keep
+  (Jakob = correction target; Lauren asserted beside the frequency-
+  chain correction; Hu 2012 cited AS the mis-citer — identifier
+  correct, but the epi pass must NOT verify the transposed 54/32/15
+  figures against it as if asserted). THE EPI PASS CONSUMES THESE
+  FLAGS: flagged window ⇒ human polarity read before verifying,
+  resolving, or fixing anything in it. Colombino itself was never
+  harvested (extractor missed the mention — lucky, not safe).
+  NEXT CHEAP PASS OPENED BY THE AUDIT (user-gated): extraction v2 —
+  fix the +1 offset, journal recall, author-order, topic pollution,
+  substring matching — then re-run the 60-record residue with
+  recovered journals; six sampled residue records already
+  demonstrated recoverable-by-re-extraction.
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
