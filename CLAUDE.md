@@ -3683,6 +3683,32 @@ screen pair per organ:
   is the pass's scope statement: the recoverable minority can be
   repaired later; the unrecoverable majority is where verification
   effort and any downgrades must concentrate, on-screen figures first.
+  IDENTIFIER BACKFILL RUN (2026-09-04, the cheap pass between harvest
+  and verify): resolving an identifier from recorded metadata and
+  verifying a claim are wildly different costs for different benefits,
+  and the failure mode is the payoff — metadata that resolves to
+  NOTHING is the entry-time-error signature (Wang/Park resolved to
+  nothing under its wrong metadata because the metadata was never
+  true). PubMed eutils sweep over 188 structured identifier-less
+  records with a MULTI-FIELD AGREEMENT GATE (first-author surname +
+  year + journal-when-recorded + topic-consistency; EXACTLY ONE
+  candidate may pass; refusals, never best guesses — an automated
+  title-match writing a confident wrong identifier is citation-shopping
+  with better throughput). RESULT (3.5 min, zero API errors):
+  46 BACKFILLED (each carrying method + resolution date in the
+  manifest's `backfill` block — a backfilled identifier asserts "this
+  metadata resolves uniquely to this paper", NOT "this paper was
+  verified to support the claim", and never carries entry-time weight);
+  13 NO-MATCH (author+year yields zero hits — the strong entry-time-
+  error candidates, human triage first, on-screen first); 11 AMBIGUOUS
+  (multiple passers, refused); 97 NO-FIELD-MATCH (hits exist but none
+  pass all fields — NOT a defect list: common-surname retrieval misses
+  and title-topic strictness; means "not auto-resolvable", nothing
+  more); 21 parse-noise. Identifier coverage roughly DOUBLES in one
+  sweep: 41 → 87 identifier-carrying sources. Epi-pass triage order:
+  the 13 no-match, then the 11 ambiguous, then user-facing
+  no-field-match — with the taxonomy's expectation set: fix
+  attribution errors, downgrade dangling pointers and content errors.
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell

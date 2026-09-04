@@ -329,5 +329,2244 @@
   }
  ],
  "_limits": "THE MANIFEST MAKES RECORDS DURABLE, NOT TRUE. A quote entered wrongly at creation time is preserved faithfully, hashed, and dated forever \u2014 initial verification is the single point of failure, and it has demonstrably failed once (col-prostate: a quote recorded as 'confirmed directly' that was never at the named source, evidenced by a Wayback snapshot predating the verification). The structural checks cannot reach that class; nothing can, except care at entry.",
- "_ruling_statistics": "Downgrade-to-illustrative works only for values with an honest illustrative home (colour). It does NOT work for statistics: a user reads '~92%' as fact regardless of labelling. For statistical claims the options are RE-SOURCE (durably-addressed) or REMOVE from the screen \u2014 no middle."
+ "_ruling_statistics": "Downgrade-to-illustrative works only for values with an honest illustrative home (colour). It does NOT work for statistics: a user reads '~92%' as fact regardless of labelling. For statistical claims the options are RE-SOURCE (durably-addressed) or REMOVE from the screen \u2014 no middle.",
+ "_backfill_method": "Identifier backfill (2026-09-04): PubMed eutils esearch/esummary with a MULTI-FIELD AGREEMENT GATE \u2014 first-author surname + publication year + (journal when recorded) + topic-consistency, and EXACTLY ONE candidate may pass; ambiguous or partial matches are refused, never guessed. Backfilled identifiers carry method+date and DO NOT have the evidentiary weight of identifiers recorded at entry time: they assert 'this recorded metadata resolves uniquely to this paper', not 'this paper was verified to support the claim'. Triage semantics: status=no-match (author+year yields zero PubMed hits) is the strong entry-time-error signature (the Wang/Park case); status=no-field-match is NOT a defect list \u2014 it mixes common-surname retrieval misses, retmax truncation, and title-topic gate strictness, and means 'not auto-resolvable', nothing more.",
+ "backfill": [
+  {
+   "author": "NEJM",
+   "year": "2012",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": true,
+   "refs": [
+    "js/organs/kidneys.js:141",
+    "js/organs/kidneys.js:145",
+    "js/organs/kidneys.js:148"
+   ]
+  },
+  {
+   "author": "Moore",
+   "year": "2011",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/kidneys.js:154"
+   ]
+  },
+  {
+   "author": "Morphol",
+   "year": "2020",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/kidneys.js:171",
+    "js/organs/kidneys.js:177"
+   ]
+  },
+  {
+   "author": "Lauren",
+   "year": "1965",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:21"
+   ]
+  },
+  {
+   "author": "Hu",
+   "year": "2012",
+   "journal": "J Gastrointest Oncol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:24"
+   ],
+   "pmid": "22943016",
+   "resolvedTitle": "Gastric cancer: Classification, histology and application of molecular pathology.",
+   "resolvedJournal": "J Gastrointest Oncol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Grimm",
+   "year": "2018",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:146"
+   ],
+   "candidates": [
+    "31093211",
+    "30966679",
+    "30936445",
+    "30719326"
+   ]
+  },
+  {
+   "author": "Mudie",
+   "year": "2014",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:146"
+   ],
+   "candidates": [
+    "25558831",
+    "25115349"
+   ]
+  },
+  {
+   "author": "Derakhshan",
+   "year": "2009",
+   "journal": "Gut",
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:187"
+   ]
+  },
+  {
+   "author": "Gastroenterology",
+   "year": "1998",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:190"
+   ]
+  },
+  {
+   "author": "Genet",
+   "year": "2011",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:206"
+   ]
+  },
+  {
+   "author": "Oncotarget",
+   "year": "2016",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:225"
+   ]
+  },
+  {
+   "author": "Zheng",
+   "year": "2008",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:227"
+   ]
+  },
+  {
+   "author": "Thomassen",
+   "year": "2014",
+   "journal": "Int J Cancer",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:227"
+   ],
+   "pmid": "23832847",
+   "resolvedTitle": "Peritoneal carcinomatosis of gastric origin: a population-based study on incidence, survival and risk factors.",
+   "resolvedJournal": "Int J Cancer",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Kiyokawa",
+   "year": "2006",
+   "journal": "Am J Surg Pathol",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:231"
+   ]
+  },
+  {
+   "author": "Li",
+   "year": "2020",
+   "journal": "World J Clin Cases",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:231"
+   ]
+  },
+  {
+   "author": "Machado",
+   "year": "2001",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:234",
+    "js/organs/stomach.js:234"
+   ]
+  },
+  {
+   "author": "Grady",
+   "year": "2000",
+   "journal": "Nat Genet",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:234"
+   ],
+   "pmid": "10973239",
+   "resolvedTitle": "Methylation of the CDH1 promoter as the second genetic hit in hereditary diffuse gastric cancer.",
+   "resolvedJournal": "Nat Genet",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Guilford",
+   "year": "1998",
+   "journal": "Nature",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:234"
+   ],
+   "pmid": "9537325",
+   "resolvedTitle": "E-cadherin germline mutations in familial gastric cancer.",
+   "resolvedJournal": "Nature",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Blair",
+   "year": "2020",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:234"
+   ]
+  },
+  {
+   "author": "Beek",
+   "year": "2018",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/stomach.js:237",
+    "js/organs/stomach.js:237"
+   ]
+  },
+  {
+   "author": "Gastroenterol",
+   "year": "2025",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:253",
+    "js/organs/colon.js:122"
+   ]
+  },
+  {
+   "author": "Machlowska",
+   "year": "2020",
+   "journal": "Int J Mol Sci",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:253"
+   ],
+   "pmid": "32512697",
+   "resolvedTitle": "Gastric Cancer: Epidemiology, Risk Factors, Classification, Genomic Characteristics and Treatment Strategies.",
+   "resolvedJournal": "Int J Mol Sci",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Mariette",
+   "year": "2019",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:260"
+   ]
+  },
+  {
+   "author": "Kim",
+   "year": "2025",
+   "journal": "World J Gastroenterol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/stomach.js:260"
+   ],
+   "pmid": "40904880",
+   "resolvedTitle": "Prognostic value of signet-ring cell carcinoma proportion in undifferentiated gastric cancer: Implications for endoscopic treatment decision",
+   "resolvedJournal": "World J Gastroenterol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Siech",
+   "year": "2026",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/prostate.js:23",
+    "js/organs/prostate.js:24",
+    "js/organs/prostate.js:25"
+   ]
+  },
+  {
+   "author": "Boutros",
+   "year": "2015",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/prostate.js:139"
+   ],
+   "pmid": "26638068",
+   "resolvedTitle": "Microscopy-Based High-Content Screening.",
+   "resolvedJournal": "Cell",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Mehra",
+   "year": "2007",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/prostate.js:210"
+   ]
+  },
+  {
+   "author": "Cooper",
+   "year": "2015",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/prostate.js:212",
+    "js/organs/prostate.js:219"
+   ]
+  },
+  {
+   "author": "Fontugne",
+   "year": "2022",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/prostate.js:219"
+   ],
+   "pmid": "35050902",
+   "resolvedTitle": "Collision tumors revealed by prospectively assessing subtype-defining molecular alterations in 904 individual prostate cancer foci.",
+   "resolvedJournal": "JCI Insight",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Pathol",
+   "year": "2022",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": true,
+   "refs": [
+    "js/organs/prostate.js:219",
+    "js/organs/thyroid.js:121"
+   ]
+  },
+  {
+   "author": "Reports",
+   "year": "2023",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/prostate.js:219"
+   ]
+  },
+  {
+   "author": "Bubendorf",
+   "year": "2000",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/prostate.js:219",
+    "js/organs/bladder.js:187"
+   ],
+   "pmid": "10836297",
+   "resolvedTitle": "Metastatic patterns of prostate cancer: an autopsy study of 1,589 patients.",
+   "resolvedJournal": "Hum Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Epstein",
+   "year": "2016",
+   "journal": "Am J Surg Pathol",
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/prostate.js:228",
+    "js/organs/prostate.js:245"
+   ]
+  },
+  {
+   "author": "Urol",
+   "year": "2016",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/prostate.js:231"
+   ]
+  },
+  {
+   "author": "Epstein",
+   "year": "2016",
+   "journal": "Eur Urol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/prostate.js:245"
+   ],
+   "pmid": "26166626",
+   "resolvedTitle": "A Contemporary Prostate Cancer Grading System: A Validated Alternative to the Gleason Score.",
+   "resolvedJournal": "Eur Urol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Ther",
+   "year": "2024",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/colon.js:123"
+   ]
+  },
+  {
+   "author": "Mino-Kenudson",
+   "year": "2026",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/colon.js:177"
+   ]
+  },
+  {
+   "author": "Domingo",
+   "year": "2013",
+   "journal": "J Pathol",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:183",
+    "js/organs/colon.js:206"
+   ],
+   "pmid": "23165447",
+   "resolvedTitle": "Use of multivariate analysis to suggest a new molecular classification of colorectal cancer.",
+   "resolvedJournal": "J Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Yaeger",
+   "year": "2018",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:206",
+    "js/organs/colon.js:208"
+   ]
+  },
+  {
+   "author": "Domingo",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:206",
+    "js/organs/colon.js:212"
+   ]
+  },
+  {
+   "author": "Engstrand",
+   "year": "2018",
+   "journal": "BMC Cancer",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:206"
+   ],
+   "pmid": "29334918",
+   "resolvedTitle": "Colorectal cancer liver metastases - a population-based study on incidence, management and survival.",
+   "resolvedJournal": "BMC Cancer",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Rep",
+   "year": "2016",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:206"
+   ]
+  },
+  {
+   "author": "Vogelstein",
+   "year": "1988",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:208"
+   ]
+  },
+  {
+   "author": "Fleming",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:210",
+    "js/organs/colon.js:210"
+   ]
+  },
+  {
+   "author": "Sarshekeh",
+   "year": "2017",
+   "journal": "PLoS One",
+   "status": "no-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:210"
+   ]
+  },
+  {
+   "author": "Wang",
+   "year": "2022",
+   "journal": "Cancers",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:210"
+   ]
+  },
+  {
+   "author": "Fang",
+   "year": "2021",
+   "journal": "BMC Gastroenterol",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:210"
+   ],
+   "pmid": "34301194",
+   "resolvedTitle": "Prognostic role and clinicopathological features of SMAD4 gene mutation in colorectal cancer: a systematic review and meta-analysis.",
+   "resolvedJournal": "BMC Gastroenterol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Wang",
+   "year": "2022",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:210"
+   ]
+  },
+  {
+   "author": "Segelman",
+   "year": "2012",
+   "journal": "Br J Surg",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:210"
+   ]
+  },
+  {
+   "author": "Nosho",
+   "year": "2008",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:212"
+   ],
+   "candidates": [
+    "19002263",
+    "18983468",
+    "18516290"
+   ]
+  },
+  {
+   "author": "Rosty",
+   "year": "2013",
+   "journal": "PLoS One",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:212"
+   ],
+   "pmid": "23785428",
+   "resolvedTitle": "PIK3CA activating mutation in colorectal carcinoma: associations with molecular features and survival.",
+   "resolvedJournal": "PLoS One",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Ikenoue",
+   "year": "2005",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:212"
+   ]
+  },
+  {
+   "author": "Christensen",
+   "year": "2016",
+   "journal": "BMC Cancer",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:212"
+   ],
+   "pmid": "27037031",
+   "resolvedTitle": "Systematic review: brain metastases from colorectal cancer--Incidence and patient characteristics.",
+   "resolvedJournal": "BMC Cancer",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Li",
+   "year": "2025",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:222",
+    "js/organs/colon.js:275"
+   ]
+  },
+  {
+   "author": "Oncol",
+   "year": "2021",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/colon.js:225"
+   ]
+  },
+  {
+   "author": "Kawaguchi",
+   "year": "2021",
+   "journal": "J Gastrointest Surg",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/colon.js:230"
+   ],
+   "pmid": "33205306",
+   "resolvedTitle": "Alteration of FBXW7 is Associated with Worse Survival in Patients Undergoing Resection of Colorectal Liver Metastases.",
+   "resolvedJournal": "J Gastrointest Surg",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Nunes",
+   "year": "2024",
+   "journal": "Nature",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:244",
+    "js/organs/colon.js:273",
+    "js/organs/colon.js:275"
+   ]
+  },
+  {
+   "author": "Cornish",
+   "year": "2024",
+   "journal": "Nature",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:274",
+    "js/organs/colon.js:275"
+   ]
+  },
+  {
+   "author": "Nunes",
+   "year": "2024",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/colon.js:274"
+   ]
+  },
+  {
+   "author": "Arends",
+   "year": "2026",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/colon.js:286",
+    "js/organs/colon.js:298"
+   ],
+   "pmid": "42616031",
+   "resolvedTitle": "Streptococcus pneumoniae adaptation to nutrient deprivation and immune modulation drives upper respiratory tract colonization.",
+   "resolvedJournal": "ISME J",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Memari",
+   "year": "2026",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/colon.js:291",
+    "js/organs/colon.js:298"
+   ]
+  },
+  {
+   "author": "Biol",
+   "year": "2025",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/colon.js:293"
+   ]
+  },
+  {
+   "author": "Androl",
+   "year": "1986",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/testis.js:101"
+   ]
+  },
+  {
+   "author": "Coffey",
+   "year": "2008",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/testis.js:177"
+   ]
+  },
+  {
+   "author": "Shen",
+   "year": "2018",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/testis.js:177"
+   ]
+  },
+  {
+   "author": "Paly",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/testis.js:177"
+   ]
+  },
+  {
+   "author": "Wood",
+   "year": "1996",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/testis.js:179",
+    "js/organs/testis.js:183"
+   ]
+  },
+  {
+   "author": "Park",
+   "year": "2023",
+   "journal": "Curr Oncol",
+   "status": "ambiguous",
+   "userFacing": true,
+   "refs": [
+    "js/organs/bladder.js:27",
+    "js/organs/bladder.js:44",
+    "js/organs/bladder.js:118"
+   ],
+   "candidates": [
+    "37887556",
+    "37232827"
+   ]
+  },
+  {
+   "author": "Alessandrino",
+   "year": "2020",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/bladder.js:212"
+   ]
+  },
+  {
+   "author": "Urol",
+   "year": "2014",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/bladder.js:226"
+   ]
+  },
+  {
+   "author": "Rachakonda",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/bladder.js:232",
+    "js/organs/bladder.js:232"
+   ]
+  },
+  {
+   "author": "Allory",
+   "year": "2014",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/bladder.js:232",
+    "js/organs/bladder.js:232"
+   ]
+  },
+  {
+   "author": "Rogers",
+   "year": "2015",
+   "journal": "JAMA Dermatol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:43"
+   ],
+   "pmid": "25928283",
+   "resolvedTitle": "Incidence Estimate of Nonmelanoma Skin Cancer (Keratinocyte Carcinomas) in the U.S. Population, 2012.",
+   "resolvedJournal": "JAMA Dermatol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Bradford",
+   "year": "2009",
+   "journal": "Arch Dermatol",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:46",
+    "js/organs/skin.js:400"
+   ],
+   "pmid": "19380664",
+   "resolvedTitle": "Acral lentiginous melanoma: incidence and survival patterns in the United States, 1986-2005.",
+   "resolvedJournal": "Arch Dermatol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Dermatol",
+   "year": "2022",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:48"
+   ]
+  },
+  {
+   "author": "Bradford",
+   "year": "2009",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:57"
+   ]
+  },
+  {
+   "author": "Rogers",
+   "year": "2015",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:58"
+   ]
+  },
+  {
+   "author": "Lintzeri",
+   "year": "2022",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:86"
+   ],
+   "candidates": [
+    "35366353",
+    "35040577",
+    "35040563"
+   ]
+  },
+  {
+   "author": "Heitzmann",
+   "year": "2024",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:93"
+   ],
+   "candidates": [
+    "38858314",
+    "38541207"
+   ]
+  },
+  {
+   "author": "Mochizuki",
+   "year": "2026",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:96"
+   ],
+   "candidates": [
+    "42691851",
+    "42669478"
+   ]
+  },
+  {
+   "author": "Hearing",
+   "year": "2008",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:247"
+   ]
+  },
+  {
+   "author": "Cichorek",
+   "year": "2013",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:249"
+   ],
+   "pmid": "24278043",
+   "resolvedTitle": "Skin melanocytes: biology and development.",
+   "resolvedJournal": "Postepy Dermatol Alergol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Jebbawi",
+   "year": "2020",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:252"
+   ]
+  },
+  {
+   "author": "Jakob",
+   "year": "2012",
+   "journal": "Cancer",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:297",
+    "js/organs/skin.js:400"
+   ],
+   "pmid": "22180178",
+   "resolvedTitle": "NRAS mutation status is an independent prognostic factor in metastatic melanoma.",
+   "resolvedJournal": "Cancer",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Curtin",
+   "year": "2005",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:300",
+    "js/organs/skin.js:400"
+   ]
+  },
+  {
+   "author": "Curtin",
+   "year": "2006",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:304",
+    "js/organs/skin.js:400"
+   ]
+  },
+  {
+   "author": "Barnholtz-Sloan",
+   "year": "2004",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:315",
+    "js/organs/skin.js:391"
+   ]
+  },
+  {
+   "author": "Haluska",
+   "year": "2006",
+   "journal": "Clin Cancer Res",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:332"
+   ],
+   "pmid": "16609049",
+   "resolvedTitle": "Genetic alterations in signaling pathways in melanoma.",
+   "resolvedJournal": "Clin Cancer Res",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Clin",
+   "year": "2017",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:381"
+   ]
+  },
+  {
+   "author": "Shain",
+   "year": "2015",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:391",
+    "js/organs/skin.js:393",
+    "js/organs/skin.js:401"
+   ],
+   "candidates": [
+    "26559571",
+    "26343386"
+   ]
+  },
+  {
+   "author": "Riihimaki",
+   "year": "2018",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:391",
+    "js/organs/skin.js:393",
+    "js/organs/skin.js:395"
+   ]
+  },
+  {
+   "author": "Cagney",
+   "year": "2017",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:391"
+   ]
+  },
+  {
+   "author": "Davies",
+   "year": "2011",
+   "journal": "Cancer",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:391"
+   ],
+   "pmid": "20960525",
+   "resolvedTitle": "Prognostic factors for survival in melanoma patients with brain metastases.",
+   "resolvedJournal": "Cancer",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Tsao",
+   "year": "2004",
+   "journal": "J Invest Dermatol",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:393"
+   ],
+   "pmid": "15009714",
+   "resolvedTitle": "Genetic interaction between NRAS and BRAF mutations and PTEN/MMAC1 inactivation in melanoma.",
+   "resolvedJournal": "J Invest Dermatol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Dankort",
+   "year": "2009",
+   "journal": "Nat Genet",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:393",
+    "js/organs/skin.js:400"
+   ],
+   "pmid": "19282848",
+   "resolvedTitle": "Braf(V600E) cooperates with Pten loss to induce metastatic melanoma.",
+   "resolvedJournal": "Nat Genet",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Goel",
+   "year": "2006",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:393"
+   ]
+  },
+  {
+   "author": "Gershenwald",
+   "year": "2017",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:397"
+   ],
+   "candidates": [
+    "29028110",
+    "28422116"
+   ]
+  },
+  {
+   "author": "Pollock",
+   "year": "2003",
+   "journal": "Nat Genet",
+   "status": "ambiguous",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:400"
+   ],
+   "candidates": [
+    "12704387",
+    "12447372"
+   ]
+  },
+  {
+   "author": "Yao",
+   "year": "2017",
+   "journal": "Nature",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:400"
+   ],
+   "pmid": "28783719",
+   "resolvedTitle": "Tumours with class 3 BRAF mutants are sensitive to the inhibition of activated RAS.",
+   "resolvedJournal": "Nature",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Nazarian",
+   "year": "2010",
+   "journal": "Nature",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:400"
+   ],
+   "pmid": "21107323",
+   "resolvedTitle": "Melanomas acquire resistance to B-RAF(V600E) inhibition by RTK or N-RAS upregulation.",
+   "resolvedJournal": "Nature",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Huang",
+   "year": "2013",
+   "journal": "Science",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:401"
+   ]
+  },
+  {
+   "author": "Horn",
+   "year": "2013",
+   "journal": "Science",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:401"
+   ]
+  },
+  {
+   "author": "Huang",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:401"
+   ]
+  },
+  {
+   "author": "Krauthammer",
+   "year": "2012",
+   "journal": "Nat Genet",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:404"
+   ]
+  },
+  {
+   "author": "Krauthammer",
+   "year": "2012",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:404"
+   ]
+  },
+  {
+   "author": "Hodis",
+   "year": "2012",
+   "journal": "Cell",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:404",
+    "js/organs/skin.js:405"
+   ]
+  },
+  {
+   "author": "Alexandrov",
+   "year": "2013",
+   "journal": "Nature",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/skin.js:408"
+   ]
+  },
+  {
+   "author": "Dermatol",
+   "year": "2026",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:419"
+   ]
+  },
+  {
+   "author": "Asato",
+   "year": "2024",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:419",
+    "js/organs/skin.js:431"
+   ]
+  },
+  {
+   "author": "Gontijo",
+   "year": "2026",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:431"
+   ]
+  },
+  {
+   "author": "Waqar",
+   "year": "2022",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/skin.js:431"
+   ]
+  },
+  {
+   "author": "Gastroenterology",
+   "year": "2022",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/pancreas.js:133"
+   ]
+  },
+  {
+   "author": "Raphael",
+   "year": "2017",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:188",
+    "js/organs/pancreas.js:215"
+   ]
+  },
+  {
+   "author": "Waddell",
+   "year": "2015",
+   "journal": "Nature",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:206",
+    "js/organs/pancreas.js:208",
+    "js/organs/pancreas.js:210"
+   ]
+  },
+  {
+   "author": "Hahn",
+   "year": "1996",
+   "journal": "Science",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:206"
+   ]
+  },
+  {
+   "author": "Wilentz",
+   "year": "2000",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:206"
+   ],
+   "pmid": "10793075",
+   "resolvedTitle": "Genetic, immunohistochemical, and clinical features of medullary carcinoma of the pancreas: A newly described and characterized entity.",
+   "resolvedJournal": "Am J Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Iacobuzio-Donahue",
+   "year": "2009",
+   "journal": "J Clin Oncol",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:206"
+   ],
+   "pmid": "19273710",
+   "resolvedTitle": "DPC4 gene status of the primary carcinoma correlates with patterns of failure in patients with pancreatic cancer.",
+   "resolvedJournal": "J Clin Oncol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Oweira",
+   "year": "2017",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:206",
+    "js/organs/pancreas.js:208",
+    "js/organs/pancreas.js:210"
+   ],
+   "pmid": "28697656",
+   "resolvedTitle": "Impact of liver transplantation on the risk of second malignant tumors among hepatocellular carcinoma patients.",
+   "resolvedJournal": "Expert Rev Gastroenterol Hepatol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Redston",
+   "year": "1994",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:210",
+    "js/organs/pancreas.js:210"
+   ]
+  },
+  {
+   "author": "Hosoda",
+   "year": "2017",
+   "journal": "J Pathol",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:210",
+    "js/organs/pancreas.js:215"
+   ],
+   "pmid": "28188630",
+   "resolvedTitle": "Genetic analyses of isolated high-grade pancreatic intraepithelial neoplasia (HG-PanIN) reveal paucity of alterations in TP53 and SMAD4.",
+   "resolvedJournal": "J Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Schutte",
+   "year": "1997",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:212"
+   ]
+  },
+  {
+   "author": "Caldas",
+   "year": "1994",
+   "journal": "Nat Genet",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:212"
+   ]
+  },
+  {
+   "author": "Wilentz",
+   "year": "1998",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:212"
+   ]
+  },
+  {
+   "author": "Wood",
+   "year": "2022",
+   "journal": "Gastroenterology",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:215",
+    "js/organs/pancreas.js:222"
+   ]
+  },
+  {
+   "author": "Kanda",
+   "year": "2012",
+   "journal": "Gastroenterology",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:215"
+   ]
+  },
+  {
+   "author": "Yachida",
+   "year": "2010",
+   "journal": "Nature",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:215"
+   ]
+  },
+  {
+   "author": "Waddell",
+   "year": "2015",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:219"
+   ]
+  },
+  {
+   "author": "Goggins",
+   "year": "1998",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:221"
+   ]
+  },
+  {
+   "author": "Wood",
+   "year": "2022",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/pancreas.js:222"
+   ]
+  },
+  {
+   "author": "Tang",
+   "year": "2021",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/pancreas.js:230",
+    "js/organs/pancreas.js:245"
+   ]
+  },
+  {
+   "author": "Min",
+   "year": "2023",
+   "journal": "Cancers",
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/pancreas.js:231",
+    "js/organs/pancreas.js:245"
+   ]
+  },
+  {
+   "author": "Pathol",
+   "year": "2014",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/pancreas.js:233"
+   ]
+  },
+  {
+   "author": "Pathology",
+   "year": "2014",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/pancreas.js:245"
+   ]
+  },
+  {
+   "author": "Jamal-Hanjani",
+   "year": "2017",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/lungs.js:182"
+   ],
+   "pmid": "28445112",
+   "resolvedTitle": "Tracking the Evolution of Non-Small-Cell Lung Cancer.",
+   "resolvedJournal": "N Engl J Med",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Frankell",
+   "year": "2023",
+   "journal": "Nature",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/lungs.js:189",
+    "js/organs/lungs.js:197",
+    "js/organs/lungs.js:199"
+   ]
+  },
+  {
+   "author": "Discovery",
+   "year": "2018",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/lungs.js:192"
+   ]
+  },
+  {
+   "author": "Awad",
+   "year": "2021",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/lungs.js:215"
+   ]
+  },
+  {
+   "author": "Travis",
+   "year": "2011",
+   "journal": "J Thorac Oncol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/lungs.js:225"
+   ],
+   "pmid": "21252716",
+   "resolvedTitle": "International association for the study of lung cancer/american thoracic society/european respiratory society international multidisciplinar",
+   "resolvedJournal": "J Thorac Oncol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Yoshizawa",
+   "year": "2011",
+   "journal": "Mod Pathol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/lungs.js:230",
+    "js/organs/lungs.js:236"
+   ],
+   "pmid": "21252858",
+   "resolvedTitle": "Impact of proposed IASLC/ATS/ERS classification of lung adenocarcinoma: prognostic subgroups and implications for further revision of stagin",
+   "resolvedJournal": "Mod Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Travis",
+   "year": "2015",
+   "journal": "J Thorac Oncol",
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/lungs.js:236"
+   ]
+  },
+  {
+   "author": "Lim",
+   "year": "2017",
+   "journal": "JAMA",
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/thyroid.js:26"
+   ]
+  },
+  {
+   "author": "Luvhengo",
+   "year": "2023",
+   "journal": "Biomedicines",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/thyroid.js:145"
+   ],
+   "pmid": "37189835",
+   "resolvedTitle": "Multi-Omics and Management of Follicular Carcinoma of the Thyroid.",
+   "resolvedJournal": "Biomedicines",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Nikiforova",
+   "year": "2003",
+   "journal": null,
+   "status": "ambiguous",
+   "userFacing": true,
+   "refs": [
+    "js/organs/thyroid.js:257",
+    "js/organs/thyroid.js:259",
+    "js/organs/thyroid.js:272"
+   ],
+   "candidates": [
+    "14602780",
+    "12727991"
+   ]
+  },
+  {
+   "author": "Zhu",
+   "year": "2003",
+   "journal": null,
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/thyroid.js:267"
+   ],
+   "pmid": "18943167",
+   "resolvedTitle": "Quantitative Trait Loci Associated with Seedling Resistance to Isolates of Puccinia coronata in Oat.",
+   "resolvedJournal": "Phytopathology",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Nault",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/liver.js:153",
+    "js/organs/liver.js:248"
+   ]
+  },
+  {
+   "author": "Genetics",
+   "year": "2015",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/liver.js:157",
+    "js/organs/liver.js:194"
+   ]
+  },
+  {
+   "author": "Oncology",
+   "year": "2025",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/liver.js:159",
+    "js/organs/liver.js:248"
+   ]
+  },
+  {
+   "author": "Katyal",
+   "year": "2000",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/liver.js:174",
+    "js/organs/liver.js:239",
+    "js/organs/liver.js:241"
+   ]
+  },
+  {
+   "author": "Research",
+   "year": "2025",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/liver.js:178"
+   ]
+  },
+  {
+   "author": "Friemel",
+   "year": "2016",
+   "journal": "BMC Clinical Pathology",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/liver.js:204",
+    "js/organs/liver.js:239",
+    "js/organs/liver.js:241"
+   ],
+   "pmid": "27252594",
+   "resolvedTitle": "Liver cancer with concomitant TP53 and CTNNB1 mutations: a case report.",
+   "resolvedJournal": "BMC Clin Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Laurent-Puig",
+   "year": "2001",
+   "journal": "Gastroenterology",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/liver.js:205",
+    "js/organs/liver.js:239",
+    "js/organs/liver.js:241"
+   ]
+  },
+  {
+   "author": "Prevention",
+   "year": "2025",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/liver.js:207"
+   ]
+  },
+  {
+   "author": "Genetics",
+   "year": "2012",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/liver.js:222"
+   ]
+  },
+  {
+   "author": "Guichard",
+   "year": "2012",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/liver.js:239",
+    "js/organs/liver.js:241",
+    "js/organs/liver.js:243"
+   ]
+  },
+  {
+   "author": "Zhuang",
+   "year": "2025",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/liver.js:239",
+    "js/organs/liver.js:241",
+    "js/organs/liver.js:243"
+   ]
+  },
+  {
+   "author": "Schulze",
+   "year": "2015",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/liver.js:248"
+   ]
+  },
+  {
+   "author": "Hepatology",
+   "year": "2018",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/liver.js:267"
+   ]
+  },
+  {
+   "author": "Schlageter",
+   "year": "2014",
+   "journal": "World J Gastroenterol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/liver.js:273"
+   ],
+   "pmid": "25473149",
+   "resolvedTitle": "Histopathology of hepatocellular carcinoma.",
+   "resolvedJournal": "World J Gastroenterol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Price",
+   "year": "2025",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/brain.js:13"
+   ]
+  },
+  {
+   "author": "Ding",
+   "year": "2016",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/brain.js:32"
+   ]
+  },
+  {
+   "author": "Archives",
+   "year": "2026",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/brain.js:128"
+   ]
+  },
+  {
+   "author": "PNAS",
+   "year": "2013",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/brain.js:152"
+   ]
+  },
+  {
+   "author": "Brennan",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/brain.js:188",
+    "js/organs/brain.js:194"
+   ]
+  },
+  {
+   "author": "Brennan",
+   "year": "2013",
+   "journal": "Cell",
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/brain.js:200",
+    "js/organs/brain.js:202",
+    "js/organs/brain.js:204"
+   ]
+  },
+  {
+   "author": "Snuderl",
+   "year": "2011",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/brain.js:200"
+   ]
+  },
+  {
+   "author": "Sottoriva",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/brain.js:204"
+   ]
+  },
+  {
+   "author": "Neuro-Oncology",
+   "year": "2021",
+   "journal": null,
+   "status": "no-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/brain.js:209",
+    "js/organs/brain.js:219",
+    "js/organs/brain.js:234"
+   ]
+  },
+  {
+   "author": "Killela",
+   "year": "2013",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/brain.js:210"
+   ]
+  },
+  {
+   "author": "Wippold",
+   "year": "2006",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/brain.js:228",
+    "js/organs/brain.js:234"
+   ]
+  },
+  {
+   "author": "Yates",
+   "year": "2017",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/breast.js:118",
+    "js/organs/breast.js:177",
+    "js/organs/breast.js:179"
+   ]
+  },
+  {
+   "author": "NEJM",
+   "year": "2010",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/breast.js:141"
+   ]
+  },
+  {
+   "author": "Livasy",
+   "year": "2006",
+   "journal": "Mod Pathol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/breast.js:193",
+    "js/organs/breast.js:206"
+   ],
+   "pmid": "16341146",
+   "resolvedTitle": "Phenotypic evaluation of the basal-like subtype of invasive breast carcinoma.",
+   "resolvedJournal": "Mod Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Oncol",
+   "year": "2015",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/breast.js:199"
+   ]
+  },
+  {
+   "author": "Salgado",
+   "year": "2015",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/breast.js:206"
+   ]
+  },
+  {
+   "author": "Group",
+   "year": "2015",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": true,
+   "refs": [
+    "js/organs/breast.js:213"
+   ]
+  },
+  {
+   "author": "Peres",
+   "year": "2019",
+   "journal": "JNCI",
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:20",
+    "js/organs/ovary.js:188"
+   ]
+  },
+  {
+   "author": "Oncol",
+   "year": "2019",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:23"
+   ]
+  },
+  {
+   "author": "Kelsey",
+   "year": "2013",
+   "journal": "PLoS ONE",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:47"
+   ],
+   "pmid": "24019863",
+   "resolvedTitle": "Ovarian volume throughout life: a validated normative model.",
+   "resolvedJournal": "PLoS One",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Wiegand",
+   "year": "2010",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:100",
+    "js/organs/ovary.js:225"
+   ]
+  },
+  {
+   "author": "Oncol",
+   "year": "2012",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:101"
+   ]
+  },
+  {
+   "author": "Pathol",
+   "year": "2004",
+   "journal": null,
+   "status": "parse-noise",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:159"
+   ]
+  },
+  {
+   "author": "Malpica",
+   "year": "2004",
+   "journal": "Am J Surg Pathol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:166"
+   ],
+   "pmid": "15087669",
+   "resolvedTitle": "Grading ovarian serous carcinoma using a two-tier system.",
+   "resolvedJournal": "Am J Surg Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Kondo",
+   "year": "2020",
+   "journal": "J Gynecol Oncol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:182"
+   ],
+   "pmid": "33078599",
+   "resolvedTitle": "The post-progression survival of patients with recurrent or persistent ovarian clear cell carcinoma: results from a randomized phase III stu",
+   "resolvedJournal": "J Gynecol Oncol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Pearce",
+   "year": "2012",
+   "journal": null,
+   "status": "no-field-match",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:196"
+   ]
+  },
+  {
+   "author": "Chandler",
+   "year": "2015",
+   "journal": "Nat Commun",
+   "status": "backfilled",
+   "userFacing": true,
+   "refs": [
+    "js/organs/ovary.js:211"
+   ],
+   "pmid": "25625625",
+   "resolvedTitle": "Coexistent ARID1A-PIK3CA mutations promote ovarian clear-cell tumorigenesis through pro-tumorigenic inflammatory cytokine signalling.",
+   "resolvedJournal": "Nat Commun",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Helming",
+   "year": "2014",
+   "journal": "Nat Med",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:259"
+   ],
+   "pmid": "24562383",
+   "resolvedTitle": "ARID1B is a specific vulnerability in ARID1A-mutant cancers.",
+   "resolvedJournal": "Nat Med",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "DeLair",
+   "year": "2011",
+   "journal": "Am J Surg Pathol",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:291"
+   ],
+   "pmid": "21164285",
+   "resolvedTitle": "Morphologic spectrum of immunohistochemically characterized clear cell carcinoma of the ovary: a study of 155 cases.",
+   "resolvedJournal": "Am J Surg Pathol",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  },
+  {
+   "author": "Uekuri",
+   "year": "2013",
+   "journal": "Oncol Lett",
+   "status": "backfilled",
+   "userFacing": false,
+   "refs": [
+    "js/organs/ovary.js:291"
+   ],
+   "pmid": "24179489",
+   "resolvedTitle": "Toward an understanding of the pathophysiology of clear cell carcinoma of the ovary (Review).",
+   "resolvedJournal": "Oncol Lett",
+   "method": "pubmed-esearch multi-field (author+year+journal+topic, single-candidate)",
+   "resolved": "2026-09-04"
+  }
+ ]
 }
