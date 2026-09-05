@@ -4237,7 +4237,41 @@ screen pair per organ:
   population, a gene as a family, a registry as the world. COROLLARY:
   a claim NARROWER than its source is surprising and gets a second
   look rather than a pass. All ten uncited-figure items now resolved:
-  6 cited-nearby, 1 re-sourced, 3 adjusted-to-verified.**
+  6 cited-nearby, 1 re-sourced, 3 adjusted-to-verified.
+  GUARDRAILS BEFORE M1a (user): (1) QUOTE REQUIREMENT — every
+  scope-drift verdict quotes the source's own restricting language
+  verbatim; no quotable restriction ⇒ the verdict is VERIFIED, not
+  drift (that's a paraphrase the reader is uncomfortable with). Makes
+  the difference falsifiable rather than a judgement call at scale.
+  (2) PRE-REGISTERED RATE: ~7 defects / ~30 claims ≈ 23%; an M1a rate
+  far below means cleaner ground or a reader who stopped looking, far
+  above means the prior is doing the finding — either departure gets
+  investigated. The pair: one catches over-finding case by case, the
+  other in aggregate.
+  M1a BATCH 1 (20 share claims, 5 organs; full table in the
+  manifest's _m1a_batch1). FIGURES 0 errors in ~14 checks, every one
+  verbatim — including the first clean ANNOTATION SPOT-CHECK: Lim's
+  in-comment "Verified from the paper's own table" checks out
+  completely against the JAMA table. SCOPE: four new drift-causes,
+  all with quotable restrictions, all broader-than-measured (the
+  direction now 11-for-11): PROSTATE medium ("of prostate cancers" vs
+  Siech's "patients ... treated with RP or RT", SEER 2004–2020 — a
+  treated-cohort distribution as all prostate cancers); BLADDER
+  medium ("~92% of bladder-primary carcinomas" on a FOUR-TYPE
+  denominator — "conventional UC, NEC, SCC, and ADC were identified"
+  — caught by scope-first where the durability pass's
+  figure-verification passed it); BRAIN low (vs "Diagnosed in the
+  United States in 2018–2022"); THYROID low (vs "SEER-9 areas during
+  1974–2013"). Four causes touch 17 sibling strings; edits reported
+  not applied — the qualifier placement across each string family is
+  one design decision awaiting the go. Stomach is the exemplar:
+  "Korean nationwide surgical survey, N=14,658" carried on-screen.
+  RATE: 4 causes / 20 claims = 20%, at the pre-registered ~23% — no
+  departure, nothing to investigate. UNRESOLVED: ovary (Peres JNCI is
+  OA-restricted — paywalled canonical; 4 sibling shares stay orphaned
+  pending an alternative canonical); breast ×4 / kidneys ×3 / liver
+  ×2 orphan queue; lungs/colon/pancreas/skin are web-source read
+  types, queued.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
