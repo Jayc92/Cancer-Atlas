@@ -3127,7 +3127,19 @@ screen pair per organ:
   belief. The catch mechanism is the part to remember: v2 kept failing
   against the truth table, and the fix was FOLLOWING THE DISAGREEMENT
   instead of the table — the instinct in that moment is to fix the
-  thing that's failing, and it is exactly wrong.**
+  thing that's failing, and it is exactly wrong.
+  (8) Adopted at the attribution ruling (2026-09-04), converting a
+  three-time discovery into the default: A NEW DETECTOR'S FIRST RUN IS
+  INSTRUMENT CALIBRATION, NOT FINDINGS. Three first runs, three piles
+  dominated by upstream noise rather than data: the no-match pile (10
+  of 13 were the parser's own artefacts, zero real defects), the
+  coverage guard (counting the staging it was built to exclude), and
+  the crosscheck (Ziol/Cyrta/Fichtner/Shen/Segura were all extractor
+  bugs, and the extension's first run echoed an already-fixed line
+  through stale input). The sequence is now standing: run, triage the
+  flags, fix the pipeline, re-run, and read the SECOND run as
+  evidence. Budgeting the first output as calibration costs nothing
+  and stops it from being reported as a result.**
 - **Environment map + ground staging (2026-09-03), the pass the pipeline
   correction was gating.** scene.environment is now a 256×128 linear-float
   equirect gradient derived from the design tokens through cssVar() — floor
@@ -3943,6 +3955,27 @@ screen pair per organ:
   PMC/doi mapping is the recorded limitation (Rachakonda's PMC find
   came from manual idconv). THE DAY: 19% → 72% identifier coverage,
   with the precision attached rather than assumed.
+  ATTRIBUTION RULING (2026-09-04 evening): RACHAKONDA FIXED in source
+  (bladder.js:174 "PLoS ONE" → "PNAS"; isolated, different file, no
+  cluster; validated by the detector itself — post-fix run passes,
+  wrong pair preserved as a permanent self-test fixture). THE TESTIS
+  FOUR HELD, deliberately: the crosscheck validates identifier against
+  metadata, so an ENTIRE citation block that migrated onto the wrong
+  claim is internally consistent and structurally invisible to it —
+  if a shuffle can move journals across neighbours it can move
+  identifiers the same way, and a one-word journal fix would make each
+  record pass while leaving open whether the identifier belongs to
+  that claim at all: converting a visible defect into an invisible
+  one. The four flags are evidence of a disturbance in the FILE, not
+  four typos. testis.js goes to the FRONT of the epi-pass claim-level
+  queue, every citation in the file, because the shuffle mechanism
+  does not respect the boundary of what the detector could detect.
+  CROSSCHECK EXTENDED same day (PMC via elink, doi via esearch[doi]):
+  141 records examined, the one unmappable id listed never silent;
+  the extension's first run treated as calibration per condition (8)
+  — stale-input and tag artifacts triaged, pipeline fixed, second run
+  read as evidence: 7 flags of 141, exactly the expected set (three
+  artifacts + the four held).
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell

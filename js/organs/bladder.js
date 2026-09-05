@@ -171,7 +171,7 @@ export const organDetail = {
 // `share` field reads as a histologic percentage — building two entries on a stage split would
 // have silently relabeled a stage as if it were a different cancer. And a real,
 // stage-INDEPENDENT trunk event exists and was sitting right there once looked for: TERT
-// promoter mutation (below) — Rachakonda et al. (PLoS ONE, 2013, PMC3808633, n=327): 65.4%,
+// promoter mutation (below) — Rachakonda et al. (PNAS, 2013, PMC3808633, n=327): 65.4%,
 // "with even distribution across different stages and grades," VERBATIM. RULING: one entry,
 // "Urothelial carcinoma," with a two-entry trunk (TERT promoter + a pathway-divergence status
 // entry) and FGFR3/TP53 assigned as branch genes at different sites — the same architectural

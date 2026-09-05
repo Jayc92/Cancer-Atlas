@@ -20,7 +20,7 @@
 # shaped data before any live scan is trusted; the live run additionally asserts its known
 # positives fire (the fragment record keys guarantee author-mismatch flags exist), so an
 # all-clean live scan is impossible unless the tool is broken — and then it says so.
-import json, re, sys, time, unicodedata, urllib.request
+import json, re, sys, time, unicodedata, urllib.parse, urllib.request
 
 def deaccent(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s or '')
@@ -99,21 +99,57 @@ def main():
             jr = e.get('journalOnLine') or e.get('journal')
             if jr in ('?',): jr = e.get('journal')
             work.append((e['pmid'], e['author'], e['year'], jr, e['refs'][0], e['status']))
-    doi_only = sum(1 for e in M['backfill']
-                   if e['status'] == 'backfilled' and not e.get('pmid') and e.get('doi'))
+    tomap = []   # (raw id, author, year, journal, ref) — PMC/doi ids needing a PMID mapping
     for r in v2:
-        for i in r.get('entryTimeIds', []):
-            if i.startswith('PMID:'):
-                work.append((i[5:], r['author'], r['year'], r['journal'], r['ref'],
-                             'entry-time(v2-source)'))
+        ids = r.get('entryTimeIds', [])
+        pm = [i for i in ids if i.startswith('PMID:')]
+        for i in pm:
+            work.append((i[5:], r['author'], r['year'], r['journal'], r['ref'],
+                         'entry-time(v2-source)'))
+        if not pm:
+            for i in ids:
+                tomap.append((i, r['author'], r['year'], r['journal'], r['ref']))
+    for e in M['backfill']:
+        if e['status'] == 'backfilled' and not e.get('pmid') and e.get('doi'):
+            tomap.append(('doi:' + e['doi'], e['author'], e['year'],
+                          e.get('journalOnLine') or e.get('journal'), e['refs'][0]))
+    # map PMC ids via elink (dbfrom=pmc) and dois via esearch [doi]; unmapped ids are
+    # REPORTED, never silently skipped — Rachakonda's find lived in exactly this class
+    unexamined = []
+    for raw, a, y, j, ref in tomap:
+        pmid = None
+        try:
+            if raw.startswith('PMC'):
+                u = ('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=pmc'
+                     f'&db=pubmed&id={raw[3:]}&retmode=json')
+                js = json.load(urllib.request.urlopen(u, timeout=25))
+                ls = js.get('linksets', [{}])[0].get('linksetdbs', [{}])
+                ids = ls[0].get('links', []) if ls else []
+                pmid = str(ids[0]) if len(ids) == 1 else None
+            elif raw.startswith('doi:'):
+                u = ('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed'
+                     f'&retmode=json&term={urllib.parse.quote(raw[4:])}%5Bdoi%5D')
+                js = json.load(urllib.request.urlopen(u, timeout=25))
+                ids = js['esearchresult'].get('idlist', [])
+                pmid = ids[0] if len(ids) == 1 else None
+            time.sleep(0.4)
+        except Exception:
+            pmid = None
+        if pmid:
+            kind = 'doi' if raw.startswith('doi:') else 'pmc'
+            work.append((pmid, a, y, j, ref, f'{kind}-mapped'))
+        else:
+            unexamined.append((raw, ref))
     seen, uniq = set(), []
     for w in work:
         k = (w[0], w[4])
         if k in seen: continue
         seen.add(k); uniq.append(w)
     pmids = sorted({w[0] for w in uniq})
-    print(f'{len(uniq)} identifier-carrying records ({len(pmids)} unique pmids; '
-          f'{doi_only} doi-only skipped this pass)')
+    print(f'{len(uniq)} identifier-carrying records ({len(pmids)} unique pmids)')
+    if unexamined:
+        print(f'UNEXAMINED (unmappable ids — not silent, listed): {len(unexamined)}')
+        for raw, ref in unexamined: print(f'    {raw} {ref}')
     es = {}
     for i in range(0, len(pmids), 150):
         chunk = pmids[i:i + 150]
