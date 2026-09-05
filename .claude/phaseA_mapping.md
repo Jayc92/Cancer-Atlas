@@ -46,13 +46,27 @@ magnitude half is illustrative by declaration, same discipline as the colour dow
 - **MAGNITUDE (illustrative):** falloff width, wall-thickening factor, mass count/size
   distribution.
 
-### 4. Stage-size — relative mass by stage
-- **CATEGORY (cited):** SEER Summary Stage categories (localized / regional / distant;
-  US-government public domain — never AJCC tables, which are copyrighted).
-- **MAGNITUDE (illustrative):** the radius scale per stage. Relative ordering is the
-  citable part (localized < regional extension); absolute radii are design.
-- **Renderer knob:** geometry radius (exists; `IcosahedronGeometry(r, 5)` at
-  main.js:497).
+### 4. Stage-EXTENT — how far the mass has gone (split 2026-09-05; SIZE demoted)
+- **THE SPLIT:** stage-size conflated two things and only one is freely sourceable.
+  SEER Summary Stage categorises EXTENT (in situ / localised / regional / distant) and
+  gives no tumour size; size-in-cm is T-category territory, and the T thresholds live
+  in AJCC — a licensed compilation whose tables cannot be reproduced (individual
+  thresholds are citable facts where a free source states them, but the compilation
+  isn't ours to render — and under this split we need neither).
+- **EXTENT IS THE PROPERTY** (the growth-pattern reframe again — render the
+  consequence, not the label; it also routes around the property set's one licensing
+  question): a mass confined within the organ, one breaching the capsule, one with
+  satellite deposits teaches what stage MEANS; "2cm vs 4cm" teaches a number.
+- **CATEGORY (cited):** SEER Summary Stage extent categories (US-government public
+  domain). Division of labour with the existing screens: the Explore tumour renders
+  LOCAL extent (in situ → localised → regional: containment / boundary breach /
+  satellite deposits); DISTANT spread stays the site map's job on its own screen.
+- **MAGNITUDE (illustrative):** radius, breach depth, satellite count/placement.
+  Radius keeps only extent-correlated ORDERING (in situ < localised < regional
+  footprint) — no cited centimetres anywhere.
+- **Renderer knobs:** geometry radius (exists); containment/breach relative to the
+  organ mesh (new expression, shares design space with infiltrative falloff and the
+  diffuse wall property).
 
 ## Provenance & disclosure
 - Citation records for the CATEGORY halves join `.claude/citations.json` as a Phase-A
@@ -62,6 +76,19 @@ magnitude half is illustrative by declaration, same discipline as the colour dow
   ILLUSTRATIVE OF CITED BEHAVIOUR, not measured from patients.
 - The lesion-vs-shadow gate INVERTS for this pass: the tumour is supposed to read as a
   lesion; the check becomes whether NORMAL tissue reads as diseased.
+
+## Idiom-collision rule (checked against code 2026-09-05)
+Multifocal (several independent PRIMARY foci) and the tumour site map (several blobs =
+SITES OF INVOLVEMENT) are different concepts that could share a visual idiom. Code
+check: the site map is a SEPARATE screen with its own viewer (`state.siteViewer`,
+`screenCancer`), organ-less, accent-coloured, and schematic by its own declaration
+(main.js:536: "four abstract blobs POSITIONED TO ENCODE A SPREAD PATTERN, not
+objects"; the aria-label says "coloured cell clusters"). RULE so the registers never
+converge: multifocal foci render ONLY in the gross-tissue register, attached to the
+organ mesh, tissue-coloured; site-map blobs render ONLY in the accent-schematic
+register, organ-less. Captions/aria must name the concept: "independent primary foci"
+vs "sites of involvement". If a future change puts both idioms on one screen, that is
+a design decision to take explicitly, not an accumulation.
 
 ## Pre-registered negative
 Some cancers may have no distinctive visual behaviour worth modelling. A generic mass
