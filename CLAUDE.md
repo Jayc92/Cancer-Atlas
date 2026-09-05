@@ -3199,15 +3199,29 @@ screen pair per organ:
   mechanism prose (~127 unread = the concentrated budget, six-state +
   scope-first + number-anchored searches); known-defective-on-screen
   = fix immediately regardless of migration (bucket empty today).
-  Uncited-but-unrefuted migrating figures ride until migration.
+  Uncited-but-unrefuted migrating figures ride until migration —
+  WITH AN EXPIRY (2026-09-05 amendment; a conditional status with no
+  review trigger quietly becomes unconditional, the exact annotation
+  failure shape): the ten figures with NO source at all (breast ×4,
+  ovary ×4, liver-iCCA, gmix clause B) sit on a dated watchlist
+  (manifest _uncited_migrating_watchlist, expiry 2026-10-17); if
+  Phase B hasn't landed by then they revert to source-or-remove and
+  get decided on their own merits.
 - **Phase A — tumour visual pass (first):** target is BEHAVIOURALLY
   correct, not anatomically correct (tumours have no canonical shape;
   chasing anatomical correctness produces a confident-looking lie).
   Four cited properties: site (pos3d, already modelled), margin
   character (spiculated/circumscribed/lobulated → sharpness/
-  spikeCount), growth pattern (exophytic/infiltrative/diffuse —
-  probably needs NEW expression; diffuse/linitis-plastica may be an
-  organ-wall property, not a blob: design before building),
+  spikeCount), growth pattern — NARROWED (2026-09-05, user): render
+  the CONSEQUENCE, not the pattern. Diffuse/linitis-plastica → a
+  thickened, rigid organ WALL (the one genuinely new expression);
+  exophytic → a mass protruding into a lumen (placement +
+  orientation, already parameterised); infiltrative → indistinct
+  boundary as a soft falloff at the tumour margin (the current
+  material can do it); multifocal → several small masses (already
+  how the site maps work). Three of four fall out of existing
+  machinery; the open question per cancer is WHICH consequence, and
+  the pre-registered negative applies to whatever doesn't map —
   stage-size (radius ← SEER Summary Stage). PREMISE VERIFIED in
   source 2026-09-05: organicSpiculate(geometry, {amplitude, freq,
   seed, spikeCount, spikeLength, sharpness}) at viewer.js:223, driven
