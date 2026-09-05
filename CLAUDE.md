@@ -4271,7 +4271,38 @@ screen pair per organ:
   OA-restricted — paywalled canonical; 4 sibling shares stay orphaned
   pending an alternative canonical); breast ×4 / kidneys ×3 / liver
   ×2 orphan queue; lungs/colon/pancreas/skin are web-source read
-  types, queued.**
+  types, queued.
+  QUALIFIER-PLACEMENT PRINCIPLE (user ruling, covers the remaining
+  ~80 items): placement follows BIAS vs PROVENANCE. A qualifier that
+  changes how the number should be read travels WITH the number,
+  inline — one row, or a screenshot of it, must not deliver a
+  conditioned figure as unconditioned (prostate's treated cohort;
+  bladder's four-type denominator). A where-and-when qualifier that
+  doesn't imply the number would differ elsewhere sits once per
+  family (brain). PREFER STATING THE DENOMINATOR TO HEDGING IT — the
+  PIK3CA move; stomach was already the good form. THYROID SECOND
+  LOOK: reclassified BIAS — SEER-9 1974–2013 spans the papillary-
+  microcarcinoma overdiagnosis wave and Lim's own headline is the
+  papillary-driven tripling across exactly that window, so the pooled
+  share mixes eras; inline. Bonus catch: the deaths figure runs on a
+  DIFFERENT window (2,371 deaths, 1994–2013) — the anaplastic row now
+  carries two windows, one per clause. ALL 14 EDITS APPLIED (bladder
+  ×4 denominator-stated, prostate ×5 treated-conditioned, brain ×1
+  anchor provenance, thyroid ×4 inline + deaths split). The medium/
+  low grading mapped onto bias-vs-provenance exactly.
+  THE BLADDER DEMONSTRATION — recorded as the answer to "why not just
+  verify the figures": the durability pass verified Park's counts
+  verbatim, the M1a re-read verified them verbatim again — figure-
+  checking passed the claim cleanly, TWICE — and scope-first caught
+  the four-type denominator presented as exhaustive. A demonstration,
+  not an argument: number-matching gives false assurance on claims
+  already marked checked; the population the number describes is
+  where the defects live.
+  THE DIRECTION, AS A CONCLUSION: across ~50 claims read, not one has
+  turned out narrower than its source — compression toward the
+  general, qualifiers dropped never added, a durable property of how
+  the atlas was authored. A narrower-than-source claim is anomalous:
+  investigate it.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
