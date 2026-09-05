@@ -27,6 +27,7 @@ SYNC = [
     ('_direction_conclusion',           'CLAUDE.md',                 'THE DIRECTION'),
     ('_phaseA_citations',               '.claude/phaseA_mapping.md', 'GROSS-SPECIMEN'),
     ('_phase2_rescope',                 'CLAUDE.md',                 'EPI-PASS RE-SCOPE'),
+    ('_ccf_read_addendum',             'CLAUDE.md',                 'CERTAINTY-DRIFT'),
 ]
 
 def check(manifest, files):
