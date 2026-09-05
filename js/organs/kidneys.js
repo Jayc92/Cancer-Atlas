@@ -20,9 +20,9 @@ export const cancerEntries = [
   // Cancer names/ids are never searched (see the Kidneys ORGANS comment), so this wouldn't be
   // a functional collision either way, but a shared id would break regionCellCache/panel state
   // if a user ever had both cancer screens loaded in the same session's history.
-  { id:'ccrcc', name:'Clear cell renal cell carcinoma',  share:'~75–80% of renal cell carcinomas', active:true,  organKey:'kidneys' },
-  { id:'prcc',  name:'Papillary renal cell carcinoma',   share:'~15% of renal cell carcinomas',    active:false, organKey:'kidneys' },
-  { id:'chrcc', name:'Chromophobe renal cell carcinoma', share:'~5% of renal cell carcinomas',      active:false, organKey:'kidneys' },
+  { id:'ccrcc', name:'Clear cell renal cell carcinoma',  share:'~75% of renal cell carcinomas (Li &amp; Kaelin, Hematol Oncol Clin North Am, 2011)', active:true,  organKey:'kidneys' },
+  { id:'prcc',  name:'Papillary renal cell carcinoma',   share:'~15% of renal cell carcinomas (Li &amp; Kaelin, 2011)',    active:false, organKey:'kidneys' },
+  { id:'chrcc', name:'Chromophobe renal cell carcinoma', share:'~5% of renal cell carcinomas (Li &amp; Kaelin, 2011)',      active:false, organKey:'kidneys' },
 ];
 
 // Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
