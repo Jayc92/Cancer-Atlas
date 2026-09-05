@@ -16,10 +16,10 @@ export const cancerEntries = [
   // NCI PDQ subtype breakdown. SCLC is deliberately listed even though it's not a subtype of
   // NSCLC at all — a wholly separate category — same reasoning as HGSOC's list including the
   // non-serous ovarian subtypes: completeness matters more than only showing what's active.
-  { id:'luad',  name:'Adenocarcinoma',            share:'~40% of NSCLC',                 active:true,  organKey:'lungs' },
-  { id:'lusc',  name:'Squamous cell carcinoma',   share:'~25–30% of NSCLC',              active:false, organKey:'lungs' },
-  { id:'lcc',   name:'Large cell carcinoma',      share:'~10% of NSCLC',                 active:false, organKey:'lungs' },
-  { id:'sclc',  name:'Small Cell Lung Cancer',    share:'~15% of all lung cancers — a separate category from NSCLC entirely', active:false, organKey:'lungs' },
+  { id:'luad',  name:'Adenocarcinoma',            share:'~40% of all lung cancers (NCI PDQ)',                 active:true,  organKey:'lungs' },
+  { id:'lusc',  name:'Squamous cell carcinoma',   share:'~25% of all lung cancers (NCI PDQ)',              active:false, organKey:'lungs' },
+  { id:'lcc',   name:'Large cell carcinoma',      share:'~10% of all lung cancers (NCI PDQ)',                 active:false, organKey:'lungs' },
+  { id:'sclc',  name:'Small Cell Lung Cancer',    share:'~15% of all lung cancers (NCI PDQ) — a separate category from NSCLC entirely', active:false, organKey:'lungs' },
 ];
 
 // Real anatomy, not procedural — and, unlike every other real-scan organ in this app, NOT from
