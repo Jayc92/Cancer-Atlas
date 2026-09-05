@@ -4207,7 +4207,37 @@ screen pair per organ:
   reported, not edited (content changes need the go; each has a
   TCGA-verifiable form). Attaching TCGA to all four would have
   manufactured three confident wrong attributions — the no-shopping
-  guard doing exactly its job on the cheapest items in the queue.**
+  guard doing exactly its job on the cheapest items in the queue.
+  ALL THREE TCGA FORMS ADOPTED AND APPLIED (2026-09-04, on the go):
+  ovary CCNE1 → "amplified in >20% of HGSOC tumors (TCGA, Nature,
+  2011)" — when an uncited figure disagrees with the canonical
+  source, THE FIGURE MOVES; hunting a source that endorses the
+  already-written number is citation-shopping in reverse. Breast →
+  "BRCA1/2 alteration ... ~20% of basal-like tumors (TCGA, Nature,
+  2012)" — the serious one: TNBC and basal-like are NOT synonyms (one
+  immunohistochemical, one gene-expression intrinsic; different
+  instruments), so presenting a basal-like measurement as a TNBC rate
+  was a CATEGORY SUBSTITUTION, not a rounding; the note's TNBC
+  mention corrected too, so the substitution doesn't survive in
+  prose. Breast PIK3CA → "~9% of basal-like tumors, against 39% in
+  HER2-enriched (TCGA, Nature, 2012)" — the re-label makes the
+  sentence BETTER, not merely correct: it was always a subtype
+  comparison with one side mislabeled "overall", and now both sides
+  say what the source measured.
+  THE DIRECTION (user ruling, the sharper instrument): all SEVEN
+  defects so far drift the same way — 15–20% for >20%; TNBC for
+  basal-like; BRCA1 for BRCA1/2 (one gene as a family); "overall" for
+  HER2-enriched; Paly's cohort; kidneys' sporadic; testis's registry.
+  Seven for seven, every one stating the finding MORE BROADLY than
+  the source supports. Uncited figures and scope drifts share one
+  mechanism: paraphrase toward the general — compression drops
+  qualifiers rather than adding them. The M1a scope question is
+  therefore not "does this match" but "IS THIS STATED MORE BROADLY
+  THAN WHAT WAS MEASURED": a subtype as overall, a cohort as a
+  population, a gene as a family, a registry as the world. COROLLARY:
+  a claim NARROWER than its source is surprising and gets a second
+  look rather than a pass. All ten uncited-figure items now resolved:
+  6 cited-nearby, 1 re-sourced, 3 adjusted-to-verified.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
