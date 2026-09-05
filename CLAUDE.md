@@ -3167,7 +3167,83 @@ screen pair per organ:
   reached by possibly-blind searches recovered LIVASY (fractions were
   in the abstract all along — the van der Kaaij shape caught before
   hardening) and converted Brenner/Guichard/Peres pendings from
-  assumed to instrument-verified.
+  assumed to instrument-verified. MECHANISM SEPARATED (2026-09-05,
+  user): Livasy's actual miss was PHRASE-form blindness — the window
+  anchored on the ATLAS's phrasing sampled past the answer; the
+  atlas's wording is not the source's wording, which is why scope
+  drift exists as a class. METHOD INVERSION adopted: ANCHOR ON THE
+  NUMBER, NOT THE PHRASE (numbers have a tiny form space; phrases
+  have dozens of paraphrases) — find the figure first, then read the
+  sentence around it. Capability port: atlas-phrase-zero → test any
+  distinctive term; none = wrong document, some = wrong phrase, go
+  read. BOUND: phrase blindness produces false negatives only, so
+  verified-quoted verdicts are safe; the exposed population was the
+  negatives, re-passed and closed 2026-09-05 — zero verdicts rest on
+  phrase-form assumptions.
+
+# Phase 2 roadmap (2026-09-05, user-authored; decisions TAKEN)
+
+- **Decisions:** breadth to ~120 cancers (NCI A–Z scope); content
+  PULLED from maintained sources (NCI PDQ, SEER, ClinicalTrials.gov
+  v2 API, WHO classification as hand-mapped taxonomy) rather than
+  hand-transcribed; tumour visual pass first. Rationale: every defect
+  class this project found — scope drift, denominator transplants,
+  attribution errors — is a COPY error; remove the copy and the class
+  goes with it. The atlas's unique value becomes "renders the
+  authoritative data correctly + shows the anatomy + the hand-written
+  mechanism prose no API supplies" — and the verification discipline
+  CONCENTRATES on that prose rather than thinning across everything.
+- **EPI-PASS RE-SCOPE (executed 2026-09-05, same day):** migrating =
+  55 share clauses (~19 unread RETIRED, incl. every remaining orphan
+  hunt); not-migrating = 156 ccf clauses + histology + anatomy + all
+  mechanism prose (~127 unread = the concentrated budget, six-state +
+  scope-first + number-anchored searches); known-defective-on-screen
+  = fix immediately regardless of migration (bucket empty today).
+  Uncited-but-unrefuted migrating figures ride until migration.
+- **Phase A — tumour visual pass (first):** target is BEHAVIOURALLY
+  correct, not anatomically correct (tumours have no canonical shape;
+  chasing anatomical correctness produces a confident-looking lie).
+  Four cited properties: site (pos3d, already modelled), margin
+  character (spiculated/circumscribed/lobulated → sharpness/
+  spikeCount), growth pattern (exophytic/infiltrative/diffuse —
+  probably needs NEW expression; diffuse/linitis-plastica may be an
+  organ-wall property, not a blob: design before building),
+  stage-size (radius ← SEER Summary Stage). PREMISE VERIFIED in
+  source 2026-09-05: organicSpiculate(geometry, {amplitude, freq,
+  seed, spikeCount, spikeLength, sharpness}) at viewer.js:223, driven
+  today by constants + idx-seed at main.js:497 — the pass is
+  re-pointing existing knobs at cited behaviour, not a new renderer.
+  New citation class (4 properties × cancers), sourced under the NEW
+  model. Gates: lesion-vs-shadow INVERTED (does normal tissue read as
+  diseased?), regress, P3 framing checks. PRE-REGISTERED NEGATIVE:
+  some cancers have no distinctive visual behaviour — a generic mass
+  with an honest label beats an invented characterisation.
+- **Phase B — integration architecture:** build-time vs runtime is
+  the shaping decision; likely BUILD-TIME for statistics (frozen,
+  auditable, detector-checkable) and RUNTIME for trials (they change
+  weekly). Provenance schema redesign: field ← endpoint ← retrieval
+  date ← discipline. One integration verified thoroughly beats two
+  thousand transcriptions — but only if the contract is explicit.
+  Conditions (1)–(8) + run_checked govern integrations from birth.
+- **Phase C — breadth to ~120:** two early decisions — each new
+  organ is an asset hunt under the licence playbook (the expensive
+  half of Phase 1; some will end in documented negatives), and BLOOD
+  CANCERS (~10% of incidence) break organ-centric navigation
+  entirely: leukaemia cannot be clicked; a second navigation model
+  (system / cell lineage / parallel entry) is a design decision to
+  take before it forces itself.
+- **Phase D — staging + trials:** SEER Summary Stage (US-gov public
+  domain), NOT AJCC (copyrighted; describe its existence, link, never
+  reproduce the tables). TRIALS carry a different duty of care:
+  eligibility is not conveyable (the UI must not imply a listed trial
+  is available to the reader); no endorsement, no ranking by apparent
+  promise — neutral order, stated; THE HANDOFF IS THE POINT (a reader
+  arriving at their oncologist with informed questions, said on the
+  page). Framing designed BEFORE the integration.
+- **Sequencing:** re-scope (done) → A → B → C∥D. Detector survival:
+  rendered-output checks (fraction/share-sum/duplicate) persist and
+  matter MORE under pulled content; citation checks shrink to the
+  hand-written residue.
   (8) Adopted at the attribution ruling (2026-09-04), converting a
   three-time discovery into the default: A NEW DETECTOR'S FIRST RUN IS
   INSTRUMENT CALIBRATION, NOT FINDINGS. Three first runs, three piles
