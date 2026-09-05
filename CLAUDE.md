@@ -3144,7 +3144,18 @@ screen pair per organ:
   A TRUSTWORTHY RUN — only HEAD ships; one green run at HEAD is the
   whole remedy. The irony one layer deep: a battery of self-testing
   instruments, all of which could have been reporting nothing while
-  appearing to report clean.
+  appearing to report clean. MECHANIZED same day (the consumption rule
+  was a habit, and a rule that depends on remembering to apply it is
+  exactly what failed the first time): .claude/run_checked.sh wraps
+  every tool invocation, requires the tool's DONE marker, and exits
+  non-zero when it is absent — the vacuous run fails the invocation
+  itself. Condition-(7) three-arm self-test at birth (rejects
+  exit-0-without-marker, accepts marker-printing runs, propagates
+  non-zero exits); verified live against the real tools (crashed
+  regress → exit 1 through the wrapper; vacuous run → exit 3). Six
+  call sites, one wrapper, invocation forms in its header. Structural
+  check rather than standing note — (7-bis) now on the right side of
+  this project's own line.
   (8) Adopted at the attribution ruling (2026-09-04), converting a
   three-time discovery into the default: A NEW DETECTOR'S FIRST RUN IS
   INSTRUMENT CALIBRATION, NOT FINDINGS. Three first runs, three piles
