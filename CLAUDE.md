@@ -3155,7 +3155,19 @@ screen pair per organ:
   regress → exit 1 through the wrapper; vacuous run → exit 3). Six
   call sites, one wrapper, invocation forms in its header. Structural
   check rather than standing note — (7-bis) now on the right side of
-  this project's own line.
+  this project's own line. EXTENDED TO READ METHODS (2026-09-05, the
+  Curtin catch — the first non-tool instance): a numeral-only percent
+  grep reported zero on an abstract containing four spelled-out
+  percentages ("Eighty-one percent"). A search returning nothing must
+  be shown capable of returning something in that document
+  (.claude/figure_search.py: three forms — numerals, spelled
+  cardinals, worded fractions — plus has_any_figure as the capability
+  check; zero quantitative tokens in a quantitative abstract indicts
+  the pattern, not the paper). The re-check of every pending verdict
+  reached by possibly-blind searches recovered LIVASY (fractions were
+  in the abstract all along — the van der Kaaij shape caught before
+  hardening) and converted Brenner/Guichard/Peres pendings from
+  assumed to instrument-verified.
   (8) Adopted at the attribution ruling (2026-09-04), converting a
   three-time discovery into the default: A NEW DETECTOR'S FIRST RUN IS
   INSTRUMENT CALIBRATION, NOT FINDINGS. Three first runs, three piles
