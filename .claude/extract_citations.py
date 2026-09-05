@@ -39,7 +39,7 @@ JOURNAL_LEX = {'j','am','int','proc','natl','acad','sci','eur','engl','med','nat
  'cancers','oncology','nature','science','cell','lancet','nejm','jama','bmj','plos','pnas',
  'jco','cureus','biomedicines','neoplasia','histopathology','gut','blood','virchows','acta',
  'world','journal','of','the','communications','insight','statpearls','seer','who',
- 'oncotarget','front','frontiers','expert','seminars','current','trends','jci'}
+ 'oncotarget','front','frontiers','expert','seminars','current','trends','jci','radiother','radiotherapy'}
 
 def looks_like_journal(seg):
     seg = seg.strip(' ,;:')

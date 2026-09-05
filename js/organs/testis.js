@@ -31,7 +31,7 @@ export const cancerEntries = [
   // death-share alongside its incidence-share the same way) — but the more important fact here
   // is the cure-rate story: cisplatin-based chemotherapy (BEP) cures the overwhelming majority
   // of seminoma even once it has spread, and there is no poor-prognosis tier for it at all under
-  // the IGCCCG system used to risk-stratify metastatic germ cell tumors (Beyer et al., Ann Oncol,
+  // the IGCCCG system used to risk-stratify metastatic germ cell tumors (Beyer et al., J Clin Oncol,
   // 2021 update, PMID 33729863, PMC8099394, 2,451 men): 5-year overall survival is 95% for the
   // good-prognosis group and 88% for intermediate — categories that, for every other cancer in
   // this atlas, would already be considered excellent outcomes for metastatic disease — and the
@@ -146,15 +146,15 @@ export const organDetail = {
 // and Prostate (76.5% multifocal, verified) each earned a departure against a hard number seminoma
 // does not clear. What IS real and worth encoding is the ORDER — done through pos3d (caudal to
 // cranial, see below) and prose, not through new schema.
-// SOURCES, verified directly: Paly et al. (J Urol, 2013, PMID 23321493; 145 involved nodes across
-// 90 patients with isolated nodal relapse) is the primary quantified anchor for WHERE seminoma's
+// SOURCES, verified directly: Paly et al. (Radiother Oncol, 2013, PMID 23321493; 145 involved nodes
+// across 90 patients with infradiaphragmatic adenopathy) is the primary quantified anchor for WHERE seminoma's
 // nodal disease actually sits: 84% para-aortic, 9% common iliac, 7% pelvic, and 99% of all
 // involved nodes fell within 2.5cm of the aorta below the T12/L1 disc space — a strikingly tight,
 // predictable landing zone, which is WHY radiotherapy planning for seminoma can use a fixed field
-// at all. Zeng et al. (Front Oncol, 2025, PMID 39977396) adds the laterality rule (left-sided
+// at all. Zeng et al. (J Urol, 2025, PMID 39977396) adds the laterality rule (left-sided
 // primaries drain to para-aortic nodes, right-sided to interaortocaval — respected in this
 // region's own note without inventing a numeric split this atlas doesn't need) and the real
-// contralateral-microscopic-spread figure (6-11.1%). Wood et al. (J Urol, 1996, PMID 8617040)
+// contralateral-microscopic-spread figure (6-11.1%). Wood et al. (Clin Radiol, 1996, PMID 8617040)
 // is the source for the CONTIGUOUS, ORDERED character of spread — quoted directly: "The
 // contiguous nature of disease spread from abdomen to chest and neck in seminoma is confirmed" —
 // used here only for that qualitative, ordering claim, not for a specific percentage at each

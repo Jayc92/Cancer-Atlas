@@ -4037,7 +4037,48 @@ screen pair per organ:
   error. ALL FOUR identifiers demonstrably belong to their claims;
   the four journal labels are ordinary attribution errors, the signal
   the hold protected is fully consumed, and the one-word fixes await
-  the go.**
+  the go.
+  GO GIVEN — ALL FIVE ATTRIBUTION FIXES APPLIED (2026-09-04): the
+  testis four (Beyer → J Clin Oncol, Paly → Radiother Oncol, Zeng →
+  J Urol, Wood → Clin Radiol) join Rachakonda; every fix
+  detector-validated — the post-fix crosscheck reports exactly the
+  three known artifacts and ZERO genuine flags (3 of 141). THE HOLD
+  IS DISCHARGED, recorded as such rather than marked done: it existed
+  to stop a one-word fix erasing the question of whether the
+  identifiers belonged to their claims, and reading all four claims
+  answered it. USER SELF-CORRECTION recorded with its shape named:
+  the displacement read was SAMPLING ON THE DEPENDENT VARIABLE — a
+  mechanism inferred from the flagged records, which are precisely
+  the records surfaced because something was wrong with them; a
+  pattern inside a non-random sample doesn't generalise to the file.
+  The full ordered map was the right instrument BECAUSE it included
+  the unflagged records, where a real displacement would also have
+  left traces. Same family as the +1 offset: a tidy pattern from
+  partial data, dissolved by widening the aperture.
+  SIXTH OUTCOME STATE, by user amendment (the contract's own rule — a
+  real case forced it): VERIFIED-FIGURE-SCOPE-DRIFT — every figure
+  verbatim, citation sound, but the claim attaches the figures to a
+  narrower or different population than the source measured;
+  consequence differs from all five: no citation action, a COPY EDIT
+  to the surrounding text. Born from Paly ("isolated nodal relapse"
+  vs the paper's "infradiaphragmatic adenopathy"), which survived a
+  line whose own header says "SOURCES, verified directly". It is a
+  state, not a footnote, because (a) it is invisible to the obvious
+  reading method — find-the-figure verification passes every scope
+  overstatement, and the calibration batch went 4/4 on figures while
+  1 of 4 carried this defect: a 25% miss rate for a number-matching
+  reader on the batch chosen to calibrate the method; and (b) it is
+  the likely-common class — compressing a study population into a
+  tidier phrase is exactly what happens writing UI copy, and
+  compression pressure peaks on-screen, so M1 is where it should be
+  most frequent. CALIBRATION LESSON: verify the population and scope
+  descriptor alongside the figure — not "does 84% appear" but "does
+  84% describe the thing this sentence says it describes". Paly's
+  copy edit applied (the state's first discharge, using the paper's
+  own descriptor). NO PRIOR INTO M1: the 4/4 batch is a biased sample
+  (records already known defective on attribution) — it says the
+  journal errors were isolated to labels, it does not predict the M1
+  rate.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
