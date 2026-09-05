@@ -4125,7 +4125,47 @@ screen pair per organ:
   ON THE OLD PASS'S METHOD: Livasy, under a HISTOLOGY
   "verified directly" header, has all four quoted phrases verbatim in
   the abstract while its fractions live in the body — consistent with
-  quote-checking without figure-checking.**
+  quote-checking without figure-checking.
+  M1 SPLIT + BATCH 2 (2026-09-04, user rulings after the 336-item
+  census). M1a = 51 shares + 51 facts (102 items, the real
+  milestone). M1b CENSUS: the two populations are OPPOSITE — ccf
+  strings are statistics (105/116 cited, 1 plain and it's an honest
+  no-figure disclaimer) and JOIN the claim-read queue; feature labels
+  are descriptive (107/118 plain morphology under the block-level
+  HISTOLOGY citations, ~11 with own figures) and belong to the
+  annotation sub-batch's vocabulary. Effective statistical surface
+  ≈ 229 items.
+  BATCH 2 TRANCHE (evidence batch, PMC full-text equipment): four of
+  the seven pending figures resolve VERIFIED-QUOTED at full text —
+  Fontugne "251 (76.5%) had multifocal tumors" of 328 RPs; Waddell
+  "31% for SMAD4 (9 structural variants and 22 mutations)"; Cichorek
+  "ratio of melanocytes to keratinocytes is 1:10 in the epidermal
+  basal layer"; Zhuang "1,116 (51%) with lung metastasis" of 2,197.
+  Brenner and Guichard are OA-RESTRICTED in PMC and Livasy has no
+  PMC: the batch's three legitimate unverifiable-by-access candidates
+  at current equipment (recorded provisional — PMC route exhausted,
+  publisher routes not attempted; claims stand). SCOPE RE-CHECKS
+  (user rule: batch-1 FIGURES found in abstracts stand and are not
+  re-read; SCOPES were provisional by construction because
+  populations live in methods): Moore's full text CONFIRMS sporadic
+  (507 sporadic RCC / 470 ccRCC) — copy-edit applied, kidneys ccf now
+  says "sporadic clear cell renal cell carcinoma"; Rosty and
+  Rachakonda scope-ok; Katyal/Hahn/Allory remain provisional (no OA
+  text; abstract-level scope consistent). The staged testis edit
+  applied with batch-2 confirmation: the share now reads
+  "22,634/35,066 in a German 2003–2014 registry". BOOKKEEPING RULE:
+  verified-quoted carries sectionsConsulted — the verdict records its
+  real strength, not its specified one, same as fieldsChecked.
+  HYPOTHESIS SAMPLE RESULT (deliberate test): reachable figures under
+  "verified directly" headers went 4/4 CORRECT (Cichorek, Waddell,
+  Hahn, Rosty); quotes verbatim everywhere tested; the one known
+  defect in the population remains a SCOPE DESCRIPTOR (Paly). The
+  "quote-checked not figure-checked" diagnosis is NOT supported by
+  figure failures — the demonstrated gap class is scope descriptors.
+  REVISED SUB-BATCH INSTRUCTION: under verified headers read
+  SCOPE-FIRST with figure spot-checks — inverting the original
+  check-figures-skip-quotes plan. Sample is small (4 reachable
+  figures): second sample before generalising, per condition (8).**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell

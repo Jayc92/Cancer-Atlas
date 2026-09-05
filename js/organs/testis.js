@@ -37,7 +37,7 @@ export const cancerEntries = [
   // this atlas, would already be considered excellent outcomes for metastatic disease — and the
   // "poor prognosis" category the IGCCCG system defines for other germ cell tumors simply has no
   // seminoma members: every seminoma patient starts in good or intermediate risk.
-  { id:'seminoma', name:'Seminoma', share:'~64.5% of testicular germ cell tumors (22,634/35,066, PMID 31310057) — and even once metastatic, there is no poor-prognosis risk category for it at all: 5-year survival is 95% (good-risk) or 88% (intermediate-risk) under the IGCCCG system (Beyer et al., 2021 update, n=2,451)', active:true, organKey:'testis' },
+  { id:'seminoma', name:'Seminoma', share:'~64.5% of testicular germ cell tumors (22,634/35,066 in a German 2003–2014 registry, PMID 31310057) — and even once metastatic, there is no poor-prognosis risk category for it at all: 5-year survival is 95% (good-risk) or 88% (intermediate-risk) under the IGCCCG system (Beyer et al., 2021 update, n=2,451)', active:true, organKey:'testis' },
   { id:'nsgct',     name:'Non-seminomatous germ cell tumor', share:'~35.5% of testicular germ cell tumors (12,432/35,066) — embryonal carcinoma, yolk sac tumor, choriocarcinoma, teratoma, or a mixture of these with seminoma', active:false, organKey:'testis' },
 ];
 
