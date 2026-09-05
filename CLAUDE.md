@@ -3234,6 +3234,110 @@ screen pair per organ:
   verbatim). Append-only by construction: no amend, no rebase, no
   force — the archive-immutability rule is not this tool's to bend,
   and it does not have the flags to try.
+  DEPLOY GATE (.claude/deploy_check.js): the THIRD layer, and the only
+  one that verifies what users actually load. THE CHAIN IS local green
+  → HEAD green → DEPLOYED green, and the third diverges from the other
+  two INDEPENDENTLY — a build failure, a CDN cache, propagation lag, a
+  file that pushed but did not publish. On 4b2c8c5 the live site served
+  a dead app and no instrument noticed; it was found by inference,
+  mid-investigation, hours later, while both other gates would have
+  read green. Three questions only the deployed origin can answer:
+  PUBLISHED (hash-compare every text asset against the HEAD BLOBS, not
+  the working tree — a dirty tree is not supposed to be live; this is
+  the layer that catches pushed-but-not-published and a stale cache,
+  neither of which touches the repo), INITIALISES (femaleBodyGroup /
+  maleBodyGroup present, hotspots > 0 — the 4b2c8c5 shape is a page
+  that parses as HTML and is dead as an app), CLEAN (zero page errors
+  beyond a DECLARED benign set, currently one entry: the favicon 404).
+  Deliberately POST-PUSH — there is nothing to check before the push —
+  and re-runnable any time to re-confirm production is still up.
+  THE ECHO CORRELATION, the one place it excuses an event it cannot
+  read: Chrome reports a failed request twice, once as a response event
+  carrying the URL and once as a console line that does NOT ("Failed to
+  load resource: ... status of 404 ()"). Matching that text by pattern
+  would swallow every 404's echo INCLUDING A MISSING JS MODULE — the
+  benign list widening silently, which its own arm 2 forbids. So the
+  echo is benign IFF every HTTP>=400 response observed was itself
+  declared benign; one undeclared 404 and the echo is a finding again.
+  Condition (7), nine arms, including two that exist because the first
+  ones passed for the wrong reason: the blank-page arm exits at the
+  unreachable-module branch and never touches the MISSING branches, so
+  a separate arm asserts the 4b2c8c5 shape (loaded page, null state)
+  reports all three. AN ARM THAT FAILS FOR THE WRONG REASON IS NOT A
+  CAPABILITY CHECK FOR THE RIGHT ONE.
+
+## ABSENCE-CLAIM instrument (2026-09-05, user-directed; ninth in the battery)
+
+- **The rule in two words (user): "exists" versus "found".** An
+  UNSCOPED absence claim asserts a fact about the world's literature —
+  "no canonical figure EXISTS", "no interaction analysis HAS FLAGGED
+  it", "no functional study HAS ADJUDICATED". Its instrument is an
+  unrecorded literature search with no query, no scope and no date, so
+  it is a zero-reporting check that cannot be shown capable of
+  non-zero: **condition (7) exactly**, in the form already extended to
+  cover human annotations. A SCOPED claim asserts a search outcome or a
+  dataset fact — "no clean population-level frequency WAS FOUND to cite
+  here", "zero samples IN THE GENIE COHORT" — and the second is a
+  downgrade of the first, which is always available and always
+  preferable to a weak substitution.
+- **Why mechanized rather than noted (user):** the atlas produced the
+  bad form at a HIGHER rate than the good one (4 defective vs 3
+  correct at the time of the ruling), every new note is an opportunity
+  to write another, and the corpus is heading from 16 entries to ~120.
+  Same reasoning as fraction_check: **the population is created by the
+  editing, not just found in it.**
+- **THREE exemptions, all real instances.** SOURCE-ATTESTED (a named
+  source is QUOTED attesting the absence, so the claim is cited rather
+  than the atlas's own unrecorded search — pancreas.js:208 quotes the
+  site-frequency source saying the site "is not detailed in the SEER
+  database"; requires a quotation ≥20 chars plus a citation, and the
+  length floor is the discriminator because an attestation is
+  sentence-length while a term of art is a word or two).
+  SELF-EVIDENCING (colon.js:210 says no canonical figure exists and
+  then prints three divergent sourced figures; the dispersion IS the
+  support). REASON-GIVING (stomach.js:231 states WHY, which is
+  checkable). The REASON connective was deliberately tightened to
+  explicit causals — an earlier draft accepted a bare em-dash, which
+  ordinary atlas prose contains constantly: **a loose exemption is
+  worse than no exemption, because it fails silently in the passing
+  direction.**
+- **Condition (8) earned its keep on the FIRST run, in both
+  directions.** The calibration scan reported 7 sites where hand-reading
+  had found 5. One (thyroid.js:263) was a real defect a neighbouring
+  clause had laundered. The other (pancreas.js:208) was CORRECT CONTENT
+  IN AN UNRECOGNISED FORM, and reading it is what produced the
+  source-attested class — a better rule than the reason connective I
+  would otherwise have widened. **A first run finds defects the reader
+  missed AND exemptions the instrument missed, and the second kind is
+  what teaches you the taxonomy.**
+- **NEITHER GRANULARITY IS SAFE ALONE, and finding that out cost a
+  second read.** Fine clauses fix LAUNDERING (a scoped clause shielding
+  an unscoped one beside it). But English spells a list comma and a
+  clause comma with the same character, so splitting on commas SEVERS
+  the negation from its predicate across a list: "No conflict with
+  CDH1, RHOA, or the fusion IS DOCUMENTED." is a textbook unscoped
+  claim and the fine split reports NONE on it — a false clean, the
+  direction that matters, and **my own remediation then walked straight
+  into it.** So the gate runs BOTH granularities and takes the WORSE
+  verdict. The cost is over-flagging when an unrelated negation and
+  existence verb share a sentence; that costs a read, and a read is the
+  cheap error.
+- **What it does not claim.** liver.js:243 is not in its output and
+  should not be: that sentence IS scoped ("the most recent large SEER
+  analysis found for this organ"). Its defect was FACTUAL — it said the
+  study didn't examine lymph nodes when the study EXCLUDES lymph-node
+  patients by design — and a lexical instrument cannot reach that.
+  The rephrase is also **the third time a drift fix produced better
+  copy than it replaced** (user): "a study that excludes lymph-node
+  patients by design cannot corroborate or revise Katyal's 41%" is a
+  sharper reason than "didn't study it", and it is what the source
+  actually supports.
+- **Capability check on files, not fixtures:** the same instrument
+  reports 6 defects against the HEAD tree and 0 against the remediated
+  one. The fixtures ARE the real instances, so a clean live run is weak
+  evidence of generality — tuning against known answers is sampling on
+  the dependent variable. Its real job is REGRESSION INSURANCE on notes
+  not yet written; **read its second run, not its first.**
 
 # Phase 2 roadmap (2026-09-05, user-authored; decisions TAKEN)
 

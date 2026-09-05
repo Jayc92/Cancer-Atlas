@@ -20,3 +20,10 @@ logs/
 *~
 .idea/
 .vscode/
+
+# Python bytecode. Two .pyc files were committed by accident and then went stale, which
+# leaves the working tree permanently dirty and masks real changes in `git status` — the
+# signal several gates here read. The instruments are the .py files; the .pyc is a build
+# artefact of running them.
+__pycache__/
+*.pyc

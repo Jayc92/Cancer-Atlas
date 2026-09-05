@@ -29,6 +29,8 @@ SYNC = [
     ('_phase2_rescope',                 'CLAUDE.md',                 'EPI-PASS RE-SCOPE'),
     ('_ccf_read_addendum',             'CLAUDE.md',                 'CERTAINTY-DRIFT'),
     ('_parse_gate',                     'CLAUDE.md',                 'PARSE GATE'),
+    ('_absence_claim_check',            'CLAUDE.md',                 'ABSENCE-CLAIM instrument'),
+    ('_deploy_gate',                    'CLAUDE.md',                 'DEPLOY GATE'),
 ]
 
 def check(manifest, files):

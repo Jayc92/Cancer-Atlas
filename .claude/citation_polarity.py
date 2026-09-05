@@ -19,7 +19,7 @@
 # Usage:
 #   python3 .claude/citation_polarity.py --selftest
 #   python3 .claude/citation_polarity.py <records.json>   # prints per-record window verdicts
-import json, re, sys
+import json, re, sys, os, tempfile
 
 MARKERS = {
     'negated': [
@@ -104,16 +104,34 @@ if __name__ == '__main__':
         print('refusing to scan with a failing self-test (condition 7)'); sys.exit(1)
     recs = json.load(open(sys.argv[1]))
     from collections import Counter
+
+    # SCHEMA ADAPTER, and the reason it is needed is itself a finding: this tool was written
+    # against the v1 extractor, which emitted a LIST 'refs'. The validated v2 extractor emits a
+    # single 'ref', so this instrument has been UNRUNNABLE since extraction v2 landed — it died
+    # with a KeyError before printing anything. That is the same half-landed-change shape
+    # record_sync_check.py was built for, one layer down: a two-part contract where one part
+    # moved. It surfaced only because run_checked.sh requires the DONE line, so a dead instrument
+    # cannot be mistaken for a clean one. Accepts both schemas so v1 archives still scan.
+    def ref_of(r):
+        return r['ref'] if 'ref' in r else r['refs'][0]
+
     out = []
     for r in recs:
-        f, ln = r['refs'][0].rsplit(':', 1)
+        ref = ref_of(r)
+        f, ln = ref.rsplit(':', 1)
         status, hits = classify_window(window_for(f, int(ln)))
-        out.append({'author': r['author'], 'year': r['year'], 'ref': r['refs'][0],
+        out.append({'author': r['author'], 'year': r['year'], 'ref': ref,
                     'window': status, 'markers': hits})
         if status != 'clean':
-            print(f"  {status:18} {r['author']:<14} {r['year']} {r['refs'][0]} "
+            print(f"  {status:18} {r['author']:<14} {r['year']} {ref} "
                   f"{sorted(set(sum(hits.values(), [])))[:2]}")
     print('SCAN:', dict(Counter(x['window'] for x in out)))
-    json.dump(out, open('/tmp/atlas-verify/cite/polarity_scan.json', 'w'), indent=1)
+    # The scan artefact went to a hardcoded scratch dir that no longer exists — a second way this
+    # tool could die after doing all its work. Overridable, and it creates its own directory.
+    dest = sys.argv[2] if len(sys.argv) > 2 else os.path.join(
+        tempfile.gettempdir(), 'atlas-polarity', 'polarity_scan.json')
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    json.dump(out, open(dest, 'w'), indent=1)
+    print(f'  scan written: {dest}')
     # DONE line last, after the write (2026-09-05 sweep): absence-of-flags is never a pass.
     print(f'DONE citation_polarity: {len(out)} records scanned')
