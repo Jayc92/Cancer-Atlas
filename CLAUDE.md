@@ -4011,7 +4011,33 @@ screen pair per organ:
   Conditions (1)–(8) standing; (7) both directions applies to the
   shuffle reconstruction itself (a tidy offset from one pass is
   exactly what the +1 looked like), (8) makes the first claim-read
-  batch calibration — read the second batch as evidence.**
+  batch calibration — read the second batch as evidence.
+  SHUFFLE TEST RUN SAME DAY — DISCONFIRMED, decisively: the four
+  flagged lines are the ONLY occurrences of those journal names in
+  the file (grep, whole file), no neighbour's true journal is
+  "Ann Oncol" or "Front Oncol", and the recorded set is not a
+  permutation of the true set; the single clean adjacency (Paly's
+  recorded "J Urol" = Zeng's truth) is orphaned by both of its
+  would-be chain links — coincidence, not displacement. Condition (7)
+  satisfied: verdict checked against raw lines + the full ordered
+  17-record citation map. Contract fork taken: four independent wrong
+  labels, ordinary fixable class, urgency DROPS, M1 (on-screen
+  figures) leads and M2 becomes a normal read. CALIBRATION BATCH
+  (condition (8) — the four held flags doubled as the first claim
+  reads, abstracts via efetch): Beyer VERIFIED-QUOTED (2,451 men,
+  5-yr OS 95%/88% — all verbatim in the abstract); Zeng
+  VERIFIED-QUOTED verbatim (laterality rule + 6–11.1% contralateral
+  microscopic spread); Wood VERIFIED-QUOTED verbatim word-for-word
+  ("The contiguous nature of disease spread from abdomen to chest and
+  neck in seminoma is confirmed."); Paly VERIFIED-QUOTED on every
+  figure (90 patients, 145 nodes, 84/9/7%, 99% within 2.5 cm inferior
+  to T12/L1) with ONE calibration caveat for revision: the atlas's
+  cohort descriptor "isolated nodal relapse" vs the paper's
+  "infradiaphragmatic adenopathy" — over-specification, not a figure
+  error. ALL FOUR identifiers demonstrably belong to their claims;
+  the four journal labels are ordinary attribution errors, the signal
+  the hold protected is fully consumed, and the one-word fixes await
+  the go.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
