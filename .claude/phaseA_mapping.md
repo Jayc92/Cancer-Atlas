@@ -26,6 +26,14 @@ anchored to existing structure rather than case-by-case taste:
    unqualified category: the claim names the divergence explicitly, or the
    pre-registered negative fires (generic mass, honest label). Likely test case:
    colorectal "adenocarcinoma" (a >90% entry spanning NST / mucinous / signet-ring).
+   **PREMISE DEPENDENCY (2026-09-05):** the threshold is keyed to the atlas's own cited
+   subtype shares, which are MIGRATING figures under Phase B — if SEER's mucinous share
+   differs and crosses the line, the colorectal split decision flips: a structural rule
+   depending on an input scheduled to change source, the watchlist shape. RULE: record
+   the share value AND its source alongside each threshold determination, so the
+   boundary entries can be re-tested when the pull lands rather than silently
+   inheriting a stale evaluation. On current evidence the boundary set is colorectal
+   and possibly one or two others.
 4. **Immediate correction this forces:** the calibration batch's breast case was
    mis-unit'ed — "IDC-NST spiculated-margin classic" is NOT a rendered entry. The
    rendered entry is TNBC/basal-like, whose gross margin is characteristically PUSHING
@@ -163,6 +171,17 @@ landscape per property before the remaining twelve are read.
   class); PDQ purpose-shaped-coverage lesson logged against Phase B's backbone
   assumption too. Breast calibration read re-pointed: gross pathology first, BI-RADS
   disclosed fallback.
+- 2026-09-05 (unit decision + reads 3–4 attempted): threshold-premise dependency
+  recorded (share value + source logged per determination; boundary set re-tests when
+  the pull lands). BREAST read complete via the unit decision — the rendered entry is
+  TNBC/basal-like, margin characteristically PUSHING, citation already verified
+  in-atlas (Livasy, "pushing margin of invasion (14/23)", abstract). PANCREAS + KIDNEY
+  gross reads BLOCKED-TO-TOOLING TODAY: PathologyOutlines rate-limits (429,
+  Retry-After 86400 — retry after 2026-09-06); archive route unreachable from this
+  tooling. Lesson #1 EXTENDED: StatPearls' clinical chapters (pancreatic, RCC) carry
+  no gross-appearance descriptions either — the reachable clinical tertiaries are
+  consistently thin on gross pathology, making PathologyOutlines the gross-pathology
+  tertiary of record (no-discretion Phase-3 when it answers).
 - 2026-09-05 (calibration reads 1–2 of 4): STOMACH diffuse → wall category CITED
   verbatim (PDQ Gastric HP, 2025-02-21: "…infiltration of the gastric wall (i.e.,
   linitis plastica)") — the new rendering expression has its citation. PANCREAS
