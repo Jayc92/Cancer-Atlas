@@ -4078,7 +4078,54 @@ screen pair per organ:
   own descriptor). NO PRIOR INTO M1: the 4/4 batch is a biased sample
   (records already known defective on attribution) — it says the
   journal errors were isolated to labels, it does not predict the M1
-  rate.**
+  rate.
+  VERIFIED-ANNOTATION CENSUS + CONDITION (7) PAST INSTRUMENTS
+  (2026-09-04, user ruling: Paly's drift survived a "SOURCES,
+  verified directly" header, which makes "verified" annotations a
+  POPULATION rather than a reassurance — a line marked verified
+  carrying a defect is worse than an unmarked one because it actively
+  spends a future reader's trust). Census: 18 "verified directly"
+  sites, mostly BLOCK-LEVEL coverage claims — 4 organs assert EVERY
+  citation verified (colon, stomach, pancreas, skin), 11 more assert
+  it for whole HISTOLOGY sections. Known defect rate at census: 1/1.
+  Rules: verified-marked lines are NOT deprioritised (a defined
+  population with known-nonzero defect rate); the population is a
+  bounded high-yield sub-batch (each finding retires a false coverage
+  claim as well as fixing a defect). A HUMAN ANNOTATION ASSERTING
+  CLEANLINESS IS ALSO A CHECK THAT REPORTS ZERO, with the same
+  obligation to demonstrate it could have reported otherwise —
+  "verified directly" with no record of what was compared is
+  unfalsifiable by construction.
+  M1 CALIBRATION BATCH (2026-09-04, 12 claims, cross-type,
+  verified-marked and unmarked mixed, no prior carried; full table in
+  the manifest's _m1_calibration). Surface census first: the real
+  on-screen surface is ~336 items (51 shares + 51 facts + 116 ccf +
+  118 feature labels), bigger than the contract's "few dozen" guess.
+  VERDICTS: 7 verified-quoted (kidneys VHL 86.6% verbatim incl. the
+  mechanism phrase; bladder 65.4% + "even distribution" verbatim and
+  Allory's 70%/79% cohorts verbatim; liver Katyal 55% verbatim; Hahn
+  25/84 verbatim; Rosty 105/757 verbatim; Livasy's four phrases
+  verbatim); 2 verified-derived with arithmetic recorded (testis
+  64.5% = 22,634/35,066; pancreas ~50% classic from Hahn's two
+  counts); 1 CLEAR SCOPE-DRIFT — the testis share generalises a
+  Germany-2003-2014 registry proportion with the population qualifier
+  silently dropped (copy-edit staged, not applied: calibration
+  verdicts are expected to be revised); plus one low-severity scope
+  note (kidneys drops "sporadic", which does real work since
+  hereditary VHL inactivation is ~100% by definition); 7 sub-figures
+  PENDING-FULL-TEXT; 0 failed; 0 not-a-source-claim. METHOD
+  CORRECTION AT CALIBRATION, exactly what condition (8) is for: the
+  first instinct was to stamp body-bound figures
+  unverifiable-by-access — wrong by the contract's own definition,
+  because six of the seven have open-access full text (PMC ids
+  recorded). State 5 is for UNREACHABLE text; the honest verdict is
+  pending-full-text, and the structural lesson is that ~37% of this
+  batch's figures live in paper bodies, so M1's reading method
+  requires PMC full-text fetch as standard equipment. FIRST EVIDENCE
+  ON THE OLD PASS'S METHOD: Livasy, under a HISTOLOGY
+  "verified directly" header, has all four quoted phrases verbatim in
+  the abstract while its fractions live in the body — consistent with
+  quote-checking without figure-checking.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
