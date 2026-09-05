@@ -162,6 +162,52 @@ First four cancers, chosen to span the property space:
 Verdicts per the six-state contract; the batch's job is to discover the real source
 landscape per property before the remaining twelve are read.
 
+## In-atlas harvest (2026-09-05 — run while PathologyOutlines cools; the Livasy pattern
+generalised as predicted)
+Grep of the atlas's own cited prose against the margin/growth vocabulary. Per-entry
+ledger (CITED = category-grade material with citation in the existing verified content):
+- **testis/seminoma — margin DONE:** "well-circumscribed solid intratesticular nodule"
+  (CITED, PMC6906820, testis.js:239). No external read needed.
+- **prostate/acinar — growth (multifocal) DONE:** the best-cited morphology fact in the
+  atlas (Fontugne 59.7% of 233, Mehra 21/30, Cooper; prostate.js:155–219). Margin
+  seeded (pattern-4/5 infiltrating descriptions, cited, :244).
+- **stomach/diffuse — growth + wall DONE in-atlas** (diffuse infiltration → "leather
+  bottle" linitis plastica, CITED at :234/:258) — the PDQ read now corroborates rather
+  than sources.
+- **breast/TNBC — margin DONE** (:204, "Margins are often pushing and circumscribed
+  rather than infiltrative", cited histology block = the Livasy find); growth seeded
+  (":197 syncytial infiltrative growth pattern", quoted from the NST page).
+- **brain/GBM — growth DONE** (diffusely infiltrative, cited; the Infiltrative margin
+  is a cited tumour-map region), margin arguably the same fact (ill-defined).
+- **bladder/urothelial — growth seeded** (invasive nests/tongues infiltrate, cited
+  :266/:274); the exophytic/papillary half needs an external read.
+- **thyroid/FTC — margin seeded** (encapsulated, cited FVPTC-adjacent context :270).
+- **Thin or absent in-atlas:** pancreas, kidneys, colon, lungs (architecture cited but
+  not gross margin), skin (register caution: ABCD border vocabulary is
+  clinical-dermoscopic, not gross), liver, ovary ×2, PTC.
+Net: the external-read population drops from ~32 margin/growth items to roughly the
+low twenties, and four entries are wholly or half retired before any fetch.
+
+## Source hierarchy for morphology categories (re-designated 2026-09-05)
+"Gross-pathology tertiary of record" was a REACHABILITY ARTIFACT — PathologyOutlines
+got the title because it's what the fetcher could reach after PDQ and StatPearls came
+back management-shaped. The AUTHORITY for gross morphology is the WHO Classification
+of Tumours; PathologyOutlines is a practitioner reference summarising it. The
+GLOBOCAN distinction applies: "best available source" and "source our fetcher can
+reach" are different claims. HIERARCHY: (1) in-atlas already-verified quotes (primary
+literature); (2) WHO Classification — the authority; not freely machine-readable, so
+via human-route reads or reachable sources stating the fact, with WHO named; (3)
+PathologyOutlines — the reachable practitioner tertiary, no-discretion Phase-3,
+recorded as summary-of-authority, not authority.
+
+## Rate-limit measurement plan (before queueing external reads)
+No probing inside the Retry-After window (impolite and uninformative). At the retry
+window (after 2026-09-06): one fetch, observe headers, a second after a modest
+interval — measure whether the limit is per-burst (pacing works) or a daily cap
+(62-from-one-source was a quarter of elapsed time and forces re-sourcing). The
+harvest already shrank the measured need to the low twenties, which changes the
+arithmetic either way.
+
 ## Status log
 - 2026-09-05: document opened; knobs verified in source; consequence mapping and
   epistemic split recorded; calibration batch defined.
