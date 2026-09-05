@@ -10,7 +10,7 @@ export const organEntry = { key:'liver', label:'Liver', system:'Digestive', acti
 export const markerSpec = { points:[{heightFrac:0.60, angle:40}] };
 
 export const cancerEntries = [
-  { id:'hcc',   name:'Hepatocellular carcinoma',         share:'~75–85% of primary liver cancers', active:true,  organKey:'liver' },
+  { id:'hcc',   name:'Hepatocellular carcinoma',         share:'~75% of primary liver cancers (McGlynn et al., Hepatology, 2021)', active:true,  organKey:'liver' },
   { id:'ichol', name:'Intrahepatic cholangiocarcinoma',  share:'~10–15% of primary liver cancers', active:false, organKey:'liver' },
 ];
 
