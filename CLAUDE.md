@@ -3853,6 +3853,50 @@ screen pair per organ:
   substring matching — then re-run the 60-record residue with
   recovered journals; six sampled residue records already
   demonstrated recoverable-by-re-extraction.
+  EXTRACTION V2 + RESIDUE RE-RUN (2026-09-04, user-approved), WITH A
+  RETRACTION FIRST: the audit's "systematic +1 ref-line offset"
+  finding was FALSE — manufactured by the audit's own context
+  printer, whose label arithmetic was off by one. A v2 line-attribution
+  "bug" that wouldn't die led to a raw probe; grep -n re-check showed
+  v1 refs were EXACT all along (Moore 154, Zhu 267 = the author lines
+  themselves), and v2's supposed failures were my TRUTH table
+  inheriting the printer bug. Condition-(2)/(3) family, inside the
+  audit itself: the instrument that measured the instrument was
+  unvalidated, and its off-by-one read as a clean systematic pattern.
+  Every other audit rate re-checked against raw grep/sed and stands.
+  The dependent claim also corrected: Zhu's PMID sits on ref+1 (the
+  continuation-line miss mechanism stands; "the ref pointed AT the
+  identifier's line" did not).
+  V2 (.claude/extract_citations.py, a repo tool — the epi pass reads
+  citations too): ref = author-token line by construction; journal
+  parsed between author block and year, validated structurally;
+  first-surname-of-list author ("Li, Kang & Tang" → Li); nearest-head-
+  to-year priority (an et-al farther back must not shadow a nearer
+  &-list — caught by the Skok/Santucci validation case); lowercase
+  particles ("von der Maase"); topics from the citation's OWN clause;
+  entry-time ids attached from the clause; polarity window on every
+  record. VALIDATED against grep-derived ground truth: 28/28 author,
+  28/28 journal, 28/28 ref line, including every v1 failure. 372
+  records, 73% journal presence (v1: 35%), 41 entry-time ids.
+  RESIDUE RE-RUN (60 records, v2 fields, word-boundary topics
+  everywhere, min-3-fields, PubMed retmax=100 [ta]-constrained +
+  Crossref, union single-candidate): 26 RESOLVED, all 26 title-read by
+  hand — incl. Cooper 2015 → 25730763 EQUAL to the entry-time id in
+  the authorship-correction comment (convergence), Siech → pmid on its
+  own line (reclassified entry-time), and 5 author-corrections doing
+  exactly their job (Brenner-not-Hearing, Li-not-Tang class, Gershenwald
+  from the "Clin" fragment, Zhuang and Aizimuaji from journal
+  fragments). Identity-dedupe GROUPS corrigenda with originals (title
+  Jaccard ≥ 0.7 — correct: same work); pmids record the originals
+  (Mariette 30167905, Cooper 25730763). Residue after: 15
+  still-ambiguous / 8 still-saturated / 10 still-zero-pass / 1
+  no-v2-match (+ 11 sweep-1 ambiguous standing refused) = 45,
+  characterised. SOURCE-DEFECT CANDIDATE recorded for the epi pass
+  (found by cross-referencing, not fixed): bladder.js:174 attributes
+  Rachakonda 2013 to "PLoS ONE" while carrying PMC3808633 = PMID
+  24101484 = PNAS — right identifier, wrong journal attribution, the
+  taxonomy's fixable class. COVERAGE: 48 entry-time + 103 backfilled
+  = 151 of ~211 (≈72%, from 19% at harvest).
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
