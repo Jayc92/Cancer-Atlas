@@ -3114,7 +3114,20 @@ screen pair per organ:
   positive (a fixture, a deliberately broken input, a swapped asset)
   and stays silent on a known negative, BEFORE its first real zero is
   accepted. First application at birth: citation_polarity.py refuses to
-  scan unless its self-test proves both directions.**
+  scan unless its self-test proves both directions.
+  EXTENDED BIDIRECTIONALLY at the crosscheck ruling (2026-09-04), after
+  the ref-line retraction showed the same failure with the opposite
+  sign: A CLEAN SYSTEMATIC PATTERN IS WEAK EVIDENCE, NOT STRONG
+  EVIDENCE, WHEN THE MEASURING INSTRUMENT IS UNVALIDATED. The "+1
+  offset" was persuasive PRECISELY BECAUSE it was tidy — random noise
+  announces itself as noise, but an off-by-one in a display function
+  presents as a discovered law, so conviction ran backwards from
+  evidence. Both directions now: a check reporting zero AND a check
+  reporting a clean pattern need an independent instrument before
+  belief. The catch mechanism is the part to remember: v2 kept failing
+  against the truth table, and the fix was FOLLOWING THE DISAGREEMENT
+  instead of the table — the instinct in that moment is to fix the
+  thing that's failing, and it is exactly wrong.**
 - **Environment map + ground staging (2026-09-03), the pass the pipeline
   correction was gating.** scene.environment is now a 256×128 linear-float
   equirect gradient derived from the design tokens through cssVar() — floor
@@ -3897,6 +3910,39 @@ screen pair per organ:
   24101484 = PNAS — right identifier, wrong journal attribution, the
   taxonomy's fixable class. COVERAGE: 48 entry-time + 103 backfilled
   = 151 of ~211 (≈72%, from 19% at harvest).
+  CROSSCHECK + JOURNAL-REQUIRED RULE (2026-09-04, the Rachakonda
+  generalisation, user-specified). The wrong-backfill census is
+  CATEGORICAL — all four in the no-journal class, zero in any
+  journal-checked class — so minimum-three measured the wrong thing:
+  it counted fields as fungible when journal is high-entropy (nearly
+  impossible to match spuriously) and topic is low-entropy and was
+  actively defective. JOURNAL IS NOW REQUIRED for automated backfill
+  (~14% no-journal error rate as evidence, 4/29; v2's 73% recall makes
+  it affordable where v1's 44% would not have); no-journal records
+  resolve only by human title-read. THE CROSS-CHECK
+  (.claude/citation_crosscheck.py): for every identifier-carrying
+  record, recorded journal/first-author/year vs the identifier's own
+  esummary metadata — one bulk pass, no papers read, attribution-error
+  detection and backfill validation by construction (retrospectively
+  it would have flagged Zhu, Arends, Wilentz and Oweira — four finds
+  that cost 29 hand-read titles now cost one API pass, forever).
+  Condition (7) both directions at birth (fires on all three fields,
+  passes agreeing fixtures incl. an NEJM-abbreviation must-not-flag;
+  live run asserts its known positives). RUN: 130 records, 7 flags,
+  all classified — 3 expected artifacts + FOUR NEW GENUINE attribution
+  errors, all identifier-right-journal-wrong: Beyer 2021 testis.js:34
+  ("Ann Oncol" → J Clin Oncol, 33729863), Paly 2013 testis.js:149
+  ("J Urol" → Radiother Oncol, 23321493), Zeng 2025 testis.js:154
+  ("Front Oncol" → J Urol, 39977396), Wood 1996 testis.js:157
+  ("J Urol" → Clin Radiol, 8617040). With Rachakonda: FIVE, four in
+  testis.js — journal names shuffled among neighbouring citations,
+  one writing session's systematic slip. All recorded not fixed
+  (one-word fixes awaiting the go). The run also hardened v2 — id
+  over-reach across citation boundaries, a head-fallback shadowing
+  bug, a head-ownership gap — instruments now check each other.
+  PMC/doi mapping is the recorded limitation (Rachakonda's PMC find
+  came from manual idconv). THE DAY: 19% → 72% identifier coverage,
+  with the precision attached rather than assumed.
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
