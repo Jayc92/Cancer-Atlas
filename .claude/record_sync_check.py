@@ -11,6 +11,11 @@
 # the map is itself a record that can go stale (noted honestly; the alternative is a
 # convention parser, which would be a bigger instrument than the failure justifies).
 #
+# THAT CAVEAT IS QUOTED VERBATIM in .claude/battery.py, which hit the identical problem one
+# level up — a declared instrument list can omit a member the same way this map can omit a
+# pair — and could close it, because ITS population is one directory and can be enumerated.
+# This map's population is "load-bearing records", which cannot be, so the caveat stands here.
+#
 # Condition (7) at birth: the self-test proves it FIRES on a synthetic half-landed pair
 # and PASSES a present one. 7-bis: DONE line last. Wrapper form:
 #   .claude/run_checked.sh "DONE record_sync_check:" python3 .claude/record_sync_check.py
@@ -31,6 +36,8 @@ SYNC = [
     ('_parse_gate',                     'CLAUDE.md',                 'PARSE GATE'),
     ('_absence_claim_check',            'CLAUDE.md',                 'ABSENCE-CLAIM instrument'),
     ('_deploy_gate',                    'CLAUDE.md',                 'DEPLOY GATE'),
+    ('_battery_runner',                 'CLAUDE.md',                 'BATTERY RUNNER'),
+    ('_polarity_mention_reads',         'CLAUDE.md',                 'POLARITY MENTION READS'),
 ]
 
 def check(manifest, files):

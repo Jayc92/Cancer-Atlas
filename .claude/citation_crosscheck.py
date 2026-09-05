@@ -20,7 +20,19 @@
 # shaped data before any live scan is trusted; the live run additionally asserts its known
 # positives fire (the fragment record keys guarantee author-mismatch flags exist), so an
 # all-clean live scan is impossible unless the tool is broken — and then it says so.
-import json, re, sys, time, unicodedata, urllib.parse, urllib.request
+#
+# IT REFUSES WITHOUT ITS INPUT, and that is a 2026-09-05 correction to a worse bug than the one
+# citation_polarity.py died of (user ruling): "A dead instrument announces itself. A degraded one
+# produces a plausible number." The v2 records artifact used to be OPTIONAL — `if len(sys.argv) > 1
+# else []` — so invoking this tool with no argument silently dropped the entire entry-time-
+# identifier population and checked 110 records instead of 142, under a DONE line whose shape was
+# indistinguishable from a full scan. Polarity died loudly (KeyError, no DONE line, wrapper exit
+# non-zero, caught the same day). This one would have kept reporting "110 records checked, 3
+# flags" forever. So the artifact is now REQUIRED and its absence is a refusal, not a default:
+# 32 unexamined records is a finding, and a finding must never be spelled as a smaller total.
+# battery.py regenerates the artifact before invoking this tool, so the refusal never fires in
+# normal use — it fires exactly when someone runs the scan by hand without one.
+import json, os, re, sys, tempfile, time, unicodedata, urllib.parse, urllib.request
 
 def deaccent(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s or '')
@@ -86,13 +98,52 @@ def selftest():
         ok &= good
         label = f'fires[{want.rstrip(":")}]' if want else 'passes'
         print(f"  {'ok  ' if good else 'FAIL'} {label}: {a} {y} -> {flags or 'clean'}")
-    print('SELFTEST', 'PASS — can fire on all three fields and can pass; zeros meaningful'
+    # THE REFUSAL IS ITSELF A CAPABILITY THAT HAS TO BE DEMONSTRATED (commit_checked.sh's rule:
+    # a tool whose job is refusing has to be shown refusing). Both directions, because a refusal
+    # that fires on a legitimate invocation is as bad as one that never fires: it would make the
+    # battery unable to run this instrument at all, and an instrument that can't be invoked is
+    # the exact hole battery.py was built to close.
+    try:
+        records_path(['citation_crosscheck.py'], quiet=True)
+        refused = False
+    except SystemExit as e:
+        refused = e.code == 2
+    ok &= refused
+    print(f"  {'ok  ' if refused else 'FAIL'} refuses with no records artifact "
+          f"(exit 2, no DONE line) rather than scanning a smaller population")
+    accepted = records_path(['citation_crosscheck.py', '--selftest', 'recs.json']) == 'recs.json'
+    ok &= accepted
+    print(f"  {'ok  ' if accepted else 'FAIL'} accepts the artifact alongside flag-shaped args")
+    print('SELFTEST', 'PASS — can fire on all three fields, can pass, and refuses without input'
           if ok else 'FAIL — do not trust any scan')
     return ok
 
+def records_path(argv, quiet=False):
+    """The v2 records artifact, REQUIRED. Flag-shaped args are ignored so --selftest still works.
+
+    Refusing here rather than defaulting to [] is the whole fix: a missing artifact used to
+    subtract 32 records from the scan and say nothing. Exits 2 WITHOUT printing a DONE line, so
+    run_checked.sh fails the invocation too — a refusal that a wrapper reads as success would be
+    the same hole one layer out."""
+    positional = [a for a in argv[1:] if not a.startswith('-')]
+    if not positional:
+        if quiet:      # the selftest exercises the refusal; it does not need the advice text
+            sys.exit(2)
+        print('citation_crosscheck: REFUSING TO SCAN — no v2 records artifact given.\n'
+              '  Without it the entry-time-identifier population is invisible and the scan\n'
+              '  silently shrinks (110 records instead of 142) under a normal-looking DONE line.\n'
+              '  Regenerate and pass it:\n'
+              '    python3 .claude/extract_citations.py /tmp/atlas-battery/records.json\n'
+              '    python3 .claude/citation_crosscheck.py /tmp/atlas-battery/records.json\n'
+              '  Or run the whole battery, which regenerates it first:\n'
+              '    python3 .claude/battery.py pre-commit', file=sys.stderr)
+        sys.exit(2)
+    return positional[0]
+
+
 def main():
     M = json.load(open('.claude/citations.json'))
-    v2 = json.load(open(sys.argv[1])) if len(sys.argv) > 1 else []
+    v2 = json.load(open(records_path(sys.argv)))
     work = []   # (pmid, rec_author, rec_year, rec_journal, ref, origin)
     for e in M['backfill']:
         if e.get('pmid') and e['status'] in ('backfilled', 'entry-time-identifier'):
@@ -175,9 +226,16 @@ def main():
     assert any('author:' in f for _, _, _, _, _, fl in flagged for f in fl), \
         'live known-positives absent — the checker cannot be firing correctly'
     print('\nlive known-positive assertion: PASS (author flags present as expected)')
+    # The flags artefact went to a hardcoded scratch dir that no longer exists — the second way
+    # this tool could die after doing all its work, and the same one polarity had. Overridable,
+    # and it creates its own directory: a refusal that only moves the crash is not a fix.
+    dest = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith('-') else os.path.join(
+        tempfile.gettempdir(), 'atlas-verify', 'cite', 'crosscheck_flags.json')
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
     json.dump([{'pmid': p, 'author': a, 'year': y, 'ref': r, 'origin': o, 'flags': fl}
                for p, a, y, r, o, fl in flagged],
-              open('/tmp/atlas-verify/cite/crosscheck_flags.json', 'w'), indent=1)
+              open(dest, 'w'), indent=1)
+    print(f'  flags written: {dest}')
     # DONE line last, after every write (2026-09-05 sweep): the report of zero must be
     # shown to have been produced at all — absence-of-flags is never a pass.
     print(f'DONE citation_crosscheck: {len(uniq)} records checked, {len(flagged)} flags')

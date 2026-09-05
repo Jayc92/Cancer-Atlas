@@ -3339,6 +3339,159 @@ screen pair per organ:
   the dependent variable. Its real job is REGRESSION INSURANCE on notes
   not yet written; **read its second run, not its first.**
 
+## BATTERY RUNNER (2026-09-05, user-directed; .claude/battery.py)
+
+**AN INSTRUMENT THAT ISN'T INVOKED CAN'T FAIL** (user). This is the
+guard on the SET, and it was the last unguarded step: `run_checked.sh`
+guards each invocation, `commit_checked.sh` guards the commit message,
+`deploy_check.js` guards the deploy — **nothing guarded the set.**
+
+- **The proof it was a real hole, not tidiness.**
+  `citation_polarity.py` had been unrunnable since the v2 extractor
+  landed (`KeyError: 'refs'`, dead before printing a line) and
+  surfaced only because a human ran the whole battery by hand on
+  2026-09-05. Ten instruments, and no mechanism could answer "did all
+  ten run?".
+- **Two assertions; the rest is plumbing.** (1) Every declared member
+  of the phase RAN AND PRINTED ITS OWN MARKER — not "was attempted",
+  which is a different claim and only the second one is a check.
+  (2) **Every tracked file in `.claude/` is declared**, as an
+  instrument or explicitly as a non-instrument with a reason.
+- **Why assertion 2 exists, in `record_sync_check.py`'s own words:**
+  "an undeclared pair is invisible to this check, and the map is
+  itself a record that can go stale." That caveat applies to a
+  declared instrument list with equal force — it is *this tool's own
+  failure mode reintroduced one level up*. Here the closure is cheap
+  because the population is one directory, so the list is CLOSED OVER
+  `.claude/`: a new file fails the battery until someone classifies
+  it, and calling something a non-instrument becomes a decision on the
+  record rather than an omission.
+- **Phases, because `deploy_check.js` cannot run pre-commit:**
+  `pre-commit` (9 members) and `post-push` (1). A third assertion
+  falls out — every instrument must belong to a real phase, since a
+  typo'd phase name would silently retire one. That is the tool's own
+  failure mode sneaking in through its own declaration, so it gets an
+  arm.
+- **Commit form:** `.claude/commit_checked.sh "<subject>" "DONE "
+  python3 .claude/battery.py pre-commit` — the `"DONE "` marker quotes
+  EVERY member's DONE line plus the battery's own into the message, so
+  a commit records the whole set's numbers verbatim.
+- **Demonstrated on the real dead instrument, not a fixture**
+  (condition 7): the pre-`03ef214` `citation_polarity.py` was restored
+  into the tree and the battery reported `NO DONE LINE:
+  citation_polarity — ran without printing its marker (vacuous run;
+  the 7-bis failure)` and `8/9`. Assertion 2 also fired unprompted on
+  its first run — on `battery.py` itself, declared but not yet staged
+  — which is why the message distinguishes NOT TRACKED (exists,
+  unstaged, would not ship) from DECLARED BUT ABSENT (stale
+  declaration).
+- **Named uncovered hole:** a SILENTLY SHRINKING extractor. The runner
+  asserts the records artifact is non-empty and prints its count, but
+  a v3 extractor emitting 300 records instead of 408 would pass. A
+  floor constant would go stale on the next legitimate corpus growth,
+  so this stays uncovered, visible in the DONE line, and named here.
+- **"reported", not "reported clean"** in the battery's DONE line:
+  `regress.js` exits 0 carrying two KNOWN label-overlap failures, so
+  "clean" would be false on every green run. Each member's own DONE
+  line carries its own findings; the runner counts only
+  marker-printed-and-exit-zero and says exactly that.
+
+**DEGRADATION IS WORSE THAN DEATH** (user ruling, same day):
+"A dead instrument announces itself. A degraded one produces a
+plausible number." `citation_polarity` died loudly and was caught the
+same day. `citation_crosscheck` silently degraded from 142 records to
+110 without its `argv[1]` artifact — `if len(sys.argv) > 1 else []` —
+and printed a normal-looking DONE line over a scan missing 32 records.
+It now **REFUSES** without the artifact (exit 2, no DONE line, so
+`run_checked.sh` fails the invocation too), its flags artefact is
+overridable and self-creating like polarity's, and `battery.py`
+regenerates the records first so the refusal only ever fires on a
+hand-run without one. Both directions have selftest arms: a refusal
+that fired on a legitimate invocation would make the instrument
+un-runnable, which is the hole `battery.py` exists to close.
+
+## POLARITY MENTION READS — the 10 corrective windows (2026-09-05)
+
+User ruling: split the 59 flags and **use the split as ordering.** The
+10 corrective-window records go first as a standalone batch, because
+each one unread is a booby trap for the epi pass — a citation the
+atlas invokes to say something ABOUT a paper rather than draw from it,
+which a figure-checking read scores as a defect against a line that
+already says the figures are wrong. That is the **Hu 2012** shape, and
+it is why the `not-a-source-claim` outcome state exists.
+
+**ALL TEN READ AT MENTION LEVEL. 2 are anti-citations; 8 are real
+source claims sitting beside a rejection.**
+
+| record | site | verdict |
+|---|---|---|
+| Boutros 2015 | prostate.js:139 | **NOT-A-SOURCE-CLAIM** — the atlas asserts this paper does not exist as a first-author work; real source is Cooper CS 2015 (PMID 25730763) |
+| Hu 2012 | stomach.js:24 | **NOT-A-SOURCE-CLAIM** — the class-defining case; the atlas documents the transposition chain, it does not assert 54/32/15 |
+| Jakob 2012 | skin.js:297 | source claim — the CORRECTION TARGET, already verified verbatim ("Four (0.6%) patients had activating mutations in both BRAF and NRAS", N=677) |
+| Lauren 1965 | stomach.js:21 | source claim — the classification source itself; flagged only by window bleed from the mis-citation text two lines below |
+| Polkowski 1999 | stomach.js:25 | source claim, **provenance-load-bearing** — its real figures (54% intestinal / 32% mixed / 15% diffuse, 41 esophageal/GEJ patients) are the EVIDENCE FOR the rejection; if they fail, the rationale collapses even though the wrong-organ ground survives |
+| Grimm 2018 | stomach.js:146 | source claim — 25 ± 18 mL is IN USE on screen; the rejection is of the folkloric "~50 mL", not of Grimm |
+| Mudie 2014 | stomach.js:146 | source claim — 35 ± 7 mL, same |
+| Derakhshan 2009 | stomach.js:187 | source claim, **refutation-load-bearing** — M/F 1.07 vs 2.65 is what retires "diffuse is commoner in women"; "the claim is not used" refers to the folk claim, not to Derakhshan |
+| Kim 2025 | stomach.js:252 | source claim, **provenance-transparency** — cited precisely as a paper ATTRIBUTING the ≥50% signet-ring threshold to WHO, because no WHO document stating it was found |
+| Machlowska 2020 | stomach.js:253 | source claim, same |
+
+- **THE INVERSE TRAP IS THE LARGER ONE, and reading is what found
+  it.** The predicted hazard (a verifier scoring an anti-citation as a
+  defect) is real but rare: 2 of 10. The common case runs the other
+  way — **a reader who trusted the window verdict would skip 8 real
+  source claims as "not source claims,"** including two that are
+  load-bearing for a rejection and two on-screen figures in active
+  use. Both directions are removed by the same read, which is what the
+  ruling bought.
+- **The guard was right at its own granularity.** Every one of the 8
+  sits within ±3 lines of genuinely corrective text, so each window
+  verdict is correct AS A WINDOW VERDICT. This is the flag-then-read
+  contract working exactly as `citation_polarity.py`'s header
+  describes, not a defect in it: "window-level regexes cannot tell the
+  negated mention (Colombino) from the correction target (Jakob) two
+  tokens later."
+- **Negated mentions are invisible to the extractor, checked not
+  assumed:** Colombino 2012 (the wrong-source attribution) yields no
+  record at all, so it cannot become a trap. Only Boutros and Hu are
+  extracted anti-citations.
+- **Consequence: no content edits.** All ten lines are correct as
+  written. The batch's output is the verdict table above, which is
+  what the epi pass needs so it does not re-litigate them.
+- **Stale count corrected:** the Phase 2 pass description said "the 36
+  polarity-flagged windows are the candidate population." The live
+  scan reports 59 (10 corrective, 49 caveated) over 408 records. Same
+  class as the recorded "141" crosscheck total — a number frozen at
+  the moment it was written while the extractor moved.
+
+## THE 49 CAVEATED WINDOWS BECOME THE ccf READ ORDER (2026-09-05)
+
+User ruling: they fold into the ccf queue, **not as a separate pass —
+as the read order.** A caveated window means the guard has already
+spotted a hedge in the vicinity, and the ccf addendum's whole thesis
+is that hedges are where certainty drift lives. Reading those clauses
+first tests the prediction on the population most likely to confirm or
+refute it, which is worth more than file order.
+
+- **22 distinct sites, not 49 reads.** The flags cluster hard: four
+  sites carry 26 of the 49 (skin.js:400 with 10, colon.js:212 with 6,
+  colon.js:210 with 5, prostate.js:219 with 5). Workload is 22 comment
+  windows.
+- **No snapshot committed, deliberately.** The order is regenerated,
+  not stored: `python3 .claude/battery.py pre-commit` rebuilds the
+  records artifact and the polarity scan, and the caveated-window
+  records come out in file order within it. A committed list would rot
+  against the corpus the way the "36" and the "141" did.
+- **THE RATE MEASURED HERE IS NOT THE CORPUS RATE.** This ordering is
+  deliberate sampling on the dependent variable — the same shape as
+  the displacement read, which was dissolved by widening the aperture,
+  and the same reason the absence-claim instrument's own header says
+  its clean live run is weak evidence. The ruling wants a TEST of the
+  addendum's prediction, and that is what it gives. The
+  **pre-registered drift rate for batch 2 must therefore be measured
+  on an unordered sample**, or the pre-registration is against a
+  population chosen for being hedged.
+
 # Phase 2 roadmap (2026-09-05, user-authored; decisions TAKEN)
 
 - **Decisions:** breadth to ~120 cancers (NCI A–Z scope); content
@@ -4349,9 +4502,12 @@ screen pair per organ:
   (attribution → fix; content → the statistics ruling: for ON-SCREEN
   figures re-source or remove, no illustrative middle — a user reads
   a number as a fact); not-a-source-claim (Hu 2012 — the atlas
-  documents the transposition, it does not assert 54/32/15; the 36
+  documents the transposition, it does not assert 54/32/15; the
   polarity-flagged windows are the candidate population, each gets a
-  mention-level human read before any verdict); unverifiable-by-access
+  mention-level human read before any verdict — recorded here as 36
+  when written, 59 on the 2026-09-05 live scan of 408 records, and the
+  10 CORRECTIVE windows are now all read: see the mention-read table,
+  2 anti-citations and 8 real source claims); unverifiable-by-access
   (Curtin 2005 — identifier sound, text unreachable: the claim STANDS
   with the limitation recorded, NOT a failure, else paywalls strip
   correct claims; expect common, not edge). MILESTONES, because
@@ -4395,7 +4551,10 @@ screen pair per organ:
   testis four (Beyer → J Clin Oncol, Paly → Radiother Oncol, Zeng →
   J Urol, Wood → Clin Radiol) join Rachakonda; every fix
   detector-validated — the post-fix crosscheck reports exactly the
-  three known artifacts and ZERO genuine flags (3 of 141). THE HOLD
+  three known artifacts and ZERO genuine flags (3 of 141 as recorded;
+  3 of **142** on the 2026-09-05 re-run, the extra record an extractor
+  revision, not a regression — the same frozen-number class as the
+  "36" polarity count). THE HOLD
   IS DISCHARGED, recorded as such rather than marked done: it existed
   to stop a one-word fix erasing the question of whether the
   identifiers belonged to their claims, and reading all four claims

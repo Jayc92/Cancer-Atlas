@@ -5,14 +5,16 @@
 # for DONE and require it) carries the identical lapse one string over if the grep is
 # manual. This wrapper makes the check unskippable: it runs the tool, requires the tool's
 # DONE marker in the output, and EXITS NON-ZERO if the marker is absent — a vacuous run
-# fails the invocation itself instead of silently succeeding. Six call sites, one wrapper:
+# fails the invocation itself instead of silently succeeding.
 #
-#   .claude/run_checked.sh "==== DONE:"                 node .claude/regress.js <dir> <port>
-#   .claude/run_checked.sh "DONE citation_crosscheck:"  python3 .claude/citation_crosscheck.py <v2.json>
-#   .claude/run_checked.sh "DONE citation_polarity:"    python3 .claude/citation_polarity.py <records.json>
-#   .claude/run_checked.sh "DONE share_sum_check:"      python3 .claude/share_sum_check.py
-#   .claude/run_checked.sh "DONE duplicate_figure_check:" python3 .claude/duplicate_figure_check.py
-#   .claude/run_checked.sh "DONE fraction_check:"       python3 .claude/fraction_check.py
+# IT GUARDS ONE INVOCATION, NOT THE SET. This header used to enumerate its call sites, which
+# made it a second hand-maintained instrument list going stale beside the real one — it said
+# "six call sites" while ten instruments existed. The enumeration now lives in exactly one
+# place, .claude/battery.py's INSTRUMENTS, which is closed over .claude/ so it cannot quietly
+# omit a member. Run the battery; call this wrapper directly only for a one-off:
+#
+#   python3 .claude/battery.py pre-commit          # every declared member, marker-checked
+#   .claude/run_checked.sh "DONE fraction_check:" python3 .claude/fraction_check.py
 #
 # Condition (7) at birth: --selftest proves all three arms — FAILS on the exact original
 # failure shape (command exits 0 with no marker: the vacuous run), PASSES a marker-printing
