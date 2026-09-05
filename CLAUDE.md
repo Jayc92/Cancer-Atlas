@@ -4165,7 +4165,49 @@ screen pair per organ:
   REVISED SUB-BATCH INSTRUCTION: under verified headers read
   SCOPE-FIRST with figure spot-checks — inverting the original
   check-figures-skip-quotes plan. Sample is small (4 reachable
-  figures): second sample before generalising, per condition (8).**
+  figures): second sample before generalising, per condition (8).
+  SCOPE-FIRST PROMOTED M1-WIDE (2026-09-04, user ruling — the
+  inversion generalises): every defect found in M1 and testis.js so
+  far is a scope drift (Paly, kidneys' sporadic, testis's German
+  registry — three for three) against ~17 figures checked with zero
+  errors. Mechanically sensible: numbers copy atomically, population
+  descriptors get paraphrased, and paraphrase is where qualifiers
+  fall out — compression lands on prose, not digits. Also the cheaper
+  allocation: a scope check is one methods read; figure-hunting is
+  the expensive part. ADAPTIVE GATE rather than a fixed ratio: figure
+  spot-check rate tied to the running figure-error count, raised the
+  moment one appears — 17-for-zero is suggestive, not settled.
+  SECONDARY-SOURCE RULE recorded before the paywalls arrive: a
+  primary's figure found quoted in a review or later paper does NOT
+  verify the claim — it verifies that someone else read it that way,
+  a different assertion (the chain this project already refused twice
+  under license-laundering and same-artist). If a secondary is all
+  that's available: state 5 WITH the secondary noted as
+  corroboration, never verified-quoted with a substituted source.
+  Brenner/Guichard/Livasy stay provisional until publisher routes are
+  actually tried.
+  UNCITED-FIGURE QUEUE-JUMP (2026-09-04): the census's 10 uncited ccf
+  figures triaged ahead of M1a — an uncited on-screen number is worse
+  than a badly-cited one because it cannot be verified at all, and
+  the statistics ruling governs directly. SIX were cited-nearby
+  (census false positives: prostate ERG ×2 via the comment trail;
+  testis KIT via its fully-cited sibling; thyroid RET/RAS under the
+  "All numbers verbatim from TCGA (Cell, 2014, PMC4243044)" block;
+  thyroid GENIE ×2 with the database named on-screen). FOUR genuine
+  orphans, all breast/ovary pool entries, resolved against the
+  canonical TCGA full texts: ovary HRD ~50% VERIFIED ("defective in
+  about half of tumors") and RE-SOURCED on-screen to TCGA Nature
+  2011 — the ruling's "source it" arm discharged; ovary CCNE1
+  "~15–20%" understates TCGA's "greater than 20%" — ADJUST CANDIDATE;
+  breast BRCA1 "~15–20% of TNBC" vs TCGA's "~20% BRCA1 OR BRCA2
+  combined in basal-like" (gene scope and figure both off) — ADJUST
+  CANDIDATE; breast PIK3CA "~39% overall" is TCGA's HER2-ENRICHED
+  subtype rate, not overall (the 9% basal-like half of that sentence
+  is verbatim-verified) — ADJUST CANDIDATE. Three adjust candidates
+  reported, not edited (content changes need the go; each has a
+  TCGA-verifiable form). Attaching TCGA to all four would have
+  manufactured three confident wrong attributions — the no-shopping
+  guard doing exactly its job on the cheapest items in the queue.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
