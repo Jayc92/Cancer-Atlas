@@ -3268,6 +3268,20 @@ screen pair per organ:
   date ← discipline. One integration verified thoroughly beats two
   thousand transcriptions — but only if the contract is explicit.
   Conditions (1)–(8) + run_checked govern integrations from birth.
+  ASSERTION INDEX (2026-09-05 addition, twice-earned in one day): the
+  manifest indexes citations by SOURCE, not by what they ESTABLISH —
+  so "do we already have a cited basis for seminoma's margin" is a
+  grep through prose rather than a query, and coverage gets
+  rediscovered instead of looked up. Twice today the atlas already
+  contained what a pass was about to source externally (van der
+  Kaaij's abstract-verifiable clause; the harvest's five fully-cited
+  morphology categories, one with a PMC id). The redesign records
+  what each citation ASSERTS — subject, property, claim — alongside
+  where it came from, so the next pass queries the index and the
+  answer is complete rather than as-good-as-the-grep. Payoff already
+  demonstrated: the harvest retired a third of the margin/growth
+  population and changed the rate-limit arithmetic before the
+  constraint was measured.
 - **Phase C — breadth to ~120:** two early decisions — each new
   organ is an asset hunt under the licence playbook (the expensive
   half of Phase 1; some will end in documented negatives), and BLOOD
