@@ -18,10 +18,16 @@ magnitude half is illustrative by declaration, same discipline as the colour dow
 - **Renderer knob:** `pos3d` (exists).
 
 ### 2. Margin character — spiculated / circumscribed / lobulated / ill-defined
-- **CATEGORY (cited):** the margin descriptor for the modelled cancer's typical
-  presentation. Source landscape note: margin vocabulary is substantially RADIOLOGIC
-  (BI-RADS for breast; imaging literature elsewhere) as well as gross-pathologic — the
-  calibration batch determines per-cancer which source class carries it.
+- **REGISTER DECISION (2026-09-05, settled before citations accumulate):** the atlas's
+  tumour is a GROSS-SPECIMEN construct — the scene reads as the organ as a physical
+  object, so the vocabulary of record is GROSS PATHOLOGY (WHO, PathologyOutlines gross
+  descriptions). BI-RADS and other radiologic lexicons describe imaging appearance — a
+  related, non-interchangeable vocabulary; using one for the other is a category
+  substitution (the TNBC-for-basal-like shape). Radiologic descriptors are admissible
+  only as DISCLOSED cross-register items, register named, imaging↔gross correlate
+  stated.
+- **CATEGORY (cited):** the gross margin/surface descriptor for the modelled cancer's
+  typical presentation (e.g., stellate, ill-defined, circumscribed/pseudocapsule).
 - **MAGNITUDE (illustrative):** `sharpness`, `spikeCount`, `spikeLength` values. No
   source maps a descriptor to a number; values are chosen for legibility and disclosed.
 - **Renderer knobs:** `organicSpiculate` `sharpness` / `spikeCount` / `spikeLength`
@@ -75,6 +81,12 @@ landscape per property before the remaining twelve are read.
 ## Status log
 - 2026-09-05: document opened; knobs verified in source; consequence mapping and
   epistemic split recorded; calibration batch defined.
+- 2026-09-05 (register + mitigations): tumour = GROSS-SPECIMEN construct decided
+  (vocabulary of record = gross pathology; radiologic = disclosed cross-register only);
+  PathologyOutlines adopted with NO-DISCRETION Phase-3 (the never-at-source-quote
+  class); PDQ purpose-shaped-coverage lesson logged against Phase B's backbone
+  assumption too. Breast calibration read re-pointed: gross pathology first, BI-RADS
+  disclosed fallback.
 - 2026-09-05 (calibration reads 1–2 of 4): STOMACH diffuse → wall category CITED
   verbatim (PDQ Gastric HP, 2025-02-21: "…infiltration of the gastric wall (i.e.,
   linitis plastica)") — the new rendering expression has its citation. PANCREAS

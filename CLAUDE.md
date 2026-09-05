@@ -3259,7 +3259,12 @@ screen pair per organ:
 - **Phase B — integration architecture:** build-time vs runtime is
   the shaping decision; likely BUILD-TIME for statistics (frozen,
   auditable, detector-checkable) and RUNTIME for trials (they change
-  weekly). Provenance schema redesign: field ← endpoint ← retrieval
+  weekly). PDQ-BACKBONE ASSUMPTION, first evidence (2026-09-05,
+  calibration lesson #1 logged here as well as Phase A): PDQ's
+  coverage is shaped by its purpose — treatment summaries — rich
+  where management lives, thin on gross pathology. "The backbone" is
+  PARTIAL: verify per-field coverage during integration design rather
+  than discovering it again then. Provenance schema redesign: field ← endpoint ← retrieval
   date ← discipline. One integration verified thoroughly beats two
   thousand transcriptions — but only if the contract is explicit.
   Conditions (1)–(8) + run_checked govern integrations from birth.
