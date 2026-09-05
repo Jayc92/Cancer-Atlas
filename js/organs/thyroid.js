@@ -30,10 +30,10 @@ export const markerSpec = { points:[{heightFrac:0.850, angle:0}] };
 // row and ovary's Japan figure state their honest exceptions where users actually see them:
 // anaplastic is 1.3% of cases but 471/2,371 = 19.9% of the cohort's thyroid-cancer deaths.
 export const cancerEntries = [
-  { id:'ptc', name:'Papillary carcinoma',  share:'~84% of thyroid cancers', active:true,  organKey:'thyroid' },
-  { id:'ftc', name:'Follicular carcinoma', share:'~11% of thyroid cancers', active:true,  organKey:'thyroid' },
-  { id:'mtc', name:'Medullary carcinoma',  share:'~2% of thyroid cancers',  active:false, organKey:'thyroid' },
-  { id:'atc', name:'Anaplastic carcinoma', share:'~1% of cases — ~20% of thyroid-cancer deaths', active:false, organKey:'thyroid' },
+  { id:'ptc', name:'Papillary carcinoma',  share:'~84% of thyroid cancers (SEER-9, 1974–2013 pooled)', active:true,  organKey:'thyroid' },
+  { id:'ftc', name:'Follicular carcinoma', share:'~11% of thyroid cancers (SEER-9, 1974–2013 pooled)', active:true,  organKey:'thyroid' },
+  { id:'mtc', name:'Medullary carcinoma',  share:'~2% of thyroid cancers (SEER-9, 1974–2013 pooled)',  active:false, organKey:'thyroid' },
+  { id:'atc', name:'Anaplastic carcinoma', share:'~1% of cases (SEER-9, 1974–2013 pooled) — ~20% of thyroid-cancer deaths (471/2,371, 1994–2013)', active:false, organKey:'thyroid' },
 ];
 
 // MESH (real, third Sketchfab asset after Lungs and Colon): "TIROIDES ANDREA  DACS UJAT" by

@@ -41,10 +41,10 @@ export const markerSpec = { points:[{heightFrac:0.475, angle:0}] };
 // cohort, the opposite of the usual "SCC then ADC then small-cell" teaching order, so the real
 // order is what's shown rather than the assumed one.
 export const cancerEntries = [
-  { id:'uc',      name:'Urothelial carcinoma',        share:'~92% of bladder-primary carcinomas (48,789/53,142, Park, Curr Oncol, 2023, SEER)', active:true,  organKey:'bladder' },
-  { id:'blnec',   name:'Neuroendocrine carcinoma',     share:'~3.2% of bladder-primary carcinomas (1,683/53,142) — rare and aggressive', active:false, organKey:'bladder' },
-  { id:'blscc',   name:'Squamous cell carcinoma',      share:'~3.1% of bladder-primary carcinomas (1,667/53,142)', active:false, organKey:'bladder' },
-  { id:'bladc',   name:'Adenocarcinoma',               share:'~1.9% of bladder-primary carcinomas (1,003/53,142)', active:false, organKey:'bladder' },
+  { id:'uc',      name:'Urothelial carcinoma',        share:'~92% of the four commonest bladder-primary carcinoma types (48,789/53,142, Park, Curr Oncol, 2023, SEER)', active:true,  organKey:'bladder' },
+  { id:'blnec',   name:'Neuroendocrine carcinoma',     share:'~3.2% of the four commonest bladder-primary carcinoma types (1,683/53,142) — rare and aggressive', active:false, organKey:'bladder' },
+  { id:'blscc',   name:'Squamous cell carcinoma',      share:'~3.1% of the four commonest bladder-primary carcinoma types (1,667/53,142)', active:false, organKey:'bladder' },
+  { id:'bladc',   name:'Adenocarcinoma',               share:'~1.9% of the four commonest bladder-primary carcinoma types (1,003/53,142)', active:false, organKey:'bladder' },
 ];
 
 // REAL ANATOMY, not procedural — Human Reference Atlas 3D Reference Object Library, entry

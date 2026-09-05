@@ -20,11 +20,11 @@ export const cancerEntries = [
   // 425,692 (99.68%) harbored acinar, 855 (0.20%) ductal, 324 (0.08%) mucinous, 54 (0.01%)
   // signet ring cell, and 130 (0.03%) neuroendocrine carcinoma. ids prefixed to avoid collision
   // with Ovary's existing 'muc' (Mucinous carcinoma) id.
-  { id:'acinar',   name:'Acinar adenocarcinoma',          share:'99.68% of prostate cancers (425,692/427,055, Siech et al., Annals of Surgical Oncology, 2026)', active:true,  organKey:'prostate' },
-  { id:'pductal',  name:'Ductal adenocarcinoma',          share:'0.20% of prostate cancers (855/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
-  { id:'pmuc',     name:'Mucinous adenocarcinoma',        share:'0.08% of prostate cancers (324/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
-  { id:'psignet',  name:'Signet ring cell adenocarcinoma', share:'0.01% of prostate cancers (54/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
-  { id:'pneuro',   name:'Neuroendocrine carcinoma',       share:'0.03% of prostate cancers (130/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
+  { id:'acinar',   name:'Acinar adenocarcinoma',          share:'99.68% of prostate cancers treated with surgery or radiotherapy (SEER 2004–2020: 425,692/427,055, Siech et al., Annals of Surgical Oncology, 2026)', active:true,  organKey:'prostate' },
+  { id:'pductal',  name:'Ductal adenocarcinoma',          share:'0.20% of prostate cancers treated with surgery or radiotherapy (855/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
+  { id:'pmuc',     name:'Mucinous adenocarcinoma',        share:'0.08% of prostate cancers treated with surgery or radiotherapy (324/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
+  { id:'psignet',  name:'Signet ring cell adenocarcinoma', share:'0.01% of prostate cancers treated with surgery or radiotherapy (54/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
+  { id:'pneuro',   name:'Neuroendocrine carcinoma',       share:'0.03% of prostate cancers treated with surgery or radiotherapy (130/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
 ];
 
 // Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"

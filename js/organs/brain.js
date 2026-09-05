@@ -21,7 +21,7 @@ export const cancerEntries = [
   // most common primary intracranial tumor and every "real primary brain tumor" list (CBTRUS
   // included) reports it alongside the gliomas, same reasoning HCC's list included
   // cholangiocarcinoma despite its different cell of origin within the same organ.
-  { id:'gbm',   name:'Glioblastoma',                    share:'13.7% of all primary brain/CNS tumors (52.2% of malignant ones)', active:true,  organKey:'brain' },
+  { id:'gbm',   name:'Glioblastoma',                    share:'13.7% of all primary brain/CNS tumors (52.2% of malignant ones; CBTRUS, US 2018–2022)', active:true,  organKey:'brain' },
   { id:'astro', name:'Lower-grade astrocytoma',          share:'part of the ~8.5% of primary brain/CNS tumors that are gliomas other than glioblastoma', active:false, organKey:'brain' },
   { id:'odg',   name:'Oligodendroglioma',                share:'part of the same ~8.5% non-glioblastoma glioma share as lower-grade astrocytoma', active:false, organKey:'brain' },
   { id:'menin', name:'Meningioma',                       share:'42.6% of all primary brain/CNS tumors — the single most common, though it arises from the meninges, not brain tissue itself', active:false, organKey:'brain' },
