@@ -165,7 +165,11 @@ function initFailures(st) {
 // ---- selftest -----------------------------------------------------------------------------
 async function selftest() {
   let ok = true;
-  const say = (good, msg) => { ok = ok && good; console.log(`  ${good ? 'ok  ' : 'FAIL'} ${msg}`); };
+  let arms = 0, failed = 0;
+  const say = (good, msg) => {
+    ok = ok && good; arms += 1; if (!good) failed += 1;
+    console.log(`  ${good ? 'ok  ' : 'FAIL'} ${msg}`);
+  };
 
   // arm 1: the hash comparator must fire on a mismatch
   say(sha(Buffer.from('a')) !== sha(Buffer.from('b')),
@@ -208,6 +212,10 @@ async function selftest() {
   console.log('SELFTEST', ok
     ? 'PASS — all three layers shown able to fail: stale bytes, a widened benign list, a dead page'
     : 'FAIL — do not trust a green deploy report from this build');
+  // 7-bis applies to the SELFTEST too: a wrapped `--selftest` run needs a DONE line, or a
+  // selftest that never executed is indistinguishable from one that passed. This is the only
+  // mode of any battery tool that can run to completion without one.
+  console.log(`DONE deploy_check_selftest: ${arms} arms run, ${failed} failures`);
   return ok;
 }
 
@@ -250,7 +258,12 @@ async function selftest() {
 
   for (const p of problems) console.log(`  ${p}`);
   // DONE line last (7-bis): a green deploy is never a pass without it.
-  console.log(`DONE deploy_check: ${assets.length} assets byte-matched to HEAD ${head.slice(0, 7)}, `
+  // The count is MATCHED-over-TOTAL, not total. The first draft printed "27 assets byte-matched"
+  // on a run where four of them demonstrably did not match — a DONE line whose numbers did not
+  // mean what they said, in the one instrument whose whole purpose is refusing to accept a
+  // green-looking summary. Caught by reading its own first real output against its own findings.
+  console.log(`DONE deploy_check: ${assets.length - stale.length}/${assets.length} assets `
+    + `byte-matched to HEAD ${head.slice(0, 7)}, `
     + `${st && st.hotspots ? st.hotspots : 0} hotspots live, `
     + `${unexplained.length} unexplained page errors (${benignSeen.length} declared-benign), `
     + `${problems.length} problems`);
