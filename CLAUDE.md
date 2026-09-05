@@ -3976,6 +3976,42 @@ screen pair per organ:
   — stale-input and tag artifacts triaged, pipeline fixed, second run
   read as evidence: 7 flags of 141, exactly the expected set (three
   artifacts + the four held).
+- **Epidemiological verification pass — FROZEN CONTRACT (2026-09-04,
+  user-authored; full text in the manifest's _epi_pass_contract; the
+  outcome vocabulary, milestone definition and testis.js entry
+  procedure are frozen, everything else iterates).** WHAT THIS PASS
+  IS NOT, stated before starting because the board reads as
+  mostly-done and it isn't: the identifier work established that
+  citations point at real papers and NOTHING about whether those
+  papers support the claims attached to them. 72% identifier coverage
+  means 72% CAN BE claim-checked; the claim surface is ~211 sources
+  of which roughly EIGHT have been claim-checked (the durability
+  sample). Every instrument so far — harvest, resolver, crosscheck,
+  polarity guard — is a pre-condition for this pass, not partial
+  completion of it. FIVE OUTCOME STATES, each addition forced by a
+  real case: verified-quoted; verified-derived (record the arithmetic
+  — Wang/Park's 53,142 was the atlas's own sum of four counts,
+  printed nowhere in the paper, so number-search verifiers fail every
+  derived value or coincidence-match one wrongly); failed
+  (attribution → fix; content → the statistics ruling: for ON-SCREEN
+  figures re-source or remove, no illustrative middle — a user reads
+  a number as a fact); not-a-source-claim (Hu 2012 — the atlas
+  documents the transposition, it does not assert 54/32/15; the 36
+  polarity-flagged windows are the candidate population, each gets a
+  mention-level human read before any verdict); unverifiable-by-access
+  (Curtin 2005 — identifier sound, text unreachable: the claim STANDS
+  with the limitation recorded, NOT a failure, else paywalls strip
+  correct claims; expect common, not edge). MILESTONES, because
+  completion is not the goal and probably isn't reachable: M1 =
+  on-screen figures (share values, ORGAN_DETAILS facts, hotspot text
+  — a few dozen items, the only claims a user actually reads); M2 =
+  testis.js in full (may run first if the disturbance confirms); long
+  tail = comment-level citations, may never complete, acceptable
+  provided the record distinguishes CHECKED from CHECKABLE per entry.
+  Conditions (1)–(8) standing; (7) both directions applies to the
+  shuffle reconstruction itself (a tidy offset from one pass is
+  exactly what the +1 looked like), (8) makes the first claim-read
+  batch calibration — read the second batch as evidence.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
