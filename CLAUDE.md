@@ -3210,6 +3210,23 @@ screen pair per organ:
 - **Phase A — tumour visual pass (first):** target is BEHAVIOURALLY
   correct, not anatomically correct (tumours have no canonical shape;
   chasing anatomical correctness produces a confident-looking lie).
+  THE CATEGORY IS CITED; THE MAGNITUDE IS NOT (2026-09-05, the one
+  conceptual gap closed before the pass): a source says "spiculated
+  margin" — no source says sharpness:11. Every parameter mapping
+  carries TWO claims of different epistemic status: the behavioural
+  CATEGORY, citable and cited; and the numeric VALUE expressing it, a
+  design choice DISCLOSED AS ILLUSTRATIVE. This is Tier 3's
+  amplitude-vs-structure split applied to geometry — bounded by the
+  citation on WHAT the tumour does, illustrative on HOW STRONGLY it
+  is drawn. Failing the separation produces the worst available
+  outcome: geometry that appears citation-backed to the depth of its
+  numbers when the citation reaches only the category — the same
+  overclaim as a scope drift, expressed in mesh instead of prose.
+  Record the two halves separately per property; the UI-facing
+  provenance states that tumour morphology is illustrative of cited
+  behaviour, not measured from it. COLD-SESSION ENTRY POINTER: read
+  CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
+  binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin
   character (spiculated/circumscribed/lobulated → sharpness/
   spikeCount), growth pattern — NARROWED (2026-09-05, user): render
