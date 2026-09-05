@@ -3227,8 +3227,15 @@ screen pair per organ:
   seed, spikeCount, spikeLength, sharpness}) at viewer.js:223, driven
   today by constants + idx-seed at main.js:497 — the pass is
   re-pointing existing knobs at cited behaviour, not a new renderer.
-  New citation class (4 properties × cancers), sourced under the NEW
-  model. Gates: lesion-vs-shadow INVERTED (does normal tissue read as
+  New citation class (4 properties × cancers, ~64 items) —
+  CLASSIFICATION-FACT EXCEPTION (2026-09-05, resolves the Phase-B
+  dependency): these are not statistics but stable classification
+  facts (WHO / PDQ pathology sections; an infiltrative growth pattern
+  reads the same in 2030), a PERMANENT exception to the content-model
+  shift, hand-cited NOW at the existing standard with nothing to
+  migrate later. Refined content rule: PULL statistics (the revisable
+  numbers); HAND-CITE stable classification facts and mechanism
+  prose. Living tertiaries still get Phase-3 treatment. Gates: lesion-vs-shadow INVERTED (does normal tissue read as
   diseased?), regress, P3 framing checks. PRE-REGISTERED NEGATIVE:
   some cancers have no distinctive visual behaviour — a generic mass
   with an honest label beats an invented characterisation.
