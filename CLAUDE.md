@@ -3180,6 +3180,60 @@ screen pair per organ:
   verified-quoted verdicts are safe; the exposed population was the
   negatives, re-passed and closed 2026-09-05 — zero verdicts rest on
   phrase-form assumptions.
+  (7-ter) THE COMMIT IS ALSO A GATE (2026-09-05, the live-site parse
+  failure — the second half of the recoverability property, learned
+  the hard way the same day the first half was written down). 4b2c8c5
+  SHIPPED A SyntaxError TO PRODUCTION: three ASCII apostrophes
+  ("atlas's" ×2, "TCGA's" ×1) typed into SINGLE-QUOTED note strings at
+  pancreas.js:219 and skin.js:407 terminated the literals, and the
+  whole app failed to initialise — femaleBodyGroup null, zero
+  hotspots, zero body markers. Confirmed live rather than inferred:
+  the deployed js/organs/*.js were fetched from Pages and parsed, both
+  broken. THE WRAPPER WORKED — run_checked.sh caught the crashed
+  regression exactly as designed (exit 3, "marker '==== DONE:' ABSENT
+  — vacuous run, treated as failure"). What had no mechanism was THE
+  STEP AFTER IT: the shell variable holding the regression output was
+  empty, and the commit was made and pushed with an empty gate quote
+  in its message. run_checked.sh guards the RUN; nothing guarded the
+  COMMIT. So the earlier comfort clause gets its missing half: A
+  VACUOUS GATE AT HEAD IS NOT HARMLESS, BECAUSE HEAD IS WHAT SHIPS —
+  the intermediate-commit dispensation was always load-bearing on the
+  end state being verified under a trustworthy run, and this time it
+  wasn't.
+  THE DEFECT CLASS, stated so it generalises past one typo: every
+  citation edit in this project writes ENGLISH PROSE INTO
+  SINGLE-QUOTED JS STRING LITERALS, so possessives, contractions and
+  quoted source titles are a standing hazard ON THE EDIT PATH itself
+  rather than an occasional slip — and the class was invisible to all
+  eight citation instruments, every one of which reads the file as
+  TEXT and never as CODE. The aggravating detail is the one worth
+  keeping: the same two lines ALREADY CONTAINED the correct
+  typographic form ("TCGA’s own table", "genome’s", "p53’s"). The
+  convention wasn't unknown; it was unchecked.
+  PARSE GATE (.claude/syntax_check.sh): node --check across all 26
+  modules as ESM (via an .mjs copy — a .js file parses as CommonJS and
+  rejects every import), naming file, line and column in under a
+  second. Not a replacement for the regression, which does catch this:
+  the regression costs ~15 minutes and dies as a HARNESS ERROR at
+  regress.js:80 naming puppeteer internals rather than the file at
+  fault, leaving no report.json and no DONE line — a cheap gate that
+  names the culprit is the difference between a run before every
+  commit and one that gets skipped. Condition (7) at birth: fires on
+  the exact defect shape, passes the curly-apostrophe form; it also
+  calibrated for real, reporting 2-of-26 with both filenames before
+  the fix and 0-of-26 after.
+  COMMIT GATE (.claude/commit_checked.sh): the DONE-quote practice
+  mechanized, because remembering to paste it is precisely what
+  failed. It runs the gate through run_checked.sh, extracts the DONE
+  line, and WRITES THE COMMIT MESSAGE ITSELF — so the quoted numbers
+  are copied from the run by machine and can neither drift from it nor
+  be silently absent, the two ways this practice has now failed, once
+  each. Three-arm self-test against a scratch repo and real commits
+  (no marker → zero new commits; non-zero exit → refuses even though
+  the marker printed; marker plus clean exit → commits with the line
+  verbatim). Append-only by construction: no amend, no rebase, no
+  force — the archive-immutability rule is not this tool's to bend,
+  and it does not have the flags to try.
 
 # Phase 2 roadmap (2026-09-05, user-authored; decisions TAKEN)
 
