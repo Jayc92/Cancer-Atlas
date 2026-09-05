@@ -77,6 +77,28 @@ magnitude half is illustrative by declaration, same discipline as the colour dow
 - The lesion-vs-shadow gate INVERTS for this pass: the tumour is supposed to read as a
   lesion; the check becomes whether NORMAL tissue reads as diseased.
 
+## The three expressions — three problems, not three variations (2026-09-05)
+Decomposed by what each needs to know about the organ:
+1. **Infiltrative falloff — TUMOUR-LOCAL.** The mass's own margin softens; the organ
+   is uninvolved. Cheapest, independent, BUILD FIRST.
+2. **Diffuse wall — ORGAN-LOCAL.** There is no mass; the expression IS the organ wall.
+   Nothing about the tumour renderer applies. PROVENANCE RULE (full weight — checked:
+   assets/stomach.glb is a cited real asset, "Realistic Stomach" by Brain Diagno,
+   Sketchfab): the organ meshes are provenance-tracked cited assets with landmark-
+   fidelity requirements, and deforming one raises whether the shipped organ is still
+   the cited asset. Render the wall effect as a MATERIAL TREATMENT or a SEPARATE SHELL
+   GEOMETRY over the unmodified mesh — the same discipline as declining to merge
+   pancreas's nodes to fix its seam: the cited asset stays untouched, the effect lives
+   on top.
+3. **Extent breach — the only genuinely RELATIONAL one** (needs the organ boundary in
+   order to cross it). CHEAP VERSION FIRST (premise checked: organ materials ship
+   opaque, no transparent:true anywhere — the transmission investigation's null
+   result): place the mass straddling the organ surface and let the DEPTH BUFFER do
+   the work — the inside portion occludes, the outside portion shows. Free, and the
+   read you want. The expensive version (visible deformation of the organ surface
+   where the tumour pushes through) is real geometry work AND would collide with the
+   provenance rule above — deferred until the cheap one has been looked at.
+
 ## Idiom-collision rule (checked against code 2026-09-05)
 Multifocal (several independent PRIMARY foci) and the tumour site map (several blobs =
 SITES OF INVOLVEMENT) are different concepts that could share a visual idiom. Code
