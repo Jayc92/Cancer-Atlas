@@ -100,6 +100,8 @@ if __name__ == '__main__':
             yrs = {(a, b) for a, b in YEARRANGE.findall(html.unescape(t))}
             if len(yrs) >= 2:
                 tworange.append((f.split('/')[-1][:-3], ln, sorted(yrs)))
-    print(f'\nSCAN: {checked} strings with fraction+percent, {flagged} mismatch flags')
     print(f'TWO-YEAR-RANGE strings (human confirms-deliberate): {len(tworange)}')
     for f, l, y in tworange: print(f'   {f}:{l}  {y}')
+    # DONE line last (2026-09-05 sweep): absence-of-flags is never a pass.
+    print(f'DONE fraction_check: {checked} strings with fraction+percent, '
+          f'{flagged} mismatch flags')

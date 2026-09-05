@@ -96,9 +96,15 @@ if __name__ == '__main__':
     if '--selftest' in sys.argv:
         sys.exit(0)
     print()
+    families = gaps = 0
     for f in sorted(glob.glob('js/organs/*.js')):
         src = open(f, encoding='utf-8').read()
         shares = [m.group(1) for m in re.finditer(r"share:'((?:[^'\\]|\\.)*)'", src)]
         if not shares: continue
         name, verdict, s, ex = check_family(f.split('/')[-1][:-3], shares)
         print(f'  {name:<9} {verdict}')
+        families += 1
+        if verdict.startswith('GAP'): gaps += 1
+    # DONE line last (2026-09-05 sweep): a mid-loop crash must not read as a short clean
+    # list — absence-of-flags is never a pass.
+    print(f'DONE share_sum_check: {families} families checked, {gaps} gap flags')

@@ -115,3 +115,5 @@ if __name__ == '__main__':
                   f"{sorted(set(sum(hits.values(), [])))[:2]}")
     print('SCAN:', dict(Counter(x['window'] for x in out)))
     json.dump(out, open('/tmp/atlas-verify/cite/polarity_scan.json', 'w'), indent=1)
+    # DONE line last, after the write (2026-09-05 sweep): absence-of-flags is never a pass.
+    print(f'DONE citation_polarity: {len(out)} records scanned')

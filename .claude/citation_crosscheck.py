@@ -178,6 +178,9 @@ def main():
     json.dump([{'pmid': p, 'author': a, 'year': y, 'ref': r, 'origin': o, 'flags': fl}
                for p, a, y, r, o, fl in flagged],
               open('/tmp/atlas-verify/cite/crosscheck_flags.json', 'w'), indent=1)
+    # DONE line last, after every write (2026-09-05 sweep): the report of zero must be
+    # shown to have been produced at all — absence-of-flags is never a pass.
+    print(f'DONE citation_crosscheck: {len(uniq)} records checked, {len(flagged)} flags')
 
 if __name__ == '__main__':
     if not selftest():

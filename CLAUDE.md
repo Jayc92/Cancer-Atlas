@@ -3128,6 +3128,23 @@ screen pair per organ:
   against the truth table, and the fix was FOLLOWING THE DISAGREEMENT
   instead of the table — the instinct in that moment is to fix the
   thing that's failing, and it is exactly wrong.
+  (7-bis) OPERATIONAL COROLLARY (2026-09-05, after the gate failure —
+  qualitatively different from the domain-check instances because it
+  was THE GATE ITSELF: /tmp purge broke puppeteer-core, regress
+  crashed inside a commit chain, and a grep-for-FAIL read empty
+  output as pass): THE REPORT OF ZERO MUST BE SHOWN TO HAVE BEEN
+  PRODUCED AT ALL. Every tool ends with a mandatory DONE line, last,
+  after every write; consumers require it present; absence-of-FAIL is
+  never a pass. Swept across all six tools same day (share_sum had NO
+  completion marker — a mid-loop crash looked like a short clean
+  list; crosscheck and polarity printed summaries BEFORE their
+  writes). The recoverability property, written down so the next such
+  discovery is not an archaeology project: A VACUOUS GATE ON AN
+  INTERMEDIATE COMMIT IS HARMLESS IF THE END STATE IS VERIFIED UNDER
+  A TRUSTWORTHY RUN — only HEAD ships; one green run at HEAD is the
+  whole remedy. The irony one layer deep: a battery of self-testing
+  instruments, all of which could have been reporting nothing while
+  appearing to report clean.
   (8) Adopted at the attribution ruling (2026-09-04), converting a
   three-time discovery into the default: A NEW DETECTOR'S FIRST RUN IS
   INSTRUMENT CALIBRATION, NOT FINDINGS. Three first runs, three piles

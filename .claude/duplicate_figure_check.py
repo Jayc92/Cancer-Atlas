@@ -136,4 +136,5 @@ if __name__ == '__main__':
                 print(f'  DRIFT? {f.split("/")[-1][:-3]}:{l1} vs :{l2}  (gene A={g1!r} B={g2!r})')
                 print(f'     window: {win}')
                 print(f'     A={na}  B={nb}')
-    print(f'\nSCAN: {total_pairs} same-file string pairs compared, {flagged} drift flags')
+    print(f'\nDONE duplicate_figure_check: {total_pairs} same-file string pairs compared, '
+          f'{flagged} drift flags')
