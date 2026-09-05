@@ -7,6 +7,33 @@ the magnitude is not.** Each property below records its two halves separately. C
 classification-fact exception (hand-cited now, permanent, no Phase-B dependency); the
 magnitude half is illustrative by declaration, same discipline as the colour downgrades.
 
+## The assignment unit (decided 2026-09-05, before the reads)
+**Morphology attaches to the ACTIVE CANCER-LIST ENTRY — the atlas's existing rendering
+unit — which is already subtype-level wherever morphology diverges** (the 16 active
+entries are TNBC, diffuse-type gastric, ccRCC, seminoma, HGSOC and OCCC separately,
+PTC and FTC separately, etc.). This is the hybrid resolution with the split rule
+anchored to existing structure rather than case-by-case taste:
+1. **Unit:** the active entry. Population stays 4 × 16 = 64; the renderer draws one
+   tumour per entry (no renderer change). Per-subtype rendering happens only if an
+   entry is split — an explicit decision, never an accumulation.
+2. **Mandatory qualifier:** every category claim carries "characteristically /
+   predominantly" WITH a source that says so. An unqualified predominant-as-THE-pattern
+   is the generalisation drift that accounts for eleven of twelve defects — building it
+   into the schema is prohibited.
+3. **Divergence threshold (stated):** if a within-entry subtype holding ≥10% share (by
+   the atlas's own cited figures) carries a CATEGORICALLY OPPOSED morphology (inversion
+   — circumscribed vs spiculated — not gradation), the entry cannot carry one
+   unqualified category: the claim names the divergence explicitly, or the
+   pre-registered negative fires (generic mass, honest label). Likely test case:
+   colorectal "adenocarcinoma" (a >90% entry spanning NST / mucinous / signet-ring).
+4. **Immediate correction this forces:** the calibration batch's breast case was
+   mis-unit'ed — "IDC-NST spiculated-margin classic" is NOT a rendered entry. The
+   rendered entry is TNBC/basal-like, whose gross margin is characteristically PUSHING
+   — and its category citation already exists in-atlas, verified: Livasy's "pushing
+   margin of invasion (14/23)" (verified-quoted at abstract, 2026-09-05). The
+   spiculated NST classic stays in the record as the counter-example documenting why
+   the unit decision matters.
+
 ## The four properties
 
 ### 1. Site — where in the organ this cancer arises
