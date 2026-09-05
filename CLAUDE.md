@@ -3297,6 +3297,28 @@ screen pair per organ:
   promise — neutral order, stated; THE HANDOFF IS THE POINT (a reader
   arriving at their oncologist with informed questions, said on the
   page). Framing designed BEFORE the integration.
+- **ccf-READ CONTRACT ADDENDUM (2026-09-05, user-authored; full text
+  in the manifest's _ccf_read_addendum):** the ~127 remaining clauses
+  are mechanism prose with no number to anchor on. THE ANCHOR IS THE
+  NAMED ENTITY (PIK3CA is exactly as unparaphrasable as 17/23):
+  extract entities → find them in the source → read the surrounding
+  sentence for the RELATIONSHIP. Capability check ports unmodified.
+  The drift direction holds but the dropped qualifier is EPISTEMIC —
+  mechanism drift drops HOW CONFIDENTLY IT WAS SHOWN ("associated
+  with"→"causes"; hedges; "suggests"→"shows"; "in this cohort"→∅;
+  "proposed"→"established") — and THE IN-VITRO/MOUSE OMISSION IS THE
+  ONE TO WATCH HARDEST: most common in review-derived prose, least
+  visible, most consequential — a patient reasonably assumes a
+  mechanism claim was shown in humans. NEW STATE: VERIFIED-CLAIM,
+  CERTAINTY-DRIFT (mechanism real and cited, assertion stronger than
+  the source; consequence = copy edit restoring the dropped qualifier
+  in the source's own words). verified-derived does not apply. RATE
+  deliberately NOT pre-registered — batch 1 establishes it, then it
+  pre-registers before batch 2 (condition (8): the first batch
+  calibrates the method, not the content). GATES unchanged, plus:
+  where a mechanism claim rests on a REVIEW, record it — the
+  secondary-source rule governs (verifies what the review asserts,
+  not what the underlying work showed).
 - **Sequencing:** re-scope (done) → A → B → C∥D. Detector survival:
   rendered-output checks (fraction/share-sum/duplicate) persist and
   matter MORE under pulled content; citation checks shrink to the
