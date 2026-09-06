@@ -25,6 +25,23 @@
 #                  can treat a citation-shaped string in a corrective window as a plain
 #                  citation without seeing the flag.
 #
+# DOCUMENTED BLIND SPOT: THE CITATION HEAD MUST BE A BARE SURNAME (2026-09-06). Recorded here
+# and not only in the batch log, on the same ruling that put fraction_check's two blind spots in
+# its header — a blind spot known only to a log is not known to the next person who trusts a
+# clean run. P_ETAL below matches SURNAME + "et al.", so the PubMed-style head "Li Z et al." does
+# not match: the initial sits where "et" must be. The citation then yields NO RECORD AT ALL, and
+# any PMID/PMC in its clause is dropped with it. FOUND LIVE, not reasoned about: the ARID2
+# name-it-or-remove-it remedy added "Li Z et al., Human Mutation, 2026 (PMID 42016321,
+# PMC13092802, OA)" to a liver.js comment; the extractor's total rose by exactly one for the
+# user-facing note's "Li et al." and citation_crosscheck's identifier-carrying population held at
+# 142, so the two identifiers the remedy existed to produce reached no instrument. Dropping the
+# initial made the same line yield a record carrying both ids. THE FAILURE IS SILENT IN BOTH
+# DIRECTIONS: nothing fires, and the ratchet cannot see it either, because a citation that never
+# becomes a record is an absence, not a decrease. Widening SURNAME to swallow initials is
+# deliberately NOT done here: it is a change in reach, and per aafbe04's rule a change in reach
+# must be declared and measured, not slipped in — and the measurement is not free, since "Li Z"
+# and "Li Zhang" are the same shape to a regex that stops caring about token length.
+#
 # Usage: python3 .claude/extract_citations.py <out.json> [file ...defaults to js/organs/*.js]
 import json, re, sys, glob, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))

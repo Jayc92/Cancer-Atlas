@@ -230,10 +230,30 @@ export const organDetail = {
 // checked individually rather than assumed safe as a group: Guichard et al. (2012) found ARID1A
 // "significantly more frequent in HCC related to alcohol intake" with "a significant association
 // with CTNNB1 mutations" (cooperating), and "6 out of 8 NFE2L2 mutated HCC were also mutated for
-// CTNNB1 (P=0.015)" (cooperating); independent, more recent work (multiomics analyses of
-// CTNNB1-ARID2 co-mutation patterns) confirms ARID2 cooperates with CTNNB1 the same way. None of
-// the three compete with CTNNB1, TP53, or TERT — safe to include in a pool shared across every
-// site regardless of that site's branch gene.
+// CTNNB1 (P=0.015)" (cooperating); for ARID2, this comment said only "independent, more recent
+// work (multiomics analyses of CTNNB1-ARID2 co-mutation patterns)" — an UNNAMED source doing
+// load-bearing work, which is the pancreas dangling-pointer class. Named on ruling rather than
+// downgraded, because it turned out to exist: Li et al., Human Mutation, 2026 (PMID 42016321,
+// PMC13092802, OA), "Low-risk patients were characterized by frequent CTNNB1-ARID2 comutations."
+// Reading it narrowed what it can carry, in three ways worth keeping: it is FIGURE-DERIVED
+// (Fig 7c,d comutation heatmaps; the prose gives no OR or p for this pair, only the Fisher
+// p<0.05 threshold used for the panel); it is SCOPED to the low-risk stratum of that paper's
+// own WGCNA/machine-learning risk model, not to HCC at large; and it is NOT INDEPENDENT — it
+// reanalyses TCGA plus GSE54236, so the old word "independent" credited a reanalysis with a
+// separate cohort, the same attribution-error class as prostate's TCGA/Taylor 2010 mix-up.
+// None of the three compete with CTNNB1, TP53, or TERT.
+//
+// THAT CHECK IS AGAINST THE WRONG PARTNER LIST, AND THE GAP IS OPEN (2026-09-06, held for
+// ruling — do not "fix" this pair alone). Exclusivity here was only ever tested pool-member
+// against TRUNK and BRANCH genes (CTNNB1, TP53, TERT). It was never tested pool-member against
+// POOL-MEMBER, and js/panel.js:48 draws TWO distinct pool members into one cell in ~12.6% of
+// cells — so every unordered pool pair is producible. Guichard's own text says ARID2 mutations
+// were "less frequent but exclusive from ARID1A mutations", and ARID1A and ARID2 are both in
+// PRIVATE_POOL_HCC below. The generator can therefore render a cell carrying a genotype this
+// file's own cited source reports as exclusive. Li et al. cannot license the pairing either:
+// its heatmaps were built to show "co-occurrence and mutual exclusivity" and it says nothing
+// about ARID1A-vs-ARID2, so on this pair it is silent, not supporting. A corpus-wide sweep of
+// this class ran on 2026-09-06 (see CLAUDE.md); ccRCC's MTOR/PTEN is a second instance.
 const REGIONS_HCC = [
   { id:'PU', name:'Lung', color:cssVar('--coral'), pos3d:{x:-0.2,y:1.3,z:0.25},
     branch:{ gene:'TP53 mutation', class:'driver', ccf:'20.8% of HCC (Guichard et al., Nature Genetics, 2012)', note:'Disables the genome-stability tumor suppressor — the chromosomally-unstable, HBV-associated branch of HCC\'s two-pathway split, "largely considered to occur in a mutually exclusive manner" with CTNNB1 mutation (Friemel et al., BMC Clinical Pathology, 2016, citing Laurent-Puig et al., Gastroenterology, 2001). That "largely" is doing real work: Friemel et al. (2016) is itself a case report finding both a CTNNB1 mutation and a TP53 mutation together in one heterogeneous tumor, stating plainly that "intratumor heterogeneity challenges the concept of CTNNB1 and TP53 gene mutations being mutually exclusive molecular classifiers in HCC." The general rule and its documented exception are both real. Lung is HCC\'s single most common metastatic site — 55% of extrahepatic-met patients (Katyal et al., Radiology, 2000), closely corroborated 25 years later by a larger SEER cohort (51%, Zhuang et al., Translational Cancer Research, 2025).' } },
@@ -249,7 +269,7 @@ const TRUNK_HCC = [
 ];
 const PRIVATE_POOL_HCC = [
   { gene:'ARID1A mutation', class:'driver', ccf:'16.8% of HCC (Guichard et al., Nature Genetics, 2012)', note:'Disrupts SWI/SNF chromatin remodeling — significantly associated with CTNNB1 mutation and alcohol-related HCC specifically (Guichard et al., 2012), cooperating with this cancer\'s Wnt-driven branch rather than competing with it.' },
-  { gene:'ARID2 mutation', class:'driver', ccf:'5.6% of HCC (Guichard et al., Nature Genetics, 2012)', note:'Another SWI/SNF chromatin-remodeling gene, independently confirmed to co-occur with CTNNB1 mutation in HCC rather than substitute for it — the same "cooperating, not competing" relationship ARID1A has with this cancer\'s Wnt-driven branch.' },
+  { gene:'ARID2 mutation', class:'driver', ccf:'5.6% of HCC (Guichard et al., Nature Genetics, 2012)', note:'Another SWI/SNF chromatin-remodeling gene, reported co-mutating with CTNNB1 rather than substituting for it — "CTNNB1-ARID2 comutations" characterize the low-risk group of a TCGA-based risk model (Li et al., Human Mutation, 2026) — the same "cooperating, not competing" relationship ARID1A has with this cancer\'s Wnt-driven branch.' },
   { gene:'NFE2L2 mutation', class:'driver', ccf:'6.4% of HCC (Guichard et al., Nature Genetics, 2012)', note:'Activates the oxidative-stress-response pathway. 6 of 8 NFE2L2-mutated HCC in this same cohort were also CTNNB1-mutated (P=0.015, Guichard et al., 2012) — real co-occurrence, not a coincidence of two common genes, and another route that cooperates with the Wnt-driven branch rather than replacing it.' },
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
 ];

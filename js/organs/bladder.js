@@ -209,7 +209,7 @@ export const organDetail = {
 // higher at 123-165).
 const REGIONS_UC = [
   { id:'BE', name:'Bone', color:cssVar('--coral'), pos3d:{x:0.3,y:-1.85,z:0.4},
-    branch:{ gene:'TP53 mutation', class:'driver', ccf:'~48&ndash;49% of urothelial carcinoma (TCGA, 2017; 49.3% in an independent 410-tumor cohort computed directly for this atlas)', note:'The genome\'s damage-response checkpoint, disabled — the founding event on this cancer\'s aggressive, MIBC-associated road (see the Trunk panel\'s pathway-divergence entry). In a real metastatic cohort, TP53 mutation was specifically associated with osseous metastases (relative risk 1.9, P=.02) and with lymphadenopathy (relative risk 1.7, P=.002) (Alessandrino et al., 2020) — and bone is this cancer\'s single most common metastatic site (38.3% of metastatic patients), a genuine echo of this atlas\'s own Prostate cancer, whose spread is likewise overwhelmingly bone-dominant. Co-occurs with RB1 loss (q&lt;0.2, TCGA) more often than chance, consistent with both sitting on the same cell-cycle-checkpoint side of this cancer\'s pathway split.' } },
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'~48&ndash;49% of urothelial carcinoma (TCGA, 2017; 49.3% in an independent 410-tumor cohort computed directly for this atlas)', note:'The genome\'s damage-response checkpoint, disabled — the founding event on this cancer\'s aggressive, MIBC-associated road (see the Trunk panel\'s pathway-divergence entry). In a real 103-patient muscle-invasive urothelial cancer cohort followed by serial imaging, TP53 mutation was specifically associated with osseous metastases (relative risk 1.9, P=.02) and with lymphadenopathy (relative risk 1.7, P=.002) (Alessandrino et al., 2020) — and bone is this cancer\'s single most common metastatic site (38.3% of metastatic patients), a genuine echo of this atlas\'s own Prostate cancer, whose spread is likewise overwhelmingly bone-dominant. Co-occurs with RB1 loss (q&lt;0.2, TCGA) more often than chance, consistent with both sitting on the same cell-cycle-checkpoint side of this cancer\'s pathway split.' } },
   { id:'LM', name:'Lymph nodes', color:cssVar('--azure'), pos3d:{x:-2.05,y:-0.05,z:-0.55},
     branch:{ gene:'CDKN2A loss', class:'driver', ccf:'~22% by strict focal-deletion criteria (copy number &lt;1; TCGA, 2017), ~32&ndash;33% by the broader GISTIC deep-deletion call used in most re-analyses (computed directly for this atlas, both major TCGA cohort versions) &mdash; the same event measured two ways, not a real disagreement', note:'A cell-cycle brake, lost — most often by focal deletion rather than point mutation. Its own paper states the two figures precisely: "the most common recurrent (22%) focal deletion (copy number &lt;1) contained CDKN2A" &mdash; a strict absolute threshold &mdash; while the more commonly cited ~32&ndash;33% uses GISTIC\'s relative "deep deletion" call on the same underlying data. Mutually exclusive with TP53 and RB1 (q&lt;0.2, TCGA) &mdash; kept at a different site than either &mdash; but positively CO-OCCURS with FGFR3 in about 7% of tumors, flagged in TCGA\'s own data as tumors "which may be MIBCs that have progressed from non-invasive" FGFR3-driven disease. Lymph-node involvement is this cancer\'s second most common metastatic site (36.8% of metastatic patients), with no significant difference by histologic subtype.' } },
   { id:'LP', name:'Lung', color:cssVar('--amber'), pos3d:{x:2.1,y:0.35,z:0.65},
@@ -223,8 +223,15 @@ const REGIONS_UC = [
 // TERT is genuinely trunk-level and, critically, STAGE-INDEPENDENT — the property that let this
 // organ avoid the two-cancer-entries trap above. Rachakonda et al. (2013): 65.4% (214/327),
 // "with even distribution across different stages and grades" (verbatim); Allory et al. (Eur
-// Urol, 2014): 70% (78/111) in a primary NMIBC cohort and 79% (282/357) in an independent
-// cohort, C228T alone 83%, "not associated with clinical or pathologic parameters," and MORE
+// Urol, 2014): 70% (78/111) in a first series the paper describes as UBCs "of different
+// stages" — NOT an NMIBC cohort, which is what this comment said until the batch-3 read; that
+// mis-scoping contradicted the very argument it supports, since the stage-independence below
+// IS the source's own framing ("high frequency across stages" is in its title) — and 79%
+// (283/357) in an independent set (184 non-muscle-invasive + 173 muscle-invasive). The
+// numerator was 282 here for the same span of time: 282/357 = 78.99% and 283/357 = 79.27%
+// both print as "79%", so no percentage could betray it and fraction_check cannot see it
+// (see that tool's header). C228T alone 83%, "not associated with clinical or pathologic
+// parameters," and MORE
 // frequent in FGFR3-mutant tumours specifically (p=0.0002) &mdash; a real, positive association
 // with one of the two branch genes below, stated as cooperation rather than conflict because
 // that is what the source shows.

@@ -21,6 +21,30 @@
 # Condition (7) at birth: fires on a synthetic mismatch, passes the real ~92/91.8 and
 # range/endpoint cases. Condition (8): first live run is calibration. The tool FLAGS; the
 # human rules.
+#
+# TWO DOCUMENTED BLIND SPOTS (2026-09-06, user ruling — the first known defect class this
+# tool STRUCTURALLY CANNOT SEE, recorded here and not only in the batch log, because a
+# blind spot known only to a log is not known to the next person who trusts a clean run).
+# Found when the batch-3 read caught `bladder.js` carrying Allory's independent-cohort
+# numerator as 282/357 where the source says "283 of 357". Note line 13 above: THIS HEADER
+# HAS CARRIED THE CORRECT 283/357 THE WHOLE TIME — the instrument's own documentation held
+# the right number while the corpus held the wrong one, and the instrument still could not
+# catch it. Both blind spots were proven by running check_string, not reasoned about:
+#   (1) ROUNDING COLLISION. 282/357 = 78.99% and 283/357 = 79.27% BOTH round to "79%", so
+#       "79% (282/357)" passes on the same tolerance that makes "~92%" for 91.8% legal. A
+#       wrong numerator that survives its own rounding is invisible BY CONSTRUCTION — this
+#       is the tolerance of line 11 working exactly as ruled, and the cost of that ruling.
+#       Tightening the tolerance would not fix it and would break the ~92% case; the honest
+#       statement is that percentage/fraction agreement cannot verify a numerator, only
+#       detect gross disagreement. 250/357 does fire, so the check is live, not dead.
+#   (2) SCAN SURFACE. FIELDS matches quoted field literals only (share|ccf|note|text|...).
+#       A fraction inside a `//` comment is never examined, and `bladder.js`'s was a comment
+#       — so this instance was not a near-miss on tolerance, it was never a candidate. The
+#       corpus's COMMENTS are part of the record (batch 3's finding: hedged user-facing
+#       prose stays clean while the provenance comment beneath it drifts), so the scan
+#       surface is narrower than the surface that carries defects. Extending FIELDS to
+#       comments is deliberately NOT done here: it is a real change in reach, and per
+#       aafbe04's rule a change in reach must be declared and measured, not slipped in.
 import re, sys, glob, html
 
 FIELDS = re.compile(r"(?:share|ccf|note|text|val|sub|intro):'((?:[^'\\]|\\.)*)'")

@@ -765,9 +765,22 @@ screen pair per organ:
       ("6 out of 8 NFE2L2 mutated HCC were also mutated for CTNNB1,
       P=0.015") were both confirmed to cooperate with CTNNB1, not compete —
       safe for the shared private pool. ARID2's cooperation with CTNNB1 was
-      confirmed via independent, more recent work (multiomics analyses
-      naming "CTNNB1-ARID2 comutations" as a recurring HCC pattern), since
-      this 2012 paper's own text didn't address that specific pair directly.
+      confirmed via more recent work, since this 2012 paper's own text didn't
+      address that specific pair directly — recorded here for months as only
+      "multiomics analyses naming 'CTNNB1-ARID2 comutations'", an UNNAMED
+      source. **NAMED ON RULING 2026-09-06 (name-it-or-remove-it, not
+      downgrade — an unnamed source was doing load-bearing work against a
+      named one): Li Z et al., *Human Mutation*, 2026, PMID 42016321,
+      PMC13092802, OA.** "Low-risk patients were characterized by frequent
+      CTNNB1-ARID2 comutations" (verbatim). Reading it narrowed it three
+      ways: FIGURE-DERIVED (Fig 7c,d heatmaps; no OR/p for this pair in
+      prose), SCOPED to the low-risk stratum of that paper's own WGCNA/ML
+      risk model rather than to HCC at large, and NOT INDEPENDENT — a
+      reanalysis of TCGA + GSE54236, so the word "independent" credited a
+      reanalysis with a separate cohort (**attribution error, the prostate
+      TCGA/Taylor-2010 class**). It is also SILENT on ARID1A-vs-ARID2, which
+      is the pair the shared pool actually turns on — see the pool-member
+      exclusivity sweep below.
     - **Laurent-Puig et al., *Gastroenterology*, 2001** ("Genetic alterations
       associated with hepatocellular carcinomas define distinct pathways of
       hepatocarcinogenesis"; PMID 11375957, not open access). The
@@ -4151,6 +4164,148 @@ refute it, which is worth more than file order.
   the hedge really does mark epistemic work already done; near the
   certainty-drift rate above and hedging is irrelevant — which kills the
   ordering idea outright rather than leaving it mis-specified.
+- **ccf BATCH 3 — READ AND CLOSED (2026-09-06). The inversion test. Frame
+  n=8 at `ab3ed93`; four members were lines edited that same day in
+  `ab3ed93` and were EXCLUDED AS CONTAMINATED rather than adjusted for.
+  INDEPENDENT n=4. CERTAINTY-DRIFT: 0 of 4. TOTAL DEFECTS: 1 of 4.**
+  Pre-registered before reading: near zero, and the killer would be "a
+  hedge present but misplaced — hedging the mechanism while stating the
+  scope flatly."
+  **THE HEADLINE IS THAT THE TEST CANNOT ANSWER ITS OWN QUESTION.** At
+  batch 2's 4/15, P(0 of 4 clean) = 0.733⁴ ≈ 29%. So 0 of 4 does not
+  exclude 27%, and "directional" was still too strong a frame for four
+  records. **Do not cite batch 3 as evidence that hedging works.** What it
+  does establish is a matched comparison, which needs no rate: each clean
+  record cleared the exact axis a batch-2 record failed. `bladder.js:232`
+  carried Allory's FGFR3 counter-association INTO the user-facing note
+  (Cornish's record dropped a distinction the same file knew);
+  `pancreas.js:206` labels an immunolabeling endpoint "SMAD4 loss" and its
+  ccf separates mutation+SV from homozygous deletion (Fang's record called
+  a mutation meta-analysis "loss"); `liver.js:251` used Guichard's own
+  significance word at a boundary p=0.05 rather than strengthening it.
+  **THE REAL FINDING — THE DRIFT MOVED, IT DID NOT VANISH, AND THE UNIT
+  WAS WRONG.** `bladder.js:232`'s user-facing note is clean while the
+  provenance COMMENT feeding it carried two defects: Allory's numerator as
+  282/357 where the source says "283 of 357", and the first series called
+  "a primary NMIBC cohort" where the source says UBCs "of different
+  stages" — the latter contradicting the stage-independence argument the
+  note below it rests on (**corpus as its own control, fourth instance**).
+  Same at `liver.js`: the framed line clean, the adjacent ARID2 record
+  resting on an unnamed source. So hedging predicts a clean USER-FACING
+  sentence and says nothing about the record beneath it. The ordering idea
+  is not dead and not confirmed; it is mis-specified in the UNIT.
+  **CONSEQUENCE, ON USER RULING — RE-SPECIFY THE UNIT AS RECORD-PLUS-
+  COMMENT BEFORE THE NEXT BATCH, NOT AFTER.** Batch 2's 6/15 was measured
+  on the wrong unit too, and the remaining ~127-clause queue counts
+  CLAUSES, not the comments under them. **The true remediation load is
+  larger than the clause count implies.**
+  **THE 282/357 CASE IS THE FIRST KNOWN DEFECT `fraction_check` CANNOT
+  SEE, and it is recorded in that tool's header, not only here.** Two
+  blind spots, both proven by running `check_string` rather than reasoned
+  about: (1) 282/357 = 78.99% and 283/357 = 79.27% both print as "79%", so
+  a wrong numerator surviving its own rounding is invisible on the very
+  tolerance that makes "~92%" for 91.8% legal — 250/357 does fire, so the
+  check is live; (2) `FIELDS` scans quoted field literals only, and this
+  fraction was in a `//` comment, so it was never a candidate at all. **The
+  instrument's own header has carried the correct 283/357 the whole time**
+  (`fraction_check.py:13`) — **corpus as its own control, fifth instance,
+  and the sharpest: the tool documented the right number and still could
+  not catch the wrong one.** Extending `FIELDS` to comments is deliberately
+  NOT done: a change in reach must be declared and measured (aafbe04).
+  **FETCH AND METHOD NOTES.** Allory finally resolved by exact title after
+  two failed author searches: PMID 24018021, Eur Urol 2014. Rachakonda
+  verified at full text (214/327, 65.4%, "even distribution across
+  different stages and grades" verbatim, population "urothelial cell
+  carcinoma of bladder" — organ scoping correct). Guichard's PMC page
+  serves fine at 170 KB; `/tmp/ft.py` reported it as "TOO SHORT
+  (wall/throttle/stub)" — **the same conflation of an extraction failure
+  with a wall that aafbe04 removed from `citation_crosscheck`, recurring
+  one layer down in the scratch helper.** `pmc.ncbi.nlm.nih.gov` served a
+  **reCAPTCHA challenge page** for two articles; NOT attempted, read via
+  the Europe PMC REST API instead. **A gated fetch is recorded as gated.**
+- **POOL-MEMBER EXCLUSIVITY — A DEFECT CLASS THAT GENERATES RATHER THAN
+  DESCRIBES, SWEPT AND BOUNDED (2026-09-06). THE FIX IS HELD FOR RULING;
+  THE BOUND IS NOT.** Every other defect in this arc is a DESCRIPTION that
+  overstates. This one is a GENERATOR that can produce an object its own
+  cited source says does not exist: a user can rotate a liver tumour whose
+  cell carries a genotype Guichard reports as exclusive. It outranks the
+  batch that found it.
+  **MECHANISM (`js/panel.js:48`):** p=0.42 a cell carries private
+  mutations; of those, p=0.3 draws TWO DISTINCT members of `privatePool`.
+  So **every unordered pool pair is producible, in ~12.6% of cells.**
+  **ROOT CAUSE — A HAND-CHOSEN PARTNER LIST.** Exclusivity was checked
+  pool-member against TRUNK and BRANCH genes and never pool-member against
+  POOL-MEMBER. `liver.js` states the check explicitly ("None of the three
+  compete with CTNNB1, TP53, or TERT — safe to include in a pool shared
+  across every site"), and the inference does not follow: the premise is
+  about the trunk/branch axis, the conclusion is about an axis never
+  tested. **Fixing the pair closes the instance and leaves the mechanism**
+  — the pattern the testis four was held for.
+  **THE SWEEP (cheap, source-free, on user ruling).** Parsed all 16
+  cancers' TRUNK/REGIONS/PRIVATE_POOL arrays into a 71-symbol modeled-gene
+  universe, then matched every "exclusiv"/`&perp;`/⊥ span in the organ
+  files, `CLAUDE.md` and `cancer-atlas.html` against producible
+  co-occurrence. 87 spans name ≥1 modeled gene; 40 name ≥2. Most
+  cross-organ matches are NOISE and were discarded by hand — a melanoma
+  exclusivity says nothing about ccRCC's pool. **TWO REAL INSTANCES:**
+    - **HCC ARID1A ⊥ ARID2** (known). Guichard: ARID2 mutations "less
+      frequent but exclusive from ARID1A mutations". Both in
+      `PRIVATE_POOL_HCC`. The flawed justification had also PROPAGATED —
+      `prostate.js:183` cites HCC's pool decision as precedent, so the
+      unchecked assumption was doing work in a second organ's reasoning.
+    - **ccRCC MTOR ⊥ PTEN** (new, and worse). `kidneys.js:157` prints, in
+      a user-facing ccf, that the PI3K/Akt/mTOR pattern has "alterations
+      across pathway components mutually exclusive with each other";
+      `kidneys.js:158` declares PTEN "part of the same" pattern. Both are
+      in `PRIVATE_POOL_CCRCC`. **A viewer can read the exclusivity in one
+      panel and see both alterations in one cell** — where ARID1A/ARID2's
+      exclusivity lives only in a source, this one is printed in the
+      product, in adjacent lines of the same array.
+      **FIX DIRECTION UNDETERMINED, AND THE READ IS BLOCKED.** If TCGA
+      states component-level exclusivity, the pool must not co-draw the
+      pair; if it does not, the ccf overstates and the pool is fine. The
+      TCGA ccRCC 2013 abstract says only "The PI(3)K/AKT pathway was
+      recurrently mutated" — no exclusivity, no 28% — and the full text is
+      unreachable (PMC www CAPTCHA-gated, EPMC fullTextXML 404 despite
+      OA:Y). **Either way it is a defect; which one it is needs that read.**
+  **THE SWEEP'S OWN BLIND SPOT, MEASURED, NOT ASSUMED — AND IT IS WHY THE
+  ccRCC HIT WAS LUCK.** A gene-PAIR matcher cannot see exclusivity
+  asserted over a PATHWAY or MODULE, because those spans name no partner
+  gene: 13 such spans exist ("across pathway components", "at module
+  level", "one or the other", "mutually exclusive of"). `kidneys.js:157`
+  is one of them, and the pair-sweep surfaced it ONLY because `VHL`
+  happened to sit in the same span, which misfiled it as pool×trunk.
+  **So the sweep as run bounds the pair-named class and does NOT bound
+  the pathway-asserted class** — the second instance was found by accident
+  and a third would be too. Any real detector for this class must resolve
+  a named pathway to its member genes, which is not a source-free
+  operation. **Unadjudicated, listed not filed:** TNBC's pool holds both
+  PIK3CA and PTEN, and a PI3K/PTEN exclusivity was used to EXCLUDE PIK3CA
+  from GBM's pool (`CLAUDE.md`, Brennan 2013). That finding is
+  GBM-specific and does not transfer, so this is a question, not a defect.
+  **THE REMEDY EXPOSED A THIRD BLIND SPOT, IN THE EXTRACTOR — AND "NAMED"
+  IS NOT THE SAME AS "REACHABLE".** Naming the ARID2 source wrote
+  `Li Z et al., … (PMID 42016321, PMC13092802, OA)` into the liver comment
+  in PubMed's own author style. `extract_citations.py`'s `P_ETAL` matches a
+  BARE SURNAME before "et al.", so the initial broke the head, the citation
+  yielded no record, and both identifiers were dropped with it:
+  `citation_crosscheck`'s identifier-carrying population did not move, so
+  the two ids the name-it-or-remove-it ruling existed to produce reached no
+  instrument. **The failure is silent in both directions** — nothing fires,
+  and the ratchet cannot see it either, because a citation that never
+  becomes a record is an ABSENCE, not a decrease, and the ratchet only
+  guards against decrease. Dropping the initial made the same line yield a
+  record carrying both ids, which put the PMID inside the crosscheck, where
+  PubMed's metadata then CORROBORATED the hand read (author, journal and
+  year all clean). Full account in that tool's header, on the same ruling
+  that put `fraction_check`'s two blind spots in its own — a blind spot
+  known only to a log is not known to the next person who trusts a clean
+  run. Widening the surname pattern to swallow initials is NOT done: it is
+  a change in reach, so it must be declared and measured (aafbe04), and the
+  measurement is not free — "Li Z" and "Li Zhang" are the same shape to a
+  regex that stops caring about token length. **The transferable rule: a
+  citation is produced only when the corpus's own extractor can see it.
+  Check the record appeared; do not assume the text is the record.**
 - **Sequencing:** re-scope (done) → A → B → C∥D. Detector survival:
   rendered-output checks (fraction/share-sum/duplicate) persist and
   matter MORE under pulled content; citation checks shrink to the
@@ -5352,7 +5507,30 @@ refute it, which is worth more than file order.
   twelve broad, one narrow. ONE COUNTEREXAMPLE DOES NOT OVERTURN THE
   CONCLUSION — AN UNEXAMINED ONE WOULD QUIETLY WEAKEN IT, which is why
   it sits here beside the claim it qualifies and not only in the batch
-  log.**
+  log.
+  SECOND NARROW INSTANCE, AND THE SUB-SHAPE NOW HAS A NAME (ccf batch 3,
+  2026-09-06, user ruling). `bladder.js:212` rendered Alessandrino 2020's
+  cohort as "a real metastatic cohort" when the source is 103 consecutive
+  patients with muscle-invasive urothelial cancer followed by serial
+  imaging — 16% metastatic at diagnosis, 37% developing it. A restriction
+  ADDED rather than dropped, so it runs the anomalous way, and unlike
+  Segelman it is not safe in either direction: it makes the relative risks
+  read as pattern-given-metastasis when the denominator may be the whole
+  cohort. **TALLY: FOURTEEN DEFECTS, TWELVE BROAD, TWO NARROW.** The same
+  edit carried a THIRD instance of one sub-shape, which is now frequent
+  enough to name in its own right rather than live as an example of the
+  narrow direction: **A BROADER ANATOMIC OR HISTOLOGIC CATEGORY RENDERED
+  UNDER A NARROWER ORGAN HEADING** — colorectal-as-colon (Segelman,
+  batch 1), colorectal-as-colon again (Li, batch 2, where the population
+  qualifier was also dropped), and now urothelial-as-bladder, since MIUC
+  includes upper-tract disease and the paper does not say bladder-only.
+  Watch for it wherever an organ file cites a study whose own name for the
+  disease is broader than the file it sits in; it is invisible to
+  number-matching every time, because the numbers are exact.
+  **UNRESOLVED ON THIS ONE: Radiology 2020 is not OA and has no PMC full
+  text, so whether the RR denominator was the metastatic subset is unread.
+  The edit was written to be true either way — the downgrade-is-always-
+  available move — which is why the item closed without the fetch.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell
