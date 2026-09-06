@@ -3441,14 +3441,18 @@ floor and **the wrong conclusion.** A ratchet does not go stale.
   calibration note — the degradation class again, so `load_ratchet`
   refuses instead.
 - **Keyed by metric**, so extending it is a declaration rather than a
-  redesign. One metric is wired today (`records`). **Still unratcheted,
-  named:** `regress.js`'s check count and `citation_crosscheck`'s
-  identifier total, each able to shrink under a green DONE line the same
-  way. Their **current values are deliberately not written here** — they
-  are exactly the class the drift rule below names, and crosscheck's
-  total has already gone stale once in a record; each instrument's own
-  DONE line is its source of truth. **How they get closed is recorded
-  below as a shape, not left as a hole.**
+  redesign. **Which metrics are wired is not listed here** — that is
+  `.claude/record_count.json` and the sidecars a run prints, and a list
+  in this file would be a second source of truth for something the state
+  file already holds. **Still unratcheted, named:** `regress.js`'s check
+  count, able to shrink under a green DONE line the same way. Its
+  **current value is deliberately not written here** — exactly the class
+  the drift rule below names; its own DONE line is the source of truth.
+  (This bullet named **two** unratcheted metrics until 2026-09-06, when
+  the second — `citation_crosscheck`'s identifier total — became the
+  sidecar convention's first producer. The prose had to be hand-edited to
+  keep up, which is the restatement hazard demonstrating itself inside
+  the passage warning about it, for the second time in one file.)
 - **Demonstrated on live extractor output, not fixtures** (condition
   7): with the stored count tampered to 500, the battery reported
   `RATCHET: records SHRANK 500 -> 408 (92 fewer)`, exited 1, and left
@@ -3479,16 +3483,127 @@ instrument.**
 - **No sweep.** It applies to the **next instrument written**, and to
   each existing one **when it is next touched for another reason.** The
   ratchet generalises for free over time and nothing is rewritten for a
-  gap that is still theoretical — the two named metrics are also the
-  two least likely to shrink invisibly, since `regress`'s count
-  dropping would almost certainly follow a deliberate code edit rather
-  than the silent producer change the extractor demonstrated.
+  gap that is still theoretical — `regress`'s count dropping would
+  almost certainly follow a deliberate code edit rather than the silent
+  producer change the extractor demonstrated.
 - **The reader ships with the first producer, not before it.** A
   consumer with no producer could only ever be demonstrated against a
   fixture, and the standard here is capability shown on real output
   (conditions 7 and 8). Whoever writes that instrument wires both ends
   and gets the live demonstration for free; building the reader today
   would spend it.
+
+**IT SHIPPED THAT WAY** (2026-09-06, with `citation_crosscheck`). **The
+trigger was the convention's own**, not enthusiasm: crosscheck had to be
+touched anyway for an independent and sufficient reason (below), it is a
+battery member, so every run until it was fixed could absorb a blip and
+present a smaller corpus as clean. That is an **active hole in the chain,
+not a deferred improvement** — and the sidecar and reader came along
+free, which is precisely the case "when it is next touched" was written
+for. Deferring would have meant touching crosscheck twice, or building
+the reader later with no producer.
+
+Three things **only the live wiring could have taught**, each of which
+would have been guessed wrong on a fixture:
+
+- **A `ratchet` array is part of the convention, not an extra.**
+  crosscheck reports `records` beside `flags`, and those are different
+  kinds of number: `records` is **coverage** and must never shrink,
+  `flags` is a **defect count** — ratcheting it would fail the battery
+  for *fixing a flag*. **Only the producer knows which is which**, so the
+  producer declares `"ratchet": ["records"]` and the reader ratchets
+  nothing it was not asked to. A reader that ratcheted every metric it
+  saw would have punished every repair.
+- **That array opens a producer-side loophole, closed in the same
+  commit.** Any instrument could stop being watched by dropping a metric
+  from its own array, or by ceasing to print the sidecar — every later
+  run still green, one metric fewer under guard. `vanished_ratchets()`
+  fails on both, **against committed state rather than a hand-maintained
+  map of who-reports-what**, because such a map is exactly the staleness
+  assertion 2 exists to refuse. Same shape as assertion 1, one level in.
+  It is **scoped to members that ran, reported and exited zero**: a
+  failing member is already failing by name and its absent sidecar is a
+  *consequence*, so an unscoped reader would have printed "you dropped
+  your ratchet" on top of crosscheck's own abort and pointed at the wrong
+  thing. That scoping opens nothing, since a producer that quietly stops
+  ratcheting still exits zero and is still in scope.
+- **Metric keys are namespaced per producer, and that is a finding rather
+  than a style choice.** Two different numbers are both called `records`
+  — the extractor's corpus total and crosscheck's identifier-carrying
+  subset, which is much smaller. Unnamespaced, **the reader's first live
+  run would have compared one against the other and fired `RATCHET
+  SHRANK` on a corpus that had not moved.** A new gate whose first act is
+  a false positive teaches people to reach for `--lower-ratchet`, which
+  is worse than the gap it closed. The key is `<producer>.<metric>`; the
+  extractor's bare `records` is left alone, so no existing state migrates.
+- **`--lower-ratchet` keeps its bare form.** `=N` still means the
+  extractor's metric, because that is what the documented flag has always
+  meant; a sidecar metric is addressed `=<producer>.<metric>:N`. Silently
+  repurposing a documented flag to gain uniformity would break the one
+  escape hatch the ratchet has, for style.
+- **Demonstrated live in all three directions, not on fixtures**
+  (conditions 7 and 8): run one **initialised** the metric and said it
+  was calibration; run two **held** it; and a deliberate probe lowering
+  the bar *above* the real value fired
+  `RATCHET: citation_crosscheck.records SHRANK 150 -> 142 (8 fewer)`,
+  exited 1, and **left the state file byte-identical** — a breach still
+  does not write itself down. The DONE line carries the count of metrics
+  actually ratcheted, so a reader that silently read nothing would say
+  `0` rather than looking like a quiet pass.
+
+## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
+
+**The instrument that refuses to scan without its input could still
+silently scan less of it.** `citation_crosscheck.py` mapped each
+identifier to a PMID inside a `try/except Exception: pmid = None`, so a
+**failed fetch** and a **genuinely unmappable identifier** landed in the
+same bucket — and the total printed on the DONE line was of records it
+*reached*, not records that *exist*.
+
+**This is not hypothetical, and it is not a demonstration either — it is
+a recorded instance.** On 2026-09-06 a battery run printed
+`141 records checked` under a green DONE line and `0 problems`, where the
+committed message from the previous commit said 142. Three standalone
+re-runs on the same artifact gave 142 every time, so the cause was a
+transient network failure being filed as an unmappable id. **A transient
+failure cannot be summoned on demand**, so what exists is an instance
+plus a diagnosed mechanism, not a live shrink waiting to be caught. That
+is still better evidence than a fixture, because it actually happened —
+and it happened **one day after** the header predicting exactly this
+class was written, in the tool that header was in.
+
+**The fix needs the deploy gate's shape, or it makes the instrument
+permanently red.** There is one *stable* unmappable identifier in the
+corpus. A tool that exits non-zero whenever anything is unexamined fails
+forever on that record, and a permanently-red gate gets ignored, which is
+the failure it was built to prevent wearing a different hat. So:
+
+- **Stable-unmappable is DECLARED AND TOLERATED**, the way the favicon
+  404 is declared-benign in `deploy_check.js`. `DECLARED_UNMAPPABLE` is a
+  dict of `id -> reason` and mirrors `BENIGN`'s role: **the gate's honesty
+  surface**, where every entry is something it has been told not to see,
+  so it stays short. **A reason, not a bare id list** — a bare list would
+  hide a coverage hole behind an id, and a selftest arm requires every
+  entry carry one.
+- **Transient-unreached is FATAL, and it refuses to print a total at
+  all.** A smaller total *is* the defect, so printing one and flagging it
+  would be publishing the wrong number with an apology attached. It
+  aborts before the metadata pass and before any DONE line.
+- **A NEW unmappable id also fails** — correctly, because that is an
+  **undeclared change in what the scan can reach**, which is a different
+  claim from "this record is unmappable" and only the second one is
+  something a human decided.
+- **The two statements the declared entry keeps apart:** *the claim is
+  unchecked* and *this instrument cannot reach it*. The one declared
+  record was read at the publisher during ccf batch 1 and its figures
+  verified verbatim; what is missing is a PMID for the automated metadata
+  cross-check, because the journal is not PubMed-indexed. Storing the
+  reason is what keeps those from collapsing into each other.
+- **Condition (7) without a network:** the classification is a pure
+  function over `(raw_id, ref, failure)` triples, so all four directions
+  — fatal on a failed fetch, fatal on a new undeclared id, tolerant of a
+  declared one, and every declared entry carrying a reason — are proven by
+  selftest arms with no fetch at all.
 
 **THE QUOTED-SPAN CHECK — recorded as a shape, on the sidecar's terms**
 (user, 2026-09-06, from the `garlandlike` finding in ccf batch 1). **A

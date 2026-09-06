@@ -32,7 +32,42 @@
 # 32 unexamined records is a finding, and a finding must never be spelled as a smaller total.
 # battery.py regenerates the artifact before invoking this tool, so the refusal never fires in
 # normal use — it fires exactly when someone runs the scan by hand without one.
+#
+# THE SAME BUG, ONE LEVEL IN (2026-09-06). The refusal above closed the case where the artifact is
+# ABSENT. It did not close the case where an id-mapping FETCH FAILS: `except Exception: pmid = None`
+# put a transient network failure and a genuinely unmappable id into one `unexamined` bucket, so a
+# blip subtracted a record from `len(uniq)` and the DONE line reported the smaller total as normal.
+# RECORDED INSTANCE, not a reproducible demonstration: on 2026-09-06 a battery run printed "141
+# records checked" against the committed 142, `0 problems`, green. Three standalone re-runs on the
+# same artifact gave 142, which is how the transient cause was identified — a network failure cannot
+# be summoned on demand, so this comment is the evidence, and it is better evidence than a fixture
+# because the shrink actually happened. battery.py's own header had named this metric as still
+# unratcheted and able to shrink under a green DONE line; it did, one day later, unprompted.
+#
+# THE SPLIT, and it is the whole fix: UNREACHED (a fetch that did not happen) is FATAL, because the
+# population is unknown and any total printed would be the exact defect being closed. UNMAPPABLE (a
+# fetch that succeeded and found no unique PMID) is a stable property of the record, so it is
+# DECLARED AND TOLERATED by exact id, on the deploy gate's honesty-surface shape. A NEW unmappable
+# id therefore fails too — correctly: it is an undeclared change in what this scan can reach.
+# Without the split, exiting on anything unexamined would make the instrument permanently red on
+# the one record that can never be mapped, which is a gate nobody can keep green and everybody
+# learns to ignore.
 import json, os, re, sys, tempfile, time, unicodedata, urllib.parse, urllib.request
+
+# DECLARED UNMAPPABLE, exhaustively and by exact id — deploy_check.js's BENIGN list, same shape and
+# same reason: every entry is a thing this gate has been told not to see, so the list stays short and
+# each entry carries WHY. An id here is a COVERAGE LIMIT of this instrument, which is a narrower
+# statement than "unchecked", and conflating the two is how a coverage hole starts reading as a pass.
+DECLARED_UNMAPPABLE = {
+    'doi:10.1002/prm2.12107':
+        'Gao et al., Precision Medical Sciences (Wiley), 2023 — js/organs/breast.js:147. The journal '
+        'is not PubMed-indexed: esearch [doi] returns 0 hits (the unqualified search returns 6 '
+        'unrelated tokenised hits, which is why the mapper requires exactly one), and Europe PMC has '
+        'no record either, so NO PMID EXISTS for the metadata cross-check to run against. The CLAIM '
+        'is not unchecked — ccf batch 1 (2026-09-06) read the paper at the publisher and verified '
+        'its figures verbatim. THIS INSTRUMENT cannot reach it. Those are different statements and '
+        'keeping them apart is why this list stores a reason rather than just an id.',
+}
 
 def deaccent(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s or '')
@@ -67,6 +102,30 @@ def check_one(rec_author, rec_year, rec_journal, es):
             flags.append(f'journal: recorded {rec_journal!r} vs id-journal '
                          f'{es.get("source", "")!r} ({es.get("fulljournalname", "")[:40]!r})')
     return flags
+
+def classify_unmapped(entries, declared=None):
+    """Pure, so condition (7) can prove every direction without a network.
+
+    entries: (raw_id, ref, failure) — failure is a string when the FETCH itself failed, None when
+    the fetch succeeded and simply found no unique PMID. Returns (tolerated, problems)."""
+    declared = DECLARED_UNMAPPABLE if declared is None else declared
+    tolerated, problems = [], []
+    for raw, ref, failure in entries:
+        if failure:
+            problems.append(
+                f'UNREACHED: {raw} ({ref}) — the id-mapping fetch FAILED [{failure}], so this '
+                'record was never examined and the population is unknown. This is NOT an unmappable '
+                'id: refusing to print a total, because a smaller total is exactly the defect.')
+        elif raw in declared:
+            tolerated.append((raw, ref, declared[raw]))
+        else:
+            problems.append(
+                f'UNMAPPABLE, UNDECLARED: {raw} ({ref}) — the fetch succeeded and found no unique '
+                'PMID. That may be permanent and fine, but it is an undeclared change in what this '
+                'scan can reach. Verify it is genuinely unmappable, then add it to '
+                'DECLARED_UNMAPPABLE with the reason, so the list stays the honesty surface.')
+    return tolerated, problems
+
 
 FIXTURES = [
     # (recorded author, year, journal, esummary-shaped dict, must_flag_substring or None)
@@ -114,7 +173,29 @@ def selftest():
     accepted = records_path(['citation_crosscheck.py', '--selftest', 'recs.json']) == 'recs.json'
     ok &= accepted
     print(f"  {'ok  ' if accepted else 'FAIL'} accepts the artifact alongside flag-shaped args")
-    print('SELFTEST', 'PASS — can fire on all three fields, can pass, and refuses without input'
+    # THE 2026-09-06 SPLIT, all four directions. The load-bearing arm is the first: a fetch failure
+    # must be fatal, because that is the shrink that actually happened and printed a green line.
+    fake = {'doi:declared': 'declared for the selftest'}
+    _t, probs = classify_unmapped([('PMC123', 'a.js:1', 'URLError: timed out')], fake)
+    good = any('UNREACHED' in p for p in probs)
+    ok &= good
+    print(f"  {'ok  ' if good else 'FAIL'} a FAILED fetch is fatal (the 142->141 shrink), not "
+          f"filed as an unmappable id")
+    _t, probs = classify_unmapped([('doi:brand-new', 'b.js:2', None)], fake)
+    good = any('UNDECLARED' in p for p in probs)
+    ok &= good
+    print(f"  {'ok  ' if good else 'FAIL'} a NEW unmappable id fails (undeclared change in reach)")
+    tol, probs = classify_unmapped([('doi:declared', 'c.js:3', None)], fake)
+    good = not probs and len(tol) == 1
+    ok &= good
+    print(f"  {'ok  ' if good else 'FAIL'} a DECLARED unmappable id is tolerated, so the gate is "
+          f"not permanently red on the one record that can never map")
+    good = all(isinstance(v, str) and len(v) > 80 for v in DECLARED_UNMAPPABLE.values())
+    ok &= good
+    print(f"  {'ok  ' if good else 'FAIL'} every declared entry carries a reason "
+          f"({len(DECLARED_UNMAPPABLE)} declared) — a bare id list would hide a coverage hole")
+    print('SELFTEST', 'PASS — can fire on all three fields, can pass, refuses without input, and '
+          'separates an unreached fetch from an unmappable id'
           if ok else 'FAIL — do not trust any scan')
     return ok
 
@@ -166,9 +247,9 @@ def main():
                           e.get('journalOnLine') or e.get('journal'), e['refs'][0]))
     # map PMC ids via elink (dbfrom=pmc) and dois via esearch [doi]; unmapped ids are
     # REPORTED, never silently skipped — Rachakonda's find lived in exactly this class
-    unexamined = []
+    unmapped = []   # (raw, ref, failure or None) — the failure field is the 2026-09-06 split
     for raw, a, y, j, ref in tomap:
-        pmid = None
+        pmid, failure = None, None
         try:
             if raw.startswith('PMC'):
                 u = ('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?dbfrom=pmc'
@@ -184,23 +265,39 @@ def main():
                 ids = js['esearchresult'].get('idlist', [])
                 pmid = ids[0] if len(ids) == 1 else None
             time.sleep(0.4)
-        except Exception:
-            pmid = None
+        except Exception as exc:
+            # The old code wrote `pmid = None` here and lost the distinction. A fetch that did not
+            # happen tells you nothing about the record; recording WHY is what makes it separable.
+            pmid, failure = None, f'{type(exc).__name__}: {exc}'
         if pmid:
             kind = 'doi' if raw.startswith('doi:') else 'pmc'
             work.append((pmid, a, y, j, ref, f'{kind}-mapped'))
         else:
-            unexamined.append((raw, ref))
+            unmapped.append((raw, ref, failure))
+    tolerated, reach_problems = classify_unmapped(unmapped)
+    for raw, ref, why in tolerated:
+        print(f'DECLARED-UNMAPPABLE (tolerated, coverage limit): {raw} {ref}\n    {why}')
+    if reach_problems:
+        # ABORT BEFORE THE esummary PASS AND BEFORE ANY DONE LINE, the refusal's shape one level in:
+        # len(uniq) is not the population, so there is no number here worth printing. Uniform across
+        # both problem classes on purpose — "the total is untrustworthy" is one fact, and a rule with
+        # two branches is a rule that gets the branches wrong.
+        for problem in reach_problems:
+            print(f'  {problem}', file=sys.stderr)
+        print('citation_crosscheck: REFUSING TO REPORT — the identifier population was not fully '
+              f'reached ({len(reach_problems)} problem(s) above). No DONE line, exit 4, so '
+              'run_checked.sh fails the invocation and the battery fails with it. Re-run: a '
+              'transient failure passes on the next attempt, and a real one keeps failing.',
+              file=sys.stderr)
+        sys.exit(4)
     seen, uniq = set(), []
     for w in work:
         k = (w[0], w[4])
         if k in seen: continue
         seen.add(k); uniq.append(w)
     pmids = sorted({w[0] for w in uniq})
-    print(f'{len(uniq)} identifier-carrying records ({len(pmids)} unique pmids)')
-    if unexamined:
-        print(f'UNEXAMINED (unmappable ids — not silent, listed): {len(unexamined)}')
-        for raw, ref in unexamined: print(f'    {raw} {ref}')
+    print(f'{len(uniq)} identifier-carrying records ({len(pmids)} unique pmids), '
+          f'{len(tolerated)} declared-unmappable')
     es = {}
     for i in range(0, len(pmids), 150):
         chunk = pmids[i:i + 150]
@@ -236,9 +333,26 @@ def main():
                for p, a, y, r, o, fl in flagged],
               open(dest, 'w'), indent=1)
     print(f'  flags written: {dest}')
+    # THE SIDECAR (2026-09-06) — the convention's FIRST PRODUCER, so this is where it got finalised.
+    # Machine-readable metrics beside the human DONE line, so the ratchet reads STRUCTURE instead of
+    # parsing a sentence. One addition to the recorded shape, forced by this instrument's own
+    # metrics: `ratchet` names WHICH metrics may only grow. `records` is COVERAGE and must never
+    # shrink; `flags` is a DEFECT COUNT and ratcheting it would fail the battery for fixing a flag,
+    # turning a quality gate into a reason not to fix things. Only the producer knows which of its
+    # numbers is which, so the producer declares it — and battery.py closes the obvious loophole by
+    # refusing to let a metric that has ALREADY been ratcheted quietly disappear from this list.
+    # Printed BEFORE the DONE line: "DONE last" stays literal, and SIDECAR carries no "DONE" so
+    # commit_checked.sh's grep keeps commit messages human-readable.
+    print('SIDECAR ' + json.dumps({
+        'name': 'citation_crosscheck',
+        'metrics': {'records': len(uniq), 'flags': len(flagged),
+                    'declared_unmappable': len(tolerated)},
+        'ratchet': ['records'],
+    }, sort_keys=True))
     # DONE line last, after every write (2026-09-05 sweep): the report of zero must be
     # shown to have been produced at all — absence-of-flags is never a pass.
-    print(f'DONE citation_crosscheck: {len(uniq)} records checked, {len(flagged)} flags')
+    print(f'DONE citation_crosscheck: {len(uniq)} records checked, {len(flagged)} flags, '
+          f'{len(tolerated)} declared-unmappable')
 
 if __name__ == '__main__':
     if not selftest():

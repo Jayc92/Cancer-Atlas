@@ -40,6 +40,7 @@ SYNC = [
     ('_polarity_mention_reads',         'CLAUDE.md',                 'POLARITY MENTION READS'),
     ('_number_restatement_rule',        'CLAUDE.md',                 'RESTATED IN PROSE WILL DRIFT'),
     ('_quoted_span_check',              'CLAUDE.md',                 'QUOTED-SPAN CHECK'),
+    ('_coverage_split',                  'CLAUDE.md',                 'DECLARED-AND-TOLERATED'),
 ]
 
 def check(manifest, files):

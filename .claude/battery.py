@@ -12,7 +12,10 @@
 # 2026-09-05. Ten instruments, and no mechanism could answer "did all ten run?". A dead instrument
 # in a battery nobody enumerates is indistinguishable from a clean one.
 #
-# WHAT THIS ADDS IS TWO ASSERTIONS. Everything else here is plumbing.
+# WHAT THIS ADDS IS ASSERTIONS, NUMBERED BELOW. Everything else here is plumbing. (This line said
+# "two" until 2026-09-06 and had been wrong since the third was added the same day it was written —
+# a count in prose, drifting, in the header of the tool that ratchets counts. Numbered headings are
+# the fix: they cannot disagree with a total that is no longer stated.)
 #
 #   1. EVERY DECLARED MEMBER OF THE PHASE RAN AND PRINTED ITS OWN MARKER. Not "was attempted" —
 #      printed the marker, via run_checked.sh, so the member's own 7-bis obligation is what this
@@ -54,12 +57,16 @@
 #      State lives in .claude/record_count.json, declared below as a non-instrument (machine-
 #      written state, not a tool). Assertion 2 firing on the very next file added to .claude/ is
 #      the mechanism working, not a nuisance. The ratchet is KEYED BY METRIC so extending it is a
-#      declaration rather than a redesign; today exactly one metric is wired, `records`. STILL
-#      UNRATCHETED, named rather than left implicit: regress.js's own check count and
-#      citation_crosscheck's identifier-carrying total, each of which could shrink under a green
-#      DONE line the same way. THEIR CURRENT VALUES ARE DELIBERATELY NOT WRITTEN HERE: they are
-#      precisely the class the drift rule names, and one of them — crosscheck's total — has already
-#      gone stale once in a record. Each instrument's own DONE line is its source of truth.
+#      declaration rather than a redesign; which metrics are wired is answered by
+#      .claude/record_count.json and by the sidecars a run prints, not by this comment — a list here
+#      would be a second source of truth for something the state file already holds.
+#      STILL UNRATCHETED, named rather than left implicit: regress.js's own check count, which
+#      could shrink under a green DONE line the same way. ITS CURRENT VALUE IS DELIBERATELY NOT
+#      WRITTEN HERE: that is precisely the class the drift rule names. Its own DONE line is the
+#      source of truth. (This paragraph named two such metrics until 2026-09-06, when the second —
+#      citation_crosscheck's identifier-carrying total — became the sidecar convention's first
+#      producer and stopped being unratcheted. The prose had to be edited to keep up, which is the
+#      restatement hazard demonstrating itself inside the comment warning about it.)
 #
 #      HOW THIS GENERALISES — THE SIDECAR CONVENTION (user, 2026-09-05, recorded as a SHAPE AND NOT
 #      A TASK, so a session that finds this finds a plan rather than a hole). The wrong way to close
@@ -77,15 +84,36 @@
 #
 #      DO NOT SWEEP TEN TOOLS FOR THIS. The convention applies to the NEXT instrument written, and
 #      to each existing one WHEN IT IS NEXT TOUCHED FOR ANOTHER REASON. The ratchet generalises for
-#      free over time, and nothing is rewritten for a gap that is still theoretical: the two named
-#      metrics are also the two least likely to shrink invisibly — regress's count dropping would
-#      almost certainly follow a deliberate code edit, not the silent producer change the extractor
-#      demonstrated.
+#      free over time, and nothing is rewritten for a gap that is still theoretical: regress's count
+#      dropping would almost certainly follow a deliberate code edit, not the silent producer change
+#      the extractor demonstrated.
 #
 #      THE READER SHIPS WITH THE FIRST PRODUCER, not before it. A consumer with no producer could
 #      only ever be demonstrated against a fixture, and the standard here is capability shown on
 #      real output — conditions (7) and (8). Whoever writes that instrument wires both ends and gets
 #      a live demonstration for free; building the reader today would spend the demonstration.
+#
+#      IT SHIPPED THAT WAY (2026-09-06, with citation_crosscheck). The trigger was the convention's
+#      own: crosscheck had to be touched anyway, because it could file a FAILED id-mapping fetch as
+#      an unmappable id and print a smaller total under a clean DONE line — an active hole in a
+#      battery member, not a deferred improvement. Sidecar and reader came along free, which is the
+#      case the "when it is next touched" clause was written for. Three things only the live wiring
+#      could have taught, each recorded at its own site below:
+#
+#        - A `ratchet` ARRAY is part of the convention, not an extra. crosscheck reports `records`
+#          (coverage, must never shrink) beside `flags` (a DEFECT COUNT — ratcheting it would fail
+#          the battery for FIXING a flag). Only the producer knows which is which, so the producer
+#          declares it and the reader ratchets nothing it was not asked to.
+#        - THE PRODUCER-SIDE LOOPHOLE that array opens is closed by vanished_ratchets(): dropping a
+#          metric from the array, or the sidecar entirely, would switch a ratchet off silently. It
+#          is checked against COMMITTED state rather than a hand-maintained map of who-reports-what,
+#          because a map is the staleness this file's assertion 2 exists to refuse.
+#        - METRIC KEYS ARE NAMESPACED per producer, and that is the finding, not a style choice. Two
+#          different numbers are both called `records` — the extractor's corpus total and
+#          crosscheck's identifier-carrying subset. Unnamespaced, this reader's FIRST live run would
+#          have compared one against the other and fired RATCHET SHRANK on a corpus that had not
+#          moved. A new gate whose first act is a false positive teaches people to pass
+#          --lower-ratchet, which is worse than the gap it closed.
 #
 # WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
 # Set -> invocation -> commit message -> deploy is COMPLETE, not arbitrarily truncated, and the
@@ -334,18 +362,123 @@ def ratchet_phrase(previous, current, new_value, problems):
 
 
 def parse_lower(argv):
-    """--lower-ratchet=N --lower-reason="why". Flag-shaped, so the phase parse ignores them."""
-    lower_to, reason, problems = None, None, []
+    """--lower-ratchet=N --lower-reason="why". Flag-shaped, so the phase parse ignores them.
+
+    Returns (lowers, reason, problems) where `lowers` maps metric key -> value. A BARE `=N` still
+    means the extractor's records metric, because that is what every existing invocation and the
+    usage block above mean by it; a sidecar metric is addressed as `=<producer>.<metric>:<N>`.
+    Keeping the bare form working matters more than uniformity here: the alternative is a flag that
+    silently changes meaning for anyone who learned it before the sidecars existed."""
+    lowers, reason, problems = {}, None, []
     for arg in argv[1:]:
         if arg.startswith('--lower-ratchet='):
             raw = arg.split('=', 1)[1]
+            metric, _, value = raw.rpartition(':')
+            metric = metric or RECORDS_METRIC
             try:
-                lower_to = int(raw)
+                lowers[metric] = int(value)
             except ValueError:
-                problems.append(f'BAD FLAG: --lower-ratchet={raw!r} — takes an integer count')
+                problems.append(f'BAD FLAG: --lower-ratchet={raw!r} — takes an integer count, '
+                                'optionally prefixed <producer>.<metric>: to name a sidecar metric')
         elif arg.startswith('--lower-reason='):
             reason = arg.split('=', 1)[1].strip() or None
-    return lower_to, reason, problems
+    return lowers, reason, problems
+
+
+# ---- the sidecar reader ------------------------------------------------------------------------
+# Ships with its first producer (citation_crosscheck, 2026-09-06), per the convention above: a
+# consumer with no producer could only be demonstrated against a fixture, and the standard is
+# capability shown on real output.
+
+SIDECAR_PREFIX = 'SIDECAR '
+
+
+def parse_sidecars(text):
+    """Every `SIDECAR {...}` line in one member's output. Returns (sidecars, problems).
+
+    A MALFORMED sidecar is a PROBLEM, never skipped. Skipping is how a producer stops being
+    ratcheted by accident: the line is still printed, the run is still green, and nothing is
+    watching the number any more. That is the whole failure class this reader was built for, so it
+    cannot be the reader's own error path."""
+    sidecars, problems = {}, []
+    for line in text.split('\n'):
+        stripped = line.strip()
+        if not stripped.startswith(SIDECAR_PREFIX):
+            continue
+        raw = stripped[len(SIDECAR_PREFIX):]
+        try:
+            payload = json.loads(raw)
+        except ValueError as exc:
+            problems.append(f'BAD SIDECAR: {raw[:80]!r} does not parse — {exc}. A sidecar that '
+                            'cannot be read is an unratcheted metric wearing a ratchet.')
+            continue
+        name = payload.get('name')
+        metrics = payload.get('metrics')
+        if not isinstance(name, str) or not name:
+            problems.append(f'BAD SIDECAR: {raw[:80]!r} has no "name" — the ratchet keys on the '
+                            'producer, so an anonymous sidecar cannot be stored')
+            continue
+        if not isinstance(metrics, dict) or not metrics:
+            problems.append(f'BAD SIDECAR: {name} carries no "metrics" object')
+            continue
+        bad_values = [k for k, v in metrics.items()
+                      if not isinstance(v, int) or isinstance(v, bool)]
+        if bad_values:
+            problems.append(f'BAD SIDECAR: {name} metrics {sorted(bad_values)} are not integers — '
+                            'the ratchet compares magnitudes and has nothing to compare')
+            continue
+        ratchet = payload.get('ratchet', [])
+        if not isinstance(ratchet, list) or any(not isinstance(m, str) for m in ratchet):
+            problems.append(f'BAD SIDECAR: {name} "ratchet" must be a list of metric names')
+            continue
+        undeclared = [m for m in ratchet if m not in metrics]
+        if undeclared:
+            problems.append(f'BAD SIDECAR: {name} asks to ratchet {sorted(undeclared)}, which it '
+                            'does not report — a ratchet on an absent metric never fires')
+            continue
+        sidecars[name] = {'metrics': metrics, 'ratchet': ratchet}
+    return sidecars, problems
+
+
+def sidecar_metric_key(producer, metric):
+    """NAMESPACED, and this is load-bearing rather than tidy. citation_crosscheck's sidecar reports
+    a metric it calls `records` — its identifier-carrying total — and the extractor's long-standing
+    ratchet key is also `records`, holding a much larger number. Unnamespaced, the first live run
+    of this reader would have read one producer's metric against the other's stored value and fired
+    RATCHET SHRANK on a corpus that had not moved at all. A reader whose first act is a false
+    positive teaches people to pass --lower-ratchet, which is the opposite of the point."""
+    return f'{producer}.{metric}'
+
+
+def vanished_ratchets(counts, sidecars, ran):
+    """A metric that was ratcheted before and is not declared now. The producer-side loophole in
+    the convention: any instrument could stop asking to be ratcheted — drop the entry from its
+    `ratchet` array, or stop printing the sidecar entirely — and every later run would pass while
+    watching one metric fewer. Same shape as assertion 1 one level in, and closed the same way,
+    against COMMITTED state rather than a hand-maintained map of who-reports-what.
+
+    SCOPED TO THE MEMBERS THAT RAN, which is what makes it correct across phases: deploy_check's
+    metrics live in the same state file and are legitimately absent from a pre-commit run."""
+    problems = []
+    for key in sorted(counts):
+        producer, sep, metric = key.partition('.')
+        if not sep or producer not in ran:
+            continue
+        declared = sidecars.get(producer, {}).get('ratchet', [])
+        if metric in declared:
+            continue
+        if producer not in sidecars:
+            problems.append(
+                f'RATCHET ABANDONED: {producer} ran and printed no sidecar, but {key} is '
+                'ratcheted in committed state. Either restore the sidecar or remove the stored '
+                'metric deliberately — a producer silently dropping its own ratchet is exactly '
+                'the hole the sidecar convention was written to close.')
+        else:
+            problems.append(
+                f'RATCHET ABANDONED: {producer} no longer lists {metric!r} in its sidecar '
+                f'"ratchet" array, but {key} is ratcheted in committed state. Dropping a metric '
+                'from the array turns the ratchet off while the run stays green.')
+    return problems
 
 
 def missing_from_run(expected, results):
@@ -437,7 +570,10 @@ def run_member(name, marker, argv):
             continue
         # DONE lines unindented and unmodified: they are quoted into commit messages by grep.
         print(line if marker in line else f'    {line}')
-    return proc.returncode, marker in combined
+    # The output is returned so the sidecar reader can parse STRUCTURE out of it. Note what is
+    # NOT returned to that reader's caller: any interpretation of the human DONE line. The
+    # sidecar is a separate channel on purpose.
+    return proc.returncode, marker in combined, combined
 
 
 # ---- selftest --------------------------------------------------------------------------------
@@ -549,9 +685,76 @@ def selftest():
     say(missing_state == {'counts': {}, 'lowers': []} and not missing_problems,
         'an absent ratchet file is a first run, not a failure')
 
+    # arm 12: the SIDECAR READER. The passing direction first, on a line in the shape its first
+    # producer actually prints, so this arm fails if that format ever drifts.
+    good_line = ('DONE citation_crosscheck: 1 records checked, 0 flags\n'
+                 'SIDECAR {"metrics": {"flags": 0, "records": 1}, '
+                 '"name": "citation_crosscheck", "ratchet": ["records"]}')
+    parsed, parse_problems = parse_sidecars(good_line)
+    say(not parse_problems and parsed.get('citation_crosscheck', {}).get('ratchet') == ['records']
+        and parsed['citation_crosscheck']['metrics']['flags'] == 0,
+        'reads a well-formed sidecar and leaves the human DONE line alone')
+    say(parse_sidecars('DONE something: 3 things, 0 problems') == ({}, []),
+        'output with no sidecar is not a problem (nine instruments have not been retrofitted, '
+        'and the convention says do not sweep them)')
+    # every malformed direction is a PROBLEM rather than a skip: a skipped sidecar is a metric that
+    # silently stops being watched, which is the failure this reader exists to prevent.
+    for label, line in [
+            ('unparseable JSON', 'SIDECAR {not json'),
+            ('no name', 'SIDECAR {"metrics": {"a": 1}}'),
+            ('no metrics', 'SIDECAR {"name": "x"}'),
+            ('a non-integer metric', 'SIDECAR {"name": "x", "metrics": {"a": "many"}}'),
+            ('a boolean posing as a count', 'SIDECAR {"name": "x", "metrics": {"a": true}}'),
+            ('a ratchet on an unreported metric',
+             'SIDECAR {"name": "x", "metrics": {"a": 1}, "ratchet": ["b"]}')]:
+        found, found_problems = parse_sidecars(line)
+        say(bool(found_problems) and not found, f'refuses a sidecar with {label}')
+
+    # arm 13: the namespacing, which is the collision this reader would have shipped with. The two
+    # metrics are both called "records" and hold different numbers.
+    say(sidecar_metric_key('citation_crosscheck', 'records') != RECORDS_METRIC,
+        "a producer's `records` metric cannot collide with the extractor's `records` ratchet "
+        '(unnamespaced, the reader\'s first live run would have fired SHRANK on a corpus that '
+        'had not moved)')
+
+    # arm 14: the producer-side loophole — a metric that was ratcheted and is not declared now.
+    say(any('RATCHET ABANDONED' in p for p in vanished_ratchets(
+        {'citation_crosscheck.records': 142},
+        {'citation_crosscheck': {'metrics': {'records': 142}, 'ratchet': []}},
+        {'citation_crosscheck'})),
+        'fires when a producer drops a metric from its own "ratchet" array (turning the ratchet '
+        'off while the run stays green)')
+    say(any('printed no sidecar' in p for p in vanished_ratchets(
+        {'citation_crosscheck.records': 142}, {}, {'citation_crosscheck'})),
+        'fires when a producer with a ratcheted metric stops printing its sidecar entirely')
+    say(not vanished_ratchets(
+        {'citation_crosscheck.records': 142},
+        {'citation_crosscheck': {'metrics': {'records': 142}, 'ratchet': ['records']}},
+        {'citation_crosscheck'}),
+        'passes while the metric is still declared')
+    say(not vanished_ratchets({'deploy_check.assets': 27}, {}, {'citation_crosscheck'}),
+        "does NOT fire on another phase's stored metrics (deploy_check is post-push and is "
+        'legitimately absent from a pre-commit run)')
+    say(not vanished_ratchets({RECORDS_METRIC: 408}, {}, {'citation_crosscheck'}),
+        "does NOT fire on the extractor's un-namespaced metric, which has no producer to run")
+
+    # arm 15: the lower flag, both address forms. The bare form is load-bearing: it is what the
+    # usage block documents and what every existing invocation means, so a reader that quietly
+    # repurposed it would break a documented flag to gain uniformity.
+    bare_lowers, bare_reason, bare_problems = parse_lower(
+        ['battery.py', 'pre-commit', '--lower-ratchet=406', '--lower-reason=two dropped'])
+    say(bare_lowers == {RECORDS_METRIC: 406} and bare_reason == 'two dropped' and not bare_problems,
+        "a bare --lower-ratchet=N still addresses the extractor's records metric")
+    keyed_lowers, _keyed_reason, keyed_problems = parse_lower(
+        ['battery.py', 'pre-commit', '--lower-ratchet=citation_crosscheck.records:140'])
+    say(keyed_lowers == {'citation_crosscheck.records': 140} and not keyed_problems,
+        '--lower-ratchet=<producer>.<metric>:N addresses one sidecar metric')
+    say(any('BAD FLAG' in p for p in parse_lower(['battery.py', '--lower-ratchet=lots'])[2]),
+        'refuses a non-integer lower rather than ignoring the flag')
+
     print('SELFTEST', 'PASS — fires on a missing member, a vacuous member, a failing member, '
-          'an undeclared file, a stale declaration, a bad phase and a shrinking corpus; '
-          'passes complete sets'
+          'an undeclared file, a stale declaration, a bad phase, a shrinking corpus, a malformed '
+          'sidecar and an abandoned ratchet; passes complete sets'
           if ok else 'FAIL — do not trust a green battery from this build')
     # 7-bis applies to the selftest as well (deploy_check.js's precedent): a selftest that never
     # executed must not be indistinguishable from one that passed.
@@ -580,8 +783,14 @@ def main(argv):
     needs_records = any(RECORDS_ARTIFACT in a for _n, _m, a in members)
     needs_server = any('.claude/regress.js' in a for _n, _m, a in members)
 
-    lower_to, lower_reason, flag_problems = parse_lower(argv)
+    lowers, lower_reason, flag_problems = parse_lower(argv)
     problems += flag_problems
+
+    # ONE state object for both ratchet paths — the extractor's metric and every sidecar metric —
+    # and one save at the end, so a run cannot half-write the file.
+    state, load_problems = load_ratchet()
+    problems += load_problems
+    ratchet_dirty = False
 
     record_count = None
     ratchet_clause = 'n/a'
@@ -592,36 +801,84 @@ def main(argv):
             # Downstream citation scans would be vacuously clean; do not run them at all rather
             # than print two green DONE lines over an empty corpus.
             members = [(n, m, a) for n, m, a in members if RECORDS_ARTIFACT not in a]
+        elif state is None:
+            ratchet_clause = 'UNREADABLE'
         else:
-            state, load_problems = load_ratchet()
-            problems += load_problems
-            if state is None:
-                ratchet_clause = 'UNREADABLE'
-            else:
-                previous = state['counts'].get(RECORDS_METRIC)
-                ratchet_problems, new_value, notes = ratchet_verdict(
-                    RECORDS_METRIC, previous, record_count, lower_to, lower_reason)
-                problems += ratchet_problems
-                for note in notes:
-                    print(f'    {note}')
-                ratchet_clause = ratchet_phrase(previous, record_count, new_value, ratchet_problems)
-                if not ratchet_problems and new_value != previous:
-                    if lower_to is not None:
-                        state['lowers'].append({'metric': RECORDS_METRIC, 'from': previous,
-                                                'to': lower_to, 'count': record_count,
-                                                'reason': lower_reason})
-                    state['counts'][RECORDS_METRIC] = new_value
-                    save_ratchet(state)
+            previous = state['counts'].get(RECORDS_METRIC)
+            ratchet_problems, new_value, notes = ratchet_verdict(
+                RECORDS_METRIC, previous, record_count, lowers.get(RECORDS_METRIC), lower_reason)
+            problems += ratchet_problems
+            for note in notes:
+                print(f'    {note}')
+            ratchet_clause = ratchet_phrase(previous, record_count, new_value, ratchet_problems)
+            if not ratchet_problems and new_value != previous:
+                if RECORDS_METRIC in lowers:
+                    state['lowers'].append({'metric': RECORDS_METRIC, 'from': previous,
+                                            'to': lowers[RECORDS_METRIC], 'count': record_count,
+                                            'reason': lower_reason})
+                state['counts'][RECORDS_METRIC] = new_value
+                ratchet_dirty = True
 
     server = start_dev_server() if needs_server else None
-    results = {}
+    results, outputs = {}, {}
     try:
         for name, marker, argv_member in members:
-            results[name] = run_member(name, marker, argv_member)
+            code, marker_seen, text = run_member(name, marker, argv_member)
+            results[name] = (code, marker_seen)
+            outputs[name] = text
     finally:
         stop_dev_server(server)
 
     problems += missing_from_run([n for n, _m, _a in members], results)
+
+    # ---- sidecars ------------------------------------------------------------------------------
+    # Read only from members that RAN, REPORTED AND EXITED ZERO. That scoping is deliberate in both
+    # directions. A failing member is already failing by name, and its absent sidecar is a
+    # CONSEQUENCE of that failure, not an independent finding — citation_crosscheck's own new abort
+    # path exits before printing one, so an unscoped reader would add "you dropped your ratchet" on
+    # top of the real diagnosis and point at the wrong thing. And it opens no loophole: a producer
+    # that quietly stops ratcheting a metric still reports and still exits zero, so it is still in
+    # scope and still caught below.
+    reported_clean = {name for name, (code, seen) in results.items() if seen and code == 0}
+    sidecars = {}
+    for name in sorted(reported_clean):
+        parsed, parse_problems = parse_sidecars(outputs[name])
+        problems += parse_problems
+        for producer, payload in parsed.items():
+            if producer != name:
+                problems.append(
+                    f'SIDECAR MISATTRIBUTED: {name} printed a sidecar naming {producer!r}. The '
+                    'ratchet keys on the producer, so a member writing under another name would '
+                    "compare its own numbers against a different instrument's stored value.")
+                continue
+            sidecars[producer] = payload
+
+    problems += vanished_ratchets(state['counts'] if state else {}, sidecars, reported_clean)
+
+    ratcheted_metrics = 0
+    if state is not None:
+        for producer in sorted(sidecars):
+            payload = sidecars[producer]
+            for metric in payload['ratchet']:
+                key = sidecar_metric_key(producer, metric)
+                previous = state['counts'].get(key)
+                current = payload['metrics'][metric]
+                metric_problems, new_value, notes = ratchet_verdict(
+                    key, previous, current, lowers.get(key), lower_reason)
+                problems += metric_problems
+                for note in notes:
+                    print(f'    {note}')
+                ratcheted_metrics += 1
+                if not metric_problems and new_value != previous:
+                    if key in lowers:
+                        state['lowers'].append({'metric': key, 'from': previous,
+                                                'to': lowers[key], 'count': current,
+                                                'reason': lower_reason})
+                    state['counts'][key] = new_value
+                    ratchet_dirty = True
+
+    if state is not None and ratchet_dirty:
+        save_ratchet(state)
 
     print()
     for problem in problems:
@@ -640,7 +897,9 @@ def main(argv):
           f'ran and reported (marker printed, exit 0), {len(INSTRUMENTS)} declared in total, '
           f'{len(tracked_claude_files())} .claude/ files all declared, '
           f'{record_count if record_count is not None else "n/a"} citation records extracted '
-          f'(ratchet {ratchet_clause}), {len(problems)} problems')
+          f'(ratchet {ratchet_clause}), {len(sidecars)}/{len(reported_clean)} reporting members '
+          f'emitted a sidecar, {ratcheted_metrics} sidecar metrics ratcheted, '
+          f'{len(problems)} problems')
     return 1 if problems else 0
 
 
