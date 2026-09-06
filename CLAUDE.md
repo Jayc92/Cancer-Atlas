@@ -3490,6 +3490,31 @@ instrument.**
   and gets the live demonstration for free; building the reader today
   would spend it.
 
+**THE QUOTED-SPAN CHECK — recorded as a shape, on the sidecar's terms**
+(user, 2026-09-06, from the `garlandlike` finding in ccf batch 1). **A
+misquoted quotation is worse than a loose paraphrase**, because quote
+marks assert exactness and paraphrase does not. brain.js quoted Wippold's
+"garlandlike" as "garland-like" — a hyphen, and the only defect of the
+batch that no amount of number-matching could have caught, since there is
+no number in it.
+
+- **The shape:** `citations.json` now archives source text verbatim, and
+  code carries quoted spans inside quote marks. Where a record has both,
+  the comparison is mechanizable and **total over that subset** — the
+  test the drift rule sets for building a detector at all. It is not
+  total over the corpus, and must not claim to be: the population is
+  "records whose archived text contains the quoted span", which the
+  instrument can enumerate for itself rather than being told.
+- **Scope discipline it must encode:** only spans inside quote marks are
+  in scope. brain.js keeps `garland-like` hyphenated in two places
+  deliberately, as paraphrase, and a checker that flagged those would be
+  training its reader to ignore it.
+- **Same treatment as the sidecar: build it when something touches
+  citation fidelity anyway**, and it inherits the sidecar convention as
+  the first new instrument written. Not now — one hyphen in fifty claims
+  is not a rate that justifies an instrument, and the honest reason to
+  record it is that the NEXT one will be found the same accidental way.
+
 **WHY THE CHAIN STOPS AT FOUR** (user, recorded so nobody adds a fifth
 from momentum). Set → invocation → commit message → deploy is
 **complete, not arbitrarily truncated.** The property that makes it
@@ -3777,6 +3802,64 @@ refute it, which is worth more than file order.
   where a mechanism claim rests on a REVIEW, record it — the
   secondary-source rule governs (verifies what the review asserts,
   not what the underlying work showed).
+- **ccf BATCH 1 — READ AND CLOSED (2026-09-06). 11 records, 5 sites,
+  boundary declared before reading. CERTAINTY-DRIFT: 0 of 11.** Ten
+  verified (nine verified-quoted, exact to numerator and denominator
+  wherever numeric) and one confirmed anti-citation (Foulkes 2010,
+  correctly recorded as carrying no percentages — figures had been
+  dropped rather than kept). Four copy-edits shipped: Segelman's verb
+  and denominator, Fleming's dropped "sporadic", Wippold's misquoted
+  hyphen and its unrecorded review status. **The batch's real output is
+  two measurements about the METHOD, which is what condition (8) says a
+  first batch is for.**
+  **(a) THE READ ORDER DID NOT SELECT WHAT IT WAS BELIEVED TO SELECT.**
+  Measured at dc12997, not assumed: the 22 caveated sites are generated
+  by 12 distinct hedge locations, and 39 of the 49 flagged records sit
+  on a line carrying no hedge at all — they are NEIGHBOURS of one.
+  `colon.js:210`'s single "disputed" marks 3 sites and 14 records;
+  `skin.js:397`'s "paywall" marks 3 sites and 15. With `REGIONS_*`
+  entries written as ~1,000-character single-line literals, a ±3-line
+  radius is a ~3,000-character aperture, so "this record sits in a
+  caveated window" is a correct window verdict and nearly uninformative
+  as a record verdict. Same window-versus-mention distinction the
+  polarity mention reads established, now quantified.
+  **(b) THE BATCH TESTED THE PREDICTION ON THE WRONG SUBSTRATE.** 7 of
+  the 11 were numeric claims with explicit denominators, where fidelity
+  is exactly checkable and drift cannot hide; only 2 were mechanism
+  prose of the kind the addendum describes. The hedges cluster in
+  numeric-provenance comments, so caveated-first order preferentially
+  surfaces EPIDEMIOLOGY. **The zero is therefore not evidence against
+  certainty drift — it is evidence that this ordering cannot sample
+  for it.**
+  **THE ACCIDENT THAT HELPED (user, and the reason batch 2 is cleaner
+  than planned): because 80% of flagged records sit on unhedged lines,
+  batch 1 was retrospectively NOT a hedged sample — it was an unordered
+  sample of numeric claims.** That makes batch 1 vs batch 2 a clean
+  SUBSTRATE comparison with no hedging confound, since neither cell is
+  actually hedged. A failed ordering produced a better experiment than
+  the intended one.
+  **PRE-REGISTERED, BATCH 2 (substrate, not inversion):** mechanism
+  prose drifts more than numeric claims, because a number either
+  matches or it doesn't while a hedge can evaporate. Stake: n=15 drawn
+  unordered from mechanism `note` prose across organs, polarity flags
+  ignored entirely, **1–3 CERTAINTY-DRIFT instances, strictly more than
+  batch 1's zero**, with the in-vitro/mouse omission the most likely
+  form.
+  **BATCH 3, QUARANTINED DELIBERATELY:** the inversion hypothesis — that
+  hedged prose drifts LESS because a hedge marks work already done —
+  remains untested and needs its own cell: **hedged mechanism prose,
+  drawn from the 12 real hedge locations, not from the 49-record window
+  expansion.** Small, and run THIRD. Folding it into batch 2 would
+  reintroduce exactly the confound the aperture measurement just handed
+  us a way around.
+  **Method note, on false zeros:** four zeros in this batch were
+  artefacts, not findings — two publisher cookie walls (PubMed, Wiley),
+  one truncated PMC page, and one paper that reported the finding in
+  different words ("No significant difference … was observed" for a
+  claim of no enrichment, with zero hits for "enrich"). **Absence of the
+  search term is not absence of the finding**, and a zero from a source
+  read is a hypothesis about the fetch before it is a fact about the
+  paper.
 - **Sequencing:** re-scope (done) → A → B → C∥D. Detector survival:
   rendered-output checks (fraction/share-sum/duplicate) persist and
   matter MORE under pulled content; citation checks shrink to the
@@ -4961,7 +5044,24 @@ refute it, which is worth more than file order.
   turned out narrower than its source — compression toward the
   general, qualifiers dropped never added, a durable property of how
   the atlas was authored. A narrower-than-source claim is anomalous:
-  investigate it.**
+  investigate it.
+  FIRST COUNTEREXAMPLE (ccf batch 1, 2026-09-06) — the corollary fired
+  as designed. colon.js:210 carried Segelman 2012's 8.3% figure as "8.3%
+  of all patients" inside a COLON ledger, but the source's denominator is
+  all 11,124 COLORECTAL patients in Stockholm County: a claim NARROWER
+  than its source, the anomalous direction. Recorded as a counterexample
+  rather than filed as wording drift, on the user's ruling, for two
+  reasons. It was caught by the corollary that pre-registered it, NOT by
+  number-matching — every digit was exact, and what moved was the
+  population the number describes, the same failure mode the scope-first
+  demonstration above establishes. And for once the bias runs the safe
+  way: Segelman makes colonic origin an independent predictor of
+  metachronous PC (HR 1.77), so a colorectal denominator UNDERSTATES the
+  colon rate. The tally at the moment it was found: thirteen defects,
+  twelve broad, one narrow. ONE COUNTEREXAMPLE DOES NOT OVERTURN THE
+  CONCLUSION — AN UNEXAMINED ONE WOULD QUIETLY WEAKEN IT, which is why
+  it sits here beside the claim it qualifies and not only in the batch
+  log.**
 - **Tier 3 — CLOSED (2026-09-04), on the outcome its own prompt
   pre-registered as legitimate and final: close-zoom monochrome
   accepted, on a documented citation limit.** The range-capable set fell

@@ -224,10 +224,16 @@ const PRIVATE_POOL_GBM = [
 // intro says so. PathologyOutlines' GBM page confirms both features' morphology directly:
 // pseudopalisading as "neoplastic cells surrounding central necrosis" (with "microvascular
 // proliferation or necrosis is required for a histologic diagnosis of GBM"), and MVP as
-// "multilayered, small caliber vessels with glomeruloid appearance." The "garland-like
+// "multilayered, small caliber vessels with glomeruloid appearance." The "garlandlike
 // arrangement of hypercellular tumor nuclei" phrasing is from Wippold et al., AJNR, 2006
 // (PMID 17110662) — the pseudopalisade-specific source, checked because "dense rows of
-// nuclei" was originally an unverified paraphrase.
+// nuclei" was originally an unverified paraphrase. Two things about that citation, both
+// found on re-read. The source spells it "garlandlike", unhyphenated, in all four of its
+// uses; this quotation was hyphenated, and a quotation asserts exactness in a way the
+// paraphrases below deliberately do not, so only the quoted span was corrected. And
+// Wippold is a REVIEW ("the purpose of this report is to review"), not primary
+// observation — cited here for descriptive phrasing it states in running text as well as
+// a figure legend, so the generalization is the source's own and not ours.
 const HISTOLOGY_GBM = {
   intro: 'Glioblastoma’s two defining microscopic features are pseudopalisading necrosis — garland-like, hypercellular rims of tumor nuclei lining up around irregular necrotic zones — and microvascular proliferation: multilayered, small-caliber vessels piled into glomeruloid tufts. Under the WHO 2021 classification these are diagnostic criteria, not just descriptions: in an IDH-wildtype diffuse astrocytic glioma, either one is sufficient on its own to make the diagnosis.',
   ariaSummary: 'Stylized microscopic field: a pale, irregular serpentine band of necrosis crosses the middle, its borders rimmed on both sides by densely packed, elongated dark nuclei standing perpendicular to the edge — the pseudopalisades. Away from the band, the field is diffusely hypercellular with small irregular tumor nuclei. Two rounded tufts of piled-up small red vessels — glomeruloid microvascular proliferation — sit in opposite corners.',
