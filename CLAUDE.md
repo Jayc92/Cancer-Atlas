@@ -4046,6 +4046,111 @@ refute it, which is worth more than file order.
   search term is not absence of the finding**, and a zero from a source
   read is a hypothesis about the fetch before it is a fact about the
   paper.
+- **ccf BATCH 2 — READ AND CLOSED (2026-09-06). 15 records drawn from a
+  frame of 48 mechanism-`note` sentences, seed `int('b0f7330',16)` — the
+  HEAD at which the frame was built, fixed before the draw and
+  auditable. CERTAINTY-DRIFT: 4 of 15, against a pre-registered 1–3.**
+  The stake was right in direction and wrong in magnitude, and the
+  over-range result is recorded as measured rather than trimmed to fit.
+  The four: `kidneys.js:141` "found convergent evolution" where Gerlinger
+  says "**suggesting** convergent **phenotypic** evolution" — the
+  addendum's own canonical example, live; `lungs.js:215` "**recurrent**
+  mechanism" where the word has zero hits in Awad and the finding is two
+  patients on adagrasib monotherapy out of 38; `colon.js:274` and
+  `colon.js:275` both "**confirmed**" over Cornish β P-values the source
+  labels "**Uncorrected** two-sided P-values", where another panel of the
+  same paper reports Q<0.05.
+  **TWO MORE DEFECTS, OTHER CATEGORIES, ON USER RULING — total 6 of 15.**
+  `colon.js:275` also dropped Li's population entirely (**SCOPE DRIFT**,
+  the Paly/kidneys/testis shape: "6530 CRC tissue samples obtained from
+  6530 **Chinese metastatic** CRC patients", and the quoted co-occurrence
+  sentence is scoped "In the **MSS** group" — 6,056 of the 6,530 we
+  printed as its denominator). `colon.js:210` cited Fang for SMAD4
+  **loss** where the meta-analysis screened out "63 articles relate to
+  SMAD4 **protein expression**" and measures mutation (**CATEGORY
+  SUBSTITUTION**, the TNBC-for-basal-like shape — a substitution, not a
+  rounding).
+  **THE LI QUALIFIER IS LOAD-BEARING, NOT DECORATION**, which is the
+  strongest argument yet for the scope-drift class: Li's own discussion
+  reports APC mutated in "62.8% in our MSS samples and 77.9% in the MSK
+  MSS samples", so the cohort we cite for an *APC* co-occurrence has a
+  materially different APC base rate than the Western cohorts nearly
+  every other frequency here comes from. Dropping "Chinese" dropped the
+  one caveat that bears on the claim being made.
+  **PLUS ONE ATTRIBUTION ERROR, RECATEGORISED ON USER RULING (Beyer /
+  Paly / Zeng / Wood class, own category and own count):** `prostate.js:222`
+  said "TCGA (2015) **found**" a preponderance TCGA explicitly attributes
+  elsewhere — "**The former** included the preponderance of PTEN
+  deletions in ERG fusion-positive cases **(Taylor et al., 2010)**", where
+  "the former" is *already-known* alterations. I had filed this as a
+  copy-edit by analogy with Wippold's unrecorded review status; the ruling
+  separates them, because Wippold was a missing annotation on an accurate
+  claim and this asserts the wrong author. Recategorising rather than
+  folding in preserves batch comparability *and* files it correctly.
+  **THE TWO RATES ARE ON DIFFERENT AXES AND MUST NOT BE MERGED.** 4 of 15
+  is the CERTAINTY-DRIFT rate and is what batch 3 is measured against,
+  because batch 3's hypothesis is about hedges and a hedge is a certainty
+  marker — no hedge would have protected against a dropped cohort or a
+  substituted category. 6 of 15 is the total-defect rate on this
+  substrate, which is what the remediation-load estimate uses. Both are
+  written here with their axes named precisely because, unnamed, a later
+  reader would "update" one to the other and the batch-3 comparison would
+  silently change base.
+  **THE CORPUS AS ITS OWN CONTROL — second and third instances after
+  Segelman, and a source-free signal worth naming even if nothing is
+  built on it.** The Cornish pair is the sharpest: `colon.js:222` tracks
+  "the only pairwise signal that survived Bonferroni" and `colon.js:275`'s
+  very next clause tracks an anti-correlation that "did not survive
+  multiple-testing correction", so the file already knew the distinction
+  the note dropped. Third instance in the same record: the comments at
+  `:222` and `:258` both carry Li's MSS scope that the user-facing note
+  omitted. A defect detectable without opening the source at all.
+  **[3] PAIRS WITH THE BLADDER DEMONSTRATION** as the second defect class
+  invisible to number-matching: the number and the quoted span are both
+  verbatim correct, and only the sentence AROUND the quote betrays it.
+  Two instances in two batches is a pattern, not an accident.
+  **QUOTED-SPAN CHECK — two design inputs from this batch.** (a) Li's
+  quote differs from source by one character: `co‐occurrence` U+2010 vs
+  ASCII `co-occurrence`. In an `ensure_ascii=True` corpus a byte-comparing
+  checker fires on every legitimate transliteration, so a
+  Unicode-normalisation policy is a precondition, not a refinement. (b)
+  Cornish's `+0.066`/`+0.086` have zero hits in the article text — read
+  off an Extended Data figure. Legitimate, but a span check finds no span,
+  so figure-derived numbers need a declared marker: the
+  declared-and-tolerated shape again.
+  **MODELLING VOCABULARY, STATED ONCE (user ruling).** "Cooperating"
+  appears 30 times in `js/organs/*.js` and only 10 carry the contrastive
+  frame, so the convention is not self-evident from the pattern, and it is
+  modelling vocabulary wearing the clothes of a mechanistic claim. One
+  sentence now closes the provenance copy in `cancer-atlas.html`, beside
+  the site→gene teaching-device sentence it is modelled on — and it covers
+  the consequence-language labels too (`PTEN loss` ×8, `CDKN2A loss` ×5,
+  `SMAD4 loss` ×3, `VHL inactivation`, …), which is the root the Fang
+  substitution grew from. The labels are NOT renamed: the convention is
+  corpus-wide and defensible, and the defect was in the clause that
+  attributed a mutation finding to "loss".
+  **A STRONGER RESULT DECLINED ON CONVENTION GROUNDS.** `colon.js:222`
+  records that AMER1×APC co-occurrence survived Bonferroni in this
+  project's OWN three-cohort computation (TCGA nHM / DFCI MSS / MSK MSS) —
+  which would have supported "confirmed" better than Cornish does. It
+  stays out of the user-facing note: own computation governs
+  inclusion/exclusion decisions in the record, and is not cited to the
+  reader as a finding. Downgrading was still the right edit.
+  **NOT VERIFIED, RECORDED AS SUCH:** Gerlinger's full text is unreachable
+  (epmc-xml 404, pmc-www 167-char throttle, epmc-www 1,514 chars), so the
+  three SETD2 mutation specifics are UNVERIFIED-BY-FETCH — kept, not
+  deleted, because an unreachable fetch is not a refutation. Cooper 2015
+  has a Corrigendum (PMID 26018901) whose content is unchecked.
+  **PLANNING CONSEQUENCE (user):** the remaining ccf queue is *all*
+  mechanism prose, so at this substrate's rate the remediation load is
+  materially higher than the old mixed-content figure implied — and
+  correspondingly the value per read is higher too.
+  **BATCH 3 IS DIRECTIONAL, NOT A RATE (user ruling).** 12 hedge locations
+  will not yield 15 mechanism claims, and a rate from ten records is
+  noise. The question is binary and worth answering anyway: near zero and
+  the hedge really does mark epistemic work already done; near the
+  certainty-drift rate above and hedging is irrelevant — which kills the
+  ordering idea outright rather than leaving it mis-specified.
 - **Sequencing:** re-scope (done) → A → B → C∥D. Detector survival:
   rendered-output checks (fraction/share-sum/duplicate) persist and
   matter MORE under pulled content; citation checks shrink to the
