@@ -3385,11 +3385,6 @@ guards each invocation, `commit_checked.sh` guards the commit message,
   — which is why the message distinguishes NOT TRACKED (exists,
   unstaged, would not ship) from DECLARED BUT ABSENT (stale
   declaration).
-- **Named uncovered hole:** a SILENTLY SHRINKING extractor. The runner
-  asserts the records artifact is non-empty and prints its count, but
-  a v3 extractor emitting 300 records instead of 408 would pass. A
-  floor constant would go stale on the next legitimate corpus growth,
-  so this stays uncovered, visible in the DONE line, and named here.
 - **"reported", not "reported clean"** in the battery's DONE line:
   `regress.js` exits 0 carrying two KNOWN label-overlap failures, so
   "clean" would be false on every green run. Each member's own DONE
@@ -3409,6 +3404,104 @@ regenerates the records first so the refusal only ever fires on a
 hand-run without one. Both directions have selftest arms: a refusal
 that fired on a legitimate invocation would make the instrument
 un-runnable, which is the hole `battery.py` exists to close.
+
+**THE RATCHET — ASSERTION 4** (user ruling, hours after the gap was
+named). The runner first shipped naming a **silently shrinking
+extractor** as uncovered: it asserted the records artifact was
+non-empty and printed its count, so a v3 emitting 300 records where 408
+stood would have passed. The stated reason for leaving it — a floor
+constant goes stale on the next legitimate corpus growth — is true of a
+floor and **the wrong conclusion.** A ratchet does not go stale.
+
+- **Record the previous count, fail on a decrease, let an increase move
+  it up automatically.** Growth never trips it, shrinkage always does,
+  and a real reduction takes an explicit `--lower-ratchet=N
+  --lower-reason="…"` — a deliberate step over the gap instead of a
+  silent one, which is the kind of step this project tolerates.
+- **A lower moves the bar; it does not switch the check off.** The
+  lowered value is applied first and then compared like any other, so
+  lowering to 380 on a corpus that actually holds 300 still fires.
+  There is no special case for "lower", which is why it cannot become
+  an escape hatch.
+- **ANY decrease is material, and that is a defined threshold, not a
+  hedge.** `extract_citations.py` is deterministic over the local
+  corpus, so on an unchanged tree the count cannot move at all. There
+  is no noise band to tolerate, and inventing a tolerance would be a
+  floor with extra steps — the thing the ratchet replaces.
+- **State: `.claude/record_count.json`**, committed (an uncommitted
+  ratchet resets on every fresh clone, which is a floor of zero wearing
+  a ratchet's clothes), declared in `NON_INSTRUMENTS` as machine-written
+  state. **Assertion 2 fired on this file before it existed** —
+  `DECLARED BUT ABSENT` — and the battery refuses to run while its own
+  selftest fails, so the tool could not create the file it writes. It
+  was seeded empty by hand once, on the record in the file's own note;
+  counts start absent so the first run INITIALISES and says so.
+- **A corrupt state file is a problem, not a reset.** Re-initialising
+  from an unparseable file would discard the floor while printing a
+  calibration note — the degradation class again, so `load_ratchet`
+  refuses instead.
+- **Keyed by metric**, so extending it is a declaration rather than a
+  redesign. One metric is wired today (`records`). **Still unratcheted,
+  named:** `regress.js`'s check count (167) and `citation_crosscheck`'s
+  identifier total (142), each able to shrink under a green DONE line
+  the same way. Wiring them means parsing each instrument's DONE line
+  for its numbers, a brittler job than reading an artifact the runner
+  already generates.
+- **Demonstrated on live extractor output, not fixtures** (condition
+  7): with the stored count tampered to 500, the battery reported
+  `RATCHET: records SHRANK 500 -> 408 (92 fewer)`, exited 1, and left
+  the file at 500 — **a breach does not write itself down.** All 9
+  instruments still reported in that run, so the failure was
+  attributable to the ratchet alone. 23 selftest arms, including a
+  shrink of **one** (the arm that pins "material" to any decrease) and
+  a reasonless lower being refused.
+
+**WHY THE CHAIN STOPS AT FOUR** (user, recorded so nobody adds a fifth
+from momentum). Set → invocation → commit message → deploy is
+**complete, not arbitrarily truncated.** The property that makes it
+complete is that the battery is a **single entry point**: one command
+covers everything downstream of it. A guard above it would need its own
+guard, and that regress only ever bottoms out at a human running one
+thing. Four is where the recursion stops because four is where the
+human is.
+
+## ANY MACHINE-DERIVABLE NUMBER RESTATED IN PROSE WILL DRIFT (2026-09-05)
+
+Stated as a rule rather than rediscovered a fourth time. **Three for
+three in one session**, all the same shape — a number the tooling knows,
+copied into prose, still sitting there after the tooling moved:
+
+| restatement | said | was |
+|---|---|---|
+| `run_checked.sh`'s header enumerating its call sites | "six call sites" | ten instruments |
+| the Phase 2 pass description | "36 polarity-flagged windows" | 59 (10 + 49) |
+| the crosscheck record | "3 of 141" | 3 of 142 |
+
+**Three remedies, in order of preference:**
+
+1. **Delete the duplicate.** `run_checked.sh` no longer lists its call
+   sites at all; it points at `battery.py`'s `INSTRUMENTS`. A number
+   that exists once cannot disagree with itself. Prefer this whenever
+   the prose does not actually need the value.
+2. **Point at the source of truth.** The 49-window read order is
+   regenerated by the battery, never snapshotted, for exactly this
+   reason.
+3. **Quote the line.** Where the number must appear — a commit message
+   — `commit_checked.sh` copies the DONE line by machine, so the
+   message's numbers cannot drift from the run that produced them.
+
+**The ratchet is the one case where a number is deliberately stored**,
+because a comparison needs something to compare against. It is safe
+because no human writes it and the only permitted movement is up.
+
+**No detector for this, deliberately.** A general one would need a
+declared list of (prose location, live value) pairs — a fourth
+hand-maintained list carrying `record_sync_check.py`'s own caveat,
+"the map is itself a record that can go stale," and by its own logic it
+would be the next thing to drift. The failure is *prevented* by the
+three remedies, not caught after the fact. Where a check is cheap and
+total over its population — `.claude/` for the instrument list — build
+it; where it is another hand-maintained list, use remedy 1 instead.
 
 ## POLARITY MENTION READS — the 10 corrective windows (2026-09-05)
 
@@ -3444,6 +3537,26 @@ source claims sitting beside a rejection.**
   load-bearing for a rejection and two on-screen figures in active
   use. Both directions are removed by the same read, which is what the
   ruling bought.
+- **THE PREDICTION WAS BACKWARDS, and that is the part worth keeping**
+  (user, on their own ruling). The batch was ordered first on the
+  grounds that each unread record was a trap for the epi pass — which
+  implies the hazard was **reading them as sources.** The composition
+  says the opposite: 2 anti-citations against 8 real source claims,
+  several with figures live on screen. The dominant risk was a reader
+  **trusting the window verdict and skipping eight legitimate
+  citations**, including the ones whose numbers are the evidence *for*
+  the rejection. The ruling was right and its stated reason was
+  inverted, so the ordering earned its keep for a reason nobody
+  predicted — which is an argument for reading batches whose hazard you
+  think you already know.
+- **That is the flag-then-human-read contract earning its design.**
+  Every window verdict is correct as a window verdict; the error in
+  either direction would have come *entirely* from treating one as a
+  mention verdict. The window/mention distinction is the thing the
+  guard was built to **preserve rather than resolve**, and a guard that
+  had tried to resolve it — ruling "not a source claim" on its own
+  regex evidence — would have produced 8 wrong rulings here while
+  looking more decisive.
 - **The guard was right at its own granularity.** Every one of the 8
   sits within ±3 lines of genuinely corrective text, so each window
   verdict is correct AS A WINDOW VERDICT. This is the flag-then-read

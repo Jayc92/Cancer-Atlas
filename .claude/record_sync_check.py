@@ -38,6 +38,7 @@ SYNC = [
     ('_deploy_gate',                    'CLAUDE.md',                 'DEPLOY GATE'),
     ('_battery_runner',                 'CLAUDE.md',                 'BATTERY RUNNER'),
     ('_polarity_mention_reads',         'CLAUDE.md',                 'POLARITY MENTION READS'),
+    ('_number_restatement_rule',        'CLAUDE.md',                 'RESTATED IN PROSE WILL DRIFT'),
 ]
 
 def check(manifest, files):

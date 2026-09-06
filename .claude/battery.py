@@ -36,11 +36,36 @@
 #      then a decision on the record rather than an omission — which is the difference between a
 #      stale map and a maintained one.
 #
-# WHAT IT DOES NOT COVER, named rather than left implicit: a SILENTLY SHRINKING extractor. The
-# runner asserts the records artifact is non-empty and prints its count, but a v3 extractor that
-# emitted 300 records instead of 408 would pass. A floor constant would go stale on the next
-# legitimate corpus growth, so the honest state is: uncovered, visible in the DONE line, and the
-# same class as the crosscheck degradation this commit fixed one layer down.
+#   4. THE CORPUS DID NOT SILENTLY SHRINK — the ratchet (user ruling, 2026-09-05, closing a gap
+#      this runner shipped with hours earlier). The first version asserted only that the records
+#      artifact was non-empty and printed its count, so a v3 extractor emitting 300 records where
+#      408 stood would have passed. That was named as uncovered on the stated grounds that a FLOOR
+#      constant goes stale on the next legitimate corpus growth. True of a floor, and the wrong
+#      conclusion: a RATCHET does not go stale. Record the previous count, fail on a decrease, and
+#      let an increase move it up automatically. Growth never trips it, shrinkage always does, and
+#      a real reduction takes an explicit --lower-ratchet with a --lower-reason — a deliberate step
+#      over the gap instead of a silent one, which is the kind of step this project tolerates.
+#
+#      ANY decrease is material, and that is a defined threshold rather than a hedge:
+#      extract_citations.py is deterministic over the local corpus, so on an unchanged tree the
+#      count cannot move at all. There is no noise band to tolerate, and inventing a tolerance
+#      would be a floor with extra steps — the thing the ratchet replaces.
+#
+#      State lives in .claude/record_count.json, declared below as a non-instrument (machine-
+#      written state, not a tool). Assertion 2 firing on the very next file added to .claude/ is
+#      the mechanism working, not a nuisance. The ratchet is KEYED BY METRIC so extending it is a
+#      declaration rather than a redesign; today exactly one metric is wired, `records`. STILL
+#      UNRATCHETED, named rather than left implicit: regress.js's own check count (167) and
+#      citation_crosscheck's identifier-carrying total (142), each of which could shrink under a
+#      green DONE line the same way. Wiring those means parsing each instrument's DONE line for its
+#      numbers, which is a brittler job than reading an artifact this runner already generates.
+#
+# WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
+# Set -> invocation -> commit message -> deploy is COMPLETE, not arbitrarily truncated, and the
+# property that makes it complete is that this runner is a SINGLE ENTRY POINT: one command covers
+# everything downstream of it. A guard above the battery would need its own guard, and that regress
+# only ever bottoms out at a human running one thing. Four is where the recursion stops because
+# four is where the human is.
 #
 # PHASES exist because deploy_check.js cannot run pre-commit — there is nothing deployed to check
 # until the push has happened, and it correctly reports NOT PUSHED if asked early. So the ten
@@ -53,6 +78,9 @@
 #   python3 .claude/battery.py --selftest
 #   python3 .claude/battery.py pre-commit
 #   python3 .claude/battery.py post-push
+#   python3 .claude/battery.py pre-commit --lower-ratchet=406 --lower-reason="two dropped, unsourced"
+#     ^ the only way past assertion 4, and it stays a check: the lowered bar is then compared to
+#       the real count like any other, so a lower cannot switch the assertion off.
 #   .claude/commit_checked.sh "<subject>" "DONE " python3 .claude/battery.py pre-commit
 #     ^ the intended commit form: marker "DONE " quotes EVERY member's DONE line plus the
 #       battery's own into the message, so the commit records the whole set's numbers verbatim.
@@ -77,6 +105,12 @@ POLARITY_ARTIFACT = os.path.join(WORK_DIR, 'polarity_scan.json')
 CROSSCHECK_ARTIFACT = os.path.join(WORK_DIR, 'crosscheck_flags.json')
 REGRESS_OUT_DIR = os.path.join(WORK_DIR, 'regress')
 REGRESS_PORT = '3057'
+
+# The ratchet's state, and the only file in .claude/ that a tool writes rather than a human. It is
+# COMMITTED on purpose: an uncommitted ratchet would reset on every fresh clone, which is a floor
+# of zero wearing a ratchet's clothes.
+RATCHET_FILE = os.path.join(REPO_ROOT, '.claude', 'record_count.json')
+RECORDS_METRIC = 'records'
 
 PHASES = ('pre-commit', 'post-push')
 
@@ -120,6 +154,8 @@ NON_INSTRUMENTS = {
     'render_thumb.py': 'offline asset tool (Blender)',
     'nocache_server.py': 'local dev server; started by this runner for the regression',
     'citations.json': 'the manifest — data, not a tool',
+    'record_count.json': 'the ratchet — machine-written state, not a tool; this runner is the '
+                         'only writer, and it is committed so a fresh clone inherits the floor',
     'launch.json': 'preview config — data, not a tool',
     'phaseA_mapping.md': 'a record — data, not a tool',
 }
@@ -192,6 +228,97 @@ def unphased_instruments(instruments, phases):
     return [f'BAD PHASE: {name} declares phase {phase!r}, not one of {list(phases)} — '
             'it would never be invoked'
             for name, phase, _marker, _argv in instruments if phase not in phases]
+
+
+def ratchet_verdict(metric, previous, current, lower_to=None, lower_reason=None):
+    """Assertion 4. Returns (problems, new_stored_value, notes).
+
+    The whole mechanism: growth raises the stored value, equality holds it, ANY shrink is a problem,
+    and a deliberate lower is applied FIRST and then subjected to the same comparison — so lowering
+    to 380 on a corpus that actually holds 300 still fails. That composition is why there is no
+    special case for "lower": it moves the bar, it does not switch the check off."""
+    problems, notes = [], []
+    if lower_to is not None:
+        if not lower_reason:
+            problems.append(
+                f'LOWER REFUSED: --lower-ratchet={lower_to} given for {metric} with no '
+                '--lower-reason — an explicit lower is a decision on the record, and a reasonless '
+                'one is just a floor being quietly moved')
+            return problems, previous, notes
+        notes.append(f'RATCHET LOWERED: {metric} {previous} -> {lower_to} — {lower_reason}')
+        previous = lower_to
+    if previous is None:
+        notes.append(f'RATCHET INITIALISED: {metric} at {current} — condition (8) applies, a first '
+                     'run is calibration; the SECOND run is the check. git add '
+                     '.claude/record_count.json, or every fresh clone re-calibrates from nothing')
+        return problems, current, notes
+    if current < previous:
+        problems.append(
+            f'RATCHET: {metric} SHRANK {previous} -> {current} ({previous - current} fewer). '
+            'Either the producer silently lost records, or a real removal has not been declared. '
+            'If the reduction is intended, step over the gap deliberately:\n'
+            f'      python3 .claude/battery.py pre-commit --lower-ratchet={current} '
+            '--lower-reason="<why>"')
+        return problems, previous, notes
+    if current > previous:
+        notes.append(f'RATCHET RAISED: {metric} {previous} -> {current} — growth moves it up with '
+                     'no ceremony; git add .claude/record_count.json in this commit')
+        return problems, current, notes
+    return problems, previous, notes
+
+
+def load_ratchet(path=None):
+    """A MISSING file is a first run. A file that EXISTS AND DOES NOT PARSE is a problem, never a
+    silent re-initialisation: resetting the ratchet to nothing would discard the whole protection
+    while printing a calibration note, which is precisely the degradation class the crosscheck
+    refusal was written to kill. Returns (state or None, problems)."""
+    path = path or RATCHET_FILE
+    if not os.path.exists(path):
+        return {'counts': {}, 'lowers': []}, []
+    try:
+        state = json.load(open(path, encoding='utf-8'))
+        if not isinstance(state.get('counts'), dict):
+            raise ValueError("no 'counts' object")
+    except (OSError, ValueError) as exc:
+        return None, [f'RATCHET UNREADABLE: {path} exists but does not parse — {exc}. Refusing to '
+                      're-initialise, which would silently discard the ratchet.']
+    state.setdefault('lowers', [])
+    return state, []
+
+
+def save_ratchet(state, path=None):
+    path = path or RATCHET_FILE
+    with open(path, 'w', encoding='utf-8') as handle:
+        json.dump(state, handle, indent=1)
+        handle.write('\n')
+
+
+def ratchet_phrase(previous, current, new_value, problems):
+    """The DONE line's ratchet clause. Machine-derived, because a restated one would drift."""
+    if problems:
+        return f'{previous} BREACHED by {current}'
+    if previous is None:
+        return f'{new_value} initialised (calibration)'
+    if new_value > previous:
+        return f'{previous}->{new_value} raised'
+    if new_value < previous:
+        return f'{previous}->{new_value} LOWERED deliberately'
+    return f'{new_value} held'
+
+
+def parse_lower(argv):
+    """--lower-ratchet=N --lower-reason="why". Flag-shaped, so the phase parse ignores them."""
+    lower_to, reason, problems = None, None, []
+    for arg in argv[1:]:
+        if arg.startswith('--lower-ratchet='):
+            raw = arg.split('=', 1)[1]
+            try:
+                lower_to = int(raw)
+            except ValueError:
+                problems.append(f'BAD FLAG: --lower-ratchet={raw!r} — takes an integer count')
+        elif arg.startswith('--lower-reason='):
+            reason = arg.split('=', 1)[1].strip() or None
+    return lower_to, reason, problems
 
 
 def missing_from_run(expected, results):
@@ -357,8 +484,47 @@ def selftest():
         members = [n for n, p, _m, _a in INSTRUMENTS if p == phase]
         say(bool(members), f'phase {phase!r} has declared members ({len(members)})')
 
+    # arm 10: assertion 4, the ratchet, in every direction. The load-bearing arm is the SHRINK BY
+    # ONE: "material" is defined as any decrease, so a check that only fired on a large drop would
+    # be a tolerance band nobody declared.
+    say(any('SHRANK' in p for p in ratchet_verdict('records', 408, 407)[0]),
+        'fires on a shrink of ONE (any decrease is material — the extractor is deterministic, '
+        'so there is no noise band)')
+    say(any('SHRANK' in p for p in ratchet_verdict('records', 408, 300)[0]),
+        'fires on the named hole exactly: 300 records where 408 stood')
+    grow_problems, grow_value, grow_notes = ratchet_verdict('records', 408, 450)
+    say(not grow_problems and grow_value == 450 and any('RAISED' in n for n in grow_notes),
+        'growth never trips it and moves the stored value up automatically (408 -> 450)')
+    hold_problems, hold_value, _hold_notes = ratchet_verdict('records', 408, 408)
+    say(not hold_problems and hold_value == 408, 'an unchanged count holds, silently')
+    # the deliberate step over the gap: allowed, but only with a reason, and still checked
+    low_problems, low_value, low_notes = ratchet_verdict('records', 408, 380, lower_to=380,
+                                                        lower_reason='two removed under '
+                                                                     'source-or-remove')
+    say(not low_problems and low_value == 380 and any('LOWERED' in n for n in low_notes),
+        'accepts an explicit lower WITH a reason and records it')
+    say(any('LOWER REFUSED' in p for p in ratchet_verdict('records', 408, 380, lower_to=380)[0]),
+        'refuses a lower with no reason (a reasonless lower is a floor being moved quietly)')
+    say(any('SHRANK' in p for p in ratchet_verdict('records', 408, 300, lower_to=380,
+                                                   lower_reason='declared')[0]),
+        'a lower still gets checked: lowering to 380 on a corpus of 300 fires anyway')
+    first_problems, first_value, first_notes = ratchet_verdict('records', None, 408)
+    say(not first_problems and first_value == 408 and any('INITIALISED' in n for n in first_notes),
+        'a first run initialises without failing, and says it is calibration (condition (8))')
+    # arm 11: a present-but-corrupt state file must be a PROBLEM, not a silent re-initialisation.
+    corrupt = os.path.join(tempfile.mkdtemp(), 'record_count.json')
+    open(corrupt, 'w').write('{ not json')
+    corrupt_state, corrupt_problems = load_ratchet(corrupt)
+    say(corrupt_state is None and any('UNREADABLE' in p for p in corrupt_problems),
+        'a corrupt ratchet file is a problem, not a reset (discarding the floor silently is the '
+        'degradation class, not a recovery)')
+    missing_state, missing_problems = load_ratchet(os.path.join(os.path.dirname(corrupt), 'nope.json'))
+    say(missing_state == {'counts': {}, 'lowers': []} and not missing_problems,
+        'an absent ratchet file is a first run, not a failure')
+
     print('SELFTEST', 'PASS — fires on a missing member, a vacuous member, a failing member, '
-          'an undeclared file, a stale declaration and a bad phase; passes complete sets'
+          'an undeclared file, a stale declaration, a bad phase and a shrinking corpus; '
+          'passes complete sets'
           if ok else 'FAIL — do not trust a green battery from this build')
     # 7-bis applies to the selftest as well (deploy_check.js's precedent): a selftest that never
     # executed must not be indistinguishable from one that passed.
@@ -387,7 +553,11 @@ def main(argv):
     needs_records = any(RECORDS_ARTIFACT in a for _n, _m, a in members)
     needs_server = any('.claude/regress.js' in a for _n, _m, a in members)
 
+    lower_to, lower_reason, flag_problems = parse_lower(argv)
+    problems += flag_problems
+
     record_count = None
+    ratchet_clause = 'n/a'
     if needs_records:
         record_count, preflight_problems = regenerate_records()
         problems += preflight_problems
@@ -395,6 +565,26 @@ def main(argv):
             # Downstream citation scans would be vacuously clean; do not run them at all rather
             # than print two green DONE lines over an empty corpus.
             members = [(n, m, a) for n, m, a in members if RECORDS_ARTIFACT not in a]
+        else:
+            state, load_problems = load_ratchet()
+            problems += load_problems
+            if state is None:
+                ratchet_clause = 'UNREADABLE'
+            else:
+                previous = state['counts'].get(RECORDS_METRIC)
+                ratchet_problems, new_value, notes = ratchet_verdict(
+                    RECORDS_METRIC, previous, record_count, lower_to, lower_reason)
+                problems += ratchet_problems
+                for note in notes:
+                    print(f'    {note}')
+                ratchet_clause = ratchet_phrase(previous, record_count, new_value, ratchet_problems)
+                if not ratchet_problems and new_value != previous:
+                    if lower_to is not None:
+                        state['lowers'].append({'metric': RECORDS_METRIC, 'from': previous,
+                                                'to': lower_to, 'count': record_count,
+                                                'reason': lower_reason})
+                    state['counts'][RECORDS_METRIC] = new_value
+                    save_ratchet(state)
 
     server = start_dev_server() if needs_server else None
     results = {}
@@ -422,8 +612,8 @@ def main(argv):
     print(f'DONE battery: phase {phase} — {reported}/{declared_for_phase} declared instruments '
           f'ran and reported (marker printed, exit 0), {len(INSTRUMENTS)} declared in total, '
           f'{len(tracked_claude_files())} .claude/ files all declared, '
-          f'{record_count if record_count is not None else "n/a"} citation records extracted, '
-          f'{len(problems)} problems')
+          f'{record_count if record_count is not None else "n/a"} citation records extracted '
+          f'(ratchet {ratchet_clause}), {len(problems)} problems')
     return 1 if problems else 0
 
 
