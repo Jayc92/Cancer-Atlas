@@ -3442,11 +3442,13 @@ floor and **the wrong conclusion.** A ratchet does not go stale.
   refuses instead.
 - **Keyed by metric**, so extending it is a declaration rather than a
   redesign. One metric is wired today (`records`). **Still unratcheted,
-  named:** `regress.js`'s check count (167) and `citation_crosscheck`'s
-  identifier total (142), each able to shrink under a green DONE line
-  the same way. Wiring them means parsing each instrument's DONE line
-  for its numbers, a brittler job than reading an artifact the runner
-  already generates.
+  named:** `regress.js`'s check count and `citation_crosscheck`'s
+  identifier total, each able to shrink under a green DONE line the same
+  way. Their **current values are deliberately not written here** — they
+  are exactly the class the drift rule below names, and crosscheck's
+  total has already gone stale once in a record; each instrument's own
+  DONE line is its source of truth. **How they get closed is recorded
+  below as a shape, not left as a hole.**
 - **Demonstrated on live extractor output, not fixtures** (condition
   7): with the stored count tampered to 500, the battery reported
   `RATCHET: records SHRANK 500 -> 408 (92 fewer)`, exited 1, and left
@@ -3455,6 +3457,38 @@ floor and **the wrong conclusion.** A ratchet does not go stale.
   attributable to the ratchet alone. 23 selftest arms, including a
   shrink of **one** (the arm that pins "material" to any decrease) and
   a reasonless lower being refused.
+
+**THE SIDECAR CONVENTION — how the ratchet generalises** (user,
+2026-09-05). Recorded as a **shape, not a task**, so a later session
+finds a plan here instead of a hole. **Read this before writing a new
+instrument.**
+
+- **The wrong way** to ratchet the other metrics is to parse the
+  numbers back out of each instrument's DONE line: nine formats to
+  track, and it recreates the prose-restatement problem *inside the
+  runner* — deriving a machine number from a human-facing string is the
+  same mistake one level in.
+- **The convention:** each instrument emits a machine-readable sidecar
+  alongside its human-readable DONE line —
+  `SIDECAR {"name": "regress", "metrics": {"checks": 167, "failures": 2}}`
+  — so the ratchet reads **structure** and the DONE line stays a
+  sentence for humans. Each is then the authority for its own audience
+  and neither is derived from the other. The numbers in that example are
+  a **form, not a reading**: whatever the run produced. This file is not
+  their source of truth either, which is why the two are unnamed above.
+- **No sweep.** It applies to the **next instrument written**, and to
+  each existing one **when it is next touched for another reason.** The
+  ratchet generalises for free over time and nothing is rewritten for a
+  gap that is still theoretical — the two named metrics are also the
+  two least likely to shrink invisibly, since `regress`'s count
+  dropping would almost certainly follow a deliberate code edit rather
+  than the silent producer change the extractor demonstrated.
+- **The reader ships with the first producer, not before it.** A
+  consumer with no producer could only ever be demonstrated against a
+  fixture, and the standard here is capability shown on real output
+  (conditions 7 and 8). Whoever writes that instrument wires both ends
+  and gets the live demonstration for free; building the reader today
+  would spend it.
 
 **WHY THE CHAIN STOPS AT FOUR** (user, recorded so nobody adds a fifth
 from momentum). Set → invocation → commit message → deploy is

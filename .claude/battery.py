@@ -55,10 +55,37 @@
 #      written state, not a tool). Assertion 2 firing on the very next file added to .claude/ is
 #      the mechanism working, not a nuisance. The ratchet is KEYED BY METRIC so extending it is a
 #      declaration rather than a redesign; today exactly one metric is wired, `records`. STILL
-#      UNRATCHETED, named rather than left implicit: regress.js's own check count (167) and
-#      citation_crosscheck's identifier-carrying total (142), each of which could shrink under a
-#      green DONE line the same way. Wiring those means parsing each instrument's DONE line for its
-#      numbers, which is a brittler job than reading an artifact this runner already generates.
+#      UNRATCHETED, named rather than left implicit: regress.js's own check count and
+#      citation_crosscheck's identifier-carrying total, each of which could shrink under a green
+#      DONE line the same way. THEIR CURRENT VALUES ARE DELIBERATELY NOT WRITTEN HERE: they are
+#      precisely the class the drift rule names, and one of them — crosscheck's total — has already
+#      gone stale once in a record. Each instrument's own DONE line is its source of truth.
+#
+#      HOW THIS GENERALISES — THE SIDECAR CONVENTION (user, 2026-09-05, recorded as a SHAPE AND NOT
+#      A TASK, so a session that finds this finds a plan rather than a hole). The wrong way to close
+#      those two is to parse the numbers back out of each instrument's DONE line: nine formats to
+#      track, and it recreates the prose-restatement problem INSIDE the runner — deriving a machine
+#      number from a human-facing string is the same mistake one level in. The right way is for each
+#      instrument to emit a machine-readable sidecar ALONGSIDE its human-readable DONE line,
+#
+#          SIDECAR {"name": "regress", "metrics": {"checks": 167, "failures": 2}}
+#
+#      so the ratchet reads STRUCTURE and the DONE line stays a sentence for humans. Each is then
+#      the authority for its own audience and neither is derived from the other. (The numbers in
+#      that example are a FORM, not a reading — whatever the run produced. This header is not their
+#      source of truth either, which is the same reason the two are unnamed above.)
+#
+#      DO NOT SWEEP TEN TOOLS FOR THIS. The convention applies to the NEXT instrument written, and
+#      to each existing one WHEN IT IS NEXT TOUCHED FOR ANOTHER REASON. The ratchet generalises for
+#      free over time, and nothing is rewritten for a gap that is still theoretical: the two named
+#      metrics are also the two least likely to shrink invisibly — regress's count dropping would
+#      almost certainly follow a deliberate code edit, not the silent producer change the extractor
+#      demonstrated.
+#
+#      THE READER SHIPS WITH THE FIRST PRODUCER, not before it. A consumer with no producer could
+#      only ever be demonstrated against a fixture, and the standard here is capability shown on
+#      real output — conditions (7) and (8). Whoever writes that instrument wires both ends and gets
+#      a live demonstration for free; building the reader today would spend the demonstration.
 #
 # WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
 # Set -> invocation -> commit message -> deploy is COMPLETE, not arbitrarily truncated, and the
