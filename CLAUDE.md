@@ -3228,12 +3228,17 @@ screen pair per organ:
   line, and WRITES THE COMMIT MESSAGE ITSELF — so the quoted numbers
   are copied from the run by machine and can neither drift from it nor
   be silently absent, the two ways this practice has now failed, once
-  each. Three-arm self-test against a scratch repo and real commits
-  (no marker → zero new commits; non-zero exit → refuses even though
-  the marker printed; marker plus clean exit → commits with the line
-  verbatim). Append-only by construction: no amend, no rebase, no
-  force — the archive-immutability rule is not this tool's to bend,
-  and it does not have the flags to try.
+  each. Self-test against a scratch repo and real commits — every arm
+  refuses or commits for real rather than asserting on a string, and the
+  arms are the file's own list, not a count restated here (this
+  paragraph said "three-arm" for a day after there were six). It
+  refuses on no marker, on a non-zero exit even though the marker
+  printed, and on output whose only "DONE" text is prose; it commits
+  quoting BOTH DONE-line forms verbatim and no prose — see WHAT COUNTS
+  AS A DONE LINE for why the second form is named explicitly and what
+  went missing while it wasn't. Append-only by construction: no amend,
+  no rebase, no force — the archive-immutability rule is not this
+  tool's to bend, and it does not have the flags to try.
   DEPLOY GATE (.claude/deploy_check.js): the THIRD layer, and the only
   one that verifies what users actually load. THE CHAIN IS local green
   → HEAD green → DEPLOYED green, and the third diverges from the other
@@ -3550,6 +3555,72 @@ would have been guessed wrong on a fixture:
   does not write itself down. The DONE line carries the count of metrics
   actually ratcheted, so a reader that silently read nothing would say
   `0` rather than looking like a quiet pass.
+
+## WHAT COUNTS AS A DONE LINE (2026-09-06, user ruling; `.claude/commit_checked.sh`)
+
+**The commit gate quoted by substring on a hand-passed marker, and that
+failed in both directions at once — neither of which announced itself.**
+
+- **TOO WIDE — prose got quoted.** Any line containing the literal
+  `DONE ` was copied into the message, so selftest arm *descriptions*
+  mentioning "DONE line" landed in the permanent record beside real gate
+  output. **Present in `58748d3`, `a3e5015` and `aafbe04`** (two lines
+  each in the first two, three in the last). Not a wrong number — every
+  real DONE line is still verbatim — but a reader cannot tell a gate's
+  own words from prose, in the one artefact whose whole purpose is being
+  a gate's own words.
+- **TOO NARROW — a gate went missing, and this is the worse half.**
+  `regress.js`'s marker is `==== DONE: …`, which **does not contain
+  `DONE `** — the character after `DONE` is a colon. So the *documented*
+  aggregate invocation `commit_checked.sh "<subject>" "DONE " python3
+  .claude/battery.py pre-commit` **silently dropped the 167-check
+  regression from the commit message.** `aafbe04` has no regress line;
+  `a3e5015` and `58748d3` do, because those runs were given the marker
+  `DONE` without the trailing space. **The most important gate in the
+  chain came and went from the record depending on one invisible
+  character in an argument typed by hand.**
+
+**The ruling: quote by FORM, not by the passed marker, and name both
+forms explicitly.** A naive `^DONE ` anchor fixes the prose and *keeps*
+the regress hole — a gate getting quieter without saying so, which is the
+failure class this whole chain exists for. `DONE_LINE_RE='^DONE |^====
+DONE'`.
+
+- **Do not reword the arm descriptions** (user). That changes the data to
+  fit the matcher, which **hides the constraint rather than removing
+  it**: the next person who writes "DONE line" in a description
+  reintroduces the pollution and nothing tells them why they shouldn't.
+- **The passed marker still governs refusal.** The caller declares which
+  gate they are gating on. A separate stricter marker check was written
+  and **removed the same hour**: with quoting anchored, the empty-capture
+  test already refuses a prose-only run, and `run_checked.sh` already
+  fails a marker typo — so a third check would have added only a way to
+  refuse a *legitimate* invocation, since `DONE ` does not appear in
+  regress's line. **Redundant checks are not free when one of them can
+  fire wrongly.**
+- **`battery.py`'s `run_member()` now indents by the same two forms.**
+  Indentation decides whether the anchored matcher can see a line, so
+  printer and matcher must agree on what a DONE line *is*. Marker-based
+  indenting already had a latent instance: a member whose selftest prints
+  `DONE <name>_selftest:` does not contain its own marker `DONE <name>:`,
+  so it was indented and would have been dropped — `deploy_check`'s is
+  exactly that shape. The definition is **duplicated across a `.sh` and a
+  `.py`, knowingly**, and both sites say so and name each other.
+- **CONDITION (7) APPLIED TO A MATCHER** (user): *show it still finds
+  what it used to find, not just that it drops what you wanted dropped.*
+  Verified against real gate output and against all three historical
+  commit messages — the old matcher's own captures. New matcher keeps
+  **every** line beginning `DONE` or `====` in all three, drops **only**
+  indented prose, and **restores** regress's line. `aafbe04` keeping one
+  fewer than the other two is the silent loss showing up in the
+  arithmetic. Three new selftest arms, including the regress form under
+  the documented aggregate marker — the arm that would have caught it.
+- **The three polluted commits are left alone** (user). History is
+  append-only by construction, immutability is a standing condition, and
+  it is what makes `git show a131649:assets/*.glb` the masters archive.
+  **Cosmetic cleanup of a commit message is nowhere near worth touching
+  that.** The pollution is recorded here with its range instead:
+  `58748d3` … `aafbe04`, 2026-09-05 to 2026-09-06.
 
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 

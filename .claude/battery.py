@@ -569,7 +569,15 @@ def run_member(name, marker, argv):
         if not line.strip():
             continue
         # DONE lines unindented and unmodified: they are quoted into commit messages by grep.
-        print(line if marker in line else f'    {line}')
+        # BY FORM, not by this member's declared marker (2026-09-06). Indenting is what decides
+        # whether commit_checked.sh's anchored matcher can see a line, so the two have to agree on
+        # what a DONE line IS or the printer silently hides output from the record. Marker-based
+        # indenting already had a latent instance: a member whose selftest prints
+        # `DONE <name>_selftest:` does not contain its own marker `DONE <name>:`, so it was indented
+        # and would be dropped — deploy_check's is exactly that shape. Same two forms as
+        # .claude/commit_checked.sh's DONE_LINE_RE, duplicated knowingly and named there too.
+        is_done = line.startswith('DONE ') or line.startswith('==== DONE')
+        print(line if is_done else f'    {line}')
     # The output is returned so the sidecar reader can parse STRUCTURE out of it. Note what is
     # NOT returned to that reader's caller: any interpretation of the human DONE line. The
     # sidecar is a separate channel on purpose.

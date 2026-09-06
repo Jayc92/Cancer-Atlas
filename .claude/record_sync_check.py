@@ -41,6 +41,7 @@ SYNC = [
     ('_number_restatement_rule',        'CLAUDE.md',                 'RESTATED IN PROSE WILL DRIFT'),
     ('_quoted_span_check',              'CLAUDE.md',                 'QUOTED-SPAN CHECK'),
     ('_coverage_split',                  'CLAUDE.md',                 'DECLARED-AND-TOLERATED'),
+    ('_done_line_form',                  'CLAUDE.md',                 'WHAT COUNTS AS A DONE LINE'),
 ]
 
 def check(manifest, files):

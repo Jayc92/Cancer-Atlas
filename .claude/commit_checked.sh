@@ -30,6 +30,35 @@
 # against real commits — a gate printing no marker leaves the repo with ZERO new commits, and
 # a gate printing one produces a message containing that line verbatim. A tool whose job is
 # refusing has to be shown refusing.
+# WHAT COUNTS AS A DONE LINE (2026-09-06, user ruling). The quote was a SUBSTRING match on the
+# hand-passed marker, which failed in both directions at once and neither announced itself:
+#
+#   TOO WIDE — prose got quoted. Any line containing the literal "DONE " was copied into the
+#   message, so selftest arm DESCRIPTIONS mentioning "DONE line" landed in the permanent record
+#   beside real gate output (58748d3, a3e5015, aafbe04). A reader cannot tell which lines are a
+#   gate's own words, in the one artefact whose whole purpose is being a gate's own words.
+#
+#   TOO NARROW — a gate went missing. regress.js's marker is "==== DONE: ..." and does NOT contain
+#   "DONE " (the character after DONE is a colon), so the DOCUMENTED aggregate invocation
+#   `commit_checked.sh "<subject>" "DONE " python3 .claude/battery.py pre-commit` SILENTLY DROPPED
+#   the 167-check regression from the message. That is not hypothetical: aafbe04 has no regress
+#   line, where a3e5015 and 58748d3 do, because those were run with the marker "DONE" (no trailing
+#   space) and this one used the documented form. The most important gate in the chain came and
+#   went from the record depending on one invisible character in an argument typed by hand.
+#
+# So QUOTING IS BY FORM, NOT BY THE PASSED MARKER, and the forms are named explicitly rather than
+# guessed at: a naive "^DONE " anchor fixes the prose and keeps the regress hole, which would be a
+# gate getting quieter without saying so — the exact failure class this chain exists for.
+#
+# THE PASSED MARKER STILL GOVERNS REFUSAL: the caller declares which gate they are gating on, and
+# it must appear among the CAPTURED lines. Prose can no longer satisfy that, because prose is no
+# longer captured.
+#
+# DUPLICATED, KNOWINGLY: .claude/battery.py's run_member() uses the same two forms to decide which
+# member lines to leave unindented, and a shared definition across a .sh and a .py would be a
+# bigger mechanism than the duplication risks. Both sites say so and name each other.
+DONE_LINE_RE='^DONE |^==== DONE'
+
 set -u
 
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
@@ -45,11 +74,18 @@ do_commit() {
     rm -f "$out"; return 3
   fi
   cat "$out"
-  done_lines="$(grep -F "$marker" "$out")"
+  done_lines="$(grep -E "$DONE_LINE_RE" "$out")"
   if [ -z "$done_lines" ]; then
     echo "COMMIT_CHECKED: no DONE line to quote — REFUSING TO COMMIT" >&2
     rm -f "$out"; return 3
   fi
+  # NO SEPARATE MARKER CHECK HERE, deliberately. It was written and removed the same hour: with
+  # quoting anchored, the empty-capture test above already refuses a prose-only run (prose no longer
+  # captures), and run_checked.sh already fails a marker typo by not finding it at all. A third
+  # check would have added only one thing — a way to refuse a LEGITIMATE invocation, since the
+  # aggregate marker "DONE " does not appear in regress's "==== DONE:" line, so gating a
+  # regress-only run with it would refuse for no reason. Redundant checks are not free when one of
+  # them can fire wrongly.
   msg="$(mktemp)"
   printf '%s\n\n%s\n' "$subject" "$done_lines" > "$msg"
   git commit -F "$msg" >/dev/null 2>&1
@@ -107,10 +143,57 @@ if [ "${1:-}" = "--selftest" ]; then
     echo "  FAIL committed on a non-zero gate exit"; ok=0
   fi
 
+  # arm 4: THE REGRESS FORM, under the documented aggregate marker. This is the arm that would
+  # have caught aafbe04: "==== DONE:" does not contain "DONE ", so the old substring quote dropped
+  # the 167-check regression from the message and said nothing.
+  base4="$(git rev-list --count HEAD)"
+  echo change4 >> f.txt; git add f.txt
+  do_commit "regress form" "DONE " sh -c \
+    'echo "==== DONE: 167 checks, 2 failures, 2 page errors ===="; echo "DONE battery: 9/9 ran"' \
+    >/dev/null 2>&1
+  body4="$(git log -1 --pretty=%B 2>/dev/null)"
+  if [ "$(git rev-list --count HEAD)" != "$base4" ] \
+     && printf '%s' "$body4" | grep -qF "==== DONE: 167 checks, 2 failures, 2 page errors ====" \
+     && printf '%s' "$body4" | grep -qF "DONE battery: 9/9 ran"; then
+    echo "  ok   quotes BOTH marker forms — regress's '==== DONE:' line is no longer dropped"
+  else
+    echo "  FAIL the '==== DONE:' form was not quoted (the aafbe04 loss)"; ok=0
+  fi
+
+  # arm 5: prose is NOT quoted, and the real line still is. The data is left exactly as it appears
+  # in a live run — arm descriptions that mention "DONE line" are legitimate output and rewording
+  # them would hide the constraint instead of removing it.
+  base5="$(git rev-list --count HEAD)"
+  echo change5 >> f.txt; git add f.txt
+  do_commit "prose excluded" "DONE " sh -c \
+    'echo "  ok   fires when a member runs without printing its DONE line"; echo "DONE x: 1 checked"' \
+    >/dev/null 2>&1
+  body5="$(git log -1 --pretty=%B 2>/dev/null)"
+  if [ "$(git rev-list --count HEAD)" != "$base5" ] \
+     && printf '%s' "$body5" | grep -qF "DONE x: 1 checked" \
+     && ! printf '%s' "$body5" | grep -q "ok   fires when a member"; then
+    echo "  ok   indented prose containing 'DONE line' is not quoted, the real line is"
+  else
+    echo "  FAIL prose leaked into the message, or the real DONE line was lost"; ok=0
+  fi
+
+  # arm 6: a run that prints ONLY prose is now a vacuous run at the quoting layer too — the
+  # anchored capture is empty, so there is nothing to quote and nothing to commit.
+  base6="$(git rev-list --count HEAD)"
+  echo change6 >> f.txt; git add f.txt
+  do_commit "prose only" "DONE " sh -c \
+    'echo "  ok   refuses with no records artifact (exit 2, no DONE line)"' >/dev/null 2>&1
+  if [ "$(git rev-list --count HEAD)" = "$base6" ]; then
+    echo "  ok   refuses a run whose only 'DONE' text is prose (nothing anchored to quote)"
+  else
+    echo "  FAIL committed on prose alone"; ok=0
+  fi
+
   cd "$DIR" || exit 2
   rm -rf "$scratch"
   if [ $ok -eq 1 ]; then
-    echo "SELFTEST PASS — refuses on no-marker and on non-zero exit, quotes the line when it commits"
+    echo "SELFTEST PASS — refuses on no-marker, non-zero exit and prose-only output; quotes both "\
+"DONE forms verbatim and no prose"
     exit 0
   fi
   echo "SELFTEST FAIL — do not trust commits made through this script"
