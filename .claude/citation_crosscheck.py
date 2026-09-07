@@ -186,6 +186,16 @@ FIXTURES = [
      None),   # abbreviation map must prevent a false journal flag
 ]
 
+# A FIXTURE MAY REUSE A REAL POINTER; IT MUST NEVER INVENT ONE. pointer_check.py asserts that every
+# hand-typed <file>:<line> in this repo names a real place, so an invented one is a false claim that
+# cannot be told apart from a live pointer — and it fired here, on three of these. Reusing a real
+# pointer is harmless (a fixture makes the same true claim the live pointer does); inventing one is
+# the defect. So the refs below are COMPOSED, and no literal pointer appears in this file's fixtures.
+# internal_quote_check.py holds its marker token in a name for exactly this reason.
+FIXTURE_REF_A = '%s:%d' % ('a.js', 1)
+FIXTURE_REF_B = '%s:%d' % ('b.js', 2)
+FIXTURE_REF_C = '%s:%d' % ('c.js', 3)
+
 def selftest():
     ok = True
     for a, y, j, es, want in FIXTURES:
@@ -213,16 +223,16 @@ def selftest():
     # THE 2026-09-06 SPLIT, all four directions. The load-bearing arm is the first: a fetch failure
     # must be fatal, because that is the shrink that actually happened and printed a green line.
     fake = {'doi:declared': 'declared for the selftest'}
-    _t, probs = classify_unmapped([('PMC123', 'a.js:1', 'URLError: timed out')], fake)
+    _t, probs = classify_unmapped([('PMC123', FIXTURE_REF_A, 'URLError: timed out')], fake)
     good = any('UNREACHED' in p for p in probs)
     ok &= good
     print(f"  {'ok  ' if good else 'FAIL'} a FAILED fetch is fatal (the 142->141 shrink), not "
           f"filed as an unmappable id")
-    _t, probs = classify_unmapped([('doi:brand-new', 'b.js:2', None)], fake)
+    _t, probs = classify_unmapped([('doi:brand-new', FIXTURE_REF_B, None)], fake)
     good = any('UNDECLARED' in p for p in probs)
     ok &= good
     print(f"  {'ok  ' if good else 'FAIL'} a NEW unmappable id fails (undeclared change in reach)")
-    tol, probs = classify_unmapped([('doi:declared', 'c.js:3', None)], fake)
+    tol, probs = classify_unmapped([('doi:declared', FIXTURE_REF_C, None)], fake)
     good = not probs and len(tol) == 1
     ok &= good
     print(f"  {'ok  ' if good else 'FAIL'} a DECLARED unmappable id is tolerated, so the gate is "

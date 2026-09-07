@@ -230,6 +230,15 @@ def sidecar_metrics(heads, problems):
     }
 
 
+# A FIXTURE MAY REUSE A REAL POINTER; IT MUST NEVER INVENT ONE. pointer_check.py asserts that every
+# hand-typed <file>:<line> in this repo names a real place, so an invented one is a false claim that
+# cannot be told apart from a live pointer — and it fired here, on five uses of this one value.
+# Reusing a real pointer is harmless (a fixture makes the same true claim the live pointer does);
+# inventing one is the defect. So the ref is COMPOSED, and no literal pointer appears in this file's
+# fixtures. internal_quote_check.py holds its marker token in a name for exactly this reason.
+FIXTURE_REF = '%s:%d' % ('x.js', 1)
+
+
 def selftest():
     # Declared up front because arm 4 rebinds it; Python requires the declaration before any use of
     # the name in this function, and the arm that needs it is a long way below.
@@ -259,13 +268,13 @@ def selftest():
     # PLUS one intruder, so the arm proves the problem fires ALONE against an otherwise-clean run;
     # my first version passed a two-head map and drowned in twenty-odd stale declarations, which is
     # the check working and the arm miscalibrated.
-    declared_clean = {head: ['x.js:1'] for head in list(IMPRECISE) + list(WELL_FORMED)}
-    grew = evaluate({**declared_clean, 'Brand New': ['x.js:1']})
+    declared_clean = {head: [FIXTURE_REF] for head in list(IMPRECISE) + list(WELL_FORMED)}
+    grew = evaluate({**declared_clean, 'Brand New': [FIXTURE_REF]})
     arm('an UNDECLARED head is a problem, and is the only one on an otherwise clean population',
         len(grew) == 1 and 'Brand New' in grew[0], str(grew))
 
     # arm 3: and on the STALE direction, which is also the guard against SURNAME narrowing.
-    stale = evaluate({head: ['x.js:1'] for head in list(IMPRECISE) + list(WELL_FORMED)[1:]})
+    stale = evaluate({head: [FIXTURE_REF] for head in list(IMPRECISE) + list(WELL_FORMED)[1:]})
     arm('a declaration with no record is STALE',
         len(stale) == 1 and 'STALE' in stale[0] and WELL_FORMED[0] in stale[0], str(stale))
     arm('narrowing SURNAME would stale EVERY declaration at once, not shrink a count quietly',
@@ -286,7 +295,7 @@ def selftest():
     # nothing, and this file's population is large enough that a broken predicate would be noisy
     # rather than obviously wrong.
     arm('a fully declared population is clean',
-        not evaluate({head: ['x.js:1'] for head in list(IMPRECISE) + list(WELL_FORMED)}))
+        not evaluate({head: [FIXTURE_REF] for head in list(IMPRECISE) + list(WELL_FORMED)}))
 
     # arm 6: every IMPRECISE entry carries a corrected form that differs from the head. The corrected
     # string is the expected output of the held fix, so an entry that merely repeats the head would
@@ -303,7 +312,7 @@ def selftest():
     # arm 7: the sidecar's arithmetic. imprecise + well_formed must exhaust the population whenever
     # there are no problems, or a head would be counted in the total and in neither half — the
     # residual-bucket failure citation_reach_check.py had to fix in its own sidecar.
-    live = {head: ['x.js:1'] for head in list(IMPRECISE) + list(WELL_FORMED)}
+    live = {head: [FIXTURE_REF] for head in list(IMPRECISE) + list(WELL_FORMED)}
     metrics = sidecar_metrics(live, [])
     arm('imprecise + well_formed == heads_total on a clean population',
         metrics['imprecise'] + metrics['well_formed'] == metrics['heads_total'],

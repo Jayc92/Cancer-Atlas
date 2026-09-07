@@ -395,8 +395,8 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/kidneys.js:171",
-    "js/organs/kidneys.js:177"
+    "js/organs/kidneys.js:198",
+    "js/organs/kidneys.js:204"
    ]
   },
   {
@@ -937,7 +937,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:210"
+    "js/organs/prostate.js:218"
    ],
    "candidates": [
     {
@@ -958,8 +958,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:212",
-    "js/organs/prostate.js:219"
+    "js/organs/prostate.js:220",
+    "js/organs/prostate.js:227"
    ],
    "candidates": [
     {
@@ -996,7 +996,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:219"
+    "js/organs/prostate.js:227"
    ],
    "pmid": "35050902",
    "resolvedTitle": "Collision tumors revealed by prospectively assessing subtype-defining molecular alterations in 904 individual prostate cancer foci.",
@@ -1023,7 +1023,7 @@
    "status": "parse-noise",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:219",
+    "js/organs/prostate.js:227",
     "js/organs/thyroid.js:121"
    ],
    "window": "caveated",
@@ -1038,7 +1038,7 @@
    "status": "parse-noise",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:219"
+    "js/organs/prostate.js:227"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record",
    "window": "caveated",
@@ -1053,7 +1053,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:219",
+    "js/organs/prostate.js:227",
     "js/organs/bladder.js:187"
    ],
    "pmid": "10836297",
@@ -1081,8 +1081,8 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/prostate.js:228",
-    "js/organs/prostate.js:245"
+    "js/organs/prostate.js:236",
+    "js/organs/prostate.js:253"
    ],
    "pmid": "26492179",
    "resolvedTitle": "The 2014 International Society of Urological Pathology (ISUP) Consensus Conference on Gleason Grading of Prostatic Carcinoma: Definition of ",
@@ -1103,7 +1103,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/prostate.js:231"
+    "js/organs/prostate.js:239"
    ]
   },
   {
@@ -1113,7 +1113,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/prostate.js:245"
+    "js/organs/prostate.js:253"
    ],
    "pmid": "26166626",
    "resolvedTitle": "A Contemporary Prostate Cancer Grading System: A Validated Alternative to the Gleason Score.",
@@ -1631,7 +1631,7 @@
    "userFacing": true,
    "refs": [
     "js/organs/colon.js:222",
-    "js/organs/colon.js:275"
+    "js/organs/colon.js:278"
    ],
    "candidates": [
     {
@@ -1695,8 +1695,8 @@
    "userFacing": true,
    "refs": [
     "js/organs/colon.js:244",
-    "js/organs/colon.js:273",
-    "js/organs/colon.js:275"
+    "js/organs/colon.js:276",
+    "js/organs/colon.js:278"
    ],
    "pubmedCount": 1159,
    "candidates": [
@@ -1717,8 +1717,8 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:274",
-    "js/organs/colon.js:275"
+    "js/organs/colon.js:277",
+    "js/organs/colon.js:278"
    ],
    "pubmedCount": 101,
    "candidates": [
@@ -1739,7 +1739,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:274"
+    "js/organs/colon.js:277"
    ],
    "pmid": "39587554",
    "resolvedTitle": "Co-occurring mutations identify prognostic subgroups of microsatellite stable colorectal cancer.",
@@ -1761,8 +1761,8 @@
    "status": "retracted-wrong-backfill",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:286",
-    "js/organs/colon.js:298"
+    "js/organs/colon.js:289",
+    "js/organs/colon.js:301"
    ],
    "triage": "retracted 2026-09-04: backfilled 42616031 is a Streptococcus pneumoniae paper (ISME J); the citation is Arends et al., Histopathology, 2026 (colorectal grading/budding) \u2014 journal was ON the source line but the extractor missed it, and the topic gate matched 'colon' as a substring of 'colonization'. Two compounding instrument defects; word-boundary topic matching required in any future sweep."
   },
@@ -1773,8 +1773,8 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:291",
-    "js/organs/colon.js:298"
+    "js/organs/colon.js:294",
+    "js/organs/colon.js:301"
    ],
    "pmid": "42046640",
    "doi": "10.7759/cureus.105968",
@@ -1798,7 +1798,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:293"
+    "js/organs/colon.js:296"
    ]
   },
   {
@@ -1966,8 +1966,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/bladder.js:232",
-    "js/organs/bladder.js:232"
+    "js/organs/bladder.js:239",
+    "js/organs/bladder.js:239"
    ],
    "pmid": "24101484",
    "resolvedTitle": "TERT promoter mutations in bladder cancer affect patient survival and disease recurrence through modification by a common polymorphism.",
@@ -1989,8 +1989,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/bladder.js:232",
-    "js/organs/bladder.js:232"
+    "js/organs/bladder.js:239",
+    "js/organs/bladder.js:239"
    ],
    "pmid": "24018021",
    "resolvedTitle": "Telomerase reverse transcriptase promoter mutations in bladder cancer: high frequency across stages, detection in urine, and lack of associa",
@@ -2358,7 +2358,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:381"
+    "js/organs/skin.js:380"
    ],
    "pubmedCount": 10,
    "pmid": "29028110",
@@ -3547,7 +3547,7 @@
    "userFacing": true,
    "refs": [
     "js/organs/liver.js:153",
-    "js/organs/liver.js:248"
+    "js/organs/liver.js:280"
    ],
    "candidates": [
     {
@@ -3580,8 +3580,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/liver.js:159",
-    "js/organs/liver.js:248"
+    "js/organs/liver.js:158",
+    "js/organs/liver.js:280"
    ],
    "pubmedCount": 12,
    "pmid": "41480220",
@@ -3606,8 +3606,8 @@
    "userFacing": true,
    "refs": [
     "js/organs/liver.js:174",
-    "js/organs/liver.js:239",
-    "js/organs/liver.js:241"
+    "js/organs/liver.js:271",
+    "js/organs/liver.js:273"
    ],
    "pmid": "10966697",
    "resolvedTitle": "Extrahepatic metastases of hepatocellular carcinoma.",
@@ -3629,7 +3629,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/liver.js:178"
+    "js/organs/liver.js:177"
    ],
    "pubmedCount": 2,
    "pmid": "41158259",
@@ -3654,8 +3654,8 @@
    "userFacing": true,
    "refs": [
     "js/organs/liver.js:204",
-    "js/organs/liver.js:239",
-    "js/organs/liver.js:241"
+    "js/organs/liver.js:271",
+    "js/organs/liver.js:273"
    ],
    "pmid": "27252594",
    "resolvedTitle": "Liver cancer with concomitant TP53 and CTNNB1 mutations: a case report.",
@@ -3677,8 +3677,8 @@
    "userFacing": true,
    "refs": [
     "js/organs/liver.js:205",
-    "js/organs/liver.js:239",
-    "js/organs/liver.js:241"
+    "js/organs/liver.js:271",
+    "js/organs/liver.js:273"
    ],
    "pmid": "11375957",
    "resolvedTitle": "Genetic alterations associated with hepatocellular carcinomas define distinct pathways of hepatocarcinogenesis.",
@@ -3721,9 +3721,9 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/liver.js:239",
-    "js/organs/liver.js:241",
-    "js/organs/liver.js:243"
+    "js/organs/liver.js:271",
+    "js/organs/liver.js:273",
+    "js/organs/liver.js:275"
    ],
    "candidates": [
     {
@@ -3755,9 +3755,9 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/liver.js:239",
-    "js/organs/liver.js:241",
-    "js/organs/liver.js:243"
+    "js/organs/liver.js:271",
+    "js/organs/liver.js:273",
+    "js/organs/liver.js:275"
    ],
    "candidates": [
     {
@@ -3802,7 +3802,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/liver.js:248"
+    "js/organs/liver.js:280"
    ],
    "candidates": [
     {
@@ -3834,7 +3834,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/liver.js:267"
+    "js/organs/liver.js:320"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
@@ -3845,7 +3845,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/liver.js:273"
+    "js/organs/liver.js:326"
    ],
    "pmid": "25473149",
    "resolvedTitle": "Histopathology of hepatocellular carcinoma.",
@@ -4035,7 +4035,7 @@
    "refs": [
     "js/organs/brain.js:209",
     "js/organs/brain.js:219",
-    "js/organs/brain.js:234"
+    "js/organs/brain.js:240"
    ],
    "pmid": "34185076",
    "resolvedTitle": "The 2021 WHO Classification of Tumors of the Central Nervous System: a summary.",
