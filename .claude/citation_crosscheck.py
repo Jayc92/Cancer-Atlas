@@ -22,8 +22,12 @@
 # all-clean live scan is impossible unless the tool is broken — and then it says so.
 #
 # IT REFUSES WITHOUT ITS INPUT, and that is a 2026-09-05 correction to a worse bug than the one
-# citation_polarity.py died of (user ruling): "A dead instrument announces itself. A degraded one
-# produces a plausible number." The v2 records artifact used to be OPTIONAL — `if len(sys.argv) > 1
+# citation_polarity.py died of (user ruling, recorded in CLAUDE.md):
+#
+#     QUOTES CLAUDE.md
+#     > A dead instrument announces itself. A degraded one produces a plausible number.
+#
+# The v2 records artifact used to be OPTIONAL — `if len(sys.argv) > 1
 # else []` — so invoking this tool with no argument silently dropped the entire entry-time-
 # identifier population and checked 110 records instead of 142, under a DONE line whose shape was
 # indistinguishable from a full scan. Polarity died loudly (KeyError, no DONE line, wrapper exit

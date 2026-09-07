@@ -3,7 +3,8 @@
  "counts": {
   "records": 487,
   "citation_crosscheck.records": 143,
-  "citation_paren_ledger.basis_test": 0
+  "citation_paren_ledger.basis_test": 0,
+  "internal_quote_check.internal_quote.marked": 13
  },
  "lowers": [
   {

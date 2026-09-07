@@ -3376,8 +3376,12 @@ guards each invocation, `commit_checked.sh` guards the commit message,
   (2) **Every tracked file in `.claude/` is declared**, as an
   instrument or explicitly as a non-instrument with a reason.
 - **Why assertion 2 exists, in `record_sync_check.py`'s own words:**
-  "an undeclared pair is invisible to this check, and the map is
-  itself a record that can go stale." That caveat applies to a
+
+  QUOTES .claude/record_sync_check.py
+  > an undeclared pair is invisible to this check, and the map is
+  > itself a record that can go stale
+
+  That caveat applies to a
   declared instrument list with equal force — it is *this tool's own
   failure mode reintroduced one level up*. Here the closure is cheap
   because the population is one directory, so the list is CLOSED OVER
@@ -3596,8 +3600,11 @@ failed in both directions at once — neither of which announced itself.**
 **The ruling: quote by FORM, not by the passed marker, and name both
 forms explicitly.** A naive `^DONE ` anchor fixes the prose and *keeps*
 the regress hole — a gate getting quieter without saying so, which is the
-failure class this whole chain exists for. `DONE_LINE_RE='^DONE |^====
-DONE'`.
+failure class this whole chain exists for. The form it took, and the one
+copy of it in this file that is machine-checked against its source:
+
+QUOTES .claude/commit_checked.sh
+> DONE_LINE_RE='^DONE |^==== DONE'
 
 - **Do not reword the arm descriptions** (user). That changes the data to
   fit the matcher, which **hides the constraint rather than removing
@@ -3723,6 +3730,123 @@ guard, and that regress only ever bottoms out at a human running one
 thing. Four is where the recursion stops because four is where the
 human is.
 
+## THE INTERNAL QUOTED-SPAN CHECK (2026-09-07, user ruling; `.claude/internal_quote_check.py`)
+
+The inward face of the shape above, built first because it is **strictly
+the easy case**: both sides are in the repo, so no fetch, no
+Unicode-normalisation policy, no figure-derived marker. What is left is a
+string comparison. It was ordered because **the same failure had happened
+twice in one day** — and by the time it was built, four times.
+
+- **The four, because a hand-assembled enumeration grows on contact and
+  this one grew inside the reason for the instrument.** (1) `battery.py`
+  quoted `record_sync_check.py`'s caveat "verbatim" and editing the source
+  left the copy fiction. (2) Moving the sidecar convention left the
+  demonstrative *"the wrong way to close those two"* with its referent
+  behind in another item. (3) `citation_head_check.py`'s copy of
+  `citation_reach_check.py`'s blind-spot span substituted **single quotes
+  for the source's double** — two characters, inside a span whose own
+  sentence says verbatim. (4) `battery.py`'s anchor-family entry joined
+  **two separate `commit_checked.sh` spans with a slash inside one pair of
+  quote marks**; the composite existed in no file. Found by this
+  instrument on its first live run, in the file hosting the family
+  enumeration it was being added to. **Only (4) was not found by a human
+  reading carefully** — which is the argument for the instrument.
+- **DRIFT AND FABRICATION ARE TWO SUB-SHAPES, and (4) is the second one**
+  (user, on reading the first live run). The check was built for **drift**
+  — the target moves, a once-exact copy stops being exact. What it found
+  first was **fabrication**: each half verbatim, the whole invented,
+  existing in no file *at any time*. **Drift has a moment when it was
+  true; fabrication never did**, and that changes the repair. Drift is
+  fixed mechanically, by re-quoting the source or quoting less of it,
+  which is what (1) and (3) got. Fabrication cannot be re-quoted, because
+  there is no source span to return to — (4) had to be **restructured**
+  into two markers, one per real span, and the composite abandoned. A
+  reader who assumes drift will go hunting for the version of
+  `commit_checked.sh` that said it, and there isn't one. The instrument
+  does not distinguish them and does not need to: both surface as the same
+  not-found flag reporting zero occurrences, and which one it is becomes
+  obvious the moment a human looks for the source. Named so nobody narrows the
+  purpose to "keeping copies in sync with their originals".
+- **THE DISCIPLINE TRANSFERS — that is what this find is evidence for**
+  (user, 2026-09-07). Three instances in one day of **quote marks
+  asserting more than their content supports**: `brain.js` quoting
+  Wippold's "garlandlike" as "garland-like"; the prostate TCGA span whose
+  **framing was wrong while its text was exact**; and (4) here. The first
+  two are the atlas's *citations*, found by the epi pass. The third is the
+  atlas's **own tooling prose**, found by the same technique, in the file
+  hosting the family enumeration it was being added to. A fourth instance
+  if trailing punctuation tucked inside quote marks counts, which is the
+  same assertion made one character at a time. **The class was never about
+  citations specifically** — it is about a mark that claims exactness, and
+  it holds on both sides of this repo.
+- **The convention, because unmarked prose would have to be guessed at.**
+  A naive survey over markdown produced 1324 not-found hits, confirming
+  the premise: the checker must not guess. A marker line `QUOTES <path>`
+  followed by a `>` gutter run holding the quoted text; it passes when
+  that text, whitespace-collapsed, occurs **exactly once** in the target.
+- **Two deviations from the form as sketched, flagged rather than taken
+  quietly.** The `:<anchor>` was **dropped** — the quote is its own
+  anchor, since a span occurring exactly once already resolves to one
+  place, and a second hand-typed string is a second thing that can rot
+  with nothing checking *it*. The delimiter is a **`>` gutter, not quote
+  marks**: a `"`-delimited region cannot express a quote containing `"`,
+  and breakage (3) is exactly that. A third reason appeared while marking
+  rather than while designing — **all three CLAUDE.md quotes carried a
+  trailing `.` or `,` inside the quote marks that the source does not
+  have**, the ordinary habit of tucking punctuation inside quotes applied
+  to a span called verbatim. The gutter deletes the temptation instead of
+  catching it.
+- **A member of the family it guards, stated by the user before it could
+  be discovered**, so both of rule C's properties are decided by asking
+  which property of the match is *decidable*. The **marker is anchored by
+  POSITION** — the corpus already held two mid-sentence uses of the word
+  as English, and selftest arms 8 and 9 use those two lines verbatim, so
+  the anchor is demonstrated against the strings that would break it. The
+  **span is anchored by COUNT**: zero and many are different defects, and
+  many means the span identifies no place.
+- **Condition (7) met on the real corpus, not on a fixture.** After every
+  site was marked *exactly as it already read*, the first live run fired
+  on two of eight and passed six — and the two were the two already known
+  bad. The repair removed that evidence, so it is preserved two ways:
+  recorded in the instrument's header, and as fire/pass arm pairs on real
+  bytes from `git` (arms 1–2 and 12–13). Arms 12–13 also pin why the
+  comparison normalises **whitespace only** — a normaliser that folded
+  quote characters together, tempting the first time a copy differs only
+  by punctuation, would pass arm 12 and blind the instrument to the defect
+  that motivated it.
+- **THE ABSENCE HOLE, DECLARED AT BIRTH because the user named it as the
+  thing to watch.** The check is total over *marked* spans only, and an
+  unmarked quote reaches no instrument — the same absence-versus-decrease
+  shape as the ratchet, and the same unclosable population as
+  `record_sync_check.py`'s undeclared pairs, since "prose that is a quote"
+  cannot be enumerated. Two narrowings, neither a closure: the marked
+  count is **ratcheted**, so deleting a marker to silence a fire fails the
+  battery; and this is **the first thing in this chain that asks the
+  author to do something at write time** rather than deriving from what is
+  already written. Whether that holds is the open question, not a settled
+  one. Evidence it does not hold automatically: the instrument's own
+  header contained an unmarked internal quote until the marking pass
+  reached it, and three more sat in this file.
+- **What it cannot reach, so the remedy is elsewhere.** A demonstrative
+  has no span to resolve and no target to compare — breakage (2) is
+  unreachable *by construction*, which is why its remedy is deletion (see
+  the sweep below). A quote of a file's **own past state** is refused
+  rather than half-supported. Three spans in this file are therefore
+  deliberately left unmarked, declared here so the exemption is a decision
+  and not an omission: `run_checked.sh`'s deleted "six call sites";
+  breakage (2)'s *"the wrong way to close those two"*, quoted above as the
+  defect under discussion and **deleted from `battery.py` by the
+  demonstrative sweep**, so marking it would fire one commit later; and
+  breakage (4)'s slash-joined composite, which existed in no file at any
+  point. All three are citations of text that is gone or never was — there
+  is nothing live to resolve against.
+- **A larger adjacent population is declared and deliberately unmarked:**
+  `extract_citations.py`'s fixtures assert "`<file>:<line>` verbatim"
+  about corpus text dozens of times. Same defect class, now mechanisable,
+  not marked here because **a reach change gets declared and measured on
+  its own commit**.
+
 ## ANY MACHINE-DERIVABLE NUMBER RESTATED IN PROSE WILL DRIFT (2026-09-05)
 
 Stated as a rule rather than rediscovered a fourth time. **Three for
@@ -3755,7 +3879,11 @@ because no human writes it and the only permitted movement is up.
 **No detector for this, deliberately.** A general one would need a
 declared list of (prose location, live value) pairs — a fourth
 hand-maintained list carrying `record_sync_check.py`'s own caveat,
-"the map is itself a record that can go stale," and by its own logic it
+
+QUOTES .claude/record_sync_check.py
+> the map is itself a record that can go stale
+
+and by its own logic it
 would be the next thing to drift. The failure is *prevented* by the
 three remedies, not caught after the fact. Where a check is cheap and
 total over its population — `.claude/` for the instrument list — build
@@ -3819,9 +3947,11 @@ source claims sitting beside a rejection.**
   sits within ±3 lines of genuinely corrective text, so each window
   verdict is correct AS A WINDOW VERDICT. This is the flag-then-read
   contract working exactly as `citation_polarity.py`'s header
-  describes, not a defect in it: "window-level regexes cannot tell the
-  negated mention (Colombino) from the correction target (Jakob) two
-  tokens later."
+  describes, not a defect in it:
+
+  QUOTES .claude/citation_polarity.py
+  > window-level regexes cannot tell the negated mention (Colombino)
+  > from the correction target (Jakob) two tokens later
 - **Negated mentions are invisible to the extractor, checked not
   assumed:** Colombino 2012 (the wrong-source attribution) yields no
   record at all, so it cannot become a trap. Only Boutros and Hu are

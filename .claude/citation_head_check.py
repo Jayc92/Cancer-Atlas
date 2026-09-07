@@ -3,9 +3,10 @@
 #
 # WHY IT EXISTS. citation_reach_check.py declares its own blind spot in its header, verbatim:
 #
-#     "THIS CHECK IS BLIND TO THAT FAILURE MODE BY CONSTRUCTION. It counts years that produced NO
-#      record; a year that produced the WRONG record is not an absence and will never appear here.
-#      Do not read a clean run as 'every year is filed correctly'."
+#     QUOTES .claude/citation_reach_check.py
+#     > THIS CHECK IS BLIND TO THAT FAILURE MODE BY CONSTRUCTION. It counts years that produced NO
+#     > record; a year that produced the WRONG record is not an absence and will never appear here.
+#     > Do not read a clean run as "every year is filed correctly".
 #
 # This file takes one bite out of that blind spot — the one bite that can be taken without a
 # heuristic. It does NOT check that a head owns its year (that is citation_crosscheck's business,

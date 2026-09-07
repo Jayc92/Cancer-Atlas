@@ -64,3 +64,7 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   NOT PUSHED: HEAD 8140a15 != origin/main 7455aaf — nothing below can be a check on HEAD
   | DONE deploy_check: 27/27 assets byte-matched to HEAD 8140a15, 31 hotspots live, 0 unexplained page errors (2 declared-benign), 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-07T14:36:54Z reason=exit=126 marker="python3" tool=--phase=pre-commit
+     output 1 lines, last 12 below
+  | .claude/run_checked.sh: line 216: .claude/battery.py: Permission denied
+==== END REFUSAL

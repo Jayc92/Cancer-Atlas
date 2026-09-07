@@ -26,9 +26,10 @@
 #      non-instrument. This is the assertion that makes the declared list trustworthy, and it
 #      exists because record_sync_check.py's map carries this caveat about itself, verbatim:
 #
-#          "an undeclared pair is invisible to this check, and the map is itself a record that
-#           can go stale (noted honestly; the alternative is a convention parser, which would
-#           be a bigger instrument than the failure justifies)"
+#          QUOTES .claude/record_sync_check.py
+#          > an undeclared pair is invisible to this check, and the map is itself a record that
+#          > can go stale (noted honestly; the alternative is a convention parser, which would
+#          > be a bigger instrument than the failure justifies)
 #
 #      THIS QUOTE WENT STALE ONCE, on 2026-09-07, and by the mechanism it is quoted to illustrate.
 #      It used to open with the DISCIPLINE sentence; editing that sentence over there (adding the
@@ -265,10 +266,21 @@
 #   SILENT — the anchor is a typed convention. These need the remedy.
 #     1. .claude/refusals.log header vs `grep -c '^==== REFUSAL '`. FIXED d01615f; run_checked.sh
 #        arm 7 fails without the guard. THE ONLY MEMBER THAT WAS EVER LIVE: 1 entry read as 0.
-#     2. commit message body vs commit_checked.sh's DONE_LINE_RE. Already anchored (2026-09-06,
-#        "TOO WIDE — prose got quoted / TOO NARROW — a gate went missing"). THE SAME BUG AS (1), ONE
-#        DAY EARLIER, IN THE SAME CHAIN, AND NOBODY CONNECTED THEM — which is the argument for
-#        enumerating rather than fixing instances.
+#     2. commit message body vs commit_checked.sh's DONE_LINE_RE. Already anchored (2026-09-06). Its
+#        header names both directions the one matcher had to satisfy at once:
+#
+#            QUOTES .claude/commit_checked.sh
+#            > TOO WIDE — prose got quoted.
+#
+#            QUOTES .claude/commit_checked.sh
+#            > TOO NARROW — a gate went missing.
+#
+#        THIS ENTRY USED TO JOIN THOSE TWO INSIDE ONE PAIR OF QUOTE MARKS, slash-separated, and that
+#        composite existed in no file. internal_quote_check.py fired on it on its FIRST LIVE RUN
+#        (2026-09-07) — a compression wearing the clothes of a quotation, which is exactly what the
+#        outward quoted-span check was recorded to catch, found here by the inward one, in the file
+#        that hosts this enumeration. THE SAME BUG AS (1), ONE DAY EARLIER, IN THE SAME CHAIN, AND
+#        NOBODY CONNECTED THEM — which is the argument for enumerating rather than fixing instances.
 #     3. instrument stdout vs run_checked.sh's marker test. Was `grep -qF` — a bare substring, so a
 #        member printing `ok  fires when DONE x: is absent` and no DONE line was ACCEPTED as
 #        reporting. FIXED 2026-09-07; arm 8 fails without the anchor. Measured latent, not live —
@@ -325,14 +337,30 @@
 #        PREREGISTERED, citation_crosscheck's DECLARED_UNMAPPABLE, this file's NON_INSTRUMENTS).
 #        NOT anchor collisions at all: the language parser is the anchor. Their separate hazard is
 #        a counter reading prose (the >80-char bar), which is recorded with that bar, not here.
+#    11. marked internal quotes vs internal_quote_check.py's `QUOTES <path>` + `>` gutter, ADDED
+#        2026-09-07 AS A MEMBER BEFORE IT WAS WRITTEN — the first entry here that is a new matcher
+#        rather than an audit of an old one, and the user named it a member of this family in the
+#        same ruling that ordered it. LOUD on both of its anchors, and it needs two because it
+#        matches two different things: the MARKER is anchored by POSITION (`QUOTES` must begin the
+#        stripped line — the corpus already holds two mid-sentence uses of the word, and its arms 8
+#        and 9 use those two lines verbatim), and the SPAN is anchored by COUNT (exactly one
+#        occurrence in the target). Every failure class is a reported PROBLEM with a non-zero exit,
+#        including the one the ruling named specifically: a marked quote whose target file is gone.
+#        THE SILENT RESIDUE, which is a population hole and not an anchor collision: an UNMARKED
+#        quote reaches no instrument, because "prose that is a quote" cannot be enumerated. Same
+#        shape as record_sync_check's undeclared-pair blind spot in (5), unclosable for the same
+#        reason, and narrowed only by ratcheting the marked count. Its own header carries the rest.
 #
 # THIS ENUMERATION HAS NO CHECKER, said plainly because the chain's own lesson is that a
 # hand-assembled enumeration grows on contact — six head-shape artifacts turned out to be eight, and
-# four family members turned out to be ten. What a checker WOULD close over is available: the
-# matcher shapes are greppable inside .claude/ (`grep -c '^`, `startswith(`, `index($0,`, `-qF`, and
-# now `.count(` — the uniqueness form is a matcher too, which is the shape the second rule added to
-# the population), so "every matcher site is classified above" is decidable the way
-# undeclared_files() is decidable.
+# this list has grown on every reading since it opened (count the entries above; a total restated
+# here would be one more machine-derivable number rotting in prose). What a checker WOULD close over
+# is available: the matcher shapes are greppable inside .claude/ (`grep -c '^`, `startswith(`,
+# `index($0,`, `-qF`, and `.count(` — the uniqueness form is a matcher too, which is the shape the
+# second rule added to the population), so "every matcher site is classified above" is decidable the
+# way undeclared_files() is decidable. Entry (11) is the first test of that list against a matcher
+# written AFTER it: internal_quote_check.py needed no new shape — its marker is `startswith(` and
+# its span is `.count(` — which is weak support, one instance, and not a closure.
 # Not built, because the ruling asked for the remedy applied to the family, not a new instrument.
 # ==================================================================================================
 #
@@ -417,6 +445,14 @@ INSTRUMENTS = [
      ['python3', '.claude/duplicate_figure_check.py']),
     ('record_sync_check', 'pre-commit', 'DONE record_sync_check:',
      ['python3', '.claude/record_sync_check.py']),
+    # declared next to record_sync_check because they are the same idea pointed two ways: that one
+    # holds a DECLARED MAP of dual-home pairs and checks each marker resolves once; this one takes
+    # the case where the copy IS the anchor, so there is nothing to declare but the direction. It is
+    # also the only member whose subject is this chain's own prose rather than the atlas, and the only
+    # one that needs the author to mark something at write time — see its header for why an unmarked
+    # quote is invisible to it, and why the marked count is the ratcheted metric.
+    ('internal_quote_check', 'pre-commit', 'DONE internal_quote_check:',
+     ['python3', '.claude/internal_quote_check.py']),
     ('citation_polarity', 'pre-commit', 'DONE citation_polarity:',
      ['python3', '.claude/citation_polarity.py', RECORDS_ARTIFACT, POLARITY_ARTIFACT]),
     ('citation_crosscheck', 'pre-commit', 'DONE citation_crosscheck:',
@@ -433,8 +469,10 @@ INSTRUMENTS = [
      ['python3', '.claude/citation_head_check.py']),
     # THE ONLY MEMBER WHOSE SUBJECT IS A RULE RATHER THAN THE CORPUS, and the only one that reads
     # records and absences together — because the thing it examines is which of the two a span landed
-    # on. It holds a pre-registered claim about closed_year_paren() ("a closed year-bearing
-    # parenthetical spends the head") and refuses any span of that shape that nobody has scored
+    # on. It holds a pre-registered claim about closed_year_paren(),
+    #     QUOTES .claude/citation_paren_ledger.py
+    #     > a closed year-bearing parenthetical spends the head
+    # and refuses any span of that shape that nobody has scored
     # against it. Distinct from every other member's failure mode: the rest catch a corpus defect,
     # this one catches a rule accumulating unexamined support.
     ('citation_paren_ledger', 'pre-commit', 'DONE citation_paren_ledger:',

@@ -49,7 +49,9 @@
 # let the decision go unmade, and refuses to let a made decision quietly change.
 #
 # WHERE THE POPULATION COMES FROM, AND WHY NOT FROM HERE. extract_citations.py evaluates
-# "is there a ')' between head and year" at the decision site and writes the answer onto whichever
+#     QUOTES .claude/extract_citations.py
+#     > is there a ')' between head and year
+# at the decision site and writes the answer onto whichever
 # artifact the span produces (parenBetweenHeadAndYear, on records and on paren-shadow absences). This
 # file reads that flag and never re-derives the geometry: a rule implemented twice drifts, and the
 # copy that drifts is the one the corpus is not run through. The single geometric assertion made here
