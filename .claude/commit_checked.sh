@@ -26,8 +26,9 @@
 # no rebase, no force — the archive-immutability rule (git at and before a131649 is the raw
 # asset archive) is not this tool's to bend, and it does not have the flags to try.
 #
-# AN AUDIT THAT SHIPS ALONGSIDE ITS SUBJECT CANNOT WITNESS IT (user ruling, 2026-09-07 — a general
-# sequencing rule, recorded here because this script is where a commit boundary gets drawn).
+# AN AUDIT MUST NOT SHIP IN THE SAME COMMIT AS THE CHANGE IT WOULD HAVE RECORDED (user ruling,
+# 2026-09-07, corrected the same day — a general sequencing rule, recorded here because this script is
+# where a commit boundary gets drawn).
 #
 # When a change and the instrument that would have caught it land in the same commit, the instrument's
 # green run proves nothing about the change: it ran on a tree the change was already in, and its
@@ -36,6 +37,21 @@
 # in git and independently readable, then the change it is meant to police. 4263890's report was
 # accepted for doing this, and it is the reason the split is worth mechanising in a habit rather than
 # rediscovering per commit.
+#
+# THE FIRST WORDING WAS "ALONGSIDE ITS SUBJECT", AND IT OVER-FIRED — corrected in place rather than
+# reworded quietly, so a reader can see which claim moved. "Subject" reads as everything the audit
+# touches, which would forbid every audit that ships with any code at all, including its own sensor.
+# THE RULE IS ABOUT RECORDS AND THEIR SUBJECTS, NOT TOOLS AND THEIR INPUTS. What must precede is THE
+# BASELINE THE AUDIT COMPARES AGAINST:
+#   1bda280 HAD TO GO FIRST because record_keys ARE the baseline. Without them a removal has nothing
+#     to be absent FROM, so the audit's first act would erase its own finding: the three false records
+#     would never appear as `-` lines anywhere in git, in the commit claiming to make composition
+#     visible.
+#   69ba723 NEEDED NO PRIOR BASELINE. citation_paren_ledger's subject is four spans and a rule already
+#     in history at 4263890, whose effect is already recorded as `-` lines in record_count.json. The
+#     `parenBetweenHeadAndYear` flag it ships with is the ledger's SENSOR, and a sensor is part of the
+#     audit.
+# SO: SENSORS, READERS AND FIXTURES TRAVEL WITH THE AUDIT FREELY. Only the recorded change waits.
 #
 # THE CONVERSE IS NOT TRUE AND MUST NOT BE INFERRED: an instrument that ships with a FIX to the very
 # thing it detects is fine, and is in fact this chain's own convention — citation_reach_check.py's

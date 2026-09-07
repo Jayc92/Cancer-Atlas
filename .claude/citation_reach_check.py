@@ -120,11 +120,40 @@ ALL_KINDS = (
 # it, so the selftest holds each to >80 chars — the same bar citation_crosscheck's
 # DECLARED_UNMAPPABLE reasons are held to, for the same reason: a one-word reason is a shrug.
 #
-# A DECLARATION NAMES CHECKABLE EVIDENCE, NOT A JUDGEMENT (rule adopted 2026-09-06, on ruling, after
-# three declarations in this very dict rotted). The >80-char bar was the only test a reason had to
-# pass, and it measures LENGTH, not content: all three wrong entries cleared it comfortably while
-# being wrong about their own subject. The distinction that separates a reason which decays from one
-# which does not is whether it can be RE-RUN or only RE-READ. Compare, in this chain:
+# WHAT A DECLARATION NEEDS: THREE PROPERTIES, RECORDED TOGETHER (user ruling, 2026-09-07). They were
+# acquired one incident at a time, which is the problem — each arrived as the fix to a specific failure
+# and so the NEXT declaration only inherited the ones already learned. Stated as a set here, in the
+# canonical home the other three declaration lists already point at, so a new declaration can satisfy
+# all three AT BIRTH instead of collecting them by failing:
+#
+#   1. IT NAMES CHECKABLE EVIDENCE, NOT A CONCLUSION. Re-runnable, not merely re-readable. Learned
+#      from the three etal-out-of-range keys deleted from this very dict — detailed immediately below,
+#      because this is where it was paid for.
+#   2. IT CARRIES A REASON AT ALL, not just an identifier. The scar is absence_claim_check.py's
+#      unscoped-claim class: "no canonical figure exists" is a declaration of absence whose instrument
+#      is an unrecorded search, i.e. an entry with no reason attached, asserted as fact. Its exemplar,
+#      in the same commit (03ef214, the deploy gate), is deploy_check.js's BENIGN — which has carried
+#      a per-entry `why` AND a prose reason since birth, verified by `git log -S"why: 'no favicon"`.
+#      NOTE, since correcting in place beats rewording quietly: the ruling attributed this property to
+#      the benign list as its FAILURE. It checks out as the opposite — the benign list is the one place
+#      that had the property from the start; the failure of the same shape happened to absence claims.
+#      Property unchanged; its scar reassigned to the list that actually lacked a reason.
+#   3. IT IS A CLOSED ENUMERATED SET, NOT SCATTERED PROSE. Learned 2026-09-07 from the head-shape
+#      artifacts: a ruling named six, and citation_head_check.py's enumeration held EIGHT. Both extras
+#      (`Sweden Engstrand`, `MIS-CITES Pollock`) were ALREADY DECLARED — one in extract_citations.py's
+#      header, one pinned by a fixture there — so they were declared but not ENUMERATED. Prose cannot
+#      notice a sibling arriving; a closed set makes a member in neither list a PROBLEM.
+#
+# The three are independent and a declaration can hold any two: a closed set of reasonless ids has
+# (3) without (2); a well-argued paragraph of prose has (1) and (2) without (3), which is exactly the
+# eight-not-six case.
+#
+# A DECLARATION NAMES CHECKABLE EVIDENCE, NOT A JUDGEMENT — property (1) in full (rule adopted
+# 2026-09-06, on ruling, after three declarations in this very dict rotted). The >80-char bar was the
+# only test a reason had to pass, and it measures LENGTH, not content: all three wrong entries cleared
+# it comfortably while being wrong about their own subject. The distinction that separates a reason
+# which decays from one which does not is whether it can be RE-RUN or only RE-READ. Compare, in this
+# chain:
 #   RE-RUNNABLE  citation_crosscheck's 'esearch [doi] returns 0 hits (the unqualified search returns
 #                6 unrelated tokenised hits)'. Anyone can issue that query and compare.
 #   RE-READABLE  this dict's former 'kept as its own entry ... so that the count is of real

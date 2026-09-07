@@ -95,10 +95,19 @@
 # scope. Expected, and left in the transcript rather than filtered: a demonstration that hides its own
 # noise is a demonstration of something else.)
 #
-# SEQUENCING (user ruling, 2026-09-07): "an audit that ships alongside its subject cannot witness
-# it." This file ships in a commit that does not change the corpus, so the four entries below are
-# scored against state that already existed and is independently in git. Recorded in
-# commit_checked.sh's header as the general rule.
+# SEQUENCING (user ruling, 2026-09-07, as corrected the same day): "an audit must not ship in the same
+# commit as the change it would have recorded. Sensors, readers, and fixtures travel with it freely."
+# This file ships in a commit that does not change the corpus, so the four entries below are scored
+# against state that already existed and is independently in git.
+#
+# THIS FILE IS THE CASE THE CORRECTION WAS MADE ON, which is why the earlier wording ("an audit that
+# ships alongside its subject cannot witness it") is quoted here and not just replaced: read literally,
+# it condemned this very commit, because `parenBetweenHeadAndYear` in extract_citations.py ships right
+# here beside the ledger that reads it. But the flag is this audit's SENSOR, not its subject — the
+# subject is four spans and a rule already in history at 4263890, with the rule's effect already
+# recorded as `-` lines in record_count.json. Contrast 1bda280, which HAD to precede its change,
+# because record_keys are the baseline a removal is absent from. Full reasoning in commit_checked.sh's
+# header, where a commit boundary actually gets drawn.
 #
 # Usage: python3 .claude/citation_paren_ledger.py [--selftest] [file ...defaults to js/organs/*.js]
 import glob, json, os, sys

@@ -10,6 +10,14 @@ demonstrate a check can fire were exactly the ones being discarded. citation_cro
 the live corpus and that refusal survives only in a chat transcript, with its own output already gone.
 It cannot be retro-filled; it is named here as the loss that motivated the file.
 
+THE LOSS, STATED PLAINLY (user, 2026-09-07), because a file whose subject is discarded evidence should
+not be vague about the piece of evidence it discarded: this log was built FOR a refusal that had already
+happened, was demonstrated live to a SCRATCH file rather than to itself, and cannot store the instance
+that motivated it. THE STORAGE ARRIVED ONE COMMIT AFTER THE EVIDENCE. That is not the same as the
+by-design one-commit lag described below — that lag is between a refusal and its archiving, and it
+recurs forever; this was a one-time gap between the instrument and the observation that argued for it,
+and the observation lost.
+
 HOW TO READ IT. `git log -p .claude/refusals.log` is the history of this chain refusing. Entries carry
 a UTC timestamp, the reason (exit=N, or marker-absent for a vacuous run), the DONE marker that names
 the instrument, the tool's filename, and the tail of the refusing run's own output with the full line
@@ -21,7 +29,9 @@ not commit — that is what refusing means — so the entry lands in the diff of
 commit. commit_checked.sh stages this file before committing, so that happens without anyone
 remembering to.
 
-Seeded by hand exactly once, with this header, for the same reason .claude/record_count.json was: the
+THIS HEADER IS HAND-MAINTAINED; THE ENTRIES BELOW IT ARE NOT, and that is the only division in the
+file. Everything above the first `==== REFUSAL` line is prose a person may correct or extend; nothing
+from that line down is. Seeded by hand for the same reason .claude/record_count.json was: the
 declaration in battery.py's NON_INSTRUMENTS has to exist before the file does, and a reader diffing an
 unexplained artifact deserves to find its explanation inside it. No entries below yet — the first one
 will be a real refusal, which is the only kind that goes here.

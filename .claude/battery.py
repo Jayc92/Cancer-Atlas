@@ -136,6 +136,25 @@
 #          moved. A new gate whose first act is a false positive teaches people to pass
 #          --lower-ratchet, which is worse than the gap it closed.
 #
+#      AN INSTRUMENT THAT OWNS A FILE NEEDS A SCRATCH PATH FROM BIRTH (user ruling, 2026-09-07 —
+#      recorded beside the sidecar convention because it is the same kind of thing: a property the NEXT
+#      tool should have on day one rather than acquire by damaging something).
+#
+#      The general form: ANYTHING THAT MAINTAINS AN ARTIFACT AND MUST EXERCISE ITSELF TO PROVE IT WORKS
+#      needs an env override naming where the artifact lives, honoured from the first commit. Otherwise
+#      its selftest either skips the write — leaving the only behaviour that matters untested — or
+#      performs it, and writes fiction into the one file whose value is being real. Two tools here own
+#      files: this one owns .claude/record_count.json, and run_checked.sh owns .claude/refusals.log.
+#
+#      THE SCAR, AND WHY IT IS A TEMPLATE HAZARD RATHER THAN ONE TOOL'S BUG: run_checked.sh had the
+#      override from birth and still got polluted, because the polluter was not the owner. Its SIBLING,
+#      commit_checked.sh, drives deliberately-failing runs THROUGH the wrapper — that is how its arms 1
+#      and 3 prove a commit gets refused — and on the refusal log's first live run it appended two
+#      invented entries to the real archive. So the rule has a second half: THE SCRATCH PATH MUST BE
+#      HONOURED BY EVERY CALLER THAT EXERCISES THE WRITER, not only by the writer's own selftest. An
+#      owner cannot protect its artifact alone. There are exactly two such callers today (this file's
+#      arms are in-process and never reach the wrapper), and a third would silently write fiction.
+#
 # WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
 # Set -> invocation -> commit message -> deploy is COMPLETE, not arbitrarily truncated, and the
 # property that makes it complete is that this runner is a SINGLE ENTRY POINT: one command covers
