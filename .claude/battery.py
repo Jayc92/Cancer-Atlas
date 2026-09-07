@@ -1027,6 +1027,105 @@ def regenerate_records():
     return keys, []
 
 
+WRAPPER_SELFTESTS = ('run_checked.sh', 'commit_checked.sh')
+
+
+def wrapper_selftest_verdict(name, returncode, output):
+    """A wrapper selftest passes only if it EXITS ZERO **AND SAYS SO**. Pure, so the arms below can
+    drive it without running a wrapper.
+
+    THE MARKER REQUIREMENT IS NOT BELT-AND-BRACES. A wrapper whose `--selftest` branch is deleted, or
+    whose `[ "${1:-}" = "--selftest" ]` guard stops matching after an argument-handling edit, falls
+    through to its normal path and can exit ZERO having asserted nothing. That is the vacuous-pass
+    shape this entire chain is built around, arriving in the two files that have no DONE line of their
+    own to check. And it cannot be delegated: run_checked.sh is what refuses a vacuous run everywhere
+    else, so it cannot be the thing that certifies itself."""
+    if returncode != 0:
+        return [f'PREFLIGHT FAILED: {name} --selftest exit {returncode} — the wrapper that guards '
+                'every other invocation in this chain is itself broken, so no DONE line below is '
+                'worth reading yet']
+    if 'SELFTEST PASS' not in output:
+        return [f'PREFLIGHT FAILED: {name} --selftest exited 0 but printed no SELFTEST PASS — a '
+                'wrapper selftest that asserts nothing passes vacuously, which is the one failure '
+                'this preflight exists to refuse']
+    return []
+
+
+#   Vars that REDIRECT git at a repository. Scrubbed from the selftests' environment because
+#   commit_checked.sh's selftest runs `git init`, `git add f.txt` and `git commit -qm seed` inside a
+#   scratch TMPDIR repo with no git-env isolation of its own (commit_checked.sh:164-166), and a git
+#   hook EXPORTS these to everything it runs. Nothing invokes this battery from a hook today — the
+#   repo has no hooks installed, only .sample files — so scrubbing them changes nothing measurable
+#   now. It is here because THIS PREFLIGHT IS WHAT MAKES THAT SCRATCH COMMIT REACHABLE ON EVERY RUN,
+#   `pre-commit` included; the day someone installs the hook the phase name already anticipates,
+#   `git add`/`git commit` in the scratch dir would resolve against the REAL index instead. The fix
+#   belongs at the new call site rather than in the wrapper: the exposure is a property of who calls
+#   it, and the wrapper's own arms are what this preflight is here to run unmodified.
+GIT_REDIRECTION_VARS = ('GIT_DIR', 'GIT_INDEX_FILE', 'GIT_WORK_TREE', 'GIT_COMMON_DIR',
+                        'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES')
+
+
+def run_wrapper_selftest(name):
+    env = {k: v for k, v in os.environ.items() if k not in GIT_REDIRECTION_VARS}
+    proc = subprocess.run(['sh', os.path.join('.claude', name), '--selftest'],
+                          cwd=REPO_ROOT, capture_output=True, text=True, env=env)
+    return proc.returncode, proc.stdout + proc.stderr
+
+
+def preflight_wrapper_selftests(wrappers=WRAPPER_SELFTESTS, runner=run_wrapper_selftest,
+                                report=print):
+    """PRECONDITION, NOT MEMBERSHIP (user ruling, 2026-09-07).
+
+    THE TWO WRAPPERS WERE THE ONLY SELFTESTS NOTHING RAN. Measured before this was written: a
+    repo-wide search for either wrapper invoked with `--selftest` returned ZERO matches, while
+    eleven instrument selftests execute inside every battery run. Their fifteen arms only ever ran
+    when a human typed them, in the two files where being wrong is most expensive — run_checked.sh
+    DECIDES VACUITY, and commit_checked.sh WRITES THE PERMANENT RECORD.
+
+    AND THE ARGUMENT IS NOT THE GENERAL PRINCIPLE, IT IS THE DEFECT HISTORY (user): every real defect
+    this chain has had lived in one of these two files — `basename` eating `-c`, the `$# -lt 2` gap
+    that archived a lie, the sibling polluting the real refusals.log. Nothing that has ever actually
+    broken here was caught by an instrument; the wrappers were where it broke.
+
+    WHY A PREFLIGHT RATHER THAN A MEMBER, which was the objection to wiring these in at all: a
+    preflight is not declared membership, so INSTRUMENTS is untouched, assertion 2's declared-file
+    accounting is untouched, and the DONE line's instrument counts do not move. It is also where a
+    precondition belongs — before anything else runs, not alongside it. The extractor preflight
+    already established the shape: run it, fail the battery on a bad exit, print under `---`.
+
+    ISOLATION IS THE WRAPPERS' OWN, AND IT IS LOAD-BEARING NOW THAT THIS RUNS EVERY TIME.
+    commit_checked.sh's selftest redirects RUN_CHECKED_REFUSAL_LOG and builds a scratch git repo in
+    TMPDIR precisely because arms 1 and 3 drive genuine refusals; its header records that it appended
+    two invented entries to the real log on the log's first live run. Verified against the real files
+    before wiring: both exit 0 in ~2s combined, and the real refusals.log sha, HEAD and dirty-file
+    count are unchanged across a run of both.
+
+    REPORT IS INJECTED FOR THE SAME REASON RUNNER IS: arm 20 drives this function with fabricated
+    verdicts, and a bare print() there would emit a second `--- preflight:` header into the selftest's
+    own output, where a reader scanning a failing run could not tell the fabricated one from the real
+    one that runs a few lines into main(). Captured instead, and then asserted on."""
+    problems = []
+    report('--- preflight: the two wrappers self-test (precondition, not membership)')
+    for name in wrappers:
+        returncode, output = runner(name)
+        fires = wrapper_selftest_verdict(name, returncode, output)
+        problems += fires
+        if fires:
+            # THE WRAPPER'S OWN OUTPUT, not just the verdict: its arms name what they checked, and on
+            # a break that text is the only diagnosis available — no instrument downstream reads it.
+            for line in output.split('\n'):
+                if line.strip():
+                    report(f'    {name}: {line}')
+        else:
+            # BARE next() ON PURPOSE — reaching here means the verdict found the marker, so a
+            # StopIteration is a broken verdict, not a wrapper problem. The mutation that proves the
+            # marker clause is load-bearing raises exactly this, which is the useful direction: the
+            # `next(..., None)` form would have printed `    commit_checked.sh: None` and carried on.
+            summary = next(line for line in output.split('\n') if 'SELFTEST PASS' in line)
+            report(f'    {name}: {summary}')
+    return problems
+
+
 def start_dev_server():
     """regress.js expects a server already listening; it does not start one. Starting it here is
     what makes a full battery run a single command. If it fails to come up, regress cannot reach
@@ -1375,10 +1474,40 @@ def selftest():
     say(not gitignore_bare_path_comments(gitignore_comments('#\n#   \n')),
         'a hash with nothing after it is not a bare path (an empty comment names no file)')
 
+    # arm 20: THE WRAPPER-SELFTEST PREFLIGHT. The load-bearing sub-arm is the VACUOUS one — exit 0
+    # with no SELFTEST PASS — and it is load-bearing for the usual reason: deleting the marker clause
+    # from wrapper_selftest_verdict leaves the exit-code sub-arm green, so without this the preflight
+    # would accept a wrapper whose --selftest branch had stopped matching. Driven through the injected
+    # runner rather than by running the real wrappers, because an arm that shells out twice would make
+    # the battery's own selftest depend on the thing it is checking; the real invocation is the
+    # preflight's job, and it happens a few lines into main() on every run.
+    say(wrapper_selftest_verdict('w.sh', 0, 'arm 1 ok\nSELFTEST PASS — refuses a vacuous run') == [],
+        'a wrapper that exits zero AND says SELFTEST PASS is a clean precondition')
+    say(len(wrapper_selftest_verdict('w.sh', 2, 'SELFTEST PASS')) == 1,
+        'a non-zero exit fires even when the marker is present (the wrapper that guards every other '
+        'invocation is itself broken)')
+    vacuous = wrapper_selftest_verdict('w.sh', 0, 'usage: w.sh <marker> <command...>\n')
+    say(len(vacuous) == 1 and 'no SELFTEST PASS' in vacuous[0],
+        'AN EXIT OF ZERO WITH NO MARKER FIRES — a --selftest branch that stopped matching falls '
+        'through to the normal path and asserts nothing, which is a vacuous pass in the two files '
+        'that have no DONE line of their own')
+    fake = {'run_checked.sh': (0, 'arm 1 ok\nSELFTEST PASS — refuses a vacuous run'),
+            'commit_checked.sh': (0, 'usage: commit_checked.sh <subject> <marker> <gate...>')}
+    said = []
+    fake_fires = preflight_wrapper_selftests(tuple(fake), lambda n: fake[n], said.append)
+    say(len(fake_fires) == 1 and 'commit_checked.sh' in fake_fires[0],
+        'the preflight runs BOTH wrappers and returns the problems of either, so one clean wrapper '
+        'cannot cover for its sibling')
+    say(any('SELFTEST PASS — refuses a vacuous run' in line for line in said)
+        and any('usage: commit_checked.sh' in line for line in said),
+        "the report carries each wrapper's own words — the passing one's marker line, and on a break "
+        'its whole output, which is the only diagnosis anything downstream will get')
+
     print('SELFTEST', 'PASS — fires on a missing member, a vacuous member, a failing member, '
           'an undeclared file, a stale declaration, a bad phase, a shrinking corpus, a corpus that '
           'changed composition under a flat count, a malformed sidecar, an abandoned ratchet, a '
-          'prose mention posing as a DONE line and a bare-path comment in .gitignore; '
+          'prose mention posing as a DONE line, a bare-path comment in .gitignore and a wrapper '
+          'selftest that exits zero without asserting anything; '
           'passes complete sets'
           if ok else 'FAIL — do not trust a green battery from this build')
     # 7-bis applies to the selftest as well (deploy_check.js's precedent): a selftest that never
@@ -1400,6 +1529,10 @@ def main(argv):
         return 2
 
     problems = []
+    # FIRST, BEFORE ANY MEMBER OR THE OTHER PREFLIGHT (user ruling: a precondition belongs before
+    # everything else, not alongside it). Unconditional across every phase, because the two wrappers
+    # guard every phase.
+    problems += preflight_wrapper_selftests()
     problems += undeclared_files(tracked_claude_files(), declared_instrument_files(),
                                  NON_INSTRUMENTS, present_on_disk=present_claude_files())
     problems += unphased_instruments(INSTRUMENTS, PHASES)
