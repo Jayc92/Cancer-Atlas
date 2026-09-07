@@ -94,7 +94,10 @@ ALL_KINDS = (
                                #          kept because a missing space ("Smith2022") still lands here
     'bare-name-comma-year',    # reported "..., Surname, 2023" — true author sits further left
     'journal-adjacent-year',   # reported a journal word abuts the year; evidence of a citation
-    'data-span-year',          # reported cohort period or ISO datestamp — EXPLAINED, not a citation
+    'data-span-year',          # reported cohort period, ISO datestamp, or open-ended vintage
+                               #          ("2010+") — EXPLAINED, not a citation. The '+' arrived
+                               #          2026-09-06 and moved one span out of prose-year, the least
+                               #          informative bucket, into this one, which says WHY
     'prose-year',              # reported a year in ordinary prose, no citation-shaped evidence
     'semicolon-shadow',        # reported by design: the head belongs to a previous citation
 )

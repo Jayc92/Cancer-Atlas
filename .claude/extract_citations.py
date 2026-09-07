@@ -116,6 +116,25 @@
 # be worse than the procedure. It is written at the top of the module whose reach it governs so that
 # the next person changing a head pattern reads it before measuring anything.
 #
+# ITS SECOND DEMONSTRATION IMMEDIATELY DID SOMETHING THE FIRST DID NOT: IT DECOMPOSED A DEFECT CLASS
+# INSTEAD OF CONFIRMING ONE (2026-09-06, the commit adding P_PAREN_YEAR and PLUS_TAIL). Six removals
+# from one candidate rule looked like one defect with one fix. Read individually they had FOUR causes
+# — a missing head shape, a missing year guard, three years that are not citation years at all, and
+# one true record — and the single rule that could produce all six was destructive because it was
+# aimed at a boundary none of them actually crossed. THE LESSON IS NOT "read the removals" AGAIN, it
+# is that the removal set of a proposed rule is a DIAGNOSTIC POPULATION, not a verdict on the rule:
+# five of these six say nothing about boundaries and everything about what the extractor never asks.
+# Powell and Travis are the proof, structurally identical with opposite verdicts — see the record
+# path, where the argument sits at the line it governs.
+#
+# AND MEASURE PER FIX, NOT IN AGGREGATE, which is a corollary strong enough to state on its own. The
+# two fixes in that commit were measured on separate throwaway trees before either was written into
+# this file: P_PAREN_YEAR alone (490 -> 491, one false record out, two true ones in, one 'prose-year'
+# absence correctly discharged) and PLUS_TAIL alone (490 -> 489, one removal, nothing added). TOGETHER
+# THEY NET TO 490, so the aggregate diff of the commit that landed both is a corpus of the same size
+# with four records changed underneath it. The ratchet holds, no --lower-ratchet was needed, and NO
+# INSTRUMENT IN THE CHAIN WOULD HAVE SEEN THE DIFFERENCE HAD THE SUBSTITUTION RUN THE OTHER WAY.
+#
 # THE CLASS SPLIT IN THREE WHEN MEASURED, and only one part is closed here. Of the 80 spans the
 # reach check reported at HEAD fe8d627, 69 (51 heads) are "Surname YEAR" with nothing between them
 # — that is what this pattern reaches. The residual did NOT split the way this comment first
@@ -142,7 +161,7 @@
 # where nothing checks it. The 80/69/51 above are safe to write down only because they are pinned to
 # a commit that cannot change; anything describing the CURRENT corpus belongs in the tool's output.
 #
-# FOUR GUARDS, EACH FROM A MEASURED FALSE HEAD — this pattern is the weakest head shape in the
+# THE GUARDS, EACH FROM A MEASURED FALSE HEAD — this pattern is the weakest head shape in the
 # file (a capitalised word adjacent to a year is a very low bar), so the guards it needed are
 # collected here. TWO OF THEM TURNED OUT NOT TO BE ABOUT THIS PATTERN AT ALL and now apply to the
 # whole matcher; that is stated per guard rather than in one sweeping sentence, because "scoped to
@@ -151,7 +170,7 @@
 #     both "PLoS Comput Biol" and "WHO-2020" walked straight through — the first because the
 #     SURNAME match began at "Comput" and never saw "PLoS", the second because "WHO-" carries a
 #     trailing hyphen and did not equal "who". Punctuation is stripped and every word is checked.
-#     Applied to ALL FOUR patterns, not just this one, because it is strictly a widening of
+#     Applied to EVERY head pattern, not just this one, because it is strictly a widening of
 #     rejection and MEASURED FREE: at HEAD fe8d627 no record's author contained a journal word
 #     under the new test, so no existing acceptance changes.
 #   YEAR RANGES, BOTH ENDS. "in a German 2003-2014 registry" and "CBTRUS, US 2018-2022" are
@@ -167,6 +186,12 @@
 #   CRSLS. Added to JOURNAL_LEX. It is a journal (SLS case reports), it occurs exactly once in the
 #     corpus, and no record is authored by it — the smallest possible lexicon widening for a real
 #     journal token, recorded here so it is not mistaken for a general acronym rule.
+#   OPEN-ENDED VINTAGES, "2010+" (PLUS_TAIL, added 2026-09-06 in its own commit). The one guard here
+#     that DELETES A RECORD rather than relabelling an absence: Park|2010 was a real author and a
+#     real registry vintage welded into a citation that never existed. It is also the one that shows
+#     the guards were incomplete in a readable way — bladder.js refused "2010-2015" and accepted
+#     "2010+" TWO LINES APART, the same fact about the same extraction, because a dash was read and
+#     a '+' was not. See disqualified_year, where the not-free-ness is measured.
 #
 # THE YEAR GUARDS ARE GLOBAL, WHICH MAKES THEM A SECOND CHANGE IN REACH INSIDE THIS ONE.
 # disqualified_year is tested ONCE per year, before any head pattern is considered, rather than per
@@ -251,6 +276,15 @@ RANGE_END = re.compile(r'(?:19|20)\d{2}\s*[–—-]\s*$')
 # capitalised word. The full day form is required rather than a bare "-NN", which would also
 # swallow the two-digit range style ("1990-95") that RANGE_START deliberately does not cover.
 ISO_TAIL = re.compile(r'-\d{2}-\d{2}\b')
+# ...and a year with a trailing '+' is an OPEN-ENDED VINTAGE — a range whose right end is "now"
+# rather than a fourth digit. "SEER 2010+", "a SEER 17-registry extraction, 2010+". Found because
+# RANGE_START reads a dash and nothing read a '+', so the same fact about the same registry
+# extraction was refused when written "2010-2015" and accepted as a publication year when written
+# "2010+", TWO LINES APART in bladder.js. That produced Park|2010 beside the real Park|2023: the
+# right author, the wrong year, and a record that looked perfectly well-formed.
+# THE '+' IS REQUIRED TO BE ADJACENT, no whitespace allowed, because a '+' one space out is
+# arithmetic or a list join ("2015 + 2019 cohorts pooled") and the digits there ARE years.
+PLUS_TAIL = re.compile(r'\+')
 
 
 def disqualified_year(text, yend):
@@ -264,8 +298,16 @@ def disqualified_year(text, yend):
     hands P_PAREN1 a head, so the range-opening year was refused for one head shape and accepted
     for another — the same span, two answers, decided by which pattern happened to match. A fact
     about the year has to be settled before any head is considered. MEASURED FREE at the point it
-    was widened: no record the corpus reaches has a year of either shape."""
+    was widened: no record the corpus reaches has a year of either shape.
+
+    THE '+' ADDITION WAS NOT FREE, AND THAT IS THE DIFFERENCE WORTH READING. Every earlier guard
+    here was measured to remove nothing, so each was pure classification. PLUS_TAIL removes exactly
+    one record — Park|2010, bladder.js:27 — which is the point of adding it: the year was never a
+    publication date. A guard that deletes a record is a stronger claim than one that only relabels
+    an absence, so it was measured ALONE, not in aggregate with the head pattern landing beside it
+    (490 -> 489, one removal, zero additions), and the removal was read against its own line."""
     return bool(RANGE_START.match(text, yend) or ISO_TAIL.match(text, yend)
+                or PLUS_TAIL.match(text, yend)
                 or RANGE_END.search(text, max(0, yend - 44), yend - 4))
 
 def looks_like_journal(seg):
@@ -332,6 +374,23 @@ P_PAREN1 = re.compile(r'\((' + SURNAME + r'),\s+')
 # produced the WRONG record is not an absence. A record from here rests on a HAND READ or on nothing.
 # Growth in this pattern's share of the corpus is growth in the unverifiable share. See the header.
 P_BARE_YEAR = re.compile(r'(' + SURNAME + r')\s+$')
+# The fifth head: "TCGA (2015)" — surname, then an OPEN PAREN the year sits just inside. Found not
+# by looking for missing shapes but by auditing a FALSE RECORD: prostate.js:204-205 reads "Fontugne
+# et al. (2022) and TCGA (2015) both frame SPINK1...", and with no pattern able to see "TCGA (",
+# the 2015 fell back to the nearest reachable head and became Fontugne|2015. The shape sat in the
+# gap between two patterns that each miss it by one character — P_BARE_YEAR requires the year to
+# follow WHITESPACE, P_PAREN1 requires the surname to sit INSIDE the paren with a comma after it.
+# A MISSING HEAD PATTERN IS A MISATTRIBUTION ENGINE, and this is the second demonstration in two
+# commits: the fix REMOVES a false record and ADDS the true owner, in the same span.
+# \s* NOT \s+, deliberately differing from P_BARE_YEAR one line up. There the whitespace carries the
+# whole separation, so "Bolton2022" must not parse; here the paren is the separator and "TCGA(2015)"
+# is still citation-shaped. The two patterns disagree because their separators differ, not by slip.
+# $-ANCHORED like P_BARE_YEAR, so it always sorts first under "nearest head wins" and DEPENDS on the
+# journalish fallback to lose: "(Nature (2017), 44%)" must not hand the year to Nature.
+# It inherits P_BARE_YEAR's unverifiability in full — no id, no journal, invisible to both metadata
+# instruments. Its first two records are hand-read (prostate.js:205 and :231, both the TCGA 2015
+# prostate paper the file cites with metadata elsewhere) and that is all they rest on.
+P_PAREN_YEAR = re.compile(r'(' + SURNAME + r')\s*\(\s*$')
 
 # --- absence classification (see the header block) -------------------------------------------
 # A year that produced no record falls into exactly one of these. Only the 'etal-' kinds are
@@ -515,7 +574,7 @@ def extract(paths, absences=None):
             # disqualified_year — leaving this per-candidate gave one span two different answers)
             if not disqualified_year(text, ym.end()):
                 for pat, kind in ((P_ETAL, 'etal'), (P_AMP, 'amp-list'), (P_PAREN1, 'single-paren'),
-                                  (P_BARE_YEAR, 'bare-year')):
+                                  (P_BARE_YEAR, 'bare-year'), (P_PAREN_YEAR, 'paren-year')):
                     m = None
                     for mm in pat.finditer(back): m = mm
                     if m: cands.append((m, kind))
@@ -537,39 +596,54 @@ def extract(paths, absences=None):
                                      'kind': absence_kind, 'key': absence_key})
                 continue
             author, head_end = m.group(1), m.end()
-            # THE YEAR ANALOGUE OF THE ';' RULE BELOW IS NOT TESTED HERE, AND MUST NOT BE ADDED
-            # NAIVELY (2026-09-06, measured, held for ruling). classify_absence now refuses an
-            # "et al." that a COMPLETED citation consumed, on the grounds that an intervening year
-            # proves the citation ended. THE SAME TEST IS SAFE THERE AND DESTRUCTIVE HERE, which is
-            # the asymmetry worth carrying: an absence has no record to lose, while this path deletes
-            # one. Measured by simulating the test on a throwaway copy of the tree and reading every
-            # removal — the standing procedure this module's header now requires. 490 -> 484, six
-            # removed, zero added, and READING THEM IS WHAT MATTERED, because the sixth is a LOSS:
-            #   FIVE FALSE RECORDS, each confirmed by hand against its own line, four of them the
-            #     misattribution shape where the year belongs to a DIFFERENT, NAMED paper:
-            #       Powell|1990    colon.js:172 — real head Powell et al. (Nature, 1992); the 1990 is
-            #                      "quotes the 1990 model", i.e. Fearon & Vogelstein's paper
-            #       Schulze|2017   liver.js:280 — real head Schulze (Nature Genetics, 2015); the 2017
-            #                      belongs to "a mixed TCGA cohort (Nature, 2017, 44%)"
-            #       Fontugne|2015  prostate.js:204 — real head Fontugne et al. (2022); the 2015
-            #                      belongs to "TCGA (2015)", a FIFTH head shape no pattern reaches
-            #                      ("Surname (YEAR)": P_BARE_YEAR needs the year to follow whitespace
-            #                      and P_PAREN1 needs a comma inside the paren)
-            #       Fearon|1991    colon.js:169 — real head Fearon & Vogelstein (Cell, 1990); the 1991
-            #                      is prose, the year APC was cloned
-            #       Park|2010      bladder.js:27 — real head Park, Curr Oncol, 2023; "SEER 2010+" is a
-            #                      DATA VINTAGE, so this is also a gap in the year guards, which read
-            #                      a dash but not a trailing '+'
-            #   ONE LEGITIMATE RECORD THE TEST WOULD HAVE DESTROYED — Travis|2011, lungs.js:236,
-            #     whose citation reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011
-            #     (IASLC/ATS/ERS)". ONE HEAD DELIBERATELY CARRYING TWO YEARS: Travis authored both
-            #     classifications and the corpus cites them together. A count of "six removed" would
-            #     have read as a clean win; only reading each one separates five fixes from one loss.
-            # SO THE RULE MUST BE NARROWER THAN "a year intervenes" — it has to refuse a year owned by
-            # a DIFFERENT head while permitting one more year under the SAME head. Held: it changes
-            # real records, so it needs its own commit, the removal read in full again, and an
-            # explicit --lower-ratchet with a reason, since fixing five false records makes the record
-            # count DROP and the ratchet is built to refuse exactly that.
+            # THERE IS NO YEAR ANALOGUE OF THE ';' RULE BELOW ON THIS PATH, AND THERE MUST NOT BE ONE
+            # (2026-09-06, measured twice, then RULED OUT on the evidence — this is a closed question,
+            # not a deferred one). classify_absence refuses an "et al." that a COMPLETED citation
+            # consumed, on the grounds that an intervening year proves the citation ended. The
+            # symmetry is inviting and it is wrong here: an absence has no record to lose, while this
+            # path deletes one.
+            #
+            # WHY NO BOUNDARY RULE CAN WORK, WHICH IS SHARPER THAN "the measurement came out badly":
+            # POWELL AND TRAVIS ARE STRUCTURALLY IDENTICAL AND HAVE OPPOSITE VERDICTS.
+            #   colon.js:172   "Powell et al. ... Nature, 1992 ... quotes the 1990 model"  FALSE
+            #   lungs.js:236   "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)" TRUE
+            # In both, an intervening year sits between the head and the target year, with no
+            # competing head anywhere between them. Any rule reading STRUCTURE sees one shape and must
+            # return one answer. The difference is SEMANTIC — two publication years of one document
+            # set, versus a publication year and a referenced model's date — and "permit one more year
+            # under the same head", the narrowing this comment previously proposed, keeps BOTH. So the
+            # narrowing was not merely under-specified; it was unspecifiable at this level.
+            #
+            # THE SIX REMOVALS THE NAIVE TEST PRODUCED HAD FOUR DIFFERENT CAUSES, and only one of them
+            # was a boundary problem, which is exactly why the one measurable version was destructive.
+            # Decomposed (the user's ruling, and the reason this path is now left alone):
+            #   REACH   Fontugne|2015  prostate.js:204 — the 2015 belongs to "TCGA (2015)", the fifth
+            #                          head shape. FIXED by P_PAREN_YEAR: TCGA claims its own year.
+            #   GUARD   Park|2010      bladder.js:27 — "SEER 2010+" is an open-ended data vintage.
+            #                          FIXED by PLUS_TAIL: it is not a publication year at all.
+            #   CLASS   Fearon|1991    colon.js:169 — "the year APC was cloned". Prose.
+            #           Powell|1990    colon.js:172 — "quotes the 1990 model". Prose.
+            #           Schulze|2017   liver.js:280 — journal-adjacent ("a mixed TCGA cohort (Nature,
+            #                          2017, 44%)"), real head Schulze (Nat Genet, 2015).
+            #                          STILL FALSE AT THIS COMMIT, deliberately. These three want the
+            #                          discrimination classify_absence already performs — prose-year,
+            #                          journal-adjacent-year — which THIS path does not perform at all.
+            #                          It asks only "is there a head" and never "is this year a
+            #                          citation year". That is the real defect, it is written once
+            #                          already on the other path, and it is a bigger and far better
+            #                          specified change than a boundary test.
+            #   TRUE    Travis|2011    lungs.js:236 — must survive, and does.
+            # A count of "six removed" would have read as a clean win. Only reading each one separates
+            # five fixes from one loss, and only DECOMPOSING them shows that no single rule was ever
+            # the answer.
+            #
+            # THE RATCHET DID NOT FIRE ON THE TWO FIXES, AND THAT IS ITS BLIND SPOT, NOT ITS BLESSING.
+            # Removing two false records and adding two true ones nets to zero, so record_count.json
+            # held and no --lower-ratchet was needed. FOUR RECORDS CHANGED IDENTITY UNDER A FLAT
+            # COUNT — and the ratchet would have been equally satisfied had the substitution run the
+            # other way, two true records out and two false ones in. The reason each fix was measured
+            # SEPARATELY is that in aggregate this commit is invisible to every instrument in the
+            # chain except the fixtures below.
             if ';' in back[head_end:]:
                 if absences is not None:
                     absences.append({'file': path, 'line': line_at(ypos), 'year': year,
@@ -617,7 +691,7 @@ def extract(paths, absences=None):
         seen.add(k); out.append(r)
     return out
 
-# --- condition (7) fixtures for the fourth head pattern ---------------------------------------
+# --- condition (7) fixtures for the bare-year and paren-year head patterns --------------------
 # Each is (label, source lines, expected (author, year, conf) records, expected (kind, key)
 # absences), and BOTH sides are asserted exactly. Only checking the records would let a fixture
 # pass while its year was quietly reclassified into a bucket nobody reads — the absence side is
@@ -739,6 +813,42 @@ FIXTURES = [
      'that swallowed them would turn five real tolerances into a green run',
      ['Diffuse-type frequencies were re-derived (Wang K et al., Nat Genet, 2011).'],
      [], [('etal-malformed-head', 'Wang K')]),
+
+    ('THE FIFTH PATTERN FIRES, AND THE ARM IS THE MISATTRIBUTION ITSELF, NOT THE SHAPE IN THE '
+     'ABSTRACT: prostate.js:204-205 reduced to its two heads. Before P_PAREN_YEAR the second year '
+     'could see no head at "TCGA (" and fell back to the nearest reachable one, minting '
+     'Fontugne|2015 — right author, wrong paper. BOTH sides are asserted, because a pattern that '
+     'reached TCGA while stealing Fontugne\'s own 2022 would be a new misattribution wearing the '
+     'clothes of a fix',
+     ['SPINK1 was checked and excluded: Fontugne et al. (2022) and TCGA (2015) both frame it as an '
+      'ERG-negative subtype.'],
+     [('Fontugne', '2022', 'etal'), ('TCGA', '2015', 'paren-year')], []),
+
+    ('AND THE FIFTH PATTERN LOSES WHEN IT MUST, which matters more than that it fires: it is '
+     '$-anchored, so it sorts FIRST on every year preceded by "Word (" and would take the head of '
+     'all of them if it could not be rejected. A journal inside the paren must send the loop on to '
+     'the true author further left. This is the same dependency P_BARE_YEAR has on the journalish '
+     'fallback, and the liver.js:280 shape is where the corpus actually exercises it',
+     ['Recurrence was re-derived from a mixed cohort (Schulze et al., Nature (2017), 44%).'],
+     [('Schulze', '2017', 'etal')], []),
+
+    ('THE \'+\' GUARD FIRES: an open-ended vintage is not a publication year. bladder.js:28 '
+     'reduced to its shape — a real author, a real journal, a real year, and then a registry '
+     'vintage that the extractor read as a SECOND publication year by the same author. The arm '
+     'asserts the true record SURVIVES beside the refusal, since a guard that removed both would '
+     'shrink the defect count and the corpus together',
+     ['Denominators come from (Park, Curr Oncol, 2023, SEER 2010+: 48,789 conventional urothelial '
+      'carcinoma).'],
+     [('Park', '2023', 'single-paren')], [('data-span-year', None)]),
+
+    ('AND THE \'+\' GUARD DOES NOT OVER-FIRE ON A DETACHED PLUS, the case the adjacency '
+     'requirement exists for: "2015 + 2019" is a list join and both digits ARE publication years. '
+     'Written as its own arm because \\+ with \\s* in front of it would pass every other arm here '
+     'while quietly deleting real records anywhere the corpus adds two cohorts together. TWO '
+     'prose-year absences on purpose, one per joined year: what the arm pins is that NEITHER became '
+     '\'data-span-year\', so the count is the assertion',
+     ['Pooled estimates come from the 2015 + 2019 cohorts (Bolton 2019).'],
+     [('Bolton', '2019', 'bare-year')], [('prose-year', None), ('prose-year', None)]),
 ]
 
 
