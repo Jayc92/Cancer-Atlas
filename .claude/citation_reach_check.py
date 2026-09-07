@@ -39,6 +39,12 @@
 # under a different paper's author. THIS CHECK IS BLIND TO THAT FAILURE MODE BY CONSTRUCTION. It
 # counts years that produced NO record; a year that produced the WRONG record is not an absence and
 # will never appear here. Do not read a clean run as "every year is filed correctly".
+#   ONE BITE OF THAT BLIND SPOT IS COVERED SINCE 2026-09-07, and only one: citation_head_check.py
+#   partitions every record author that is not a single run of letters into declared-imprecise and
+#   declared-well-formed, and fails on a head in neither. It answers "is this author STRING what the
+#   corpus text says", which is decidable per span without a heuristic. It does NOT answer "does this
+#   head own this year" — the misattribution class above is still uncovered by both of us, and the
+#   only instrument pointed at it is citation_crosscheck, per record, against sources.
 #
 # WHY EVERY KIND IS LISTED IN ALL_KINDS BELOW RATHER THAN TAKEN FROM THE COUNTER. A Counter omits
 # what has count zero, so a kind derived from it VANISHES the moment its count reaches zero — and a

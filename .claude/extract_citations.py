@@ -213,11 +213,25 @@
 # ONE IMPRECISION IS DECLARED AND KEPT, not fixed: SURNAME admits two capitalised words, so
 # colon.js's national-cohort list yields "Sweden Engstrand", "Germany Hackl" and "Burgundy
 # Manfredi" — a leading place name absorbed into the author. Narrowing SURNAME to one word is not
-# available: "Safaee Ardekani" in the same list, and "Mehrvarz Sarshekeh" and "van der Maase"
+# available: "Safaee Ardekani" in the same list, and "Mehrvarz Sarshekeh" and "von der Maase"
 # elsewhere, are genuinely multi-word surnames, which is why the two-word form exists. The class is
 # also PRE-EXISTING rather than introduced here — HEAD's own records already contain "But Friemel"
 # and "Foulkes WD" from the older patterns — so this pattern adds three instances to a defect the
-# corpus already had, and fixing it belongs to a pass over all four patterns with a place lexicon.
+# corpus already had.
+#     ("van der Maase" above was "von der Maase" in the corpus all along; corrected in place
+#      2026-09-07 when the enumeration below made every such string checkable. A declaration that
+#      misquotes its own subject is the rot class this project keeps finding, and it found one here.)
+#
+# THAT PARAGRAPH WAS THE CLASS'S ONLY HOME UNTIL 2026-09-07, and it named some members while the SET
+# was ambient — which is what the ruling that closed it said: "Declare the enumerated list with
+# fixtures pinning it, so the set can't grow silently." The enumeration now lives in
+# .claude/citation_head_check.py, a closed partition over every record author that is not a single
+# run of letters: each is declared IMPRECISE (with the string it should have been) or WELL_FORMED, and
+# a head in neither fails the battery. Four members of the class are pinned by fixtures at the bottom
+# of this file, and the block there records what pinning them showed — the imprecisions come out
+# through THREE different head patterns, so the fault is SURNAME's and not any pattern's, and the
+# earlier plan ("a pass over all four patterns with a place lexicon") was aimed one level too low.
+# One edit to SURNAME moves every pattern's output at once, which is what makes it a change in reach.
 #
 # CONDITION (7): selftest() below proves each of these can FIRE and, just as important, that the
 # new pattern does NOT STEAL heads — "Smith et al., Nature Genetics, 2019" must still yield Smith,
@@ -1026,6 +1040,57 @@ FIXTURES = [
      'condemned it under prose-adjacency are the sentence carrying the citation, not part of it',
      ['Rose et al.\'s 428-case autopsy series (Cancer, 1989) found metastatic sites "nearly'],
      [('Rose', '1989', 'etal')], []),
+
+    # --- THE HEAD-SHAPE IMPRECISIONS, PINNED (2026-09-07) ------------------------------------------
+    # The four arms below pin the members of the declared imprecision class that no fixture reached.
+    # The other four are already pinned above: the colon.js:164-165 arm holds "Sweden Engstrand",
+    # "Germany Hackl" and "Burgundy   Manfredi", and its own arm holds "MIS-CITES Pollock".
+    #
+    # WHAT PINNING THESE MADE VISIBLE, and it is not what the header's declaration paragraph implies.
+    # That paragraph reads as though the two-word clause of one pattern were at fault; these four
+    # arms come out through THREE DIFFERENT PATTERNS — P_ETAL, P_BARE_YEAR and P_PAREN1 — because the
+    # defect is in SURNAME, which all of them are built from. So there is no pattern to fix, and any
+    # fix is a change to SURNAME itself: one edit, every pattern's output moves, and the standing
+    # procedure applies in full.
+    #
+    # THE ENUMERATION LIVES ELSEWHERE, ON PURPOSE. A fixture pins ONE span; it cannot notice a NINTH
+    # imprecision appearing in a file nobody transcribed. .claude/citation_head_check.py holds the
+    # closed partition over every multi-token head in the corpus and fails on an undeclared one.
+    # These arms are the unit-level half: they say what the extractor DOES with each span, so a
+    # change to SURNAME fails here with the old and new strings side by side instead of only
+    # presenting as a set of removals and additions in record_count.json.
+    ('DECLARED IMPRECISION, P_ETAL path: liver.js:208-209 verbatim. A SENTENCE WORD is absorbed — '
+     '"...N=291). But Friemel et al." — because SURNAME\'s optional second capitalised word takes '
+     '"But" as the first. Named in this file\'s header as evidence the class pre-dates the fourth '
+     'head pattern, and now pinned: the header named it, nothing tested it',
+     ['mutually exclusive mutation" directly (TP53 33.0%, CTNNB1 34.0%, N=291). But Friemel et al.',
+      '(2016) is itself a case report of the documented exception, confirmed directly rather than'],
+     [('But Friemel', '2016', 'etal')], []),
+
+    ('DECLARED IMPRECISION, P_PAREN1 path: breast.js:142 verbatim. TRAILING INITIALS are absorbed, '
+     'PubMed style. THE SAME CORPUS SHAPE PRODUCES AN ABSENCE ON THE OTHER PATH: '
+     'citation_reach_check declares "Li D" and "Wang K" as etal-malformed-head, where the initial '
+     'BREAKS the match because P_ETAL needs a bare surname before "et al." — here there is no "et '
+     'al.", P_PAREN1 matches, and the initial rides along instead. One cause, two outcomes, and the '
+     'pair is why "swallow initials" was rejected as a remedy for the absence class',
+     ['paper (Foulkes WD, Smith IE, Reis-Filho JS, "Triple-Negative Breast Cancer," NEJM 2010, PMID'],
+     [('Foulkes WD', '2010', 'single-paren')], []),
+
+    ('DECLARED IMPRECISION, AND NOT THE TWO-WORD CLAUSE AT ALL: stomach.js:86 verbatim. A POSSESSIVE '
+     'is absorbed by SURNAME\'s CHARACTER CLASS, which admits an apostrophe so a real "O\'Brien" can '
+     'be a head. Distinct cause from the six place/sentence/initial cases, which is why both '
+     'possessives get their own arms rather than one standing for the class',
+     ['is anchored to 10.4 cm — Cunningham\'s 1905 mid-range ("not more than 4 to 4.5 inches'],
+     [("Cunningham's", '1905', 'bare-year')], []),
+
+    ('THE SECOND POSSESSIVE, P_BARE_YEAR again: stomach.js:102 verbatim. Both are pinned because the '
+     'candidate fix — strip a trailing "\'s" — would move BOTH keys at a flat record count, the '
+     'd54bd1a shape that record_count.json\'s key set exists to make visible, and an arm holding only '
+     'one of them would let half the change pass. The fix is HELD, not adopted: its hazard is a '
+     'surname genuinely ending that way, and these two are the only apostrophe-bearing authors in '
+     'the corpus today, so the hazard is prospective and the corpus is about to grow eightfold',
+     ['in words (Gray\'s 1918 colors the INSIDE mucosa only); 0xc08a7c was a flagged INFERENCE from'],
+     [("Gray's", '1918', 'bare-year')], []),
 ]
 
 

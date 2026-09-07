@@ -144,11 +144,16 @@
 # four is where the human is.
 #
 # PHASES exist because deploy_check.js cannot run pre-commit — there is nothing deployed to check
-# until the push has happened, and it correctly reports NOT PUSHED if asked early. So the ten
-# members split into `pre-commit` (nine) and `post-push` (one), and a third assertion falls out of
+# until the push has happened, and it correctly reports NOT PUSHED if asked early. So the members
+# split into `pre-commit` and `post-push` (deploy_check alone), and a third assertion falls out of
 # that: every declared instrument must belong to a declared phase, or a typo in a phase name would
 # silently retire an instrument. That is "an instrument that isn't invoked can't fail" sneaking
 # back in through the declaration itself, so it gets an arm.
+# THIS PARAGRAPH CARRIED THE SPLIT AS TWO NUMBERS IN PROSE ("the ten members split into pre-commit
+# (nine) and post-push (one)") and both went stale the moment a member was added, in the header of
+# the file whose own line 15 records having done exactly this once already. The counts are gone
+# rather than corrected: INSTRUMENTS below is the only place either is true, and the DONE line
+# prints both from it.
 #
 # Usage:
 #   python3 .claude/battery.py --selftest
@@ -220,6 +225,12 @@ INSTRUMENTS = [
     # ratchet could never cover this direction
     ('citation_reach_check', 'pre-commit', 'DONE citation_reach_check:',
      ['python3', '.claude/citation_reach_check.py']),
+    # its opposite face, and declared next to it on purpose: reach_check counts years that produced
+    # NO record and says in its own header that a year producing the WRONG record will never appear
+    # there. This one takes the part of that blind spot which is decidable without a heuristic — the
+    # author STRING against the corpus text — by enumeration rather than by rule.
+    ('citation_head_check', 'pre-commit', 'DONE citation_head_check:',
+     ['python3', '.claude/citation_head_check.py']),
     ('regress', 'pre-commit', '==== DONE:',
      ['node', '.claude/regress.js', REGRESS_OUT_DIR, REGRESS_PORT]),
     ('deploy_check', 'post-push', 'DONE deploy_check:',
