@@ -195,7 +195,7 @@
 #     "2010+" TWO LINES APART, the same fact about the same extraction, because a dash was read and
 #     a '+' was not. See disqualified_year, where the not-free-ness is measured.
 #
-# THE YEAR GUARDS ARE GLOBAL, WHICH MAKES THEM A SECOND CHANGE IN REACH INSIDE THIS ONE.
+# THE YEAR GUARDS ARE GLOBAL, WHICH MAKES THEM A SECOND CHANGE IN REACH INSIDE THE SAME COMMIT.
 # disqualified_year is tested ONCE per year, before any head pattern is considered, rather than per
 # candidate: a datestamp is not a publication year no matter which head shape sits beside it, and
 # leaving the test per-candidate gave one span two different answers depending on which pattern
@@ -443,10 +443,11 @@ P_BARE_YEAR = re.compile(r'(' + SURNAME + r')\s+$')
 P_PAREN_YEAR = re.compile(r'(' + SURNAME + r')\s*\(\s*$')
 
 # --- absence classification (see the header block) -------------------------------------------
-# A year that produced no record falls into exactly one of these. Only the 'etal-' kinds are
-# citation-shaped enough to gate on, because only they carry an unambiguous "et al." marker; the
-# rest are reported and not gated (see citation_reach_check.py, which enumerates every kind so a
-# kind at zero still prints its zero). 'prose-year' is a genuine non-citation.
+# A year that produced no record falls into exactly one of the kinds classify_absence returns
+# (enumerated in citation_reach_check.py's ALL_KINDS, which is the gate over them). Only the 'etal-'
+# kinds are citation-shaped enough to gate on, because only they carry an unambiguous "et al."; the
+# rest are reported and not gated (ALL_KINDS enumerates every kind, so a kind at zero still prints
+# its zero). 'prose-year' is a genuine non-citation.
 SUR_AT_END = re.compile(SURNAME + r'\s*$')
 TRAILING_TOKENS = re.compile(r'([^\s,;:()\[\]"]+(?:\s+[^\s,;:()\[\]"]+)?)\s*$')
 

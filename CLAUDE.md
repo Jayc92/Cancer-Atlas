@@ -246,7 +246,7 @@ screen pair per organ:
   roles matter: keep `role="group"` on viewer wrappers (canvas takes
   `role="img"`), or the projected buttons vanish from the accessibility tree.
 
-## Data rules (do not relax these)
+## Data rules (do not relax)
 1. **Every organ/cancer pair needs its own real-data pass.** Genes, mutation
    frequencies, and any "spread pattern" or clonal architecture claims must come
    from actual published sources (TCGA, named peer-reviewed studies, etc.), not
@@ -1342,7 +1342,7 @@ screen pair per organ:
       (MSI-associated); ERBB2/CCNE1-class amplifications (CIN =
       intestinal-side). Private pool used: TP53 ~50% overall (van Beek et
       al., 2018 — placed with the precise note that its home subtype is CIN
-      at 71%, not this one; sequencing shows no Lauren-axis association
+      at 71%, not diffuse; sequencing shows no Lauren-axis association
       either way), APC and SMAD4 (TCGA's 25 significantly mutated gastric
       genes; no clean subtype percentage → none shown).
     - **Claims checked and NOT used:** "diffuse is more common in women" —
@@ -1453,7 +1453,7 @@ screen pair per organ:
       melanoma, 4/6 HCC cell lines), a real cross-organ thread stated in
       the product text. Horn 2013's 33% is PRIMARY tumors vs 85% metastatic
       tissue in the same paper — a specimen-type difference, NOT
-      discovery-vs-replication; never frame it the latter way. Timing
+      discovery-vs-replication; never frame it as replication. Timing
       pillar: Shain et al., NEJM, 2015 (37-tumor evolutionary series,
       abstract verbatim): 77% of intermediate lesions/melanomas in situ
       carry TERT promoter mutations; benign lesions harbor BRAF V600E
@@ -2505,7 +2505,7 @@ screen pair per organ:
   organ.** Adding Breast/TNBC was the first real test of whether a second
   organ means a second `#screenOrgan`/`#screenCancer` (copy-pasted markup +
   JS, doubling the maintenance surface every organ after) or a data entry into
-  the existing ones. It's the latter: `ORGAN_DETAILS[organKey]` (eyebrow/
+  the existing ones. It's a data entry: `ORGAN_DETAILS[organKey]` (eyebrow/
   title/sub/facts/desc/hotspots/buildMesh/viewer opts) drives
   `renderOrganScreen()`/`initOrganViewer()`, and `CANCER_DETAILS[cancerId]`
   (title/screenLabel/legendTitle/regions/trunk/privatePool, plus an optional
@@ -2625,8 +2625,8 @@ screen pair per organ:
   vertical quad-flow striping on the thighs under grazing light exists in
   the RAW L2 too — a property of the sculpt's topology, not compression.
   js/body.js now registers MeshoptDecoder (load-bearing: a compressed GLB
-  with no decoder fails to load entirely). One toolchain note: these two
-  files can no longer be parsed by the raw-GLB accessor scripts used in
+  with no decoder fails to load entirely). One toolchain note: the two body
+  GLBs can no longer be parsed by the raw-GLB accessor scripts used in
   review packets; verify body geometry through the live app (the organ
   GLBs remain uncompressed until the dedicated compression pass decides
   otherwise).
@@ -2916,8 +2916,9 @@ screen pair per organ:
     five organs — only the anchor coordinates moved.
   - **Async loading, a first for the organ viewer (the body viewer already
     had this, the organ viewer never did before now):** `GLTFLoader` has no
-    synchronous path, so each of these five `buildMesh` functions returns a
-    `Promise<THREE.Object3D>` instead of an `Object3D` directly.
+    synchronous path, so each of the Lungs/Kidneys/Liver/Brain/Prostate
+    `buildMesh` functions returns a `Promise<THREE.Object3D>` instead of an
+    `Object3D` directly.
     `initOrganViewer()` wraps every organ's `buildMesh()` result in
     `Promise.resolve()` so procedural (sync) and real-mesh (async) organs
     share one code path. Guards against the same race body.js's loader
@@ -2930,8 +2931,9 @@ screen pair per organ:
     the *same* organ. A `#organLoading` status element (same pattern as
     `#bodyLoading`) covers the gap.
   - **Camera framing and marker scale had to be re-derived, not reused,
-    because these five GLBs are real-world meters and the procedural organs
-    were an arbitrary ~1-2 unit scale:** `initOrganViewer()` calls
+    because the Lungs/Kidneys/Liver/Brain/Prostate GLBs are real-world meters
+    and the procedural organs were an arbitrary ~1-2 unit
+    scale:** `initOrganViewer()` calls
     `thisViewer.frameContents([mesh], 1.3)` (the same call body.js already
     makes against its two body GLBs) whenever any hotspot on the organ uses
     `pos` rather than `dir` — this re-derives camera distance from the
@@ -3878,9 +3880,13 @@ That is worse than a missing entry, because it reads as fact.
   that strictly contains the ruled rule** (nothing beginning with `-`
   begins with `DONE` or `====`) **and reaches the real case, which the
   ruled rule did not.** A marker must begin with `DONE` or `====`. Not a
-  new convention: all 14 markers in `battery.py`'s `INSTRUMENTS` are one of
-  those two forms, and `commit_checked.sh`'s `DONE_LINE_RE` already defines
-  a DONE line as exactly them.
+  new convention: every marker in `battery.py`'s `INSTRUMENTS` is one of
+  `DONE` or `====`, and `commit_checked.sh`'s `DONE_LINE_RE` already defines
+  a DONE line as exactly those two forms. (Both homes said "all 14 markers"
+  for a day. The number is derivable from `INSTRUMENTS` and the claim is
+  stronger without it — EVERY marker — and `run_checked.sh`'s header is the
+  one that already lost a count this way, saying "six call sites" while ten
+  instruments existed.)
 - **The tool field is fixed rather than guarded**, since with the marker
   contract in place an option can no longer reach that position by a
   shift: an option word is skipped, so `sh -c` archives `tool=sh` instead
@@ -3900,6 +3906,111 @@ That is worse than a missing entry, because it reads as fact.
   arriving in the harness rather than the instrument. The arm now also
   requires the guard's own message, which distinguishes "refused by the
   guard" from "never ran". The exit code cannot: both are non-zero.
+
+## NO CROSS-BLOCK DEMONSTRATIVE — THE DELETION REMEDY, SWEPT (2026-09-07, user ruling)
+
+**The ruling:** "apply the deletion remedy for demonstratives, since there's
+no cheap mechanism for those: no cross-block demonstrative anywhere in
+`.claude/` or `CLAUDE.md` — name the referent. 'Those two' is unanchorable by
+construction; a named target survives a move. That's a prose sweep, not a
+checker." Breakage 2 of the internal-quote work was exactly this: moving the
+sidecar convention left `"the wrong way to close those two"` with its referent
+behind in another item, and **no quoted-span checker can reach it** — there is
+no span to resolve and no target to compare.
+
+- **THE PATTERN SET, RECORDED SO THE SWEEP IS RE-RUNNABLE AND NOT MERELY
+  RE-READABLE.** Four patterns over `.claude/*.{py,sh,js,md}` + `CLAUDE.md`,
+  matching demonstratives used as NOUN PHRASES:
+
+  | name | pattern |
+  |---|---|
+  | bare-with-count | `\b(?:those\|these)\s+(?:two\|three\|…\|\d+)\b` |
+  | bare-pronoun | `\b(?:those\|these)\b(?!\s+(?:[a-z]+(?:s\b\|\b)))\|\b(?:that\|this)\s+one\b` |
+  | ordinal-reference | `\bthe\s+(?:former\|latter)\b` |
+  | positional | `\b(?:the\s+above\|as\s+above\|as\s+below\|said)\b` |
+
+  **The boundary is a declared decision, not an oversight.** `this`/`that`
+  immediately followed by a noun is OUT — the noun names its own referent and
+  survives a move. So are `it`/`they`/`them`, which are the whole of English
+  and cannot be swept. That leaves the shapes a move actually breaks.
+- **THE COUNT, AND WHY IT IS NOT A RESTATED MACHINE NUMBER.** The sweep found
+  **113 candidate lines across 25 files** (bare-pronoun 41, bare-with-count 36,
+  positional 31, ordinal-reference 5) and left **98**. These are a DATED
+  MEASUREMENT of a one-time pass, not a description of current state, which is
+  the distinction the number-restatement rule turns on: "on 2026-09-07 the
+  sweep found 113" stays true forever, where "there are 113" rots on the next
+  edit. Re-run the patterns above rather than trusting the totals.
+- **THE DIFF OF THIS COMMIT IS THE ENUMERATION OF WHAT WAS FIXED**, which is
+  why no hand-counted total appears here: re-run the patterns above over
+  `git show`'s removed lines and 21 of them carry one, four edited for a
+  different reason (two stale pointers, two restated counts) with the
+  demonstrative legitimately kept. Three shapes dominated the rest.
+  (1) **A comment describing the tuple BELOW it**, three times in
+  `battery.py`'s `INSTRUMENTS` — "this one takes the case where the copy IS the
+  anchor" sitting between `record_sync_check`'s entry and
+  `internal_quote_check`'s, where the nearest preceding name is the wrong
+  referent. Naming each entry removes a real ambiguity, not just a fragility.
+  (2) **A sub-bullet pointing at its parent** ~190 lines up, twice, both
+  "these five" for the organ GLBs. (3) **`the former`/`the latter`**, fixed
+  *regardless of block* — a declared extension of the ruling, flagged rather
+  than taken silently, because position-within-an-enumeration is unanchorable
+  by construction even inside one sentence: an edit that reorders the two
+  alternatives silently inverts the meaning, with no move required.
+- **THE SWEEP ALSO DELETED THREE RESTATED NUMBERS IT WAS NOT LOOKING FOR**,
+  because "these three"/"the other 15" carries a count as well as a
+  demonstrative and one edit removes both.
+- **WHAT IS KEPT, WITH THE REASON, SO A LATER READING DOES NOT "FINISH" THE
+  SWEEP.** Four classes: the **records of the defect** (eight sites quoting
+  `"the wrong way to close those two"` as the example — deleting them deletes
+  the evidence); **quoted source text** (TCGA's own "The former", plus the
+  prose that glosses what it refers to); **referent named in the same sentence
+  or block**; and **self-reference to the containing file** ("this one owns
+  `.claude/record_count.json`"), which a move cannot break because the file is
+  the referent.
+- **THE `positional` PATTERN CONTRIBUTED 31 HITS AND ZERO REAL ONES.** Every
+  match was the English verb "say"; the corpus holds no "the above", no "as
+  above", no "as below", and no legal-style "said X" anywhere. Recorded because
+  a pattern that fires 31 times and finds nothing is worth knowing about before
+  someone re-runs it and reads the volume as signal.
+- **AND THE SCANNER IS LINE-BASED, WHICH IS ITS OWN FALSE-POSITIVE CLASS.** A
+  determiner phrase split across a line wrap ("whether those / papers") is
+  judged without its noun and reads as bare. Three such hits; they need no fix.
+- **THE HOLE IS THE SAME ONE THE INSTRUMENT HAS.** A sweep is a moment, not a
+  guard: the next cross-block demonstrative typed after this commit is invisible
+  to everything. That is accepted — the ruling named it a prose sweep on purpose,
+  and a checker here would have to guess what stands in for what.
+
+## A FILE:LINE POINTER IN PROSE IS THE `:<anchor>` FIELD THE CONVENTION DROPPED (2026-09-07)
+
+**Found by the demonstrative sweep, not by a checker, and it is the sharpest
+thing the sweep turned up.** Reading `internal_quote_check.py`'s own header
+line by line surfaced four hand-typed `file:line` pointers in its prose. **All
+four were wrong** — in the file whose convention deliberately has no
+`:<anchor>` field, on the user's ruling that "a redundant hand-typed field is a
+liability that nothing checks… the span delivers uniqueness and the line number
+derives."
+
+- **BOTH SUB-SHAPES, IN ONE FILE, ON THE SAME DAY THE DISTINCTION WAS DRAWN.**
+  `citation_head_check.py:88` and `citation_paren_ledger.py:125` were TRUE at
+  the parent commit and **went stale inside the commit that wrote them**,
+  because that same commit added a `QUOTES` block near the top of each target
+  and pushed the lines down: **DRIFT**, with a mechanism worth naming — writing
+  a pointer while reading the pre-edit file. `battery.py:151` (twice) was
+  **FABRICATION**: the span it names has existed in exactly two commits, at line
+  154 and then 155, so the pointer resolved to nothing at any point in history.
+- **THE POPULATION IS 191 POINTERS, AND ONLY 5 ARE CHEAP TO CHECK.** 136 in
+  `.claude/`, 55 in `CLAUDE.md`; all but five point into corpus `js/` files,
+  where nothing here can verify them without reading the target. Of the five
+  pointing into a `.claude/` instrument — files whose lines move for TOOLING
+  reasons, on the same commits that edit the prose — **four were the four wrong
+  ones**. The fifth, `CLAUDE.md`'s `fraction_check.py:13`, is correct.
+- **THE REMEDY IS THE ONE ALREADY RULED:** name the file and quote the span.
+  Applied to all four. `battery.py`'s "the wrong way to close those two" cannot
+  drift and cannot be fabricated — if it is wrong, it is wrong loudly, and
+  `internal_quote_check` would catch it if it were marked.
+- **NOT SWEPT: the 186 corpus pointers.** A different population with a
+  different cost, and widening the sweep to it is a change in reach that has to
+  be declared and measured on its own commit rather than slipped into this one.
 
 ## ANY MACHINE-DERIVABLE NUMBER RESTATED IN PROSE WILL DRIFT (2026-09-05)
 
@@ -4372,8 +4483,9 @@ refute it, which is worth more than file order.
   provenance COMMENT feeding it carried two defects: Allory's numerator as
   282/357 where the source says "283 of 357", and the first series called
   "a primary NMIBC cohort" where the source says UBCs "of different
-  stages" — the latter contradicting the stage-independence argument the
-  note below it rests on (**corpus as its own control, fourth instance**).
+  stages" — the stage heterogeneity contradicting the stage-independence
+  argument the note rests on (**corpus as its own control, fourth
+  instance**).
   Same at `liver.js`: the framed line clean, the adjacent ARID2 record
   resting on an unnamed source. So hedging predicts a clean USER-FACING
   sentence and says nothing about the record beneath it. The ordering idea
@@ -6498,8 +6610,9 @@ refute it, which is worth more than file order.
     against every organ's own `aliases` array before writing the harness,
     not assumed from the brief. The regression suite instead asserts the
     exact expected matching organ SET per term (the documented multi-organ
-    set for these two, a single-organ set for the other 15) — a strictly
-    more precise check than "zero collisions" that doesn't flag this app's
+    set for "adenocarcinoma" and "clear cell", a single-organ set for every
+    other term) — a strictly more precise check than "zero collisions" that
+    doesn't flag this app's
     own by-design behavior as broken.
 
 - **Lungs mesh swap — "Realistic Human Lungs" (neshallads, Sketchfab) replaces
@@ -6705,8 +6818,8 @@ refute it, which is worth more than file order.
   if either assumption ("everything here is generated in-browser," "everything
   here is provably CC0 by the code itself") gets baked into future tooling.
   Blender itself is now a real build-time dependency (not a runtime one — see
-  Architecture notes) for regenerating these two files; nobody should need it
-  just to run the app.
+  Architecture notes) for regenerating the two body GLBs; nobody should need
+  it just to run the app.
 - Tumor-site blob positions are schematic, not anatomically precise. **Check
   `pos3d` spacing against the default camera framing, not just against other
   sites' blob-mesh overlap.** **FIXED (tech-debt pass):** TNBC's Brain/Lung

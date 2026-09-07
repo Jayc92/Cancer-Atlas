@@ -89,10 +89,16 @@
 # says to decide them — by asking WHICH PROPERTY OF THE MATCH IS DECIDABLE, not by anchoring reflexively.
 #
 #   THE MARKER: POSITION. `QUOTES` must begin the stripped line. This is not precautionary — the
-#   corpus already holds two lines with `QUOTES` mid-sentence (citation_head_check.py:88 and
-#   citation_paren_ledger.py:125, both meaning the English verb). A substring matcher would read both
+#   corpus already holds two lines with `QUOTES` mid-sentence, both meaning the English verb:
+#   citation_head_check.py's "reason below QUOTES the corpus span it is about" and
+#   citation_paren_ledger.py's "a reason that QUOTES the span". A substring matcher would read both
 #   as markers and derive a path from the next word. Selftest arms 8 and 9 use those two lines
 #   verbatim, so the anchor is demonstrated against the strings that would break it and not a fixture.
+#   THOSE TWO POINTERS USED TO BE LINE NUMBERS — `citation_head_check.py:88` and
+#   `citation_paren_ledger.py:125` — and both were stale by the time this file was committed, because
+#   the same commit added a QUOTES block near the top of each target and pushed the lines down. A
+#   file:line pointer in prose is the `:<anchor>` field this convention was ruled to DROP, still being
+#   typed by hand where no checker reaches it. Naming the span instead costs nothing and cannot drift.
 #
 #   THE QUOTED SPAN: COUNT. The span must occur EXACTLY ONCE in the target. Zero and many are both
 #   defects and they are DIFFERENT defects: zero is drift (the target moved or was reworded), many
@@ -143,8 +149,11 @@
 # there is nothing for a quoted-span checker to be right or wrong about. The nearest thing this file
 # can demonstrate is a marked quote whose target has moved or vanished, which is arms 1 and 4.
 # A quote of a file's OWN past state is refused rather than half-supported (arm 5, SELF TARGET):
-# battery.py:151's "the wrong way to close those two" is precisely that, and its target does not
-# exist in any present file.
+# battery.py's "the wrong way to close those two" is precisely that, and its target does not
+# exist in any present file. (That pointer read `battery.py:151` until the demonstrative sweep read
+# it: the span has only ever been at 154 and then 155, so the line number was FABRICATED — never true
+# at any commit — rather than merely stale. Breakage 4's sub-shape, in the header of the instrument
+# built to catch breakage 4.)
 #
 # SCOPE. Markers are looked for in .claude/*.{py,sh,js,md} and CLAUDE.md — the .claude/ <-> CLAUDE.md
 # boundary in BOTH directions, per the ruling, because dual-home records cross that line by design.
@@ -369,7 +378,7 @@ def selftest():
 
     # arm 5: SELF TARGET. A file quoting itself proves nothing — the span is trivially present, so a
     # naive check would report it verified. This is also how a quote of a file's OWN PAST STATE gets
-    # refused rather than half-supported (battery.py:151's "those two" is exactly that shape).
+    # refused rather than half-supported (battery.py's "those two" is exactly that shape).
     fires, verified = check({'.claude/battery.py': marked('.claude/battery.py', 'anything')},
                             {'.claude/battery.py': 'anything'})
     arm(verified == 0 and any(k == SELF_TARGET for *_r, k, _h in fires),

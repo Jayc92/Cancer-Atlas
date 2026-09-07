@@ -266,8 +266,11 @@ marker="$1"
 # SO THE OUTCOME IS DELIVERED AT THE MARKER, AS A POSITIVE CONTRACT, which strictly contains the
 # ruled rule (nothing beginning with `-` begins with DONE or ====) and reaches the real case, which
 # the ruled rule at the tool position does not. A marker must begin with `DONE` or `====`. That is
-# not a new convention invented here: all 14 markers declared in battery.py's INSTRUMENTS are one of
-# those two forms, and commit_checked.sh's DONE_LINE_RE already defines a DONE line as exactly them.
+# not a new convention invented here: every marker declared in battery.py's INSTRUMENTS is one of
+# `DONE` or `====`, and commit_checked.sh's DONE_LINE_RE already defines a DONE line as exactly those
+# two forms. (The count was written out here as "all 14 markers" for a day. This header is the one
+# that already lost a count that way — it said "six call sites" while ten instruments existed — so a
+# restated total is the last thing it should carry. The claim is stronger without it: EVERY marker.)
 case "$marker" in
   DONE*|'===='*) ;;
   *) echo "run_checked.sh: MISINVOKED — first argument \"$marker\" is not a DONE marker." >&2

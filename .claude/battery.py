@@ -116,7 +116,7 @@
 #      family of such matchers enumerated and each member's status.
 #
 # WHY HERE AND NOT IN CLAUDE.md, which is the other obvious home: the test is WHO NEEDS IT AND
-# WHEN. CLAUDE.md is read before touching the project at all. These three are needed at a narrower
+# WHEN. CLAUDE.md is read before touching the project at all. A, B and C are needed at a narrower
 # moment — while writing an instrument, or a matcher — and that moment already had a designated
 # place: this file's header, where the sidecar convention and then the scratch-path rule were
 # recorded. The block makes the address explicit instead of leaving it to whoever scrolls.
@@ -445,9 +445,10 @@ INSTRUMENTS = [
      ['python3', '.claude/duplicate_figure_check.py']),
     ('record_sync_check', 'pre-commit', 'DONE record_sync_check:',
      ['python3', '.claude/record_sync_check.py']),
-    # declared next to record_sync_check because they are the same idea pointed two ways: that one
-    # holds a DECLARED MAP of dual-home pairs and checks each marker resolves once; this one takes
-    # the case where the copy IS the anchor, so there is nothing to declare but the direction. It is
+    # declared next to record_sync_check because they are the same idea pointed two ways:
+    # record_sync_check holds a DECLARED MAP of dual-home pairs and checks each marker resolves once;
+    # internal_quote_check takes the case where the copy IS the anchor, so there is nothing to declare
+    # but the direction. It is
     # also the only member whose subject is this chain's own prose rather than the atlas, and the only
     # one that needs the author to mark something at write time — see its header for why an unmarked
     # quote is invisible to it, and why the marked count is the ratcheted metric.
@@ -463,8 +464,8 @@ INSTRUMENTS = [
      ['python3', '.claude/citation_reach_check.py']),
     # its opposite face, and declared next to it on purpose: reach_check counts years that produced
     # NO record and says in its own header that a year producing the WRONG record will never appear
-    # there. This one takes the part of that blind spot which is decidable without a heuristic — the
-    # author STRING against the corpus text — by enumeration rather than by rule.
+    # there. citation_head_check takes the part of that blind spot which is decidable without a
+    # heuristic — the author STRING against the corpus text — by enumeration rather than by rule.
     ('citation_head_check', 'pre-commit', 'DONE citation_head_check:',
      ['python3', '.claude/citation_head_check.py']),
     # THE ONLY MEMBER WHOSE SUBJECT IS A RULE RATHER THAN THE CORPUS, and the only one that reads
@@ -474,7 +475,7 @@ INSTRUMENTS = [
     #     > a closed year-bearing parenthetical spends the head
     # and refuses any span of that shape that nobody has scored
     # against it. Distinct from every other member's failure mode: the rest catch a corpus defect,
-    # this one catches a rule accumulating unexamined support.
+    # citation_paren_ledger catches a rule accumulating unexamined support.
     ('citation_paren_ledger', 'pre-commit', 'DONE citation_paren_ledger:',
      ['python3', '.claude/citation_paren_ledger.py']),
     ('regress', 'pre-commit', '==== DONE:',
