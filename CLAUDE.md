@@ -3847,6 +3847,60 @@ twice in one day** — and by the time it was built, four times.
   not marked here because **a reach change gets declared and measured on
   its own commit**.
 
+## A WRAPPER THAT CANNOT TELL IT WAS CALLED WRONG (2026-09-07, user ruling; `.claude/run_checked.sh`)
+
+Found by misinvoking it while building the check above. `run_checked.sh`
+was called with the marker omitted — `run_checked.sh python3
+.claude/battery.py --phase=pre-commit` — which satisfied its `$# -lt 2`
+usage test, ran `.claude/battery.py` as a bare executable (exit 126), and
+appended a refusal entry saying `marker="python3"
+tool=--phase=pre-commit`. **The refusal was genuine and both of its labels
+were false**, in the file whose entire purpose is append-only evidence.
+That is worse than a missing entry, because it reads as fact.
+
+- **`$# -lt 2` cannot see a three-argument call with the wrong three
+  arguments** (user). The count was right and the contents were shifted.
+- **The entry stays.** It is a real refusal and the log is append-only
+  evidence; editing it out to tidy the record would be worse than the
+  wrong labels. The durable fix is the assertion that stops the next one
+  from being mislabelled, not a cleaner history.
+- **THE RULED MECHANISM WAS MEASURED FIRST AND HALF OF IT IS
+  DESTRUCTIVE**, per the standing rule that a ruling's named mechanism can
+  be destructive while its outcome is reachable another way. The ruling was
+  *reject a marker or tool argument beginning with `-`*. On a throwaway
+  copy the tool half **failed 5 of the wrapper's own selftest arms**: the
+  legitimate `sh -c '…'` form puts `-c` in exactly the refused position.
+  And the obvious repair defeats the catch — deriving the tool by skipping
+  option words turns the real misinvocation into `tool=battery.py`, which
+  the `-` rule then passes. **The tool position is not where that call is
+  decidable.**
+- **The outcome delivered at the marker instead, as a positive contract
+  that strictly contains the ruled rule** (nothing beginning with `-`
+  begins with `DONE` or `====`) **and reaches the real case, which the
+  ruled rule did not.** A marker must begin with `DONE` or `====`. Not a
+  new convention: all 14 markers in `battery.py`'s `INSTRUMENTS` are one of
+  those two forms, and `commit_checked.sh`'s `DONE_LINE_RE` already defines
+  a DONE line as exactly them.
+- **The tool field is fixed rather than guarded**, since with the marker
+  contract in place an option can no longer reach that position by a
+  shift: an option word is skipped, so `sh -c` archives `tool=sh` instead
+  of the `tool=-c` it used to write. Same defect as the false labels, one
+  degree quieter — a field that lied about a *legitimate* call.
+- **Condition (7), with isolation shown.** Two negative controls, each
+  reverting one guard: without the marker contract exactly one arm fails
+  (the misinvocation is *logged* rather than refused before running);
+  without the derivation fix exactly one arm fails (the tool field names an
+  option). Every other arm passes in both, so neither guard is carrying the
+  other's weight.
+- **AN ABSENCE ASSERTION HAS A FALSE-PASS MODE, and this one was caught
+  false-passing.** Arm 10 asserts the refusal log stays *empty*. The first
+  negative control was written without an execute bit, so every
+  self-invocation died at exec, the log stayed empty for the wrong reason,
+  and **the arm reported ok while measuring nothing** — condition (8)
+  arriving in the harness rather than the instrument. The arm now also
+  requires the guard's own message, which distinguishes "refused by the
+  guard" from "never ran". The exit code cannot: both are non-zero.
+
 ## ANY MACHINE-DERIVABLE NUMBER RESTATED IN PROSE WILL DRIFT (2026-09-05)
 
 Stated as a rule rather than rediscovered a fourth time. **Three for

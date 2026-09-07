@@ -191,11 +191,49 @@ if [ "${1:-}" = "--selftest" ]; then
   else
     echo "  FAIL anchoring the marker rejected a run that does print its DONE line"; ok=0
   fi
+  # arm 10: THE MISINVOCATION, on the exact argument list that really happened. Written to FAIL
+  # without the marker contract: `$# -lt 2` sees three arguments and passes them through, so without
+  # the guard this call RUNS something and appends an entry rather than refusing. Note what the arm
+  # asserts — not just a non-zero exit, but that NOTHING WAS LOGGED. A refusal entry here would be the
+  # defect itself: a wrapper that never checked anything, archiving two false labels as fact.
+  # IT ALSO ASSERTS THE GUARD'S OWN WORDS, and that is not belt-and-braces. "The log is empty" is an
+  # ABSENCE, and absences have false-pass modes: while building this arm, a negative-control copy
+  # written without an execute bit could not exec at all, so every self-invocation died at 126, the
+  # log stayed empty, and the arm reported ok while measuring nothing. Requiring the refusal message
+  # distinguishes "refused by the guard" from "never ran", which the exit code alone cannot.
+  rm -f "$RUN_CHECKED_REFUSAL_LOG"
+  mis="$("$self" python3 .claude/battery.py --phase=pre-commit 2>&1)" && mis_rc=0 || mis_rc=1
+  if [ $mis_rc -eq 0 ]; then
+    echo "  FAIL a call with the marker omitted was accepted"; ok=0
+  elif [ -s "$RUN_CHECKED_REFUSAL_LOG" ]; then
+    echo "  FAIL the misinvocation was logged as a refusal — it must be refused BEFORE running"; ok=0
+  elif ! printf '%s' "$mis" | grep -q 'MISINVOKED'; then
+    echo "  FAIL refused without the guard's message — it did not run, but for the wrong reason"; ok=0
+  else
+    echo "  ok   a call with the marker omitted is refused by the guard, and logs nothing"
+  fi
+  # and the passing direction, so the contract is shown not to have simply broken the wrapper
+  if "$self" "==== DONE:" sh -c 'echo "==== DONE: 1 thing"' >/dev/null 2>&1; then
+    echo "  ok   the ==== DONE: marker form is still accepted (regress.js's form)"
+  else
+    echo "  FAIL the marker contract rejected regress.js's legitimate marker"; ok=0
+  fi
+  # arm 11: THE TOOL FIELD NAMES A TOOL, NOT AN OPTION. Written to FAIL against `basename -- ${2:-$1}`,
+  # under which `sh -c '...'` archived tool=-c. Not a misinvocation — a field that lied about a
+  # legitimate call, which is the same defect as arm 10's labels one degree quieter.
+  rm -f "$RUN_CHECKED_REFUSAL_LOG"
+  "$self" "DONE test:" sh -c 'echo "DONE test: 1 thing"; exit 4' >/dev/null 2>&1
+  if grep -q '^==== REFUSAL .* tool=sh$' "$RUN_CHECKED_REFUSAL_LOG" 2>/dev/null; then
+    echo "  ok   an option word is skipped when naming the tool (sh -c archives tool=sh, not tool=-c)"
+  else
+    echo "  FAIL the tool field named an option instead of the tool"; ok=0
+  fi
   rm -f "$RUN_CHECKED_REFUSAL_LOG"
   if [ $ok -eq 1 ]; then
     echo "SELFTEST PASS — the wrapper fails vacuous runs, passes real ones, propagates errors, and "\
-"logs exactly the refusals with their own output, anchored even onto an unterminated file, and "\
-"matches the marker at line start so a prose mention cannot pass for a DONE line"
+"logs exactly the refusals with their own output, anchored even onto an unterminated file, "\
+"matches the marker at line start so a prose mention cannot pass for a DONE line, refuses a "\
+"misinvocation before running anything, and names a tool rather than an option in the entry"
     exit 0
   else
     echo "SELFTEST FAIL — do not trust wrapped invocations"
@@ -208,10 +246,46 @@ if [ $# -lt 2 ]; then
   exit 2
 fi
 
-marker="$1"; shift
+marker="$1"
+# THE MISINVOCATION GUARD (2026-09-07, user ruling, after this wrapper archived a misinvocation as
+# fact). `$# -lt 2` CANNOT SEE A THREE-ARGUMENT CALL WITH THE WRONG THREE ARGUMENTS. Omitting the
+# marker and calling `run_checked.sh python3 .claude/battery.py --phase=pre-commit` satisfied it, ran
+# .claude/battery.py as a bare executable (exit 126, permission denied), and appended an entry saying
+# marker="python3" tool=--phase=pre-commit. Both fields named things that are not what they claim, in
+# the file whose whole purpose is append-only evidence — a refusal correctly recorded under two false
+# labels, which is worse than a missing entry because it reads as fact.
+#
+# THE RULED MECHANISM WAS "REJECT A MARKER OR TOOL ARGUMENT BEGINNING WITH `-`", AND THE TOOL HALF IS
+# DESTRUCTIVE — measured on a throwaway copy before being written here, per the standing rule. The
+# legitimate `sh -c '...'` form puts `-c` in exactly the position that rule refuses, and five of this
+# file's own selftest arms use it, so the literal rule fails the wrapper's own selftest. Worse, the
+# obvious repair defeats the catch: deriving the tool by SKIPPING option words turns the real
+# misinvocation's argv into tool=battery.py, which the `-` rule then passes. The tool position is
+# simply not where that call is decidable.
+#
+# SO THE OUTCOME IS DELIVERED AT THE MARKER, AS A POSITIVE CONTRACT, which strictly contains the
+# ruled rule (nothing beginning with `-` begins with DONE or ====) and reaches the real case, which
+# the ruled rule at the tool position does not. A marker must begin with `DONE` or `====`. That is
+# not a new convention invented here: all 14 markers declared in battery.py's INSTRUMENTS are one of
+# those two forms, and commit_checked.sh's DONE_LINE_RE already defines a DONE line as exactly them.
+case "$marker" in
+  DONE*|'===='*) ;;
+  *) echo "run_checked.sh: MISINVOKED — first argument \"$marker\" is not a DONE marker." >&2
+     echo "  A marker begins with DONE or ==== . Arguments look shifted by one." >&2
+     echo "usage: run_checked.sh <done-marker> <command> [args...]" >&2
+     exit 2 ;;
+esac
+shift
 # `--` matters: the second word of `sh -c '...'` is `-c`, and basename without it reads that as an
 # option and returns nothing. Found on the log's first live run, where an entry came out `tool=`.
-tool="$(basename -- "${2:-$1}")"
+# AND AN OPTION WORD IS SKIPPED, so `sh -c '...'` archives tool=sh rather than tool=-c. This is the
+# other half of the same defect — not a misinvocation, just a field that named an option instead of a
+# tool — and it is fixed here rather than guarded, because with the marker contract in place an
+# option can no longer REACH this position by an argument shift.
+case "${2:-}" in
+  ''|-*) tool="$(basename -- "$1")" ;;
+  *)     tool="$(basename -- "$2")" ;;
+esac
 tmp="$(mktemp)"
 "$@" >"$tmp" 2>&1
 rc=$?
