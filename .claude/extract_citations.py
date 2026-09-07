@@ -362,6 +362,30 @@ def classify_absence(text, wstart, ypos, back):
         return 'data-span-year', None
     etals = [mm for mm in re.finditer(r'et\s+al', back)]
     if etals:
+        # THE BOUNDARY TEST COMES BEFORE ANY QUESTION ABOUT THE HEAD'S SHAPE, and the placement is
+        # the whole correction (2026-09-06). An intervening YEAR means a COMPLETE CITATION already
+        # consumed this "et al.", so the year now being classified has no head of its own — exactly
+        # what a ';' means in the record path's semicolon-shadow rule, which this branch was missing.
+        # Asking about the head's shape first is the SAME MISTAKE ONE LEVEL DOWN as asking about the
+        # head before settling what the year is, which is recorded at the top of this function
+        # because it already happened once here. So the test guards the whole `if etals:` block, not
+        # just the out-of-range branch inside it: whether the head was cut in half is irrelevant if
+        # the head is not ours.
+        #
+        # NO KEY, DELIBERATELY. semicolon-shadow names the head it shadows, but here the finding is
+        # precisely that the nearest "et al." does NOT belong to this year, so naming its surname
+        # would attach a real, well-reached author to somebody else's absence — the very
+        # misattribution this test exists to stop, re-created in the report.
+        #
+        # A YEAR AND NOT A CLOSING PAREN, though both were considered and BOTH GIVE THE SAME ANSWER
+        # ON THE CORPUS TODAY (measured: one span, the Louis case, is caught by either). The year is
+        # the principled test — it is positive evidence that a citation ENDED — whereas a ')' also
+        # closes ordinary parenthetical asides mid-citation ("Nature Genetics (impact factor aside),
+        # 2019"), so it would buy nothing today at the cost of a false positive later. The choice is
+        # not load-bearing at this commit and is recorded because it becomes load-bearing at the next
+        # span that hits it.
+        if re.search(YEAR, back[etals[-1].end():]):
+            return 'etal-shadow', None
         # anchor on the "et al." NEAREST the year — the extractor's own "nearest head wins"
         # semantics. Widening the lookback instead finds a NEIGHBOURING citation's head and
         # misclassifies a malformed head as merely distant (measured: it mislabelled 6 of 18).
@@ -369,14 +393,21 @@ def classify_absence(text, wstart, ypos, back):
         head_was_cut = (wstart > 0 and pre and pre[0] not in ' \t'
                         and text[wstart - 1] not in ' \t(,;"')
         if head_was_cut:
-            # 'etal-out-of-range' HAS AN UNRELIABLE KEY BY CONSTRUCTION, AND IT IS THE ONE KIND
-            # HERE THAT DOES (2026-09-06, measured, held for its own commit). This branch reaches
-            # 40 chars PAST the lookback to complete a surname that was cut in half — but nothing
-            # tests whether the "et al." it anchored on belongs to THIS year, and across a window
-            # that long it frequently does not. The record-producing path already has the rule
-            # this branch is missing: a ';' between head and year means the head belongs to a
-            # PREVIOUS citation (see the semicolon-shadow continue above). A YEAR between them
-            # means the same thing, and is not tested.
+            # 'etal-out-of-range' HAD AN UNRELIABLE KEY BY CONSTRUCTION, AND IT WAS THE ONE KIND
+            # HERE THAT DID (2026-09-06; found by measurement, fixed by the boundary test above in
+            # its own commit). This branch reaches 40 chars PAST the lookback to complete a surname
+            # that was cut in half, and NOTHING tested whether the "et al." it anchored on belonged
+            # to THIS year — across a window that long it frequently did not. The record-producing
+            # path already had the rule this branch lacked: a ';' between head and year means the
+            # head belongs to a PREVIOUS citation (see the semicolon-shadow continue below). A YEAR
+            # between them means the same thing, and was not tested. Now it is.
+            #
+            # THE KEY IS NOW TESTED, NOT PROVEN, and the difference is worth keeping: the boundary
+            # test only refuses an "et al." that a COMPLETED citation demonstrably consumed. An
+            # "et al." that is not ours with no intervening year would still be anchored on and
+            # still be keyed wrong. What can be said is that the bucket is empty and every way it
+            # was observed to go wrong is closed — which is a weaker claim than correctness, and
+            # this branch's whole history is a lesson in not upgrading the one to the other.
             #
             # ALL THREE INSTANCES AT HEAD fe8d627 WERE WRONG, EACH IN A DIFFERENT WAY, and each had
             # a confident hand-written tolerance in citation_reach_check explaining a pairing that
@@ -385,18 +416,19 @@ def classify_absence(text, wstart, ypos, back):
             #                   citation at all; RANGE_END now refuses it.
             #   Curtin, skin.js the year belonged to TCGA 2015, four words away; the fourth head
             #                   pattern now reaches its true owner and the span is gone.
-            #   Louis, brain.js STILL LIVE, and a prose year: brain.js:209 carries three 2021s, and
-            #                   the real "(Louis et al., Neuro-Oncology, 2021)" is reached at 24
-            #                   chars. The gated one is "the 2021 WHO update" in the note prose,
-            #                   whose lookback grazes that citation's "et al." at 125 chars.
-            # SCOPE, MEASURED SO THE FIX IS NOT GUESSWORK: of the 16 gated spans, Louis is the ONLY
-            # one where a year or a closing paren sits between the anchoring "et al." and the year.
-            # All 15 'etal-malformed-head' spans are clean — nothing but "et al."'s own period and
-            # the journal name — so those five declarations name true owners and are verified
-            # rather than assumed. A boundary test would therefore empty this bucket and touch
-            # nothing else, but it needs a new absence kind to fall into (falling through to
-            # 'etal-malformed-head' would key a fresh undeclared head off garbage and fail the
-            # battery), and a new kind is the checker's business as much as this module's.
+            #   Louis, brain.js a prose year, and the one the boundary test above now catches:
+            #                   brain.js:209 carries three 2021s, and the real "(Louis et al.,
+            #                   Neuro-Oncology, 2021)" is reached at 24 chars and has a record. The
+            #                   gated one was "the 2021 WHO update" in the note prose, whose lookback
+            #                   grazed that citation's "et al." at 125 chars — with that citation's
+            #                   OWN year sitting between the two, which is what the test reads.
+            # SCOPE, MEASURED BEFORE THE FIX WAS WRITTEN so it was not guesswork: of the 16 gated
+            # spans, Louis was the ONLY one where a year or a closing paren sat between the anchoring
+            # "et al." and the year. All 15 'etal-malformed-head' spans are clean — nothing but "et
+            # al."'s own period and the journal name — so those five declarations name true owners,
+            # verified rather than assumed. The prediction was that a boundary test would empty this
+            # bucket and touch nothing else; the commit that added it measured exactly that, and the
+            # prediction is left in place so the two can be read against each other.
             completed = text[max(0, wstart - 40):wstart] + pre
             m = SUR_AT_END.search(completed.rstrip())
             if m:
@@ -505,6 +537,39 @@ def extract(paths, absences=None):
                                      'kind': absence_kind, 'key': absence_key})
                 continue
             author, head_end = m.group(1), m.end()
+            # THE YEAR ANALOGUE OF THE ';' RULE BELOW IS NOT TESTED HERE, AND MUST NOT BE ADDED
+            # NAIVELY (2026-09-06, measured, held for ruling). classify_absence now refuses an
+            # "et al." that a COMPLETED citation consumed, on the grounds that an intervening year
+            # proves the citation ended. THE SAME TEST IS SAFE THERE AND DESTRUCTIVE HERE, which is
+            # the asymmetry worth carrying: an absence has no record to lose, while this path deletes
+            # one. Measured by simulating the test on a throwaway copy of the tree and reading every
+            # removal — the standing procedure this module's header now requires. 490 -> 484, six
+            # removed, zero added, and READING THEM IS WHAT MATTERED, because the sixth is a LOSS:
+            #   FIVE FALSE RECORDS, each confirmed by hand against its own line, four of them the
+            #     misattribution shape where the year belongs to a DIFFERENT, NAMED paper:
+            #       Powell|1990    colon.js:172 — real head Powell et al. (Nature, 1992); the 1990 is
+            #                      "quotes the 1990 model", i.e. Fearon & Vogelstein's paper
+            #       Schulze|2017   liver.js:280 — real head Schulze (Nature Genetics, 2015); the 2017
+            #                      belongs to "a mixed TCGA cohort (Nature, 2017, 44%)"
+            #       Fontugne|2015  prostate.js:204 — real head Fontugne et al. (2022); the 2015
+            #                      belongs to "TCGA (2015)", a FIFTH head shape no pattern reaches
+            #                      ("Surname (YEAR)": P_BARE_YEAR needs the year to follow whitespace
+            #                      and P_PAREN1 needs a comma inside the paren)
+            #       Fearon|1991    colon.js:169 — real head Fearon & Vogelstein (Cell, 1990); the 1991
+            #                      is prose, the year APC was cloned
+            #       Park|2010      bladder.js:27 — real head Park, Curr Oncol, 2023; "SEER 2010+" is a
+            #                      DATA VINTAGE, so this is also a gap in the year guards, which read
+            #                      a dash but not a trailing '+'
+            #   ONE LEGITIMATE RECORD THE TEST WOULD HAVE DESTROYED — Travis|2011, lungs.js:236,
+            #     whose citation reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011
+            #     (IASLC/ATS/ERS)". ONE HEAD DELIBERATELY CARRYING TWO YEARS: Travis authored both
+            #     classifications and the corpus cites them together. A count of "six removed" would
+            #     have read as a clean win; only reading each one separates five fixes from one loss.
+            # SO THE RULE MUST BE NARROWER THAN "a year intervenes" — it has to refuse a year owned by
+            # a DIFFERENT head while permitting one more year under the SAME head. Held: it changes
+            # real records, so it needs its own commit, the removal read in full again, and an
+            # explicit --lower-ratchet with a reason, since fixing five false records makes the record
+            # count DROP and the ratchet is built to refuse exactly that.
             if ';' in back[head_end:]:
                 if absences is not None:
                     absences.append({'file': path, 'line': line_at(ypos), 'year': year,
@@ -640,6 +705,40 @@ FIXTURES = [
       '  Manfredi 2006 [14.5%]) — and the ~50% lifetime figure is rejected IN PRINT'],
      [('Sweden Engstrand', '2018', 'bare-year'), ('Germany Hackl', '2014', 'bare-year'),
       ('Burgundy   Manfredi', '2006', 'bare-year')], []),
+
+    ('THE CITATION-BOUNDARY TEST FIRES: brain.js:209 reduced to its shape. A complete citation '
+     'ends, and a LATER prose year then finds that citation\'s "et al." still inside its lookback. '
+     'The head is not available to be stolen — a year sits between — so the prose year is '
+     '\'etal-shadow\' and NOT a gated unreachable head. The real citation still yields its record, '
+     'which is the half of this arm that matters: emptying a defect bucket by losing a citation '
+     'would look identical in the count',
+     ['Grading follows the CNS5 scheme (Louis et al., Neuro-Oncology, 2021), and the grading '
+      'rules that follow from it are what this panel reflects across all four of the 2021 WHO '
+      'update is what it shows.'],
+     [('Louis', '2021', 'etal')], [('etal-shadow', None)]),
+
+    ('THE PADDING IN THE ARM ABOVE IS LOAD-BEARING AND MUST NOT BE TIDIED, which is why this arm '
+     'sits next to it holding the other side of the window. The geometry it reproduces is narrow: '
+     'the "et al." must fall INSIDE the 130-char lookback while its surname falls OUTSIDE, so that '
+     'no head pattern matches and classify_absence is reached at all. Measured by sweep — at 16 '
+     'words of padding or fewer, P_ETAL matches, a duplicate Louis|2021 is produced and then '
+     'silently removed by the (author, year, ref) dedupe, so the arm passes its record side and '
+     'sees NO absence; at 19 words or more the "et al." leaves the lookback entirely and the span '
+     'is plain \'prose-year\'. Only 17-18 words land on etal-shadow. Shortening that prose would '
+     'move the arm into the dedupe window, where it would go green while testing nothing — this '
+     'arm makes the far edge explicit so at least one side fails loudly if the window moves',
+     ['Grading follows the CNS5 scheme (Louis et al., Neuro-Oncology, 2021), and the rules that '
+      'follow from it are what this whole panel reflects across every one of the four sampled '
+      'sites shown here, so the 2021 WHO update is what it shows.'],
+     [('Louis', '2021', 'etal')], [('prose-year', None)]),
+
+    ('AND IT DOES NOT OVER-FIRE, the direction that would silently empty the GATED bucket: a '
+     'malformed head with NO intervening year must still be gated. "Wang K et al." reaches no '
+     'record, no year sits between its "et al." and its own year, so it stays '
+     '\'etal-malformed-head\' — the 15 declared spans depend on this arm, since a boundary test '
+     'that swallowed them would turn five real tolerances into a green run',
+     ['Diffuse-type frequencies were re-derived (Wang K et al., Nat Genet, 2011).'],
+     [], [('etal-malformed-head', 'Wang K')]),
 ]
 
 

@@ -83,8 +83,13 @@ GATED_KINDS = ('etal-malformed-head', 'etal-out-of-range')
 # silently.
 ALL_KINDS = (
     'etal-malformed-head',     # GATED    "et al." present, head unmatchable (initial, non-ASCII)
-    'etal-out-of-range',       # GATED    head sits beyond the 130-char lookback. KEY UNRELIABLE —
-                               #          see the long note in extract_citations.classify_absence
+    'etal-out-of-range',       # GATED    head sits beyond the 130-char lookback. Its key was
+                               #          unreliable by construction until the boundary test; now
+                               #          TESTED, not proven — see the note in classify_absence
+    'etal-shadow',             # reported the nearest "et al." was consumed by a COMPLETED citation
+                               #          (a year sits between it and this one), so this year has no
+                               #          head of its own. semicolon-shadow's analogue; no key, on
+                               #          purpose — naming the neighbour's author is the defect
     'bare-name-year',          # reported "Surname 2022" — discharged by the fourth head pattern,
                                #          kept because a missing space ("Smith2022") still lands here
     'bare-name-comma-year',    # reported "..., Surname, 2023" — true author sits further left
@@ -192,26 +197,21 @@ DECLARED_UNREACHED = {
         'the first author. Stripping the initials would damage the correction to please the '
         'extractor. The paper itself is not lost: Cooper has five records elsewhere in the same '
         'file. TOLERATED PERMANENTLY, not held — this span should never produce a record.',
-    'etal-out-of-range:Louis':
-        'NOT A CITATION, AND THE KEY NAMES THE WRONG PAPER — this declaration is a tolerance for a '
-        'MISCLASSIFICATION, not for an unreachable citation, and saying so is the only honest form '
-        'it can take. Its previous text read "WELL-FORMED HEAD, MERELY DISTANT: the author sits '
-        '131 characters before its year and the extractor looks back 130. One character." The '
-        'arithmetic was right and the subject was wrong. brain.js:209 carries THREE occurrences of '
-        '2021: the ccf\'s real "(Louis et al., Neuro-Oncology, 2021)" is reached at 24 characters '
-        'and has a record; "under the 2021 WHO reclassification" has no head at all; and the gated '
-        'one is "the 2021 WHO update" inside the note prose, whose 130-char lookback happens to '
-        'graze the real citation\'s "et al." at 125 characters. Nothing is being lost here — the '
-        'WHO CNS reference this entry claimed was unindexed is indexed. THE HELD REMEDY IS '
-        'WITHDRAWN: lengthening the lookback would make a prose sentence yield a duplicate Louis '
-        'record and would buy no citation at all. The real defect is that this KIND cannot tell '
-        'whether the "et al." it anchored on belongs to the year it is reporting, and all three of '
-        'its instances at HEAD fe8d627 were wrong in three different ways; the measured scope and '
-        'the specified fix (a citation-boundary test, needing a new absence kind to fall into) are '
-        'recorded at the branch that produces this kind, in extract_citations.classify_absence, '
-        'rather than duplicated here. It stays DECLARED because the span still exists and is still '
-        'gated: deleting the entry would fail the battery as UNDECLARED, so the choice is not '
-        'whether to tolerate it but whether the tolerance tells the truth. Held for that commit.',
+    # 'etal-out-of-range:Louis' WAS DELETED HERE, in the boundary-test commit that made its span
+    # stop being gated (2026-09-06). Recorded as a comment for one commit because the deletion is
+    # the mechanism working end to end, and the entry is the only one in this dict's history to have
+    # been rewritten to tell the truth and then removed by the fix it described: it began as
+    # 'WELL-FORMED HEAD, MERELY DISTANT ... One character', which was arithmetic about a head that
+    # did not own the year; it was rewritten to say it tolerated a MISCLASSIFICATION; and the
+    # boundary test then reclassified its span as 'etal-shadow', which is reported and not gated, so
+    # stale_declarations() would have failed the battery if this line had been left in place.
+    # THE ORDER MATTERS AND IS THE POINT: the tolerance was made honest BEFORE it was made
+    # unnecessary. Had it been deleted while still claiming a distant head, the record would say a
+    # citation was recovered when what actually happened is that a prose year stopped pretending.
+    # Its full text is in the previous commit, c50842a, which is where a deleted declaration's
+    # reasoning belongs — copying it here would leave a tolerance-shaped block of prose in a dict
+    # whose entries are load-bearing, and the next reader cannot tell an archived reason from a live
+    # one at a glance. git show c50842a:.claude/citation_reach_check.py has it.
 }
 
 
