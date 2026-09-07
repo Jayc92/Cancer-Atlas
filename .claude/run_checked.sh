@@ -175,10 +175,27 @@ if [ "${1:-}" = "--selftest" ]; then
   else
     echo "  FAIL the entry ran onto the previous line — the anchored count would read zero"; ok=0
   fi
+  # arm 8: THE MARKER IS MATCHED AT LINE START. Written to FAIL against the `grep -qF "$marker"`
+  # this replaced: a run that only MENTIONS its marker inside prose, and prints no DONE line, is
+  # vacuous and must be refused. The unanchored matcher accepted it, so the wrapper's own headline
+  # guarantee — "a vacuous run fails the invocation itself" — had a hole the width of one sentence.
+  if "$self" "DONE test:" sh -c 'echo "  ok   fires when DONE test: is absent"' >/dev/null 2>&1; then
+    echo "  FAIL a prose mention of the marker was accepted as a DONE line"; ok=0
+  else
+    echo "  ok   a marker mentioned only in prose is still a vacuous run"
+  fi
+  # and the passing direction, so the anchor is shown not to have simply broken the check
+  if "$self" "DONE test:" sh -c 'echo "  ok   mentions DONE test: in prose"; echo "DONE test: 1"' \
+       >/dev/null 2>&1; then
+    echo "  ok   the same output WITH a real DONE line is still accepted"
+  else
+    echo "  FAIL anchoring the marker rejected a run that does print its DONE line"; ok=0
+  fi
   rm -f "$RUN_CHECKED_REFUSAL_LOG"
   if [ $ok -eq 1 ]; then
     echo "SELFTEST PASS — the wrapper fails vacuous runs, passes real ones, propagates errors, and "\
-"logs exactly the refusals with their own output, anchored even onto an unterminated file"
+"logs exactly the refusals with their own output, anchored even onto an unterminated file, and "\
+"matches the marker at line start so a prose mention cannot pass for a DONE line"
     exit 0
   else
     echo "SELFTEST FAIL — do not trust wrapped invocations"
@@ -204,7 +221,15 @@ if [ $rc -ne 0 ]; then
   log_refusal "exit=$rc"
   rm -f "$tmp"; exit $rc
 fi
-if grep -qF "$marker" "$tmp"; then
+# THE MARKER MUST BE AT LINE START. This was `grep -qF "$marker"` — a bare substring over output
+# that also carries PROSE (selftest arm descriptions, PROBLEM messages, anything the tool echoes),
+# which means a run printing `ok   fires when DONE battery: is absent` and no DONE line at all would
+# be ACCEPTED here. That is the vacuous run this wrapper exists to refuse, reachable through the one
+# matcher that decides whether a run was vacuous. `awk index($0,m)==1` rather than an anchored grep
+# because the marker is a literal, not a pattern: `==== DONE:` would need escaping to survive a
+# regex, and an escape function is a second thing to get wrong. Safe on MEASUREMENT, not argument —
+# across a full pre-commit run all 13 markers occur exactly once each, every one already at column 0.
+if awk -v m="$marker" 'index($0, m) == 1 { found = 1 } END { exit !found }' "$tmp"; then
   rm -f "$tmp"; exit 0
 fi
 echo "RUN_CHECKED: marker '$marker' ABSENT — vacuous run, treated as failure" >&2

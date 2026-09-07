@@ -17,7 +17,13 @@ logs/
 # is the ruling's word for it; this line is why the general rule above does not reach it.
 !.claude/refusals.log
 
-# macOS
+# macOS filesystem droppings — Finder metadata and resource-fork stubs.
+#
+# EVERY COMMENT IN THIS FILE MUST BE PROSE, two words or more. A single-token comment that loses its
+# hash becomes an ignore pattern, and whatever it named silently stops being addable: no error, the
+# path simply disappears from `git status`. This line used to read `# macOS`, which is exactly that
+# shape. The rule holds whether or not anything is checking it, which is why it is stated here and
+# not just enforced elsewhere.
 .DS_Store
 .AppleDouble
 .LSOverride

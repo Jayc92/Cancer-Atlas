@@ -26,10 +26,18 @@
 #      non-instrument. This is the assertion that makes the declared list trustworthy, and it
 #      exists because record_sync_check.py's map carries this caveat about itself, verbatim:
 #
-#          "DISCIPLINE: when a new dual-home record is created, add its pair here in the same
-#           commit — an undeclared pair is invisible to this check, and the map is itself a
-#           record that can go stale (noted honestly; the alternative is a convention parser,
-#           which would be a bigger instrument than the failure justifies)."
+#          "an undeclared pair is invisible to this check, and the map is itself a record that
+#           can go stale (noted honestly; the alternative is a convention parser, which would
+#           be a bigger instrument than the failure justifies)"
+#
+#      THIS QUOTE WENT STALE ONCE, on 2026-09-07, and by the mechanism it is quoted to illustrate.
+#      It used to open with the DISCIPLINE sentence; editing that sentence over there (adding the
+#      marker-uniqueness clause) left the copy here no longer verbatim, and NOTHING CHECKED IT — the
+#      quoted-span check covers code quoting archived sources, and SYNC covers manifest-to-document
+#      pairs, so a quotation from one instrument header into another falls between them. The repair
+#      is to quote LESS and exactly: the span above is the part the argument needs and is the part
+#      least likely to be reworded. Recorded rather than silently fixed, because it is the same
+#      failure as everything in the anchor family — a copy of prose with no anchor to its original.
 #
 #      That caveat applies to THIS list with equal force and the same wording: a new instrument
 #      that forgets to declare itself is invisible to a declared-list-only runner, which is the
@@ -89,71 +97,244 @@
 #      producer and stopped being unratcheted. The prose had to be edited to keep up, which is the
 #      restatement hazard demonstrating itself inside the comment warning about it.)
 #
-#      HOW THIS GENERALISES — THE SIDECAR CONVENTION (user, 2026-09-05, recorded as a SHAPE AND NOT
-#      A TASK, so a session that finds this finds a plan rather than a hole). The wrong way to close
-#      those two is to parse the numbers back out of each instrument's DONE line: nine formats to
-#      track, and it recreates the prose-restatement problem INSIDE the runner — deriving a machine
-#      number from a human-facing string is the same mistake one level in. The right way is for each
-#      instrument to emit a machine-readable sidecar ALONGSIDE its human-readable DONE line,
+#      HOW THAT METRIC GETS RATCHETED IS NOT ANSWERED HERE ANY MORE. The sidecar convention that
+#      closes it — and the scratch-path rule that grew up beside it — moved into the labelled block
+#      below, READ THIS BEFORE WRITING A NEW INSTRUMENT, OR A NEW MATCHER. Their audience is
+#      whoever writes the next tool, not whoever is reading about the ratchet, and that split is
+#      the whole reason the block exists.
 #
-#          SIDECAR {"name": "regress", "metrics": {"checks": 167, "failures": 2}}
+# ==================================================================================================
+# READ THIS BEFORE WRITING A NEW INSTRUMENT, OR A NEW MATCHER (user ruling, 2026-09-07 — the
+# LOCATION is the ruling, not only the contents).
 #
-#      so the ratchet reads STRUCTURE and the DONE line stays a sentence for humans. Each is then
-#      the authority for its own audience and neither is derived from the other. (The numbers in
-#      that example are a FORM, not a reading — whatever the run produced. This header is not their
-#      source of truth either, which is the same reason the two are unnamed above.)
+# THREE CONVENTIONS LIVE HERE, and they are here TOGETHER on purpose:
 #
-#      DO NOT SWEEP TEN TOOLS FOR THIS. The convention applies to the NEXT instrument written, and
-#      to each existing one WHEN IT IS NEXT TOUCHED FOR ANOTHER REASON. The ratchet generalises for
-#      free over time, and nothing is rewritten for a gap that is still theoretical: regress's count
-#      dropping would almost certainly follow a deliberate code edit, not the silent producer change
-#      the extractor demonstrated.
+#   A. THE SIDECAR CONVENTION — how an instrument reports numbers that a machine will read.
+#   B. THE SCRATCH-PATH RULE — what a tool that OWNS A FILE needs on its first commit.
+#   C. THE ANCHOR RULE — how a matcher over a file that also holds hand prose must match, with the
+#      family of such matchers enumerated and each member's status.
 #
-#      THE READER SHIPS WITH THE FIRST PRODUCER, not before it. A consumer with no producer could
-#      only ever be demonstrated against a fixture, and the standard here is capability shown on
-#      real output — conditions (7) and (8). Whoever writes that instrument wires both ends and gets
-#      a live demonstration for free; building the reader today would spend the demonstration.
+# WHY HERE AND NOT IN CLAUDE.md, which is the other obvious home: the test is WHO NEEDS IT AND
+# WHEN. CLAUDE.md is read before touching the project at all. These three are needed at a narrower
+# moment — while writing an instrument, or a matcher — and that moment already had a designated
+# place: this file's header, where the sidecar convention and then the scratch-path rule were
+# recorded. The block makes the address explicit instead of leaving it to whoever scrolls.
 #
-#      IT SHIPPED THAT WAY (2026-09-06, with citation_crosscheck). The trigger was the convention's
-#      own: crosscheck had to be touched anyway, because it could file a FAILED id-mapping fetch as
-#      an unmappable id and print a smaller total under a clean DONE line — an active hole in a
-#      battery member, not a deferred improvement. Sidecar and reader came along free, which is the
-#      case the "when it is next touched" clause was written for. Three things only the live wiring
-#      could have taught, each recorded at its own site below:
+# WHY ONE LABELLED BLOCK RATHER THAN THREE SCATTERED ONES, which is the part this chain learned
+# the hard way. Family members (1) and (2) below are the SAME BUG one day apart, and the lesson
+# from (2) WAS written down — in commit_checked.sh, at the site, in the file that had just fixed
+# it. The refusal log then broke identically the next day, because nobody reads commit_checked.sh's
+# header while editing a different file. A second copy in CLAUDE.md would not have fixed that
+# either: the failure was not that the lesson was unwritten, it was that the lesson was reachable
+# only by scrolling to the place that already knew it. What fixes it is ONE designated location
+# that a new instrument's author is TOLD to read, holding all three conventions.
 #
-#        - A `ratchet` ARRAY is part of the convention, not an extra. crosscheck reports `records`
-#          (coverage, must never shrink) beside `flags` (a DEFECT COUNT — ratcheting it would fail
-#          the battery for FIXING a flag). Only the producer knows which is which, so the producer
-#          declares it and the reader ratchets nothing it was not asked to.
-#        - THE PRODUCER-SIDE LOOPHOLE that array opens is closed by vanished_ratchets(): dropping a
-#          metric from the array, or the sidecar entirely, would switch a ratchet off silently. It
-#          is checked against COMMITTED state rather than a hand-maintained map of who-reports-what,
-#          because a map is the staleness this file's assertion 2 exists to refuse.
-#        - METRIC KEYS ARE NAMESPACED per producer, and that is the finding, not a style choice. Two
-#          different numbers are both called `records` — the extractor's corpus total and
-#          crosscheck's identifier-carrying subset. Unnamespaced, this reader's FIRST live run would
-#          have compared one against the other and fired RATCHET SHRANK on a corpus that had not
-#          moved. A new gate whose first act is a false positive teaches people to pass
-#          --lower-ratchet, which is worse than the gap it closed.
+# FOR AN INSTRUMENT THE TELLING IS STRUCTURAL, not a note anyone has to remember: assertion 2 fails
+# the battery until a new file in .claude/ is declared in INSTRUMENTS or NON_INSTRUMENTS, so writing
+# one MEANS editing this file, and this block is in it. FOR A MATCHER IT IS NOT — nothing forces the
+# author of a `grep -c` or a `startswith` into this file at all, which is the weaker half and is why
+# the label names matchers explicitly rather than trusting the same mechanism to cover both.
 #
-#      AN INSTRUMENT THAT OWNS A FILE NEEDS A SCRATCH PATH FROM BIRTH (user ruling, 2026-09-07 —
-#      recorded beside the sidecar convention because it is the same kind of thing: a property the NEXT
-#      tool should have on day one rather than acquire by damaging something).
+# AND ONE HOME, NOT TWO. A copy of this block elsewhere would be a dual-home record, which by
+# record_sync_check.py's own discipline wants a SYNC pair and a marker occurring exactly once —
+# i.e. it would be governed by rule C, which it contains. A single home sidesteps that recursion
+# by construction rather than by argument.
 #
-#      The general form: ANYTHING THAT MAINTAINS AN ARTIFACT AND MUST EXERCISE ITSELF TO PROVE IT WORKS
-#      needs an env override naming where the artifact lives, honoured from the first commit. Otherwise
-#      its selftest either skips the write — leaving the only behaviour that matters untested — or
-#      performs it, and writes fiction into the one file whose value is being real. Two tools here own
-#      files: this one owns .claude/record_count.json, and run_checked.sh owns .claude/refusals.log.
+# WHAT IS DELIBERATELY NOT HERE: the closures for family members (5) and (6). Those are facts
+# about record_sync_check.py and about .gitignore — what each one's rule is and what evidence
+# exists for it — so they live in those files' own headers, and only their STATUS is recorded in
+# C's enumeration below.
 #
-#      THE SCAR, AND WHY IT IS A TEMPLATE HAZARD RATHER THAN ONE TOOL'S BUG: run_checked.sh had the
-#      override from birth and still got polluted, because the polluter was not the owner. Its SIBLING,
-#      commit_checked.sh, drives deliberately-failing runs THROUGH the wrapper — that is how its arms 1
-#      and 3 prove a commit gets refused — and on the refusal log's first live run it appended two
-#      invented entries to the real archive. So the rule has a second half: THE SCRATCH PATH MUST BE
-#      HONOURED BY EVERY CALLER THAT EXERCISES THE WRITER, not only by the writer's own selftest. An
-#      owner cannot protect its artifact alone. There are exactly two such callers today (this file's
-#      arms are in-process and never reach the wrapper), and a third would silently write fiction.
+# --------------------------------------------------------------------------------------------------
+# A. THE SIDECAR CONVENTION
+#
+#   HOW THIS GENERALISES — THE SIDECAR CONVENTION (user, 2026-09-05, recorded as a SHAPE AND NOT
+#   A TASK, so a session that finds this finds a plan rather than a hole). The question it answers:
+#   how an UNRATCHETED number gets ratcheted — assertion 4 above names the one still outstanding.
+#   (This opened "the wrong way to close those two" until the block was assembled; the referent was
+#   left behind in item 4 by the move, which is the hazard of moving prose that points sideways.)
+#   The wrong way is to parse the numbers back out of each instrument's DONE line: nine formats to
+#   track, and it recreates the prose-restatement problem INSIDE the runner — deriving a machine
+#   number from a human-facing string is the same mistake one level in. The right way is for each
+#   instrument to emit a machine-readable sidecar ALONGSIDE its human-readable DONE line,
+#
+#       SIDECAR {"name": "regress", "metrics": {"checks": 167, "failures": 2}}
+#
+#   so the ratchet reads STRUCTURE and the DONE line stays a sentence for humans. Each is then
+#   the authority for its own audience and neither is derived from the other. (The numbers in
+#   that example are a FORM, not a reading — whatever the run produced. This header is not their
+#   source of truth either, which is the same reason assertion 4 names its unratcheted metric
+#   without quoting a value for it.)
+#
+#   DO NOT SWEEP TEN TOOLS FOR THIS. The convention applies to the NEXT instrument written, and
+#   to each existing one WHEN IT IS NEXT TOUCHED FOR ANOTHER REASON. The ratchet generalises for
+#   free over time, and nothing is rewritten for a gap that is still theoretical: regress's count
+#   dropping would almost certainly follow a deliberate code edit, not the silent producer change
+#   the extractor demonstrated.
+#
+#   THE READER SHIPS WITH THE FIRST PRODUCER, not before it. A consumer with no producer could
+#   only ever be demonstrated against a fixture, and the standard here is capability shown on
+#   real output — conditions (7) and (8). Whoever writes that instrument wires both ends and gets
+#   a live demonstration for free; building the reader today would spend the demonstration.
+#
+#   IT SHIPPED THAT WAY (2026-09-06, with citation_crosscheck). The trigger was the convention's
+#   own: crosscheck had to be touched anyway, because it could file a FAILED id-mapping fetch as
+#   an unmappable id and print a smaller total under a clean DONE line — an active hole in a
+#   battery member, not a deferred improvement. Sidecar and reader came along free, which is the
+#   case the "when it is next touched" clause was written for. Three things only the live wiring
+#   could have taught, each recorded at its own site below:
+#
+#     - A `ratchet` ARRAY is part of the convention, not an extra. crosscheck reports `records`
+#       (coverage, must never shrink) beside `flags` (a DEFECT COUNT — ratcheting it would fail
+#       the battery for FIXING a flag). Only the producer knows which is which, so the producer
+#       declares it and the reader ratchets nothing it was not asked to.
+#     - THE PRODUCER-SIDE LOOPHOLE that array opens is closed by vanished_ratchets(): dropping a
+#       metric from the array, or the sidecar entirely, would switch a ratchet off silently. It
+#       is checked against COMMITTED state rather than a hand-maintained map of who-reports-what,
+#       because a map is the staleness this file's assertion 2 exists to refuse.
+#     - METRIC KEYS ARE NAMESPACED per producer, and that is the finding, not a style choice. Two
+#       different numbers are both called `records` — the extractor's corpus total and
+#       crosscheck's identifier-carrying subset. Unnamespaced, this reader's FIRST live run would
+#       have compared one against the other and fired RATCHET SHRANK on a corpus that had not
+#       moved. A new gate whose first act is a false positive teaches people to pass
+#       --lower-ratchet, which is worse than the gap it closed.
+#
+# --------------------------------------------------------------------------------------------------
+# B. THE SCRATCH PATH
+#
+#   AN INSTRUMENT THAT OWNS A FILE NEEDS A SCRATCH PATH FROM BIRTH (user ruling, 2026-09-07 —
+#   recorded beside the sidecar convention because it is the same kind of thing: a property the NEXT
+#   tool should have on day one rather than acquire by damaging something).
+#
+#   The general form: ANYTHING THAT MAINTAINS AN ARTIFACT AND MUST EXERCISE ITSELF TO PROVE IT WORKS
+#   needs an env override naming where the artifact lives, honoured from the first commit. Otherwise
+#   its selftest either skips the write — leaving the only behaviour that matters untested — or
+#   performs it, and writes fiction into the one file whose value is being real. Two tools here own
+#   files: this one owns .claude/record_count.json, and run_checked.sh owns .claude/refusals.log.
+#
+#   THE SCAR, AND WHY IT IS A TEMPLATE HAZARD RATHER THAN ONE TOOL'S BUG: run_checked.sh had the
+#   override from birth and still got polluted, because the polluter was not the owner. Its SIBLING,
+#   commit_checked.sh, drives deliberately-failing runs THROUGH the wrapper — that is how its arms 1
+#   and 3 prove a commit gets refused — and on the refusal log's first live run it appended two
+#   invented entries to the real archive. So the rule has a second half: THE SCRATCH PATH MUST BE
+#   HONOURED BY EVERY CALLER THAT EXERCISES THE WRITER, not only by the writer's own selftest. An
+#   owner cannot protect its artifact alone. There are exactly two such callers today (this file's
+#   arms are in-process and never reach the wrapper), and a third would silently write fiction.
+#
+# --------------------------------------------------------------------------------------------------
+# C. THE ANCHOR RULE, AND THE FAMILY IT WAS DERIVED FROM
+#
+# PROSE SHARING A FILE WITH MACHINE-READ STRUCTURE — THE FAMILY, ENUMERATED (user ruling,
+# 2026-09-07, after the refusal log held one entry and reported zero: "the cause is structural rather
+# than a one-off ... the set is small enough to enumerate ... the remedy should be applied to the
+# family rather than to the instance that happened to surface").
+#
+# TWO QUESTIONS, ASKED IN ORDER: which members are DANGEROUS, and for those, what the remedy is.
+# They came a day apart and are separate rules; conflating them is how the second nearly became
+# "anchor everything".
+#
+# THE PREDICATE THE INCIDENT SUGGESTED IS THE WRONG CUT, and deriving the set rather than accepting
+# it is what showed that. "Prose beside structure" does not predict danger: the ruling named four
+# members and THREE OF THE FOUR FAIL LOUDLY. What predicts danger is one property —
+#
+#   IS THE ANCHOR A LANGUAGE PARSER, OR A HAND-TYPED CONVENTION?
+#
+# Where a parser is the anchor (JSON, Python, JS), a prose edit cannot be missed: it is a
+# SyntaxError or a refusal. Where the anchor is a convention someone typed (`^==== REFUSAL `,
+# `^DONE `, a bare marker, a leading `#`), a prose edit fails SILENTLY, and silence over present
+# data is this chain's signature failure. Every silent member below was outside the four named.
+#
+# AND AN ANCHOR IS NOT ALWAYS A POSITION (user ruling, 2026-09-07, arriving with 5(b) below and the
+# reason this block is titled for matchers as well as instruments). Line-start is the right remedy
+# where the matcher decides WHETHER A LINE IS THE LINE — a DONE line, a refusal header, a sidecar:
+# there the convention genuinely lives at column 0, so position is a property of the artifact. It is
+# the WRONG remedy where the marker text is prose that could legitimately begin a line, which is
+# exactly the shape of `THE DIRECTION`; anchoring that would have been a rule that looks like the
+# others and checks nothing. What is decidable there is COUNT: the marker must occur EXACTLY ONCE in
+# its target. Zero is the stale declaration; more than one means the string is not a marker at all,
+# and the pair can sit green in both homes by coincidence.
+#
+# SO THE QUESTION FOR A NEW MATCHER IS NOT "IS IT ANCHORED" but WHICH PROPERTY OF THE MATCH IS
+# DECIDABLE FROM THE FILE — position, or arithmetic over occurrences. Both forms clear the same bar,
+# which is the bar and not the mechanism: decidable from the artifact alone, with no judgement about
+# what anyone intended. Picking the mechanism that fits the artifact is the whole rule.
+#
+# THE SET, CLOSED, with the evidence for each — the three declaration properties applied to a
+# declaration about declarations. Direction first, because it is the whole point:
+#
+#   SILENT — the anchor is a typed convention. These need the remedy.
+#     1. .claude/refusals.log header vs `grep -c '^==== REFUSAL '`. FIXED d01615f; run_checked.sh
+#        arm 7 fails without the guard. THE ONLY MEMBER THAT WAS EVER LIVE: 1 entry read as 0.
+#     2. commit message body vs commit_checked.sh's DONE_LINE_RE. Already anchored (2026-09-06,
+#        "TOO WIDE — prose got quoted / TOO NARROW — a gate went missing"). THE SAME BUG AS (1), ONE
+#        DAY EARLIER, IN THE SAME CHAIN, AND NOBODY CONNECTED THEM — which is the argument for
+#        enumerating rather than fixing instances.
+#     3. instrument stdout vs run_checked.sh's marker test. Was `grep -qF` — a bare substring, so a
+#        member printing `ok  fires when DONE x: is absent` and no DONE line was ACCEPTED as
+#        reporting. FIXED 2026-09-07; arm 8 fails without the anchor. Measured latent, not live —
+#        re-runnable, and stated as the check rather than its output because a count here would
+#        drift: in a full pre-commit run every declared marker occurs exactly once and every
+#        occurrence is already at column 0, so anchoring breaks nothing that passes today.
+#     4. instrument stdout vs this file's marker test, three lines from a printer that already
+#        anchored. Was `marker in combined`. FIXED 2026-09-07 (marker_reported); arm 12 fails
+#        without it — its refusing assertions flip and its passing one does not, which is what
+#        distinguishes an arm that catches the defect from one that restates the fix.
+#     5. CLAUDE.md / phaseA_mapping.md vs record_sync_check's `marker in text` + `key in manifest`.
+#        TWO silent directions, ruled on separately. (a) CLOSED 2026-09-07: the check fired only on
+#        ASYMMETRY, so a pair gone from BOTH homes passed, and its DONE line said `N pairs checked`
+#        while counting len(SYNC) — the map's length. A pair the map declares and neither home holds
+#        is now a STALE DECLARATION and always a defect, because deliberate retirement has an
+#        explicit path (delete the SYNC row, a visible reviewable diff); the count is now pairs FOUND
+#        over pairs declared. This is declaration property (3) turned on SYNC itself — a closed
+#        enumerated set whose membership was never verified against reality. Arms 4 and 5 there fail
+#        against the logic they replaced. (b) CLOSED 2026-09-07 BY UNIQUENESS RATHER THAN POSITION,
+#        per the rule above: the marker was an unanchored substring of hand prose, so a generic one
+#        ('THE DIRECTION') could read as landed from an unrelated sentence and a pair could be green
+#        in both homes by accident. Each marker must now occur EXACTLY ONCE in its target. Arm 6
+#        there fails against the `marker in text` boolean it replaced, and the rule FIRED ON THE
+#        LIVE CORPUS at birth — five declared markers matched more than once, each lengthened to the
+#        unique span at the record's own home; which five, and what each became, is recorded in that
+#        file's SYNC map rather than restated here. Condition (7) met by the corpus, not a fixture.
+#     6. .gitignore's comment lines vs git's pattern parser, where the anchor is a leading `#`.
+#        CLOSED 2026-09-07 as a PROSE-SHAPE RULE rather than a shipping check (user ruling: forbid the
+#        prose from being ABLE to become a pattern). A comment line that is a BARE PATH and loses its
+#        `#` becomes an ignore pattern and the file silently stops being addable — measured on scratch
+#        repos twice: the path vanished from `git add -A --dry-run`, and this file's own `# macOS`
+#        minus its hash dropped `?? macOS` out of `git status --porcelain`. Assertion 5 forbids a `#`
+#        line whose stripped content holds no whitespace; arm 19 fails both when the predicate is
+#        removed and when it is read as "no space character" (a tab-separated comment is prose).
+#        WHY THE SHAPE AND NOT THE CONSEQUENCE: undeclared_files() cannot see the consequence, because
+#        a should-ship file that was silently ignored is indistinguishable from the untracked scratch
+#        tracked_claude_files() excludes ON PURPOSE. Same move as anchoring an append at the writer.
+#        It fired on the live file at birth, which is condition (7) met by the corpus, not a fixture.
+#
+#   LOUD — the anchor is a parser, or the failure is a reported PROBLEM. No remedy needed, and
+#   saying so is part of the audit: an enumeration that only lists the dangerous half cannot be
+#   checked for completeness.
+#     7. instrument stdout vs parse_sidecars' `strip().startswith('SIDECAR ')`. Unanchored w.r.t.
+#        indentation, so prose BEGINNING with the token collides — and both collision shapes were
+#        driven: each becomes `BAD SIDECAR`, a PROBLEM, and a genuine indented sidecar is still read.
+#     8. record_count.json's `_note` vs json.load. A broken prose edit yields RATCHET UNREADABLE and
+#        REFUSES to re-initialise; and load_ratchet -> save_ratchet round-trips the file
+#        byte-identically, so a machine rewrite cannot silently drop the prose either. Both driven.
+#     9. citations.json's `_`-prefixed prose keys vs its json.load readers AND NO WRITER — the
+#        largest member by key count, named by nobody. Prose loss is impossible because nothing
+#        rewrites it; a broken edit is a parse error at every reader.
+#    10. reasons inside declared lists (citation_reach_check's DECLARED_UNREACHED, deploy_check's
+#        BENIGN.why, citation_head_check's IMPRECISE/WELL_FORMED, citation_paren_ledger's
+#        PREREGISTERED, citation_crosscheck's DECLARED_UNMAPPABLE, this file's NON_INSTRUMENTS).
+#        NOT anchor collisions at all: the language parser is the anchor. Their separate hazard is
+#        a counter reading prose (the >80-char bar), which is recorded with that bar, not here.
+#
+# THIS ENUMERATION HAS NO CHECKER, said plainly because the chain's own lesson is that a
+# hand-assembled enumeration grows on contact — six head-shape artifacts turned out to be eight, and
+# four family members turned out to be ten. What a checker WOULD close over is available: the
+# matcher shapes are greppable inside .claude/ (`grep -c '^`, `startswith(`, `index($0,`, `-qF`, and
+# now `.count(` — the uniqueness form is a matcher too, which is the shape the second rule added to
+# the population), so "every matcher site is classified above" is decidable the way
+# undeclared_files() is decidable.
+# Not built, because the ruling asked for the remedy applied to the family, not a new instrument.
+# ==================================================================================================
 #
 # WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
 # Set -> invocation -> commit message -> deploy is COMPLETE, not arbitrarily truncated, and the
@@ -327,7 +508,10 @@ def present_claude_files():
             if os.path.isfile(os.path.join(REPO_ROOT, '.claude', name))}
 
 
-# ---- the three assertions, as pure functions so the selftest can drive them ------------------
+# ---- the assertions, as pure functions so the selftest can drive them ------------------------
+# Numbered in their own docstrings, and NOT counted here: this header said "the three assertions"
+# while the file already held four, which is the number-restatement rule biting the label on the
+# section that holds the checks. The count is derivable by grep; a copy of it is just a copy.
 
 def undeclared_files(tracked, instrument_files, non_instruments, present_on_disk=None):
     """Assertion 2. Any tracked .claude/ file that is neither an instrument nor a declared
@@ -357,6 +541,68 @@ def unphased_instruments(instruments, phases):
     return [f'BAD PHASE: {name} declares phase {phase!r}, not one of {list(phases)} — '
             'it would never be invoked'
             for name, phase, _marker, _argv in instruments if phase not in phases]
+
+
+def gitignore_comments(text):
+    """Every comment line in .gitignore as (line number, content after the hash). Shared by the
+    assertion below and by the DONE line's count, so the number reported and the number checked
+    come from one parse rather than two that can disagree.
+
+    NEITHER STRIP IS A GUARD, and that is measured rather than assumed — the first version of this
+    docstring claimed the trailing one was load-bearing and a mutation probe falsified it. The
+    predicate downstream is `len(content.split()) == 1`, and str.split() with no argument already
+    collapses every run of whitespace and drops empties, so a padded body and a bare one are the same
+    token list and an empty comment is the empty list. Removing the .strip() changed no arm. It stays
+    because the PROBLEM message quotes the content back and padding in a quoted string reads as a
+    typo, not because anything depends on it.
+
+    WHAT THE MEASUREMENT DID ESTABLISH, on a scratch repo, is the shape of the hazard the predicate
+    has to cover. Git ignores trailing whitespace in a pattern, so `# padded   ` minus its hash really
+    does ignore `padded` — `?? padded` vanished from `git status --porcelain`. And git reads a comment
+    only when the `#` is at column 0, while an indented comment's body keeps its leading spaces as
+    literal pattern text, so `  # indented` minus the hash ignores nothing (`indented` stayed
+    untracked). The .lstrip() therefore counts indented comments that could not become live patterns:
+    deliberately broader than the hazard, which is the safe direction for a check whose failure mode
+    is under-firing, and the live file has no indented comment anyway."""
+    out = []
+    for number, line in enumerate(text.split('\n'), 1):
+        stripped = line.lstrip()
+        if stripped.startswith('#'):
+            out.append((number, stripped[1:].strip()))
+    return out
+
+
+def gitignore_bare_path_comments(comments):
+    """Assertion 5. NO COMMENT IN .gitignore MAY BE A BARE PATH (user ruling, 2026-09-07).
+
+    .gitignore is a member of the prose-beside-structure family enumerated in this file's header,
+    and its anchor is the weakest kind: a single leading `#`. A comment line that is a BARE PATH and
+    loses its hash becomes an ignore PATTERN, and the file it names silently stops being addable —
+    driven on a scratch repo, where the path vanished from `git add -A --dry-run` with no error at
+    all, and again on this file's own line 20: `macOS` without its hash ignores a file called macOS
+    and drops it out of `git status --porcelain` without a word. Two things bound the damage and
+    neither is a guard: git ignores only UNTRACKED paths, so files already in the index are immune;
+    and no comment here is a bare path today, which is a property of the prose style rather than of
+    anything checking.
+
+    THE RULE GUARDS THE SHAPE, NOT THE CONSEQUENCE, and that choice is the whole design. The
+    consequence — "a file that should ship silently does not" — cannot be checked here without
+    reopening tracked_claude_files()'s deliberate exclusion of untracked scratch, because a
+    should-ship file that was silently ignored and a scratch file nobody meant to add are the same
+    observation. Forbidding the prose from being ABLE to become a pattern needs neither: it is
+    decidable from .gitignore alone. Same move as anchoring an append at the writer rather than
+    repairing the file it damaged.
+
+    DELIBERATELY BROADER THAN THE HAZARD. "Contains no whitespace" flags any single-token comment,
+    including ones that are plainly not paths. That is the trade taken on purpose: the broad form is
+    EXACT and needs no judgement, where "looks like a path" would be a heuristic, and this chain
+    prefers a structural check to a heuristic every time. It fired on a real line at birth —
+    `# macOS`, harmless in itself — which is condition (7) satisfied by the corpus rather than by a
+    fixture, and the fix was to make the comment prose."""
+    return [f'BARE-PATH COMMENT: .gitignore:{number} is `# {content}` — a single token with no '
+            'whitespace, so dropping the `#` turns it into an ignore pattern and whatever it names '
+            'silently stops being addable. Make the comment prose (two words or more).'
+            for number, content in comments if len(content.split()) == 1]
 
 
 def ratchet_verdict(metric, previous, current, lower_to=None, lower_reason=None):
@@ -771,6 +1017,25 @@ def stop_dev_server(proc):
 
 # ---- running ---------------------------------------------------------------------------------
 
+def marker_reported(marker, text):
+    """Did the member actually PRINT its DONE line, as opposed to merely mentioning it?
+
+    ANCHORED AT LINE START, and the anchoring is the whole point. This used to be `marker in
+    combined` — a bare substring over output that also carries PROSE: selftest arm descriptions,
+    PROBLEM messages, and anything the member echoes. A member whose arm reads
+    `ok   fires when DONE battery: is absent` would satisfy an unanchored test while printing no
+    DONE line at all, which is the vacuous run this whole wrapper chain exists to refuse — reachable
+    through the matcher that decides whether a run was vacuous.
+
+    Three lines above, the PRINTER already anchors (`line.startswith('DONE ')`), and it was anchored
+    deliberately in 2026-09-06 for the identical reason. The two disagreed: the printer knew a DONE
+    line is a line, the reporter thought it was a string anywhere. Same file, same variable, three
+    lines apart. Anchoring here is safe on measurement rather than on argument: across a full
+    pre-commit run all 13 markers occur exactly once each and every occurrence is already at column
+    0, so nothing that passes today stops passing."""
+    return any(line.startswith(marker) for line in text.split('\n'))
+
+
 def run_member(name, marker, argv):
     """One instrument, through run_checked.sh — the member's own DONE-marker obligation is
     enforced by the existing wrapper rather than re-implemented here. Output is streamed with the
@@ -796,7 +1061,7 @@ def run_member(name, marker, argv):
     # The output is returned so the sidecar reader can parse STRUCTURE out of it. Note what is
     # NOT returned to that reader's caller: any interpretation of the human DONE line. The
     # sidecar is a separate channel on purpose.
-    return proc.returncode, marker in combined, combined
+    return proc.returncode, marker_reported(marker, combined), combined
 
 
 # ---- selftest --------------------------------------------------------------------------------
@@ -908,7 +1173,21 @@ def selftest():
     say(missing_state == {'counts': {}, 'lowers': []} and not missing_problems,
         'an absent ratchet file is a first run, not a failure')
 
-    # arm 12: the SIDECAR READER. The passing direction first, on a line in the shape its first
+    # arm 12: THE MARKER TEST IS ANCHORED. Written to FAIL against the `marker in combined` this
+    # replaced, which is what earns it a place instead of restating the fix. The refusing direction
+    # is a member that MENTIONS its marker in prose and prints no DONE line — a vacuous run wearing
+    # the marker, which the unanchored test accepted.
+    prose_only = ('  ok   fires when DONE battery: is absent\n'
+                  '  ok   a PROBLEM naming DONE battery: is still not a DONE line')
+    say(not marker_reported('DONE battery:', prose_only),
+        'a member that only MENTIONS its marker in prose is not counted as having reported')
+    say(marker_reported('DONE battery:', prose_only + '\nDONE battery: phase x — 1/1'),
+        'the same output WITH a real DONE line does report (the anchor did not just break it)')
+    say(marker_reported('==== DONE:', 'noise\n==== DONE: 169 checks, 2 failures ====')
+        and not marker_reported('==== DONE:', 'see ==== DONE: below'),
+        "regress's marker form anchors the same way (it is not a DONE-prefixed line)")
+
+    # arm 13: the SIDECAR READER. The passing direction first, on a line in the shape its first
     # producer actually prints, so this arm fails if that format ever drifts.
     good_line = ('DONE citation_crosscheck: 1 records checked, 0 flags\n'
                  'SIDECAR {"metrics": {"flags": 0, "records": 1}, '
@@ -933,14 +1212,14 @@ def selftest():
         found, found_problems = parse_sidecars(line)
         say(bool(found_problems) and not found, f'refuses a sidecar with {label}')
 
-    # arm 13: the namespacing, which is the collision this reader would have shipped with. The two
+    # arm 14: the namespacing, which is the collision this reader would have shipped with. The two
     # metrics are both called "records" and hold different numbers.
     say(sidecar_metric_key('citation_crosscheck', 'records') != RECORDS_METRIC,
         "a producer's `records` metric cannot collide with the extractor's `records` ratchet "
         '(unnamespaced, the reader\'s first live run would have fired SHRANK on a corpus that '
         'had not moved)')
 
-    # arm 14: the producer-side loophole — a metric that was ratcheted and is not declared now.
+    # arm 15: the producer-side loophole — a metric that was ratcheted and is not declared now.
     say(any('RATCHET ABANDONED' in p for p in vanished_ratchets(
         {'citation_crosscheck.records': 142},
         {'citation_crosscheck': {'metrics': {'records': 142}, 'ratchet': []}},
@@ -961,7 +1240,7 @@ def selftest():
     say(not vanished_ratchets({RECORDS_METRIC: 408}, {}, {'citation_crosscheck'}),
         "does NOT fire on the extractor's un-namespaced metric, which has no producer to run")
 
-    # arm 15: the lower flag, both address forms. The bare form is load-bearing: it is what the
+    # arm 16: the lower flag, both address forms. The bare form is load-bearing: it is what the
     # usage block documents and what every existing invocation means, so a reader that quietly
     # repurposed it would break a documented flag to gain uniformity.
     bare_lowers, bare_reason, bare_problems = parse_lower(
@@ -975,7 +1254,7 @@ def selftest():
     say(any('BAD FLAG' in p for p in parse_lower(['battery.py', '--lower-ratchet=lots'])[2]),
         'refuses a non-integer lower rather than ignoring the flag')
 
-    # arm 16: THE COMPOSITION DELTA, and its load-bearing arm is the FLAT COUNT — condition (7)
+    # arm 17: THE COMPOSITION DELTA, and its load-bearing arm is the FLAT COUNT — condition (7)
     # applied to the one failure this was built for. The keys below are the REAL ones from d54bd1a,
     # transcribed, so an arm failing points at a commit that happened rather than at a hypothesis.
     d54_before = ['Fontugne|2015|js/organs/prostate.js:204', 'Park|2010|js/organs/bladder.js:27',
@@ -1014,7 +1293,7 @@ def selftest():
         != record_key({'author': 'TCGA', 'year': '2015', 'ref': 'js/organs/prostate.js:231'}),
         "the key is the extractor's dedupe key: two records differing only in ref stay distinct "
         '(one field narrower and both records d54bd1a added collapse into one)')
-    # arm 17: the state file's own coherence, both refusals, shown able to FIRE.
+    # arm 18: the state file's own coherence, both refusals, shown able to FIRE.
     incoherent = os.path.join(tempfile.mkdtemp(), 'record_count.json')
     open(incoherent, 'w').write('{"counts": {"records": 3}, "record_keys": ["a|1|f:1"]}')
     inc_state, inc_problems = load_ratchet(incoherent)
@@ -1030,9 +1309,37 @@ def selftest():
         and coherent_state[RECORD_KEYS] == ['a|1|f:1', 'b|1|f:1'],
         'and loads a coherent one clean (the refusals are not unconditional)')
 
+    # arm 19: ASSERTION 5, the .gitignore prose shape, in both directions and on the parse the DONE
+    # line's count is taken from. Two sub-arms are load-bearing and both were checked by mutation
+    # rather than assumed. Deleting the predicate makes the FIRE sub-arm fail, which is what earns
+    # this arm a place. And the TAB case separates `len(split()) == 1` from the naive `no space
+    # anywhere` reading of the ruling's words: a tab-separated comment contains whitespace, so it is
+    # prose and must not fire — the space-only test would flag it. (The .strip() in the parse is NOT
+    # one of them: split() normalises whitespace itself, and removing the strip changed no arm.)
+    parsed_ignore = gitignore_comments('# .claude/refusals.log\n'
+                                       '# EXCEPT ONE, and it is an evidence archive\n'
+                                       '*.log\n'
+                                       '#  .DS_Store  \n'
+                                       '# macOS\tdroppings\n')
+    say([n for n, _c in parsed_ignore] == [1, 2, 4, 5],
+        'every comment line is parsed with its own line number, and pattern lines are not comments '
+        '(a count over patterns would not mean what it says)')
+    ignore_fires = gitignore_bare_path_comments(parsed_ignore)
+    say(len(ignore_fires) == 2
+        and any('.claude/refusals.log' in p for p in ignore_fires)
+        and any('.DS_Store' in p for p in ignore_fires),
+        'fires on a bare-path comment and on a whitespace-padded one (git strips trailing '
+        'whitespace, so the padded body is a pattern too), and not on the prose beside them')
+    say(not any('macOS' in p for p in ignore_fires),
+        'a comment whose words are separated by a TAB is prose, not a bare path (whitespace, not '
+        'the space character)')
+    say(not gitignore_bare_path_comments(gitignore_comments('#\n#   \n')),
+        'a hash with nothing after it is not a bare path (an empty comment names no file)')
+
     print('SELFTEST', 'PASS — fires on a missing member, a vacuous member, a failing member, '
           'an undeclared file, a stale declaration, a bad phase, a shrinking corpus, a corpus that '
-          'changed composition under a flat count, a malformed sidecar and an abandoned ratchet; '
+          'changed composition under a flat count, a malformed sidecar, an abandoned ratchet, a '
+          'prose mention posing as a DONE line and a bare-path comment in .gitignore; '
           'passes complete sets'
           if ok else 'FAIL — do not trust a green battery from this build')
     # 7-bis applies to the selftest as well (deploy_check.js's precedent): a selftest that never
@@ -1057,6 +1364,18 @@ def main(argv):
     problems += undeclared_files(tracked_claude_files(), declared_instrument_files(),
                                  NON_INSTRUMENTS, present_on_disk=present_claude_files())
     problems += unphased_instruments(INSTRUMENTS, PHASES)
+    # UNGUARDED open() ON PURPOSE. If .gitignore ever goes missing this raises and the battery prints
+    # no DONE line at all, which run_checked.sh already treats as a refusal. The alternative — treat an
+    # absent file as zero comments — would print "0/0 are prose" and pass, i.e. a green report over a
+    # file nobody read. Loud is the acceptable direction here; silent is the one this chain refuses.
+    with open(os.path.join(REPO_ROOT, '.gitignore'), encoding='utf-8') as handle:
+        gitignore_comment_lines = gitignore_comments(handle.read())
+    # The fires are kept, not just added to problems, because the DONE line has to report PROSE OVER
+    # TOTAL. Printing "none a bare path" from the count alone would be a verdict the clause never
+    # conditioned on: this line still prints on a failing run, so it would state "none" while a
+    # BARE-PATH COMMENT problem sat three lines above it.
+    gitignore_fires = gitignore_bare_path_comments(gitignore_comment_lines)
+    problems += gitignore_fires
 
     members = [(n, m, a) for n, p, m, a in INSTRUMENTS if p == phase]
     needs_records = any(RECORDS_ARTIFACT in a for _n, _m, a in members)
@@ -1190,6 +1509,8 @@ def main(argv):
     print(f'DONE battery: phase {phase} — {reported}/{declared_for_phase} declared instruments '
           f'ran and reported (marker printed, exit 0), {len(INSTRUMENTS)} declared in total, '
           f'{len(tracked_claude_files())} .claude/ files all declared, '
+          f'{len(gitignore_comment_lines) - len(gitignore_fires)}/'
+          f'{len(gitignore_comment_lines)} .gitignore comments are prose not bare paths, '
           f'{record_count if record_count is not None else "n/a"} citation records extracted '
           f'(ratchet {ratchet_clause}; {delta_clause}), '
           f'{len(sidecars)}/{len(reported_clean)} reporting members '
