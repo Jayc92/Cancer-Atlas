@@ -3609,12 +3609,57 @@ is the fourth item of `battery.py`'s sidecar-convention block.
   where missing a tracked one would be silent). Each carries the trigger
   as a comment **on its own glob line** — the line that would have to
   change — rather than only in a header nobody adding a ratchet reads.
-- **Not mechanised, and that is a held decision.** The property is
-  decidable from source text — a tracked `.claude/*.py` that both calls
-  `glob.glob` and declares a non-empty `ratchet` array — so a checker is
-  buildable and would have named all four sites **by inspection instead
-  of by waiting for one to fire**, which was the ruling's own point. Held
-  because a new battery member is the user's call.
+- **Not mechanised — considered and DECLINED on evidence** (user ruling,
+  2026-09-07), which is a different note from a held shape and is written
+  as one deliberately. A fifteenth battery member is buildable: the
+  property is decidable from source text — a tracked `.claude/*.py` that
+  both calls `glob.glob` and declares a non-empty `ratchet` array — so a
+  checker would have named all four sites **by inspection instead of by
+  waiting for one to fire**.
+  - **The reason is that the ratchet already *is* that guard**, in the
+    user's words: *"a glob-derived metric counts untracked files, so it
+    records a number higher than the tracked corpus supports. On a clean
+    checkout the count comes back **lower** — and a lower count is exactly
+    what the ratchet fires on. Loudly, with a named metric, one checkout
+    away."* The new member would catch **at authoring time** what the
+    existing mechanism already catches **at checkout time**. Earlier is
+    nicer; it is not load-bearing.
+  - **The other polarity was checked, not assumed** — "the guard already
+    fires" is a claim about both directions. A glob can see *fewer* files
+    than the index only when a **tracked** file is missing from the working
+    tree, and then the count drops in the author's own tree, so `SHRANK`
+    fires there rather than one clone later. The index readers that
+    replaced those globs behave the same way on the same input:
+    `internal_quote_check` and `pointer_check` skip a missing file via
+    `os.path.exists`, so its absence **lowers** the count instead of
+    crashing the run, and `extract_citations` does not guard its read at
+    all, so it raises — and a gate with no DONE line is a refusal. Loud in
+    every one of those shapes.
+  - **The cost of declining, declared**: detection is later, the
+    diagnosis is indirect (the message names a metric that `SHRANK`, not
+    "your floor came from an untracked file"), and it lands on whoever
+    clones next, who did nothing wrong. The written record is what buys
+    that down — it is the thing to find when `SHRANK` fires on a fresh
+    clone with a clean tree.
+  - **The bar is reusable, which is why the reasoning is recorded and not
+    just the verdict: "the existing guard already fires on this" is enough
+    to turn down a new instrument.** Same reasoning that stops the chain
+    at four layers, one level down. Contrast the two genuinely *held*
+    shapes so this is not misread as one: the sidecar reader (held until a
+    producer existed, then shipped) and `record_sync_check`'s marker token
+    (held, pending a change across every declared pair) both read *"not
+    yet"*. This one reads *"no"*.
+- **And where the fix is a specific line, the note goes on that line**
+  (user ruling, 2026-09-07; general form in `battery.py`'s block, which
+  is where an instrument or matcher author is told to read). One
+  designated location is necessary and **not sufficient**: the same-bug
+  pair in that block's family enumeration broke twice one day apart even
+  though the lesson had been written at the site that fixed it, because
+  the person editing a *different* file never opened that header. The
+  constraint is invisible where it binds. A comment on the exact line
+  that would have to change cannot be missed by the person changing it —
+  and with the checker above declined, **that comment is the mechanism**,
+  not a reminder that one exists.
 - **The procedural half, recorded where a commit boundary gets drawn**
   (`.claude/commit_checked.sh`, beside the sequencing rule): **gate the
   tree you're committing, not the tree you're working in.** Those diverge

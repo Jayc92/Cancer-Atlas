@@ -81,3 +81,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   NOT A MARKER: _number_restatement_rule <-> CLAUDE.md ['RESTATED IN PROSE WILL DRIFT'] — marker matches more than one place (not a marker), 2 occurrences in the target
   | DONE record_sync_check: 18/19 declared pairs present in both homes under a unique marker, 0 half-landed, 0 stale declarations, 1 non-unique markers
 ==== END REFUSAL
+==== REFUSAL 2026-09-07T22:52:40Z reason=exit=1 marker="DONE deploy_check:" tool=deploy_check.js
+     output 13 lines, last 12 below
+  |   ok   benign filter swallows the declared favicon 404
+  |   ok   benign filter does NOT swallow a different 404 (the list cannot widen silently)
+  |   ok   benign filter does NOT swallow the 4b2c8c5 parse error
+  |   ok   initialisation assertion fails on a blank page (1 failure(s) reported)
+  |   ok   reports all three initialisation failures on the 4b2c8c5 shape (loaded page, null state) — got 3
+  |   ok   reports no failures on a healthy state (the gate is not stuck failing)
+  |   ok   excuses the console echo when every HTTP error observed was declared benign
+  |   ok   keeps the console echo as a finding when an UNDECLARED 404 is also present
+  | SELFTEST PASS — all three layers shown able to fail: stale bytes, a widened benign list, a dead page
+  | DONE deploy_check_selftest: 9 arms run, 0 failures
+  |   NOT PUSHED: HEAD 74277c5 != origin/main 838746e — nothing below can be a check on HEAD
+  | DONE deploy_check: 27/27 assets byte-matched to HEAD 74277c5, 31 hotspots live, 0 unexplained page errors (2 declared-benign), 1 problems
+==== END REFUSAL

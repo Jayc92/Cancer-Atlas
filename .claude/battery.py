@@ -136,6 +136,27 @@
 # author of a `grep -c` or a `startswith` into this file at all, which is the weaker half and is why
 # the label names matchers explicitly rather than trusting the same mechanism to cover both.
 #
+# AND WHERE THE FIX IS A SPECIFIC LINE, THE NOTE GOES ON THAT LINE (user ruling, 2026-09-07 — the
+# refinement that makes the weaker half above workable, and the strongest single lesson in this block
+# because it is the one that survives having no checker behind it).
+#
+# One designated location is NECESSARY AND NOT SUFFICIENT. The pair at (1) and (2) below is the same
+# bug one day apart, and the lesson from the earlier one WAS written down, at the site, in the file
+# that had just fixed it — and the later one broke identically anyway, because the person editing a
+# different file never opened that header. A designated block has the same weakness whenever the edit
+# that would break the rule happens somewhere else: the constraint is invisible at the site where it
+# binds. A COMMENT ON THE EXACT LINE THAT WOULD HAVE TO CHANGE CANNOT BE MISSED BY THE PERSON CHANGING
+# IT — that is its whole advantage, and it is an advantage no amount of good placement in a header buys.
+#
+# SO THE RULE IS BOTH, WITH DIFFERENT JOBS: the REASONING lives here once, where an author is told to
+# read it; the TRIGGER lives on the line, naming the condition under which that line must change and
+# pointing back here. Applied at the three still-globbing defect counters in the fourth item of block A,
+# whose trigger comments sit on their glob lines rather than only in this file.
+#
+# THIS MATTERS MOST WHERE A CHECKER WAS DECLINED, and the fourth item of block A is exactly that case:
+# with no fifteenth battery member watching for the defect, the comment on the line IS the mechanism at
+# authoring time. A note that is merely well filed would leave nothing there at all.
+#
 # AND ONE HOME, NOT TWO. A copy of this block elsewhere would be a dual-home record, which by
 # record_sync_check.py's own discipline wants a SYNC pair and a marker occurring exactly once —
 # i.e. it would be governed by rule C, which it contains. A single home sidesteps that recursion
@@ -224,13 +245,36 @@
 #       FEATURE: it fails loudly on a file that will not ship, where missing a tracked one would be
 #       silent. Each carries the trigger as a comment on its own glob line, which is the line that
 #       would have to change, rather than only here where nobody adding a ratchet would look.
-#       NOT MECHANISED, AND THAT IS A HELD DECISION, not an oversight. The property is decidable from
-#       SOURCE TEXT — a tracked .claude/*.py that both calls glob.glob and declares a non-empty
-#       `ratchet` array — so a checker is buildable, and it would have named all four sites by
-#       inspection instead of waiting for one to fire, which is the ruling's own point. Held because a
-#       new battery member is the user's call and the ruling made inspection the standard; recorded
-#       here so a session that finds this finds a plan rather than a hole, exactly as the sidecar
-#       reader was held above until a producer existed.
+#       NOT MECHANISED — CONSIDERED AND DECLINED ON EVIDENCE (user ruling, 2026-09-07), WHICH IS A
+#       DIFFERENT NOTE FROM A HELD SHAPE AND IS WRITTEN AS ONE ON PURPOSE. A fifteenth member was
+#       proposed and is buildable: the property is decidable from SOURCE TEXT — a tracked .claude/*.py
+#       that both calls glob.glob and declares a non-empty `ratchet` array — so a checker would have
+#       named all four sites by inspection instead of waiting for one to fire.
+#       THE REASON IT IS DECLINED IS THAT THE RATCHET ALREADY IS THAT GUARD, and the user's walk-through
+#       is the whole argument: "a glob-derived metric counts untracked files, so it records a number
+#       higher than the tracked corpus supports. On a clean checkout the count comes back LOWER — and a
+#       lower count is exactly what the ratchet fires on. Loudly, with a named metric, one checkout
+#       away." So the fifteenth member would catch AT AUTHORING TIME something the existing mechanism
+#       already catches AT CHECKOUT TIME. Earlier is nicer; it is not load-bearing.
+#       THE OTHER POLARITY WAS CHECKED RATHER THAN ASSUMED, because "the guard already fires" is a claim
+#       about both directions. A glob can see FEWER files than the index only when a TRACKED file is
+#       missing from the working tree — and then the count drops in the AUTHOR'S OWN tree, so SHRANK
+#       fires there rather than one clone later. The index readers that replaced those globs behave the
+#       same way for the same input: internal_quote_check and pointer_check skip a missing file via
+#       os.path.exists, so its absence LOWERS the count instead of crashing the run, and
+#       extract_citations does not guard its read at all, so it raises and the wrapper turns a gate with
+#       no DONE line into a refusal. Loud in every one of those shapes, which is what this direction had
+#       to be for the decline to hold.
+#       THE COST OF DECLINING, DECLARED: detection is later, and the DIAGNOSIS IS INDIRECT — the message
+#       says a named metric SHRANK, not "your floor came from an untracked file" — and it lands on
+#       whoever clones next, who did nothing wrong. This paragraph is what buys that down: it is the
+#       thing to find when SHRANK fires on a fresh clone with a clean tree.
+#       AND THE BAR IS REUSABLE, which is why the decline is recorded as reasoning and not as a verdict:
+#       "THE EXISTING GUARD ALREADY FIRES ON THIS" is enough to turn down a new instrument. That is the
+#       same reasoning that stops this chain at four layers, one level down. Contrast the two genuinely
+#       HELD shapes so a later session does not mistake this for one: the sidecar reader above (held
+#       until a producer existed, then shipped) and record_sync_check.py's marker token (held, waiting
+#       on a change across every declared pair) both read "not yet". This one reads "no".
 #
 # --------------------------------------------------------------------------------------------------
 # B. THE SCRATCH PATH

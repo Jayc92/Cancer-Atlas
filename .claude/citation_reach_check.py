@@ -425,6 +425,9 @@ def main():
     # Reasoning and the general rule: battery.py's sidecar-convention block. THE TRIGGER, here because
     # this is the line that would have to change: adding anything to that array means switching this
     # default to extract_citations.corpus_paths() in the same edit.
+    # AND NOTHING CHECKS THAT FOR YOU. A battery member for it was proposed and DECLINED on evidence
+    # (2026-09-07, same item) because the ratchet itself fires one checkout later. So this comment is
+    # the mechanism at authoring time, not a reminder that one exists.
     paths = [a for a in sys.argv[1:] if not a.startswith('--')] or sorted(glob.glob('js/organs/*.js'))
     spans = unreached_spans(paths)
     problems, gated, counts = evaluate(spans)
