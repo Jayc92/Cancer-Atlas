@@ -15,23 +15,47 @@
 # So: "named" is not the same as "reachable", and the general rule is CHECK THE RECORD APPEARED,
 # NEVER ASSUME THE TEXT IS THE RECORD. This file is that check, mechanised.
 #
-# WHAT IT GATES, AND WHAT IT ONLY REPORTS — the split is the load-bearing decision here.
+# WHAT IT GATES, AND WHAT IT ONLY REPORTS — the split is the load-bearing decision here. There are
+# TWO categories, not three. An earlier draft of this header described a third, "NOT REPORTED",
+# covering prose-year and semicolon-shadow — and the code never had it: main() has always printed
+# every kind the classifier produced. A header category with no implementation is worse than an
+# undocumented one, because a reader checks the header and stops.
 #   GATED: 'etal-malformed-head' and 'etal-out-of-range'. A span containing "et al." is
 #     unambiguously a citation; if it produced no record, something is wrong and a human must say
 #     what. Each head is DECLARED below with a reason, on citation_crosscheck's declared-and-
 #     tolerated pattern; an UNDECLARED head fails. Keys are head TEXT, not locations, because the
 #     head SHAPE is the defect and a line number churns on every edit above it.
-#   REPORTED ONLY: 'bare-name-year' (measured: 80 spans, 56 distinct heads). This is the
-#     "(Bolton 2022)" style — no "et al.", no "&", no "(Surname, Journal," — which matches none of
-#     the extractor's three head patterns and dominates ovary.js and colon.js. It is NOT declared
-#     span by span and NOT gated, for one reason: I have not classified 56 heads, and declaring
-#     them would be fake precision wearing the shape of rigour. Closing that class means adding a
-#     fourth head pattern to the extractor, which is a CHANGE IN REACH — per aafbe04's rule it
-#     must be declared and measured in its own commit, not slipped in beside a reporting change.
-#     Held for ruling; the number is printed on every run so it cannot go quiet in the meantime.
-#   NOT REPORTED: 'prose-year' (a year in ordinary prose — a genuine non-citation) and
-#     'semicolon-shadow' (by design: the head belongs to a previous citation). Both are counted in
-#     the sidecar so the classification's totals add up and nothing hides in a residual bucket.
+#   REPORTED: every other kind, printed with its count on every run. Reported does not mean
+#     harmless — it means the population is not yet classified well enough for a human declaration
+#     to be anything but fake precision.
+#
+# 'bare-name-year' IS DISCHARGED (2026-09-06). It was the held item this header used to describe at
+# length: the "(Bolton 2022)" style, 80 spans and 56 distinct heads at HEAD fe8d627, matching none
+# of the extractor's three head patterns, and supplying user-facing OCCC anchors. The extractor now
+# carries a fourth head pattern, declared and measured in its own commit per aafbe04's rule. What
+# the discharge actually taught is recorded in extract_citations' header and is NOT the reach
+# expansion: closing the class removed ten pre-existing FALSE records, four of them
+# misattributions where the old nearest-head rule reached past a bare-name head and filed a year
+# under a different paper's author. THIS CHECK IS BLIND TO THAT FAILURE MODE BY CONSTRUCTION. It
+# counts years that produced NO record; a year that produced the WRONG record is not an absence and
+# will never appear here. Do not read a clean run as "every year is filed correctly".
+#
+# WHY EVERY KIND IS LISTED IN ALL_KINDS BELOW RATHER THAN TAKEN FROM THE COUNTER. A Counter omits
+# what has count zero, so a kind derived from it VANISHES the moment its count reaches zero — and a
+# metric that disappears on reaching zero cannot be told apart from a metric nobody computed. That
+# is the same absence-versus-decrease confusion this whole instrument exists for, reappearing one
+# level up in its own reporting. Every known kind is therefore enumerated and its zero PRINTED as a
+# zero; a kind the classifier emits that is NOT enumerated is a PROBLEM, because an unlisted kind
+# is a residual bucket that arrived without anyone deciding whether it should be gated.
+#
+# THE "NOTHING HIDES IN A RESIDUAL BUCKET" PROMISE WAS UNCHECKED, AND BROKE THE FIRST TIME THE
+# CLASSIFICATION CHANGED. This header claimed the sidecar's counts add up, and the metrics were a
+# hand-written list that happened to be complete — at HEAD fe8d627 the five kind metrics did sum to
+# unreached_total, so every run looked like evidence for the promise. Then the fourth head pattern
+# added three kinds, no hand-written key existed for any of them, and the per-kind numbers stopped
+# summing while nothing said so. The lesson is not "the list was wrong"; it is that a coincidence
+# and a guarantee are indistinguishable from the outside. sidecar_metrics() is now derived from
+# ALL_KINDS and a selftest arm asserts the sum, so the claim fails loudly instead of quietly ageing.
 #
 # STANDING CONDITION (7): --selftest proves this checker can FIRE. Arm 3 feeds it an undeclared
 # head and requires a non-zero exit; a gate that has only ever been seen to pass is not known to
@@ -52,9 +76,75 @@ from extract_citations import unreached_spans
 
 GATED_KINDS = ('etal-malformed-head', 'etal-out-of-range')
 
+# Every kind classify_absence can return. Enumerated, not derived from the run's own Counter — see
+# the header: a derived key vanishes when its count hits zero, which is the one thing this
+# instrument exists to notice. GATED_KINDS must be a subset (asserted in the selftest), and a kind
+# arriving from the extractor that is missing here fails the battery rather than being counted
+# silently.
+ALL_KINDS = (
+    'etal-malformed-head',     # GATED    "et al." present, head unmatchable (initial, non-ASCII)
+    'etal-out-of-range',       # GATED    head sits beyond the 130-char lookback. KEY UNRELIABLE —
+                               #          see the long note in extract_citations.classify_absence
+    'bare-name-year',          # reported "Surname 2022" — discharged by the fourth head pattern,
+                               #          kept because a missing space ("Smith2022") still lands here
+    'bare-name-comma-year',    # reported "..., Surname, 2023" — true author sits further left
+    'journal-adjacent-year',   # reported a journal word abuts the year; evidence of a citation
+    'data-span-year',          # reported cohort period or ISO datestamp — EXPLAINED, not a citation
+    'prose-year',              # reported a year in ordinary prose, no citation-shaped evidence
+    'semicolon-shadow',        # reported by design: the head belongs to a previous citation
+)
+
 # Keyed '<kind>:<head text>'. Every reason must survive being read by someone who did not write
 # it, so the selftest holds each to >80 chars — the same bar citation_crosscheck's
 # DECLARED_UNMAPPABLE reasons are held to, for the same reason: a one-word reason is a shrug.
+#
+# A DECLARATION NAMES CHECKABLE EVIDENCE, NOT A JUDGEMENT (rule adopted 2026-09-06, on ruling, after
+# three declarations in this very dict rotted). The >80-char bar was the only test a reason had to
+# pass, and it measures LENGTH, not content: all three wrong entries cleared it comfortably while
+# being wrong about their own subject. The distinction that separates a reason which decays from one
+# which does not is whether it can be RE-RUN or only RE-READ. Compare, in this chain:
+#   RE-RUNNABLE  citation_crosscheck's 'esearch [doi] returns 0 hits (the unqualified search returns
+#                6 unrelated tokenised hits)'. Anyone can issue that query and compare.
+#   RE-READABLE  this dict's former 'kept as its own entry ... so that the count is of real
+#                citations'. There is nothing to check. It asserts a conclusion and the reader's only
+#                option is to believe it — which is what six months of nobody noticing looks like.
+# AND A NUMBER IS NOT AUTOMATICALLY EVIDENCE, which is the trap that actually caught me. The deleted
+# entries said 'the author sits 131 characters before its year and the extractor looks back 130'.
+# That is a measurement, it is arithmetically CORRECT, and it is worthless: it measured the distance
+# to a head that does not own the year. A figure only counts as evidence when a reader can regenerate
+# it AND the thing it measures is the thing in dispute.
+#
+# THE CHEAPEST SUFFICIENT FORM IS TO QUOTE THE SPAN. Observed across all six entries here, n=6 so
+# this is a pattern and not a law: the two that quote their source text verbatim (Riihimäki, Gundem
+# G) are the two that survive audit most cleanly, and NONE of the three that were wrong quoted
+# anything at all. Had the deleted Gao entry quoted its span — "24,822 TNBC patients (2010–2015)" —
+# the error would have been legible on the page without measuring anything. This is also the
+# MECHANISABLE form of the rule (assert the reason contains a verbatim substring of the span it
+# declares) and it is deliberately NOT built: it would add a new substring matcher to a chain whose
+# last one is already flagged, and it is satisfiable by quoting a single word, so it would enforce
+# the letter of the rule and not the rule. Held, and named so it is not re-invented from scratch.
+#
+# AUDIT OF ALL THREE DECLARATION LISTS AGAINST THAT TEST, 2026-09-06 — recorded because an audited
+# entry and an unexamined one look identical, the same reason panel.js's exclusivity sweep records
+# its cleared pairs. (The order to audit said "the fifteen etal-malformed-head keys"; there are
+# fifteen SPANS over FIVE keys, eleven of the spans being Riihimäki alone.)
+#   FIVE etal-malformed-head KEYS, 15 spans — PASS. Each names a file:line, the paper, and a corpus
+#     count. Every count RE-MEASURED against the current 490-record set today and every one still
+#     exact: Riihimäki 0 records non-ASCII / 5 ASCII, Conejero Merchán 0, eleven other-Li records,
+#     exactly one same-surname Wang record at colon.js:210, five Cooper records in prostate.js.
+#   citation_crosscheck.DECLARED_UNMAPPABLE, one id — PASS, and it is the entry this rule was
+#     derived from. It also does the harder thing: it separates "the claim is unchecked" from "this
+#     instrument cannot reach it". One clause in it is NOT re-runnable — that ccf batch 1 read the
+#     paper at the publisher — and that is the CORRECT residual, not a lapse: a human read can only
+#     ever be dated and attributed. Saying which part of a reason is re-runnable and which is a
+#     dated human act is itself part of the evidence.
+#   deploy_check.js BENIGN, one entry — PASS. "no favicon in the repo (pre-existing, known)" is a
+#     statement about the tree, and it was checked, not assumed: `git ls-files | grep -i favicon`
+#     returns nothing. Its arm 2 already pins the list against widening in both directions.
+# THE COUNTS ABOVE ARE MACHINE-DERIVABLE NUMBERS RESTATED IN PROSE, which this project's own rule
+# says will drift. They are kept because they ARE the evidence, so the predicate that regenerates
+# them is named instead of hidden: run extract_citations.extract() over js/organs/*.js and count
+# records by the 'author' field. A drifted number is then self-correcting rather than merely stale.
 DECLARED_UNREACHED = {
     'etal-malformed-head:Riihimäki':
         'NON-ASCII SURNAME, and the corpus is right while the extractor is wrong — the fix is not '
@@ -81,7 +171,9 @@ DECLARED_UNREACHED = {
         'INITIAL IN HEAD, PubMed style — the exact shape that started this whole check ("Li Z et '
         'al." in liver.js). One span, colon.js:225, Front Oncol 2021; zero records for that '
         'paper, and eleven records exist for OTHER Li papers, so a same-surname sanity check '
-        'would have looked satisfied. Fixable at the site by dropping the initial, as liver.js '
+        'would have looked satisfied — and two of the eleven are Li|2021 (pancreas.js:230 and '
+        ':245, a different paper), so a same-surname-AND-YEAR check would have looked satisfied '
+        'too. Fixable at the site by dropping the initial, as liver.js '
         'was, and that is the right fix here because nothing in this comment depends on the '
         'initial being present. Not done in this commit: this commit builds the detector, and '
         'acting on its findings in the same breath would leave the detector unproven on the '
@@ -101,33 +193,37 @@ DECLARED_UNREACHED = {
         'extractor. The paper itself is not lost: Cooper has five records elsewhere in the same '
         'file. TOLERATED PERMANENTLY, not held — this span should never produce a record.',
     'etal-out-of-range:Louis':
-        'WELL-FORMED HEAD, MERELY DISTANT: the author sits 131 characters before its year and the '
-        'extractor looks back 130. One character. brain.js:209, the WHO CNS classification '
-        'reference. Recorded rather than fixed because moving the lookback is a change in reach '
-        'like any other, and a 130-char window is what makes the "nearest head wins" rule safe '
-        'against swallowing a neighbouring citation\'s author — lengthening it trades one silent '
-        'failure for another and needs measuring, not guessing.',
-    'etal-out-of-range:Gao':
-        'WELL-FORMED HEAD, MERELY DISTANT: 132 characters back, breast.js:148. Same cause and '
-        'same held fix as Louis above. Kept as its own entry rather than merged into a single '
-        '"out of range" tolerance so that the count is of real citations and a new one shows up '
-        'as a new line rather than incrementing a number nobody reads.',
-    'etal-out-of-range:Curtin':
-        'WELL-FORMED HEAD, MERELY DISTANT: 134 characters back, skin.js:306. Same cause and held '
-        'fix as Louis and Gao. This one is the least costly of the three — Curtin has eight '
-        'records elsewhere in skin.js, so the paper is well represented even though this '
-        'particular mention is not indexed.',
+        'NOT A CITATION, AND THE KEY NAMES THE WRONG PAPER — this declaration is a tolerance for a '
+        'MISCLASSIFICATION, not for an unreachable citation, and saying so is the only honest form '
+        'it can take. Its previous text read "WELL-FORMED HEAD, MERELY DISTANT: the author sits '
+        '131 characters before its year and the extractor looks back 130. One character." The '
+        'arithmetic was right and the subject was wrong. brain.js:209 carries THREE occurrences of '
+        '2021: the ccf\'s real "(Louis et al., Neuro-Oncology, 2021)" is reached at 24 characters '
+        'and has a record; "under the 2021 WHO reclassification" has no head at all; and the gated '
+        'one is "the 2021 WHO update" inside the note prose, whose 130-char lookback happens to '
+        'graze the real citation\'s "et al." at 125 characters. Nothing is being lost here — the '
+        'WHO CNS reference this entry claimed was unindexed is indexed. THE HELD REMEDY IS '
+        'WITHDRAWN: lengthening the lookback would make a prose sentence yield a duplicate Louis '
+        'record and would buy no citation at all. The real defect is that this KIND cannot tell '
+        'whether the "et al." it anchored on belongs to the year it is reporting, and all three of '
+        'its instances at HEAD fe8d627 were wrong in three different ways; the measured scope and '
+        'the specified fix (a citation-boundary test, needing a new absence kind to fall into) are '
+        'recorded at the branch that produces this kind, in extract_citations.classify_absence, '
+        'rather than duplicated here. It stays DECLARED because the span still exists and is still '
+        'gated: deleting the entry would fail the battery as UNDECLARED, so the choice is not '
+        'whether to tolerate it but whether the tolerance tells the truth. Held for that commit.',
 }
 
 
 def selftest():
-    ok = True
+    ok, ran = True, 0
 
     def arm(label, cond, detail=''):
-        nonlocal ok
+        nonlocal ok, ran
+        ran += 1
         if not cond:
             ok = False
-            print(f'SELFTEST FAIL: {label} {detail}')
+            print(f'SELFTEST FAIL: {label} {detail}', file=sys.stderr)
         return cond
 
     # arm 1: every declared reason is a real explanation, not a shrug
@@ -152,22 +248,69 @@ def selftest():
     quiet, _, _ = evaluate(fake_declared)
     arm('a DECLARED head is not a problem', not quiet, str(quiet))
 
-    # arm 4: an ungated kind never becomes a problem, however many there are — this is the
-    # reported-not-gated split, asserted rather than trusted to the prose above.
-    bulk = [{'file': 'x.js', 'line': i, 'year': '2020', 'kind': 'bare-name-year', 'key': f'H{i}'}
-            for i in range(50)]
-    none_fired, _, _ = evaluate(bulk)
-    arm('bare-name-year is reported, never gated', not none_fired, str(none_fired[:3]))
+    # arm 4: EVERY ungated kind never becomes a problem, however many there are — the
+    # reported-not-gated split, asserted rather than trusted to the prose above. Iterating
+    # ALL_KINDS rather than naming one kind means a kind added later is covered without anyone
+    # remembering to extend this arm.
+    for kind in ALL_KINDS:
+        if kind in GATED_KINDS:
+            continue
+        bulk = [{'file': 'x.js', 'line': i, 'year': '2020', 'kind': kind, 'key': f'H{i}'}
+                for i in range(50)]
+        none_fired, _, _ = evaluate(bulk)
+        arm(f'{kind} is reported, never gated', not none_fired, str(none_fired[:3]))
 
     # arm 5: the STALE direction fires too, and only on the missing key. A tolerance list that
-    # cannot go stale grows monotonically until it tolerates the whole corpus.
-    all_but_one = {k: [] for k in DECLARED_UNREACHED if k != 'etal-out-of-range:Gao'}
-    stale = stale_declarations(all_but_one)
-    arm('a declaration with no remaining span is STALE', len(stale) == 1 and 'Gao' in stale[0],
-        str(stale))
+    # cannot go stale grows monotonically until it tolerates the whole corpus. The victim is chosen
+    # programmatically: this arm used to name a key by hand, and that key was deleted the first
+    # time a declaration actually went stale — leaving the arm testing nothing it was written for.
+    victim = sorted(DECLARED_UNREACHED)[0]
+    stale = stale_declarations({k: [] for k in DECLARED_UNREACHED if k != victim})
+    arm('a declaration with no remaining span is STALE',
+        len(stale) == 1 and victim in stale[0], f'victim={victim} got={stale}')
     arm('a fully-populated declaration set is not stale',
         not stale_declarations({k: [] for k in DECLARED_UNREACHED}))
 
+    # arm 6: GATED_KINDS is a subset of ALL_KINDS. A gated kind missing from the enumeration would
+    # be gated but never printed and never counted — protected and invisible at the same time.
+    arm('GATED_KINDS is a subset of ALL_KINDS',
+        not [k for k in GATED_KINDS if k not in ALL_KINDS],
+        str([k for k in GATED_KINDS if k not in ALL_KINDS]))
+
+    # arm 7: THE PER-KIND METRICS SUM TO THE TOTAL. This is the header's "nothing hides in a
+    # residual bucket" claim, which was prose and was false. Distinct counts per kind so a
+    # transposition cannot pass by coincidence.
+    spans = [{'file': 'x.js', 'line': 1, 'year': '2020', 'kind': k, 'key': 'H'}
+             for i, k in enumerate(ALL_KINDS) for _ in range(i + 1)]
+    counts = Counter(s['kind'] for s in spans)
+    metrics = sidecar_metrics(spans, counts, [])
+    per_kind = sum(v for k, v in metrics.items() if k.startswith('kind_'))
+    arm('per-kind metrics sum to unreached_total', per_kind == metrics['unreached_total'],
+        f'{per_kind} != {metrics["unreached_total"]}')
+    arm('no unlisted spans when every kind is known', metrics['kind_unlisted'] == 0,
+        str(metrics['kind_unlisted']))
+    arm('every ALL_KINDS member has its own metric',
+        all('kind_' + k.replace('-', '_') in metrics for k in ALL_KINDS))
+
+    # arm 8: an UNKNOWN kind is a problem AND is carried in kind_unlisted, so the sum invariant
+    # holds even while the enumeration is incomplete. Both directions matter: a bucket that keeps
+    # the arithmetic honest but stays silent would let an unclassified kind live here forever.
+    rogue = spans + [{'file': 'x.js', 'line': 9, 'year': '2020', 'kind': 'brand-new-kind',
+                      'key': 'H'}] * 3
+    rcounts = Counter(s['kind'] for s in rogue)
+    rmetrics = sidecar_metrics(rogue, rcounts, [])
+    arm('an unknown kind is a PROBLEM', len(unknown_kinds(rcounts)) == 1, str(unknown_kinds(rcounts)))
+    arm('an unknown kind lands in kind_unlisted', rmetrics['kind_unlisted'] == 3,
+        str(rmetrics['kind_unlisted']))
+    rper = sum(v for k, v in rmetrics.items() if k.startswith('kind_'))
+    arm('the sum invariant survives an unknown kind', rper == rmetrics['unreached_total'],
+        f'{rper} != {rmetrics["unreached_total"]}')
+
+    # The COUNT is printed, not just the verdict (condition 7-bis): a pass line saying only "ok"
+    # cannot tell a full run from a run whose arms were deleted, and this selftest used to print
+    # nothing at all on success — silence standing in for a report of zero failures.
+    if ok:
+        print(f'selftest: {ran}/{ran} reach-check arms passed')
     return ok
 
 
@@ -202,43 +345,69 @@ def stale_declarations(gated):
             for key in sorted(DECLARED_UNREACHED) if key not in gated]
 
 
+def unknown_kinds(counts):
+    """A kind the extractor emits that ALL_KINDS does not list. Its own PROBLEM rather than a
+    silent count: an unlisted kind is a residual bucket that arrived without anyone deciding
+    whether it should be gated, and it would disappear from the sidecar the moment its count
+    reached zero with nothing left to show it had ever been there."""
+    return [f'UNKNOWN absence kind {k!r} ({counts[k]} spans): the extractor classified spans into a '
+            f'kind this checker does not list, so nobody has decided whether it should be GATED. '
+            f'Add it to ALL_KINDS with a one-line description of what the shape is.'
+            for k in sorted(counts) if k not in ALL_KINDS]
+
+
+def sidecar_metrics(spans, counts, problems):
+    """Per-kind counts taken from ALL_KINDS, never from the Counter's own keys, plus the totals.
+    A selftest arm asserts the per-kind values sum to unreached_total — the claim this file's
+    header used to make in prose and not check, while three kinds had no metric at all."""
+    metrics = {'kind_' + k.replace('-', '_'): counts.get(k, 0) for k in ALL_KINDS}
+    # keeps sum(kind_*) == unreached_total UNCONDITIONALLY. Without it, a kind ALL_KINDS does not
+    # list would quietly make the totals stop adding up — the exact failure the sum arm exists to
+    # catch, hiding inside the sum arm's own blind spot. It is a PROBLEM as well (unknown_kinds),
+    # so it cannot sit here being nonzero and merely informative.
+    metrics['kind_unlisted'] = len(spans) - sum(metrics.values())
+    metrics['unreached_total'] = len(spans)
+    metrics['gated_total'] = sum(counts.get(k, 0) for k in GATED_KINDS)
+    metrics['declared'] = len(DECLARED_UNREACHED)
+    metrics['problems'] = len(problems)
+    return metrics
+
+
 def main():
     paths = [a for a in sys.argv[1:] if not a.startswith('--')] or sorted(glob.glob('js/organs/*.js'))
     spans = unreached_spans(paths)
     problems, gated, counts = evaluate(spans)
     problems += stale_declarations(gated)
+    problems += unknown_kinds(counts)
 
     print(f'citation_reach_check: {len(paths)} files, {len(spans)} years produced no record')
-    for kind in sorted(counts):
+    # ALL_KINDS, not sorted(counts): a kind at zero must PRINT its zero. Iterating the Counter
+    # would drop it from the report entirely, which reads identically to never having checked.
+    for kind in ALL_KINDS:
         mark = 'GATED   ' if kind in GATED_KINDS else 'reported'
-        print(f'  {mark} {kind:<22} {counts[kind]:>4} spans')
+        print(f'  {mark} {kind:<22} {counts.get(kind, 0):>4} spans')
     for key, locs in sorted(gated.items()):
         print(f'    declared {key!r} x{len(locs)}: {", ".join(locs[:8])}')
-    bare = [s for s in spans if s['kind'] == 'bare-name-year']
-    bare_heads = sorted({s['key'] for s in bare})
-    print(f'  bare-name-year heads ({len(bare_heads)} distinct, NOT gated — held for ruling): '
-          f'{", ".join(bare_heads[:12])}{" ..." if len(bare_heads) > 12 else ""}')
+    # The shapes still held for their own commit, printed with distinct head counts on every run
+    # for the reason the discharged bare-name-year line was: a held item that stops being printed
+    # is a held item that stops being remembered.
+    for kind in ('bare-name-comma-year', 'journal-adjacent-year'):
+        heads = sorted({s['key'] for s in spans if s['kind'] == kind and s['key']})
+        print(f'  {kind} heads ({len(heads)} distinct, NOT gated — held): '
+              f'{", ".join(heads[:12])}{" ..." if len(heads) > 12 else ""}')
     for p in problems:
         print(f'  PROBLEM: {p}')
 
     print('SIDECAR ' + json.dumps({
         'name': 'citation_reach_check',
-        'metrics': {'unreached_total': len(spans),
-                    'etal_malformed': counts.get('etal-malformed-head', 0),
-                    'etal_out_of_range': counts.get('etal-out-of-range', 0),
-                    'bare_name_year': counts.get('bare-name-year', 0),
-                    'bare_name_year_heads': len(bare_heads),
-                    'semicolon_shadow': counts.get('semicolon-shadow', 0),
-                    'prose_year': counts.get('prose-year', 0),
-                    'declared': len(DECLARED_UNREACHED),
-                    'problems': len(problems)},
+        'metrics': sidecar_metrics(spans, counts, problems),
         # empty ON PURPOSE: every metric above is a defect count, and ratcheting a defect count
         # would fail the battery for fixing a defect. Empty says the producer considered it.
         'ratchet': [],
     }, sort_keys=True))
     # DONE last (condition 7-bis), after the sidecar and every listing above
     print(f'DONE citation_reach_check: {len(spans)} unreached spans, '
-          f'{counts.get("etal-malformed-head", 0) + counts.get("etal-out-of-range", 0)} gated '
+          f'{sum(counts.get(k, 0) for k in GATED_KINDS)} gated '
           f'({len(DECLARED_UNREACHED)} declared), {len(problems)} problems')
     if problems:
         sys.exit(3)

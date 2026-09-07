@@ -58,6 +58,9 @@ import json, os, re, sys, tempfile, time, unicodedata, urllib.parse, urllib.requ
 # same reason: every entry is a thing this gate has been told not to see, so the list stays short and
 # each entry carries WHY. An id here is a COVERAGE LIMIT of this instrument, which is a narrower
 # statement than "unchecked", and conflating the two is how a coverage hole starts reading as a pass.
+# A DECLARATION NAMES CHECKABLE EVIDENCE, NOT A JUDGEMENT — the rule binding every declaration list
+# in this chain, stated in full (with the audit that found this entry passing it) at
+# citation_reach_check.DECLARED_UNREACHED. The esearch hit counts below are why: they can be re-run.
 DECLARED_UNMAPPABLE = {
     'doi:10.1002/prm2.12107':
         'Gao et al., Precision Medical Sciences (Wiley), 2023 — js/organs/breast.js:147. The journal '

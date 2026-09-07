@@ -39,6 +39,11 @@ const ENTRY = 'cancer-atlas.html';
 // DECLARED BENIGN, exhaustively and by exact shape. The favicon 404 is pre-existing and known:
 // there is no favicon in the repo. Anything else is a finding. This list is the gate's honesty
 // surface — every entry is a thing it has been told not to see, so it stays this short.
+// A DECLARATION NAMES CHECKABLE EVIDENCE, NOT A JUDGEMENT — the rule binding every declaration list
+// in this chain, stated in full at citation_reach_check.DECLARED_UNREACHED, where three declarations
+// that stated conclusions instead had to be deleted. This list passed its 2026-09-06 audit: "no
+// favicon in the repo" is a fact about the tree and was checked (`git ls-files | grep -i favicon`
+// returns nothing), not assumed, and arm 2 below pins the list against widening in both directions.
 const BENIGN = [
   { why: 'no favicon in the repo (pre-existing, known)', test: (kind, detail) => /favicon\.ico(\?|$)/.test(detail) },
 ];
