@@ -88,6 +88,17 @@ REFUSAL_TAIL=12
 
 log_refusal() {
   # $1 reason. Uses $tmp, $marker and $tool from the caller's scope.
+  #
+  # AN APPEND MUST BEGIN AT LINE START, and this guard is here because the first REAL entry this file
+  # ever wrote did not. The seeded header ended without a trailing newline, so the entry ran onto the
+  # header's last sentence — and `grep -c '^==== REFUSAL '`, the only thing that counts entries and the
+  # assertion arms 4-6 below are built on, MATCHED NOTHING. The log held one refusal and reported zero:
+  # a zero-report over present data, which is the failure class this whole chain exists to refuse.
+  # Fixed at the WRITER rather than only in the file, because the header is hand-maintained prose and
+  # any future edit could drop the terminator again; the seed is one instance, this is the class.
+  if [ -s "$REFUSAL_LOG" ] && [ -n "$(tail -c 1 "$REFUSAL_LOG")" ]; then
+    printf '\n' >> "$REFUSAL_LOG"
+  fi
   total="$(wc -l < "$tmp" | tr -d ' ')"
   {
     printf '==== REFUSAL %s reason=%s marker="%s" tool=%s\n' \
@@ -152,10 +163,22 @@ if [ "${1:-}" = "--selftest" ]; then
   else
     echo "  FAIL the non-zero exit entry is missing its code or its output tail"; ok=0
   fi
+  # arm 7: THE RUN-ON, on the exact shape that really happened. A log whose last byte is not a newline
+  # must still receive an entry that starts at line start — otherwise `^==== REFUSAL ` misses it and the
+  # count reads zero over present data. Condition (7): the arm is written to FAIL without the guard in
+  # log_refusal, which is how it earns its place rather than confirming the fix by restating it.
+  printf 'header prose with no trailing newline.' > "$RUN_CHECKED_REFUSAL_LOG"
+  "$self" "DONE test:" sh -c 'echo "DONE test: 1 thing"; exit 5' >/dev/null 2>&1
+  if [ "$(grep -c '^==== REFUSAL ' "$RUN_CHECKED_REFUSAL_LOG" 2>/dev/null)" = "1" ] \
+     && grep -q '^header prose with no trailing newline\.$' "$RUN_CHECKED_REFUSAL_LOG" 2>/dev/null; then
+    echo "  ok   an entry appended to a file lacking its final newline still starts at line start"
+  else
+    echo "  FAIL the entry ran onto the previous line — the anchored count would read zero"; ok=0
+  fi
   rm -f "$RUN_CHECKED_REFUSAL_LOG"
   if [ $ok -eq 1 ]; then
     echo "SELFTEST PASS — the wrapper fails vacuous runs, passes real ones, propagates errors, and "\
-"logs exactly the refusals with their own output"
+"logs exactly the refusals with their own output, anchored even onto an unterminated file"
     exit 0
   else
     echo "SELFTEST FAIL — do not trust wrapped invocations"

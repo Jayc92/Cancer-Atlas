@@ -33,5 +33,34 @@ THIS HEADER IS HAND-MAINTAINED; THE ENTRIES BELOW IT ARE NOT, and that is the on
 file. Everything above the first `==== REFUSAL` line is prose a person may correct or extend; nothing
 from that line down is. Seeded by hand for the same reason .claude/record_count.json was: the
 declaration in battery.py's NON_INSTRUMENTS has to exist before the file does, and a reader diffing an
-unexplained artifact deserves to find its explanation inside it. No entries below yet — the first one
-will be a real refusal, which is the only kind that goes here.
+unexplained artifact deserves to find its explanation inside it.
+
+THE FIRST ENTRY ARRIVED 2026-09-07 AND BROKE THE FILE, which is worth more than a clean start. The seed
+above ended WITHOUT a trailing newline, so deploy_check's refusal was appended onto the header's last
+sentence — and `grep -c '^==== REFUSAL '`, the only thing that counts entries here and what
+run_checked.sh's arms are built on, matched nothing. THE LOG HELD ONE REFUSAL AND REPORTED ZERO. A
+zero-report over present data is the exact class this chain exists to refuse, produced by the chain's
+own newest artifact on its first real use. Fixed at the WRITER (run_checked.sh's log_refusal now anchors
+any append, and its arm 7 fails without that guard), not only here, because this header is
+hand-maintained prose and the next edit could drop the terminator again. The entry below was re-seated
+on its own line; its bytes were not touched.
+
+AND IT IS A GENUINE REFUSAL, not a demonstration: deploy_check declined to certify a deploy because
+HEAD was one commit ahead of origin/main, so nothing it measured could be a check on HEAD. That is the
+fourth layer being right, and it is the kind of run this file was built to keep.
+
+==== REFUSAL 2026-09-07T04:50:03Z reason=exit=1 marker="DONE deploy_check:" tool=deploy_check.js
+     output 13 lines, last 12 below
+  |   ok   benign filter swallows the declared favicon 404
+  |   ok   benign filter does NOT swallow a different 404 (the list cannot widen silently)
+  |   ok   benign filter does NOT swallow the 4b2c8c5 parse error
+  |   ok   initialisation assertion fails on a blank page (1 failure(s) reported)
+  |   ok   reports all three initialisation failures on the 4b2c8c5 shape (loaded page, null state) — got 3
+  |   ok   reports no failures on a healthy state (the gate is not stuck failing)
+  |   ok   excuses the console echo when every HTTP error observed was declared benign
+  |   ok   keeps the console echo as a finding when an UNDECLARED 404 is also present
+  | SELFTEST PASS — all three layers shown able to fail: stale bytes, a widened benign list, a dead page
+  | DONE deploy_check_selftest: 9 arms run, 0 failures
+  |   NOT PUSHED: HEAD 8140a15 != origin/main 7455aaf — nothing below can be a check on HEAD
+  | DONE deploy_check: 27/27 assets byte-matched to HEAD 8140a15, 31 hotspots live, 0 unexplained page errors (2 declared-benign), 1 problems
+==== END REFUSAL
