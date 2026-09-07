@@ -261,6 +261,11 @@ NON_INSTRUMENTS = {
     'citations.json': 'the manifest — data, not a tool',
     'record_count.json': 'the ratchet — machine-written state, not a tool; this runner is the '
                          'only writer, and it is committed so a fresh clone inherits the floor',
+    'refusals.log': 'the refusal log — machine-written state, not a tool; run_checked.sh is the '
+                    'only writer, appending the runs that FAILED, which are the ones this chain '
+                    'used to discard. It checks nothing and changes no exit code; it is where the '
+                    'evidence of a check firing survives, one commit later than the pass it '
+                    'would have been',
     'launch.json': 'preview config — data, not a tool',
     'phaseA_mapping.md': 'a record — data, not a tool',
 }

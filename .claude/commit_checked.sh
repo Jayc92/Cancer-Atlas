@@ -109,6 +109,17 @@ do_commit() {
   # aggregate marker "DONE " does not appear in regress's "==== DONE:" line, so gating a
   # regress-only run with it would refuse for no reason. Redundant checks are not free when one of
   # them can fire wrongly.
+  # THE REFUSAL LOG RIDES ALONG (2026-09-07). run_checked.sh appends a refusing run to
+  # .claude/refusals.log, and a refusing run makes no commit — so the entry can only reach git in the
+  # diff of the next SUCCESSFUL commit. Staging it here is what makes "the next commit picks it up"
+  # true by construction instead of by anyone remembering; an unstaged refusal is one `git checkout`
+  # away from being the thing the log exists to prevent. Guarded on existence because the selftest
+  # commits inside a scratch repo that has no .claude/ at all.
+  #
+  # THE ONLY FILE THIS SCRIPT STAGES, and it stages nothing else on purpose: a commit tool that
+  # decides what belongs in a commit is a different and much worse tool. This one file is
+  # machine-written, declared in battery.py's NON_INSTRUMENTS, and exists solely to be archived.
+  [ -f .claude/refusals.log ] && git add .claude/refusals.log
   msg="$(mktemp)"
   printf '%s\n\n%s\n' "$subject" "$done_lines" > "$msg"
   git commit -F "$msg" >/dev/null 2>&1
@@ -125,6 +136,13 @@ do_commit() {
 
 if [ "${1:-}" = "--selftest" ]; then
   ok=1
+  # ARMS 1 AND 3 DRIVE GENUINE REFUSALS THROUGH run_checked.sh — that is how they prove the commit is
+  # refused — so the wrapper's refusal log has to be redirected or this selftest appends two invented
+  # entries to the real .claude/refusals.log on every battery run. It did exactly that on the log's
+  # first live run. Distinct from arm 7's scratch .claude/refusals.log, which is a file to be STAGED,
+  # not the wrapper's write target.
+  RUN_CHECKED_REFUSAL_LOG="${TMPDIR:-/tmp}/commit_checked_selftest.$$.refusals.log"
+  export RUN_CHECKED_REFUSAL_LOG
   scratch="${TMPDIR:-/tmp}/commit_checked_selftest.$$"
   mkdir -p "$scratch" && cd "$scratch" || exit 2
   git init -q . 2>/dev/null
@@ -212,11 +230,23 @@ if [ "${1:-}" = "--selftest" ]; then
     echo "  FAIL committed on prose alone"; ok=0
   fi
 
+  # arm 7: the refusal log is carried into the commit even though nothing staged it. This is the arm
+  # that makes "refusals archive one commit late" a property of the tool rather than of a habit — an
+  # entry written by a run that could not commit has no other route into git.
+  mkdir -p .claude && echo "==== REFUSAL 2026-01-01T00:00:00Z reason=exit=3 marker=\"DONE x:\" tool=y" \
+    > .claude/refusals.log
+  do_commit "carries the refusal log" "DONE test:" sh -c 'echo "DONE test: 1 checked"' >/dev/null 2>&1
+  if git show --stat --pretty=format:"" HEAD 2>/dev/null | grep -q 'refusals.log'; then
+    echo "  ok   stages .claude/refusals.log so an unstaged refusal still reaches git"
+  else
+    echo "  FAIL the refusal log was not carried into the commit"; ok=0
+  fi
+
   cd "$DIR" || exit 2
-  rm -rf "$scratch"
+  rm -rf "$scratch" "$RUN_CHECKED_REFUSAL_LOG"
   if [ $ok -eq 1 ]; then
     echo "SELFTEST PASS — refuses on no-marker, non-zero exit and prose-only output; quotes both "\
-"DONE forms verbatim and no prose"
+"DONE forms verbatim and no prose; carries the refusal log"
     exit 0
   fi
   echo "SELFTEST FAIL — do not trust commits made through this script"

@@ -1,0 +1,27 @@
+THE REFUSAL LOG. Append-only evidence, MACHINE-WRITTEN by .claude/run_checked.sh, which is the only
+writer. Do not edit entries by hand and do not delete them: an entry is the only surviving trace that
+some instrument in this chain refused a real run, and the chain's own evidentiary standard is
+capability shown on real output.
+
+WHY IT EXISTS (user ruling, 2026-09-07). This chain archives its PASSES into git forever — every
+commit message carries a gate's DONE line, written by commit_checked.sh and unamendable afterwards —
+and forgot its REFUSALS entirely, because a refusing run reaches no commit. So the runs that actually
+demonstrate a check can fire were exactly the ones being discarded. citation_crosscheck has refused on
+the live corpus and that refusal survives only in a chat transcript, with its own output already gone.
+It cannot be retro-filled; it is named here as the loss that motivated the file.
+
+HOW TO READ IT. `git log -p .claude/refusals.log` is the history of this chain refusing. Entries carry
+a UTC timestamp, the reason (exit=N, or marker-absent for a vacuous run), the DONE marker that names
+the instrument, the tool's filename, and the tail of the refusing run's own output with the full line
+count so the excerpt never pretends to be complete. What an entry deliberately omits, and why, is in
+run_checked.sh's header.
+
+REFUSALS ARCHIVE ONE COMMIT LATE, by construction and not by accident. The run that appends here did
+not commit — that is what refusing means — so the entry lands in the diff of the next SUCCESSFUL
+commit. commit_checked.sh stages this file before committing, so that happens without anyone
+remembering to.
+
+Seeded by hand exactly once, with this header, for the same reason .claude/record_count.json was: the
+declaration in battery.py's NON_INSTRUMENTS has to exist before the file does, and a reader diffing an
+unexplained artifact deserves to find its explanation inside it. No entries below yet — the first one
+will be a real refusal, which is the only kind that goes here.

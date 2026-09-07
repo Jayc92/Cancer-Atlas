@@ -9,6 +9,14 @@
 *.log
 logs/
 
+# EXCEPT ONE, AND IT IS AN EVIDENCE ARCHIVE RATHER THAN OUTPUT. .claude/refusals.log holds the runs
+# where a gate in the check chain REFUSED — appended by .claude/run_checked.sh, staged by
+# .claude/commit_checked.sh, declared in .claude/battery.py's NON_INSTRUMENTS. It is committed on
+# purpose: a refusing run reaches no commit, so without this the chain archives its passes into
+# commit messages forever and discards the runs that demonstrate a check can fire at all. The name
+# is the ruling's word for it; this line is why the general rule above does not reach it.
+!.claude/refusals.log
+
 # macOS
 .DS_Store
 .AppleDouble
