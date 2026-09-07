@@ -3894,18 +3894,67 @@ That is worse than a missing entry, because it reads as fact.
   degree quieter — a field that lied about a *legitimate* call.
 - **Condition (7), with isolation shown.** Two negative controls, each
   reverting one guard: without the marker contract exactly one arm fails
-  (the misinvocation is *logged* rather than refused before running);
-  without the derivation fix exactly one arm fails (the tool field names an
+  (the misinvocation *runs* rather than being refused first); without the
+  derivation fix exactly one arm fails (the tool field names an
   option). Every other arm passes in both, so neither guard is carrying the
   other's weight.
 - **AN ABSENCE ASSERTION HAS A FALSE-PASS MODE, and this one was caught
-  false-passing.** Arm 10 asserts the refusal log stays *empty*. The first
-  negative control was written without an execute bit, so every
-  self-invocation died at exec, the log stayed empty for the wrong reason,
-  and **the arm reported ok while measuring nothing** — condition (8)
-  arriving in the harness rather than the instrument. The arm now also
+  false-passing.** Arm 10 *as first written* asserted the refusal log stays
+  *empty*. The first negative control was written without an execute bit, so
+  every self-invocation died at exec, the log stayed empty for the wrong
+  reason, and **the arm reported ok while measuring nothing** — condition (8)
+  arriving in the harness rather than the instrument. The arm also
   requires the guard's own message, which distinguishes "refused by the
   guard" from "never ran". The exit code cannot: both are non-zero.
+- **THE EMPTY-LOG HALF WAS REVERSED THE SAME DAY, AND THE LESSON ABOVE IS
+  WHY THE REVERSAL IS SAFE** (user ruling, 2026-09-07 — see "A REFUSAL THAT
+  LEAVES NO RECORD" below). A misinvocation is now *logged*, with
+  `reason=MISINVOKED marker="n/a" tool=n/a`, so arm 10 asserts a PRESENT
+  entry with named fields instead of an absence — and a present entry with
+  named fields has no false-pass mode of that shape, because a call that
+  never ran writes no entry to find. Only the *labels* were ever the defect;
+  the entry was not.
+
+### A REFUSAL THAT LEAVES NO RECORD IS AN ABSENCE (2026-09-07, user ruling)
+
+**The ruling, reversing behaviour shipped hours earlier in `ae56833`:** "The
+guard's job was to fix the *labels*; removing the *entry* is a second change
+nobody asked for, and it's the wrong direction. A refusal that produces no
+record is an absence, and absences are exactly what this chain has spent two
+days learning it cannot see — same shape as the ratchet's absence-versus-decrease
+hole."
+
+**The decisive argument is refusal 2 itself** (user): "its entire value today is
+that it's the incident that motivated `ae56833`. Under the new behaviour that
+incident leaves no trace, which means the guard's own motivating evidence would
+be missing from the archive built to hold precisely that class of evidence."
+
+- **A GUARD THAT REFUSES EARLIER MADE THE ARCHIVE BLINDER.** That is the
+  generalisable form, and it is not obvious: moving a refusal earlier in the
+  pipeline is normally strictly better. It is worse when the pipeline's later
+  stage was the only thing WRITING ANYTHING DOWN. The guard was scored on what
+  it prevented and nothing scored what it stopped recording.
+- **`tool=n/a marker=n/a reason=MISINVOKED`** — "more honest than the old lying
+  labels and more useful than silence" (user). There is no marker and no tool
+  in a misinvocation; that is what the refusal *is*.
+- **The bad argument is not lost, it MOVES.** The guard's message quotes it
+  (`first argument "python3" is not a DONE marker`) and the message is what the
+  entry's output block carries. So the raw word is recorded as *the word that
+  was passed* rather than as a field *claiming to be a marker* — which was the
+  whole complaint about the original entry. Verified against real bytes on a
+  scratch log, not reasoned about.
+- **ONE WRITER.** The entry goes through `log_refusal`, which holds the
+  line-start guard that a real defect bought (the seeded header's missing
+  terminator, which made `grep -c '^==== REFUSAL '` report zero over present
+  data). A second append written inline in the guard could drop the terminator
+  the same way. The quotes around `marker="n/a"` are that writer's format
+  string, not a choice made at the call site.
+- **Both halves of arm 10 shown able to fire, separately.** Deleting the
+  `log_refusal` call fails on the count alone. Deriving the fields the old way
+  instead **reproduces the original defect byte for byte** —
+  `marker="python3" tool=battery.py` — and fails on honesty alone. The second
+  mutation is the one worth having: the arm catches the exact entry the guard
+  exists because of, not merely *some* entry.
 
 ## NO CROSS-BLOCK DEMONSTRATIVE — THE DELETION REMEDY, SWEPT (2026-09-07, user ruling)
 

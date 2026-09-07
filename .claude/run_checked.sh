@@ -193,24 +193,44 @@ if [ "${1:-}" = "--selftest" ]; then
   fi
   # arm 10: THE MISINVOCATION, on the exact argument list that really happened. Written to FAIL
   # without the marker contract: `$# -lt 2` sees three arguments and passes them through, so without
-  # the guard this call RUNS something and appends an entry rather than refusing. Note what the arm
-  # asserts — not just a non-zero exit, but that NOTHING WAS LOGGED. A refusal entry here would be the
-  # defect itself: a wrapper that never checked anything, archiving two false labels as fact.
-  # IT ALSO ASSERTS THE GUARD'S OWN WORDS, and that is not belt-and-braces. "The log is empty" is an
-  # ABSENCE, and absences have false-pass modes: while building this arm, a negative-control copy
-  # written without an execute bit could not exec at all, so every self-invocation died at 126, the
-  # log stayed empty, and the arm reported ok while measuring nothing. Requiring the refusal message
-  # distinguishes "refused by the guard" from "never ran", which the exit code alone cannot.
+  # the guard this call RUNS something — and then logs an entry whose fields name a real marker and a
+  # real tool that are neither, which is the defect. The arm therefore separates the two things that
+  # used to be conflated: REFUSED BEFORE RUNNING (no output block from a command, exit 2) and RECORDED
+  # WITH HONEST FIELDS (`reason=MISINVOKED`, and both labels `n/a` rather than lies).
+  #
+  # THIS ARM USED TO ASSERT THE LOG STAYS EMPTY, and the reversal is the user's ruling. What survives
+  # from that version is its lesson, which the new form no longer needs: "the log is empty" is an
+  # ABSENCE, and absences have false-pass modes — while building the old arm, a negative-control copy
+  # written without an execute bit could not exec at all, so every self-invocation died at 126, the log
+  # stayed empty, and THE ARM REPORTED OK WHILE MEASURING NOTHING. Asserting a PRESENT entry with named
+  # fields cannot false-pass that way: a call that never ran writes no entry to find. The guard's own
+  # message is still required, because it is what distinguishes "refused by the guard" from "never
+  # ran", and the exit code cannot — both are non-zero.
+  #
+  # BOTH HALVES SHOWN ABLE TO FIRE, SEPARATELY, BY MUTATION (condition 7). Deleting the log_refusal
+  # call fails on the count and nothing else. Deriving the fields the old way instead —
+  # `tool="$(basename -- "${2:-$1}")"` with the real marker left in place — REPRODUCES THE ORIGINAL
+  # DEFECT BYTE FOR BYTE, `marker="python3" tool=battery.py`, and fails on honesty and nothing else.
+  # The second is the one worth having: the arm is not merely checking that something was written, it
+  # catches the exact entry this guard was written because of.
   rm -f "$RUN_CHECKED_REFUSAL_LOG"
   mis="$("$self" python3 .claude/battery.py --phase=pre-commit 2>&1)" && mis_rc=0 || mis_rc=1
+  mis_entries="$(grep -c '^==== REFUSAL ' "$RUN_CHECKED_REFUSAL_LOG" 2>/dev/null || echo 0)"
   if [ $mis_rc -eq 0 ]; then
     echo "  FAIL a call with the marker omitted was accepted"; ok=0
-  elif [ -s "$RUN_CHECKED_REFUSAL_LOG" ]; then
-    echo "  FAIL the misinvocation was logged as a refusal — it must be refused BEFORE running"; ok=0
+  elif [ "$mis_entries" != "1" ]; then
+    echo "  FAIL the misinvocation left $mis_entries entries — a refusal must leave exactly one"; ok=0
+  elif ! grep -q '^==== REFUSAL .* reason=MISINVOKED marker="n/a" tool=n/a$' \
+         "$RUN_CHECKED_REFUSAL_LOG" 2>/dev/null; then
+    echo "  FAIL the entry did not name the refusal honestly (reason=MISINVOKED, both labels n/a)"
+    ok=0
+  elif ! grep -q 'is not a DONE marker' "$RUN_CHECKED_REFUSAL_LOG" 2>/dev/null; then
+    echo "  FAIL the entry did not carry the guard's message, so the bad argument is unrecorded"; ok=0
   elif ! printf '%s' "$mis" | grep -q 'MISINVOKED'; then
     echo "  FAIL refused without the guard's message — it did not run, but for the wrong reason"; ok=0
   else
-    echo "  ok   a call with the marker omitted is refused by the guard, and logs nothing"
+    echo "  ok   a call with the marker omitted is refused BEFORE running and recorded with honest "\
+"fields (reason=MISINVOKED, marker and tool n/a, the bad argument quoted in the entry's output)"
   fi
   # and the passing direction, so the contract is shown not to have simply broken the wrapper
   if "$self" "==== DONE:" sh -c 'echo "==== DONE: 1 thing"' >/dev/null 2>&1; then
@@ -233,7 +253,8 @@ if [ "${1:-}" = "--selftest" ]; then
     echo "SELFTEST PASS — the wrapper fails vacuous runs, passes real ones, propagates errors, and "\
 "logs exactly the refusals with their own output, anchored even onto an unterminated file, "\
 "matches the marker at line start so a prose mention cannot pass for a DONE line, refuses a "\
-"misinvocation before running anything, and names a tool rather than an option in the entry"
+"misinvocation before running anything AND records it with both labels n/a, and names a tool "\
+"rather than an option in the entry"
     exit 0
   else
     echo "SELFTEST FAIL — do not trust wrapped invocations"
@@ -271,12 +292,40 @@ marker="$1"
 # two forms. (The count was written out here as "all 14 markers" for a day. This header is the one
 # that already lost a count that way — it said "six call sites" while ten instruments existed — so a
 # restated total is the last thing it should carry. The claim is stronger without it: EVERY marker.)
+#
+# AND IT IS LOGGED (2026-09-07, user ruling, reversing this guard's first behaviour). The guard as
+# first written refused and wrote NOTHING, on the reasoning that an entry for a call that ran nothing
+# would archive two false labels as fact. The user's correction: "The guard's job was to fix the
+# LABELS; removing the ENTRY is a second change nobody asked for, and it's the wrong direction. A
+# refusal that produces no record is an absence, and absences are exactly what this chain has spent
+# two days learning it cannot see — same shape as the ratchet's absence-versus-decrease hole."
+#
+# THE DECISIVE ARGUMENT IS REFUSAL 2 ITSELF (user): "its entire value today is that it's the incident
+# that motivated `ae56833`. Under the new behaviour that incident leaves no trace, which means the
+# guard's own motivating evidence would be missing from the archive built to hold precisely that class
+# of evidence." A guard that refuses earlier made the archive BLINDER to the error class that
+# motivated it.
+#
+# SO THE FIELDS SAY `n/a` — "more honest than the old lying labels and more useful than silence"
+# (user). There is no marker and no tool here: that is what the refusal IS. And the bad argument is
+# not lost, it MOVES: the guard's message quotes it, and the message is what the entry's output block
+# carries, so the raw word is recorded as the word that was passed rather than as a field claiming to
+# be a marker. (The quotes around `marker="n/a"` come from log_refusal's format string, not from here.
+# ONE WRITER on purpose — log_refusal holds the line-start guard that a real defect bought, and a
+# second append written inline could drop the terminator again the way the seeded header did.)
 case "$marker" in
   DONE*|'===='*) ;;
-  *) echo "run_checked.sh: MISINVOKED — first argument \"$marker\" is not a DONE marker." >&2
-     echo "  A marker begins with DONE or ==== . Arguments look shifted by one." >&2
-     echo "usage: run_checked.sh <done-marker> <command> [args...]" >&2
-     exit 2 ;;
+  *) tmp="$(mktemp)"
+     {
+       echo "run_checked.sh: MISINVOKED — first argument \"$marker\" is not a DONE marker."
+       echo "  A marker begins with DONE or ==== . Arguments look shifted by one."
+       echo "usage: run_checked.sh <done-marker> <command> [args...]"
+     } > "$tmp"
+     cat "$tmp" >&2
+     marker="n/a"
+     tool="n/a"
+     log_refusal "MISINVOKED"
+     rm -f "$tmp"; exit 2 ;;
 esac
 shift
 # `--` matters: the second word of `sh -c '...'` is `-c`, and basename without it reads that as an
