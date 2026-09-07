@@ -100,6 +100,14 @@ ALL_KINDS = (
                                #          informative bucket, into this one, which says WHY
     'prose-year',              # reported a year in ordinary prose, no citation-shaped evidence
     'semicolon-shadow',        # reported by design: the head belongs to a previous citation
+    'paren-shadow',            # reported by design, semicolon-shadow's second delimiter (added
+                               #          2026-09-06): a parenthetical CARRYING A YEAR closed between
+                               #          the head and this year, so the head is spent. Not gated —
+                               #          same standing as semicolon-shadow, because a shadowed year
+                               #          is a year the corpus does not attribute, not one this tool
+                               #          failed to reach. Its count is printed below like every
+                               #          other kind's; the population it is fit to, and how narrow
+                               #          that is, are measured at the rule in extract_citations.py
 )
 
 # Keyed '<kind>:<head text>'. Every reason must survive being read by someone who did not write

@@ -1,10 +1,18 @@
 {
  "_note": "Ratchet state for .claude/battery.py assertion 4 \u2014 the corpus did not silently shrink. MACHINE-WRITTEN: battery.py is the only writer, and it only ever moves a count UP, except through an explicit --lower-ratchet with a --lower-reason, which is appended to 'lowers' below so every deliberate step over the gap stays on the record. Seeded empty by hand exactly once, because the declaration in NON_INSTRUMENTS has to exist before the file can and the battery refuses to run at all while its own selftest fails \u2014 so the file could not have been created by the tool that writes it. Counts start absent on purpose: the first run INITIALISES and says so, condition (8), and the SECOND run is the check. 'record_keys' (added 2026-09-06 by the same hand, same reason: the field has to be explained in the file a reader diffs) is the record SET beside its size \u2014 sorted (author|year|file:line) identities, one per line, so `git diff` on this file IS the composition audit. A count cannot see four records swapping identity under a flat total; the set can, and the battery prints added/removed/moved on every run. Sorted ordering is load-bearing. The count and the set are saved together and battery.py REFUSES this file if they ever disagree, so do not edit either by hand.",
  "counts": {
-  "records": 490,
+  "records": 487,
   "citation_crosscheck.records": 143
  },
- "lowers": [],
+ "lowers": [
+  {
+   "metric": "records",
+   "from": 490,
+   "to": 487,
+   "count": 487,
+   "reason": "paren-shadow removes three years their head never published: Fearon|1991 colon.js:169 (APC cloning date; the paper is Cell 1990), Powell|1990 colon.js:172 (the model being quoted; the paper is Nature 1992), Schulze|2017 liver.js:280 (a TCGA cohort's year; the paper is Nat Genet 2015). Re-runnable: the record_keys diff on this commit is exactly those three lines and nothing else, and each of the three heads keeps its own true record at the same ref"
+  }
+ ],
  "record_keys": [
   "Aizimuaji|2025|js/organs/liver.js:158",
   "Aizimuaji|2025|js/organs/liver.js:280",
@@ -105,7 +113,6 @@
   "Epstein|2016|js/organs/prostate.js:253",
   "Fang|2021|js/organs/colon.js:210",
   "Fearon|1990|js/organs/colon.js:169",
-  "Fearon|1991|js/organs/colon.js:169",
   "Fichtner|2026|js/organs/testis.js:193",
   "Fleming|2013|js/organs/colon.js:210",
   "Fontugne|2022|js/organs/prostate.js:132",
@@ -309,7 +316,6 @@
   "Polkowski|1999|js/organs/stomach.js:25",
   "Pollock|2003|js/organs/skin.js:312",
   "Pollock|2003|js/organs/skin.js:400",
-  "Powell|1990|js/organs/colon.js:172",
   "Powell|1992|js/organs/colon.js:172",
   "Powell|1992|js/organs/colon.js:215",
   "Price|2025|js/organs/brain.js:13",
@@ -341,7 +347,6 @@
   "Schulze|2015|js/organs/liver.js:156",
   "Schulze|2015|js/organs/liver.js:194",
   "Schulze|2015|js/organs/liver.js:280",
-  "Schulze|2017|js/organs/liver.js:280",
   "Schutte|1997|js/organs/pancreas.js:182",
   "Schutte|1997|js/organs/pancreas.js:212",
   "Segelman|2012|js/organs/colon.js:210",

@@ -124,8 +124,10 @@
 # aimed at a boundary none of them actually crossed. THE LESSON IS NOT "read the removals" AGAIN, it
 # is that the removal set of a proposed rule is a DIAGNOSTIC POPULATION, not a verdict on the rule:
 # five of these six say nothing about boundaries and everything about what the extractor never asks.
-# Powell and Travis are the proof, structurally identical with opposite verdicts — see the record
-# path, where the argument sits at the line it governs.
+# Powell and Travis are the proof: opposite verdicts, and indistinguishable to the rule that produced
+# them both — see the record path, where the argument sits at the line it governs. THIS SENTENCE SAID
+# "structurally identical" UNTIL 2026-09-06, when a structural rule separated them; the correction and
+# what it does and does not concede are at the paren-shadow block on that same path.
 #
 # AND MEASURE PER FIX, NOT IN AGGREGATE, which is a corollary strong enough to state on its own. The
 # two fixes in that commit were measured on separate throwaway trees before either was written into
@@ -310,6 +312,40 @@ def disqualified_year(text, yend):
                 or PLUS_TAIL.match(text, yend)
                 or RANGE_END.search(text, max(0, yend - 44), yend - 4))
 
+def closed_year_paren(seg):
+    """True if a parenthetical CARRYING A YEAR closed inside `seg` — a completed citation.
+
+    THIS IS THE ';' RULE WITH A SECOND DELIMITER, and reading it that way is the whole
+    justification. The record path already refuses a head when a ';' sits between it and the year,
+    on the grounds that the ';' proves the head belongs to a PREVIOUS citation. A parenthetical that
+    carried a year and then closed proves the same thing about the same span with different
+    punctuation: "Powell et al. (Nature, 1992) for APC-comes-first, and quotes the 1990 model" ends
+    its citation at the ')' exactly as "Ziol et al., Hepatology, 2018; Acad Pathol, 2024" ends its
+    at the ';'. Neither is a boundary test on the YEAR; both are positive evidence a citation ENDED.
+
+    "CARRYING A YEAR" IS THE ENTIRE LOAD-BEARING NARROWING, and the objection it answers was already
+    written in this file — classify_absence's etal-shadow note rejected a closing paren for the
+    absence path in these words: "a ')' also closes ordinary parenthetical asides mid-citation
+    ('Nature Genetics (impact factor aside), 2019'), so it would buy nothing today at the cost of a
+    false positive later." Correct, and requiring a YEAR inside the paren removes the cost: an aside
+    carries no year, so it cannot fire. That is also precisely what separates the two spans below,
+    and it is why the absence path keeps the bare-year test while this path takes the narrow form —
+    an absence has no record to lose, this path deletes one.
+
+    START = 0 WHEN THE STACK IS EMPTY, which is not a fallback but the Schulze case: the '(' opened
+    BEFORE the head, so the span from the head to the ')' is that parenthetical's tail, and the year
+    it carries is inside it. "(Schulze et al., Nature Genetics, 2015) and a mixed TCGA cohort
+    (Nature, 2017" reaches the ')' with nothing on the stack, and the 2015 behind it is the point."""
+    stack = []
+    for i, ch in enumerate(seg):
+        if ch == '(':
+            stack.append(i)
+        elif ch == ')':
+            start = stack.pop() if stack else 0
+            if re.search(YEAR, seg[start:i]):
+                return True
+    return False
+
 def looks_like_journal(seg):
     seg = seg.strip(' ,;:')
     if not seg or any(c.isdigit() for c in seg): return None
@@ -443,6 +479,14 @@ def classify_absence(text, wstart, ypos, back):
         # 2019"), so it would buy nothing today at the cost of a false positive later. The choice is
         # not load-bearing at this commit and is recorded because it becomes load-bearing at the next
         # span that hits it.
+        #
+        # AND THAT OBJECTION WAS LATER ANSWERED ON THE OTHER PATH RATHER THAN HERE (2026-09-06):
+        # closed_year_paren requires the paren to CARRY A YEAR, which an aside does not, and the
+        # sentence above is the fixture that pins it. The reasoning survives unchanged FOR THIS PATH —
+        # a bare closing paren really is unusable, this path really does gain nothing from the
+        # narrowed form today, and a year is still the principled test where a year suffices. What the
+        # record path needed was a test the year could not give it, since a year between head and
+        # target is exactly what Travis|2011 legitimately has.
         if re.search(YEAR, back[etals[-1].end():]):
             return 'etal-shadow', None
         # anchor on the "et al." NEAREST the year — the extractor's own "nearest head wins"
@@ -596,23 +640,38 @@ def extract(paths, absences=None):
                                      'kind': absence_kind, 'key': absence_key})
                 continue
             author, head_end = m.group(1), m.end()
-            # THERE IS NO YEAR ANALOGUE OF THE ';' RULE BELOW ON THIS PATH, AND THERE MUST NOT BE ONE
-            # (2026-09-06, measured twice, then RULED OUT on the evidence — this is a closed question,
-            # not a deferred one). classify_absence refuses an "et al." that a COMPLETED citation
-            # consumed, on the grounds that an intervening year proves the citation ended. The
-            # symmetry is inviting and it is wrong here: an absence has no record to lose, while this
-            # path deletes one.
+            # THERE IS NO YEAR-COUNTING ANALOGUE OF THE ';' RULE BELOW ON THIS PATH, AND THERE MUST
+            # NOT BE ONE (2026-09-06, measured twice, then RULED OUT on the evidence — a closed
+            # question, not a deferred one). A DELIMITER analogue is a different thing and one now
+            # exists: the ';' rule immediately below, and the second delimiter under it. What is ruled
+            # out here is any rule whose input is HOW MANY YEARS INTERVENED. classify_absence refuses
+            # an "et al." that a COMPLETED citation consumed, on the grounds that an intervening year
+            # proves the citation ended. The symmetry is inviting and it is wrong here: an absence has
+            # no record to lose, while this path deletes one.
             #
-            # WHY NO BOUNDARY RULE CAN WORK, WHICH IS SHARPER THAN "the measurement came out badly":
-            # POWELL AND TRAVIS ARE STRUCTURALLY IDENTICAL AND HAVE OPPOSITE VERDICTS.
+            # WHY NO YEAR-COUNTING RULE CAN WORK, WHICH IS SHARPER THAN "the measurement came out
+            # badly": POWELL AND TRAVIS ARE INDISTINGUISHABLE TO IT AND HAVE OPPOSITE VERDICTS.
             #   colon.js:172   "Powell et al. ... Nature, 1992 ... quotes the 1990 model"  FALSE
             #   lungs.js:236   "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)" TRUE
             # In both, an intervening year sits between the head and the target year, with no
-            # competing head anywhere between them. Any rule reading STRUCTURE sees one shape and must
-            # return one answer. The difference is SEMANTIC — two publication years of one document
-            # set, versus a publication year and a referenced model's date — and "permit one more year
-            # under the same head", the narrowing this comment previously proposed, keeps BOTH. So the
-            # narrowing was not merely under-specified; it was unspecifiable at this level.
+            # competing head anywhere between them. A rule that knows only how many years intervened
+            # sees one shape and must return one answer. The difference is SEMANTIC — two publication
+            # years of one document set, versus a publication year and a referenced model's date — and
+            # "permit one more year under the same head", the narrowing this comment previously
+            # proposed, keeps BOTH. So that narrowing was not merely under-specified; it was
+            # unspecifiable at this level.
+            #
+            # THIS PARAGRAPH USED TO CLAIM MORE THAN THAT, AND THE EXCESS WAS WRONG — corrected in
+            # place 2026-09-06 rather than quietly reworded, because the ruling that closed the
+            # boundary question rested on the stronger version. It read "POWELL AND TRAVIS ARE
+            # STRUCTURALLY IDENTICAL" and "any rule reading STRUCTURE sees one shape". They are not
+            # structurally identical: Powell's intervening year sits inside a parenthetical that
+            # CLOSED, Travis's is bare and the one paren closing between his head and his year carries
+            # no year at all. The step from "the rule on the table cannot see the difference" to "no
+            # structural rule can" was a generalisation from two examples, was never measured, and is
+            # what the rule below falsifies. THE NARROWER CLAIM SURVIVES UNTOUCHED and still closes
+            # the year-counting question, which is why that argument is kept above rather than deleted
+            # along with the overreach.
             #
             # THE SIX REMOVALS THE NAIVE TEST PRODUCED HAD FOUR DIFFERENT CAUSES, and only one of them
             # was a boundary problem, which is exactly why the one measurable version was destructive.
@@ -625,13 +684,10 @@ def extract(paths, absences=None):
             #           Powell|1990    colon.js:172 — "quotes the 1990 model". Prose.
             #           Schulze|2017   liver.js:280 — journal-adjacent ("a mixed TCGA cohort (Nature,
             #                          2017, 44%)"), real head Schulze (Nat Genet, 2015).
-            #                          STILL FALSE AT THIS COMMIT, deliberately. These three want the
-            #                          discrimination classify_absence already performs — prose-year,
-            #                          journal-adjacent-year — which THIS path does not perform at all.
-            #                          It asks only "is there a head" and never "is this year a
-            #                          citation year". That is the real defect, it is written once
-            #                          already on the other path, and it is a bigger and far better
-            #                          specified change than a boundary test.
+            #                          FIXED in the next commit by closed_year_paren below, and NOT
+            #                          by the mechanism this line originally predicted — see the
+            #                          block under the ';' rule, which records what the port of
+            #                          classify_absence's discrimination actually measured.
             #   TRUE    Travis|2011    lungs.js:236 — must survive, and does.
             # A count of "six removed" would have read as a clean win. Only reading each one separates
             # five fixes from one loss, and only DECOMPOSING them shows that no single rule was ever
@@ -643,7 +699,8 @@ def extract(paths, absences=None):
             # COUNT — and the ratchet would have been equally satisfied had the substitution run the
             # other way, two true records out and two false ones in. The reason each fix was measured
             # SEPARATELY is that in aggregate this commit is invisible to every instrument in the
-            # chain except the fixtures below.
+            # chain except the fixtures below. THE GAP IS CLOSED SINCE, by the record key set in
+            # record_count.json — battery.py's assertion 4 carries the ruling and the mechanism.
             if ';' in back[head_end:]:
                 if absences is not None:
                     absences.append({'file': path, 'line': line_at(ypos), 'year': year,
@@ -651,6 +708,62 @@ def extract(paths, absences=None):
                 # a ';' between head and year means the head belongs to a PREVIOUS citation
                 # and this year's own mention is authorless (journal-only): "Ziol et al.,
                 # Hepatology, 2018; Acad Pathol, 2024 (PMID x)" must not yield Ziol|2024
+                continue
+            # THE SAME RULE, SECOND DELIMITER (2026-09-06). A completed parenthetical citation between
+            # the head and this year says what the ';' says. Justification and the narrowing that
+            # makes it safe are at closed_year_paren; what belongs HERE is what was measured, because
+            # the ordered instruction this discharges named a DIFFERENT mechanism and that mechanism
+            # was destructive.
+            #
+            # THE PORT WAS TRIED FIRST, EXACTLY AS RULED, AND MEASURED 3 FIXES AGAINST 3 LOSSES.
+            # The instruction was that Fearon, Powell and Schulze "want the record path to gain the
+            # absence path's classification logic... it's already written once on the other path".
+            # Two readings of that exist and both were measured on isolated trees before either was
+            # written into this file:
+            #   (i)  PROSE-ADJACENCY — an ordinary lowercase word between head and year, which is
+            #        what prose-year's evidence amounts to. 490 -> 484. It removed the three targets
+            #        and THREE TRUE RECORDS with them, and reading each removal is the only thing
+            #        that separated them: skin.js:47 and skin.js:15 are "(Di Carlo et al., CONCORD-3
+            #        morphology study, Br J Cancer, 2022)" — the lowercase words are the CITATION'S
+            #        OWN descriptive label — and ovary.js:184 is "Rose et al.'s 428-case autopsy
+            #        series (Cancer, 1989)", where they are the sentence carrying the citation.
+            #   (ii) THE ABSENCE PATH'S OWN open_paren TEST, ported literally: it requires a citation
+            #        year to sit inside an unclosed paren. It kills Travis|2011 (", 2015 (WHO) & 2011"
+            #        is a '&'-list, not a parenthetical) and KEEPS Schulze. Strictly worse than (i).
+            # So the named mechanism does not transfer. Its 1:1 fix-to-loss ratio is the same shape as
+            # the boundary test the previous ruling rejected, found the same way, by the same
+            # procedure — which is the procedure earning its keep a second time rather than a new
+            # lesson.
+            #
+            # AND IT REVISES A PREMISE OF THAT RULING, which is the part worth reading twice. The
+            # ruling held that "a structural rule can't separate Powell from Travis: they're
+            # structurally identical... an intervening year sits between the head and the target with
+            # no competing head." True of the rule then on the table — "permit one more year under the
+            # same head" — and NOT true of every structural rule, because the two intervening years
+            # are not alike:
+            #   colon.js:172  "Powell et al. (Nature, 1992) for APC-comes-first, and quotes the 1990"
+            #                 the intervening year is INSIDE A PARENTHETICAL THAT CLOSED.
+            #   lungs.js:236  "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)"
+            #                 the intervening year is BARE, in the same unparenthesised clause, and
+            #                 the one paren that closes between head and target, "(WHO)", carries no
+            #                 year at all.
+            # The semantic difference the ruling identified — two publication years of one document
+            # set, versus a publication year and a referenced model's date — turns out to have a
+            # punctuation shadow in this corpus. That is a narrower claim than "the semantics are
+            # recoverable structurally", and it is the only claim being made.
+            #
+            # ITS ENTIRE POPULATION IS FOUR RECORDS, MEASURED, AND SAYING SO IS THE HONEST PART. Of
+            # the 490 records at d54bd1a, exactly 4 have any ')' between head and year: the three
+            # above and Travis. The rule splits 3/1 along the true-false line. Both readings of that
+            # are true and both belong here: the blast radius is 4, so this cannot silently damage
+            # anything else — and the evidence base is 4, one of which is the counterexample the rule
+            # was shaped around, so it is FIT TO THE CORPUS and the next span of this shape is a test
+            # of it, not a confirmation. The fixtures below pin all four shapes plus the year-free
+            # aside, so a future span that breaks it breaks an arm rather than a record.
+            if closed_year_paren(back[head_end:]):
+                if absences is not None:
+                    absences.append({'file': path, 'line': line_at(ypos), 'year': year,
+                                     'kind': 'paren-shadow', 'key': m.group(1)})
                 continue
             between = back[head_end:].strip()
             # trim a leading "(" and trailing separators before the year
@@ -849,6 +962,70 @@ FIXTURES = [
      '\'data-span-year\', so the count is the assertion',
      ['Pooled estimates come from the 2015 + 2019 cohorts (Bolton 2019).'],
      [('Bolton', '2019', 'bare-year')], [('prose-year', None), ('prose-year', None)]),
+
+    # --- the paren-shadow rule. FOUR REAL SPANS ARE ITS WHOLE POPULATION, so all four are here, ---
+    # plus the two shapes the two rejected mechanisms destroyed and the aside the objection named.
+    # Every fires-arm also asserts the SAME HEAD'S TRUE RECORD SURVIVES in the same span, because
+    # that is the failure mode with no other detector: colon.js:172 must keep Powell|1992 while
+    # losing Powell|1990, and a rule that took both would shrink the defect and the corpus together
+    # while every count in the chain still moved in the direction a fix moves it.
+
+    ('PAREN-SHADOW FIRES, AND THE SPAN IS THE ONE THAT DEFINED THE RULE: colon.js:172 verbatim in '
+     'shape. A completed parenthetical citation, "(Nature, 1992)", stands between the head and a '
+     'later prose year, so the head is spent — the 1990 is the date of a MODEL BEING DISCUSSED, not '
+     'a paper Powell wrote. Powell|1992 survives, which is the half that matters',
+     ['cites Powell et al. (Nature, 1992) for APC-comes-first, and quotes the 1990 model for what'],
+     [('Powell', '1992', 'etal')], [('paren-shadow', 'Powell')]),
+
+    ('IT FIRES ACROSS AN &-JOINED HEAD TOO, so the rule is not quietly specific to "et al.". '
+     'colon.js:169 verbatim: the atlas is saying the 1990 paper NEVER NAMES APC because the gene '
+     'was cloned in 1991, and that 1991 was becoming a Fearon publication. The real Fearon|1990 '
+     'sits inside the parenthetical and is untouched',
+     ['- Fearon &amp; Vogelstein (Cell, 1990) NEVER NAMES APC — the gene wasn\'t cloned until 1991; the'],
+     [('Fearon', '1990', 'amp-list')], [('paren-shadow', 'Fearon')]),
+
+    ('THE STACK-EMPTY BRANCH IS REACHED BY A REAL SPAN, not by a defensive default: liver.js:280 '
+     'reduced. The head sits INSIDE a parenthetical that opened before the lookback window, so the '
+     'first ")" this rule sees has no "(" on its own stack — treating the segment start as the '
+     'opener is what makes the 2015 visible as the year that closed. Without that branch the '
+     'journal-adjacent 2017 of "a mixed TCGA cohort (Nature, 2017, 44%)" keeps Schulze as its '
+     'author, which is the misattribution this arm exists to pin',
+     ['other French cohorts (Schulze et al., Nature Genetics, 2015) and a mixed TCGA cohort '
+      '(Nature, 2017, 44%) span the range in between.'],
+     [('Schulze', '2015', 'etal')], [('paren-shadow', 'Schulze')]),
+
+    ('AND IT MUST NOT FIRE HERE, WHICH IS THE ARM THE RULE WAS SHAPED AROUND AND THE ONE MOST '
+     'WORTH DISTRUSTING: lungs.js:236 verbatim. Travis et al. published the 2015 WHO classification '
+     'AND the 2011 IASLC/ATS/ERS one, so BOTH years are theirs. A ")" does close between the head '
+     'and the 2011 — "(WHO)" — and it carries no year, which is the entire narrowing. Delete '
+     '"carrying a year" from closed_year_paren and this arm is what fails; the corpus record it '
+     'protects would otherwise vanish with no count moving except downward, i.e. looking like a fix',
+     ['citation: \'Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)\','],
+     [('Travis', '2015', 'etal'), ('Travis', '2011', 'etal')], []),
+
+    ('THE OBJECTION ANSWERED ON ITS OWN TERMS. classify_absence\'s etal-shadow note warned that '
+     '"a \')\' also closes ordinary parenthetical asides mid-citation (\'Nature Genetics (impact '
+     'factor aside), 2019\')" — written there as the reason a paren test looked unusable. That exact '
+     'string is this arm, and the year requirement disposes of it: an aside carries no year, so the '
+     'citation is unaffected. The warning was correct about bare paren-closing and is preserved '
+     'there; this arm is why it does not extend to the rule as narrowed',
+     ['Recurrent fusions were described in Smith et al., Nature Genetics (impact factor aside), 2019.'],
+     [('Smith', '2019', 'etal')], []),
+
+    ('A TRUE RECORD THE REJECTED PROSE-ADJACENCY MECHANISM DELETED, kept as an arm so the rejected '
+     'reading cannot be reintroduced silently: skin.js:47-48 verbatim. "CONCORD-3 morphology study" '
+     'is the CITATION\'S OWN descriptive label, so lowercase words between head and year prove '
+     'nothing — while no paren closes between them at all, and paren-shadow never looks at it',
+     ['registrations worldwide SSM is 36% (Di Carlo et al., CONCORD-3 morphology study, Br J',
+      'Dermatol, 2022, N=1,578,482). Shares shown are COMPUTED from Bradford\'s SEER-17 incidence'],
+     [('Di Carlo', '2022', 'etal')], []),
+
+    ('THE SECOND SUCH RECORD, AND A DIFFERENT REASON IT SURVIVES: ovary.js:184 verbatim. Here the '
+     'year sits INSIDE the parenthetical — "(Cancer, 1989)" opens between head and year and closes '
+     'after it — so the rule sees an unclosed "(" and no ")" at all. The lowercase words that '
+     'condemned it under prose-adjacency are the sentence carrying the citation, not part of it',
+     ['Rose et al.\'s 428-case autopsy series (Cancer, 1989) found metastatic sites "nearly'],
+     [('Rose', '1989', 'etal')], []),
 ]
 
 
