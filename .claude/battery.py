@@ -54,6 +54,27 @@
 #      count cannot move at all. There is no noise band to tolerate, and inventing a tolerance
 #      would be a floor with extra steps — the thing the ratchet replaces.
 #
+#      AND A COUNT IS STILL BLIND TO COMPOSITION, which is the ratchet's own gap and not a
+#      criticism of it (user ruling, 2026-09-06, closing it). d54bd1a removed two FALSE records and
+#      added two TRUE ones. Net zero. The ratchet held at 490 and printed "490 held" — true, and it
+#      told nobody anything: four records changed identity, and the ratchet would have been equally
+#      satisfied had the substitution run the other way, two true records out and two false ones in.
+#      The movement was visible only because a throwaway git-archive clone was built by hand to diff
+#      the record sets, i.e. by a TECHNIQUE somebody remembered, not by a property of the repo.
+#
+#          "Store the sorted record keys in the state file, not just the count. Then the battery
+#           reports the delta — added and removed — on every run... with keys in a committed file,
+#           `git diff` on that file IS the composition audit. ... Sorted ordering is load-bearing,
+#           or the diff is unreadable."
+#
+#      So the state file the ratchet already owns gained the SET beside its size (record_keys, see
+#      record_key() below). Two things follow, and the second is the better one: the run prints
+#      added/removed/moved on every invocation, and the standing procedure — diff the record sets
+#      across any reach change and READ EVERY REMOVAL — stops needing a before-image someone
+#      remembered to take. Its cost is ~20KB of sorted JSON that most content commits touch, and
+#      that churn IS the signal. The count and the set are written by the same writer in the same
+#      save, and load_ratchet() refuses the file if they ever disagree.
+#
 #      State lives in .claude/record_count.json, declared below as a non-instrument (machine-
 #      written state, not a tool). Assertion 2 firing on the very next file added to .claude/ is
 #      the mechanism working, not a nuisance. The ratchet is KEYED BY METRIC so extending it is a
@@ -166,6 +187,9 @@ REGRESS_PORT = '3057'
 # of zero wearing a ratchet's clothes.
 RATCHET_FILE = os.path.join(REPO_ROOT, '.claude', 'record_count.json')
 RECORDS_METRIC = 'records'
+# The record SET, stored beside its size in the same file. Named as a constant because three
+# functions read it and a typo in one of them would look exactly like a first run.
+RECORD_KEYS = 'record_keys'
 
 PHASES = ('pre-commit', 'post-push')
 
@@ -329,6 +353,109 @@ def ratchet_verdict(metric, previous, current, lower_to=None, lower_reason=None)
     return problems, previous, notes
 
 
+# ---- the record SET, not just its size ---------------------------------------------------------
+# Why this exists at all is the composition paragraph in assertion 4 above. What follows is the
+# part that had to be got exactly right: what a record's identity IS, and how to report a change in
+# a set of 490 of them without flooding the one list the standing procedure says to read.
+
+def record_key(record):
+    """One record's identity, AS THE EXTRACTOR ALREADY DEFINES IT: (author, year, ref).
+
+    NOT ONE FIELD NARROWER, and that was measured rather than assumed. extract_citations.py dedupes
+    on exactly this triple, so it is the finest distinction the producer draws and the coarsest key
+    whose set size can equal the count it explains. Drop the ref and `TCGA|2015` is ONE string
+    naming 22 records — including both records d54bd1a added, which is the very movement this was
+    built to show. A colliding key would put two different totals in one file and call them both
+    `records`, and the delta report would go quiet on the exact case that motivated it."""
+    return f"{record['author']}|{record['year']}|{record['ref']}"
+
+
+def coarse_key(key):
+    """A record's identity WITHOUT its line, used for one purpose: telling a MOVE from a removal.
+
+    The line number is in the key because it is in the producer's dedupe key, and the cost of that
+    is real — inserting a single line at the top of colon.js re-keys every record below it, so a
+    formatting commit can present forty removals and forty additions. Left unclassified that floods
+    the list the standing procedure says to read line by line, which is how a discipline dies of
+    noise rather than of disagreement.
+    SAYING "MOVED" IS A LABEL, NOT A FILTER: moves are counted, and printed with both refs, so a
+    reader sees everything either way. IT CAN MISLABEL ONE THING, named here because the pairing is
+    arithmetic and cannot know better — a real removal plus an unrelated real addition that happen
+    to share author, year and file will pair as a move. Both refs still print, so no evidence is
+    lost; only the label is wrong, and a wrong label on printed evidence is recoverable. A SILENT
+    omission would not be, which is why nothing here drops anything."""
+    return key.rsplit(':', 1)[0]
+
+
+def record_delta(previous, current):
+    """(added, removed, moved) over the record set — pure, so the selftest can point it at the
+    d54bd1a shape (a flat count with four records changing identity) and watch it fire.
+
+    `previous` is None on the first run after this shipped: there is no baseline, every key would
+    read as added, and calling that a delta would be the loudest possible way of saying nothing.
+    Condition (8) once more — a first run is calibration, the SECOND run is the check."""
+    if previous is None:
+        return [], [], []
+    out_by_coarse, in_by_coarse = {}, {}
+    for key in sorted(set(previous) - set(current)):
+        out_by_coarse.setdefault(coarse_key(key), []).append(key)
+    for key in sorted(set(current) - set(previous)):
+        in_by_coarse.setdefault(coarse_key(key), []).append(key)
+    added, removed, moved = [], [], []
+    for coarse, went in out_by_coarse.items():
+        came = in_by_coarse.get(coarse, [])
+        pairs = min(len(went), len(came))
+        moved += list(zip(went[:pairs], came[:pairs]))
+        removed += went[pairs:]
+    for coarse, came in in_by_coarse.items():
+        pairs = min(len(out_by_coarse.get(coarse, [])), len(came))
+        added += came[pairs:]
+    return sorted(added), sorted(removed), sorted(moved)
+
+
+# Truncation limits for the PRINTED report only. The file holds the whole set unconditionally, so
+# these cost a scroll, never evidence. REMOVALS HAVE NO LIMIT and that asymmetry is the point: a
+# removal is either a fix or a loss and no count can tell them apart, so every one has to be
+# readable in the run that made it. A wrong ADDITION is a false record, and false records already
+# have citation_crosscheck pointed straight at them.
+MOVED_SHOWN = 8
+ADDED_SHOWN = 20
+
+
+def record_delta_report(previous, current):
+    """Returns (lines to print, the DONE line's clause). The clause is machine-derived for the
+    reason every clause here is: a restated one drifts, and this one goes into commit messages."""
+    added, removed, moved = record_delta(previous, current)
+    if previous is None:
+        return ([f'RECORD KEYS INITIALISED: {len(current)} stored — condition (8), a first run is '
+                 'calibration and there is nothing to compare against yet; the SECOND run is the '
+                 f'first real composition check. git add .claude/{os.path.basename(RATCHET_FILE)}'],
+                f'{len(current)} keys initialised (calibration)')
+    if not (added or removed or moved):
+        return [], 'set unchanged'
+    lines = [f'RECORD SET MOVED: {len(added)} added, {len(removed)} removed, {len(moved)} moved '
+             f'(line shifts) — the count alone cannot see this, which is why it is printed']
+    for key in removed:
+        lines.append(f'  - {key}')
+    for key in added[:ADDED_SHOWN]:
+        lines.append(f'  + {key}')
+    if len(added) > ADDED_SHOWN:
+        lines.append(f'  + ... {len(added) - ADDED_SHOWN} more additions; '
+                     f'git diff .claude/{os.path.basename(RATCHET_FILE)} for the whole set')
+    for went, came in moved[:MOVED_SHOWN]:
+        lines.append(f'  ~ {went} -> :{came.rsplit(":", 1)[1]}')
+    if len(moved) > MOVED_SHOWN:
+        lines.append(f'  ~ ... {len(moved) - MOVED_SHOWN} more line shifts')
+    parts = []
+    if added:
+        parts.append(f'{len(added)} added')
+    if removed:
+        parts.append(f'{len(removed)} removed')
+    if moved:
+        parts.append(f'{len(moved)} moved')
+    return lines, ', '.join(parts)
+
+
 def load_ratchet(path=None):
     """A MISSING file is a first run. A file that EXISTS AND DOES NOT PARSE is a problem, never a
     silent re-initialisation: resetting the ratchet to nothing would discard the whole protection
@@ -341,9 +468,29 @@ def load_ratchet(path=None):
         state = json.load(open(path, encoding='utf-8'))
         if not isinstance(state.get('counts'), dict):
             raise ValueError("no 'counts' object")
+        keys = state.get(RECORD_KEYS)
+        if keys is not None and not (isinstance(keys, list)
+                                     and all(isinstance(key, str) for key in keys)):
+            raise ValueError(f"'{RECORD_KEYS}' is present but is not a list of strings")
     except (OSError, ValueError) as exc:
         return None, [f'RATCHET UNREADABLE: {path} exists but does not parse — {exc}. Refusing to '
                       're-initialise, which would silently discard the ratchet.']
+    # THE COUNT AND THE SET IT EXPLAINS ARE WRITTEN TOGETHER BY ONE WRITER, so they can only
+    # disagree if the file was hand-edited or a run half-wrote it. Either way the file then holds
+    # two different corpora under one name, and the ratchet would be comparing against one while the
+    # delta compared against the other. Refuse, same as an unparseable file: absent keys are a first
+    # run, but INCOHERENT keys are not a state this tool could have produced.
+    keys, stored = state.get(RECORD_KEYS), state['counts'].get(RECORDS_METRIC)
+    if keys is not None and stored is not None and len(keys) != stored:
+        return None, [f'RATCHET INCOHERENT: {path} stores {stored} for {RECORDS_METRIC} but '
+                      f'{len(keys)} record keys. One writer owns both and saves them together, so '
+                      'they cannot legitimately disagree.']
+    # Sorted ordering is load-bearing (user, 2026-09-06): "or the diff is unreadable", and an
+    # unreadable diff is not an audit. The only writer sorts, so an unsorted file is a hand-edit.
+    if keys is not None and keys != sorted(keys):
+        return None, [f'RATCHET INCOHERENT: {path} stores {RECORD_KEYS} out of sorted order, which '
+                      'this tool never writes. Sorted is what makes `git diff` on this file the '
+                      'composition audit; unsorted, every commit rewrites every line of it.']
     state.setdefault('lowers', [])
     return state, []
 
@@ -515,7 +662,11 @@ def regenerate_records():
     whatever is left in TMPDIR from an earlier session — a stale artifact would make both scans
     describe a corpus that no longer exists. citation_crosscheck.py now REFUSES without it
     (2026-09-05: it used to default to an empty list and quietly check 110 records instead of
-    142), and regenerating here is what keeps that refusal from ever firing in normal use."""
+    142), and regenerating here is what keeps that refusal from ever firing in normal use.
+
+    RETURNS THE SORTED KEY SET, not a count: the count is len() of it. That is deliberate — two
+    values derived from one artifact by two expressions is how the count and the set it explains
+    come to disagree, and load_ratchet() refuses a file where they do. Here they cannot."""
     os.makedirs(WORK_DIR, exist_ok=True)
     print('--- preflight: regenerating the v2 records artifact')
     proc = subprocess.run(['python3', '.claude/extract_citations.py', RECORDS_ARTIFACT],
@@ -531,7 +682,21 @@ def regenerate_records():
     if not records:
         return None, ['PREFLIGHT FAILED: records artifact is empty — every citation scan '
                       'downstream would be vacuously clean']
-    return len(records), []
+    try:
+        keys = sorted(record_key(record) for record in records)
+    except (KeyError, TypeError) as exc:
+        return None, [f'PREFLIGHT FAILED: records artifact has an unexpected shape — {exc}. The '
+                      'ratchet keys on (author, year, ref) and cannot key on a record missing one.']
+    # THE UNIQUENESS ASSERTION IS ALSO A CHECK ON THE PRODUCER'S DEDUPE, which is the only reason it
+    # can fail: this key IS extract_citations.py's dedupe key, so duplicates here mean the extractor
+    # narrowed its own notion of a distinct record. That is precisely the silent producer change the
+    # ratchet exists for, arriving at the one place where it makes the count and the set disagree.
+    if len(set(keys)) != len(keys):
+        dupes = sorted({key for key in keys if keys.count(key) > 1})
+        return None, [f'PREFLIGHT FAILED: {len(keys) - len(set(keys))} duplicate record keys — the '
+                      'extractor dedupes on (author, year, ref), so this means its dedupe key '
+                      f'narrowed. First: {dupes[:3]}']
+    return keys, []
 
 
 def start_dev_server():
@@ -767,9 +932,65 @@ def selftest():
     say(any('BAD FLAG' in p for p in parse_lower(['battery.py', '--lower-ratchet=lots'])[2]),
         'refuses a non-integer lower rather than ignoring the flag')
 
+    # arm 16: THE COMPOSITION DELTA, and its load-bearing arm is the FLAT COUNT — condition (7)
+    # applied to the one failure this was built for. The keys below are the REAL ones from d54bd1a,
+    # transcribed, so an arm failing points at a commit that happened rather than at a hypothesis.
+    d54_before = ['Fontugne|2015|js/organs/prostate.js:204', 'Park|2010|js/organs/bladder.js:27',
+                  'Travis|2011|js/organs/lungs.js:236']
+    d54_after = ['TCGA|2015|js/organs/prostate.js:205', 'TCGA|2015|js/organs/prostate.js:231',
+                 'Travis|2011|js/organs/lungs.js:236']
+    flat_added, flat_removed, flat_moved = record_delta(d54_before, d54_after)
+    say(len(flat_added) == 2 and len(flat_removed) == 2 and not flat_moved
+        and len(d54_before) == len(d54_after),
+        'reports 2 added and 2 removed on the d54bd1a shape — a count that did not move at all '
+        '(the blind spot this closes)')
+    flat_lines, flat_clause = record_delta_report(d54_before, d54_after)
+    say('2 added' in flat_clause and '2 removed' in flat_clause,
+        f'and the DONE line carries it into the commit message ({flat_clause!r})')
+    say(all(any(key in line for line in flat_lines) for key in flat_removed),
+        'every removal is printed individually — the standing procedure is to read each one')
+    say(record_delta(d54_after, d54_after) == ([], [], [])
+        and record_delta_report(d54_after, d54_after)[1] == 'set unchanged',
+        'an unchanged set is silent and says so (the gate is not stuck reporting movement)')
+    say(record_delta(None, d54_after) == ([], [], [])
+        and 'calibration' in record_delta_report(None, d54_after)[1],
+        'a first run is calibration, not one spurious addition per record (condition (8))')
+    # A LINE SHIFT MUST NOT PRESENT AS A REMOVAL, or one formatting commit floods the removal list
+    # and the discipline of reading it dies of noise.
+    shifted = record_delta(['Travis|2011|js/organs/lungs.js:236'],
+                           ['Travis|2011|js/organs/lungs.js:239'])
+    say(shifted == ([], [], [('Travis|2011|js/organs/lungs.js:236',
+                              'Travis|2011|js/organs/lungs.js:239')]),
+        'a same-file line shift is reported as MOVED, not as a removal plus an addition')
+    # ...and the pairing must not let a move swallow a real removal in the same file.
+    both = record_delta(['Travis|2011|js/organs/lungs.js:236', 'Travis|2011|js/organs/lungs.js:225'],
+                        ['Travis|2011|js/organs/lungs.js:239'])
+    say(len(both[1]) == 1 and len(both[2]) == 1 and not both[0],
+        'a move does not swallow a real removal under the same author, year and file')
+    say(record_key({'author': 'TCGA', 'year': '2015', 'ref': 'js/organs/prostate.js:205'})
+        != record_key({'author': 'TCGA', 'year': '2015', 'ref': 'js/organs/prostate.js:231'}),
+        "the key is the extractor's dedupe key: two records differing only in ref stay distinct "
+        '(one field narrower and both records d54bd1a added collapse into one)')
+    # arm 17: the state file's own coherence, both refusals, shown able to FIRE.
+    incoherent = os.path.join(tempfile.mkdtemp(), 'record_count.json')
+    open(incoherent, 'w').write('{"counts": {"records": 3}, "record_keys": ["a|1|f:1"]}')
+    inc_state, inc_problems = load_ratchet(incoherent)
+    say(inc_state is None and any('INCOHERENT' in p for p in inc_problems),
+        'refuses a file whose count and key set disagree (two corpora under one name)')
+    open(incoherent, 'w').write('{"counts": {"records": 2}, "record_keys": ["b|1|f:1", "a|1|f:1"]}')
+    unsorted_state, unsorted_problems = load_ratchet(incoherent)
+    say(unsorted_state is None and any('INCOHERENT' in p for p in unsorted_problems),
+        'refuses UNSORTED keys — sorted ordering is what makes the diff the audit')
+    open(incoherent, 'w').write('{"counts": {"records": 2}, "record_keys": ["a|1|f:1", "b|1|f:1"]}')
+    coherent_state, coherent_problems = load_ratchet(incoherent)
+    say(coherent_state is not None and not coherent_problems
+        and coherent_state[RECORD_KEYS] == ['a|1|f:1', 'b|1|f:1'],
+        'and loads a coherent one clean (the refusals are not unconditional)')
+
     print('SELFTEST', 'PASS — fires on a missing member, a vacuous member, a failing member, '
-          'an undeclared file, a stale declaration, a bad phase, a shrinking corpus, a malformed '
-          'sidecar and an abandoned ratchet; passes complete sets'
+          'an undeclared file, a stale declaration, a bad phase, a shrinking corpus, a corpus that '
+          'changed composition under a flat count, a malformed sidecar and an abandoned ratchet; '
+          'passes complete sets'
           if ok else 'FAIL — do not trust a green battery from this build')
     # 7-bis applies to the selftest as well (deploy_check.js's precedent): a selftest that never
     # executed must not be indistinguishable from one that passed.
@@ -809,15 +1030,17 @@ def main(argv):
 
     record_count = None
     ratchet_clause = 'n/a'
+    delta_clause = 'n/a'
     if needs_records:
-        record_count, preflight_problems = regenerate_records()
+        current_keys, preflight_problems = regenerate_records()
         problems += preflight_problems
+        record_count = None if current_keys is None else len(current_keys)
         if preflight_problems:
             # Downstream citation scans would be vacuously clean; do not run them at all rather
             # than print two green DONE lines over an empty corpus.
             members = [(n, m, a) for n, m, a in members if RECORDS_ARTIFACT not in a]
         elif state is None:
-            ratchet_clause = 'UNREADABLE'
+            ratchet_clause = delta_clause = 'UNREADABLE'
         else:
             previous = state['counts'].get(RECORDS_METRIC)
             ratchet_problems, new_value, notes = ratchet_verdict(
@@ -832,6 +1055,19 @@ def main(argv):
                                             'to': lowers[RECORDS_METRIC], 'count': record_count,
                                             'reason': lower_reason})
                 state['counts'][RECORDS_METRIC] = new_value
+                ratchet_dirty = True
+            # THE COMPOSITION DELTA. Reported whatever the count did — that is the entire point, and
+            # the flat-count case is the one it was built for.
+            delta_lines, delta_clause = record_delta_report(state.get(RECORD_KEYS), current_keys)
+            for line in delta_lines:
+                print(f'    {line}')
+            # A HOLD DOES NOT MOVE THE COUNT AND SO USED NOT TO WRITE THE FILE AT ALL, which is
+            # exactly the case the keys exist for: d54bd1a held at 490 and moved four records. So the
+            # key set is its own dirty trigger. GATED ON THE RATCHET NOT FIRING for the same reason
+            # the count is: a run whose corpus shrank without a declared reason must not quietly
+            # advance the baseline, or the next run reports no delta for a shrink nobody accepted.
+            if not ratchet_problems and state.get(RECORD_KEYS) != current_keys:
+                state[RECORD_KEYS] = current_keys
                 ratchet_dirty = True
 
     server = start_dev_server() if needs_server else None
@@ -912,7 +1148,8 @@ def main(argv):
           f'ran and reported (marker printed, exit 0), {len(INSTRUMENTS)} declared in total, '
           f'{len(tracked_claude_files())} .claude/ files all declared, '
           f'{record_count if record_count is not None else "n/a"} citation records extracted '
-          f'(ratchet {ratchet_clause}), {len(sidecars)}/{len(reported_clean)} reporting members '
+          f'(ratchet {ratchet_clause}; {delta_clause}), '
+          f'{len(sidecars)}/{len(reported_clean)} reporting members '
           f'emitted a sidecar, {ratcheted_metrics} sidecar metrics ratcheted, '
           f'{len(problems)} problems')
     return 1 if problems else 0

@@ -52,6 +52,36 @@
 # Without the split, exiting on anything unexamined would make the instrument permanently red on
 # the one record that can never be mapped, which is a gate nobody can keep green and everybody
 # learns to ignore.
+#
+# THEN IT FIRED FOR REAL, ON ITS FIRST OPPORTUNITY, ON THE SAME FAILURE IT WAS BUILT FOR — and this
+# is the live demonstration, recorded on the user's ruling (2026-09-06) as the best evidence in the
+# whole arc:
+#
+#     "A live DNS failure then hit mid-run and the instrument refused to print a total rather than
+#      reporting a smaller one — unprompted, on its first opportunity, a day after it was written
+#      for a failure recorded from the past. That's better evidence than the fixture and better than
+#      the recording... the one case in this whole arc where a guard was built for a specific past
+#      failure and then caught the same failure again in the wild."
+#
+# WHAT IS CHECKABLE, and it is the interval rather than the output: the split shipped in aafbe04
+# (2026-09-05 22:57 -0400, `git log -1 aafbe04`). Its first live exercise was the full battery run
+# on the way to d54bd1a (2026-09-06 22:14 -0400) — 23 hours later, and the FIRST run since aafbe04
+# in which the network happened to break. Every id-mapping fetch failed with urllib's
+# `nodename nor servname provided, or not known`, so every record took the UNREACHED branch below,
+# this tool exited non-zero WITHOUT a total, and battery.py reported 1 problem and 9/10 members
+# rather than a green line over a smaller number. The transient was then confirmed independently
+# (ping, and a curl to the same host returning HTTP 200) and the immediate re-run printed
+# "143 records checked, 3 flags, 1 declared-unmappable" with 10/10 and 0 problems — which is the
+# same artifact reaching the same total, i.e. the corpus never moved and the earlier run's silence
+# was correct.
+#
+# WHAT IS NOT CHECKABLE, said plainly because the rule above demands it: THE REFUSING RUN'S OUTPUT
+# WAS NOT KEPT. The paragraph above it records a shrink from a run that was also not kept, and this
+# one was nearly lost the same way. That is not incidental — it is an asymmetry in the chain worth
+# naming and NOT worth a fifth layer: commit_checked.sh quotes every DONE line into the commit
+# message, so the chain archives its PASSES in git permanently and forgets its REFUSALS entirely,
+# because a refusing run never reaches a commit. The best evidence this project has produced about
+# its own instruments is the class of evidence it stores least well.
 import json, os, re, sys, tempfile, time, unicodedata, urllib.parse, urllib.request
 
 # DECLARED UNMAPPABLE, exhaustively and by exact id — deploy_check.js's BENIGN list, same shape and
