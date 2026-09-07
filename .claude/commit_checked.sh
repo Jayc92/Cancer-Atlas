@@ -65,6 +65,22 @@
 # which is a judgement, and a wrong judgement here refuses legitimate commits. It is a rule for the
 # person drawing the boundary, which is why it is written where they will be standing.
 #
+# GATE THE TREE YOU'RE COMMITTING, NOT THE TREE YOU'RE WORKING IN (user ruling, 2026-09-07 — recorded
+# beside the sequencing rule because it is the same family, one layer down). That rule decides WHICH
+# COMMIT a thing lands in; this one decides WHICH TREE the gate ran over. The two trees diverge the
+# moment an untracked file exists, and a working tree with a draft in it is not the tree a reviewer, a
+# clone or the deploy will see — so a green run over it can certify bytes that are going nowhere and,
+# worse, BANK NUMBERS DERIVED FROM THEM.
+# THE INCIDENT IS WHY THIS IS A RULE AND NOT AN AESTHETIC: an untracked draft in .claude/ raised
+# internal_quote_check's ratcheted floor to a value no fresh checkout could reproduce, and it was
+# caught by moving the draft aside and re-running — by gating the committed tree rather than the
+# working one, and by nothing else. The PRODUCER side of that is now fixed and mechanised (a ratcheted
+# metric derives from tracked files; battery.py's sidecar-convention block holds the rule). This side
+# is not mechanisable, for the same shape of reason as the rule above: no gate can know whether an
+# untracked file is a draft to exclude or a file you forgot to stage.
+# WHAT IT COSTS TO OBEY: one `git status --porcelain --untracked-files=all` before the gate run, and if
+# it is not empty, either stage the file or move it out of the tree and run again.
+#
 # Condition (7) at birth: --selftest builds a scratch git repo in TMPDIR and proves both arms
 # against real commits — a gate printing no marker leaves the repo with ZERO new commits, and
 # a gate printing one produces a message containing that line verbatim. A tool whose job is

@@ -112,12 +112,20 @@
 # header, where a commit boundary actually gets drawn.
 #
 # Usage: python3 .claude/citation_paren_ledger.py [--selftest] [file ...defaults to js/organs/*.js]
-import glob, json, os, sys
+# `glob` is gone from this import on purpose: main()'s default population globbed js/organs/ and now
+# comes from corpus_paths(), below.
+import json, os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-# extract() only: it fills an absences list as it goes, so one pass yields BOTH sides of the split.
+# extract() fills an absences list as it goes, so one pass yields BOTH sides of the split.
 # citation_reach_check.py imports unreached_spans() instead because it wants the absences alone.
-from extract_citations import extract
+# corpus_paths() IS THE SECOND IMPORT FOR A REASON: this file's default population was its own copy of
+# `sorted(glob.glob('js/organs/*.js'))`, identical to the extractor's and free to drift from it. It
+# reads git's index now — `basis_test` here is RATCHETED, and a ratcheted metric must derive from
+# tracked files (user ruling, 2026-09-07) — and importing it rather than re-deriving it means the
+# ledger and the extractor cannot disagree about what the corpus is, which is the same defect one
+# directory over that made internal_quote_check and battery.py disagree about .claude/.
+from extract_citations import extract, corpus_paths
 
 SIDES = ('SPENT', 'KEPT')          # the rule fired / the rule declined
 BASES = ('FIT', 'TEST')            # informed the rule / arrived after it
@@ -412,7 +420,7 @@ def selftest():
 
 
 def main():
-    paths = [a for a in sys.argv[1:] if not a.startswith('--')] or sorted(glob.glob('js/organs/*.js'))
+    paths = [a for a in sys.argv[1:] if not a.startswith('--')] or corpus_paths()
     by_key, problems = population(paths)
     problems = problems + evaluate(by_key)
 

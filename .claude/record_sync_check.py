@@ -28,6 +28,35 @@
 # pair — and could close it, because ITS population is one directory and can be enumerated.
 # This map's population is "load-bearing records", which cannot be, so the caveat stands here.
 #
+# DECOUPLE THE MARKER FROM THE HEADING (user ruling, 2026-09-07 — recorded as a SHAPE AND NOT A TASK,
+# the same treatment the sidecar reader got before a producer existed, so a session that finds this
+# finds a plan rather than a hole).
+#
+# WHAT HAPPENED — AND IT IS THE GUARD WORKING, NOT TWO CONVENTIONS FAILING. A new CLAUDE.md passage
+# cited another section BY ITS EXACT TITLE, deliberately, because the alternative was a positional
+# reference ("the section below") and the anchor rule in battery.py's rule C exists to stop those. That
+# title is a declared marker here. Its occurrence count went one -> two, this check fired NOT A MARKER,
+# the battery refused the commit, and run_checked.sh logged the refusal. The uniqueness rule caught a
+# LIVE attempt to create a duplicate, in prose, on its first real opportunity — the strongest evidence
+# a rule can offer for itself. The refusal is the third entry in .claude/refusals.log and was explained
+# in the commit message rather than tidied away, which is the archive being used as designed.
+#
+# WHY IT WILL RECUR: two rules pull in opposite directions and NEITHER IS WRONG. The sweep's rule tells
+# an author to NAME a referent rather than point at a position; the uniqueness rule makes some names
+# UNQUOTABLE. And there is no way to tell which headings are markers without opening this file — the
+# constraint is invisible at the site where it binds, which is the property that makes recurrence a
+# matter of time rather than of care.
+#
+# THE SHAPE OF THE FIX: a DEDICATED TOKEN that this checker looks for — a tag placed once at the
+# record's home — leaving HEADINGS AS FREE PROSE that any passage may quote. The marker column then
+# holds something nobody writes by accident, and citing a title costs nothing.
+# WHY IT IS NOT DONE HERE: it is a change across EVERY declared pair below, in every target file — each
+# token sited, agreed and verified, with this map rewritten in the same commit — and none of that is
+# what the commit carrying this record is about. Done badly it leaves pairs green by coincidence, which
+# is the exact failure the uniqueness rule closed.
+# THE WORKAROUND UNTIL THEN, which is what the incident settled on: name the rule and its date, or
+# quote a DIFFERENT span of the title. Both are cheap; both keep the referent named.
+#
 # Condition (7) at birth: the self-test proves it FIRES on a synthetic half-landed pair
 # and PASSES a present one. Extended 2026-09-07 with three arms that fail against the logic
 # they replaced — a pair absent from both homes must fire, the DONE line's count must be

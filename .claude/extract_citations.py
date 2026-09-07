@@ -242,9 +242,48 @@
 #
 # Usage: python3 .claude/extract_citations.py <out.json> [file ...defaults to js/organs/*.js]
 #        python3 .claude/extract_citations.py --selftest
-import json, re, sys, glob, os
+# `glob` is gone from this import on purpose — see corpus_paths() below, which replaced the default
+# glob with a read of git's index. Removed rather than left unused, so the next reader does not reach
+# for the thing the ruling took away.
+import json, re, sys, os, subprocess
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from citation_polarity import classify_window, window_for
+
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CORPUS_DIR = 'js/organs'
+CORPUS_EXT = 'js'
+
+
+def corpus_paths(tracked=None):
+    """THE CORPUS: every TRACKED js/organs/*.js, in sorted order. The default population for this
+    module and — by import — for citation_paren_ledger.py, which used to keep its own identical glob.
+
+    FROM GIT, NOT FROM A GLOB. This module's record count is battery.py's ratcheted `records` metric
+    and citation_crosscheck's ratcheted `records`, and a glob sees files git does not have, so an
+    untracked scratch organ would raise a floor A FRESH CHECKOUT CANNOT REPRODUCE — the clone then
+    fails SHRANK with no defect anywhere in it. User ruling, 2026-09-07: "what ships is what's
+    tracked — a fresh checkout has only tracked files", therefore "A RATCHETED METRIC MUST DERIVE FROM
+    TRACKED FILES." The confirmed instance was one directory over: an untracked draft in .claude/
+    moved internal_quote_check's ratcheted marked count by one.
+    THE INDEX, NOT HEAD, so a newly `git add`ed organ counts in the commit that adds it; the same
+    choice battery.py makes for the same reason. Filtering rather than a `js/organs/*.js` pathspec
+    because git's wildcards cross directory separators and a future subdirectory would be swept in
+    silently. Explicit `[file ...]` arguments still win — the arms and one-off runs need them.
+    `tracked` is injectable so the arms can drive the filter without depending on what is on disk."""
+    if tracked is None:
+        out = subprocess.run(['git', 'ls-files'], cwd=REPO_ROOT, capture_output=True, text=True,
+                             check=True).stdout
+        tracked = [line for line in out.split('\n') if line]
+    found = []
+    for path in tracked:
+        if not path.startswith(CORPUS_DIR + '/'):
+            continue
+        relative = path[len(CORPUS_DIR) + 1:]
+        if '/' in relative:            # a future subdirectory is not the corpus until someone says so
+            continue
+        if relative.rsplit('.', 1)[-1] == CORPUS_EXT:
+            found.append(path)
+    return sorted(found)
 
 YEAR = r'(?:19|20)\d{2}'
 # lowercase particles ride along ("von der Maase"); two-cap compounds too ("Mehrvarz Sarshekeh")
@@ -1145,14 +1184,30 @@ def selftest():
                              f'  source   {lines}\n'
                              f'  records  want {want_r} got {got_recs}\n'
                              f'  absences want {want_a} got {got_abs}\n')
+    # THE POPULATION ARMS. Not head patterns — the corpus this module reads when nobody names files,
+    # which is every battery run. The second arm is the incident in miniature: a path that certainly
+    # exists on disk is absent from the tracked list, and absence from the list is what decides.
+    synthetic = ['js/organs/a.js', 'js/organs/b.js', 'js/organs/notes.md',
+                 'js/organs/sub/c.js', 'js/scene.js', 'CLAUDE.md']
+    if corpus_paths(synthetic) != ['js/organs/a.js', 'js/organs/b.js']:
+        ok = False
+        sys.stderr.write('SELFTEST FAIL: corpus_paths() filter — got %r\n'
+                         % (corpus_paths(synthetic),))
+    on_disk = os.path.join(REPO_ROOT, 'js', 'organs', 'liver.js')
+    if os.path.exists(on_disk) and 'js/organs/liver.js' in corpus_paths(['js/organs/a.js']):
+        ok = False
+        sys.stderr.write('SELFTEST FAIL: corpus_paths() took a file that EXISTS ON DISK but is not '
+                         'in the tracked list — the glob this replaced did exactly that, which is '
+                         'how an untracked draft can move a ratcheted floor\n')
     if ok:
-        print(f'selftest: {len(FIXTURES)}/{len(FIXTURES)} head-pattern arms passed')
+        print(f'selftest: {len(FIXTURES)}/{len(FIXTURES)} head-pattern arms passed, and the default '
+              f'corpus comes from git rather than from the filesystem')
     return ok
 
 
 def main():
     outp = sys.argv[1]
-    paths = sys.argv[2:] or sorted(glob.glob('js/organs/*.js'))
+    paths = sys.argv[2:] or corpus_paths()
     absences = []
     recs = extract(paths, absences)
     json.dump(recs, open(outp, 'w'), indent=1)

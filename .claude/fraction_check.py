@@ -255,6 +255,11 @@ if __name__ == '__main__':
     checked = flagged = 0
     comments_checked = comments_flagged = 0
     tworange = []
+    # STILL A GLOB, AND DECLARED AS SUCH. The tracked-set rule binds a producer whose metric is
+    # RATCHETED; this sidecar's ratchet array is empty (every metric it prints is a defect count).
+    # Reasoning and the general rule: battery.py's sidecar-convention block. THE TRIGGER, here because
+    # this is the line that would have to change: adding anything to that array means switching this
+    # loop to extract_citations.corpus_paths() in the same edit.
     for f in sorted(glob.glob('js/organs/*.js')):
         src = open(f, encoding='utf-8').read()
         short = f.split('/')[-1][:-3]

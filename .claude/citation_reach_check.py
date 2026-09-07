@@ -420,6 +420,11 @@ def sidecar_metrics(spans, counts, problems):
 
 
 def main():
+    # STILL A GLOB, AND DECLARED AS SUCH. The tracked-set rule binds a producer whose metric is
+    # RATCHETED; this sidecar's ratchet array is empty, for the reason given beside it below.
+    # Reasoning and the general rule: battery.py's sidecar-convention block. THE TRIGGER, here because
+    # this is the line that would have to change: adding anything to that array means switching this
+    # default to extract_citations.corpus_paths() in the same edit.
     paths = [a for a in sys.argv[1:] if not a.startswith('--')] or sorted(glob.glob('js/organs/*.js'))
     spans = unreached_spans(paths)
     problems, gated, counts = evaluate(spans)

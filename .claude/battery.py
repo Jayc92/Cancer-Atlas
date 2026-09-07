@@ -200,6 +200,38 @@
 #       moved. A new gate whose first act is a false positive teaches people to pass
 #       --lower-ratchet, which is worse than the gap it closed.
 #
+#   A FOURTH PROPERTY, 2026-09-07, and the only one found by a ratchet MISFIRING rather than by
+#   wiring one up:
+#
+#     - A RATCHETED METRIC MUST DERIVE FROM TRACKED FILES (user ruling). "What ships is what's
+#       tracked — a fresh checkout has only tracked files, so any ratcheted metric derived from a
+#       filesystem glob records a number a clean checkout cannot reproduce." The incident: while
+#       .claude/pointer_check.py was still an untracked draft, internal_quote_check globbed .claude/,
+#       counted the draft's marked quotes and moved its ratcheted `marked` floor upward — to a floor
+#       no clone can reach, so the clone fails SHRANK with no defect anywhere in it. THIS FILE WAS THE
+#       ONE THAT WAS RIGHT: tracked_claude_files() already read git's index, and the two instruments
+#       therefore disagreed about what the corpus IS. Fixed at every ratcheted producer by reading the
+#       INDEX rather than HEAD, so a newly `git add`ed file counts in the commit that adds it:
+#       internal_quote_check and pointer_check over .claude/, and extract_citations over js/organs/,
+#       whose corpus_paths() citation_paren_ledger now IMPORTS instead of keeping its own byte-identical
+#       copy of the same glob — a second population, free to drift from the first, which is this whole
+#       finding one directory over. Measured behaviour-neutral on the day: the glob and the index
+#       listed the same corpus and `git status --porcelain --untracked-files=all` was empty, so no
+#       record moved and the read-every-removal rule had nothing to read.
+#       SCOPE, DECLARED IN BOTH DIRECTIONS. Three instruments still glob js/organs/ —
+#       citation_head_check, citation_reach_check, fraction_check — and are LEFT that way. Each
+#       declares `'ratchet': []`, and for a pure defect count seeing an untracked draft organ is a
+#       FEATURE: it fails loudly on a file that will not ship, where missing a tracked one would be
+#       silent. Each carries the trigger as a comment on its own glob line, which is the line that
+#       would have to change, rather than only here where nobody adding a ratchet would look.
+#       NOT MECHANISED, AND THAT IS A HELD DECISION, not an oversight. The property is decidable from
+#       SOURCE TEXT — a tracked .claude/*.py that both calls glob.glob and declares a non-empty
+#       `ratchet` array — so a checker is buildable, and it would have named all four sites by
+#       inspection instead of waiting for one to fire, which is the ruling's own point. Held because a
+#       new battery member is the user's call and the ruling made inspection the standard; recorded
+#       here so a session that finds this finds a plan rather than a hole, exactly as the sidecar
+#       reader was held above until a producer existed.
+#
 # --------------------------------------------------------------------------------------------------
 # B. THE SCRATCH PATH
 #

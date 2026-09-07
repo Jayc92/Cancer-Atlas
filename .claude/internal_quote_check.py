@@ -179,7 +179,12 @@
 # because the repair removed the evidence. Condition (8): a first run is
 # calibration; read the second. 7-bis: DONE line last, after the sidecar. Wrapper form:
 #   .claude/run_checked.sh "DONE internal_quote_check:" python3 .claude/internal_quote_check.py
-import glob, json, os, re, sys
+import json, os, re, subprocess, sys
+
+# `glob` is gone from this import on purpose: scope() used to glob .claude/ and now reads git's index,
+# because a ratcheted metric must derive from tracked files. Leaving the import would leave the tool
+# for the next reader to reach for.
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # The marker token is held in a NAME so no FIXTURE can become a marker: every fixture below composes
 # its marker lines from this constant, and none writes one at line start. The header's worked example
@@ -448,20 +453,66 @@ def selftest():
     arm(verified == 1 and not fires,
         'and passes that same span once the two characters are corrected')
 
+    # THE POPULATION IS PART OF THE CHECK, because `marked` is ratcheted and a ratchet is only as
+    # honest as the set it counts. Driven with a SYNTHETIC tracked list, not the real repo: an arm
+    # that read the live index would pass on whatever happens to be on disk, which is precisely the
+    # confusion this replaced.
+    synthetic = ['.claude/a.py', '.claude/b.sh', '.claude/c.js', '.claude/d.md',
+                 '.claude/e.json', '.claude/nested/f.py', 'js/organs/g.js', 'CLAUDE.md']
+    arm(scope(synthetic) == ['.claude/a.py', '.claude/b.sh', '.claude/c.js', '.claude/d.md',
+                             'CLAUDE.md'],
+        'scope() takes .claude/ prose sources from the TRACKED list, skipping other extensions, '
+        'nested paths and corpus files')
+    arm(os.path.exists('.claude/internal_quote_check.py')
+        and '.claude/internal_quote_check.py' not in scope(['.claude/battery.py']),
+        'and a file that EXISTS ON DISK but is not in the tracked list stays OUT — the glob this '
+        'replaced took it in, which is how an untracked draft moved a ratcheted metric')
+
     print('SELFTEST', 'PASS — fires on a drifted quote (real bytes), a two-character drift (real '
           'bytes), a non-unique span, a missing target, a self-target, an unmarked marker, an empty '
           'gutter and a malformed marker; ignores the word used as English; passes repaired and '
-          'rewrapped quotes'
+          'rewrapped quotes; and takes its population from git rather than from the filesystem'
           if ok else 'FAIL — do not trust the scan')
     return ok
 
 
-def scope():
-    """Files scanned for markers: .claude/ sources plus CLAUDE.md. Globbed rather than hand-listed —
-    a hand list here would be the staleness battery.py's assertion 2 refuses one level up."""
+SCANNED_EXTS = ('py', 'sh', 'js', 'md')
+
+
+def tracked_paths():
+    """Every path git has in its INDEX. The index rather than HEAD, so a newly `git add`ed file counts
+    in the same commit that adds it — the same reason battery.py reads the index."""
+    out = subprocess.run(['git', '-C', REPO_ROOT, 'ls-files'],
+                         capture_output=True, text=True, check=True).stdout
+    return [line.strip() for line in out.split('\n') if line.strip()]
+
+
+def scope(tracked=None):
+    """Files scanned for markers: the TRACKED sources directly in .claude/, plus CLAUDE.md.
+
+    READ FROM GIT, NOT GLOBBED — AND THE DOCSTRING THIS REPLACES ARGUED THE OPPOSITE. It said globbing
+    beat a hand list because a hand list is a second thing to forget, and that half was correct; what
+    it missed is the half that decides a RATCHET. A glob sees untracked scratch, and `marked` is a
+    ratcheted metric, so an untracked draft in .claude/ can raise the floor to a value A FRESH
+    CHECKOUT CANNOT REPRODUCE — after which a clean clone fails the coverage ratchet with no defect
+    anywhere. That is not hypothetical: pointer_check.py, sitting untracked with a marked quote in its
+    header, moved this metric by one, and the bad value was caught only because the draft was moved
+    aside and the gate re-run. User ruling, 2026-09-07: "what ships is what's tracked — a fresh
+    checkout has only tracked files", so "A RATCHETED METRIC MUST DERIVE FROM TRACKED FILES."
+    THIS IS STILL NOT A HAND LIST: git is the authority, so there is nothing to remember and nothing
+    to forget. It replaces one authority with a better one rather than adding a list.
+    `tracked` is injectable so the arms can drive the filter without touching the real repo."""
+    if tracked is None:
+        tracked = tracked_paths()
     found = []
-    for pattern in ('.claude/*.py', '.claude/*.sh', '.claude/*.js', '.claude/*.md'):
-        found += glob.glob(pattern)
+    for path in tracked:
+        if not path.startswith('.claude/'):
+            continue
+        relative = path[len('.claude/'):]
+        if '/' in relative:          # nested dirs hold no prose today; same rule battery.py applies
+            continue
+        if relative.rsplit('.', 1)[-1] in SCANNED_EXTS:
+            found.append(path)
     return sorted(found) + ['CLAUDE.md']
 
 

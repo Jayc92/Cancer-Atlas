@@ -3575,6 +3575,52 @@ would have been guessed wrong on a fixture:
   actually ratcheted, so a reader that silently read nothing would say
   `0` rather than looking like a quiet pass.
 
+**A FOURTH PROPERTY** (2026-09-07, user ruling), and the only one found
+by a ratchet **misfiring** rather than by wiring one up. Its other home
+is the fourth item of `battery.py`'s sidecar-convention block.
+
+- **A ratcheted metric must derive from tracked files.** In the user's
+  words: *"what ships is what's tracked — a fresh checkout has only
+  tracked files, so any ratcheted metric derived from a filesystem glob
+  records a number a clean checkout cannot reproduce."*
+- **The incident.** While `.claude/pointer_check.py` was still an
+  untracked draft, `internal_quote_check` globbed `.claude/`, counted the
+  draft's marked quotes and moved its ratcheted `marked` floor **up to a
+  value no clone can reach** — so a fresh checkout would fail `SHRANK`
+  with no defect anywhere in it. `battery.py` was the one that was right:
+  its `tracked_claude_files()` already read git's index, and **the two
+  instruments disagreed about what the corpus is.**
+- **Fixed at every ratcheted producer**, reading the **index rather than
+  `HEAD`** so a newly `git add`ed file counts in the commit that adds it:
+  `internal_quote_check` and `pointer_check` over `.claude/`, and
+  `extract_citations` over `js/organs/` — whose `corpus_paths()`
+  `citation_paren_ledger` now **imports** instead of keeping its own
+  byte-identical copy of the same glob, which was a second population
+  free to drift from the first.
+- **Measured behaviour-neutral on the day**: the glob and the index
+  listed the same corpus and `git status --porcelain --untracked-files=all`
+  was empty, so no record moved and the read-every-removal rule had
+  nothing to read. That is the only way to satisfy it with no diff.
+- **Scope declared in both directions.** Three instruments still glob
+  `js/organs/` — `citation_head_check`, `citation_reach_check`,
+  `fraction_check` — and are **left that way**: each declares
+  `'ratchet': []`, and for a pure defect count, seeing an untracked draft
+  organ is a **feature** (it fails loudly on a file that will not ship,
+  where missing a tracked one would be silent). Each carries the trigger
+  as a comment **on its own glob line** — the line that would have to
+  change — rather than only in a header nobody adding a ratchet reads.
+- **Not mechanised, and that is a held decision.** The property is
+  decidable from source text — a tracked `.claude/*.py` that both calls
+  `glob.glob` and declares a non-empty `ratchet` array — so a checker is
+  buildable and would have named all four sites **by inspection instead
+  of by waiting for one to fire**, which was the ruling's own point. Held
+  because a new battery member is the user's call.
+- **The procedural half, recorded where a commit boundary gets drawn**
+  (`.claude/commit_checked.sh`, beside the sequencing rule): **gate the
+  tree you're committing, not the tree you're working in.** Those diverge
+  the moment an untracked file exists, and the bad ratchet value above was
+  caught only by moving the draft aside and re-running.
+
 ## WHAT COUNTS AS A DONE LINE (2026-09-06, user ruling; `.claude/commit_checked.sh`)
 
 **The commit gate quoted by substring on a hand-passed marker, and that
@@ -4184,17 +4230,32 @@ hand."* Census → guard → repair, in that order, on separate commits.
   of quoting the heading. Worth recording because the error message does not
   suggest the fix, and because the count-not-position anchor rule caught the
   person who wrote it.
-- **OPEN FINDING — TWO BATTERY MEMBERS DISAGREE ABOUT WHAT THE POPULATION IS.**
-  `internal_quote_check.py` **globs** `.claude/`, while `battery.py` declares its
-  file set **from git**. So an *untracked* draft in `.claude/` participates in one
-  member's count and not the other's: this instrument, sitting untracked with a
-  marked quote in its header, silently moved the ratcheted marked-quote metric,
-  and committing that `record_count.json` would have recorded a number the
-  committed tree could not support — a fresh checkout would fail the coverage
-  ratchet. Caught by restoring the ratchet and moving the draft aside so the gate
-  validated exactly the tree being committed. **The general shape: a ratchet is
-  only as trustworthy as the agreement between its producers about what they are
-  counting.** Not fixed; no ruling yet.
+  **The user's reframing, which is the more accurate reading: the uniqueness rule
+  fired on a live attempt to create a duplicate, in prose, on its first real
+  opportunity — that is the guard working, not two conventions failing.** And the
+  third refusal-log entry being an agent's own, logged and explained in the commit
+  rather than tidied away, is the archive being used exactly as designed.
+  **The structural fix is recorded as a shape, not done** (`record_sync_check.py`
+  header, on the user's ruling — the same treatment the sidecar reader got before
+  a producer existed): **decouple the marker from the heading**, giving the
+  checker a dedicated token placed once at each record's home and leaving headings
+  as free prose anything may quote. Deferred because it is a change across every
+  declared pair, in every target file, and done badly it leaves pairs green by
+  coincidence — the exact failure the uniqueness rule closed. Until then the
+  collision recurs by design, because the constraint is invisible at the site
+  where it binds: nothing tells an author which headings are markers.
+- **RULED AND FIXED — TWO BATTERY MEMBERS DISAGREED ABOUT WHAT THE POPULATION
+  IS.** `internal_quote_check.py` **globbed** `.claude/`, while `battery.py`
+  declares its file set **from git**. So an *untracked* draft in `.claude/`
+  participated in one member's count and not the other's: this instrument,
+  sitting untracked with a marked quote in its header, silently moved the
+  ratcheted marked-quote metric, and committing that `record_count.json` would
+  have recorded a number the committed tree could not support — a fresh checkout
+  would fail the coverage ratchet. Caught by restoring the ratchet and moving the
+  draft aside so the gate validated exactly the tree being committed. **The
+  user's ruling: `battery.py` was right, and the general form is that a ratcheted
+  metric must derive from tracked files** — recorded, with the fix, the declared
+  scope and the procedural half, as the sidecar convention's fourth property.
 
 ## ANY MACHINE-DERIVABLE NUMBER RESTATED IN PROSE WILL DRIFT (2026-09-05)
 

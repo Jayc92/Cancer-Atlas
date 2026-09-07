@@ -191,7 +191,10 @@
 # recorded here because the repair removed the evidence. Condition (8): a first run is calibration;
 # read the second. 7-bis: DONE line last, after the sidecar. Wrapper form:
 #   .claude/run_checked.sh "DONE pointer_check:" python3 .claude/pointer_check.py
-import glob, json, os, re, subprocess, sys
+# `glob` is gone from this import on purpose: scope() globbed .claude/ and now reads git's index. The
+# import is removed rather than left harmlessly unused, because an unused import is the next reader's
+# invitation to reach for the thing the ruling took away.
+import json, os, re, subprocess, sys
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFEST = os.path.join('.claude', 'citations.json')
@@ -330,14 +333,37 @@ def check(pointers, files, tracked, declared):
     return fires, resolved, identity_checked, exempted
 
 
-def scope():
-    """Files scanned for PROSE pointers: .claude/ sources plus CLAUDE.md. Globbed rather than
-    hand-listed, for the reason battery.py's assertion 2 exists — a second hand-maintained list is a
-    second thing to forget."""
+SCANNED_EXTS = ('py', 'sh', 'js', 'md')
+
+
+def scope(tracked=None):
+    """Files scanned for PROSE pointers: the TRACKED sources directly in .claude/, plus CLAUDE.md.
+
+    FROM GIT, NOT FROM A GLOB, and this file shipped one commit earlier with the glob — so the
+    correction belongs here rather than being quietly absent. `pointer.pointers` is RATCHETED, and a
+    glob sees untracked scratch, so an untracked draft in .claude/ could raise the floor to a number A
+    FRESH CHECKOUT CANNOT REPRODUCE, failing a clean clone with no defect anywhere. The confirmed case
+    was the sibling metric: THIS FILE, while untracked, moved internal_quote_check's ratcheted marked
+    count by one. User ruling, 2026-09-07: "what ships is what's tracked — a fresh checkout has only
+    tracked files", therefore "A RATCHETED METRIC MUST DERIVE FROM TRACKED FILES", and anything
+    emitting a ratcheted sidecar while globbing has the same defect latent.
+    NOT A HAND LIST, which is what the replaced docstring was defending against: git is the authority,
+    so there is nothing to keep in step. Consistent with resolve() one screen up, which already
+    required a pointer's TARGET to be tracked — the population and the referent now answer to the same
+    authority, and it was incoherent for them not to. `tracked` is injectable so the arms can drive
+    the filter without depending on what is on disk."""
+    if tracked is None:
+        tracked = tracked_files()
     found = []
-    for pattern in ('.claude/*.py', '.claude/*.sh', '.claude/*.js', '.claude/*.md'):
-        found += glob.glob(pattern)
-    return sorted(found) + ['CLAUDE.md']
+    for path in sorted(tracked):
+        if not path.startswith('.claude/'):
+            continue
+        relative = path[len('.claude/'):]
+        if '/' in relative:          # nested dirs hold no prose today; same rule battery.py applies
+            continue
+        if relative.rsplit('.', 1)[-1] in SCANNED_EXTS:
+            found.append(path)
+    return found + ['CLAUDE.md']
 
 
 def collect(manifest, prose):
@@ -500,10 +526,27 @@ def selftest():
     else:
         arm(False, 'real-bytes arm could not read its corpus file')
 
+    # arms 15-16: THE POPULATION COMES FROM GIT. Both ratcheted metrics here are counts over scope(),
+    # so a scope that can see an untracked file can move a floor a clean checkout cannot reach. The
+    # second arm is the confirmed incident in miniature, with the roles reversed: this very file, while
+    # untracked, is what raised internal_quote_check's ratcheted count. It reads a path that certainly
+    # exists on disk (its own) and proves the absence of that path from the tracked list is decisive.
+    synthetic = ['.claude/a.py', '.claude/b.sh', '.claude/c.js', '.claude/d.md',
+                 '.claude/e.json', '.claude/nested/f.py', 'js/organs/g.js', 'CLAUDE.md']
+    arm(scope(synthetic) == ['.claude/a.py', '.claude/b.sh', '.claude/c.js', '.claude/d.md',
+                             'CLAUDE.md'],
+        'scope() takes .claude/ prose sources from the TRACKED list, skipping other extensions, '
+        'nested paths and corpus files')
+    arm(os.path.exists(os.path.join(REPO_ROOT, '.claude', 'pointer_check.py'))
+        and '.claude/pointer_check.py' not in scope(['.claude/battery.py']),
+        'and THIS FILE, which exists on disk, stays out of a tracked list that omits it — the glob '
+        'this replaced would have taken it in, which is how an untracked draft moved a ratchet')
+
     print('SELFTEST', 'PASS — fires on both dangling shapes, on a referent off its line, on one '
           'absent from the file, and on all five ways an exemption can be wrong; keeps floor-only '
           'pointers out of the identity count; refuses a substring match for a short surname and '
-          'accepts a non-ASCII one; finds a far-away referent in real corpus bytes'
+          'accepts a non-ASCII one; finds a far-away referent in real corpus bytes; and takes its '
+          'population from git rather than from the filesystem'
           if ok else 'FAIL — do not trust the scan')
     return ok
 
@@ -515,8 +558,10 @@ if __name__ == '__main__':
         sys.exit(0)
     os.chdir(REPO_ROOT)
     manifest = json.load(open(MANIFEST, encoding='utf-8'))
-    prose = {p: open(p, encoding='utf-8').read() for p in scope() if os.path.exists(p)}
+    # One read of the index, feeding both the population and the referent test, so the two cannot
+    # answer to different authorities the way the glob and resolve() did.
     tracked = tracked_files()
+    prose = {p: open(p, encoding='utf-8').read() for p in scope(tracked) if os.path.exists(p)}
     pointers = collect(manifest, prose)
     files = {}
     for _o, raw, _l, _a, _y in pointers:
