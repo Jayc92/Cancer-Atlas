@@ -26,6 +26,29 @@
 # no rebase, no force — the archive-immutability rule (git at and before a131649 is the raw
 # asset archive) is not this tool's to bend, and it does not have the flags to try.
 #
+# AN AUDIT THAT SHIPS ALONGSIDE ITS SUBJECT CANNOT WITNESS IT (user ruling, 2026-09-07 — a general
+# sequencing rule, recorded here because this script is where a commit boundary gets drawn).
+#
+# When a change and the instrument that would have caught it land in the same commit, the instrument's
+# green run proves nothing about the change: it ran on a tree the change was already in, and its
+# report is indistinguishable from one produced on the state that existed before. The instrument has
+# to run on a tree it did not arrive with. So SPLIT: the audit first, green on state that is already
+# in git and independently readable, then the change it is meant to police. 4263890's report was
+# accepted for doing this, and it is the reason the split is worth mechanising in a habit rather than
+# rediscovering per commit.
+#
+# THE CONVERSE IS NOT TRUE AND MUST NOT BE INFERRED: an instrument that ships with a FIX to the very
+# thing it detects is fine, and is in fact this chain's own convention — citation_reach_check.py's
+# STALE DECLARATION problem exists to force exactly that pairing ("if it was fixed, delete the
+# declaration in the same commit"). The rule is about an audit shipping with its SUBJECT, not with its
+# subject's REPAIR. What it forbids is a commit where the only evidence the instrument works is a run
+# over output the same commit produced.
+#
+# NOT MECHANISED, DELIBERATELY, and the reason is the same one that stops the chain at four layers: a
+# check for it would have to decide which files in a diff are "the audit" and which are "the subject",
+# which is a judgement, and a wrong judgement here refuses legitimate commits. It is a rule for the
+# person drawing the boundary, which is why it is written where they will be standing.
+#
 # Condition (7) at birth: --selftest builds a scratch git repo in TMPDIR and proves both arms
 # against real commits — a gate printing no marker leaves the repo with ZERO new commits, and
 # a gate printing one produces a message containing that line verbatim. A tool whose job is

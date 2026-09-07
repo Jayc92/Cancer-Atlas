@@ -231,6 +231,14 @@ INSTRUMENTS = [
     # author STRING against the corpus text — by enumeration rather than by rule.
     ('citation_head_check', 'pre-commit', 'DONE citation_head_check:',
      ['python3', '.claude/citation_head_check.py']),
+    # THE ONLY MEMBER WHOSE SUBJECT IS A RULE RATHER THAN THE CORPUS, and the only one that reads
+    # records and absences together — because the thing it examines is which of the two a span landed
+    # on. It holds a pre-registered claim about closed_year_paren() ("a closed year-bearing
+    # parenthetical spends the head") and refuses any span of that shape that nobody has scored
+    # against it. Distinct from every other member's failure mode: the rest catch a corpus defect,
+    # this one catches a rule accumulating unexamined support.
+    ('citation_paren_ledger', 'pre-commit', 'DONE citation_paren_ledger:',
+     ['python3', '.claude/citation_paren_ledger.py']),
     ('regress', 'pre-commit', '==== DONE:',
      ['node', '.claude/regress.js', REGRESS_OUT_DIR, REGRESS_PORT]),
     ('deploy_check', 'post-push', 'DONE deploy_check:',

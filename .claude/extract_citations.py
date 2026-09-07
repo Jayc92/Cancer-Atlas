@@ -766,18 +766,33 @@ def extract(paths, absences=None):
             # punctuation shadow in this corpus. That is a narrower claim than "the semantics are
             # recoverable structurally", and it is the only claim being made.
             #
-            # ITS ENTIRE POPULATION IS FOUR RECORDS, MEASURED, AND SAYING SO IS THE HONEST PART. Of
-            # the 490 records at d54bd1a, exactly 4 have any ')' between head and year: the three
-            # above and Travis. The rule splits 3/1 along the true-false line. Both readings of that
-            # are true and both belong here: the blast radius is 4, so this cannot silently damage
-            # anything else — and the evidence base is 4, one of which is the counterexample the rule
-            # was shaped around, so it is FIT TO THE CORPUS and the next span of this shape is a test
-            # of it, not a confirmation. The fixtures below pin all four shapes plus the year-free
-            # aside, so a future span that breaks it breaks an arm rather than a record.
+            # ITS POPULATION IS SMALL AND SAYING SO IS THE HONEST PART; THE SIZE IS NOT RESTATED HERE.
+            # It was, as two numbers taken at d54bd1a, and both were already drifting when
+            # .claude/citation_paren_ledger.py was written — that file MEASURES the population and the
+            # split on every run and prints them in its DONE line, which is where to read them. What
+            # belongs here is the part a measurement cannot supply: the rule was FIT TO THIS CORPUS,
+            # on a handful of spans one of which (Travis) is the counterexample the "carrying a year"
+            # narrowing was invented for, so the next span of this shape is a TEST of the rule and not
+            # a confirmation of it. The ledger enforces exactly that distinction, per span, and it is
+            # where a new instance gets scored; the fixtures below pin the four known shapes plus the
+            # year-free aside, so a span that breaks the rule breaks an arm rather than a record.
+            #
+            # THE RULE'S OWN ANSWER TRAVELS ON ITS OUTPUT (2026-09-07). The pre-registration that
+            # scores this rule (.claude/citation_paren_ledger.py) needs BOTH sides of the split, and
+            # the one thing it must not do is re-derive this geometry for itself: a rule implemented
+            # twice drifts, and the copy that drifts is the one the corpus is not run through. So the
+            # predicate defining the POPULATION — is there a ')' between head and year at all — is
+            # evaluated here, once, beside the decision, and written onto whichever artifact this
+            # span produces. Note it is deliberately NOT wired into the `if` below: fired-implies-
+            # examined then holds by construction and could never be observed failing, where a ledger
+            # that finds a paren-shadow absence with the flag False has caught closed_year_paren
+            # firing on a span with no ')' in it, which is the rule leaving its own stated shape.
+            paren_between_head_and_year = ')' in back[head_end:]
             if closed_year_paren(back[head_end:]):
                 if absences is not None:
                     absences.append({'file': path, 'line': line_at(ypos), 'year': year,
-                                     'kind': 'paren-shadow', 'key': m.group(1)})
+                                     'kind': 'paren-shadow', 'key': m.group(1),
+                                     'parenBetweenHeadAndYear': paren_between_head_and_year})
                 continue
             between = back[head_end:].strip()
             # trim a leading "(" and trailing separators before the year
@@ -809,7 +824,9 @@ def extract(paths, absences=None):
                             'author': author, 'authorConfidence': conf, 'year': year,
                             'journal': journal, 'topics': topics_of(clause),
                             'clause': clause.strip()[:140], 'entryTimeIds': ids,
-                            'window': win_status})
+                            'window': win_status,
+                            # the KEPT side of the paren rule — see the note at the decision above
+                            'parenBetweenHeadAndYear': paren_between_head_and_year})
     # dedupe identical (author, year, ref)
     seen, out = set(), []
     for r in records:
