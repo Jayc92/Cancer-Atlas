@@ -42,6 +42,19 @@
 # must be declared and measured, not slipped in — and the measurement is not free, since "Li Z"
 # and "Li Zhang" are the same shape to a regex that stops caring about token length.
 #
+# THE ABSENCE SIDE IS NOW COUNTED (2026-09-06, ruling on the blind spot above). The record count
+# has a ratchet (.claude/record_count.json) which fails a DECREASE, and that bounds the corpus
+# from below — but nothing bounded it from the side where growth silently fails to happen. A
+# citation that never becomes a record is an ABSENCE, not a decrease: crosscheck never sees it,
+# the ratchet cannot fire on it, and the sync check has nothing to compare. So the loop below now
+# classifies every year it SKIPS, at the exact `continue` statements that skip it, and
+# unreached_spans() exposes the result. The classification lives here rather than in the checker
+# because this module owns the head-matching regexes; a second matcher elsewhere would drift from
+# this one, which is the whole reason journal-name screening lives here too.
+# .claude/citation_reach_check.py is the gate over the output, on citation_crosscheck's
+# declared-and-tolerated pattern: a malformed head must be DECLARED with a reason, and an
+# undeclared one fails the battery. A malformed head now reports itself instead of vanishing.
+#
 # Usage: python3 .claude/extract_citations.py <out.json> [file ...defaults to js/organs/*.js]
 import json, re, sys, glob, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -106,7 +119,46 @@ P_ETAL = re.compile(r'(' + SURNAME + r')\s+et\s+al\.?,?\s*', )
 P_AMP = re.compile(r'(' + SURNAME + r')((?:,\s*' + SURNAME + r')*)\s*&(?:amp;)?\s*' + SURNAME + r'\s*(?:\(|,)\s*')
 P_PAREN1 = re.compile(r'\((' + SURNAME + r'),\s+')
 
-def extract(paths):
+# --- absence classification (see the header block) -------------------------------------------
+# A year that produced no record falls into exactly one of these. Only the first two are
+# citation-shaped enough to gate on; 'bare-name-year' is reported but deliberately not gated
+# (see citation_reach_check.py for why), and 'prose-year' is a genuine non-citation.
+SUR_AT_END = re.compile(SURNAME + r'\s*$')
+TRAILING_TOKENS = re.compile(r'([^\s,;:()\[\]"]+(?:\s+[^\s,;:()\[\]"]+)?)\s*$')
+
+def classify_absence(text, wstart, ypos, back):
+    """Why did this year yield nothing? Returns (kind, key) — key is the head TEXT, not a
+    location, because the head SHAPE is the defect and a line number churns on every edit."""
+    etals = [mm for mm in re.finditer(r'et\s+al', back)]
+    if etals:
+        # anchor on the "et al." NEAREST the year — the extractor's own "nearest head wins"
+        # semantics. Widening the lookback instead finds a NEIGHBOURING citation's head and
+        # misclassifies a malformed head as merely distant (measured: it mislabelled 6 of 18).
+        pre = back[:etals[-1].start()]
+        head_was_cut = (wstart > 0 and pre and pre[0] not in ' \t'
+                        and text[wstart - 1] not in ' \t(,;"')
+        if head_was_cut:
+            completed = text[max(0, wstart - 40):wstart] + pre
+            m = SUR_AT_END.search(completed.rstrip())
+            if m:
+                # a well-formed surname sitting further back than the 130-char lookback
+                return 'etal-out-of-range', m.group(0).strip()
+        m = TRAILING_TOKENS.search(pre.rstrip(' ,;'))
+        return 'etal-malformed-head', (m.group(1).strip() if m else '<empty>')
+    open_paren = text.rfind('(', max(0, ypos - 240), ypos)
+    if open_paren != -1 and open_paren > text.rfind(')', max(0, ypos - 240), ypos):
+        m = SUR_AT_END.search(back.rstrip(' ,'))
+        if m and m.group(0).strip().split()[0].lower() not in JOURNAL_LEX:
+            return 'bare-name-year', m.group(0).strip()
+    return 'prose-year', None
+
+def unreached_spans(paths):
+    """Citation-shaped spans that produced NO record, grouped by (kind, head text)."""
+    absences = []
+    extract(paths, absences)
+    return absences
+
+def extract(paths, absences=None):
     records = []
     for path in paths:
         raw = open(path, encoding='utf-8').read().splitlines()
@@ -124,7 +176,8 @@ def extract(paths):
             return lo
         for ym in re.finditer(r'\b(' + YEAR + r')\b', text):
             year, ypos = ym.group(1), ym.start()
-            back = text[max(0, ypos - 130):ypos]
+            wstart = max(0, ypos - 130)
+            back = text[wstart:ypos]
             # collect the LAST match of every head pattern; the head NEAREST the year wins
             # (an "et al." farther back must not shadow a nearer "&"-list — the Skok/Santucci
             # validation failure)
@@ -142,9 +195,16 @@ def extract(paths):
                 if cm.group(1).split()[0].lower() in JOURNAL_LEX: continue
                 m, conf = cm, kind; break
             if not m:
+                if absences is not None:
+                    absence_kind, absence_key = classify_absence(text, wstart, ypos, back)
+                    absences.append({'file': path, 'line': line_at(ypos), 'year': year,
+                                     'kind': absence_kind, 'key': absence_key})
                 continue
             author, head_end = m.group(1), m.end()
             if ';' in back[head_end:]:
+                if absences is not None:
+                    absences.append({'file': path, 'line': line_at(ypos), 'year': year,
+                                     'kind': 'semicolon-shadow', 'key': m.group(1)})
                 # a ';' between head and year means the head belongs to a PREVIOUS citation
                 # and this year's own mention is authorless (journal-only): "Ziol et al.,
                 # Hepatology, 2018; Acad Pathol, 2024 (PMID x)" must not yield Ziol|2024
@@ -191,10 +251,14 @@ def extract(paths):
 if __name__ == '__main__':
     outp = sys.argv[1]
     paths = sys.argv[2:] or sorted(glob.glob('js/organs/*.js'))
-    recs = extract(paths)
+    absences = []
+    recs = extract(paths, absences)
     json.dump(recs, open(outp, 'w'), indent=1)
     from collections import Counter
     print(f'v2: {len(recs)} records from {len(paths)} files')
+    # the absence side, printed next to the record count so growth that silently failed to
+    # happen is visible in the same glance as growth that happened (gate: citation_reach_check)
+    print('  unreached spans: ', dict(Counter(a['kind'] for a in absences)))
     print('  authorConfidence:', dict(Counter(r["authorConfidence"] for r in recs)))
     print('  journal present: ', sum(1 for r in recs if r['journal']))
     print('  entry-time ids:  ', sum(1 for r in recs if r['entryTimeIds']))

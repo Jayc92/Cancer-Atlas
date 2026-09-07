@@ -243,17 +243,29 @@ export const organDetail = {
 // separate cohort, the same attribution-error class as prostate's TCGA/Taylor 2010 mix-up.
 // None of the three compete with CTNNB1, TP53, or TERT.
 //
-// THAT CHECK IS AGAINST THE WRONG PARTNER LIST, AND THE GAP IS OPEN (2026-09-06, held for
-// ruling — do not "fix" this pair alone). Exclusivity here was only ever tested pool-member
-// against TRUNK and BRANCH genes (CTNNB1, TP53, TERT). It was never tested pool-member against
-// POOL-MEMBER, and js/panel.js:48 draws TWO distinct pool members into one cell in ~12.6% of
-// cells — so every unordered pool pair is producible. Guichard's own text says ARID2 mutations
-// were "less frequent but exclusive from ARID1A mutations", and ARID1A and ARID2 are both in
-// PRIVATE_POOL_HCC below. The generator can therefore render a cell carrying a genotype this
-// file's own cited source reports as exclusive. Li et al. cannot license the pairing either:
+// THAT CHECK WAS AGAINST THE WRONG PARTNER LIST — NOW CLOSED BY EXCLUSIVE_PAIRS_HCC BELOW
+// (2026-09-06). Exclusivity here was only ever tested pool-member against TRUNK and BRANCH
+// genes (CTNNB1, TP53, TERT). It was never tested pool-member against POOL-MEMBER, and
+// js/panel.js draws TWO distinct pool members into one cell in ~12.6% of cells — so every
+// unordered pool pair was producible. Guichard's own text says ARID2 mutations were "less
+// frequent but exclusive from ARID1A mutations", and ARID1A and ARID2 are both in
+// PRIVATE_POOL_HCC below, so the generator could render a cell carrying a genotype this file's
+// own cited source reports as exclusive. THAT IS A DEFECT CLASS OF ITS OWN, and the distinction is
+// what makes it outrank the others rather than being rarer than them: every other flavour of
+// certainty drift found here overstates a DESCRIPTION, which a reader can discount; this one
+// GENERATES an object the source says does not exist, and no amount of hedging in the prose
+// reaches it. (An earlier draft of this comment claimed the rest of the corpus did not have the
+// class. The hand audit recorded in js/panel.js falsified that in both directions: ccRCC's
+// MTOR/PTEN was a second instance, three more pairs are held there as a cross-organ variant, and
+// brain.js turned out to have applied the CORRECT test — candidate against existing pool member —
+// all along, excluding PIK3CA and RB1 from the GBM pool on exactly that basis. The method this
+// file needed was already in the corpus; it simply was not applied here.)
+// Li et al. could not license the pairing either:
 // its heatmaps were built to show "co-occurrence and mutual exclusivity" and it says nothing
-// about ARID1A-vs-ARID2, so on this pair it is silent, not supporting. A corpus-wide sweep of
-// this class ran on 2026-09-06 (see CLAUDE.md); ccRCC's MTOR/PTEN is a second instance.
+// about ARID1A-vs-ARID2, so on this pair it is silent, not supporting — which is why naming
+// the source did not resolve the conflict and the exclusion had to be added. A corpus-wide
+// sweep of this class ran on 2026-09-06 (see CLAUDE.md); ccRCC's MTOR/PTEN was a second
+// instance, closed the other way, by downgrading the claim that created the conflict.
 const REGIONS_HCC = [
   { id:'PU', name:'Lung', color:cssVar('--coral'), pos3d:{x:-0.2,y:1.3,z:0.25},
     branch:{ gene:'TP53 mutation', class:'driver', ccf:'20.8% of HCC (Guichard et al., Nature Genetics, 2012)', note:'Disables the genome-stability tumor suppressor — the chromosomally-unstable, HBV-associated branch of HCC\'s two-pathway split, "largely considered to occur in a mutually exclusive manner" with CTNNB1 mutation (Friemel et al., BMC Clinical Pathology, 2016, citing Laurent-Puig et al., Gastroenterology, 2001). That "largely" is doing real work: Friemel et al. (2016) is itself a case report finding both a CTNNB1 mutation and a TP53 mutation together in one heterogeneous tumor, stating plainly that "intratumor heterogeneity challenges the concept of CTNNB1 and TP53 gene mutations being mutually exclusive molecular classifiers in HCC." The general rule and its documented exception are both real. Lung is HCC\'s single most common metastatic site — 55% of extrahepatic-met patients (Katyal et al., Radiology, 2000), closely corroborated 25 years later by a larger SEER cohort (51%, Zhuang et al., Translational Cancer Research, 2025).' } },
@@ -272,6 +284,27 @@ const PRIVATE_POOL_HCC = [
   { gene:'ARID2 mutation', class:'driver', ccf:'5.6% of HCC (Guichard et al., Nature Genetics, 2012)', note:'Another SWI/SNF chromatin-remodeling gene, reported co-mutating with CTNNB1 rather than substituting for it — "CTNNB1-ARID2 comutations" characterize the low-risk group of a TCGA-based risk model (Li et al., Human Mutation, 2026) — the same "cooperating, not competing" relationship ARID1A has with this cancer\'s Wnt-driven branch.' },
   { gene:'NFE2L2 mutation', class:'driver', ccf:'6.4% of HCC (Guichard et al., Nature Genetics, 2012)', note:'Activates the oxidative-stress-response pathway. 6 of 8 NFE2L2-mutated HCC in this same cohort were also CTNNB1-mutated (P=0.015, Guichard et al., 2012) — real co-occurrence, not a coincidence of two common genes, and another route that cooperates with the Wnt-driven branch rather than replacing it.' },
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
+];
+
+// The generator's pool draw must not produce a pair this file's own source calls exclusive.
+// Each entry is an unordered pair of `gene` strings from PRIVATE_POOL_HCC above; js/panel.js
+// takes the first n ADMISSIBLE shuffled members instead of the first n, so a cell that would
+// have carried both carries the first plus the next non-conflicting member instead.
+//
+// GENE STRINGS, NOT GENE SYMBOLS, AND THAT IS THE FRAGILE PART: these must match the pool's
+// `gene` field character for character, so a rename or a typo would silently make the
+// constraint vacuous — the generator would go back to producing the forbidden pair with no
+// error anywhere. regress.js's exclusive-pair arm exists for exactly that: it fails if any
+// name in any exclusivePairs entry is not present in that cancer's own pool, which turns a
+// silent regression into a red check. A pair naming a gene the pool does not contain is a bug
+// even though it is harmless at runtime, because it means the pair someone intended to
+// exclude is not the pair being excluded.
+const EXCLUSIVE_PAIRS_HCC = [
+  // Guichard et al., Nature Genetics, 2012: ARID2 mutations were "less frequent but exclusive
+  // from ARID1A mutations". Both genes are SWI/SNF chromatin remodelers and both sit in the
+  // pool above at their own real frequencies (16.8% and 5.6%) — the frequencies are not in
+  // question and are unchanged; only their CO-OCCURRENCE in one cell is excluded.
+  ['ARID1A mutation', 'ARID2 mutation'],
 ];
 
 // HISTOLOGY (microscopic-view data — every claim verified directly at the source, and this
@@ -310,6 +343,7 @@ export const cancerDetails = {
     title:'Hepatocellular Carcinoma', screenLabel:'Hepatocellular carcinoma — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_HCC, trunk:TRUNK_HCC, privatePool:PRIVATE_POOL_HCC,
+    exclusivePairs:EXCLUSIVE_PAIRS_HCC,
     histology: HISTOLOGY_HCC,
   },
 };

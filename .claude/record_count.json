@@ -1,7 +1,7 @@
 {
  "_note": "Ratchet state for .claude/battery.py assertion 4 \u2014 the corpus did not silently shrink. MACHINE-WRITTEN: battery.py is the only writer, and it only ever moves a count UP, except through an explicit --lower-ratchet with a --lower-reason, which is appended to 'lowers' below so every deliberate step over the gap stays on the record. Seeded empty by hand exactly once, because the declaration in NON_INSTRUMENTS has to exist before the file can and the battery refuses to run at all while its own selftest fails \u2014 so the file could not have been created by the tool that writes it. Counts start absent on purpose: the first run INITIALISES and says so, condition (8), and the SECOND run is the check.",
  "counts": {
-  "records": 411,
+  "records": 413,
   "citation_crosscheck.records": 143
  },
  "lowers": []

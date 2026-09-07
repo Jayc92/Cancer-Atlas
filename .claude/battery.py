@@ -169,8 +169,11 @@ RECORDS_METRIC = 'records'
 
 PHASES = ('pre-commit', 'post-push')
 
-# THE DECLARED INSTRUMENT LIST. Ten members. Adding an instrument means adding a row here in the
-# same commit; assertion 2 makes that mechanical rather than remembered.
+# THE DECLARED INSTRUMENT LIST — count it from the rows below, which is the only place it is true.
+# It used to say "Ten members" here; that is a machine-derivable number restated in prose, and it
+# went stale the first time a member was added (this comment's own recorded failure mode: delete
+# the duplicate, else point at the source of truth, else quote the line). Adding an instrument
+# means adding a row here in the same commit; assertion 2 makes that mechanical, not remembered.
 INSTRUMENTS = [
     # (name,                     phase,        done marker,                    argv)
     ('syntax_check', 'pre-commit', 'DONE syntax_check:',
@@ -189,6 +192,10 @@ INSTRUMENTS = [
      ['python3', '.claude/citation_polarity.py', RECORDS_ARTIFACT, POLARITY_ARTIFACT]),
     ('citation_crosscheck', 'pre-commit', 'DONE citation_crosscheck:',
      ['python3', '.claude/citation_crosscheck.py', RECORDS_ARTIFACT, CROSSCHECK_ARTIFACT]),
+    # the only member that watches for something NOT happening — see its own header for why the
+    # ratchet could never cover this direction
+    ('citation_reach_check', 'pre-commit', 'DONE citation_reach_check:',
+     ['python3', '.claude/citation_reach_check.py']),
     ('regress', 'pre-commit', '==== DONE:',
      ['node', '.claude/regress.js', REGRESS_OUT_DIR, REGRESS_PORT]),
     ('deploy_check', 'post-push', 'DONE deploy_check:',

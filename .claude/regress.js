@@ -231,6 +231,64 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     check(`search "${q}"`, ok, JSON.stringify(res).slice(0, 140));
   }
 
+  // ---- POOL-MEMBER EXCLUSIVITY (2026-09-06) -------------------------------------------------
+  // A cancer may declare `exclusivePairs` naming two privatePool members its own cited source
+  // reports as mutually exclusive (liver.js's EXCLUSIVE_PAIRS_HCC, from Guichard 2012);
+  // js/panel.js honours it in the private-mutation draw. Both halves fail SILENTLY:
+  //   (a) a pair naming a gene the pool does not contain is VACUOUS. The generator quietly goes
+  //       back to producing the forbidden genotype and nothing anywhere reports it, because the
+  //       pair is matched against the pool's `gene` strings character for character. This arm is
+  //       the only thing standing between a rename and a silent regression.
+  //   (b) the constraint might just not hold. This enumerates every cell of every region of
+  //       every active cancer through the REAL buildRegionCells — not a reimplementation of the
+  //       draw, because a second copy of the rule drifts from the first — and looks for the pair.
+  // Condition (7) is enforced INSIDE arm (b) instead of being argued about in a comment: a run
+  // that saw zero two-mutation cells cannot tell "constraint holds" from "nothing was tested",
+  // so zero opportunities FAILS the check. The opportunity count is reported either way, so the
+  // number that makes the result meaningful is visible in the record rather than assumed.
+  const excl = await page.evaluate(async () => {
+    const idxMod = await import('./js/organs/index.js');
+    const panelMod = await import('./js/panel.js');
+    const stateMod = await import('./js/state.js');
+    const out = { declaredPairs: [], unknownGenes: [], violations: [], twoMutationCells: 0, cellsSeen: 0 };
+    const restoreCancerId = stateMod.state.currentCancerId;
+    const clearCache = () => { for (const k of Object.keys(stateMod.regionCellCache)) delete stateMod.regionCellCache[k]; };
+    for (const cancer of idxMod.CANCERS.filter(x => x.active)) {
+      const detail = idxMod.CANCER_DETAILS[cancer.id];
+      const pairs = detail.exclusivePairs || [];
+      const poolGenes = new Set((detail.privatePool || []).map(p => p.gene));
+      for (const pair of pairs) {
+        out.declaredPairs.push(cancer.id + ':' + pair.join('|'));
+        for (const g of pair) if (!poolGenes.has(g)) out.unknownGenes.push(cancer.id + ':' + JSON.stringify(g));
+      }
+      if (!pairs.length) continue;
+      stateMod.state.currentCancerId = cancer.id;
+      clearCache();
+      for (let ri = 0; ri < detail.regions.length; ri++) {
+        for (const cell of panelMod.buildRegionCells(ri)) {
+          out.cellsSeen++;
+          if (cell.private.length >= 2) out.twoMutationCells++;
+          const genesInCell = cell.private.map(p => p.gene);
+          for (const pair of pairs) {
+            if (pair.every(g => genesInCell.includes(g))) out.violations.push(cell.id + ' ' + pair.join('+'));
+          }
+        }
+      }
+      clearCache();
+    }
+    stateMod.state.currentCancerId = restoreCancerId;
+    clearCache();
+    return out;
+  });
+  check('exclusivePairs: every named gene exists in its own pool', excl.unknownGenes.length === 0,
+    `${excl.declaredPairs.length} declared [${excl.declaredPairs.join(', ')}]` +
+    (excl.unknownGenes.length ? ` UNKNOWN: ${excl.unknownGenes.join(', ')}` : ''));
+  check('exclusivePairs: no cell carries a declared-exclusive pair',
+    excl.violations.length === 0 && excl.twoMutationCells > 0,
+    `${excl.violations.length} violations over ${excl.twoMutationCells} two-mutation cells of ${excl.cellsSeen} cells` +
+    (excl.twoMutationCells === 0 ? ' — ZERO OPPORTUNITIES, check is vacuous' : '') +
+    (excl.violations.length ? ` [${excl.violations.slice(0, 6).join('; ')}]` : ''));
+
   fs.writeFileSync(path.join(OUT, 'report.json'), JSON.stringify(report, null, 1));
   const fails = report.checks.filter(c => !c.ok).length;
   // --- CITATION STRUCTURAL CHECKS (citation-durability pass, 2026-09-04) --------------------

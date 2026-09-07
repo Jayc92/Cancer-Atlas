@@ -178,10 +178,18 @@ export const organDetail = {
 // shared founding point mutation couldn't.
 //
 // PTEN LOSS AND CHD1 DELETION — checked individually against both branch genes before inclusion,
-// same standard as HCC's ARID1A/ARID2/NFE2L2 check. Both have a real, soft, ONE-SIDED cooperating
-// relationship (not a mutual-exclusivity one), so both are safe in the shared private pool the
-// same way ARID1A/ARID2/NFE2L2 (CTNNB1-cooperating, not TP53-exclusive) were safe in HCC's pool
-// despite that pool being drawn uniformly across every focus regardless of branch:
+// checked against EACH OTHER as well, which is the part the precedent this comment used to cite
+// got wrong: it appealed to "the same standard as HCC's ARID1A/ARID2/NFE2L2 check", and that
+// check tested pool members against the trunk and branches ONLY. ARID1A and ARID2 turned out to
+// be an exclusive pair Guichard states outright, so HCC's pool is now the example of the failure,
+// not of the standard — see EXCLUSIVE_PAIRS_HCC in liver.js and the pool-pair audit in panel.js.
+// THE CONCLUSION HERE SURVIVES THE CORRECTED TEST, which is why nothing below changed: PTEN loss
+// and CHD1 deletion have a real, soft, ONE-SIDED cooperating relationship, not a mutual-exclusivity
+// one. Note what would have made it a defect and does not: PTEN is ERG-enriched, CHD1 is
+// SPOP-associated, and ERG and SPOP ARE exclusive — but a chain through two enrichments is not an
+// exclusivity, and treating it as one would manufacture a claim TCGA 2015 declines to make. So
+// both are safe in the shared private pool despite that pool being drawn uniformly across every
+// focus regardless of branch:
 // - PTEN loss: ~15-17% homozygous deletion (TCGA 2015) — TCGA 2015 found "the preponderance of
 //   PTEN deletions in ERG fusion-positive cases," i.e. enriched in ERG+ tumors, but not stated as
 //   absent from SPOP-mutant tumors. A real, differential, non-exclusive relationship.

@@ -153,9 +153,36 @@ const REGIONS_CCRCC = [
 const TRUNK_CCRCC = [
   { gene:'VHL inactivation', class:'driver', ccf:'86.6% of sporadic clear cell renal cell carcinoma, via mutation or promoter methylation (Moore et al., PLOS Genetics, 2011)', note:'Disables the von Hippel-Lindau tumor suppressor — the founding event of this disease. Gerlinger et al. (NEJM, 2012) confirmed VHL was the one driver gene mutated in every single region sampled across the tumors they studied, present before the branching point of each tumor\'s evolutionary tree — architecturally truncal, not just the most common event.' },
 ];
+// DOWNGRADED 2026-09-06, and the downgrade is what RESOLVED a generator defect rather than
+// merely softening prose. Both ccf strings below used to read "a PI3K/Akt/mTOR pathway-alteration
+// pattern found in ~28% of ccRCC tumors, with alterations across pathway components mutually
+// exclusive with each other (TCGA, Nature, 2013)". TCGA's abstract (fetched directly, Europe PMC
+// EXT_ID:23792563) says exactly this much and no more: "The PI(3)K/AKT pathway was recurrently
+// mutated, suggesting this pathway as a potential therapeutic target." No "mutually exclusive",
+// no "~28%", and no component-level breakdown naming MTOR or PTEN at all. So the printed claim
+// exceeded its own verified source — a certainty-drift defect standing on its own, independent of
+// anything the generator does.
+//
+// IT WAS ALSO A POOL-MEMBER EXCLUSIVITY CONTRADICTION, AND THE DOWNGRADE DISSOLVED IT. MTOR
+// mutation and PTEN loss are both in this pool, and js/panel.js draws two distinct pool members
+// into one cell in ~12.6% of cells, so the app could render a tumour carrying both while this
+// very ccf told the reader they are mutually exclusive. The alternative repair was to keep the
+// claim and add an exclusivePairs entry (the route liver.js's ARID1A/ARID2 pair took, where
+// Guichard states the exclusivity in reachable text). Here the claim itself was unverified, so
+// constraining the generator would have hard-coded an unsourced assertion into the model.
+// Downgrading was available and strictly better: one edit, no unsourced constraint, contradiction
+// gone as a side effect. THE ~28% IS REMOVED RATHER THAN HEDGED, per the standing rule that a
+// statistic has no illustrative home — re-source or remove, no middle.
+//
+// RESTORE CONDITION, both halves together or neither: if TCGA 2013's full text is ever reached
+// and does state component-level mutual exclusivity, restore the claim AND add the MTOR/PTEN pair
+// to an exclusivePairs declaration in the same commit. Restoring the sentence alone would put the
+// contradiction straight back. The full text is currently unreachable — PMC3771322 serves a
+// reCAPTCHA on www (not attempted, by standing rule) and all three Europe PMC full-text routes
+// 404 despite the record's own isOpenAccess:Y.
 const PRIVATE_POOL_CCRCC = [
-  { gene:'MTOR mutation', class:'driver', ccf:'part of a PI3K/Akt/mTOR pathway-alteration pattern found in ~28% of ccRCC tumors, with alterations across pathway components mutually exclusive with each other (TCGA, Nature, 2013)', note:'Activates a growth-signaling pathway downstream of, and independent from, the VHL/HIF axis — a parallel route to proliferation that cooperates with the trunk VHL loss rather than substituting for it.' },
-  { gene:'PTEN loss', class:'driver', ccf:'part of the same ~28% PI3K/Akt/mTOR pathway-alteration pattern (TCGA, Nature, 2013)', note:'Removes a brake on the same PI3K/Akt/mTOR pathway MTOR mutations activate directly. Gerlinger et al. (NEJM, 2012) found convergent evolution here too — two independent PTEN mutations (a splice-site change and a missense change) arising separately in different, spatially separated regions of the same tumor.' },
+  { gene:'MTOR mutation', class:'driver', ccf:'a component of the PI(3)K/AKT pathway, which TCGA reports as "recurrently mutated" in clear cell RCC — no component-level frequency for MTOR itself is verified here (TCGA, Nature, 2013)', note:'Activates a growth-signaling pathway downstream of, and independent from, the VHL/HIF axis — a parallel route to proliferation that cooperates with the trunk VHL loss rather than substituting for it.' },
+  { gene:'PTEN loss', class:'driver', ccf:'a component of the same recurrently-mutated PI(3)K/AKT pathway (TCGA, Nature, 2013)', note:'Removes a brake on the same PI3K/Akt/mTOR pathway MTOR mutations activate directly. Gerlinger et al. (NEJM, 2012) found convergent evolution here too — two independent PTEN mutations (a splice-site change and a missense change) arising separately in different, spatially separated regions of the same tumor.' },
   { gene:'CDKN2A loss', class:'driver', note:'Removes a cell-cycle checkpoint (the p16 brake on CDK4/6) — recurrent and subtype-associated in ccRCC (TCGA, Nature, 2013), cooperating with the trunk VHL loss rather than competing with it, the same cell-cycle-checkpoint role this gene plays in every other cancer modeled in this atlas.' },
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
 ];

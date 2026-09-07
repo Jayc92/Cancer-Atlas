@@ -50,7 +50,100 @@ export function buildRegionCells(regionIdx){
     if(hasPrivate){
       const n = cellRandom()<0.3 ? 2 : 1;
       const shuffled = shuffleWithRandom(CANCER_DETAILS[state.currentCancerId].privatePool, cellRandom);
-      for(let k=0;k<n;k++) priv.push(shuffled[k]);
+      // Take the first n ADMISSIBLE members, not the first n: a cancer may declare
+      // `exclusivePairs` (see liver.js's EXCLUSIVE_PAIRS_HCC) naming pool members its own
+      // cited source reports as mutually exclusive, and this draw is what actually decides
+      // whether such a pair ever appears in a cell. Nothing else does — the prose can hedge
+      // all it likes, the generator still emits the genotype.
+      //
+      // DELIBERATELY CONSUMES NO EXTRA cellRandom() CALLS. The RNG stream is identical to
+      // before, so every cell that carried one mutation still carries one and every cell that
+      // carried two still carries two (a 4-member pool with one excluded pair always has an
+      // admissible second). Only the COMPOSITION of the conflicting draws changes, and a
+      // cancer with no exclusivePairs is byte-identical to the previous behaviour. Skipping a
+      // conflict by re-rolling instead would have shifted every subsequent cell's profile.
+      // ---- POOL-PAIR EXCLUSIVITY AUDIT, 2026-09-06 (done by hand, on ruling; the result is
+      // recorded here rather than in a log because THIS is the line that decides whether an
+      // audited pair can appear, and a finding kept somewhere else is a finding the next editor
+      // of this loop will not read). A pathway-resolving detector was explicitly NOT built: the
+      // candidate set is every unordered pair of real members of one pool, which across 16 pools
+      // is a few dozen pairs, i.e. an enumerable list and not a population. Most pools hold 2-4
+      // real members plus a deliberate passenger (TTN synonymous variant, exclusive with nothing).
+      //
+      // STANDARD APPLIED: a pair is a defect when the corpus's OWN cited source, for THIS tumour
+      // type, states the two are mutually exclusive — the ARID1A/ARID2 shape, where the generator
+      // emits a genotype the citation says does not exist. Transitive chains do NOT qualify, and
+      // that mattered: prostate.js pools PTEN loss with CHD1 deletion while citing PTEN as
+      // ERG-enriched, CHD1 as SPOP-associated, and ERG as exclusive with SPOP. Two enrichments
+      // plus one exclusivity is not an exclusivity, and promoting it to one would invent a claim
+      // TCGA 2015 declines to make — the same certainty drift this project counts as a defect in
+      // the other direction. prostate.js's own text is careful about this ("not stated as absent
+      // from", "not proven absent from"); its CONCLUSION is sound. Only its JUSTIFICATION is
+      // stale, since it cites HCC's pre-fix check as precedent.
+      //
+      // CLEARED, and worth naming because a cleared pair looks identical to an unexamined one:
+      //   brain/GBM      PTEN loss + CDKN2A/B deletion — different pathways; the exclusivities
+      //                  Brennan states are PI3K-vs-PTEN and RB1-vs-CDKN2A/B, neither this pair.
+      //                  GBM is also the corpus's CORRECT PRECEDENT: it excluded PIK3CA and RB1
+      //                  by testing candidates against EXISTING POOL MEMBERS, which is exactly
+      //                  the test liver.js and kidneys.js omitted. The method was already here.
+      //   colon/CRC      FBXW7 + AMER1, TCF7L2 + AMER1 — actively verified the other way: Li 2025
+      //                  identifies APC-KRAS-FBXW7-AMER1 as a CO-OCCURRENCE set, and Nunes 2024
+      //                  found positive APC co-occurrence with both, with "zero reports anywhere
+      //                  of exclusivity" recorded in colon.js's own words.
+      //   liver/HCC      ARID1A + NFE2L2, ARID2 + NFE2L2 — cooperating with CTNNB1, not exclusive.
+      //   kidneys/ccRCC  PTEN loss + CDKN2A loss — no source addresses the pair. (MTOR + PTEN was
+      //                  the separate held case, dissolved by downgrading the unverified claim.)
+      //   all others     no span in the corpus names both members of a pool pair near exclusivity
+      //                  language, per-file or cross-file.
+      //
+      // THREE FURTHER HITS, RULED 2026-09-06 — AND THE RULING TURNS ON A DISTINCTION THIS AUDIT
+      // FIRST GOT WRONG. I filed all three as one shape ("a pair the corpus declares exclusive in
+      // one organ, pooled in another"), which conflates two different kinds of statement:
+      //   EMPIRICAL EXCLUSIVITY — "in this cohort these two were mutually exclusive" — is a fact
+      //     about a tumour type. It does NOT transfer. Importing it is the ESR1/MDM4 error class:
+      //     real gene, real frequency, wrong tumour.
+      //   MECHANISTIC REDUNDANCY — "both alterations remove the same checkpoint" — is a claim
+      //     about biology, and where the corpus asserts it IN ITS OWN VOICE it needs no import.
+      // Treating one-hit-per-pathway-node as tumour-agnostic, which is how I framed the middle
+      // disposition, would smuggle the first in wearing the clothes of the second. That framing is
+      // rejected; each pair is disposed of on which kind of claim actually bears on it.
+      //
+      // OPEN, AND NOT A PROVENANCE-IMPORT QUESTION AT ALL:
+      //   lungs/LUAD  CDKN2A loss + RB1 loss. MISFILED ABOVE. Its CDKN2A entry carries no ccf and
+      //     no source of any kind, which puts it in the BLADDER-COLOUR CLASS — uncited content
+      //     driving generated output — governed by source-or-remove, not by anything about
+      //     exclusivity. Nothing needs importing for the redundancy point either: THIS CORPUS'S
+      //     OWN TWO NOTES both say the alteration "Removes a cell-cycle checkpoint", in
+      //     near-identical words, in the same pool. skin.js reached the same conclusion inside its
+      //     own organ on pathway-redundancy grounds — it tested the pair empirically (OR 0.67,
+      //     p=0.39, not significant), declined to call it exclusivity, and still excluded RB1 for
+      //     duplicating CDKN2A's pathway. So the two questions here are (1) source or remove the
+      //     uncited member, and (2) a redundancy question that is INTERNAL CONSISTENCY rather than
+      //     provenance. bladder.js's record of TCGA 2017's CDKN2A-perp-RB1 and brain.js's Brennan
+      //     2013 are context, not the grounds. Deferred to its own commit, behind the
+      //     bare-name-year extractor gap, which is the larger hole.
+      //
+      // EXAMINED AND CLEARED ON RULING — kept here for the reason the audit was worth running at
+      // all: a cleared pair looks identical to an unexamined one.
+      //   breast/TNBC  PIK3CA mutation + PTEN loss. Brennan 2013 states PI3K-perp-PTEN and that is
+      //     why brain.js excluded PIK3CA from the GBM pool — but that is an empirical cohort
+      //     finding in glioblastoma, so importing it would be the named error AND would probably
+      //     be wrong on the facts: PIK3CA and PTEN alterations are not exclusive in breast the way
+      //     they are in GBM. breast.js:189's "the same growth advantage PIK3CA mutations reach by
+      //     a different door" is an alternative-route description, and it claims no exclusivity —
+      //     which is the correct amount to claim. No change.
+      //   stomach/GDIFF  TP53 + APC. colon.js records APC-perp-TP53 from Nunes 2024 at MODULE
+      //     level and hedges it even for colorectum (pairwise AMER1xTP53 did not survive
+      //     multiple-testing correction). A finding already hedged in its own organ does not
+      //     survive transfer to another. No change.
+      const declaredExclusivePairs = CANCER_DETAILS[state.currentCancerId].exclusivePairs || [];
+      for(const candidateMutation of shuffled){
+        if(priv.length >= n) break;
+        const conflictsWithPick = priv.some(alreadyPicked => declaredExclusivePairs.some(
+          pair => pair.includes(candidateMutation.gene) && pair.includes(alreadyPicked.gene)));
+        if(!conflictsWithPick) priv.push(candidateMutation);
+      }
     }
     return { id: cellId, x:p.x, y:p.y, private:priv };
   });

@@ -161,7 +161,7 @@ export const organDetail = {
 // sentence: the two SMGs "occurred concomitant with MAPK-pathway driver mutations"). Nothing
 // mutually exclusive with BRAF is drawn anywhere in this tumor: EIF1AX was rejected outright
 // (1.5%, exclusive with RAS/BRAF — the LUAD-EGFR rejection class), RET fusions stay in the
-// trunk note as the alternative founding driver, RAS likewise (52/402, 12.9%, codons 12/61).
+// trunk note as the alternative founding driver, RAS likewise (52/402, 12.9%, codons 12 and 61).
 const REGIONS_PTC = [
   { id:'TH', name:'Thyroid (primary)', color:cssVar('--coral'), pos3d:{x:-1.25,y:-0.55,z:0.3},
     branch:{ gene:'1q gain', class:'driver', ccf:'14.8% of tumors form TCGA\'s "SCNA-low-1q-amp" copy-number class', note:'An extra copy of chromosome arm 1q, in a genome that otherwise stays remarkably tidy — 72.9% of papillary carcinomas have no significant arm-level changes at all. The 1q-gain class is enriched for BRAF mutation and for the aggressive tall-cell look under the microscope, and carries significantly higher recurrence-risk scores and tumor stage (TCGA, 2014).' } },
