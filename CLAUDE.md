@@ -4047,19 +4047,154 @@ derives."
   a pointer while reading the pre-edit file. `battery.py:151` (twice) was
   **FABRICATION**: the span it names has existed in exactly two commits, at line
   154 and then 155, so the pointer resolved to nothing at any point in history.
-- **THE POPULATION IS 191 POINTERS, AND ONLY 5 ARE CHEAP TO CHECK.** 136 in
-  `.claude/`, 55 in `CLAUDE.md`; all but five point into corpus `js/` files,
-  where nothing here can verify them without reading the target. Of the five
-  pointing into a `.claude/` instrument — files whose lines move for TOOLING
-  reasons, on the same commits that edit the prose — **four were the four wrong
-  ones**. The fifth, `CLAUDE.md`'s `fraction_check.py:13`, is correct.
+- **THE POPULATION FIGURES IN THIS BULLET ARE SUPERSEDED** — by the entry titled
+  "THE GUARD CAME BEFORE THE REPAIR, AND THE FLOOR WAS THE DECISIVE NUMBER".
+  As measured on 2026-09-07 by an unsaved hand grep: 191 pointers,
+  136 in `.claude/` and 55 in `CLAUDE.md`, of which only 5 were cheap to check
+  because all but five point into corpus `js/` files that nothing here could
+  verify without reading the target. The finding those numbers carried still
+  stands and is why they are kept: of the five pointing into a `.claude/`
+  instrument — files whose lines move for TOOLING reasons, on the same commits
+  that edit the prose — **four were the four wrong ones**, and the fifth,
+  `CLAUDE.md`'s `fraction_check.py:13`, is correct. **What is superseded is the
+  totals, not the ratio**, and they are not simply larger now: `pointer_check.py`
+  defines a wider population (manifest refs and `code_refs` as well as prose) with
+  a saved, re-runnable rule, so its count and this one are not the same
+  measurement and do not subtract. **The count lives in that instrument's DONE
+  line**; a total written here would be one more instance of the
+  machine-derivable-number rule this file records under 2026-09-05.
 - **THE REMEDY IS THE ONE ALREADY RULED:** name the file and quote the span.
   Applied to all four. `battery.py`'s "the wrong way to close those two" cannot
   drift and cannot be fabricated — if it is wrong, it is wrong loudly, and
   `internal_quote_check` would catch it if it were marked.
-- **NOT SWEPT: the 186 corpus pointers.** A different population with a
+- **NOT SWEPT AT THE TIME: the corpus pointers.** A different population with a
   different cost, and widening the sweep to it is a change in reach that has to
   be declared and measured on its own commit rather than slipped into this one.
+  **DONE, on its own commits, later the same day** — the census came first, then
+  the guard, then the repair, recorded under "THE GUARD CAME BEFORE THE REPAIR,
+  AND THE FLOOR WAS THE DECISIVE NUMBER". The reach change happened the way this
+  bullet asked for: declared before it happened, measured after, and the
+  measurement is a saved instrument rather than a number.
+
+## THE GUARD CAME BEFORE THE REPAIR, AND THE FLOOR WAS THE DECISIVE NUMBER (2026-09-07, user ruling; `.claude/pointer_check.py`)
+
+**The user refused both of the obvious moves and ordered a third.** Not "sweep
+the pointers" — *"count them, don't sweep them… If most resolve, it's a small
+cleanup; if most don't, hand-typed pointers are a defect class in their own right
+and the remedy is deletion rather than repair — which is a different ruling and
+wants the number first."* And then, once the number was in, not "repair them"
+either: *"the guard produces the worklist and then prevents its recurrence,
+rather than being written afterward against a state someone already cleaned by
+hand."* Census → guard → repair, in that order, on separate commits.
+
+- **WHY THE ORDER IS A RULING AND NOT A PREFERENCE, in the user's own reason:**
+  *"Drift clusters by file because **one edit moves many pointers at once** —
+  eleven in `prostate.js`, nineteen in `liver.js` — so repairing 49 today buys a
+  state that the next content commit partially undoes, silently, with nothing
+  reporting it."* A guard written after a hand cleanup is a guard demonstrated
+  against a corpus with no defects left in it — condition (7) unmeetable by the
+  corpus, only by fixtures. This one fired on the live corpus first, and its
+  output *was* the worklist.
+- **THE FLOOR IS THE DECISIVE NUMBER, NOT THE EXACT-MATCH RATE** (user: *"529/529
+  resolving at the floor is the decisive number, not the 217. Nothing is
+  fabricated; every defect is recoverable. That's what makes this repair rather
+  than deletion"*). Two questions, two populations, deliberately never blended
+  into one score: **FLOOR** — is there a tracked file with that many lines? —
+  answerable for every pointer, so nothing is excused from it. **IDENTITY** — is
+  the named thing actually *at* that line? — answerable only where the pointer
+  carries its own oracle, which here means a manifest ref accompanied by its
+  citation's author and year. The floor came back **TOTAL, with a zero gap**:
+  every pointer in this repo names a real file at a line that exists. So no
+  pointer was ever fabricated, every identity failure was a referent sitting
+  elsewhere in the file it named, and **a referent that is somewhere in its file
+  had a moment when the pointer was true** — which is what makes it re-pointable.
+  Deletion would have destroyed recoverable information. The figures are not
+  restated here; `pointer_check.py`'s DONE line is their only home, and commit
+  `3fa9e1a`'s message quotes the pre-repair run verbatim, because a repaired
+  corpus can no longer produce it.
+- **THE ORACLE IS THE PART NOBODY REVIEWS, AND IT HAD TWO BUGS** — either of
+  which would have sent the repair-versus-deletion ruling the wrong way. A bare
+  substring test for surnames looked fine until 33 records turned out to have a
+  needle of four characters or fewer: `Li` matches "likely", `Hu` matches
+  "human", `Ding` matches "finding", `Ther` matches "therapy". **The total did not
+  move when word boundaries went in, which is exactly why the tightening was
+  worth doing** — a number that survives a stricter oracle is why it is
+  believable. Then a **±25-line search window invented a defect class**: fifteen
+  referents came back GONE, and searching the whole file found every one of them,
+  up to 53 lines away. That window was never part of the question; it was an
+  artifact of how the answer was computed, and it argued for deleting the
+  population. There is no window constant in the instrument on purpose, and the
+  distance is reported rather than thresholded.
+- **NEAREST IS NOT IDENTITY, WHICH IS WHY THE GUARD PROPOSES AND NEVER APPLIES.**
+  Its repair candidate was the **wrong line in four of the flags**: three
+  wrapped citations, plus an author whose nearest occurrence is a comment
+  *quoting* the paper while the referent is a data string far below it. Every
+  candidate was read before it was used. **An auto-fixer would have written four
+  wrong numbers and reported success.** The better evidence is the BLOCK OFFSET —
+  flags in a file share one, because one edit moved them together — but that stays
+  a reading aid rather than a rule: a modal offset over a handful of flags is a
+  thin vote, and here it returned two confident wrong answers off one vote and
+  two votes. **A vote whose count nobody reads is not evidence.**
+- **A WRAPPED CITATION IS IMPRECISE FROM BIRTH, NOT DRIFT**, and the repairs go
+  opposite directions. Where a citation splits across two lines — surname ending
+  one, year and journal beginning the next — a pointer at the YEAR line names a
+  real place that never held the whole citation. Drift is re-pointed **forward**;
+  this is re-pointed **up**, to the surname. The check accepts that by design: a
+  name-only match on the pointed line counts as on-line, because demanding author
+  and year on one line would make the corpus's own wrapping unrepresentable.
+- **A POINTER CAN BE RIGHT FOR ONE RECORD AND STALE FOR ANOTHER**, so a repair is
+  keyed to **(record, ref)** and never to (file, line). `brain.js:234` is cited by
+  two records: stale for the one whose site moved, correct for the other, whose
+  subject line 234 still is. A global rewrite would have broken the passing one —
+  and within one file the same number appeared as both an *old* line and a *new*
+  line, so applying the pairs in sequence would have re-broken what it had just
+  fixed. Before applying, every ref instance matching a repair pair was checked to
+  have been individually flagged; exactly one was not, and it was left alone.
+- **A FIXTURE MAY REUSE A REAL POINTER; IT MUST NEVER INVENT ONE.** The census
+  reached its population with a hand-maintained list of fixture filenames to skip,
+  and **that list hid eight dangling pointers** — selftest fixtures spelling out
+  `file:line` for files that do not exist. Copying the list into the instrument
+  would have made its total a statement about the list, which is the staleness
+  `battery.py`'s assertion 2 exists to refuse. So the fixtures changed instead:
+  they compose their refs from parts, no literal pointer appears in either
+  selftest, and the invariant is now absolute with nothing to keep in step.
+  Reusing a real pointer is harmless — the fixture makes the same true claim the
+  live pointer does. **Inventing one is a false claim that no reader and no tool
+  can tell apart from a live pointer.**
+- **THE DECLARED-EXEMPTION PATH SHIPPED FROM BIRTH AND EMPTY**, on the user's
+  ruling — *"Give it the declared-exemption path from birth, with the three
+  properties… Retrofitting that after the first false positive is how the other
+  declarations acquired their scars one at a time."* Its quote must be a verbatim
+  substring of the exempted line **occurring exactly once in the file**, which is
+  `citation_reach_check.py`'s quote-the-span idea finally mechanised, with the
+  loophole it declined to build around closed by this chain's own
+  count-not-position rule. Empty is a claim, not a stub: no pointer in the corpus
+  needs excusing. Its five refusal arms are what demonstrate it, and that is the
+  state a declaration list should ship in.
+- **A DECLARED UNIQUE MARKER MAKES ITS OWN HEADING UNQUOTABLE, and this entry
+  found that out by failing the gate.** The first draft above cited a sibling
+  section by its exact title, to avoid a positional reference like "the section
+  below" — and that title's distinctive span is a `record_sync_check` dual-home
+  marker, required to occur EXACTLY ONCE in this file. So the check reported
+  `NOT A MARKER … 2 occurrences in the target`, the battery refused, and the
+  invocation was logged as a refusal. **Two of this repo's conventions collide
+  head-on:** name a section by its title rather than its position, and reserve a
+  unique span as a marker. The resolution is to cite a *different* span of the
+  title than the declaration reserved, or to name the rule and its date instead
+  of quoting the heading. Worth recording because the error message does not
+  suggest the fix, and because the count-not-position anchor rule caught the
+  person who wrote it.
+- **OPEN FINDING — TWO BATTERY MEMBERS DISAGREE ABOUT WHAT THE POPULATION IS.**
+  `internal_quote_check.py` **globs** `.claude/`, while `battery.py` declares its
+  file set **from git**. So an *untracked* draft in `.claude/` participates in one
+  member's count and not the other's: this instrument, sitting untracked with a
+  marked quote in its header, silently moved the ratcheted marked-quote metric,
+  and committing that `record_count.json` would have recorded a number the
+  committed tree could not support — a fresh checkout would fail the coverage
+  ratchet. Caught by restoring the ratchet and moving the draft aside so the gate
+  validated exactly the tree being committed. **The general shape: a ratchet is
+  only as trustworthy as the agreement between its producers about what they are
+  counting.** Not fixed; no ruling yet.
 
 ## ANY MACHINE-DERIVABLE NUMBER RESTATED IN PROSE WILL DRIFT (2026-09-05)
 

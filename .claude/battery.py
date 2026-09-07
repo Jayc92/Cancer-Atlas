@@ -350,6 +350,34 @@
 #        quote reaches no instrument, because "prose that is a quote" cannot be enumerated. Same
 #        shape as record_sync_check's undeclared-pair blind spot in (5), unclosable for the same
 #        reason, and narrowed only by ratcheting the marked count. Its own header carries the rest.
+#    12. hand-typed `<file>:<line>` pointers — in prose and in citations.json's `refs` — vs
+#        pointer_check.py's POINTER regex, ADDED 2026-09-07, the second entry that is a new matcher
+#        rather than an audit of an old one. LOUD: every failure class is a reported PROBLEM with a
+#        non-zero exit, and a prose string that merely LOOKS like a pointer without being one gets
+#        flagged rather than ignored, which is visible and arguable. Its anchor is neither position nor
+#        count but RESOLUTION — the named file and line either exist or they do not — which is why the
+#        loud direction is the cheap one here.
+#        THE SHAPE IS NEW TO THIS LIST, and that is the finding: a word-boundaried REGEX OVER PROSE,
+#        not `^`, `startswith(`, `index($0,`, `-qF` or `.count(`. Its characteristic failure is not an
+#        anchor collision at all but ORACLE LOOSENESS — drop the `\b` and a surname needle of two or
+#        three characters matches ordinary English (`Li` in "likely", `Hu` in "human", `Ding` in
+#        "finding"), so the check reports a clean corpus while measuring nothing. Paid for with word
+#        boundaries plus a second corroborating field, the year. A matcher that scores TOO KINDLY is
+#        the silent half of this shape and belongs recorded beside the position/count hazards, because
+#        the remedy is different in kind: not an anchor, a corroborator.
+#        THE POPULATION HAS NO EXCLUSION LIST, deliberately, and the reason is a scar. The census that
+#        ordered the instrument skipped fixture filenames by a hand-maintained list, and that list HID
+#        eight dangling pointers inside two selftests. Copying it into the instrument would have made
+#        its total a statement about the list — exactly the staleness assertion 2 exists to refuse. The
+#        fixtures were changed instead, to compose their refs from parts, so the invariant is absolute
+#        and has nothing to keep in step: a fixture may REUSE a real pointer, never INVENT one.
+#        THE SILENT RESIDUE, a population hole and not a collision: a pointer written in any other form
+#        — "line 141 of kidneys.js", "the KDM5C block", a section name — reaches nothing. Same shape as
+#        (11)'s unmarked quote and unclosable for the same reason, narrowed only by ratcheting the
+#        pointer TOTAL so that deleting a pointer to silence a fire fails the battery.
+#        Condition (7) met by the CORPUS at birth: it fired on a corpus nobody had cleaned, and its
+#        output was the worklist the repair worked from. Commit 3fa9e1a's message quotes that run's
+#        DONE line verbatim, which is where the figures live — a repaired corpus cannot re-produce it.
 #
 # THIS ENUMERATION HAS NO CHECKER, said plainly because the chain's own lesson is that a
 # hand-assembled enumeration grows on contact — six head-shape artifacts turned out to be eight, and
@@ -358,10 +386,19 @@
 # is available: the matcher shapes are greppable inside .claude/ (`grep -c '^`, `startswith(`,
 # `index($0,`, `-qF`, and `.count(` — the uniqueness form is a matcher too, which is the shape the
 # second rule added to the population), so "every matcher site is classified above" is decidable the
-# way undeclared_files() is decidable. Entry (11) is the first test of that list against a matcher
-# written AFTER it: internal_quote_check.py needed no new shape — its marker is `startswith(` and
-# its span is `.count(` — which is weak support, one instance, and not a closure.
-# Not built, because the ruling asked for the remedy applied to the family, not a new instrument.
+# way undeclared_files() is decidable. Entries (11) and (12) are the two tests of that list against
+# matchers written AFTER it, AND THEY SPLIT — which settles what the first one left open. Entry (11)
+# needed no new shape (internal_quote_check.py's marker is `startswith(`, its span is `.count(`), and
+# that was recorded here as weak support, one instance, not a closure. Entry (12) is the second
+# instance and it BROKE THE SET: pointer_check.py matches with a regex over prose, which none of the
+# five greppable forms describes. So that list is now known to enumerate the shapes used SO FAR rather
+# than the shapes possible, and a checker built over it would have gone green while missing the newest
+# member entirely — the enumeration-grows-on-contact lesson arriving one level up, at the list of ways
+# to grep for members. The honest closure is the OTHER direction, every .claude/ matcher site
+# classified here rather than every known shape found, which is undeclared_files() pointed at this
+# block. Still not built, because the ruling asked for the remedy applied to the family, not a new
+# instrument. The superseded sentence is corrected here rather than reworded away: it was true when
+# written and was overturned by a measurement.
 # ==================================================================================================
 #
 # WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
@@ -454,6 +491,19 @@ INSTRUMENTS = [
     # quote is invisible to it, and why the marked count is the ratcheted metric.
     ('internal_quote_check', 'pre-commit', 'DONE internal_quote_check:',
      ['python3', '.claude/internal_quote_check.py']),
+    # declared next to internal_quote_check because they are the SAME HAZARD ON THE OTHER FIELD. That
+    # one checks a quoted SPAN against the file it claims to quote; this one checks a hand-typed
+    # `<file>:<line>` against the thing it claims to point at. internal_quote_check's header names the
+    # class in one sentence — a file:line pointer in prose is the `:<anchor>` field the marked-quote
+    # convention was ruled to DROP — and it says that about two stale pointers of its own. The
+    # convention could escape the problem by making the span the anchor because it was NEW; the corpus
+    # already held hundreds of pointers written the other way, load-bearing and reaching no checker.
+    # It arrived AFTER a census rather than instead of one (user ruling: count them, don't sweep them),
+    # and the count is what chose repair over deletion — every pointer named a real place, so nothing
+    # was fabricated and every defect was recoverable. Its own header carries the two-population split
+    # (a TOTAL floor, a PARTIAL identity check) and why it proposes repairs and never applies them.
+    ('pointer_check', 'pre-commit', 'DONE pointer_check:',
+     ['python3', '.claude/pointer_check.py']),
     ('citation_polarity', 'pre-commit', 'DONE citation_polarity:',
      ['python3', '.claude/citation_polarity.py', RECORDS_ARTIFACT, POLARITY_ARTIFACT]),
     ('citation_crosscheck', 'pre-commit', 'DONE citation_crosscheck:',
