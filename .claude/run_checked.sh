@@ -7,6 +7,31 @@
 # DONE marker in the output, and EXITS NON-ZERO if the marker is absent — a vacuous run
 # fails the invocation itself instead of silently succeeding.
 #
+# THE EXIT CODE IS THE VERDICT; THE OUTPUT IS COMMENTARY (2026-09-07, user ruling). That is the whole
+# point of this wrapper and it is stated here because the failure above KEEPS RECURRING AT THE CALLER.
+# Everything this file does — refuse a vacuous run, propagate a non-zero exit, reject a misinvocation —
+# it delivers as a NUMBER. A caller that captures the number needs no pattern, and no pattern a caller
+# invents can be more authoritative than the number the tool already returned. Read `$?`. Grep the
+# output only to explain a verdict you have already read, never to establish one.
+#
+# TWO MISSES IN ONE SESSION IS THE PATTERN, NOT THE INCIDENT (user), and both were in callers that
+# parsed prose anyway:
+#   1. A BACKGROUNDED GATE RUN THAT PRODUCED A DONE LINE AND NO VERDICT — same shape as the outage.
+#   2. `commit_checked.sh` EXITED NON-ZERO AND THE COMMIT DID NOT HAPPEN, while a grep for the verdict
+#      matched selftest arm descriptions instead of the verdict line and was truncated before reaching
+#      it. The tool had already said everything necessary in one integer.
+#
+# THE MECHANISM THAT DESTROYS THE SIGNAL IS WORTH NAMING, because it looks like capturing the code:
+# trailing a run with `; echo "exit $?"` makes the SHELL's status the echo's — always 0 — so any
+# harness reporting the command's exit sees success while the real code is buried in the text. Either
+# let the invocation be the last statement, or capture with `rc=$?; …; exit $rc`. The `$?` was printed
+# in miss 2 and still went unread for exactly this reason: the surrounding report said exit 0.
+#
+# TREE AND LOG ARE CORROBORATION, NOT THE PRIMARY CHECK. For an action with a durable consequence,
+# `git status --porcelain` and `git log --oneline` independently confirm a commit happened — but that
+# reads the CONSEQUENCE, so it does not generalise to an instrument whose result is not a git object,
+# which is most of them. Verdict first, corroboration second.
+#
 # IT GUARDS ONE INVOCATION, NOT THE SET. This header used to enumerate its call sites, which
 # made it a second hand-maintained instrument list going stale beside the real one — it said
 # "six call sites" while ten instruments existed. The enumeration now lives in exactly one

@@ -249,6 +249,19 @@ async function selftest() {
 
   const assets = headTextAssets(repo);
   const stale = await comparePublished(repo, assets);
+  // THE MOST DANGEROUS MOMENT FOR THIS GATE IS THE FIRST RUN AFTER A PUSH, and the reason is that the
+  // benign explanation is sitting right there and is USUALLY TRUE: Pages has not rebuilt yet, so the
+  // files the push changed still serve their old bytes and every one of them lands here. Measured
+  // 2026-09-07 — two NOT PUBLISHED findings naming exactly the two changed assets, green ~150s later
+  // with no action taken. In the user's words, that makes it "the single most likely moment for someone
+  // to wave a real failure through", because the reasoning that excuses a transient is the same
+  // reasoning that would excuse a genuine stale deploy.
+  //
+  // SO THE DISCRIMINATOR IS WRITTEN DOWN RATHER THAN LEFT TO JUDGEMENT: a rebuild delay can only
+  // affect assets the push actually CHANGED. If a file appears here that is NOT in
+  // `git diff --name-only origin/main@{1} origin/main`, waiting will not fix it and it is a real
+  // finding. Same commit re-run twice with no change and still stale is also real. WAIT AND RE-RUN
+  // ONCE; do not edit, do not re-push, and do not explain it away twice.
   for (const s of stale) problems.push(`NOT PUBLISHED: ${s.p} — ${s.why}`);
 
   let st = null, events = [];
