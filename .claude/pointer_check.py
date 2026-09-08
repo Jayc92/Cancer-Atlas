@@ -52,6 +52,31 @@
 # judgement-not-evidence failure the declaration rules exist to refuse. So this instrument is TOTAL
 # on resolution and PARTIAL on identity, and the DONE line prints both denominators for that reason.
 #
+# WHAT THE PARTIAL HALF COSTS, MEASURED (2026-09-08). The floor-only residue is not a theoretical
+# gap: a hand audit of every prose pointer touched in that batch found fraction_check.py citing
+# line 226 of thyroid.js (a `// =====` separator) for the "ATM (13/168, 7.7%) and KMT2D (12/168,
+# 7.1%)" pair, which lives at thyroid.js:247. That pointer was committed, floor-only, in range, and
+# WRONG, and this instrument reported 0 flags on it every run because it has no oracle to be wrong
+# against. It was corrected by reading the line.
+# THE WRONG NUMBER IS DELIBERATELY NOT IN POINTER FORM ABOVE, and that is the same lesson one turn
+# later: the first draft of this paragraph wrote that number in pointer form, which re-created the
+# exact defect it describes — a new, committed, in-range, oracle-less pointer at a separator line,
+# counted in the TOTAL and checked by nothing. A historical wrong value is a fact about the past, not
+# a reference a reader should follow, so it goes in the residue form named below, where the population
+# does not reach it. Only the CORRECTED pointer is written as one, because that one should be checked.
+# It took two passes because the SECOND draft then quoted the bad form inside backticks to show what
+# not to do, which is still a pointer — a demonstration of a bad reference cannot be written literally
+# without becoming one, so this paragraph describes the form and never exhibits it.
+# AND THE SAME BATCH MANUFACTURED FOUR MORE OF ITS OWN, WHICH IS THE ARGUMENT FOR AUDITING BY HAND
+# AFTER ANY INSERTION. Three organ files gained comment blocks above cited lines (kidneys +6, lungs
+# +9, brain +8), which moved 28 backfill refs — all caught HERE, because those carry oracles — and
+# also silently invalidated the batch's own new prose pointers, which do not. The failure mode is the
+# mirror of the documented one: a pointer breaks not when its target moves but when anything ABOVE
+# its target moves, and the write and the break can be minutes apart in one working tree.
+# THE CHEAP CHECK THAT FINDS IT: diff the tree, extract every `organ.js:NNN` on an ADDED line, print
+# what is now at that line, and read the list. That is a hand audit and it stays one — the oracle
+# problem is unchanged, and inventing one for prose is the judgement-not-evidence refusal above.
+#
 # THE SILENT RESIDUE, at birth, because the population is the hole: a pointer written in any other
 # form — "line 141 of kidneys.js", "the KDM5C block", a section name — reaches nothing here. That
 # cannot be enumerated, the same way internal_quote_check.py cannot enumerate "prose that is a

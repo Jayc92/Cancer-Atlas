@@ -45,7 +45,64 @@
 #       surface is narrower than the surface that carries defects. Extending FIELDS to
 #       comments is deliberately NOT done here: it is a real change in reach, and per
 #       aafbe04's rule a change in reach must be declared and measured, not slipped in.
+#
+# THE CROSS-HALF SURFACE (2026-09-08, user ruling: "A figure appearing in both a record and its
+# provenance comment must match"). ORDERED AS A PAIRING CHECK, SHIPPED AS A CLOSURE GUARD, and the
+# difference is a measurement rather than a preference. The ruling's property is real and this file
+# now enforces it — but not by comparing the two halves, because comparing them is either noise or
+# duplication, and which one it is depends on a fact about this corpus's SHAPE that neither the
+# ruling nor blind spot (2) above had in view:
+#   NO RECORD IN THIS CORPUS HAS A COMMENT OF ITS OWN. Measured, not assumed: 0 of 143 `gene:'`
+#   lines is directly preceded by a `//` line. Records sit packed inside their array, so the only
+#   block ccf_load.attached() can reach for one is the block above the array's OPENER — which is
+#   SHARED with every sibling. "A record and its provenance comment" is therefore one-to-MANY here,
+#   and any pairing not anchored by an identical figure fans one comment number out across every
+#   record in the array.
+#   WHAT THE FAN-OUT COSTS, MEASURED BEFORE BUILDING RATHER THAN AFTER. Two anchors were tried on
+#   the live corpus. SHARED DENOMINATOR (same cohort size both halves, numerators differ): 4
+#   candidates, 4 FALSE. A denominator names a COHORT, and a cohort is shared by design — the
+#   record at thyroid.js:257 carrying 57/168 against its comment's 12/168 and 13/168 is this file's
+#   own thyroid.js:247 sibling-bracket fixture one level up. SOLE COMMENT FRACTION against the
+#   record's percentage: 13 candidates, 12 FALSE, with the fan-out legible in the arithmetic — 25/84
+#   reaches three pancreas records, 63/77 four skin records, 52/402 two thyroid ones, and stomach's
+#   "54/32" is not a fraction at all but the Lauren 54/32/15 citation string. Both anchors fail in
+#   the exact direction the same ruling forbids: noise proportional to how much provenance an array
+#   documents.
+#   AND THE ORDERED COMPARISON IS ALREADY ENFORCED, BY COMPOSITION. Where the identical fraction
+#   DOES appear in both halves — 8 records, the only attachment-free identity available — the field
+#   surface already compares it against the record's percentage and the comment surface against the
+#   comment's, so the two percentages agree THROUGH the fraction with no third comparison. Adding
+#   one would report a defect neither half's own check recognises, and the only disagreement it
+#   could still find is stacked tolerance: a constant tuned until the corpus went quiet, which the
+#   paren-scope block below rejects by name.
+# SO WHAT SHIPS IS THE PREMISE, NOT THE COMPARISON. That closure holds only where the record half
+# actually PAIRS the fraction with a percentage, and the field surface pairs per LITERAL: a fraction
+# in `ccf:` and a percentage in `note:` are two strings, never compared, while the comment compares
+# its own copy and passes. cross_half() reports that state — a fraction in both halves that no
+# single record literal pairs with a percentage, where the comment does. It is the one shape the
+# composition argument does not cover, it needs no heuristic (identity is the literal digits, so
+# more provenance adds no candidates), and it is where blind spot (2) would recur. Live: 8 shared
+# fractions, 0 unpaired — a defect count resting at zero over a non-empty candidate set.
+# DECLINED AT THIS LINE, NOT HELD AS A SHAPE (user ruling, same message). The SEMANTIC halves stay
+# unbuilt: scope disagreement and hedge disagreement need semantics, and on a corpus where every
+# comment exists to discuss its record a heuristic would produce noise proportional to how
+# well-documented a record is. "Punishing thoroughness is the wrong failure direction" — and the two
+# arithmetic anchors measured above are that same failure arriving through arithmetic instead.
+# THIS DOES NOT REACH BLADDER, AND A GREEN RUN IS NOT COVERAGE. bladder.js's defect was a SCOPE
+# contradiction — the note argued stage-independence while the comment described a stage-restricted
+# cohort — and NO FIGURE DISAGREED, so nothing numeric could have caught it. The numeric half is a
+# real but PARTIAL closure of the comment-contradicts-its-record class, said here so that a clean
+# run is not read as the class being closed.
+# NO VACUITY GUARD ON THIS SURFACE, unlike the two below, and the asymmetry is measured rather than
+# stylistic: the field and comment surfaces cannot legitimately reach zero, but 8 shared fractions
+# across 5 files can — a re-sourcing that removes one duplicated fraction empties it correctly. The
+# candidate count is printed in the DONE line instead, so a zero stays VISIBLE without being fatal.
 import re, sys, glob, html, json
+
+# IMPORTED, NOT RE-STATED. A second copy of the attachment rule is the hazard that ccf_load's own
+# attached() was extracted to prevent, and citation_head_check/citation_reach_check set the
+# precedent for importing across .claude/ rather than keeping a byte-identical copy.
+from ccf_load import attached, RECORD
 
 FIELDS = re.compile(r"(?:share|ccf|note|text|val|sub|intro):'((?:[^'\\]|\\.)*)'")
 COMMENT_LINE = re.compile(r'^\s*//\s?(.*)$')
@@ -109,7 +166,7 @@ def scope_rank(scope, fpos, ppos):
       SIBLING/NESTED. A percentage inside a parenthetical the fraction is outside of is invisible.
         ovary.js:220's "2/39 deep-infiltrating lesions (one at 8% allele fraction)" is not a
         79%-vs-8% disagreement — the 8% is a VARIANT ALLELE FRACTION of one lesion, a different
-        quantity that merely shares the '%' sign. thyroid.js:226's "ATM (13/168, 7.7%) and KMT2D
+        quantity that merely shares the '%' sign. thyroid.js:247's "ATM (13/168, 7.7%) and KMT2D
         (12/168, 7.1%)" is two correct pairs that the old rule cross-paired.
       TRAILING. A percentage in an enclosing scope counts only if it appears BEFORE the fraction's
         parenthetical opens, because a parenthetical attaches to the text preceding it. That is
@@ -200,6 +257,44 @@ def comment_blocks(src):
     if buf: blocks.append((start, ' '.join(buf)))
     return blocks
 
+def fkeys(text):
+    """Fractions in text as (numerator, denominator) digit-string pairs, commas stripped so that
+    "13,898/17,837" and "13898/17837" are ONE identity rather than two. Same >= 20 denominator floor
+    as check_string, for the same reason: below it these are counts, not proportions."""
+    return {(m.group(1).replace(',', ''), m.group(2).replace(',', ''))
+            for m in FRac.finditer(text) if num(m.group(2)) >= 20}
+
+def attached_text(lines, idx):
+    """The record at line index idx joined with its comment half, using ccf_load's attachment rule."""
+    out = []
+    for a, b in attached(lines, idx):
+        for i in range(a, b):
+            m = COMMENT_LINE.match(lines[i])
+            if m: out.append(m.group(1))
+    return html.unescape(' '.join(out))
+
+def cross_half(src):
+    """Fractions appearing in BOTH a record and its comment half, with whether each half PAIRS that
+    fraction with a percentage. Yields (line, 'n/d', paired_in_one_literal, comment_states_percent).
+
+    The record half is judged PER LITERAL and then aggregated with `or`, because that is how the
+    field surface actually scans: a fraction sitting in `ccf:` with no percentage is still guarded if
+    the same fraction appears in a `note:` that has one, since that literal's own check makes the
+    comparison. Unaggregated, every multi-literal record would report itself."""
+    lines = src.splitlines()
+    for idx, line in enumerate(lines):
+        if not RECORD.search(line): continue
+        ctxt = attached_text(lines, idx)
+        cf = fkeys(ctxt)
+        if not cf: continue
+        comment_pct = '%' in ctxt
+        paired = {}
+        for lit in (html.unescape(g) for g in FIELDS.findall(line)):
+            for k in fkeys(lit) & cf:
+                paired[k] = paired.get(k, False) or ('%' in lit)
+        for k in sorted(paired):
+            yield idx + 1, f'{k[0]}/{k[1]}', paired[k], comment_pct
+
 
 FIXTURES = [
     ('~92% of the four commonest types (48,789/53,142, Park)', [], 'real bladder pair'),
@@ -235,6 +330,26 @@ FIXTURES = [
      'drift inside its own bracket is still caught'),
 ]
 
+# CROSS-HALF FIXTURES — whole miniature sources, because this surface reads the corpus's GEOMETRY
+# (shared block above an array opener, records packed beneath) and a bare string cannot express it.
+# The last fixture is a DECLINE pinned as a test: the shared-denominator anchor measured 4-for-4
+# false, and a fixture asserting it stays silent is what stops it being re-added as an improvement.
+CROSS_FIXTURES = [
+    ("// TCGA: BRAF V600E in 248/402 papillary carcinomas (61.7%).\nconst A = [\n"
+     "  { gene:'BRAF V600E', note:'61.7% of papillary carcinomas (248/402, TCGA)' },\n];\n",
+     [], 'one literal pairs the fraction with its percentage: the composition argument holds'),
+    ("// TCGA: BRAF V600E in 248/402 papillary carcinomas (61.7%).\nconst A = [\n"
+     "  { gene:'BRAF V600E', ccf:'248/402 sequenced tumors', note:'61.7% of papillary carcinomas' },\n];\n",
+     ['fire'], 'fraction and percentage in DIFFERENT literals: the comment compares its own copy '
+     'and passes, the record compares nothing'),
+    ("// TCGA sequenced 248/402 papillary carcinomas in the discovery set.\nconst A = [\n"
+     "  { gene:'BRAF V600E', ccf:'248/402 sequenced tumors' },\n];\n",
+     [], 'the comment states no percentage for it, so there is no second figure to disagree'),
+    ("// TCGA: 300/402 tumors were BRAF-like (74.6%).\nconst A = [\n"
+     "  { gene:'BRAF V600E', note:'61.7% of papillary carcinomas (248/402, TCGA)' },\n];\n",
+     [], 'a shared DENOMINATOR is not a shared figure — the declined anchor, pinned silent'),
+]
+
 def selftest():
     ok = True
     for t, want, label in FIXTURES:
@@ -242,8 +357,13 @@ def selftest():
         good = bool(got) == bool(want)
         ok &= good
         print(f"  {'ok  ' if good else 'FAIL'} {label}: {got or 'clean'}")
-    print('SELFTEST', 'PASS — fires on drift, passes real pairs within tolerance'
-          if ok else 'FAIL — do not trust the scan')
+    for src, want, label in CROSS_FIXTURES:
+        got = [(ln, fr) for ln, fr, paired, cpct in cross_half(src) if not paired and cpct]
+        good = bool(got) == bool(want)
+        ok &= good
+        print(f"  {'ok  ' if good else 'FAIL'} cross-half: {label}: {got or 'clean'}")
+    print('SELFTEST', 'PASS — fires on drift, passes real pairs within tolerance, and reports a '
+          'cross-half fraction no literal pairs' if ok else 'FAIL — do not trust the scan')
     return ok
 
 if __name__ == '__main__':
@@ -254,6 +374,7 @@ if __name__ == '__main__':
     print()
     checked = flagged = 0
     comments_checked = comments_flagged = 0
+    cross_pairs = cross_flags = 0
     tworange = []
     # STILL A GLOB, AND DECLARED AS SUCH. The tracked-set rule binds a producer whose metric is
     # RATCHETED; this sidecar's ratchet array is empty (every metric it prints is a defect count).
@@ -288,6 +409,16 @@ if __name__ == '__main__':
                 for ptxt, ftxt, fval in check_string(t, sentence_split=True):
                     comments_flagged += 1
                     print(f'  COMMENT MISMATCH? {short}:{ln}  stated {ptxt} vs {ftxt} = {fval}%')
+        # THE CROSS-HALF SURFACE (2026-09-08) — the closure PREMISE, per the header block. Counted
+        # apart from the other two for the same reason the comment surface was: a new reach has to
+        # stay distinguishable from flags already adjudicated.
+        for ln, frac, paired, comment_pct in cross_half(src):
+            cross_pairs += 1
+            if not paired and comment_pct:
+                cross_flags += 1
+                print(f'  CROSS-HALF? {short}:{ln}  {frac} appears in this record and in its '
+                      f'comment, which states a percentage for it, but no single record literal '
+                      f'pairs the two — so nothing checks the record\'s own figure against it')
     print(f'TWO-YEAR-RANGE strings (human confirms-deliberate): {len(tworange)}')
     for f, l, y in tworange: print(f'   {f}:{l}  {y}')
     # A SCAN THAT EXAMINED NOTHING IS NOT A PASS (condition 7 applied locally rather than argued
@@ -301,14 +432,19 @@ if __name__ == '__main__':
         'name': 'fraction_check',
         'metrics': {'field_strings': checked, 'field_flags': flagged,
                     'comment_blocks': comments_checked, 'comment_flags': comments_flagged,
+                    'cross_half_pairs': cross_pairs, 'cross_half_flags': cross_flags,
                     'two_year_range': len(tworange)},
         # empty on purpose: the flag counts are DEFECT counts, and the two "examined" counts drop
         # legitimately whenever an unsourced statistic is REMOVED rather than re-sourced — which is
         # the remedy this project prefers. Ratcheting either would punish the correct fix.
+        # cross_half_pairs is the same kind of number and stays out for the same reason — a
+        # re-sourcing that stops repeating a fraction in both halves lowers it CORRECTLY. So this
+        # array is still empty and the glob above is still legal; the trigger there is untripped.
         'ratchet': [],
     }, sort_keys=True))
     # DONE line last (2026-09-05 sweep): absence-of-flags is never a pass.
     print(f'DONE fraction_check: {checked} field strings with fraction+percent, {flagged} mismatch '
-          f'flags; {comments_checked} comment blocks, {comments_flagged} comment flags')
+          f'flags; {comments_checked} comment blocks, {comments_flagged} comment flags; '
+          f'{cross_pairs} cross-half shared fractions, {cross_flags} unpaired')
     if vacuous:
         sys.exit(3)
