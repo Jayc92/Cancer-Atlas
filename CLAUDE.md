@@ -6742,8 +6742,9 @@ refute it, which is worth more than file order.
   longer clip. The two remaining accepted failures: the GBM and
   Prostate/acinar label overlaps (deliberately clustered site designs,
   standing since their own passes) and testis blown-white ~1.2%
-  (accepted 2026-09-02 after a diagnostic-only characterization — packet
-  ~/Downloads/cancer-atlas-testis-blownwhite-diagnostic/). The testis
+  (accepted 2026-09-02 after a diagnostic-only characterization whose
+  screenshot packet was scratch outside the repo and is gone — what
+  follows is the retained record, and it is the whole basis). The testis
   characterization, proven by isolation rather than inferred: an
   84-sample deterministic angle sweep (harness-verbatim measurement)
   fails only inside one θ15–45° × φ55–85° window — the camera aligned
@@ -7601,8 +7602,23 @@ refute it, which is worth more than file order.
     0.36% glow halo and the already-documented angle-dependent Testis 1.20%
     (testis.js untouched by anything in this working tree). Before/after,
     close-zoom, and rotated fissure-silhouette screenshots (the fissures
-    being visible is the point of the whole swap) in
-    `~/Downloads/cancer-atlas-lungs-integration-review/`.
+    being visible is the point of the whole swap) went to a scratch
+    directory outside the repo and are gone. The numbers above are the
+    retained record, and the mesh those shots depicted is tracked at
+    `assets/lungs.glb` (swapped in at f358c0a), so the fissure claim is
+    RE-CHECKABLE rather than resting on lost images — which is the
+    difference between an ephemeral pointer that costs nothing and one
+    that strands a claim. Writing a scratch path into this file promises
+    retrievability that a scratch location cannot keep, so DESCRIBE what
+    was measured and name where the subject lives instead — stated as an
+    instruction, because "later entries do this" would be a claim about
+    this repo's own contents of exactly the kind 6e3c310 had to drop. A
+    check that every path-shaped reference here resolves on disk was
+    CONSIDERED AND DECLINED: it would read this machine's `/tmp` and home
+    directory, so it could never be green on a fresh clone, and a gate
+    that cannot pass for a new contributor is worse than the defect. The
+    cost of declining is that the next such pointer also goes unguarded,
+    which is what makes this note the mechanism.
 
 - **Colon mesh swap — "Small and large intestine" (antonia.sundberg, Sketchfab)
   replaces the HRA large-intestine model (2026-09-02; developed directly after a
