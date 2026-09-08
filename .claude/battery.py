@@ -497,6 +497,21 @@
 #        output was the worklist the repair worked from. Commit 3fa9e1a's message quotes that run's
 #        DONE line verbatim, which is where the figures live — a repaired corpus cannot re-produce it.
 #
+#   CLASSIFIED OUT, NOT OMITTED — the closure this block calls honest is "every matcher site in
+#   .claude/ classified here", and a site left unclassified is indistinguishable from one nobody saw.
+#     machine_path_files' HOME_ROOT (assertion 6, 2026-09-08) is a regex over the bytes of every
+#        tracked file and is deliberately NOT entry 13. This family is matchers that decide WHICH LINE
+#        IS THE STRUCTURE among prose, and every hazard above is a collision at that boundary: prose
+#        read as structure, or structure read as prose. A leak scan has no boundary to collide at —
+#        every byte of every file is in scope and nothing is being told apart from anything — so
+#        neither remedy (position, count) has a thing to attach to, and (12)'s corroborator shape does
+#        not apply either: there is no second field to agree with, because the match IS the finding.
+#        Its own hazards are REACH, and they sit in its docstring; its trigger sits on the pattern
+#        line, because the one way to break it from inside this file is to reformat the pattern into
+#        a form that matches its own source. THE COST OF DECLINING: a reader who greps this list for
+#        "every regex in .claude/" finds this one only through this note, which is why the note is
+#        here and not only there.
+#
 # THIS ENUMERATION HAS NO CHECKER, said plainly because the chain's own lesson is that a
 # hand-assembled enumeration grows on contact — six head-shape artifacts turned out to be eight, and
 # this list has grown on every reading since it opened (count the entries above; a total restated
@@ -553,6 +568,7 @@
 #   .claude/run_checked.sh "DONE battery:" python3 .claude/battery.py pre-commit
 import json
 import os
+import re
 import shutil
 import signal
 import subprocess
@@ -736,6 +752,26 @@ def tracked_claude_files():
     return names
 
 
+def tracked_paths():
+    """Every path in the index, repo-relative. The whole index and not just .claude/, because the
+    property assertion 6 checks is a property of WHAT SHIPS, and a public repository ships all of it.
+    NUL-delimited on purpose: a tracked filename may contain a space, and a whitespace-split list turns
+    such a name into two nonexistent paths that a per-file check then reports CLEAN — a false clean, in
+    the direction that matters, and the shape this project's own null-delimiting rule was written for
+    after the moved-files incident. Every loop over this list is NUL-delimited, index outward."""
+    out = subprocess.run(['git', '-C', REPO_ROOT, 'ls-files', '-z'],
+                         capture_output=True, text=True, check=True).stdout
+    return [path for path in out.split('\0') if path]
+
+
+def read_tracked_bytes(path):
+    """The read_bytes callable assertion 6 is driven with on a real run: raw bytes, repo-relative path,
+    no decoding — the scan is over what ships, and what ships is bytes. Separate from the assertion so
+    the selftest can substitute an in-memory lookup and an OSError-raising stub for it."""
+    with open(os.path.join(REPO_ROOT, path), 'rb') as handle:
+        return handle.read()
+
+
 def present_claude_files():
     """What is actually in .claude/ on disk, tracked or not. Only used to tell a stale declaration
     apart from an untracked file, which are different problems with different fixes."""
@@ -838,6 +874,102 @@ def gitignore_bare_path_comments(comments):
             'whitespace, so dropping the `#` turns it into an ignore pattern and whatever it names '
             'silently stops being addable. Make the comment prose (two words or more).'
             for number, content in comments if len(content.split()) == 1]
+
+
+# A home-root prefix followed by an account name. THE SEGMENT NAMES APPEAR AS A PATH ONLY HERE — the
+# docstring spells them letter by letter and arm 21 composes them from detached tokens at runtime —
+# and this pattern deliberately does not match its own source text:
+# `(?:` sits between the leading slash and the first alternative, and the second alternative is
+# followed by `)` rather than by a slash. DO NOT REFORMAT IT into a form that does. That is not left
+# to care: battery.py is itself tracked, so the live arm and every real run scan this file, and a
+# reformat that made the pattern self-matching would fire on the next battery rather than rot.
+HOME_ROOT = re.compile(rb'/(?:Users|home)/[A-Za-z0-9._-]+')
+
+
+def machine_path_files(paths, read_bytes, home):
+    """Assertion 6. NO TRACKED FILE MAY CONTAIN A MACHINE-SPECIFIC ABSOLUTE PATH (user ruling,
+    2026-09-08). Same tier as assertion 5 and for the same reason: this is a property of the tracked
+    SET, like "every .claude/ file is declared" and "every .gitignore comment is prose", so it belongs
+    beside those and not in a sixteenth instrument. No member, no sidecar, no ratchet — a population
+    that must stay at zero has nothing to ratchet.
+
+    WHAT IT IS FOR: this repository is public, and a tracked absolute home path names an account to
+    everyone who clones it. eff40fa removed the last one from launch.json and recorded this scan as a
+    CANDIDATE MEMBER, not built; the ruling placed it here as an assertion instead, so the declared
+    instrument count holds. The population is ZERO at birth and this ships green, so condition (7) is
+    met by FIXTURE and not by the corpus, which is the honest way round: a check that has never fired
+    and cannot be shown firing is a check nobody should believe.
+
+    REDUCTION, NOT REMOVAL, and the distinction is standing. Scrubbing the index does not reach
+    history: ca3b627 and 0d437ef still carry the path, git at and before a131649 is immutable by
+    standing rule, and no squash, rebase or blob purge is available or wanted. Those blobs stay
+    publicly readable. What this assertion buys is that the CURRENT tree stays clean, no future clone
+    reproduces it, and a regression is loud rather than silent.
+
+    TWO PRONGS, AND ONE OF THEM SUBSUMES THE OTHER ON THIS MACHINE. Prong one is the running
+    machine's own home directory, taken from expanduser at the call site rather than written down --
+    THE ACCOUNT NAME IS NEVER TYPED INTO THIS REPOSITORY, because here writing the example would BE
+    the leak, the sharpest case of the spell-rather-than-instantiate corollary. Prong two is a
+    home-root segment -- U-s-e-r-s or h-o-m-e -- followed by an account name, which catches a path
+    naming SOMEONE ELSE's account, something prong one cannot see. On any machine whose home lives
+    under either root, prong two matches everything prong one does; prong one is the backstop for an
+    unusual HOME, and its fixture injects such a home so the arm demonstrates it firing where prong
+    two cannot. Recorded because a prong that can never fire independently looks like padding.
+
+    BYTES, NOT TEXT, so the population needs no exclusion list. Binary assets are scanned on the same
+    terms as prose: a glTF file can carry a uri or a generator string, and measured on this corpus
+    each carries a generator and no uri at all -- a fact about today's assets, not about the format,
+    which is precisely why they are not skipped. An exclusion list would also be a second
+    hand-maintained enumeration to forget, the staleness assertion 2 exists to refuse.
+
+    REACH, DECLARED RATHER THAN QUIETLY ASSUMED. Prong two is POSIX-rooted: a backslash home path (the
+    Windows spelling) is outside it, and prong one sees one only on a machine whose own home is spelled
+    that way. Nothing in this repository's toolchain runs there; widening the reach is a change that
+    gets declared and measured on its own commit, not slipped in here. And the needle is dropped when
+    expanduser could not resolve — it returns '~' unchanged in that case, and a one-character needle
+    would fire on every tilde in the corpus. NOT A MEMBER OF THE ANCHOR FAMILY assertion 5 belongs to;
+    the enumeration in this file's header says so at its tail, and says why.
+
+    THE PROBLEM MESSAGE DESCRIBES AND DOES NOT QUOTE, which is load-bearing rather than fastidious.
+    A firing assertion fails the battery, run_checked.sh refuses, and log_refusal appends the tail of
+    that output to .claude/refusals.log -- which is TRACKED. A message quoting the offending path
+    would therefore move the leak INTO the index by the act of reporting it. The reader gets the file
+    and the line and opens it; that is position two of the placement checklist under a constraint the
+    checklist had not met before, where the problem string must be the reader's home AND must not
+    contain the evidence."""
+    problems = []
+    # An unresolved home is no needle at all — see REACH in the docstring.
+    home_needle = home.encode() if home and os.path.isabs(home) else None
+    for path in paths:
+        try:
+            data = read_bytes(path)
+        except OSError as exc:
+            problems.append(f'UNREADABLE TRACKED FILE: {path} ({exc.strerror}) — the index names it, '
+                            'so a denominator counting it as scanned would be a lie. Restore it or '
+                            'stage its deletion.')
+            continue
+        fired = []
+        offset = None
+        if home_needle and home_needle in data:
+            fired.append("this machine's own home directory")
+            offset = data.index(home_needle)
+        match = HOME_ROOT.search(data)
+        if match:
+            fired.append('a home-root path naming an account')
+            offset = match.start() if offset is None else min(offset, match.start())
+        if not fired:
+            continue
+        try:
+            where = f'line {data[:offset].decode().count(chr(10)) + 1}'
+        except UnicodeDecodeError:
+            where = f'byte offset {offset}'
+        problems.append(
+            f'MACHINE PATH: {path} {where} holds {" and ".join(fired)}. This repository is public, '
+            'so a tracked absolute home path names an account to everyone who clones it. THE TEXT IS '
+            'NOT QUOTED HERE ON PURPOSE: this message can be archived into the tracked refusal log, '
+            'which would move the leak into the index. Open the file at that position and make the '
+            'path relative.')
+    return problems
 
 
 def ratchet_verdict(metric, previous, current, lower_to=None, lower_reason=None):
@@ -1711,11 +1843,72 @@ def selftest():
         "the report carries each wrapper's own words — the passing one's marker line, and on a break "
         'its whole output, which is the only diagnosis anything downstream will get')
 
+    # arm 21: ASSERTION 6, the machine-path scan, in every direction its docstring claims. THE FIXTURES
+    # COMPOSE THEIR PATHS FROM SEGMENTS AT RUNTIME — seg(b'Users', b'alice', ...) — because this file
+    # is itself in the scanned population: a home-root path written as a literal here would fire the
+    # live sub-arm below on the very run that added it. Same move as pointer_check's fixtures (build
+    # the shape from parts, never instantiate the thing being guarded against), and the injected homes
+    # are composed the same way, so no account name, real or invented, is spelled in this repository.
+    def seg(*parts):
+        return b'/' + b'/'.join(parts)
+
+    def in_memory(files):
+        return lambda path: files[path]
+
+    lab_home = seg(b'srv', b'lab', b'carol').decode()   # under neither home root: prong two is blind
+    scan = machine_path_files
+    fires = scan(['n.md'], in_memory({'n.md': b'see ' + seg(b'srv', b'lab', b'carol', b'run.sh')}),
+                 lab_home)
+    say(len(fires) == 1 and 'own home directory' in fires[0] and 'naming an account' not in fires[0],
+        "prong one fires on this machine's own home under a root prong two cannot see (the arm that "
+        'keeps prong one from being padding)')
+    for root in (b'Users', b'home'):
+        fires = scan(['a.txt'], in_memory({'a.txt': seg(root, b'alice', b'x')}), lab_home)
+        say(len(fires) == 1 and 'naming an account' in fires[0] and 'own home' not in fires[0],
+            f"prong two fires on a {root.decode()}-rooted path naming SOMEONE ELSE's account")
+    fires = scan(['b.txt'], in_memory({'b.txt': b'x\ny ' + seg(b'Users', b'alice', b'y') + b'\n'}),
+                 seg(b'Users', b'alice').decode())
+    say(len(fires) == 1 and 'own home directory and a home-root path' in fires[0]
+        and 'line 2' in fires[0],
+        'both prongs on one file collapse to ONE problem naming both, at the line of the hit')
+    leak = seg(b'home', b'bob', b'secret')
+    fires = scan(['c.txt'], in_memory({'c.txt': leak}), lab_home)
+    say(len(fires) == 1 and 'c.txt line 1' in fires[0] and leak.decode() not in fires[0]
+        and 'bob' not in fires[0],
+        'the problem string names file and line and carries NONE of the offending path — it can be '
+        'archived into the tracked refusal log without moving the leak into the index')
+    blob = b'glTF\x00\xff\xfe' + seg(b'Users', b'alice', b'model') + b'\x00'
+    fires = scan(['m.glb'], in_memory({'m.glb': blob}), lab_home)
+    say(len(fires) == 1 and 'byte offset 7' in fires[0],
+        'a binary file is scanned on the same terms, reporting a byte offset where the prefix does '
+        'not decode as UTF-8')
+    clean = {'d.md': b'the packet sat in ~/Downloads/atlas and is gone\n',
+             'e.md': b'accounts live under ' + seg(b'home') + b'/ on Linux and ' + seg(b'Users')
+                     + b'/ on macOS\n',
+             'f.md': b'the path ' + seg(b'var', b'root') + b' is a home under neither root\n'}
+    say(scan(sorted(clean), in_memory(clean), lab_home) == [],
+        'a tilde-relative reference, a bare home root with no account segment, and an absolute path '
+        'under neither root all pass — the shapes the corpus legitimately holds')
+    say(scan(['t.md'], in_memory({'t.md': b'~/Downloads/x and ~ again'}), '~') == [],
+        "an unresolved home ('~' returned unchanged) is no needle: nothing fires on a tilde")
+
+    def unreadable(_path):
+        raise FileNotFoundError(2, 'No such file or directory')
+    fires = scan(['gone.txt'], unreadable, lab_home)
+    say(len(fires) == 1 and 'UNREADABLE' in fires[0] and 'gone.txt' in fires[0],
+        'a tracked file that cannot be read is reported by name rather than counted as scanned')
+    live_paths = tracked_paths()
+    live_fires = scan(live_paths, read_tracked_bytes, os.path.expanduser('~'))
+    say(live_fires == [],
+        f'the live index holds no machine-specific path ({len(live_paths)} tracked files scanned as '
+        'bytes, binaries included)' + ('' if not live_fires else ' -- ' + live_fires[0]))
+
     print('SELFTEST', 'PASS — fires on a missing member, a vacuous member, a failing member, '
           'an undeclared file, a stale declaration, a bad phase, a shrinking corpus, a corpus that '
           'changed composition under a flat count, a malformed sidecar, an abandoned ratchet, a '
-          'prose mention posing as a DONE line, a bare-path comment in .gitignore and a wrapper '
-          'selftest that exits zero without asserting anything; '
+          'prose mention posing as a DONE line, a bare-path comment in .gitignore, a tracked file '
+          'holding a machine-specific path and a wrapper selftest that exits zero without asserting '
+          'anything; '
           'passes complete sets'
           if ok else 'FAIL — do not trust a green battery from this build')
     # 7-bis applies to the selftest as well (deploy_check.js's precedent): a selftest that never
@@ -1756,6 +1949,13 @@ def main(argv):
     # BARE-PATH COMMENT problem sat three lines above it.
     gitignore_fires = gitignore_bare_path_comments(gitignore_comment_lines)
     problems += gitignore_fires
+    # ASSERTION 6, same tier as 5 and wired the same way: the fires are KEPT so the DONE line reports
+    # CLEAN OVER TOTAL, and the population is the whole index rather than .claude/. The home is taken
+    # from expanduser here and materialised nowhere else — machine_path_files' docstring says why the
+    # account name is never written down in this repository.
+    tracked_all = tracked_paths()
+    machine_path_fires = machine_path_files(tracked_all, read_tracked_bytes, os.path.expanduser('~'))
+    problems += machine_path_fires
 
     members = [(n, m, a) for n, p, m, a in INSTRUMENTS if p == phase]
     needs_records = any(RECORDS_ARTIFACT in a for _n, _m, a in members)
@@ -1891,6 +2091,8 @@ def main(argv):
           f'{len(tracked_claude_files())} .claude/ files all declared, '
           f'{len(gitignore_comment_lines) - len(gitignore_fires)}/'
           f'{len(gitignore_comment_lines)} .gitignore comments are prose not bare paths, '
+          f'{len(tracked_all) - len(machine_path_fires)}/{len(tracked_all)} tracked files hold no '
+          f'machine-specific path, '
           f'{record_count if record_count is not None else "n/a"} citation records extracted '
           f'(ratchet {ratchet_clause}; {delta_clause}), '
           f'{len(sidecars)}/{len(reported_clean)} reporting members '
@@ -1901,6 +2103,6 @@ def main(argv):
 
 if __name__ == '__main__':
     if shutil.which('git') is None:
-        print('battery: git is required (assertion 2 reads the index)', file=sys.stderr)
+        print('battery: git is required (assertions 2 and 6 read the index)', file=sys.stderr)
         sys.exit(2)
     sys.exit(main(sys.argv))

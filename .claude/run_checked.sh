@@ -129,11 +129,23 @@ log_refusal() {
     printf '==== REFUSAL %s reason=%s marker="%s" tool=%s\n' \
       "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$1" "$marker" "$tool"
     printf '     output %s lines, last %s below\n' "$total" "$REFUSAL_TAIL"
-    if [ -n "${TMPDIR:-}" ]; then
-      tail -n "$REFUSAL_TAIL" "$tmp" | sed "s|${TMPDIR%/}|\$TMPDIR|g" | sed 's/^/  | /'
-    else
-      tail -n "$REFUSAL_TAIL" "$tmp" | sed 's/^/  | /'
-    fi
+    # THE ARCHIVED TAIL IS SCRUBBED OF MACHINE-SPECIFIC ROOTS, and $HOME was added for a sharper
+    # reason than $TMPDIR (2026-09-08, with battery.py's assertion 6). This log is TRACKED and
+    # MACHINE-WRITTEN, which makes it the one file in the index that can acquire an absolute home
+    # path with NO HUMAN IN THE LOOP — one failing gate whose last lines carry a traceback is
+    # enough. Assertion 6 would then fire on every following run, and the only remedy would be
+    # EDITING AN APPEND-ONLY EVIDENCE ARCHIVE, which this file's own header forbids: a red chain
+    # with no sanctioned way out. Prevention at the writer is what keeps that state unreachable,
+    # the same move as the newline guard above — fix the class at the writer, not the instance.
+    # TMPDIR IS SUBSTITUTED FIRST ON PURPOSE: a TMPDIR nested inside HOME should read as $TMPDIR,
+    # the more specific and more useful of the two. Each root is used as a BRE, so a dot inside it
+    # matches any character — over-matching, which is the harmless direction for a scrubber.
+    scrub='s/^/  | /'
+    home_root="${HOME:-}"; home_root="${home_root%/}"
+    [ -n "$home_root" ] && scrub="s|$home_root|\$HOME|g;$scrub"
+    tmp_root="${TMPDIR:-}"; tmp_root="${tmp_root%/}"
+    [ -n "$tmp_root" ] && scrub="s|$tmp_root|\$TMPDIR|g;$scrub"
+    tail -n "$REFUSAL_TAIL" "$tmp" | sed "$scrub"
     printf '==== END REFUSAL\n'
   } >> "$REFUSAL_LOG"
   echo "RUN_CHECKED: refusal appended to $REFUSAL_LOG" >&2
@@ -273,13 +285,28 @@ if [ "${1:-}" = "--selftest" ]; then
   else
     echo "  FAIL the tool field named an option instead of the tool"; ok=0
   fi
+  # arm 12: $HOME IS SCRUBBED OUT OF THE ARCHIVED TAIL. Condition (7) on the writer, and the arm
+  # asserts BOTH directions because only one of them can fail honestly: the literal token must be
+  # present AND the expanded path must be absent. Checking only for the token would pass vacuously
+  # against output that never carried a home path at all — the same vacuous-green shape as the
+  # blown-white checks that passed on zero mesh pixels. Deleting the substitution from log_refusal
+  # fails the second half.
+  rm -f "$RUN_CHECKED_REFUSAL_LOG"
+  "$self" "DONE test:" sh -c 'echo "DONE test: 1 thing"; echo "at $HOME/app/x.py"; exit 6' \
+    >/dev/null 2>&1
+  if grep -q '\$HOME/app/x\.py' "$RUN_CHECKED_REFUSAL_LOG" 2>/dev/null \
+     && ! grep -qF "$HOME/app/x.py" "$RUN_CHECKED_REFUSAL_LOG" 2>/dev/null; then
+    echo "  ok   a home path in a refusing run's output is archived symbolically, not expanded"
+  else
+    echo "  FAIL the refusal log archived a machine-specific home path"; ok=0
+  fi
   rm -f "$RUN_CHECKED_REFUSAL_LOG"
   if [ $ok -eq 1 ]; then
     echo "SELFTEST PASS — the wrapper fails vacuous runs, passes real ones, propagates errors, and "\
 "logs exactly the refusals with their own output, anchored even onto an unterminated file, "\
 "matches the marker at line start so a prose mention cannot pass for a DONE line, refuses a "\
-"misinvocation before running anything AND records it with both labels n/a, and names a tool "\
-"rather than an option in the entry"
+"misinvocation before running anything AND records it with both labels n/a, names a tool "\
+"rather than an option in the entry, and scrubs the machine's home path out of what it archives"
     exit 0
   else
     echo "SELFTEST FAIL — do not trust wrapped invocations"
