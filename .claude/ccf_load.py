@@ -61,7 +61,50 @@
 # CLAUDE.md binds to 37aa47a and refuses to agree quietly. A measuring script with no known-answer
 # case is an oracle nobody has attacked; this one has exactly one, and it is a real commit rather
 # than a fixture. If --verify fails, distrust THIS FILE before distrusting the record.
-import re, statistics, subprocess, sys
+#
+# THE FRAME AND THE DRAW LIVE HERE TOO, ADDED (2026-09-08) BECAUSE BATCH 2'S SAMPLE CANNOT BE
+# REPLAYED — and that was established by TRYING TO REPLAY IT, not by noticing a missing file.
+# CLAUDE.md records batch 2 as "15 records drawn from a frame of 48 mechanism-`note` sentences, seed
+# `int('b0f7330',16)` — the HEAD at which the frame was built, fixed before the draw and auditable".
+# AUDITABLE IS THE WORD THAT IS FALSE, and it is corrected at that sentence in CLAUDE.md, not only
+# here. Three checks, in the order they were run:
+#   (1) no frame or draw artefact was ever tracked. 89 distinct paths exist across ALL of history,
+#       and the only ever-added file matching frame|draw|sampl|batch|ccf is THIS ONE;
+#   (2) `git log --all -S"b0f7330"` returns exactly one commit — ab3ed93, the commit that WROTE the
+#       claim, in CLAUDE.md and in the citations.json entry extracted from that same prose. THE ONLY
+#       WITNESS IS THE SENTENCE UNDER SUSPICION, which a pickaxe hit cannot tell you by itself;
+#   (3) the frame size is not re-derivable from its own description. Ten mechanical readings of
+#       "mechanism-`note` sentences" were scored at b0f7330 and NONE yields 48 — that tree carries
+#       144 gene-bearing records and 321 note sentences, and the nearest candidate is 56 records
+#       whose note contains "et al.". Checked before concluding, because "I cannot find the file" and
+#       "the description does not determine the set" are different failures with different remedies.
+# A SEED IS NOT A RECIPE. Replaying a sample needs the FRAME MEMBERSHIP and the DRAW PROCEDURE too,
+# and neither was written down. This is this file's own lesson — "A FIGURE THAT ONLY A REMEMBERED
+# METHOD CAN REPRODUCE IS NOT REALLY BOUND TO ANYTHING" — firing on a SAMPLE rather than a figure,
+# and note that commit-binding, the remedy that saves a figure, buys nothing here: b0f7330 pins the
+# tree the frame was drawn FROM and says nothing about which 48 of it were IN the frame.
+#
+# SO THE PROCEDURE IS WRITTEN DOWN AND NOT ONLY THE SEED: the frame is sorted by (path, line) and the
+# sample is `random.Random(key).sample(frame, n)`, with `key = int(seed, 16)` for a hex seed so a
+# commit prefix can go on being one. SORTING BEFORE SAMPLING IS LOAD-BEARING — corpus() sorts paths,
+# but a frame in dict or filesystem order would let the same seed draw different members elsewhere.
+#
+# MEMBERS ARE NAMED BY SPAN, NOT BY LINE, because two of batch 3's three `file:line` pointers were
+# already wrong in the commit that wrote them. The ladder is shortest-first and stops at the first
+# span occurring EXACTLY ONCE in its own file, which is the contract internal_quote_check.py already
+# enforces on `QUOTES <path>` blocks: bare `gene:'…'`, then gene-through-ccf, then the whole record
+# line. A record whose own line is not unique is reported UNANCHORABLE rather than handed a span that
+# cannot be verified — an unverifiable pointer is what this is trying to stop producing.
+#
+# CONTAMINATION IS MECHANICAL, AND REFUSES WHEN IT CANNOT BE: `--touched-by C` marks every member
+# whose UNIT lines — the record line PLUS its attached comment blocks — commit C changed. That is
+# batch 3's judged "four members were lines edited that same day and were EXCLUDED AS CONTAMINATED"
+# made computable, and it matters for batch 4 because ab3ed93 repaired six batch-2 records: 6
+# comment lines and 6 non-comment lines added across four organ files. It requires the frame's own
+# commit to BE C, because hunk line numbers are only meaningful in the tree they were computed
+# against; asked for any other pairing it refuses rather than quietly comparing two trees' addresses.
+import random, re, statistics, subprocess, sys
+from collections import Counter
 
 RECORD = re.compile(r"\bgene:\s*'")
 CCF = re.compile(r"\bccf:\s*'")
@@ -73,7 +116,13 @@ ARRAY_OPEN = re.compile(r"(?:const\s+\w+\s*=|\b[\w']+\s*:)\s*\[\s*$")
 # CLAUDE.md's figures for 37aa47a, transcribed. The prose is the source of truth; this is a copy
 # kept HERE so --verify can fail, and it is the one place a copy is warranted.
 CALIBRATION = {'commit': '37aa47a', 'records': 144, 'with_ccf': 117, 'blocks': 29,
-               'comment_lines': 984, 'median': 17, 'max': 120, 'none': 55}
+               'comment_lines': 984, 'median': 17, 'max': 120, 'none': 55,
+               # The span-uniqueness feasibility figures CLAUDE.md binds to the SAME tree, which are
+               # the known-answer case for the ladder: "at 37aa47a, 116 of the 144 records are
+               # uniquely identified by their bare `gene:'…'` span; the remaining 28 are the same
+               # gene modeled at two sites in one file". Added here for the same reason as the rest —
+               # so the ladder can disagree with the record instead of being believed.
+               'unique_bare': 116, 'needs_lengthening': 28}
 
 
 def corpus(at=None):
@@ -109,6 +158,23 @@ def array_open_above(lines, idx):
     return None
 
 
+def attached(lines, idx):
+    """THE UNIT'S COMMENT HALF, as a list of half-open index ranges: the record's own block plus the
+    block above its array's opener. Extracted from measure() so frame() cannot drift from it — a
+    second copy of the attachment rule is exactly the two-hand-maintained-lists hazard this project
+    keeps finding, and --verify proves the extraction changed no figure."""
+    out = []
+    own = block_above(lines, idx)
+    if own:
+        out.append(own)
+    opener = array_open_above(lines, idx)
+    if opener is not None:
+        shared = block_above(lines, opener)
+        if shared:
+            out.append(shared)
+    return out
+
+
 def measure(at=None):
     blocks = {}          # (path, start, end) -> line count; a dict so a SHARED block counts once
     per_record = []
@@ -120,18 +186,10 @@ def measure(at=None):
                 continue
             records += 1
             with_ccf += bool(CCF.search(line))
-            attached = []
-            own = block_above(lines, n)
-            if own:
-                attached.append((path,) + own)
-            opener = array_open_above(lines, n)
-            if opener is not None:
-                shared = block_above(lines, opener)
-                if shared:
-                    attached.append((path,) + shared)
-            for key in attached:
+            keys = [(path,) + r for r in attached(lines, n)]
+            for key in keys:
                 blocks[key] = key[2] - key[1]
-            per_record.append(sum(blocks[key] for key in attached))
+            per_record.append(sum(blocks[key] for key in keys))
     return {
         'files': len(corpus(at)), 'records': records, 'with_ccf': with_ccf,
         'blocks': len(blocks), 'comment_lines': sum(blocks.values()),
@@ -141,23 +199,165 @@ def measure(at=None):
     }
 
 
+GENE_SPAN = re.compile(r"gene:\s*'(?:[^'\\]|\\.)*'")
+CCF_SPAN = re.compile(r"ccf:\s*'(?:[^'\\]|\\.)*'")
+HUNK = re.compile(r'^@@ -\S+ \+(\d+)(?:,(\d+))? @@')
+
+
+def ladder(line):
+    """Candidate spans for one record line, SHORTEST FIRST, each a literal substring of that line so
+    it can be pasted into a `QUOTES <path>` block unaltered. The two lengthenings are the ones
+    CLAUDE.md named — into the ccf, then the whole line — and no fourth rung is invented here: if the
+    record's own line is not unique, that is a fact about the corpus and gets reported as one."""
+    out = []
+    g = GENE_SPAN.search(line)
+    if g:
+        out.append(('gene', g.group(0)))
+        c = CCF_SPAN.search(line)
+        if c and c.end() > g.start():
+            out.append(('gene+ccf', line[g.start():c.end()]))
+    out.append(('record-line', line.strip()))
+    return out
+
+
+def anchor(text, line):
+    for level, span in ladder(line):
+        if text.count(span) == 1:
+            return level, span
+    return 'UNANCHORABLE', None
+
+
+def touched(commit, path):
+    """1-based line numbers of `path` that `commit` ADDED OR CHANGED, in commit's own tree, read from
+    -U0 hunk headers. A pure deletion contributes nothing, so a member whose unit merely LOST a line
+    is not marked: the error runs toward under-reporting contamination, which is the direction that
+    leaves a stale member in the frame rather than silently shrinking it."""
+    out = subprocess.run(['git', 'diff', '-U0', f'{commit}^', commit, '--', path],
+                         capture_output=True, text=True, check=True).stdout
+    hit = set()
+    for ln in out.split('\n'):
+        m = HUNK.match(ln)
+        if m:
+            start, count = int(m.group(1)), int(m.group(2) or 1)
+            hit.update(range(start, start + count))
+    return hit
+
+
+def _same_commit(a, b):
+    rev = lambda r: subprocess.run(['git', 'rev-parse', r], capture_output=True, text=True,
+                                   check=True).stdout.strip()
+    return rev(a) == rev(b)
+
+
+def frame(at=None, touched_by=None):
+    """THE FRAME: every gene-bearing record at `at`, named by SPAN, carrying its unit's line set and
+    whether `touched_by` changed any of those lines. Sorted by (path, line), which is what makes the
+    draw below reproducible off a seed alone."""
+    if touched_by is not None:
+        if at is None:
+            sys.exit('REFUSING: --touched-by needs an explicit frame commit — a hunk\'s line numbers '
+                     'mean nothing against the index')
+        if not _same_commit(at, touched_by):
+            sys.exit(f'REFUSING: the frame is at {at} but --touched-by names {touched_by}. Hunk line '
+                     f'numbers are only meaningful in the tree they were computed against, so this '
+                     f'pairing would compare two trees\' addresses and call the result an exclusion.')
+    rows = []
+    for path in corpus(at):
+        lines = lines_of(path, at)
+        text = '\n'.join(lines)
+        dirty = touched(touched_by, path) if touched_by is not None else set()
+        for n, line in enumerate(lines):
+            if not RECORD.search(line):
+                continue
+            unit = {n + 1}
+            for start, end in attached(lines, n):
+                unit.update(range(start + 1, end + 1))
+            level, span = anchor(text, line)
+            rows.append({'path': path, 'line': n + 1, 'level': level, 'span': span,
+                         'has_ccf': bool(CCF.search(line)), 'unit': sorted(unit),
+                         'contaminated': sorted(unit & dirty)})
+    return sorted(rows, key=lambda r: (r['path'], r['line']))
+
+
+def draw(rows, n, seed):
+    """THE DRAW PROCEDURE, WRITTEN DOWN RATHER THAN REMEMBERED — which is the whole reason this
+    function exists. Sort by (path, line), then random.Random(key).sample(). Returns the integer key
+    as well as the sample so a record of the draw can state what the seed actually became."""
+    key = int(seed, 16) if re.fullmatch(r'[0-9a-fA-F]{4,40}', seed) else int(seed)
+    pool = sorted(rows, key=lambda r: (r['path'], r['line']))
+    if n > len(pool):
+        sys.exit(f'REFUSING: asked to draw {n} from {len(pool)} eligible members')
+    return key, random.Random(key).sample(pool, n)
+
+
 def verify():
     at = CALIBRATION['commit']
     got = measure(at)
-    bad = [(k, CALIBRATION[k], got[k]) for k in
-           ('records', 'with_ccf', 'blocks', 'comment_lines', 'median', 'max', 'none')
-           if got[k] != CALIBRATION[k]]
+    rows = frame(at)
+    got['unique_bare'] = sum(1 for r in rows if r['level'] == 'gene')
+    got['needs_lengthening'] = sum(1 for r in rows if r['level'] != 'gene')
+    keys = ('records', 'with_ccf', 'blocks', 'comment_lines', 'median', 'max', 'none',
+            'unique_bare', 'needs_lengthening')
+    bad = [(k, CALIBRATION[k], got[k]) for k in keys if got[k] != CALIBRATION[k]]
     for key, want, saw in bad:
         print(f'  MISMATCH {key}: CLAUDE.md binds {want} to {at}, this file measures {saw}')
-    print(f'DONE ccf_load --verify: {7 - len(bad)}/7 figures reproduce the record bound to {at}, '
-          f'{len(bad)} mismatched')
+    print(f'DONE ccf_load --verify: {len(keys) - len(bad)}/{len(keys)} figures reproduce the record '
+          f'bound to {at}, {len(bad)} mismatched')
     return 1 if bad else 0
+
+
+def _excluded_clause(rows, touched_by):
+    """Built as a variable rather than inline, because `a + b if cond else ''` binds over the whole
+    concatenation and would drop the earlier clauses on the else branch — a silent truncation of a
+    DONE line, which is the one output this chain treats as the verdict."""
+    parts = [f'{sum(1 for r in rows if not r["span"])} UNANCHORABLE']
+    if touched_by is not None:
+        parts.append(f'{sum(1 for r in rows if r["contaminated"])} with unit lines touched by '
+                     f'{touched_by}')
+    return ', '.join(parts)
 
 
 if __name__ == '__main__':
     args = sys.argv[1:]
     if '--verify' in args:
         sys.exit(verify())
+
+    touched_by = None
+    if '--touched-by' in args:
+        i = args.index('--touched-by')
+        touched_by = args[i + 1]
+        del args[i:i + 2]
+
+    if '--draw' in args:
+        i = args.index('--draw')
+        want, seed = int(args[i + 1]), args[i + 2]
+        del args[i:i + 3]
+        at = args[0] if args else None
+        rows = frame(at, touched_by)
+        eligible = [r for r in rows if r['span'] and not r['contaminated']]
+        key, picked = draw(eligible, want, seed)
+        for r in picked:
+            print(f'  {r["path"]}:{r["line"]} [{r["level"]}] {r["span"]}')
+        print(f'DONE ccf_draw: {want} drawn from {len(eligible)} eligible of the {len(rows)} '
+              f'gene-bearing records at {at or "the index"} (excluded: '
+              f'{_excluded_clause(rows, touched_by)}); seed {seed} = {key}; procedure = '
+              f'random.Random(key).sample(frame sorted by (path, line), n)')
+        sys.exit(0)
+
+    if '--frame' in args:
+        args.remove('--frame')
+        at = args[0] if args else None
+        rows = frame(at, touched_by)
+        for r in rows:
+            if r['level'] != 'gene' or r['contaminated']:
+                flag = 'CONTAMINATED ' if r['contaminated'] else ''
+                print(f'  {flag}{r["path"]}:{r["line"]} [{r["level"]}] {r["span"] or "(no span)"}')
+        levels = ', '.join(f'{v} anchored by {k}' for k, v in
+                           sorted(Counter(r['level'] for r in rows).items()))
+        print(f'DONE ccf_frame: at {at or "the index"} — {len(rows)} gene-bearing records; {levels}; '
+              f'excluded: {_excluded_clause(rows, touched_by)}')
+        sys.exit(0)
+
     at = args[0] if args else None
     m = measure(at)
     print(f'  the unit is the record plus its provenance comment; comment lines counted ONCE each')

@@ -4825,7 +4825,24 @@ refute it, which is worth more than file order.
 - **ccf BATCH 2 — READ AND CLOSED (2026-09-06). 15 records drawn from a
   frame of 48 mechanism-`note` sentences, seed `int('b0f7330',16)` — the
   HEAD at which the frame was built, fixed before the draw and
-  auditable. CERTAINTY-DRIFT: 4 of 15, against a pre-registered 1–3.**
+  ~~auditable~~ **NOT AUDITABLE: CORRECTED IN PLACE (2026-09-08), and the
+  strikethrough is deliberate because the word is the finding.** The frame
+  was fixed before the draw, which is the part that was true and is worth
+  keeping; it is not auditable, because THE SAMPLE CANNOT BE REPLAYED.
+  Established by trying, not by noticing an absence — the three checks and
+  their counts live in `.claude/ccf_load.py`'s header, which is where the
+  frame-and-draw machinery that replaces this now lives. The short of it:
+  no frame or draw artefact was ever tracked, the only commit in all of
+  history carrying the string `b0f7330` is the one that WROTE this
+  sentence, and ten mechanical readings of "mechanism-`note` sentences" at
+  that tree yield no count matching the one above. **A SEED IS NOT A
+  RECIPE** — replay needs the frame MEMBERSHIP and the draw PROCEDURE too,
+  and commit-binding does not help, because `b0f7330` pins the tree the
+  frame was drawn FROM and says nothing about which of it was IN the
+  frame. This is `ccf_load.py`'s own "a figure that only a remembered
+  method can reproduce is not really bound to anything", firing on a
+  SAMPLE rather than a figure. **CERTAINTY-DRIFT: 4 of 15, against a
+  pre-registered 1–3.**
   The stake was right in direction and wrong in magnitude, and the
   over-range result is recorded as measured rather than trimmed to fit.
   The four: `kidneys.js:141` "found convergent evolution" where Gerlinger
@@ -5064,6 +5081,21 @@ refute it, which is worth more than file order.
   > same commit added a QUOTES block near the top of each target and
   > pushed the lines down.
 
+  **AND IT IS NOT CONFINED TO BATCH 3 — MEASURED AT BATCH 4's START
+  (2026-09-08), because a class found once is worth testing on the
+  neighbouring population before it is filed as an incident.** Batch 2's
+  six defect pointers were resolved against git the same way, and **TWO OF
+  ITS SIX ARE STALE AT BIRTH TOO, IN A DIFFERENT COMMIT (`ab3ed93`) FROM
+  THE SAME CAUSE.** All six are correct at `ab3ed93^`, the tree the reader
+  read: `colon.js:274` is `gene:'TCF7L2 alteration'` and `colon.js:275` is
+  `gene:'AMER1 (FAM123B/WTX) mutation'` there. The same commit's repair
+  inserted six comment lines above them and pushed both to 277 and 278,
+  where the record was then committed. The other four sit in files with
+  nothing inserted above their referent and survived — the identical
+  survival pattern batch 3's third pointer had. **So the count is four
+  stale pointers across two commits, not two in one**, and the mechanism is
+  not "that one repair commit" but ANY commit that both fixes a record and
+  writes down where the record was.
   What is new is only the POPULATION: prose pointers from this file into
   `js/organs/*.js`, which `pointer_check.py` gives FLOOR ONLY under an
   explicitly declared boundary. It reported `530/530` and `266/266` green

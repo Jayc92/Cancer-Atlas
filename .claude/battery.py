@@ -632,13 +632,21 @@ NON_INSTRUMENTS = {
     'extract_citations.py': 'artifact producer, run as this runner preflight, not a gate',
     'figure_search.py': 'read helper — searches ONE fetched document during a claim read; '
                         'has a DONE line but no corpus-wide population to scan',
-    'ccf_load.py': 'read-load measurement for planning a ccf batch — evidence, not a gate. It DOES '
-                   'have a corpus-wide population, unlike figure_search.py, so that is not what '
-                   'keeps it out: it asserts nothing, ratchets nothing, emits no sidecar and has no '
-                   'failing exit, and the freshness instrument it could have been was declined '
+    'ccf_load.py': 'read-load measurement AND the frame-and-draw for a ccf batch — evidence, not a '
+                   'gate. It DOES have a corpus-wide population, unlike figure_search.py, so that is '
+                   'not what keeps it out: it asserts nothing about the corpus, ratchets nothing and '
+                   'emits no sidecar, and the freshness instrument it could have been was declined '
                    '(2026-09-07) because commit-binding already closes the hole. Its --verify '
                    'reproduces the figures CLAUDE.md binds to 37aa47a, which is a calibration the '
-                   'battery does not run and does not depend on',
+                   'battery does not run and does not depend on. **"AND HAS NO FAILING EXIT" WAS '
+                   'REMOVED FROM THIS ENTRY (2026-09-08) BECAUSE IT WAS NEVER QUITE TRUE AND IS NOW '
+                   'PLAINLY FALSE**: --verify has always exited 1 on a mismatch, and --frame/--draw '
+                   'now REFUSE — non-zero, no output — when asked for a contamination pairing whose '
+                   'hunk lines belong to a different tree than the frame. That does not make it an '
+                   'instrument: an exit code is how a tool declines to answer, while being an '
+                   'instrument means asserting something about the corpus on every run, which this '
+                   'still never does. The clause was corrected rather than reworded because a '
+                   'non-instrument declaration is the one place an overstatement hides a gate',
     'bake_ao.py': 'offline asset tool (Blender), part of the a131649 reproducible chain',
     'mesh_hygiene.py': 'offline asset tool (Blender), part of the a131649 reproducible chain',
     'render_thumb.py': 'offline asset tool (Blender)',
