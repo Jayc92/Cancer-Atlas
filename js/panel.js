@@ -109,20 +109,47 @@ export function buildRegionCells(regionIdx){
       // disposition, would smuggle the first in wearing the clothes of the second. That framing is
       // rejected; each pair is disposed of on which kind of claim actually bears on it.
       //
-      // OPEN, AND NOT A PROVENANCE-IMPORT QUESTION AT ALL:
-      //   lungs/LUAD  CDKN2A loss + RB1 loss. MISFILED ABOVE. Its CDKN2A entry carries no ccf and
-      //     no source of any kind, which puts it in the BLADDER-COLOUR CLASS — uncited content
+      // HALF CLOSED, AND NOT A PROVENANCE-IMPORT QUESTION AT ALL:
+      //   lungs/LUAD  CDKN2A loss + RB1 loss. MISFILED ABOVE. Its CDKN2A entry carried no ccf and
+      //     no source of any kind, which put it in the BLADDER-COLOUR CLASS — uncited content
       //     driving generated output — governed by source-or-remove, not by anything about
-      //     exclusivity. Nothing needs importing for the redundancy point either: THIS CORPUS'S
-      //     OWN TWO NOTES both say the alteration "Removes a cell-cycle checkpoint", in
-      //     near-identical words, in the same pool. skin.js reached the same conclusion inside its
-      //     own organ on pathway-redundancy grounds — it tested the pair empirically (OR 0.67,
-      //     p=0.39, not significant), declined to call it exclusivity, and still excluded RB1 for
-      //     duplicating CDKN2A's pathway. So the two questions here are (1) source or remove the
-      //     uncited member, and (2) a redundancy question that is INTERNAL CONSISTENCY rather than
-      //     provenance. bladder.js's record of TCGA 2017's CDKN2A-perp-RB1 and brain.js's Brennan
-      //     2013 are context, not the grounds. Deferred to its own commit, behind the
-      //     bare-name-year extractor gap, which is the larger hole.
+      //     exclusivity. Two questions, and only the first is now answered.
+      //   (1) SOURCED, 2026-09-07 — BY DOWNGRADE, WHICH IS THE WHOLE RESULT. TCGA (Nature, 2014)
+      //     was read in full text for this rather than recalled: it says "The CDKN2A locus was the
+      //     most significant deletion" and gives that deletion's frequency only in a supplementary
+      //     table, never in its text. Its CDKN2A 4% is a MUTATION figure, printed in one sentence
+      //     with RB1's 4%, and a third route — promoter hypermethylation — is counted in neither.
+      //     So NO percentage in that paper measures the event this entry models, and the entry now
+      //     carries the quotation plus its counting rule instead of a number. Downgrading beat
+      //     substituting, again.
+      //   (1-bis) AND THE FIX PROPAGATED ONE LINE DOWN, which is the part worth keeping: stating
+      //     CDKN2A's counting rule made its NEIGHBOUR visibly wrong. RB1 loss shipped "~4%" — the
+      //     same mutation-only figure, from the same sentence — under a "loss" label, a partial
+      //     count wearing a total's name. Corrected in place in the same commit, because a counting
+      //     rule cannot ship next to a figure that contradicts it.
+      //   (2) STILL OPEN: the redundancy, which is INTERNAL CONSISTENCY rather than provenance.
+      //     THIS CORPUS'S OWN TWO NOTES both say the alteration "Removes a cell-cycle checkpoint",
+      //     in near-identical words, in the same pool. Two other organs faced this pair and both
+      //     kept CDKN2A and dropped RB1: skin.js on pathway-redundancy grounds, having tested the
+      //     pair empirically (OR 0.67, p=0.39, not significant) and DECLINED to call it
+      //     exclusivity; brain.js because Brennan 2013 states the routes to disabling Rb are
+      //     alternative and mutually exclusive. Only skin.js's grounds are usable here — brain.js's
+      //     is an EMPIRICAL COHORT FINDING in GBM and would be the ESR1/MDM4 error class if
+      //     imported, exactly as ruled above.
+      //   (2-bis) WHAT THE FULL-TEXT READ SETTLED AND WHAT IT DID NOT. Checked directly: TCGA 2014
+      //     does NOT state this pair mutually exclusive in LUAD, so bladder.js's TCGA 2017
+      //     CDKN2A-perp-RB1 stays un-imported and unusable. It DOES report a cell-cycle module,
+      //     "alteration of cell cycle regulators", at 64%. That module is the LUAD-native grounds
+      //     this pair has always lacked — but its MEMBERSHIP LIST IS IN SUPPLEMENTARY FIG. 10,
+      //     WHICH HAS NOT BEEN READ, so "TCGA scores these two as one module in LUAD" is NOT
+      //     currently a claim this corpus can make. It is an inference from the module's NAME, and
+      //     naming it as such is the point: one supplementary figure is the difference between
+      //     deciding (2) on another organ's precedent and deciding it on LUAD's own evidence.
+      //   (2-ter) AND (2) IS A CONTENT DECISION, so it waits for a ruling rather than riding along
+      //     with (1): it removes a modeled gene, changes what THIS LOOP can emit, and drops the
+      //     citation-record ratchet, whose floor then has to be lowered deliberately with the
+      //     removed records READ rather than counted. IF YOU ADD OR REMOVE A MEMBER OF ANY POOL
+      //     HERE, that ratchet moves with it — record_count.json is not decoration.
       //
       // EXAMINED AND CLEARED ON RULING — kept here for the reason the audit was worth running at
       // all: a cleared pair looks identical to an unexamined one.

@@ -501,6 +501,38 @@ screen pair per organ:
      7%, RIT1 2%. This is now the source for LUAD's trunk KRAS figure (33%,
      not the earlier "~30–37%" range) and for the RB1 loss (~4%) and ARID1A
      mutation (~7%) private-pool entries.
+   - **Counting rule for that list, added 2026-09-07 on a second full-text
+     read — it corrects how the list was USED, not what it says.** Every
+     percentage in it is a MUTATION frequency; the paper prints them as
+     "Mutations in tumour suppressor genes including STK11 (17%), KEAP1
+     (17%), NF1 (11%), RB1 (4%) and CDKN2A (4%) were observed." So a figure
+     from that list may only be attached to an entry that models mutation.
+     Two consequences, both shipped together because the second exposed the
+     first:
+     - `CDKN2A loss` is now sourced, and **deliberately carries no number.**
+       The paper's copy-number statement is "The CDKN2A locus was the most
+       significant deletion", with that frequency in Supplementary Table 6
+       and nowhere in the text; its CDKN2A 4% counts mutations; and promoter
+       hypermethylation is in neither count — the paper keeps it separate,
+       describing tumours "with low CDKN2A expression due to methylation
+       (rather than due to mutation or deletion)". No percentage in the paper
+       measures `CDKN2A loss`, so the entry quotes the superlative and states
+       its counting rule rather than substituting a nearby figure.
+     - `RB1 loss` was carrying `~4%` under a *loss* label — a mutation-only
+       count wearing a total's name, and it only became visible because
+       CDKN2A's counting rule was written one line above it. Corrected in
+       place; its ccf now says which thing the figure counts. This is the
+       mirror of the bladder CDKN2A entry's 22%-vs-32/33% reconciliation
+       elsewhere in this file: there, two real measurements of one event;
+       here, one measurement standing in for a different event.
+     Also read and deliberately NOT claimed: the paper reports "alteration of
+     cell cycle regulators" at 64%, but that module's membership list is in
+     Supplementary Fig. 10, which has not been read — so this atlas does not
+     assert that TCGA scores CDKN2A and RB1 as one module in LUAD. The open
+     half of this item — whether `RB1 loss` should leave the pool as
+     duplicating CDKN2A's pathway — lives in `js/panel.js`, in the pool-pair
+     exclusivity audit on the line that decides whether an audited pair can
+     be emitted at all.
    - Frankell et al., *Nature*, 2023 (TRACERx — the evolutionary history of
      NSCLC; PMID 37046096, PMCID PMC10115649, open access). Names KRAS,
      TP53, and STK11 together as under significant *subclonal* (not purely
@@ -551,7 +583,10 @@ screen pair per organ:
      text, and an independent literature search found SMAD4 studied in LUAD
      mainly for expression/splicing/prognosis, not as a recurrent genomic
      driver event the way it is in pancreatic/colorectal cancer — replaced
-     with **RB1 loss** (TCGA 2014, ~4%, directly confirmed). **PTEN loss**,
+     with **RB1 loss** (TCGA 2014, ~4%, directly confirmed — and see the
+     counting-rule bullet above, added later: that 4% is a MUTATION
+     frequency, which is what the entry's ccf now says out loud rather than
+     leaving a *loss* label to imply otherwise). **PTEN loss**,
      also originally attributed to the same Frankell 2023 claim, had the
      same problem — and TCGA 2014's own list of 18 significantly mutated
      LUAD genes above does not include PTEN at all, while an independent
