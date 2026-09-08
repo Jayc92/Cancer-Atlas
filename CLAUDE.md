@@ -5114,11 +5114,100 @@ refute it, which is worth more than file order.
   the region id before it can anchor anything.
   **WHAT THIS DELIBERATELY DOES NOT DO.** It re-reads nothing. Batch 2's
   6/15 and batch 3's n=4 were measured on the old unit and are NOT restated
-  on the new one — re-deriving them is batch 4's work, not a footnote here.
+  on the new one — ~~re-deriving them is batch 4's work, not a footnote
+  here~~ **SUPERSEDED (2026-09-08): RE-DERIVING BATCH 2's IS IMPOSSIBLE, NOT
+  MERELY DEFERRED.** That sample cannot be replayed and its only still
+  identifiable members are its six defects, so batch 4 substitutes a
+  within-batch control; see the pre-registration below. The sentence is
+  struck rather than reworded because "batch 4's work" is exactly the
+  expectation that had to be given up.
   The two stale pointers are repaired when their records are next read,
   rather than by a sweep: a hand sweep buys a state the next content commit
   partially undoes, which is `pointer_check.py`'s own reason for putting
   the guard before the repair.
+- **ccf BATCH 4 — PRE-REGISTERED, NOTHING READ (2026-09-08). It is NOT the
+  re-derivation this file said it would be, and the reason is recorded at
+  batch 2 above: that sample cannot be replayed.** The only members of
+  batch 2 still identifiable are its six defects — which are exactly the
+  six `ab3ed93` repaired. **IDENTIFIABILITY AND VALIDITY ARE
+  ANTI-CORRELATED HERE**, because what made a record identifiable was the
+  defect that got it named, and naming came with fixing. So a
+  same-records-new-unit comparison is not available at any n.
+  **THE REPLACEMENT IS A WITHIN-BATCH CONTROL, AND IT IS BETTER THAN THE
+  COMPARISON IT REPLACES.** Records attaching NO comment block are records
+  for which the re-specified unit and the old unit are THE SAME OBJECT.
+  Drawing from both strata measures the record-only rate and the
+  record-plus-comment rate in one batch, on fresh uncontaminated records,
+  with one reader — a control group instead of a historical claim about a
+  population that has since been repaired. The stratum is a property of the
+  UNIT, not of the content, which is what makes it usable as a control.
+  **THE FRAME, THE DRAW AND THE EXCLUSIONS ARE ALL IN THE TRACKED SET THIS
+  TIME**, which is the whole point of the commit that precedes this one.
+  Frame: every `gene:`-bearing record at `a3088be`, minus the records
+  already read (declared in `ccf_load.py`'s `ALREADY_READ`, keyed by
+  `(path, span)` with a reason each). Frame and stratum sizes are not
+  restated here — the commands print them, and these two are also the
+  replay:
+
+      python3 .claude/ccf_load.py a3088be --draw 6 a3088be --stratum comments
+      python3 .claude/ccf_load.py a3088be --draw 6 a3088be --stratum none
+
+  Seed `int('a3088be',16)` — the HEAD at which the frame was built and at
+  which this paragraph was written, which is batch 2's intent with the two
+  missing halves supplied. **THE DRAW HAS NOT BEEN RUN AT THIS SEED.**
+  Throwaway seeds `0` and `1` were used to exercise the code; those samples
+  are not batch 4's, and saying which seeds were burnt is part of what
+  makes the registered one meaningful.
+  **HOW A RECIPE GETS PROVED RUNNABLE WITHOUT BEING RUN**, since a
+  registration nobody validated is its own kind of worthless: both commands
+  above were executed verbatim at `--draw 0`. That parses the seed, resolves
+  both strata, applies the exclusions and prints the procedure while drawing
+  NOBODY — and it cannot leak the sample, because each invocation seeds a
+  fresh `random.Random(key)`, so drawing zero tells you nothing about which
+  six drawing six would return.
+  **PRE-REGISTERED, IN DIRECTION AND NOT IN MAGNITUDE.** (1) The total
+  defect rate in the `comments` stratum is at least that of the `none`
+  stratum. (2) Among defective units in the `comments` stratum, at least
+  half carry the defect in the COMMENT rather than on the record line —
+  batch 3's **"THE DRIFT MOVED, IT DID NOT VANISH, AND THE UNIT WAS
+  WRONG"** turned into a stake, quoted whole because two of those three
+  clauses is a different and weaker finding.
+  (3) PRE-REGISTERED NEGATIVE: the `none` stratum **cannot** show a comment
+  defect, so if it comes out HIGHER, the unit re-specification bought
+  nothing and the record-plus-comment framing gets re-examined rather than
+  defended.
+  **AND THE POWER IS PRE-REGISTERED AS INADEQUATE, WHICH IS BATCH 3's ERROR
+  DECLARED IN ADVANCE INSTEAD OF DISCOVERED AFTER.** Six per stratum can
+  separate only a LARGE difference from noise; a null result will be
+  reported as UNINFORMATIVE, not as evidence of no difference. Batch 3
+  learned this only after reading: at batch 2's rate, drawing four clean
+  records had probability ≈ 29%, so, in its own words, **"0 of 4 does not
+  exclude 27%"** — and even its pre-registered frame, the user ruling
+  "BATCH 3 IS DIRECTIONAL, NOT A RATE", was then judged **"still too strong
+  a frame for four records"**. So the output at this n is what batch 3's
+  real output turned out to be: MATCHED EXAMPLES, which need no rate. A
+  rate will not be claimed to settle anything.
+  **THE ONE CONFOUND THAT CANNOT BE REMOVED, WITH ITS SIZE.** Batch 2 named
+  6 of its 15 and batch 3 named 3 of its 4, so **ten already-read records
+  remain in the frame unnamed** and can be drawn again. That is the direct
+  cost of the unreplayable draw, and it is bounded rather than unknown. It
+  is also NOT a straight re-read: what cleared those records was the OLD
+  unit — their record lines — and their comments were never examined, which
+  is precisely where batch 3 found the drift had moved. A re-draw therefore
+  re-reads a cleared clause with UNREAD provenance attached.
+  **THE READ-LIST GUARD COULD NOT BE MADE TO FIRE ON REAL HISTORY, AND THAT
+  IS THE MORE INTERESTING RESULT.** Condition (7) says a zero must be shown
+  capable of being non-zero, so every key was resolved at `b0f7330`,
+  `2f35ac8`, `dc12997`, `37aa47a` and `a131649` — every tree tried,
+  including trees from before the reads happened — and all of them resolve
+  to exactly one member at every one. **The repairs edited `note` prose and
+  provenance comments and never the `gene:`/`ccf:` fields the keys are
+  built from**, so the identity survived edits that moved every line number
+  around it. That is span-naming's own argument, arriving as a failed
+  attempt to break it; the guard is demonstrated on constructed cases
+  instead — a key matching NOTHING, a key matching TWICE, a key matching
+  ONCE — and the file says why, because an unattacked zero is precisely what
+  condition (7) exists to catch.
 - **LUAD's `RB1 loss` REMOVED FROM THE PRIVATE POOL — QUESTION (2) CLOSED ON
   RULING (2026-09-07), AND THE GROUNDS WERE IN-CORPUS ALL ALONG.** The
   exclusion is SOFT, MECHANISTIC-FIT class, and explicitly NOT an

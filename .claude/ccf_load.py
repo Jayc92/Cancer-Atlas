@@ -124,6 +124,69 @@ CALIBRATION = {'commit': '37aa47a', 'records': 144, 'with_ccf': 117, 'blocks': 2
                # so the ladder can disagree with the record instead of being believed.
                'unique_bare': 116, 'needs_lengthening': 28}
 
+# EVERY RECORD A ccf BATCH HAS ALREADY READ, keyed by (path, ANCHORING SPAN) rather than by line,
+# because four `file:line` pointers to these very records were stale in the commits that wrote them.
+# Excluded from a draw automatically, with a reason each, so a re-read cannot enter a fresh sample
+# silently — which is the batch-3 exclusion rule made durable instead of remembered.
+#   IT IS SELF-CHECKED, WHICH IS THE PART THAT MAKES IT WORTH TRUSTING: every key must match EXACTLY
+# ONE frame member, or a draw REFUSES. So an edit that changes one of these spans stops the next
+# batch instead of quietly readmitting a record that has already been read — the same "resolves
+# exactly once" discipline record_sync_check.py applies to its declared map.
+#   BATCH 2 IS ONLY 6 OF ITS 15 AND THAT IS THE COST OF THE UNREPLAYABLE DRAW, RECORDED HERE RATHER
+# THAN GLOSSED: the other nine were read and cleared, and nothing names them. They remain in the
+# frame and can be drawn again. The bias that introduces is NOT a straight re-read, because what
+# cleared them was the OLD unit — their record lines. Their comments were never examined, and the
+# comment is where batch 3 found the drift had moved. An unwitting re-draw therefore re-reads a
+# cleared clause with unread provenance attached, which is a weaker confound than a true duplicate,
+# and its size is bounded: 9 of the frame.
+#   THE `file:line` POINTERS IN THE REASONS BELOW ARE HISTORICAL QUOTATIONS, NOT LIVE POINTERS, AND
+# THE DISTINCTION IS LOAD-BEARING FOR pointer_check.py. Each is past tense — "was cited as X" — and
+# carries its own verdict, because the whole point of keying this map by SPAN is that those line
+# numbers no longer resolve. pointer_check COUNTS them (adding these reasons is why the pointer
+# ratchet moved in the commit that introduced this map), and under its declared FLOOR-ONLY boundary
+# it does not resolve them, so the battery is green and correctly so. NO GUARD IS ADDED HERE: an
+# identity check over this population would flag three of the four as broken when three are
+# deliberately, documentedly broken, so it would manufacture false alarms rather than find defects.
+# If pointer_check is ever given identity verification, it must treat a pointer inside a past-tense
+# "was cited as" clause as historical — and THIS is the line that has to change to say so.
+ALREADY_READ = {
+    ('js/organs/kidneys.js', "gene:'SETD2 mutation'"):
+        'batch 2 — CERTAINTY DRIFT: "found convergent evolution" where Gerlinger says "suggesting '
+        'convergent phenotypic evolution". Repaired in ab3ed93',
+    ('js/organs/lungs.js', "gene:'MET amplification'"):
+        'batch 2 — CERTAINTY DRIFT: "recurrent mechanism" for a word with zero hits in Awad, where '
+        'the finding is two of 38 patients. Repaired in ab3ed93',
+    ('js/organs/colon.js', "gene:'TCF7L2 alteration'"):
+        'batch 2 — CERTAINTY DRIFT: "confirmed" over Cornish P-values the source labels '
+        '"Uncorrected two-sided". Repaired in ab3ed93; was cited as colon.js:274, stale at birth',
+    ('js/organs/colon.js', "gene:'AMER1 (FAM123B/WTX) mutation'"):
+        'batch 2 — CERTAINTY DRIFT plus SCOPE DRIFT: the same Cornish "confirmed", and Li\'s '
+        'population dropped. Repaired in ab3ed93; was cited as colon.js:275, stale at birth',
+    ('js/organs/colon.js', "gene:'SMAD4 loss'"):
+        'batch 2 — CATEGORY SUBSTITUTION: Fang\'s mutation meta-analysis called "loss". Repaired '
+        'in ab3ed93',
+    ('js/organs/prostate.js', "gene:'PTEN loss'"):
+        'batch 2 — ATTRIBUTION ERROR: TCGA 2015 credited with what TCGA attributes to Taylor 2010. '
+        'Repaired in ab3ed93. Note the span is unique in prostate.js only — `PTEN loss` appears in '
+        'six organ files, which is why the key is a PAIR',
+    ('js/organs/bladder.js', "gene:'TERT promoter mutation (C228T / C250T)'"):
+        'batch 3 — the user-facing note was CLEAN; its provenance comment carried two defects '
+        '(Allory 282/357 for "283 of 357", and "a primary NMIBC cohort" for UBCs "of different '
+        'stages"). The record that re-specified the unit; was cited as bladder.js:232, stale at '
+        'birth in 2f35ac8',
+    ('js/organs/pancreas.js',
+     "gene:'SMAD4 loss', class:'driver', ccf:'31% of PDAC by mutation + structural variant "
+     "(Waddell et al., Nature, 2015, 100 whole genomes) — classically ~50% once homozygous "
+     "deletion, the dominant mechanism (25/84 tumors, Hahn et al., Science, 1996), is counted'"):
+        'batch 3 — CLEAN: labels an immunolabeling endpoint "SMAD4 loss" while its ccf separates '
+        'mutation+SV from homozygous deletion. Needs the ccf in its key because pancreas.js models '
+        'SMAD4 loss at two sites and the bare gene span is ambiguous there',
+    ('js/organs/liver.js', "gene:'ARID1A mutation'"):
+        'batch 3 — CLEAN: used Guichard\'s own significance word at a boundary p=0.05 rather than '
+        'strengthening it. Attaches NO comment block at all, so on the re-specified unit it is '
+        'identical to the old one; was cited as liver.js:251, which was still correct at ab3ed93',
+}
+
 
 def corpus(at=None):
     """Every tracked js/organs/*.js, sorted. From git's index, or from `at`'s tree."""
@@ -279,6 +342,68 @@ def frame(at=None, touched_by=None):
     return sorted(rows, key=lambda r: (r['path'], r['line']))
 
 
+def unresolved_reads(rows, keys=None):
+    """Every read-list key that does not match EXACTLY ONE member of `rows`, with its count. A draw
+    refuses on any of these rather than proceeding with a list it cannot resolve. `keys` is a
+    parameter only so selftest() can pass its own — the default is the real list."""
+    keys = ALREADY_READ if keys is None else keys
+    return [(p, s, sum(1 for r in rows if r['path'] == p and r['span'] == s))
+            for (p, s) in keys
+            if sum(1 for r in rows if r['path'] == p and r['span'] == s) != 1]
+
+
+def selftest():
+    """CONDITION (7) FOR THE READ-LIST GUARD: a check that reports zero must be shown capable of
+    reporting non-zero before its zero is believed.
+      WHY A FIXTURE AND NOT AN ARCHAEOLOGY RUN, WHICH WAS TRIED FIRST AND IS THE MORE INTERESTING
+    RESULT: the guard could not be made to fire anywhere in real history. All nine keys resolve to
+    exactly one member at b0f7330, 2f35ac8, dc12997, 37aa47a AND a131649 — every tree tried,
+    including one from before the reads happened. The reason is the reason span-naming was adopted:
+    the repairs edited `note` prose and provenance comments and never touched the `gene:`/`ccf:`
+    fields the keys are built from, so the identity survived edits that moved every line number
+    around it. A guard whose failure mode is unreachable from the corpus needs a constructed case,
+    and saying so is better than reporting a zero nobody attacked.
+      The duplicate case is unreachable through frame() by construction — the ladder never returns a
+    span that occurs twice, it lengthens or gives up — so it is tested against the CHECKER directly,
+    which is what it guards."""
+    rows = [{'path': 'js/organs/fixture.js', 'span': "gene:'DUP'", 'unit': [1]},
+            {'path': 'js/organs/fixture.js', 'span': "gene:'DUP'", 'unit': [1]},
+            {'path': 'js/organs/fixture.js', 'span': "gene:'ONE'", 'unit': [1]}]
+    cases = [('a key matching NOTHING', "gene:'ABSENT'", 0),
+             ('a key matching TWICE', "gene:'DUP'", 2),
+             ('a key matching ONCE', "gene:'ONE'", None)]
+    ok = True
+    for label, span, expect in cases:
+        got = unresolved_reads(rows, {('js/organs/fixture.js', span): 'fixture'})
+        if expect is None:
+            good = not got
+            saw = 'silent' if good else f'fired with {got[0][2]} matches'
+        else:
+            good = len(got) == 1 and got[0][2] == expect
+            saw = f'fired with {got[0][2]} matches' if got else 'SILENT'
+        ok &= good
+        print(f'  {"ok  " if good else "FAIL"} {label}: {saw}')
+    print('SELFTEST PASS — the read-list guard can fire and can stay silent'
+          if ok else 'SELFTEST FAIL')
+    return ok
+
+
+def stratify(rows, stratum):
+    """THE STRATUM IS THE CONTROL, AND IT IS A PROPERTY OF THE UNIT RATHER THAN OF THE CONTENT — which
+    is what makes it usable as one. A record attaching NO comment block is a record for which the
+    re-specified unit and the old unit are THE SAME OBJECT, so reading that stratum measures the
+    record-only rate on fresh, uncontaminated records, in the same batch and by the same reader.
+    That is the comparison batch 2's unreplayable draw took away, rebuilt as a control group instead
+    of a historical claim about a population that has since been repaired."""
+    if stratum == 'comments':
+        return [r for r in rows if len(r['unit']) > 1]
+    if stratum == 'none':
+        return [r for r in rows if len(r['unit']) == 1]
+    if stratum == 'all':
+        return list(rows)
+    sys.exit(f'REFUSING: unknown stratum {stratum!r}; expected comments, none or all')
+
+
 def draw(rows, n, seed):
     """THE DRAW PROCEDURE, WRITTEN DOWN RATHER THAN REMEMBERED — which is the whole reason this
     function exists. Sort by (path, line), then random.Random(key).sample(). Returns the integer key
@@ -310,11 +435,30 @@ def _excluded_clause(rows, touched_by):
     """Built as a variable rather than inline, because `a + b if cond else ''` binds over the whole
     concatenation and would drop the earlier clauses on the else branch — a silent truncation of a
     DONE line, which is the one output this chain treats as the verdict."""
-    parts = [f'{sum(1 for r in rows if not r["span"])} UNANCHORABLE']
+    parts = [f'{sum(1 for r in rows if not r["span"])} UNANCHORABLE',
+             f'{sum(1 for r in rows if (r["path"], r["span"]) in ALREADY_READ)} already read']
     if touched_by is not None:
         parts.append(f'{sum(1 for r in rows if r["contaminated"])} with unit lines touched by '
                      f'{touched_by}')
     return ', '.join(parts)
+
+
+def eligible_for_draw(rows):
+    """Anchorable, uncontaminated, and not already read. Refuses if the read-list cannot resolve, and
+    refuses FIRST if the guard that decides that cannot be shown to work — a silent read-list on a
+    broken checker is the one outcome that would readmit an already-read record invisibly."""
+    if not selftest():
+        sys.exit('REFUSING to draw with a failing read-list selftest (condition 7)')
+    bad = unresolved_reads(rows)
+    for path, span, n in bad:
+        print(f'  UNRESOLVED ALREADY_READ ({n} matches): {path} :: {span[:70]}')
+    if bad:
+        sys.exit(f'REFUSING to draw: {len(bad)} ALREADY_READ key(s) do not resolve to exactly one '
+                 f'member of this frame. A key that matches nothing would readmit a record that has '
+                 f'already been read; one that matches twice names no single record. Repair the key '
+                 f'against the frame rather than dropping it.')
+    return [r for r in rows if r['span'] and not r['contaminated']
+            and (r['path'], r['span']) not in ALREADY_READ]
 
 
 if __name__ == '__main__':
@@ -328,20 +472,26 @@ if __name__ == '__main__':
         touched_by = args[i + 1]
         del args[i:i + 2]
 
+    stratum = 'all'
+    if '--stratum' in args:
+        i = args.index('--stratum')
+        stratum = args[i + 1]
+        del args[i:i + 2]
+
     if '--draw' in args:
         i = args.index('--draw')
         want, seed = int(args[i + 1]), args[i + 2]
         del args[i:i + 3]
         at = args[0] if args else None
         rows = frame(at, touched_by)
-        eligible = [r for r in rows if r['span'] and not r['contaminated']]
-        key, picked = draw(eligible, want, seed)
+        pool = stratify(eligible_for_draw(rows), stratum)
+        key, picked = draw(pool, want, seed)
         for r in picked:
-            print(f'  {r["path"]}:{r["line"]} [{r["level"]}] {r["span"]}')
-        print(f'DONE ccf_draw: {want} drawn from {len(eligible)} eligible of the {len(rows)} '
-              f'gene-bearing records at {at or "the index"} (excluded: '
+            print(f'  {r["path"]}:{r["line"]} [{r["level"]}] unit={len(r["unit"])} {r["span"]}')
+        print(f'DONE ccf_draw: {want} drawn from {len(pool)} eligible in stratum {stratum!r} of the '
+              f'{len(rows)} gene-bearing records at {at or "the index"} (excluded: '
               f'{_excluded_clause(rows, touched_by)}); seed {seed} = {key}; procedure = '
-              f'random.Random(key).sample(frame sorted by (path, line), n)')
+              f'random.Random(key).sample(stratum sorted by (path, line), n)')
         sys.exit(0)
 
     if '--frame' in args:
