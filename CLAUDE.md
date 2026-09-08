@@ -4909,6 +4909,56 @@ refute it, which is worth more than file order.
   rather than by a sweep: a hand sweep buys a state the next content commit
   partially undoes, which is `pointer_check.py`'s own reason for putting
   the guard before the repair.
+- **LUAD's `RB1 loss` REMOVED FROM THE PRIVATE POOL — QUESTION (2) CLOSED ON
+  RULING (2026-09-07), AND THE GROUNDS WERE IN-CORPUS ALL ALONG.** The
+  exclusion is SOFT, MECHANISTIC-FIT class, and explicitly NOT an
+  exclusivity claim — the form `skin.js`'s own RB1 exclusion set, copied
+  including the parts that make it honest. **WHAT DISSOLVED THE
+  IMPORT PROBLEM:** the atlas already asserted the redundancy IN LUAD'S OWN
+  VOICE. Both notes said the alteration "Removes a cell-cycle checkpoint"
+  and called it "a common co-occurring event alongside KRAS rather than an
+  alternative driver, adding proliferative pressure", in near-identical
+  words, in the same pool — so no melanoma or GBM finding had to travel, and
+  the ESR1/MDM4 rule was never engaged. The circuit under it is hand-cited
+  under the classification-fact carve-out above, whose refined content rule
+  already covers exactly this ("HAND-CITE stable classification facts and
+  mechanism prose"): `Serrano et al., Nature, 1993`, PMID 8259215.
+  THAT CARVE-OUT'S HEADING IS DELIBERATELY NOT REPRODUCED IN THIS SENTENCE,
+  and the reason is worth more than the paraphrase: the heading is also
+  `_classification_fact_exception`'s sync marker, and `record_sync_check`
+  requires a declared marker to occur EXACTLY ONCE in its target. This
+  bullet first wrote it a second time and the check fired NOT A MARKER on
+  its own author, which is a marker's uniqueness being load-bearing rather
+  than decorative — a citation pointing at "the second one" resolves to
+  nothing. **A PROSE PHRASE MAKES A FRAGILE MARKER: it stays unique only
+  while nobody writes the obvious sentence about it**, and the near-miss
+  here is one more argument for the held item that gives these pairs a
+  dedicated token instead. Until then, cite this rule by description.
+  **CITED FOR THE CIRCUIT, NOT FOR THE INFERENCE, AND THE GAP IS WHY THE
+  EXCLUSION IS SOFT** — that paper reports CDK4 and D-type cyclins, NOT
+  CDK4/6, and never says losing either node disables the same checkpoint.
+  Its own hedge is preserved in the quotation ("p16 **seems to** act in a
+  regulatory feedback circuit…") because the hedge does load-bearing work.
+  Read at the abstract via the Europe PMC REST API; the paper is not open
+  access, so **the abstract is the whole of what was read, and the claim was
+  cut to fit it** rather than the citation stretched to cover more.
+  **SILENCE RECORDED AS SILENCE:** TCGA 2014 does not state the pair
+  exclusive in LUAD, and Supplementary Fig. 10 — which holds the 64%
+  cell-cycle module's membership list, the only LUAD-native grounds
+  available — is UNREACHABLE BY FETCH (three PMC URL forms plus Europe PMC's
+  `supplementaryFiles`; HEAD requests only, nothing downloaded).
+  **UNREACHABLE IS NOT REFUTED AND IS NOT SUPPORT.**
+  **AND THE RATCHET DID NOT MOVE, WHICH IS THE FINDING WORTH KEEPING.** Both
+  `js/panel.js` and the removal itself were written predicting a lower, and
+  the measurement overturned it: the removed record left as the Serrano
+  record entered, so `records` held at 488 while the SET changed one out and
+  one in, and **no lower was needed at all.** The removal was still READ
+  INDIVIDUALLY first and found VALID, so it is recorded as a LOSS and not a
+  fix — reading is what distinguishes them, and a flat total cannot.
+  **THIS IS `record_keys`' FIRST LIVE INSTANCE OF THE CASE IT WAS BUILT
+  FOR**, verified by replaying every commit that has ever touched
+  `record_count.json` rather than assumed because it sounded like a first.
+  The count alone would have reported nothing.
 - **POOL-MEMBER EXCLUSIVITY — A DEFECT CLASS THAT GENERATES RATHER THAN
   DESCRIBES, SWEPT AND BOUNDED (2026-09-06). THE FIX IS HELD FOR RULING;
   THE BOUND IS NOT.** Every other defect in this arc is a DESCRIPTION that

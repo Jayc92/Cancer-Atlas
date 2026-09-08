@@ -109,11 +109,13 @@ export function buildRegionCells(regionIdx){
       // disposition, would smuggle the first in wearing the clothes of the second. That framing is
       // rejected; each pair is disposed of on which kind of claim actually bears on it.
       //
-      // HALF CLOSED, AND NOT A PROVENANCE-IMPORT QUESTION AT ALL:
+      // FULLY CLOSED (was HALF CLOSED until 2026-09-07 — corrected here rather than reworded, so a
+      // reader can see which half moved), AND NOT A PROVENANCE-IMPORT QUESTION AT ALL:
       //   lungs/LUAD  CDKN2A loss + RB1 loss. MISFILED ABOVE. Its CDKN2A entry carried no ccf and
       //     no source of any kind, which put it in the BLADDER-COLOUR CLASS — uncited content
       //     driving generated output — governed by source-or-remove, not by anything about
-      //     exclusivity. Two questions, and only the first is now answered.
+      //     exclusivity. Two questions, both now answered — (1) on 2026-09-07 by sourcing, (2) later
+      //     the same day on ruling, and deliberately not in the same commit.
       //   (1) SOURCED, 2026-09-07 — BY DOWNGRADE, WHICH IS THE WHOLE RESULT. TCGA (Nature, 2014)
       //     was read in full text for this rather than recalled: it says "The CDKN2A locus was the
       //     most significant deletion" and gives that deletion's frequency only in a supplementary
@@ -127,29 +129,76 @@ export function buildRegionCells(regionIdx){
       //     same mutation-only figure, from the same sentence — under a "loss" label, a partial
       //     count wearing a total's name. Corrected in place in the same commit, because a counting
       //     rule cannot ship next to a figure that contradicts it.
-      //   (2) STILL OPEN: the redundancy, which is INTERNAL CONSISTENCY rather than provenance.
-      //     THIS CORPUS'S OWN TWO NOTES both say the alteration "Removes a cell-cycle checkpoint",
-      //     in near-identical words, in the same pool. Two other organs faced this pair and both
-      //     kept CDKN2A and dropped RB1: skin.js on pathway-redundancy grounds, having tested the
-      //     pair empirically (OR 0.67, p=0.39, not significant) and DECLINED to call it
-      //     exclusivity; brain.js because Brennan 2013 states the routes to disabling Rb are
-      //     alternative and mutually exclusive. Only skin.js's grounds are usable here — brain.js's
-      //     is an EMPIRICAL COHORT FINDING in GBM and would be the ESR1/MDM4 error class if
-      //     imported, exactly as ruled above.
-      //   (2-bis) WHAT THE FULL-TEXT READ SETTLED AND WHAT IT DID NOT. Checked directly: TCGA 2014
-      //     does NOT state this pair mutually exclusive in LUAD, so bladder.js's TCGA 2017
-      //     CDKN2A-perp-RB1 stays un-imported and unusable. It DOES report a cell-cycle module,
-      //     "alteration of cell cycle regulators", at 64%. That module is the LUAD-native grounds
-      //     this pair has always lacked — but its MEMBERSHIP LIST IS IN SUPPLEMENTARY FIG. 10,
-      //     WHICH HAS NOT BEEN READ, so "TCGA scores these two as one module in LUAD" is NOT
-      //     currently a claim this corpus can make. It is an inference from the module's NAME, and
-      //     naming it as such is the point: one supplementary figure is the difference between
-      //     deciding (2) on another organ's precedent and deciding it on LUAD's own evidence.
-      //   (2-ter) AND (2) IS A CONTENT DECISION, so it waits for a ruling rather than riding along
-      //     with (1): it removes a modeled gene, changes what THIS LOOP can emit, and drops the
-      //     citation-record ratchet, whose floor then has to be lowered deliberately with the
-      //     removed records READ rather than counted. IF YOU ADD OR REMOVE A MEMBER OF ANY POOL
-      //     HERE, that ratchet moves with it — record_count.json is not decoration.
+      //   (2) CLOSED ON RULING, 2026-09-07 — RB1 loss REMOVED from LUAD's private pool, as a SOFT
+      //     exclusion on MECHANISTIC-FIT grounds and explicitly NOT as an exclusivity claim. It was
+      //     INTERNAL CONSISTENCY rather than provenance all along, and the deciding point is that
+      //     nothing had to be imported to settle it: THIS CORPUS'S OWN TWO NOTES both said the
+      //     alteration "Removes a cell-cycle checkpoint", in near-identical words, in the same pool
+      //     — the atlas asserting the duplication for LUAD in LUAD's own voice. The circuit beneath
+      //     it is hand-cited under the CLASSIFICATION-FACT EXCEPTION (mechanism prose, stable, one
+      //     canonical source): Serrano et al., Nature, 1993, PMID 8259215, quoted at the exclusion's
+      //     own site in lungs.js. CITED FOR THE CIRCUIT, NOT FOR THE INFERENCE — that paper reports
+      //     CDK4 and D-type cyclins, not CDK4/6, and never says that losing either node disables the
+      //     same checkpoint. That step is this corpus's own, which is what keeps the exclusion SOFT.
+      //   (2-bis) WHAT THE FULL-TEXT READ SETTLED, WHAT IT DID NOT, AND WHY NONE OF IT WAS TREATED
+      //     AS SUPPORT. Checked directly: TCGA 2014 does NOT state this pair mutually exclusive in
+      //     LUAD. THAT SILENCE IS RECORDED AS SILENCE AND NOT AS SUPPORT — a condition of the ruling
+      //     itself, and the reason bladder.js's TCGA 2017 CDKN2A-perp-RB1 stays un-imported and
+      //     unusable. The paper DOES report a cell-cycle module, "alteration of cell cycle
+      //     regulators", at 64%, which would have been the LUAD-native grounds this pair always
+      //     lacked — but its MEMBERSHIP LIST IS IN SUPPLEMENTARY FIG. 10, and that figure is
+      //     UNREACHABLE BY FETCH (three PMC URL forms plus Europe PMC's supplementaryFiles endpoint,
+      //     2026-09-07; HEAD requests only, nothing downloaded). UNREACHABLE IS NOT REFUTED, and it
+      //     is not support either: "TCGA scores these two as one module in LUAD" is still an
+      //     inference from the module's NAME and still not a claim this corpus makes.
+      //   (2-ter) THE TWO NEARBY PRECEDENTS WERE USED FOR FORM ONLY, EACH UNUSABLE AS EVIDENCE FOR
+      //     ITS OWN REASON. skin.js's RB1 exclusion supplied the SHAPE this one copies — soft,
+      //     mechanistic-fit, exclusivity explicitly declined, the non-significant OR recorded — but
+      //     its "TCGA scores them jointly as RB1/CDKN2A cell-cycle" is a claim about what the
+      //     MELANOMA paper did, so it is precedent and never evidence. brain.js's Brennan 2013
+      //     exclusivity is an EMPIRICAL COHORT FINDING in GBM, and importing it would be the
+      //     ESR1/MDM4 error class, exactly as ruled above. Named by content rather than by
+      //     `file:line` on purpose — hand-typed line pointers into these files went stale at birth
+      //     once already (see CLAUDE.md's ccf-unit re-specification).
+      //   (2-quater) THE RATCHET DID NOT MOVE, AND THIS BLOCK PREDICTED THAT IT WOULD — the
+      //     prediction is corrected here rather than deleted, because the reason it was wrong is the
+      //     useful part. The citation record the removed entry carried did leave the corpus, and it
+      //     was READ INDIVIDUALLY first and found VALID, so its departure is a LOSS and not a fix.
+      //     But the same change ADDED the Serrano citation for the circuit, so the TOTAL held while
+      //     the SET changed one out and one in, and NO LOWER WAS NEEDED. A FLAT TOTAL HIDING A
+      //     COMPOSITION CHANGE IS PRECISELY WHAT `record_keys` WAS BUILT FOR, and this is its first
+      //     live instance — checked by replaying EVERY commit that has ever touched
+      //     record_count.json and finding no earlier one where `records` held while the key set
+      //     moved, rather than assumed because it sounded like a first. The count alone would have
+      //     reported nothing at all here. IF YOU ADD OR REMOVE
+      //     A MEMBER OF ANY POOL HERE, look at the SET and not only the count — record_count.json is
+      //     not decoration, and its `records` number is the half that can lie by staying still.
+      //   (2-quinquies) AND THE COMMENT BLOCK ABOVE STALED THREE LINE-KEYED IDENTITIES ON ITS WAY IN,
+      //     which is (2-ter)'s warning arriving as a measurement instead of a memory. Inserting it in
+      //     lungs.js moved the addresses of ten citation records, and the three kinds of consumer that
+      //     hold an address reacted differently — the useful part, because it says which designs
+      //     survive a formatting commit. Re-derivable against the parent tree 7de8f07, where the old
+      //     addresses are still correct:
+      //       - record_count.json's `record_keys` reported them as MOVED, distinct from added and
+      //         removed, and needed no repair. battery.py pins that behaviour in an arm asserting a
+      //         same-file line shift is not a removal plus an addition. Designed for this; silent.
+      //       - pointer_check put five citations.json backfill refs OFF LINE. Real, and repaired.
+      //       - citation_paren_ledger's PREREGISTERED key staled into TWO problems for ONE unmoved
+      //         span: STALE SCORING at the old address AND UNSCORED PAREN SPAN at the new one. That
+      //         is precisely the removal-plus-arrival that `record_delta`'s move-pairing exists to
+      //         prevent, in an instrument that has no such pairing — so a span nobody touched
+      //         presented as a deletion and a newcomer at once, and the newcomer invited a fresh
+      //         scoring entry. Scoring it would have logged basis TEST and manufactured support for
+      //         the rule from a line-number change. Its basis stayed FIT and basis_test stayed 0.
+      //     THE REPAIR WAS DONE BY CONTENT, NOT BY ARITHMETIC: each stale ref was resolved by taking
+      //     the OLD line's exact text and finding its one occurrence in the new file. That was not
+      //     pedantry — pointer_check's hint names the NEAREST candidate carrying the name and year,
+      //     and for one ref the nearest was 253 while the right answer was 259, because Yoshizawa
+      //     2011 occurs twice. A plus-offset would have been wrong in the same place.
+      //     battery.py's own `lungs.js:236` strings were deliberately LEFT ALONE. They are opaque
+      //     fixture inputs, never resolved against a file, and transcribed from d54bd1a so a failing
+      //     arm points at a commit that happened — freshening them would destroy the one property
+      //     that makes them evidence. An address is load-bearing only where something resolves it.
       //
       // EXAMINED AND CLEARED ON RULING — kept here for the reason the audit was worth running at
       // all: a cleared pair looks identical to an unexamined one.

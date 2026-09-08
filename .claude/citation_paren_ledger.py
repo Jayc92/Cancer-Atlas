@@ -96,6 +96,13 @@
 # three STALE problems, because a single-file invocation puts the colon.js and liver.js spans out of
 # scope. Expected, and left in the transcript rather than filtered: a demonstration that hides its own
 # noise is a demonstration of something else.)
+#   THE `:236` IN THAT QUOTED RESULT IS LEFT WRONG ON PURPOSE, because it is not a claim about this
+# tree — it is what the run printed on 2026-09-07, and the line it names is the line the span sat on
+# that day. Re-running the recipe now prints `:259`: a 21-line comment block went in above the span
+# later the same day and moved it. The recipe still reproduces, because every step of it matches on
+# TEXT rather than on a line number, which is the property that let it survive the move at all.
+# Rewriting a dated transcript to agree with a tree it predates would make it a worse record, not a
+# fresher one — so the correction is this sentence and not an edit to the quote.
 #
 # SEQUENCING (user ruling, 2026-09-07, as corrected the same day): "an audit must not ship in the same
 # commit as the change it would have recorded. Sensors, readers, and fixtures travel with it freely."
@@ -180,12 +187,19 @@ PREREGISTERED = {
             'author in the span at all. Removed in 4263890. This is the START=0 case named in '
             'closed_year_paren\'s docstring: the \'(\' opened before the head.',
     },
-    'Travis|2011|js/organs/lungs.js:236': {
+    # RE-ADDRESSED 236 -> 259 on 2026-09-07 when a 21-line comment block went into lungs.js above it.
+    # THE SPAN DID NOT CHANGE — it is byte-identical, and that was checked by matching the OLD line's
+    # exact content against the working copy and finding ONE occurrence, not by adding an offset. So
+    # BASIS STAYS FIT: an address is not an identity, and re-addressing a span is not new evidence.
+    # Scoring this as TEST because its line number moved would have manufactured support for the very
+    # rule it is here to withhold support from. That one insertion staled this key, the two backfill
+    # refs pointing at the same span, and nothing else that is checked — see (2-quater) in js/panel.js.
+    'Travis|2011|js/organs/lungs.js:259': {
         'side': 'KEPT',
         'basis': 'FIT',
         'scored': 'CONFIRMS',
         'reason':
-            'lungs.js:236 reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)". '
+            'lungs.js:259 reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)". '
             'A \')\' does sit between head and 2011, so this span is in the population — but "(WHO)" '
             'carries no year, so the rule declines and the record stands. Travis et al. really did '
             'author both classifications. THIS IS THE COUNTEREXAMPLE THE "CARRYING A YEAR" NARROWING '
@@ -342,7 +356,10 @@ def selftest():
         'Fearon|1991|js/organs/colon.js:169',
         'Powell|1990|js/organs/colon.js:172',
         'Schulze|2017|js/organs/liver.js:280',
-        'Travis|2011|js/organs/lungs.js:236',
+        # Re-addressed 236 -> 259, same span, byte-identical (see the entry's own note). "At birth"
+        # names the set of SPANS, not the set of addresses; if this arm were left pinned to a stale
+        # address it would fail for the one reason that says nothing about the rule's shape.
+        'Travis|2011|js/organs/lungs.js:259',
     }
     fit_now = {key for key, entry in PREREGISTERED.items() if entry['basis'] == 'FIT'}
     arm('FIT is still exactly the four spans the rule was fit to', fit_now == fit_at_birth,
@@ -361,7 +378,7 @@ def selftest():
 
     # arm 5: STALE fires when a scored span leaves the population.
     dropped = dict(scored_clean)
-    dropped.pop('Travis|2011|js/organs/lungs.js:236')
+    dropped.pop('Travis|2011|js/organs/lungs.js:259')
     stale = [p for p in evaluate(dropped) if p.startswith('STALE SCORING')]
     arm('STALE fires when a scored span is gone', len(stale) == 1, str(stale[:1])[:90])
 
@@ -370,7 +387,7 @@ def selftest():
     # else in the chain — the population, the record total and the paren-shadow count are all
     # invariant under a KEPT/SPENT swap, so without this arm the event is completely silent.
     flipped = dict(scored_clean)
-    flipped['Travis|2011|js/organs/lungs.js:236'] = 'SPENT'
+    flipped['Travis|2011|js/organs/lungs.js:259'] = 'SPENT'
     moved = [p for p in evaluate(flipped) if p.startswith('SIDE MOVED')]
     arm('SIDE MOVED fires when the rule re-decides a scored span', len(moved) == 1,
         str(moved[:1])[:90])
