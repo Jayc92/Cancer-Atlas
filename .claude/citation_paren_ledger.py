@@ -280,7 +280,26 @@ def evaluate(by_key):
     subject. SIDE MOVED is the interesting one: the span is still there and the rule now decides it
     differently, so either the rule or the corpus text changed under a recorded verdict. FALSIFIED is
     the claim actually failing; it is a problem so that a known-wrong deletion cannot sit in the
-    corpus behind a green battery."""
+    corpus behind a green battery.
+
+    A SOUND CHECK CAN CARRY STALE ADVICE, AND THAT IS A DISTINCT FAILURE CLASS (user ruling,
+    2026-09-08). Twice now, a relocated span has produced UNSCORED here and the remediation text has
+    told the reader to add a basis-TEST entry — which would lift the one ratcheted number measuring
+    this rule's real evidence off zero on the strength of a line-number change. The DETECTION was right
+    both times: the key really was absent, and saying so is a measurement. The INSTRUCTION was wrong
+    both times, because it assumed arrival, which is the one thing the check cannot see. So the two
+    halves of a problem string have different standing — the finding is evidence, the fix is a
+    SUGGESTION written by whoever last thought about the failure, and nothing in the output marks which
+    is which.
+      WHY THIS IS HARDER TO CATCH THAN A WRONG CHECK: every gate in this chain trains the reflex to do
+    what the output says, and a green-when-obeyed instrument giving confident wrong instructions never
+    looks like it is failing. A red check invites suspicion; correct-detection-plus-stale-advice does
+    not. The defence is not to distrust instruments generally — it is to notice that a remediation
+    sentence is an argument, and to check its premise. Here the premise was "this span arrived", and
+    one look at the accompanying STALE problem refuted it.
+      THE ADVICE ITSELF IS NOW FIXED rather than only annotated, because a note in a docstring does not
+    reach the person reading a failure at the terminal: UNSCORED's text now says to rule out relocation
+    first, and how."""
     problems = []
     for key in sorted(by_key):
         if key not in PREREGISTERED:
@@ -291,7 +310,12 @@ def evaluate(by_key):
                 'right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of '
                 'CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was '
                 'already written when this span arrived, so this is evidence and the four FIT entries '
-                'are not.')
+                'are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the '
+                'same head and year, this is probably ONE existing span whose line moved, and the two '
+                'problems are its removal and its arrival. Take the OLD entry\'s line text, find its '
+                'one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing '
+                'entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for '
+                'this rule out of a line-number change, and TEST is the only number here that counts.')
     for key, entry in sorted(PREREGISTERED.items()):
         if key not in by_key:
             problems.append(

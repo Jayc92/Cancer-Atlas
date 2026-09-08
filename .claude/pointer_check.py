@@ -58,6 +58,13 @@
 # 7.1%)" pair, which lives at thyroid.js:247. That pointer was committed, floor-only, in range, and
 # WRONG, and this instrument reported 0 flags on it every run because it has no oracle to be wrong
 # against. It was corrected by reading the line.
+#   THE FULL MEASURED COST OF RANGE-CHECKING-ONLY, since a number beats an estimate: that audit found
+# TWO pre-existing defects across FIVE sites — the separator citation above, plus a superseded address
+# for one span written at four sites in extract_citations.py, in comparison tables and in the selftest
+# arm that quotes that span verbatim. Both were committed, both in range, both oracle-less, and both
+# reported green on every run from the day they were written. Neither was found by an instrument. That
+# is what the partial half costs, and it is the floor of the cost rather than the whole of it, because
+# the audit covered the pointers this batch TOUCHED and not the population.
 # THE WRONG NUMBER IS DELIBERATELY NOT IN POINTER FORM ABOVE, and that is the same lesson one turn
 # later: the first draft of this paragraph wrote that number in pointer form, which re-created the
 # exact defect it describes — a new, committed, in-range, oracle-less pointer at a separator line,
@@ -67,6 +74,31 @@
 # It took two passes because the SECOND draft then quoted the bad form inside backticks to show what
 # not to do, which is still a pointer — a demonstration of a bad reference cannot be written literally
 # without becoming one, so this paragraph describes the form and never exhibits it.
+#
+# DESCRIBE THE SHAPE, DO NOT INSTANTIATE IT (user ruling, 2026-09-08, on the third incident). This is a
+# PATTERN in this repo, not a quirk of pointers: documenting a defect class has now produced an instance
+# of that class three times, in three different instruments, each found by a different means.
+#   1. record_sync_check.py's header. Naming a record's heading in prose took that heading's occurrence
+#      count 1 -> 2, the check fired NOT A MARKER, and the battery refused the commit. Caught by a
+#      GATE, on its first real opportunity.
+#   2. internal_quote_check.py's breakage (4). An entry meant to enumerate anchor families joined two
+#      separate spans of commit_checked.sh inside one pair of quote marks, and the composite existed in
+#      no file at any time. Caught by THAT INSTRUMENT on its first live run, in the very file hosting
+#      the enumeration it was being added to.
+#   3. This paragraph, twice over. Caught by a HAND AUDIT, because nothing resolves a prose pointer.
+#   THE COMMON MECHANISM IS THAT A MATCHER HAS NO NOTION OF CONTEXT. `organ.js:NNN` is a pointer
+# wherever it appears; a heading's text is an occurrence wherever it appears; a quoted span is a claim
+# of verbatim identity wherever it appears. None of them reads the sentence around it, so "as a bad
+# example", "formerly", "do not write", and backticks change nothing about what is counted. Prose can
+# frame an example for a human and cannot frame it for a scanner.
+#   SO THE REMEDY IS GENERAL: describe the shape in words that cannot match. "A pointer naming a line
+# that has since moved" is safe; the literal address is not, no matter what surrounds it. Name the form,
+# quote nothing, and put only the CORRECT instance in matchable form.
+#   WHY IT KEEPS HAPPENING, WHICH IS THE PART WORTH WRITING DOWN: the instinct that produces it — be
+# concrete, show the reader the actual thing rather than a description of it — is normally correct, and
+# is the instinct this file's whole header is written on. It is wrong in exactly one place: when the
+# thing being shown is the thing being counted. That is a narrow exception to a good habit, which is
+# why care does not prevent it and a stated rule might.
 # AND THE SAME BATCH MANUFACTURED FOUR MORE OF ITS OWN, WHICH IS THE ARGUMENT FOR AUDITING BY HAND
 # AFTER ANY INSERTION. Three organ files gained comment blocks above cited lines (kidneys +6, lungs
 # +9, brain +8), which moved 28 backfill refs — all caught HERE, because those carry oracles — and
