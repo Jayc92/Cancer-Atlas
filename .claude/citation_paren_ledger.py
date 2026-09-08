@@ -98,16 +98,26 @@
 # noise is a demonstration of something else.)
 #   THE `:236` IN THAT QUOTED RESULT IS LEFT WRONG ON PURPOSE, because it is not a claim about this
 # tree — it is what the run printed on 2026-09-07, and the line it names is the line the span sat on
-# that day. Re-running the recipe now prints `:259`: a 21-line comment block went in above the span
-# later the same day and moved it. The recipe still reproduces, because every step of it matches on
-# TEXT rather than on a line number, which is the property that let it survive the move at all.
+# that day. Re-running the recipe now prints `:268`: a 21-line comment block went in above the span
+# later the same day, and a nine-line one on 2026-09-08, and each moved it. The recipe still
+# reproduces, because every step of it matches on TEXT rather than on a line number, which is the
+# property that let it survive both moves at all — twice in two days is the rate to expect, so the
+# address in a transcript is worth less than the recipe that regenerates it.
 # Rewriting a dated transcript to agree with a tree it predates would make it a worse record, not a
 # fresher one — so the correction is this sentence and not an edit to the quote.
 #
 # SEQUENCING (user ruling, 2026-09-07, as corrected the same day): "an audit must not ship in the same
 # commit as the change it would have recorded. Sensors, readers, and fixtures travel with it freely."
-# This file ships in a commit that does not change the corpus, so the four entries below are scored
+# This file was BORN in a commit that does not change the corpus, so the four entries below are scored
 # against state that already existed and is independently in git.
+#   THAT SENTENCE SAID "ships" UNTIL 2026-09-08, WHEN IT STOPPED BEING TRUE OF THE CURRENT COMMIT and
+# had to be scoped rather than deleted. A corpus change moved one entry's line, so the re-address has
+# to travel WITH that change — leaving it for a later commit would ship a tree whose own ledger reports
+# two problems, and gating the tree you commit rather than the tree you work in is the whole point. The
+# ruling is not violated by that: what may not ship beside an audit is the audit's SUBJECT, and this
+# commit contains no paren span the ledger would newly record. It moved one that was scored at 4263890
+# and left its bytes alone. An entry re-addressed by a corpus change is a reader following its subject,
+# not an audit witnessing itself.
 #
 # THIS FILE IS THE CASE THE CORRECTION WAS MADE ON, which is why the earlier wording ("an audit that
 # ships alongside its subject cannot witness it") is quoted here and not just replaced: read literally,
@@ -187,19 +197,27 @@ PREREGISTERED = {
             'author in the span at all. Removed in 4263890. This is the START=0 case named in '
             'closed_year_paren\'s docstring: the \'(\' opened before the head.',
     },
-    # RE-ADDRESSED 236 -> 259 on 2026-09-07 when a 21-line comment block went into lungs.js above it.
+    # RE-ADDRESSED 236 -> 259 on 2026-09-07 when a 21-line comment block went into lungs.js above it,
+    # AND 259 -> 268 on 2026-09-08 when a nine-line one did the same thing.
     # THE SPAN DID NOT CHANGE — it is byte-identical, and that was checked by matching the OLD line's
     # exact content against the working copy and finding ONE occurrence, not by adding an offset. So
     # BASIS STAYS FIT: an address is not an identity, and re-addressing a span is not new evidence.
     # Scoring this as TEST because its line number moved would have manufactured support for the very
     # rule it is here to withhold support from. That one insertion staled this key, the two backfill
     # refs pointing at the same span, and nothing else that is checked — see (2-quater) in js/panel.js.
-    'Travis|2011|js/organs/lungs.js:259': {
+    #   THE SECOND MOVE IS THE REASON THIS NOTE IS WORTH ITS LENGTH. Both problems the 2026-09-08 run
+    # raised on this entry (STALE at the old address, UNSCORED at the new one) describe ONE span that
+    # moved, and the instrument's own remediation text — written for the case where a span genuinely
+    # arrives — asks for a new entry with basis TEST. Taking that literally would have raised
+    # `basis_test` off 0 on a span this rule was FIT to, which is the one number here that is supposed
+    # to be hard to move. An instrument cannot tell arrival from relocation, so the human does, and the
+    # test is CONTENT: same bytes, one occurrence, re-address. Different bytes would be a real arrival.
+    'Travis|2011|js/organs/lungs.js:268': {
         'side': 'KEPT',
         'basis': 'FIT',
         'scored': 'CONFIRMS',
         'reason':
-            'lungs.js:259 reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)". '
+            'lungs.js:268 reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)". '
             'A \')\' does sit between head and 2011, so this span is in the population — but "(WHO)" '
             'carries no year, so the rule declines and the record stands. Travis et al. really did '
             'author both classifications. THIS IS THE COUNTEREXAMPLE THE "CARRYING A YEAR" NARROWING '
@@ -356,10 +374,12 @@ def selftest():
         'Fearon|1991|js/organs/colon.js:169',
         'Powell|1990|js/organs/colon.js:172',
         'Schulze|2017|js/organs/liver.js:280',
-        # Re-addressed 236 -> 259, same span, byte-identical (see the entry's own note). "At birth"
-        # names the set of SPANS, not the set of addresses; if this arm were left pinned to a stale
-        # address it would fail for the one reason that says nothing about the rule's shape.
-        'Travis|2011|js/organs/lungs.js:259',
+        # Re-addressed 236 -> 259 -> 268, same span, byte-identical each time (see the entry's own
+        # note). "At birth" names the set of SPANS, not the set of addresses; if this arm were left
+        # pinned to a stale address it would fail for the one reason that says nothing about the rule's
+        # shape. Two re-addresses in two days: the arm's cost is one line per insertion above the span,
+        # and that is the price of pinning identity to something a comment block can move.
+        'Travis|2011|js/organs/lungs.js:268',
     }
     fit_now = {key for key, entry in PREREGISTERED.items() if entry['basis'] == 'FIT'}
     arm('FIT is still exactly the four spans the rule was fit to', fit_now == fit_at_birth,
@@ -378,7 +398,7 @@ def selftest():
 
     # arm 5: STALE fires when a scored span leaves the population.
     dropped = dict(scored_clean)
-    dropped.pop('Travis|2011|js/organs/lungs.js:259')
+    dropped.pop('Travis|2011|js/organs/lungs.js:268')
     stale = [p for p in evaluate(dropped) if p.startswith('STALE SCORING')]
     arm('STALE fires when a scored span is gone', len(stale) == 1, str(stale[:1])[:90])
 
@@ -387,7 +407,7 @@ def selftest():
     # else in the chain — the population, the record total and the paren-shadow count are all
     # invariant under a KEPT/SPENT swap, so without this arm the event is completely silent.
     flipped = dict(scored_clean)
-    flipped['Travis|2011|js/organs/lungs.js:259'] = 'SPENT'
+    flipped['Travis|2011|js/organs/lungs.js:268'] = 'SPENT'
     moved = [p for p in evaluate(flipped) if p.startswith('SIDE MOVED')]
     arm('SIDE MOVED fires when the rule re-decides a scored span', len(moved) == 1,
         str(moved[:1])[:90])

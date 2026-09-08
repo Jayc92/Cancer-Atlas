@@ -116,11 +116,20 @@ export const organDetail = {
     {label:'Function', val:'Gas exchange across ~300 million alveoli'},
     {label:'Blood supply', val:'Dual: pulmonary arteries (deoxygenated) &amp; bronchial arteries'},
   ],
-  // The dual-blood-supply fact is worth a second sentence, not just a facts-grid line: it's
-  // the one place in the body where "artery" doesn't mean "carries oxygenated blood" — the
-  // pulmonary arteries carry deoxygenated blood *to* the lungs to be oxygenated, while the
+  // The dual-blood-supply fact is worth a second sentence, not just a facts-grid line: in the
+  // adult body this is the only place where "artery" doesn't mean "carries oxygenated blood" —
+  // the pulmonary arteries carry deoxygenated blood *to* the lungs to be oxygenated, while the
   // separate bronchial arteries feed the lung tissue itself with already-oxygenated blood.
-  desc:'The lungs fill most of the thoracic cavity, each connected to the airway via a bronchus entering at the hilum. Uniquely among organs, the lungs have two separate blood supplies: pulmonary arteries carrying deoxygenated blood to the ~300 million alveoli for gas exchange — the one place in the body where "artery" means deoxygenated, not oxygenated — plus separate bronchial arteries that feed the lung tissue itself with oxygenated blood.',
+  // TWO CORRECTIONS HERE, AND ONLY ONE OF THEM IS ABOUT THIS ATLAS. The desc used to open
+  // "Uniquely among organs, the lungs have two separate blood supplies", which is wrong about
+  // ANATOMY and not merely unscoped: the liver's portal vein plus hepatic artery is the textbook
+  // co-example, and liver.js:118 asserted the mirror-image claim, so each record was the other's
+  // counterexample. Naming the liver is the repair — a downgrade to "one of few" would have been
+  // vaguer AND still uncheckable. Separately, "the one place in the body" is qualified to the
+  // ADULT body, because the umbilical artery carries deoxygenated blood in fetal circulation;
+  // that qualifier is narrow on purpose, since the claim is true and useful for every reader who
+  // is not looking at a fetus.
+  desc:'The lungs fill most of the thoracic cavity, each connected to the airway via a bronchus entering at the hilum. Like the liver, the lungs have two separate blood supplies: pulmonary arteries carrying deoxygenated blood to the ~300 million alveoli for gas exchange — the only place in the adult body where "artery" means deoxygenated, not oxygenated — plus separate bronchial arteries that feed the lung tissue itself with oxygenated blood.',
   buildMesh: buildLungsMesh,
   // Real-world-meter GLB — theta/phi still set the initial viewing angle, but radius is
   // replaced by initOrganViewer's frameContents() call once the model loads. minRadius/

@@ -339,9 +339,9 @@
    "status": "parse-noise",
    "userFacing": true,
    "refs": [
-    "js/organs/kidneys.js:141",
-    "js/organs/kidneys.js:145",
-    "js/organs/kidneys.js:148"
+    "js/organs/kidneys.js:147",
+    "js/organs/kidneys.js:151",
+    "js/organs/kidneys.js:154"
    ]
   },
   {
@@ -351,7 +351,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/kidneys.js:154"
+    "js/organs/kidneys.js:160"
    ],
    "candidates": [
     {
@@ -395,8 +395,8 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/kidneys.js:198",
-    "js/organs/kidneys.js:204"
+    "js/organs/kidneys.js:204",
+    "js/organs/kidneys.js:210"
    ]
   },
   {
@@ -3328,7 +3328,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:182"
+    "js/organs/lungs.js:191"
    ],
    "pmid": "28445112",
    "resolvedTitle": "Tracking the Evolution of Non-Small-Cell Lung Cancer.",
@@ -3351,9 +3351,9 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/lungs.js:189",
-    "js/organs/lungs.js:197",
-    "js/organs/lungs.js:199"
+    "js/organs/lungs.js:198",
+    "js/organs/lungs.js:206",
+    "js/organs/lungs.js:208"
    ],
    "pmid": "37046096",
    "resolvedTitle": "The evolution of lung cancer and impact of subclonal selection in TRACERx.",
@@ -3374,7 +3374,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:192"
+    "js/organs/lungs.js:201"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
@@ -3385,7 +3385,7 @@
    "status": "still-zero-pass",
    "userFacing": true,
    "refs": [
-    "js/organs/lungs.js:239"
+    "js/organs/lungs.js:248"
    ],
    "candidates": [
     {
@@ -3418,7 +3418,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:248"
+    "js/organs/lungs.js:257"
    ],
    "pmid": "21252716",
    "resolvedTitle": "International association for the study of lung cancer/american thoracic society/european respiratory society international multidisciplinar",
@@ -3438,8 +3438,8 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:253",
-    "js/organs/lungs.js:259"
+    "js/organs/lungs.js:262",
+    "js/organs/lungs.js:268"
    ],
    "pmid": "21252858",
    "resolvedTitle": "Impact of proposed IASLC/ATS/ERS classification of lung adenocarcinoma: prognostic subgroups and implications for further revision of stagin",
@@ -3460,7 +3460,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:259"
+    "js/organs/lungs.js:268"
    ],
    "pmid": "26291008",
    "resolvedTitle": "The 2015 World Health Organization Classification of Lung Tumors: Impact of Genetic, Clinical and Radiologic Advances Since the 2004 Classif",
@@ -3923,7 +3923,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/brain.js:128"
+    "js/organs/brain.js:136"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
@@ -3934,7 +3934,7 @@
    "status": "entry-time-identifier",
    "userFacing": false,
    "refs": [
-    "js/organs/brain.js:152"
+    "js/organs/brain.js:160"
    ],
    "pmid": "23412337",
    "resolvedTitle": "Intratumor heterogeneity in human glioblastoma reflects cancer evolutionary dynamics.",
@@ -3952,8 +3952,8 @@
    "status": "still-saturated",
    "userFacing": false,
    "refs": [
-    "js/organs/brain.js:188",
-    "js/organs/brain.js:194"
+    "js/organs/brain.js:196",
+    "js/organs/brain.js:202"
    ],
    "pubmedCount": 743
   },
@@ -3964,9 +3964,9 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/brain.js:200",
-    "js/organs/brain.js:202",
-    "js/organs/brain.js:204"
+    "js/organs/brain.js:208",
+    "js/organs/brain.js:210",
+    "js/organs/brain.js:212"
    ],
    "pmid": "24120142",
    "resolvedTitle": "The somatic genomic landscape of glioblastoma.",
@@ -3987,7 +3987,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/brain.js:200"
+    "js/organs/brain.js:208"
    ],
    "pmid": "22137795",
    "resolvedTitle": "Mosaic amplification of multiple receptor tyrosine kinase genes in glioblastoma.",
@@ -4010,7 +4010,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/brain.js:204"
+    "js/organs/brain.js:212"
    ],
    "pmid": "23412337",
    "resolvedTitle": "Intratumor heterogeneity in human glioblastoma reflects cancer evolutionary dynamics.",
@@ -4033,9 +4033,9 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/brain.js:209",
-    "js/organs/brain.js:219",
-    "js/organs/brain.js:240"
+    "js/organs/brain.js:217",
+    "js/organs/brain.js:227",
+    "js/organs/brain.js:248"
    ],
    "pmid": "34185076",
    "resolvedTitle": "The 2021 WHO Classification of Tumors of the Central Nervous System: a summary.",
@@ -4058,7 +4058,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/brain.js:210"
+    "js/organs/brain.js:218"
    ],
    "pmid": "23530248",
    "resolvedTitle": "TERT promoter mutations occur frequently in gliomas and a subset of tumors derived from cells with low rates of self-renewal.",
@@ -4081,8 +4081,8 @@
    "status": "entry-time-identifier",
    "userFacing": false,
    "refs": [
-    "js/organs/brain.js:228",
-    "js/organs/brain.js:234"
+    "js/organs/brain.js:236",
+    "js/organs/brain.js:242"
    ],
    "pmid": "17110662",
    "triage": "extraction miss (multi-line parenthetical): PMID attached to the citation itself; sweep-2 independently converged \u2014 validation datum",

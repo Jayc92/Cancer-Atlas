@@ -82,15 +82,21 @@ export const organDetail = {
   eyebrow:'Urinary System', title:'Kidneys',
   sub:'Paired organs · retroperitoneal · filter ~180L of blood per day',
   facts:[
-    {label:'Location', val:'Retroperitoneal — behind the peritoneum, unlike every other organ in this atlas'},
+    {label:'Location', val:'Retroperitoneal — behind the peritoneum lining the abdominal cavity, not within it'},
     {label:'Function', val:'Filtration via ~1 million nephrons per kidney, ~180L blood/day'},
     {label:'Blood supply', val:'Renal arteries, direct branches of the aorta'},
   ],
-  // The retroperitoneal fact is worth a second sentence for the same reason lungs' dual blood
-  // supply got one: it's the one anatomically distinct thing about this organ relative to
-  // every prior organ in this atlas — ovary and breast tissue are both intraperitoneal/overlying
-  // structures, lungs are thoracic, but the kidneys sit behind the peritoneal lining entirely.
-  desc:'The kidneys sit retroperitoneally — behind the peritoneum lining the abdominal cavity, not within it, unlike every other organ modeled in this atlas so far. Each kidney filters blood through roughly 1 million nephrons, processing about 180 liters of blood a day, with the resulting urine draining into the renal pelvis before leaving via the ureter.',
+  // The retroperitoneal fact is worth a second sentence because it is a real anatomical
+  // distinction most readers do not picture: the kidneys sit behind the peritoneal lining
+  // entirely, not within the cavity it encloses.
+  // THE UNIQUENESS CLAIM THAT USED TO BE HERE WAS TRUE WHEN IT WAS WRITTEN AND IS NOT NOW, which
+  // is why it is called out rather than quietly dropped. It read "unlike every prior organ in
+  // this atlas" and enumerated ovary, breast and lungs — the organs that existed then. The
+  // pancreas is ORGAN_MODULES[8] and the kidneys are [5], so pancreas.js:114 ("behind the
+  // peritoneum") arrived three organs later and falsified a sentence in a file its author never
+  // opened. Nothing about the claim or its source changed; the corpus grew around it. Any
+  // replacement here would age the same way, so the remaining text asserts no comparison at all.
+  desc:'The kidneys sit retroperitoneally — behind the peritoneum lining the abdominal cavity, not within it. Each kidney filters blood through roughly 1 million nephrons, processing about 180 liters of blood a day, with the resulting urine draining into the renal pelvis before leaving via the ureter.',
   buildMesh: buildKidneysMesh,
   // Real-world-meter GLB (bbox ~7x8x12cm) — see lungs.js for why minRadius/maxRadius are
   // rescaled here rather than left at the old ~1-unit procedural values. theta/phi are NOT the

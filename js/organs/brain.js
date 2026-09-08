@@ -84,11 +84,19 @@ export const organDetail = {
     {label:'Ventricles', val:'Four CSF-filled cavities — two lateral, third, fourth — linked by the cerebral aqueduct'},
     {label:'Blood supply', val:'Protected by the blood-brain barrier, a selective filter most drugs cannot cross'},
   ],
-  // The blood-brain barrier gets the same second-sentence treatment every prior organ's one
-  // genuinely distinguishing fact has gotten (Lungs' dual supply, Kidneys' retroperitoneal
-  // position, Liver's dual supply) — here it's the one fact with the biggest treatment-design
-  // consequence of any organ in this atlas, not just an anatomy trivia point.
-  desc:'The brain is organized into four lobes per hemisphere — frontal, parietal, temporal, and occipital — surrounding a ventricular system of four connected, cerebrospinal-fluid-filled cavities. Unlike every other organ in this atlas, most of the brain\'s blood vessels are sealed by the blood-brain barrier, a layer of tightly-joined endothelial cells that blocks the great majority of drugs, including most chemotherapy, from ever reaching brain tissue at a useful concentration — a central reason glioblastoma remains so difficult to treat regardless of which mutations a given tumor carries.',
+  // The blood-brain barrier gets the same second-sentence treatment other organs give their least
+  // intuitive anatomical fact (Lungs' dual supply, Kidneys' retroperitoneal position, Liver's dual
+  // supply) — here it is the fact with the largest treatment-design consequence, not an anatomy
+  // trivia point.
+  // THE PRECEDENT IS THE TREATMENT, NOT A UNIQUENESS CLAIM, and that distinction is the whole
+  // repair: this comment used to call each of those three facts the organ's "one genuinely
+  // distinguishing fact", and two of the three were false in exactly that sense — the lungs' and
+  // the liver's dual supplies are each other's counterexample, and the kidneys' retroperitoneal
+  // position is the pancreas's. The second sentence survives at all three sites; only the
+  // exclusivity did not. A house style that rewards finding a distinguishing fact per organ is
+  // also a house style that manufactures false universals, which is why the flag tier in
+  // absence_claim_check.py exists and why this comment no longer asserts one.
+  desc:'The brain is organized into four lobes per hemisphere — frontal, parietal, temporal, and occipital — surrounding a ventricular system of four connected, cerebrospinal-fluid-filled cavities. Most of the brain\'s blood vessels are sealed by the blood-brain barrier, a layer of tightly-joined endothelial cells that blocks the great majority of drugs, including most chemotherapy, from ever reaching brain tissue at a useful concentration — a central reason glioblastoma remains so difficult to treat regardless of which mutations a given tumor carries.',
   buildMesh: buildBrainMesh,
   // Real-world-meter GLB (bbox ~14x17x15cm) — see lungs.js for why minRadius/maxRadius are
   // rescaled here rather than left at the old ~1-unit procedural values.
@@ -113,7 +121,7 @@ export const organDetail = {
     { key:'ventricles', label:'Ventricular system', pos:[0.0062,0.0087,0.0449],
       text:'Four connected cavities deep in the brain that produce and circulate cerebrospinal fluid. The tissue immediately lining them, the subventricular zone, is a candidate source of the neural stem and progenitor cells some research points to as glioblastoma\'s cell of origin — genuine open debate, not a settled fact, in current neuro-oncology.' },
     { key:'cortex', label:'Cerebral cortex', pos:[0.0533,0.0540,-0.0010],
-      text:'The thin, deeply folded outer layer of gray matter responsible for higher cognitive function. Unlike this atlas\'s other organs, this is deliberately NOT glioblastoma\'s "arises here" point — the disease is more often a white-matter process that secondarily reaches the cortex, not a cortical one from the start.' },
+      text:'The thin, deeply folded outer layer of gray matter responsible for higher cognitive function. This is deliberately NOT glioblastoma\'s "arises here" point — the disease is more often a white-matter process that secondarily reaches the cortex, not a cortical one from the start.' },
     { key:'bbb', label:'Blood-brain barrier', pos:[0.0200,-0.0038,0.0394],
       text:'A selective filter formed by tightly-joined blood-vessel cells that keeps most of the bloodstream\'s contents — including most drugs — out of healthy brain tissue. Glioblastoma partially disrupts this barrier within the tumor itself (which is why the tumor core "enhances" on contrast MRI), but the barrier stays largely intact at the tumor\'s infiltrating edges, a major reason chemotherapy struggles to reach the disease\'s full extent.' },
   ],

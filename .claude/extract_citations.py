@@ -721,8 +721,15 @@ def extract(paths, absences=None):
             #
             # WHY NO YEAR-COUNTING RULE CAN WORK, WHICH IS SHARPER THAN "the measurement came out
             # badly": POWELL AND TRAVIS ARE INDISTINGUISHABLE TO IT AND HAVE OPPOSITE VERDICTS.
+            #   (The Travis address in the three tables below and in the selftest arm that quotes it
+            #   read `:236` until 2026-09-08 and are now `:268`. Two comment-block insertions above
+            #   that span moved it, on two consecutive days, and nothing resolved these four addresses
+            #   so nothing reported them — they were found by hand-auditing the same span the
+            #   citation_paren_ledger fire pointed at. Re-addressed by matching the OLD line's exact
+            #   text to its one occurrence, per the ruling recorded at js/panel.js:193. The quoted text
+            #   on each row is the identity; these numbers are provenance and will rot again.)
             #   colon.js:172   "Powell et al. ... Nature, 1992 ... quotes the 1990 model"  FALSE
-            #   lungs.js:236   "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)" TRUE
+            #   lungs.js:268   "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)" TRUE
             # In both, an intervening year sits between the head and the target year, with no
             # competing head anywhere between them. A rule that knows only how many years intervened
             # sees one shape and must return one answer. The difference is SEMANTIC — two publication
@@ -758,7 +765,7 @@ def extract(paths, absences=None):
             #                          by the mechanism this line originally predicted — see the
             #                          block under the ';' rule, which records what the port of
             #                          classify_absence's discrimination actually measured.
-            #   TRUE    Travis|2011    lungs.js:236 — must survive, and does.
+            #   TRUE    Travis|2011    lungs.js:268 — must survive, and does.
             # A count of "six removed" would have read as a clean win. Only reading each one separates
             # five fixes from one loss, and only DECOMPOSING them shows that no single rule was ever
             # the answer.
@@ -813,7 +820,7 @@ def extract(paths, absences=None):
             # are not alike:
             #   colon.js:172  "Powell et al. (Nature, 1992) for APC-comes-first, and quotes the 1990"
             #                 the intervening year is INSIDE A PARENTHETICAL THAT CLOSED.
-            #   lungs.js:236  "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)"
+            #   lungs.js:268  "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)"
             #                 the intervening year is BARE, in the same unparenthesised clause, and
             #                 the one paren that closes between head and target, "(WHO)", carries no
             #                 year at all.
@@ -1082,7 +1089,9 @@ FIXTURES = [
      [('Schulze', '2015', 'etal')], [('paren-shadow', 'Schulze')]),
 
     ('AND IT MUST NOT FIRE HERE, WHICH IS THE ARM THE RULE WAS SHAPED AROUND AND THE ONE MOST '
-     'WORTH DISTRUSTING: lungs.js:236 verbatim. Travis et al. published the 2015 WHO classification '
+     'WORTH DISTRUSTING: lungs.js:268 verbatim (re-addressed from 236 by content, twice; the fixture '
+     'text below is the identity and this number is only provenance). Travis et al. published the '
+     '2015 WHO classification '
      'AND the 2011 IASLC/ATS/ERS one, so BOTH years are theirs. A ")" does close between the head '
      'and the 2011 — "(WHO)" — and it carries no year, which is the entire narrowing. Delete '
      '"carrying a year" from closed_year_paren and this arm is what fails; the corpus record it '

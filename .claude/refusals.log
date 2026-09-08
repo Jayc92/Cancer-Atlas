@@ -154,3 +154,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   FAILED: citation_paren_ledger — exit 3
   | DONE battery: phase pre-commit — 11/14 declared instruments ran and reported (marker printed, exit 0), 15 declared in total, 29 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 488 citation records extracted (ratchet 488 held; 1 added, 1 removed, 10 moved), 5/11 reporting members emitted a sidecar, 2 sidecar metrics ratcheted, 3 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-08T07:08:51Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 20 lines, last 12 below
+  |   ok   RULE LEFT ITS SHAPE fires on a flag-False paren-shadow and not on a flag-True one RULE LEFT ITS SHAPE at Ghost|2029|js/organs/thyroid.js:7: closed_year_
+  |   ok   basis_fit + basis_test == scored spans, and scored == population when clean {"basis_fit": 4, "basis_test": 0, "kept": 1, "population": 4, "preregistered": 4, "problems": 0, "scored_confirms": 4, "scored_falsifies": 0, "spent": 3}
+  | DONE citation_paren_ledger_selftest: 10 arms run, 0 failures
+  | citation_paren_ledger: 15 files, 4 spans with a ')' between head and year
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   UNSCORED  KEPT   Travis|2011|js/organs/lungs.js:268
+  |   PROBLEM: UNSCORED PAREN SPAN Travis|2011|js/organs/lungs.js:268 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not.
+  |   PROBLEM: STALE SCORING Travis|2011|js/organs/lungs.js:259: scored CONFIRMS on the KEPT side, but no such span is in the population any more. If the sentence was rewritten or the record removed, delete the entry in the same commit — and if its basis was TEST, say so in the message, because deleting a TEST is deleting this rule's only real evidence.
+  | SIDECAR {"metrics": {"basis_fit": 3, "basis_test": 0, "kept": 1, "population": 4, "preregistered": 4, "problems": 2, "scored_confirms": 3, "scored_falsifies": 0, "spent": 3}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 4 paren spans (3 spent, 1 kept), 4 scored (0 as TEST, 3 as FIT and worth no support), 0 falsifying, 2 problems
+==== END REFUSAL
