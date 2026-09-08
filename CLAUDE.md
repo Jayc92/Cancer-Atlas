@@ -4225,6 +4225,35 @@ be missing from the archive built to hold precisely that class of evidence."
   mutation is the one worth having: the arm catches the exact entry the guard
   exists because of, not merely *some* entry.
 
+## A GUARD THAT WRITES ITS FINDINGS MUST NOT BE ABLE TO WRITE A FINDING THAT FAILS ITSELF (2026-09-08, user ruling; `battery.py` assertion 6 + `run_checked.sh`'s `log_refusal`)
+
+**The sharpest thing in `12abb27`, and the easiest to miss in its report: the guard against
+machine-specific paths could have committed one.** Assertion 6 fails the battery when a tracked
+file names an account; `run_checked.sh` refuses; `log_refusal` archives the refusing run's tail
+into `.claude/refusals.log`, which is TRACKED and append-only by its own header. Had the problem
+string quoted the offending path, or had the writer not scrubbed the machine's home, one firing
+would have machine-written the leak into the index — and the assertion would then have fired on
+it on every later run, in a file no human is allowed to hand-edit. **A self-wedging guard.**
+
+- **THE CLASS, in the user's words: *"a guard that writes its findings must not be able to write
+  a finding that fails itself."*** Both ends were closed before shipping: the message DESCRIBES and
+  never QUOTES (file and line, never the text), and `log_refusal` substitutes `$HOME` symbolically
+  the way it already did `$TMPDIR`, with a selftest arm asserting both directions and a mutant
+  that fails exactly that arm.
+- **THE FIRST TIME IN THIS ARC A GUARD'S OWN FAILURE MODE WAS ANTICIPATED RATHER THAN DISCOVERED.**
+  Every prior instance — the coverage guard counting the staging it was built to exclude,
+  `deploy_check`'s byte-matched total printed over stale bytes, the refusal log's own header
+  making `grep -c` read one present entry as zero — was found after it fired. This one was found
+  by asking, before the first run, what the guard WRITES and whether what it writes can satisfy
+  its own predicate.
+- **WHY IT IS A CLASS AND NOT A FOOTNOTE TO ASSERTION 6:** every guard in this chain writes
+  something — a problem string, a DONE line, a sidecar, a refusal entry, a state file — and
+  several of those writes land in tracked files. The question generalises to each of them: can
+  the written finding be the thing the next run flags?
+- **Recorded at the FAILURE position of `battery.py`'s placement checklist**, because the
+  constraint is on that position's home — the problem string — which turned out to have a second
+  reader: the archive.
+
 ## NO CROSS-BLOCK DEMONSTRATIVE — THE DELETION REMEDY, SWEPT (2026-09-07, user ruling)
 
 **The ruling:** "apply the deletion remedy for demonstratives, since there's

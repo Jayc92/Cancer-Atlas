@@ -171,6 +171,19 @@
 #     citation_paren_ledger.py's UNSCORED text, whose detection was a measurement and whose advice was
 #     stale: annotating that file's docstring alone would have left the wrong instruction sitting
 #     exactly where it was being acted on, which is the whole failure this rule exists to prevent.
+#     AND A CONSTRAINT ON THAT HOME, FOUND BEFORE IT FIRED (user ruling, 2026-09-08): A GUARD THAT
+#     WRITES ITS FINDINGS MUST NOT BE ABLE TO WRITE A FINDING THAT FAILS ITSELF. The problem string has
+#     a second reader nobody had counted — run_checked.sh archives a refusing run's tail into TRACKED,
+#     append-only refusals.log — so assertion 6's message, had it quoted the offending path, would have
+#     committed the very leak it guards against and then fired on it on every later run, in a file no
+#     human may hand-edit. A self-wedging guard. Closed at both ends before shipping: the message
+#     describes and never quotes (machine_path_files), and the writer scrubs the machine's home from
+#     what it archives (log_refusal), each with an arm. THIS IS THE FIRST GUARD FAILURE IN THIS CHAIN
+#     TO BE ANTICIPATED RATHER THAN DISCOVERED — the coverage guard counting the staging it was built
+#     to exclude, deploy_check's byte-matched total printed over stale bytes, the refusal log read as
+#     empty over one present entry: every one was found AFTER it fired. The question that found this
+#     one first, to ask of every guard that writes: what does it write, where does that land, and can
+#     the written finding satisfy the guard's own predicate?
 #   REVIEW. The reader is looking at a diff or a commit message, deciding whether a change is sound.
 #     Home: THE MACHINE-QUOTED DONE LINE, which commit_checked.sh has been pasting into every message
 #     since it was written. That position has been operating correctly and UNNAMED, which is exactly

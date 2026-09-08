@@ -32,6 +32,21 @@
 # reads the CONSEQUENCE, so it does not generalise to an instrument whose result is not a git object,
 # which is most of them. Verdict first, corroboration second.
 #
+# THE SAME FAMILY, ONE LEVEL OUT — AMBIENT STATE, AND A FORM RULE INSTEAD OF A VIGILANCE RULE (user
+# ruling, 2026-09-08). The shell's working directory persists between an agent's tool calls, and a `cd`
+# in one call silently redirects every relative path in the calls after it. That drift has already put
+# two checks meant for this repository inside a scratch clone of it, where one reported a planted file
+# as a live leak; the filename in the FAIL line was the only tell. A rule saying "always cd-prefix"
+# existed and it bit anyway — a rule that is written and still fails is the wrong shape, because it
+# asks for attention where a form would remove the possibility. THE FORM: any command whose output
+# becomes a claim about this repository uses `git -C <absolute path>` or an absolute script path,
+# never a relative path plus the ambient cwd. Then a stray `cd` in an earlier call cannot reach it.
+# Same reasoning as the exit code above: prefer the explicit form over the ambient one, because
+# ambient state is invisible in a transcript and exit codes and absolute paths are not. The false
+# positive this time was the safest version — a planted file reported as real, caught by reading the
+# filename. The inverse is the same drift with the outcome reversed: a real leak checked in the wrong
+# tree and reported clean.
+#
 # IT GUARDS ONE INVOCATION, NOT THE SET. This header used to enumerate its call sites, which
 # made it a second hand-maintained instrument list going stale beside the real one — it said
 # "six call sites" while ten instruments existed. The enumeration now lives in exactly one
@@ -137,6 +152,10 @@ log_refusal() {
     # EDITING AN APPEND-ONLY EVIDENCE ARCHIVE, which this file's own header forbids: a red chain
     # with no sanctioned way out. Prevention at the writer is what keeps that state unreachable,
     # the same move as the newline guard above — fix the class at the writer, not the instance.
+    # THE CLASS THIS CLOSES, named on ruling (2026-09-08) and recorded at the FAILURE position of
+    # battery.py's placement checklist: A GUARD THAT WRITES ITS FINDINGS MUST NOT BE ABLE TO WRITE A
+    # FINDING THAT FAILS ITSELF. This sed is the writer's half; machine_path_files' describe-don't-quote
+    # message is the other. The first such failure in this chain caught BEFORE it fired.
     # TMPDIR IS SUBSTITUTED FIRST ON PURPOSE: a TMPDIR nested inside HOME should read as $TMPDIR,
     # the more specific and more useful of the two. Each root is used as a BRE, so a dot inside it
     # matches any character — over-matching, which is the harmless direction for a scrubber.
