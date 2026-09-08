@@ -3700,6 +3700,22 @@ is the fourth item of `battery.py`'s sidecar-convention block.
   tree you're committing, not the tree you're working in.** Those diverge
   the moment an untracked file exists, and the bad ratchet value above was
   caught only by moving the draft aside and re-running.
+  - **THE SAME RULE ONE LAYER OUT, AND IT IS PRACTICE RATHER THAN A SHAPE TO
+    BUILD** (user ruling, 2026-09-08). That rule says the tree you are about
+    to commit is not necessarily the tree you are working in. The same
+    failure with a different artefact says **the file you are about to write
+    is not necessarily the file you read.** Observed this session: a second
+    session appended to a prose index outside this repo while it was being
+    consolidated, between the read and the write. **Nothing in this chain
+    guards that and nothing should** — the battery, `record_sync_check` and
+    every ratchet assume a single writer, and that file is not in the repo at
+    all, so no gate here can reach it. Neither half has a mechanism; both are
+    **read immediately before acting**, and that is the entire remedy. It
+    held: the other writer's append survived underneath the consolidation
+    because the file was taken as FOUND rather than as LOADED. The reason to
+    write it down anyway is that a single-writer assumption is invisible
+    until it is wrong, and its failure is silent — an overwrite leaves a
+    clean tree and a green gate.
 - **AND THE RULE EXTENDS PAST METRICS TO REASONING: UNTRACKED THINGS ARE
   NOT PART OF THE CORPUS, INCLUDING THE CORPUS OF CONVENTIONS** (user
   ruling, 2026-09-07, correcting their own earlier sentence — the second
@@ -3719,6 +3735,20 @@ is the fourth item of `battery.py`'s sidecar-convention block.
     floor has to be a number a fresh clone can reproduce. Same rule, one
     level up: the tracked set bounds not just what gets measured but
     **what may be appealed to.**
+  - **AND THE PROHIBITION HAS A DIRECTION — which is the half that keeps it
+    from reading as a contradiction later** (user ruling, 2026-09-08, on
+    noticing the property above was stated as a prohibition with its
+    direction never worked out): **OUTWARD IS FREE; INWARD NEEDS THE INDEX.**
+    A tracked rule may govern something outside this tree — it carries its
+    authority with it. An untracked thing may not be appealed to for
+    anything inside this tree — it has none to carry. So the
+    read-every-removal procedure governing a consolidation of a prose index
+    that lives outside this repo is **not** a breach of this property, and
+    `extract_citations.py` says so at the line where the two would otherwise
+    look inconsistent. **Record the direction at the moment the two sites
+    could be compared, not when the objection arrives** — the objection
+    arrives as a re-litigation of the rule, and by then the person raising it
+    has already read both sites and concluded they disagree.
   - **The real exemplars are `figure_search.py` and `extract_citations.py`**
     — tracked, declared, output-is-evidence — and `ccf_load.py`'s header
     cites those. Note the trap in the near-miss name: `pointer_check.py` IS
