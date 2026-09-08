@@ -212,7 +212,7 @@ const TRUNK_GBM = [
 const PRIVATE_POOL_GBM = [
   { gene:'PTEN loss', class:'driver', ccf:'~34% of GBM (computed from Brennan et al., Cell, 2013: PI3K-pathway mutations were mutually exclusive of PTEN alterations, with 59.4% of GBM showing one or the other and PI3K mutations alone at 25.1% — 59.4% − 25.1% = ~34.3% PTEN-specific)', note:'Removes a brake on the PI3K/AKT growth pathway downstream of receptor tyrosine kinase signaling — cooperates with either EGFR- or PDGFRA-amplified regions rather than competing with them, since it acts further downstream in the same signaling cascade both receptors feed into.' },
   { gene:'CDKN2A/B deletion', class:'driver', ccf:'57.8% of GBM (Brennan et al., Cell, 2013)', note:'Removes the p16/p14ARF brake on the cell cycle and p53 pathway — a distinct mechanism from the PI3K/AKT axis PTEN loss affects, so the two cooperate rather than substitute for one another. RB1 loss and CDK4/6 amplification reach a similar end effect on the same checkpoint through alternative, mutually exclusive routes — real GBM findings, but deliberately not included alongside this gene for that reason.' },
-  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
 ];
 
 // HISTOLOGY (microscopic-view data — every claim verified directly at the source): the WHO

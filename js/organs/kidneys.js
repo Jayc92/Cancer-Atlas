@@ -183,8 +183,8 @@ const TRUNK_CCRCC = [
 const PRIVATE_POOL_CCRCC = [
   { gene:'MTOR mutation', class:'driver', ccf:'a component of the PI(3)K/AKT pathway, which TCGA reports as "recurrently mutated" in clear cell RCC — no component-level frequency for MTOR itself is verified here (TCGA, Nature, 2013)', note:'Activates a growth-signaling pathway downstream of, and independent from, the VHL/HIF axis — a parallel route to proliferation that cooperates with the trunk VHL loss rather than substituting for it.' },
   { gene:'PTEN loss', class:'driver', ccf:'a component of the same recurrently-mutated PI(3)K/AKT pathway (TCGA, Nature, 2013)', note:'Removes a brake on the same PI3K/Akt/mTOR pathway MTOR mutations activate directly. Gerlinger et al. (NEJM, 2012) found convergent evolution here too — two independent PTEN mutations (a splice-site change and a missense change) arising separately in different, spatially separated regions of the same tumor.' },
-  { gene:'CDKN2A loss', class:'driver', note:'Removes a cell-cycle checkpoint (the p16 brake on CDK4/6) — recurrent and subtype-associated in ccRCC (TCGA, Nature, 2013), cooperating with the trunk VHL loss rather than competing with it, the same cell-cycle-checkpoint role this gene plays in every other cancer modeled in this atlas.' },
-  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
+  { gene:'CDKN2A loss', class:'driver', note:'Removes a cell-cycle checkpoint (the p16 brake on CDK4/6) — recurrent and subtype-associated in ccRCC (TCGA, Nature, 2013), cooperating with the trunk VHL loss rather than competing with it.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
 ];
 
 // HISTOLOGY (microscopic-view data — every claim verified directly at the source):

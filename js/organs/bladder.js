@@ -249,7 +249,7 @@ const TRUNK_UC = [
 const PRIVATE_POOL_UC = [
   { gene:'KMT2C mutation', class:'driver', ccf:'~18% (TCGA, 2017) &mdash; the single most frequently mutated chromatin-modifying gene in this cancer outside the branch/trunk genes above', note:'A histone-methyltransferase gene, recurrently disrupted &mdash; part of the same broad chromatin-remodeling vulnerability this atlas has already found in several other cancers (ARID1A in Liver and Ovary, ARID2 in Liver and Skin), here showing up as a different gene in the same functional family.' },
   { gene:'ATM mutation', class:'driver', ccf:'~14% (TCGA, 2017)', note:'A DNA-damage-response gene, recurrently mutated &mdash; a different route to genomic instability than TP53 loss, on an independent axis from either branch of this cancer\'s pathway split.' },
-  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome, same as in every other cancer modeled in this atlas.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
 ];
 
 // HISTOLOGY — PathologyOutlines was unreachable for this pass (HTTP 429, the same block the
