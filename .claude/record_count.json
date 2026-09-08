@@ -4,8 +4,8 @@
   "records": 488,
   "citation_crosscheck.records": 143,
   "citation_paren_ledger.basis_test": 0,
-  "internal_quote_check.internal_quote.marked": 14,
-  "pointer_check.pointer.pointers": 530,
+  "internal_quote_check.internal_quote.marked": 15,
+  "pointer_check.pointer.pointers": 534,
   "pointer_check.pointer.identity_oracle": 266
  },
  "lowers": [
