@@ -4844,6 +4844,71 @@ refute it, which is worth more than file order.
   one layer down in the scratch helper.** `pmc.ncbi.nlm.nih.gov` served a
   **reCAPTCHA challenge page** for two articles; NOT attempted, read via
   the Europe PMC REST API instead. **A gated fetch is recorded as gated.**
+- **THE ccf READ UNIT, RE-SPECIFIED BEFORE BATCH 4 (2026-09-07), which is
+  the batch-3 ruling above being executed rather than acknowledged.** The
+  unit is **THE RECORD PLUS ITS PROVENANCE COMMENT**, and attachment is
+  mechanical rather than judged: the contiguous `//` block immediately
+  above the record's own line, PLUS the contiguous `//` block immediately
+  above the declaration of the array the record sits in. Both kinds, not
+  either — the bladder defect was in the SECOND kind, a block above
+  `const TRUNK_UC = [` with no comment at all immediately above the record,
+  so an inline-only rule would have reproduced the exact miss that forced
+  this re-specification.
+  **THE LOAD, MEASURED AT `37aa47a` ON A CLEAN TREE** — bound to a commit
+  because no instrument prints it, which is the last of the four ways the
+  number rule allows and the only one available here: 144 records carry a
+  `gene:` field and 117 of those carry a ccf; they attach 29 distinct
+  comment blocks totalling 984 comment lines; the median record attaches 17
+  such lines, one `liver.js` record attaches 120, and 55 records attach
+  none.
+  **THE COMMENT LINES ARE SHARED, AND THAT IS THE THING THE ADJECTIVE
+  "LARGER" WAS HIDING IN BOTH DIRECTIONS.** A block above a container
+  serves every record inside it, so the load is clauses PLUS blocks, not
+  clauses TIMES lines: 984 lines read once each, not 117 × 17. Larger than
+  the clause count, as ruled — and BOUNDED, which the clause count never
+  was, because it counted the wrong thing rather than too few of them.
+  **AND THE QUEUE'S IDENTIFIERS HAD TO MOVE WITH THE UNIT — THE FINDING
+  THAT FORCED IT, WHICH CAME FROM READING AND NOT FROM AN INSTRUMENT.**
+  Batch 3's three records are named in this file by `file:line`, and **TWO
+  OF THE THREE WERE ALREADY WRONG IN THE COMMIT THAT WROTE THEM**
+  (`2f35ac8`). Checked against git rather than reasoned about: at
+  `2f35ac8^` the TERT record sat at bladder.js:232 and the ARID1A record at
+  liver.js:251 — which is what the reader read, so both were right at read
+  time — and the SAME commit's repair inserted comment lines above each,
+  pushing both down. The third survived only because that file had nothing
+  inserted above its referent. All three pointer strings entered this file
+  in that one commit, so this is staleness at birth, not drift afterwards.
+  **NOT A NEW CLASS, AND SAYING SO IS THE POINT:** the mechanism is already
+  named in `internal_quote_check.py`, about two pointers of its own —
+
+  QUOTES .claude/internal_quote_check.py
+  > both were stale by the time this file was committed, because the
+  > same commit added a QUOTES block near the top of each target and
+  > pushed the lines down.
+
+  What is new is only the POPULATION: prose pointers from this file into
+  `js/organs/*.js`, which `pointer_check.py` gives FLOOR ONLY under an
+  explicitly declared boundary. It reported `530/530` and `266/266` green
+  at `37aa47a` while two of these pointers named the wrong line, and **that
+  is the declared boundary behaving as declared, not a defect in it** — the
+  same flag-then-read contract recorded for `citation_polarity.py` above.
+  **THE REMEDY ALREADY EXISTS AND IS ALREADY CHECKED, SO NOTHING IS BUILT
+  HERE.** `internal_quote_check.py` scans this file for `QUOTES <path>`
+  markers, its targets may be any path in the repo, and it requires the
+  quoted span to occur EXACTLY ONCE. So a batch-4 record names its unit by
+  SPAN, not by line, and the span is verified by an instrument that already
+  runs. **FEASIBILITY MEASURED RATHER THAN ASSUMED:** at `37aa47a`, 116 of
+  the 144 records are uniquely identified by their bare `gene:'…'` span;
+  the remaining 28 are the same gene modeled at two sites in one file,
+  where EXACTLY ONCE fails and the span must be lengthened into the ccf or
+  the region id before it can anchor anything.
+  **WHAT THIS DELIBERATELY DOES NOT DO.** It re-reads nothing. Batch 2's
+  6/15 and batch 3's n=4 were measured on the old unit and are NOT restated
+  on the new one — re-deriving them is batch 4's work, not a footnote here.
+  The two stale pointers are repaired when their records are next read,
+  rather than by a sweep: a hand sweep buys a state the next content commit
+  partially undoes, which is `pointer_check.py`'s own reason for putting
+  the guard before the repair.
 - **POOL-MEMBER EXCLUSIVITY — A DEFECT CLASS THAT GENERATES RATHER THAN
   DESCRIBES, SWEPT AND BOUNDED (2026-09-06). THE FIX IS HELD FOR RULING;
   THE BOUND IS NOT.** Every other defect in this arc is a DESCRIPTION that
