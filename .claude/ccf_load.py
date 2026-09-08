@@ -35,10 +35,30 @@
 # is worth keeping for THAT, not for currency. An instrument would have added earlier detection of a
 # problem commit-binding already closes; this file adds a check on a claim NOTHING closes.
 #
-# THE UNIT, from CLAUDE.md's ccf re-specification: THE RECORD PLUS ITS PROVENANCE COMMENT, attached
-# mechanically rather than judged — the contiguous `//` block immediately above the record's own
-# line, PLUS the contiguous `//` block immediately above the declaration of the array the record sits
-# in. Both kinds, because the bladder defect was in the second kind.
+# THE UNIT IS THE RECORD ONLY — REVERTED (2026-09-08), BECAUSE BATCH 4 TESTED THE RE-SPECIFICATION
+# AND IT CAME BACK NEGATIVE. This line previously declared THE RECORD PLUS ITS PROVENANCE COMMENT,
+# from CLAUDE.md's re-specification of 2026-09-07. Batch 4 is the batch that unit was specified for,
+# and the user's ruling on its result is the reversion: "I ruled the record-plus-comment
+# re-specification. Batch 4 says it doesn't generalize: zero defects in the comment half, and
+# prediction (2) falsified 0 of 2 — on the stratum that exists to test it, at real reading cost, with
+# the strata not even effort-matched. The bladder case that motivated it was real, but it was n=1,
+# and one instance is what a pre-registration exists to keep from becoming a rule." Those figures are
+# QUOTED rather than restated; batch 4's write-up in CLAUDE.md is their only home.
+#
+# NONE OF THE ATTACHMENT MACHINERY IS REMOVED, AND THAT IS NOT SENTIMENT — three live things need it.
+# `--stratum` is batch 4's REPLAY, and a result whose sampling procedure has been deleted is a result
+# nobody can check. The load measurement below is comment-inclusive by construction, and `--verify`
+# binds it to a named commit. And the one class that SURVIVED the reversion is narrower and needs
+# both halves present at once: a comment block that CONTRADICTS its own record. In the user's words,
+# "Reading the comment half found nothing; comparing the two halves mechanically would have found
+# bladder." That is a grep over a pair, not a unit to read, which is why `unit` keeps both blocks.
+# THE LINE THAT HAS TO CHANGE IF RECORD-ONLY EVER BECOMES A REMOVAL rather than a default is
+# `stratify()`'s `len(r['unit']) > 1` test — the only place the two strata are distinguished.
+#
+# HOW ATTACHMENT IS COMPUTED, UNCHANGED: mechanically rather than judged — the contiguous `//` block
+# immediately above the record's own line, PLUS the contiguous `//` block immediately above the
+# declaration of the array the record sits in. Both kinds, because the bladder defect was in the
+# second kind.
 #
 # THE POPULATION IS EVERY `gene:` RECORD, NOT ONLY THE ccf-CARRYING ONES, and this line exists
 # because the first draft of this script got it wrong. CLAUDE.md reads "144 records carry a `gene:`
@@ -510,7 +530,8 @@ if __name__ == '__main__':
 
     at = args[0] if args else None
     m = measure(at)
-    print(f'  the unit is the record plus its provenance comment; comment lines counted ONCE each')
+    print('  a COMMENT-INCLUSIVE LOAD figure — record plus attached blocks, comment lines counted '
+          'ONCE each; not the read unit, which reverted to record-only after batch 4')
     print(f'DONE ccf_load: at {at or "the index"} — {m["records"]} records carry a gene field across '
           f'{m["files"]} organ files and {m["with_ccf"]} of those carry a ccf; they attach '
           f'{m["blocks"]} distinct comment blocks totalling {m["comment_lines"]} comment lines; the '

@@ -5005,8 +5005,15 @@ refute it, which is worth more than file order.
   **reCAPTCHA challenge page** for two articles; NOT attempted, read via
   the Europe PMC REST API instead. **A gated fetch is recorded as gated.**
 - **THE ccf READ UNIT, RE-SPECIFIED BEFORE BATCH 4 (2026-09-07), which is
-  the batch-3 ruling above being executed rather than acknowledged.** The
-  unit is **THE RECORD PLUS ITS PROVENANCE COMMENT**, and attachment is
+  the batch-3 ruling above being executed rather than acknowledged.
+  SUPERSEDED — THE RE-SPECIFICATION DID NOT SURVIVE THE BATCH IT WAS MADE
+  FOR: reverted to RECORD-ONLY on ruling (2026-09-08), with the grounds at
+  batch 4's write-up below.** The entry is kept as written because a
+  negative result is only interpretable against the claim it tested, and
+  because the attachment machinery it specifies is still built and still
+  used — for batch 4's replay and for the one narrower class that survived.
+  Read on for what was claimed; do not read it as current. The
+  unit **WAS** **THE RECORD PLUS ITS PROVENANCE COMMENT**, and attachment is
   mechanical rather than judged: the contiguous `//` block immediately
   above the record's own line, PLUS the contiguous `//` block immediately
   above the declaration of the array the record sits in. Both kinds, not
@@ -5208,6 +5215,99 @@ refute it, which is worth more than file order.
   instead — a key matching NOTHING, a key matching TWICE, a key matching
   ONCE — and the file says why, because an unattacked zero is precisely what
   condition (7) exists to catch.
+- **ccf BATCH 4 — READ AND RULED, AND THE RE-SPECIFICATION IT EXISTED TO
+  TEST CAME BACK NEGATIVE (2026-09-08).** Twelve units read at the
+  registered seed, six per stratum; the two `--stratum` commands above are
+  the replay and they reproduce the sample exactly. **2 of 6 defective in
+  EACH stratum, and all four defects sit ON THE RECORD LINE — zero in a
+  provenance comment.** `comments` stratum: `brain.js:202`'s EGFR ccf
+  qualifier and `ovary.js:269`'s "dominated by", both on the record line,
+  both comment halves clean. `none` stratum: `brain.js:215`'s false
+  universal and `prostate.js:231`'s mis-addressed pointer, both repaired at
+  `d17a15f`. The other two need source re-reading rather than a corpus grep
+  and stay OPEN.
+  **`ovary.js:269` IS THE SHARPEST OF THE FOUR, AND IT CUTS AGAINST THE
+  UNIT RATHER THAN FOR IT.** The source attributes a median of 25 and 89
+  mutations to SBS1/SBS5 — 114, on the all-somatic base. The note welds
+  "dominated by" onto the 46 PROTEIN-ALTERING figure, a smaller and
+  different denominator, so the attributed counts cannot even be a subset
+  of what they modify. The COMMENT half states the 46 correctly and makes
+  no dominance claim: on the one unit where the two halves disagreed, the
+  comment was the half that was RIGHT.
+  **THE THREE PREDICTIONS, SCORED.** (1) came out a TIE and is reported
+  UNINFORMATIVE — the pre-registered power statement being honoured rather
+  than a hedge, since six per stratum separates only a large difference and
+  a tie is not evidence of no difference. (2) is **FALSIFIED, 0 of 2**: on
+  the stratum that exists to test it, neither defect was in the comment.
+  (3), the pre-registered negative, was NOT formally triggered — `none`
+  came out EQUAL, not higher — but its substance landed on (2)'s
+  falsification, and the ruling did what (3) said to do: re-examine the
+  framing instead of defending it.
+  **THE RULING, AND IT IS THE USER OVERTURNING THEIR OWN
+  RE-SPECIFICATION:** "I ruled the record-plus-comment re-specification.
+  Batch 4 says it doesn't generalize: zero defects in the comment half, and
+  prediction (2) falsified 0 of 2 — on the stratum that exists to test it,
+  at real reading cost, with the strata not even effort-matched. The
+  bladder case that motivated it was real, but it was n=1, and one instance
+  is what a pre-registration exists to keep from becoming a rule."
+  **BATCH 5 REVERTS TO RECORD-ONLY AS THE DEFAULT UNIT.** The superseded
+  entry is corrected at its own sentence above rather than only here, and
+  the declaration in `ccf_load.py` is corrected at its own line. None of
+  the attachment machinery is removed — three live things still need it,
+  and that file names the single line that would have to change if
+  record-only ever became a REMOVAL instead of a default.
+  **WHAT SURVIVES IS NARROWER, AND IT IS A GREP RATHER THAN A READ UNIT:** a
+  comment block that CONTRADICTS its own record. In the ruling's words,
+  "Reading the comment half found nothing; comparing the two halves
+  mechanically would have found bladder." That is the internal-inconsistency
+  shape, at five instances as of this entry — the fifth being
+  `fraction_check.py` carrying the correct `283/357` in its own header,
+  where the instrument holding the right number still cannot catch the
+  wrong one.
+  **THE ADJUDICATION HELD A STAKE AND WAS RESOLVED AGAINST IT, recorded
+  because nothing else would show it.** `testis.js:230`'s two candidates
+  both dissolved at the source, leaving one borderline: the ccf says
+  "cohort of testicular germ cell TUMORS" where the source says PATIENTS.
+  The reader held a stake in the `comments` stratum showing defects, so
+  that borderline was scored CLEAN WITH A NOTED IMPRECISION and not
+  counted. Scored the other way it would have been 3 of 6 against 2 of 6
+  and would have satisfied (1) — so the tie is the conservative reading,
+  not a convenient one.
+  **TWO DESIGN FINDINGS, BOTH CONFOUNDS THE PRE-REGISTRATION FAILED TO
+  NAME.** First, UNIT SIZE MEASURES COMMENT ATTACHMENT, NOT READING LOAD:
+  `skin.js:400` is unit=1 — nominally the cheap stratum — and carries about
+  a dozen citation clusters, so "the `none` stratum is cheap" was false and
+  THE STRATA ARE NOT EFFORT-MATCHED. That record is scored **no defect
+  found at partial depth**, four of those clusters verified, rather than
+  clean, because a clean at partial depth is a weaker and different claim
+  than a clean. Second, STRATUM SEPARATION CANNOT BE ENFORCED AT
+  READ-WINDOW LEVEL: `brain.js:215` was seen while reading `brain.js` lines
+  124-218 for a `comments`-stratum unit, so one of the two `none`-stratum
+  findings was surfaced by a `comments`-stratum read. Disclosed rather than
+  laundered — it does not touch the record-line/comment split, which is
+  what (2) turned on.
+  **AND THE FINDING THE BATCH WAS NOT LOOKING FOR: A SOURCE-FREE DEFECT
+  CLASS, FALSE CLAIMS ABOUT THE ATLAS'S OWN CONTENTS.** Two of the four
+  needed no fetch, no paywall and no source at all — they are decidable by
+  grep. `ovary.js:266` does not merely fail to support `brain.js:215`; it
+  CONTRADICTS it, with a citation of its own.
+  **THE MISS HAS A SHAPE, AND THIS IS THE USER'S OWN TALLY OF IT:** "That's
+  a new source-free class, which makes three times I've declared that well
+  dry and been wrong. The pattern in the misses is consistent: each time, I
+  enumerated classes about the corpus's relationship to EXTERNAL sources and
+  missed one about its relationship to ITSELF. Share sums, duplicate
+  figures, and fraction agreement were all internal too — I keep finding
+  that category and then forgetting it's a category."
+  **THE CLASS IS GUARDED RATHER THAN HAND-SWEPT, AND THE INSTRUMENT COUNT
+  HOLDS AT FIFTEEN.** `absence_claim_check` absorbs it instead of a
+  sixteenth instrument being declared, on the ruling's own argument: "A
+  universal claim is the POSITIVE MIRROR of an absence claim — 'in every
+  other cancer modeled in this atlas' and 'no functional study has
+  adjudicated' are the same object: an unscoped quantification over a
+  population, checkable against that population." The guard was built
+  BEFORE the repairs and its output was the worklist; the hand count and
+  the guard's count were different numbers, which is recorded in
+  `d17a15f`'s message rather than restated here.
 - **LUAD's `RB1 loss` REMOVED FROM THE PRIVATE POOL — QUESTION (2) CLOSED ON
   RULING (2026-09-07), AND THE GROUNDS WERE IN-CORPUS ALL ALONG.** The
   exclusion is SOFT, MECHANISTIC-FIT class, and explicitly NOT an

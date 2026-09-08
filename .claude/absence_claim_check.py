@@ -138,6 +138,181 @@ def classify(text):
                                             'with no search scope or dataset bound')
     return best
 
+# ---------------------------------------------------------------------------
+# THE CORPUS-UNIVERSAL WIDENING (2026-09-08, user ruling) — the SAME OBJECT, mirrored.
+#
+# THE ARGUMENT FOR PUTTING IT HERE RATHER THAN IN A SIXTEENTH INSTRUMENT (user): "A universal
+# claim is the POSITIVE MIRROR of an absence claim — 'in every other cancer modeled in this atlas'
+# and 'no functional study has adjudicated' are the same object: an unscoped quantification over a
+# population, checkable against that population." This file already owns the scoped-vs-unscoped
+# vocabulary, clause-level detection and the exemption machinery, so the widening is natural.
+#
+# AND THE MIRROR IS EXACT IN THE ONE WAY THAT MATTERS: an unscoped ABSENCE claim quantifies over
+# the world's literature, which this instrument CANNOT resolve — so it can only flag. An unscoped
+# UNIVERSAL claim quantifies over THE ATLAS, which is sitting right here on disk. So this half
+# does not flag, it RESOLVES, and it names the counterexamples. That is why the class was worth a
+# widening and not just a note: it is the first defect class here with a real oracle.
+#
+# WHY THE CLASS EXISTS AT ALL (batch 4, 2026-09-08): 2 of that batch's 4 defects were false claims
+# about the atlas's OWN contents, needing no fetch and no source. brain.js:215 asserted TTN was
+# background noise "same as in every other cancer modeled in this atlas" while ovary.js:266
+# CONTRADICTS it with a citation, and breast/thyroid carry no TTN record at all.
+#
+# GRANULARITY IS PER-CANCER, NOT PER-FILE, and the difference is a false clean rather than a nicety.
+# ovary.js holds HGSOC and OCCC; HGSOC:149 carries TTN and OCCC deliberately does not. A file-level
+# index would report ovary.js as HAVING TTN and pass the claim — the dangerous direction. The
+# `const (REGIONS|TRUNK|PRIVATE_POOL)_<CANCER>` partition is what makes per-cancer resolution
+# possible, so the presence index is keyed by that suffix.
+#
+# TWO TIERS, AND THE SECOND ONE DOES NOT FAIL THE BATTERY. Resolution needs a SUBJECT to quantify
+# over, and the only subject this instrument can compute is the record's own gene symbol. A
+# universal over a gene RESOLVES. A universal over anything else — kidneys.js:93's "unlike every
+# other organ modeled in this atlas so far" quantifies over retroperitoneal POSITION — is reported
+# as UNIVERSAL-UNRESOLVED and read by a human, because computing that property is out of scope and
+# failing on it would force a hand-declared exemption for every legitimate self-reference.
+# THIS IS THE LINE THAT HAS TO CHANGE to make the second tier fail: give it a property oracle, or
+# declare each instance, and only then move it into the exit-status set.
+#
+# A THIRD SHAPE IS DECLINED OUTRIGHT, AND THE DECISION IS RECORDED HERE BECAUSE THIS IS WHERE THE
+# TIER WOULD BE ADDED. prostate.js:231 cited "the same honesty precedent this atlas's LUAD adrenal
+# gland and ccRCC liver/brain sites already use" — a SPECIFIC POINTER into the corpus rather than a
+# universal over it. Two of the three named sites really do decline a frequency; the ccRCC LIVER
+# site (kidneys.js:143) carries "~15% of clear cell RCC", the exact opposite of the precedent being
+# invoked, so the claim was two-thirds true and mis-addressed on the third. REPAIRED BY HAND, not
+# mechanized: resolving it requires modelling what "this precedent" IS and then testing a named
+# site for it, and a matcher loose enough to find the reference would flag every cross-reference in
+# the atlas — the population is ~52 self-references in record fields, mostly legitimate. The cost
+# of declining is real and worth stating: this pointer names sites by DESCRIPTION, and kidneys.js:145
+# (the surviving ccRCC referent) has an open item on its own ccf wording, so a repair there silently
+# breaks this pointer with nothing reporting it. That is the staleness-at-birth mechanism already on
+# record for line pointers, arriving in prose form. IF A THIRD TIER IS EVER BUILT, IT GOES HERE.
+#
+# NO SIDECAR, DELIBERATELY. The defect count already drives exit status, which is how this
+# instrument has always worked, and a sidecar would move battery.py's "N reporting members emitted
+# a sidecar / M sidecar metrics ratcheted" pair and give the widening a second thing to keep in
+# step for no detection gain. The consequence accepted: the UNRESOLVED count is printed every run
+# but is not ratcheted, so it can grow silently. THIS is the line to change if it does.
+POOL_DECL = re.compile(r"^const (REGIONS|TRUNK|PRIVATE_POOL|EXCLUSIVE_PAIRS)_([A-Z0-9]+)\s*=")
+PRESENCE_POOLS = ('REGIONS', 'TRUNK', 'PRIVATE_POOL')
+GENE_FIELD = re.compile(r"gene:'((?:[^'\\]|\\.)*)'")
+# Gene-symbol shape, deliberately strict: a leading ALL-CAPS token. 'Clock-like background
+# variants' and '1p/19q co-deletion' correctly fail it and fall through to UNRESOLVED rather than
+# being resolved against a symbol that is not one.
+SYMBOL = re.compile(r"^([A-Z][A-Z0-9]+(?:-[A-Z0-9]+)?)\b")
+# A universal needs BOTH a quantifier and a reference to the corpus. 'every'/'all'/'only' are
+# common words and 'this atlas' is not, so the corpus reference carries the precision here.
+QUANTIFIER = r"\bevery\b|\ball (?:other )?(?:cancers?|tumors?|tumours?|organs?|sites?)\b|\beach\b|\bthe only\b|\bno other\b|\bany other\b"
+CORPUS_REF = r"\bthis atlas\b|\bthe atlas\b|\bmodel(?:l)?ed in this\b|\bmodel(?:l)?ed here\b|\belsewhere in this\b"
+# A COMPARATIVE or SUPERLATIVE quantification over the corpus is NOT a presence claim, and
+# resolving gene presence against it would answer a question it never asked. FOUND BY THE FIRST
+# LIVE RUN, which is this file's documented pattern arriving a second time: skin.js:408 says TTN
+# "earns its place in THIS cancer's pool more than any other" and that "melanoma's per-cell
+# mutation load is the heaviest in this atlas". Both are real corpus claims that deserve a read —
+# the second is an unexamined superlative over the atlas's own figures — but TTN's presence in the
+# other fifteen cancers is irrelevant to either, so the honest verdict is UNRESOLVED, not DEFECT.
+# A hand enumeration had scored this record CLEAN because it lacks the boilerplate clause; the
+# guard found it for a reason the hand pass had no way to see, which is the argument for the guard.
+COMPARATIVE = (r"\bmore than\b|\bless than\b|\bfewer than\b|\bbetter than\b|\bworse than\b|"
+               r"\bheaviest\b|\blightest\b|\bhighest\b|\blowest\b|\bmost\b|\bleast\b|"
+               r"\bthe only\b|\b\w+er than\b")
+
+def universal_clause(text):
+    """The narrowest clause carrying both a quantifier and a corpus reference, or None.
+    Fine clauses are tried FIRST so the reported span is the claim and not its whole sentence;
+    the sentence is the fallback because a list comma severs quantifier from referent exactly as
+    it severs negation from predicate (see GRANULARITIES)."""
+    for sentence in clauses(text):
+        for cl in fine_clauses(sentence) + [sentence]:
+            if re.search(QUANTIFIER, cl, re.I) and re.search(CORPUS_REF, cl, re.I):
+                return ' '.join(cl.split())
+    return None
+
+def gene_symbol(raw):
+    m = SYMBOL.match(raw.strip())
+    return m.group(1) if m else None
+
+def classify_universal(text, symbol, cancer, presence):
+    """-> (verdict, reason). DEFECT-FALSE-UNIVERSAL / OK-UNIVERSAL-VERIFIED /
+    UNIVERSAL-UNRESOLVED / NONE. `presence` maps CANCER -> set of gene symbols."""
+    cl = universal_clause(text)
+    if cl is None:
+        return ('NONE', '')
+    if re.search(COMPARATIVE, cl, re.I):
+        return ('UNIVERSAL-UNRESOLVED', 'comparative/superlative over the corpus, not a presence '
+                                        'claim — gene presence cannot settle it')
+    if symbol is None:
+        return ('UNIVERSAL-UNRESOLVED', 'quantifies over the atlas; record names no gene symbol')
+    # The claim must actually be ABOUT the record's gene, else the symbol is the wrong subject to
+    # resolve against — 'a first for the atlas' on a gene record is not a claim about that gene.
+    if not re.search(r'\bthis gene\b|\b%s\b' % re.escape(symbol), text, re.I):
+        return ('UNIVERSAL-UNRESOLVED', f'quantifies over the atlas but not about {symbol}')
+    others = sorted(k for k in presence if k != cancer)
+    missing = [k for k in others if symbol not in presence[k]]
+    if missing:
+        return ('DEFECT-FALSE-UNIVERSAL',
+                f'{symbol} is absent from {len(missing)} of {len(others)} other cancers '
+                f'({", ".join(missing)})')
+    return ('OK-UNIVERSAL-VERIFIED', f'{symbol} is present in all {len(others)} other cancers')
+
+def corpus_scan(paths):
+    """-> (presence, owner): CANCER -> set of gene symbols, and (path, lineno) -> CANCER.
+    EXCLUSIVE_PAIRS is tracked as a boundary but excluded from PRESENCE — a gene named only in an
+    exclusivity pair is not a modeled record, and counting it would manufacture support."""
+    presence, owner = {}, {}
+    for p in paths:
+        cancer = None
+        for i, line in enumerate(open(p, encoding='utf-8'), 1):
+            m = POOL_DECL.match(line)
+            if m:
+                if m.group(1) in PRESENCE_POOLS:
+                    cancer = m.group(2)
+                    presence.setdefault(cancer, set())
+                else:
+                    cancer = None
+                continue
+            if line.startswith('];'):
+                cancer = None
+                continue
+            if cancer is None or line.lstrip().startswith('//'):
+                continue
+            owner[(p, i)] = cancer
+            for raw in GENE_FIELD.findall(line):
+                s = gene_symbol(raw)
+                if s:
+                    presence[cancer].add(s)
+    return presence, owner
+
+# A synthetic index, so the resolver is tested on known answers rather than on the live corpus it
+# is meant to judge. TTN present in two of three cancers is the brain.js:215 shape exactly.
+UNIVERSAL_INDEX = {'GBM': {'TTN', 'EGFR'}, 'HGSOC': {'TTN'}, 'OCCC': {'OBSCN'}}
+UNIVERSAL_FIXTURES = [
+    # the two real defects, abridged — a false universal must name its counterexample
+    ("background mutational noise, common simply because TTN is one of the largest genes in the "
+     "genome, same as in every other cancer modeled in this atlas.",
+     'TTN', 'GBM', 'DEFECT-FALSE-UNIVERSAL'),
+    ("the same cell-cycle-checkpoint role this gene plays in every other cancer modeled in this "
+     "atlas.", 'EGFR', 'GBM', 'DEFECT-FALSE-UNIVERSAL'),
+    # the TRUE universal must pass, or the check is just a pattern ban
+    ("noise, common because TTN is huge, same as in every other cancer modeled in this atlas.",
+     'TTN', 'OCCC', 'OK-UNIVERSAL-VERIFIED'),
+    # no gene subject -> unresolved, NOT a defect and NOT a clean
+    ("The kidneys sit retroperitoneally, unlike every other organ modeled in this atlas so far.",
+     None, 'GBM', 'UNIVERSAL-UNRESOLVED'),
+    # a corpus universal on a gene record that is NOT about that gene: wrong subject, unresolved
+    ("the pool ships two verified passenger entries and zero drivers, a first for every cancer in "
+     "this atlas", 'OBSCN', 'OCCC', 'UNIVERSAL-UNRESOLVED'),
+    # skin.js:408's real shape, abridged: the gene IS named and the corpus IS quantified over, but
+    # the claim is comparative. Resolving TTN presence here would report a defect that is not one —
+    # this fixture is the one that would regress if COMPARATIVE were dropped.
+    ("It earns its place in THIS cancer's pool more than any other: melanoma's per-cell mutation "
+     "load is the heaviest in this atlas, and almost all of it is passengers like this one.",
+     'TTN', 'GBM', 'UNIVERSAL-UNRESOLVED'),
+    # ordinary prose and a bare atlas self-reference with no quantifier must not fire
+    ("the atlas does not carry a passenger over from other cancers and relabel it", 'TTN', 'GBM',
+     'NONE'),
+    ("Margins are often pushing and circumscribed rather than infiltrative", 'TTN', 'GBM', 'NONE'),
+]
+
 FIXTURES = [
     # the four real defects at birth
     ("no interaction analysis has flagged it against either", 'DEFECT'),
@@ -182,8 +357,14 @@ def selftest():
         good = got == want
         ok &= good
         print(f"  {'ok  ' if good else 'FAIL'} want {want:24s} got {got:24s} {text[:58]!r}")
+    for text, sym, cancer, want in UNIVERSAL_FIXTURES:
+        got, why = classify_universal(text, sym, cancer, UNIVERSAL_INDEX)
+        good = got == want
+        ok &= good
+        print(f"  {'ok  ' if good else 'FAIL'} want {want:24s} got {got:24s} {text[:58]!r}")
     print('SELFTEST', 'PASS — fires on the existence form, passes the search/scoped forms, '
-          'honours all three exemptions, and is not laundered by a short quotation'
+          'honours all three exemptions, is not laundered by a short quotation, and resolves a '
+          'corpus universal against a synthetic index in all three directions'
           if ok else 'FAIL — do not trust this scan')
     return ok
 
@@ -192,27 +373,52 @@ if __name__ == '__main__':
         sys.exit(1)
     if '--selftest' in sys.argv:
         sys.exit(0)
+    paths = sorted(glob.glob('js/organs/*.js'))
+    presence, owner = corpus_scan(paths)
     counts = {}
     defects = []
-    for f in sorted(glob.glob('js/organs/*.js')):
+    universals = []
+    unresolved = []
+    for f in paths:
         for i, line in enumerate(open(f, encoding='utf-8'), 1):
             if line.lstrip().startswith('//'):
                 continue
-            for fld, val in FIELD.findall(line):
+            fields = FIELD.findall(line)
+            gene = next((gene_symbol(v) for k, v in fields if k == 'gene'), None)
+            for fld, val in fields:
                 if fld not in READ_FIELDS:
                     continue
                 for cl in clauses(val):
                     verdict, why = classify(cl)
-                    if verdict == 'NONE':
-                        continue
-                    counts[verdict] = counts.get(verdict, 0) + 1
-                    if verdict == 'DEFECT':
-                        defects.append((f, i, fld, ' '.join(cl.split()), why))
+                    if verdict != 'NONE':
+                        counts[verdict] = counts.get(verdict, 0) + 1
+                        if verdict == 'DEFECT':
+                            defects.append((f, i, fld, ' '.join(cl.split()), why))
+                # The universal runs on the WHOLE field value, not per sentence: the quantifier and
+                # the gene it is about are routinely in different sentences of one note.
+                uverdict, uwhy = classify_universal(val, gene, owner.get((f, i)), presence)
+                if uverdict != 'NONE':
+                    counts[uverdict] = counts.get(uverdict, 0) + 1
+                    span = universal_clause(val) or ''
+                    if uverdict == 'DEFECT-FALSE-UNIVERSAL':
+                        universals.append((f, i, fld, span, uwhy))
+                    elif uverdict == 'UNIVERSAL-UNRESOLVED':
+                        unresolved.append((f, i, fld, span, uwhy))
     for f, i, fld, cl, why in defects:
         print(f'  UNSCOPED ABSENCE CLAIM: {f}:{i} [{fld}] — {why}')
         print(f'      {cl[:220]}')
+    for f, i, fld, cl, why in universals:
+        print(f'  FALSE CORPUS UNIVERSAL: {f}:{i} [{fld}] — {why}')
+        print(f'      {cl[:220]}')
+    # Printed, not failed, under the declared two-tier boundary above.
+    for f, i, fld, cl, why in unresolved:
+        print(f'  universal needs a read: {f}:{i} [{fld}] — {why}')
+        print(f'      {cl[:160]}')
     tally = ', '.join(f'{k} {v}' for k, v in sorted(counts.items()))
+    bad = len(defects) + len(universals)
     # DONE line last (7-bis): a clean scan is never a pass without it.
-    print(f'DONE absence_claim_check: {len(defects)} unscoped absence claims '
-          f'({tally or "no absence claims found"})')
-    sys.exit(1 if defects else 0)
+    print(f'DONE absence_claim_check: {bad} unscoped claims '
+          f'({len(defects)} absence, {len(universals)} false corpus universal), '
+          f'{len(unresolved)} universals flagged for a read, '
+          f'{len(presence)} cancers indexed ({tally or "no claims found"})')
+    sys.exit(1 if bad else 0)
