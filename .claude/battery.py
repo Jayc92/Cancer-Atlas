@@ -157,6 +157,48 @@
 # with no fifteenth battery member watching for the defect, the comment on the line IS the mechanism at
 # authoring time. A note that is merely well filed would leave nothing there at all.
 #
+# THE CRITERION IS WHERE THE READER IS STANDING, AND IT HAS EXACTLY THREE POSITIONS (user ruling,
+# 2026-09-08, sharpening the two paragraphs above). "At the site" is not the general form of this rule.
+# It is position ONE of three, and stating only position one is precisely why the other two got
+# re-derived by analogy each time they came up. "Where the reader is standing" is the right criterion
+# and is too abstract to survive on its own, so it is enumerated instead — three positions, each with
+# a home this repo already uses:
+#   AUTHORING. The reader is editing a line whose change would break the rule. Home: a TRIGGER COMMENT
+#     ON THAT LINE, naming the condition and pointing back here. Applied at the three still-globbing
+#     defect counters named above; this is the position the paragraphs above already covered.
+#   FAILURE. The reader is at a red terminal holding a problem string, deciding what to do about it,
+#     and may never open the source at all. Home: THE PROBLEM STRING ITSELF. Established by
+#     citation_paren_ledger.py's UNSCORED text, whose detection was a measurement and whose advice was
+#     stale: annotating that file's docstring alone would have left the wrong instruction sitting
+#     exactly where it was being acted on, which is the whole failure this rule exists to prevent.
+#   REVIEW. The reader is looking at a diff or a commit message, deciding whether a change is sound.
+#     Home: THE MACHINE-QUOTED DONE LINE, which commit_checked.sh has been pasting into every message
+#     since it was written. That position has been operating correctly and UNNAMED, which is exactly
+#     why it never got counted as an instance of this rule.
+#   AND ONE COROLLARY, BECAUSE THE RULE READ ALONE IS DESTRUCTIVE (user ruling, 2026-09-08). Describe
+# the shape, do not instantiate it — AND WHERE THE INSTANCE IS THE EVIDENCE, SPELL IT RATHER THAN
+# DELETE IT. Three addresses in internal_quote_check.py and CLAUDE.md are recorded as stale or
+# fabricated, and for those the address is simultaneously the defect and the proof the defect existed:
+# delete the number and the claim about it loses its own referent, so a record is destroyed to satisfy
+# a counter. Writing it spelled — a file name, the word "line", the number — reads identically to a
+# human and is invisible to a matcher that wants the colon. Evidence kept, instance gone, and a floor
+# that drops for a re-verifiable reason instead of being propped up by known-bad entries. This is a
+# COROLLARY and not an exception: the rule was always about what a scanner counts, never about
+# refusing to say what happened.
+#
+#   SO IT IS A CHECKLIST AND NOT A JUDGEMENT: for any lesson, ask which of the three readers needs it,
+# and put it where that reader is. More than one may need it; the REASONING still lives here once, and
+# what goes to each position is the actionable half. The enumeration is the part that stops a fourth
+# position needing an analogy — and if a fourth reader is ever found, it gets added here, not derived.
+#
+# ONE CORRECTION FILED HERE BECAUSE ITS OWN SITE CANNOT BE AMENDED: 457ce7d's message says this
+# principle wants "stating it once as a rule", which asserts that no record existed. One did — this
+# block — and only its SCOPE was too narrow, being written throughout in terms of an author editing a
+# line. A MISSING RECORD AND A NARROWLY-SCOPED ONE WANT DIFFERENT FIXES, writing versus extending, so
+# the wrong diagnosis recommended the wrong remedy. Both the claim and the recommendation came from
+# recollection rather than from reading the file, which is the same failure as asserting a repo's
+# contents without looking. Recorded at the extension because a reader meets the claim here.
+#
 # AND ONE HOME, NOT TWO. A copy of this block elsewhere would be a dual-home record, which by
 # record_sync_check.py's own discipline wants a SYNC pair and a marker occurring exactly once —
 # i.e. it would be governed by rule C, which it contains. A single home sidesteps that recursion
@@ -1207,7 +1249,10 @@ def wrapper_selftest_verdict(name, returncode, output):
 
 #   Vars that REDIRECT git at a repository. Scrubbed from the selftests' environment because
 #   commit_checked.sh's selftest runs `git init`, `git add f.txt` and `git commit -qm seed` inside a
-#   scratch TMPDIR repo with no git-env isolation of its own (commit_checked.sh:164-166), and a git
+#   scratch TMPDIR repo with no git-env isolation of its own (commit_checked.sh:180-182 — the three
+#   commands named just above are the identity of that reference and the number is only provenance;
+#   it read 164-166, which was TRUE when written at 8140a15 and staled when lines were added above it,
+#   so this is DRIFT and was found by hand audit, not by an instrument), and a git
 #   hook EXPORTS these to everything it runs. Nothing invokes this battery from a hook today — the
 #   repo has no hooks installed, only .sample files — so scrubbing them changes nothing measurable
 #   now. It is here because THIS PREFLIGHT IS WHAT MAKES THAT SCRATCH COMMIT REACHABLE ON EVERY RUN,

@@ -5,7 +5,7 @@
   "citation_crosscheck.records": 144,
   "citation_paren_ledger.basis_test": 0,
   "internal_quote_check.internal_quote.marked": 15,
-  "pointer_check.pointer.pointers": 586,
+  "pointer_check.pointer.pointers": 580,
   "pointer_check.pointer.identity_oracle": 266
  },
  "lowers": [
@@ -15,6 +15,13 @@
    "to": 487,
    "count": 487,
    "reason": "paren-shadow removes three years their head never published: Fearon|1991 colon.js:169 (APC cloning date; the paper is Cell 1990), Powell|1990 colon.js:172 (the model being quoted; the paper is Nature 1992), Schulze|2017 liver.js:280 (a TCGA cohort's year; the paper is Nat Genet 2015). Re-runnable: the record_keys diff on this commit is exactly those three lines and nothing else, and each of the three heads keeps its own true record at the same ref"
+  },
+  {
+   "metric": "pointer_check.pointer.pointers",
+   "from": 586,
+   "to": 580,
+   "count": 580,
+   "reason": "six wrong non-corpus pointers rewritten as SPELLED addresses (file name, the word line, the number) rather than deleted, so they leave the matchable population without losing their referents. Each was an INSTANCE of the defect its own paragraph documents: two fabricated spans that never held those lines at any commit, in two homes each (an instrument header and CLAUDE.md). Deletion was refused because for these six the address is simultaneously the defect AND the evidence the defect existed: remove it and the claim that the line never held that span loses its referent and stops being checkable. Re-runnable: pointer_check on this commit reports six fewer pointers and the SAME identity_oracle value, because none of the six carried an author+year oracle - they sat inside the counted population and RESOLVED, which is exactly why range-checking-only reported them green from the day they were written. The colon-delimited non-corpus pointers that remain are one content-anchored repair into commit_checked.sh plus two declared-correct fraction_check references"
   }
  ],
  "record_keys": [

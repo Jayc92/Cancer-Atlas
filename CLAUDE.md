@@ -4309,13 +4309,31 @@ liability that nothing checks… the span delivers uniqueness and the line numbe
 derives."
 
 - **BOTH SUB-SHAPES, IN ONE FILE, ON THE SAME DAY THE DISTINCTION WAS DRAWN.**
-  `citation_head_check.py:88` and `citation_paren_ledger.py:125` were TRUE at
+  `citation_head_check.py` line 88 and `citation_paren_ledger.py` line 125
+  (spelled, not colon-delimited — see below) were TRUE at
   the parent commit and **went stale inside the commit that wrote them**,
   because that same commit added a `QUOTES` block near the top of each target
   and pushed the lines down: **DRIFT**, with a mechanism worth naming — writing
-  a pointer while reading the pre-edit file. `battery.py:151` (twice) was
-  **FABRICATION**: the span it names has existed in exactly two commits, at line
-  154 and then 155, so the pointer resolved to nothing at any point in history.
+  a pointer while reading the pre-edit file. `battery.py` line 151 (twice) was
+  **FABRICATION**: 151 has never been one of that span's addresses at any commit,
+  so the pointer resolved to nothing at any point in history. The addresses the
+  span HAS held are derivable from git and are deliberately not enumerated here —
+  the enumeration that used to sit in this sentence named two of them and was
+  already wrong before `457ce7d`, which is a machine number drifting in prose
+  inside the record of a drifted number.
+- **ALL THREE ADDRESSES IN THE BULLET ABOVE ARE SPELLED, NOT COLON-DELIMITED, ON
+  PURPOSE** (user ruling, 2026-09-08). `pointer_check.py`'s pattern covers `.py`
+  as well as `.js`, so while they were written in matchable form all six copies —
+  three addresses, two homes each — sat in its **counted** population and
+  **resolved**, meaning addresses this record calls stale or fabricated reported
+  green on every run. Deletion was the wrong repair: for these six the address is
+  simultaneously the defect and the evidence the defect existed, so removing 151
+  would leave the claim about 151 with no referent to check. Spelling reads the
+  same to a human and is invisible to the matcher, so the evidence survives and
+  the instance does not. The floor was lowered by exactly six accordingly.
+  `battery.py`'s designated block carries this as a **corollary** to
+  describe-the-shape-don't-instantiate-it, and `internal_quote_check.py`'s note
+  carries it at the line.
 - **THE POPULATION FIGURES IN THIS BULLET ARE SUPERSEDED** — by the entry titled
   "THE GUARD CAME BEFORE THE REPAIR, AND THE FLOOR WAS THE DECISIVE NUMBER".
   As measured on 2026-09-07 by an unsaved hand grep: 191 pointers,

@@ -94,8 +94,10 @@
 #   citation_paren_ledger.py's "a reason that QUOTES the span". A substring matcher would read both
 #   as markers and derive a path from the next word. Selftest arms 8 and 9 use those two lines
 #   verbatim, so the anchor is demonstrated against the strings that would break it and not a fixture.
-#   THOSE TWO POINTERS USED TO BE LINE NUMBERS — `citation_head_check.py:88` and
-#   `citation_paren_ledger.py:125` — and both were stale by the time this file was committed, because
+#   THOSE TWO POINTERS USED TO BE LINE NUMBERS — `citation_head_check.py` line 88 and
+#   `citation_paren_ledger.py` line 125, spelled rather than colon-delimited so the record keeps its
+#   evidence without adding two instances to what pointer_check counts — and both were stale by the
+#   time this file was committed, because
 #   the same commit added a QUOTES block near the top of each target and pushed the lines down. A
 #   file:line pointer in prose is the `:<anchor>` field this convention was ruled to DROP, still being
 #   typed by hand where no checker reaches it. Naming the span instead costs nothing and cannot drift.
@@ -150,10 +152,28 @@
 # can demonstrate is a marked quote whose target has moved or vanished, which is arms 1 and 4.
 # A quote of a file's OWN past state is refused rather than half-supported (arm 5, SELF TARGET):
 # battery.py's "the wrong way to close those two" is precisely that, and its target does not
-# exist in any present file. (That pointer read `battery.py:151` until the demonstrative sweep read
-# it: the span has only ever been at 154 and then 155, so the line number was FABRICATED — never true
-# at any commit — rather than merely stale. Breakage 4's sub-shape, in the header of the instrument
-# built to catch breakage 4.)
+# exist in any present file. (That pointer read `battery.py` line 151 until the demonstrative sweep
+# read it: 151 has never been one of that span's addresses at ANY commit, so the number was FABRICATED —
+# never true rather than merely stale. The addresses the span HAS held are derivable from git and are
+# deliberately not enumerated here, because the enumeration that used to sit in this sentence named
+# two of them and was already wrong before 457ce7d — a machine number drifting in prose, inside the
+# note about a drifted number. Breakage 4's sub-shape, in the header of the instrument built to catch
+# breakage 4.)
+#   THOSE ADDRESSES ARE NOW SPELLED RATHER THAN COLON-DELIMITED, AND THE FLOOR WAS LOWERED (user
+# ruling, 2026-09-08). pointer_check.py's POINTER pattern covers .py as well as .js, so every bad
+# address written in matchable form sat inside its COUNTED population and RESOLVED — file tracked,
+# line in range. Three addresses that this file and CLAUDE.md describe AS stale or fabricated were
+# therefore reporting green on every run, at two homes each: not unchecked pointers, counted and
+# passing ones, and the sharpest instance of that instrument's floor-versus-identity gap yet found.
+#   DELETION WAS THE WRONG REPAIR, WHICH IS THE PART WORTH KEEPING. For these six the address IS both
+# the defect and the evidence that the defect existed — delete 151 and the claim "151 never held that
+# span" loses its own referent and stops being checkable at all. Spelling it reads identically to a
+# human and is invisible to the matcher, so the evidence survives, the instance does not, and the
+# floor drops by exactly six, one per site, instead of being propped up by six known-bad entries.
+# record_count.json carries the resulting value; it is deliberately not restated here.
+#   THE COROLLARY LIVES IN battery.py's DESIGNATED BLOCK, because describe-the-shape-do-not-instantiate
+# -it read alone would have someone destroying records to satisfy a counter. THE LINE THAT WOULD HAVE
+# TO CHANGE IS THE FIRST OF THIS PARAGRAPH'S PARENTHETICAL, which is why the note also sits here.
 #
 # SCOPE. Markers are looked for in .claude/*.{py,sh,js,md} and CLAUDE.md — the .claude/ <-> CLAUDE.md
 # boundary in BOTH directions, per the ruling, because dual-home records cross that line by design.
