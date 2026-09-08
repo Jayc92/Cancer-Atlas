@@ -137,6 +137,22 @@
 # with four records changed underneath it. The ratchet holds, no --lower-ratchet was needed, and NO
 # INSTRUMENT IN THE CHAIN WOULD HAVE SEEN THE DIFFERENCE HAD THE SUBSTITUTION RUN THE OTHER WAY.
 #
+# THE PROCEDURE IS ABOUT REMOVALS, NOT ABOUT RECORD SETS (2026-09-08, user ruling). Stated at that
+# width it is: PROVE THE INFORMATION SURVIVES ELSEWHERE BEFORE REMOVING IT HERE — and the reason it
+# generalises is that its whole content generalises. A removal is a FIX or a LOSS; the two are
+# indistinguishable in a count; only reading the removed thing against where it is supposed to already
+# live tells them apart. None of that mentions citations.
+#   Demonstrated on prose: a 20.2KB index was consolidated to 13.5KB by moving detail into the files it
+# pointed at, and every distinctive string slated for cutting was grepped in the file that was supposed
+# to hold it ALREADY — before the cut, not after. The check that makes it honest is not the byte drop
+# but the ENTRY COUNT, which went UP (20 -> 21). Size falling while entries fall too is the LOSS case
+# wearing the fix's clothes, exactly as a corpus shrinking by a "better pattern" is.
+#   THE DIRECTION OF THE BORROWING IS THE PART TO GET RIGHT, because the fourth-property note in
+# CLAUDE.md forbids the other one: an untracked file cannot be a PRECEDENT for how something inside
+# this tree is declared. Here the traffic runs outward — this tracked rule governed a removal
+# somewhere else — and nothing outside the tracked set is being cited as authority for anything in it.
+# Outward is free; inward needs the index.
+#
 # THE CLASS SPLIT IN THREE WHEN MEASURED, and only one part is closed here. Of the 80 spans the
 # reach check reported at HEAD fe8d627, 69 (51 heads) are "Surname YEAR" with nothing between them
 # — that is what this pattern reaches. The residual did NOT split the way this comment first

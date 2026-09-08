@@ -262,6 +262,21 @@ async function selftest() {
   // `git diff --name-only origin/main@{1} origin/main`, waiting will not fix it and it is a real
   // finding. Same commit re-run twice with no change and still stale is also real. WAIT AND RE-RUN
   // ONCE; do not edit, do not re-push, and do not explain it away twice.
+  //
+  // AND THE SHARP FORM OF THAT, which is the one to keep (user ruling, 2026-09-08): THE WAIT IS NOT A
+  // PROPERTY OF PUSHING, IT IS A PROPERTY OF PUSHING A SERVED ASSET. The only files that can
+  // legitimately appear below are `changed ∩ headTextAssets()` — the very filter this gate applies four
+  // lines up — so the question is decidable rather than a timing heuristic: compute the intersection,
+  // do not estimate it.
+  //   git diff --name-only <old origin/main> HEAD | grep -E '^cancer-atlas\.html$|^js/.*\.js$|\.css$'
+  // IF THAT SET IS EMPTY, EVERY FINDING HERE IS REAL — nothing the push touched could have staled a
+  // served byte. That is why this framing matters more than the paragraph above it: the weak form only
+  // ever tells you to WAIT, so on a `.claude/`-only or docs-only commit it sends you to re-run 150s
+  // later into exactly the same red, and the waiting LOOKS like diligence. This form tells you when
+  // waiting is WRONG, which is the direction that fails safe.
+  //   MEASURED on 873baec (`.claude/run_checked.sh` + `.claude/deploy_check.js`, intersection empty):
+  // 27/27 byte-matched on the FIRST run with no wait at all. A green first run after a push is not luck
+  // and not a reason to relax — it is what an empty intersection predicts.
   for (const s of stale) problems.push(`NOT PUBLISHED: ${s.p} — ${s.why}`);
 
   let st = null, events = [];
