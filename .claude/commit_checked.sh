@@ -14,6 +14,33 @@
 # The message's numbers are copied from the run by machine, so they can neither drift from it
 # nor be silently absent — the two ways the practice has failed, once each.
 #
+# THE GENERALISATION, WHICH REACHES PAST COMMIT MESSAGES (user ruling, 2026-09-08). Quoting the
+# machine instead of restating it is the special case of a rule about any verification claim:
+# NAME THE POPULATION MEASURED, NOT THE CONCLUSION DRAWN. This script makes cheating impossible
+# for the numbers it writes, because they are copied. A report written by hand can still cheat,
+# and did.
+#
+#   THE FAILURE THAT NAMES IT, and it is a different failure from 4b2c8c5 above: personal files
+#   were to be moved out of this repo's work tree. The report said EIGHT ITEMS OUT OF TREE. The
+#   measurement was EIGHT FILES ABSENT FROM THEIR OLD PATHS — a relative mv had put them INSIDE
+#   the tree, so every individual step was true, the conclusion was false, and it stood for three
+#   days on a safety-relevant action. Written under this rule the report would have had to say
+#   the second sentence, and the second sentence VISIBLY DOES NOT ESTABLISH THE FIRST. That is
+#   the whole value: the gap becomes readable without anyone needing to be suspicious of it.
+#   (eff40fa's message records the incident; nothing is restated from it here.)
+#
+#   THE TELL, since nothing can force a sentence to be as narrow as its evidence: THE CONCLUSION
+#   IS THE ONE YOU WANTED. A check that confirms an expectation gets read as confirming the
+#   claim, and the gap is invisible precisely because nobody is looking for it. So an expected
+#   answer on a sensitive action earns MORE interrogation than a surprising one, not less — and
+#   the question to ask a report is not "did it work" but what was run, over what population,
+#   and what it would have printed if the thing were still broken.
+#
+#   WHY IT LIVES HERE and not in battery.py's placement block, which is where it was first
+#   proposed and the user moved it: that block answers WHERE A LESSON LIVES, this answers WHAT A
+#   CLAIM MUST CARRY. Different questions, and that block has been extended twice already. The
+#   parent is the paragraph directly above — this is that rule generalised from gates to reports.
+#
 # Usage:
 #   .claude/commit_checked.sh "<subject line>" "<done-marker>" <gate command...>
 # e.g.

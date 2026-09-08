@@ -1249,10 +1249,19 @@ def wrapper_selftest_verdict(name, returncode, output):
 
 #   Vars that REDIRECT git at a repository. Scrubbed from the selftests' environment because
 #   commit_checked.sh's selftest runs `git init`, `git add f.txt` and `git commit -qm seed` inside a
-#   scratch TMPDIR repo with no git-env isolation of its own (commit_checked.sh:180-182 — the three
+#   scratch TMPDIR repo with no git-env isolation of its own (commit_checked.sh:207-209 — the three
 #   commands named just above are the identity of that reference and the number is only provenance;
 #   it read 164-166, which was TRUE when written at 8140a15 and staled when lines were added above it,
-#   so this is DRIFT and was found by hand audit, not by an instrument), and a git
+#   then 180-182, which staled the same way when the DONE-quote rule was generalised at the top of that
+#   file. TWO DRIFTS OF ONE REFERENCE, and the second is the more instructive: pointer_check reported it
+#   GREEN throughout, because the stale line number still EXISTS in a file that only ever grows, and
+#   this reference carries no author-and-year oracle to land on. That is the measured cost of
+#   range-checking-only, instantiated a second time rather than estimated. It was caught by asking which
+#   reader arrives at a line BEFORE inserting above it — position one of the placement checklist used as
+#   a pre-flight instead of an audit, which is the first time that has paid. DELETING THE NUMBER is what
+#   the number-drift rule actually prescribes, since the identity is already the three named commands;
+#   held, not declined, because the pointer is inside pointer_check's counted population and resolves,
+#   so removing it lowers a ratcheted floor and that is the user's call, not this file's), and a git
 #   hook EXPORTS these to everything it runs. Nothing invokes this battery from a hook today — the
 #   repo has no hooks installed, only .sample files — so scrubbing them changes nothing measurable
 #   now. It is here because THIS PREFLIGHT IS WHAT MAKES THAT SCRATCH COMMIT REACHABLE ON EVERY RUN,
