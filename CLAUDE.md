@@ -3701,6 +3701,44 @@ is the fourth item of `battery.py`'s sidecar-convention block.
   the moment an untracked file exists, and the bad ratchet value above was
   caught only by moving the draft aside and re-running.
 
+**A FIFTH PROPERTY** (2026-09-07, user ruling), and the only one found by
+misreading a green DONE line rather than by any check firing.
+
+- **`set unchanged` reports the record set, not the sidecar metrics.** In
+  the user's words: *"Those move independently, and reading one as covering
+  the other is what left `record_count.json` dirty."* Written in that
+  specific form on ruling, because *"'check the tree after the gate' is the
+  vaguer version that wouldn't have caught it"* — the general advice says to
+  look but not what at, and the whole defect is a reader who believed the
+  looking had already been done for them.
+- **The incident (`1145d01`).** The battery reported the record set
+  unchanged, which was true, and I read it as *nothing in
+  `record_count.json` moved*, which was not: `internal_quote.marked` and
+  `pointer.pointers` had both ratcheted up in the same run. The file stayed
+  dirty through the commit, layer four went red on a clean-looking tree, and
+  **amend is forbidden here**, so the repair cost a whole forward commit
+  (`7de8f07`). One green line, read one clause too widely.
+- **THE REMEDY ALREADY EXISTED IN THE TOOL'S OUTPUT, WHICH IS THE
+  UNCOMFORTABLE PART.** The battery prints `RATCHET RAISED: <metric> A -> B
+  — growth moves it up with no ceremony; git add .claude/record_count.json
+  in this commit`, naming the metric and the exact command. It printed that
+  at `1145d01` too. So this was never a missing mechanism; it was an unread
+  line, and no sixth layer would have helped — the fifth would have been the
+  same words one line further down.
+- **Verified as fixed on the next commit that could have repeated it**
+  (`ad134b3`, whose `refusals.log` entry carries the raise verbatim):
+  `citation_crosscheck.records` moved when a new author entered the corpus,
+  the raise was caught before staging, `record_count.json` went in with the
+  change, and the tree was clean afterwards. **The check that catches this
+  is `git status` before the commit, not after it** — after is where the
+  amend ban makes it expensive.
+- **And the two halves can disagree in the other direction too**, which is
+  what makes the claim precise rather than a slogan: a run can move a
+  sidecar with the record set frozen (this session, where a citation left
+  and another arrived and the total held), and it can move the record set
+  with every sidecar frozen (any pure line shift, reported as `moved`).
+  Neither number implies the other in either direction, so **read both**.
+
 ## WHAT COUNTS AS A DONE LINE (2026-09-06, user ruling; `.claude/commit_checked.sh`)
 
 **The commit gate quoted by substring on a hand-passed marker, and that
@@ -4854,13 +4892,48 @@ refute it, which is worth more than file order.
   `const TRUNK_UC = [` with no comment at all immediately above the record,
   so an inline-only rule would have reproduced the exact miss that forced
   this re-specification.
-  **THE LOAD, MEASURED AT `37aa47a` ON A CLEAN TREE** — bound to a commit
-  because no instrument prints it, which is the last of the four ways the
-  number rule allows and the only one available here: 144 records carry a
-  `gene:` field and 117 of those carry a ccf; they attach 29 distinct
-  comment blocks totalling 984 comment lines; the median record attaches 17
-  such lines, one `liver.js` record attaches 120, and 55 records attach
-  none.
+  **THE LOAD, MEASURED AT `37aa47a` ON A CLEAN TREE** — bound to a commit,
+  which is the last of the four ways the number rule allows: 144 records
+  carry a `gene:` field and 117 of those carry a ccf; **those 144, not the
+  117**, attach 29 distinct comment blocks totalling 984 comment lines; the
+  median record attaches 17 such lines, one `liver.js` record attaches 120,
+  and 55 records attach none.
+  **"THE ONLY ONE AVAILABLE HERE" WAS TRUE WHEN WRITTEN AND IS NOW FALSE**,
+  corrected in place rather than reworded: `.claude/ccf_load.py` re-derives
+  every figure above on demand, so POINTING AT THE SOURCE OF TRUTH is
+  available too, and commit-binding is now a choice rather than the last
+  resort. The figures stay bound to `37aa47a` regardless, because a number
+  written into prose needs a tree named next to it whatever else exists.
+  What changed is that the binding is CHECKABLE: `ccf_load.py --verify`
+  re-measures that commit and refuses to agree quietly.
+  **WHICH IS HOW THE AMBIGUITY ABOVE WAS FOUND.** The sentence used to read
+  "they attach 29 distinct comment blocks", and "they" can mean either
+  population. Scored over the 117 the same tree gives 26 blocks, 951 lines,
+  a median of 25 and 39 attaching none — so the first draft of the script
+  read the smaller population, disagreed with all four figures, and **was
+  about to report the RECORD as wrong.** The sweep said otherwise: the
+  record reproduces exactly, on all seven figures, and the script was
+  reading 117 records where the record had read 144. **A FIGURE THAT ONLY A
+  REMEMBERED METHOD CAN REPRODUCE IS NOT REALLY BOUND TO ANYTHING** — the
+  commit pinned the tree but not the unit, and the unit was the part that
+  moved. That is the argument for saving the script, made by the script.
+  **AND NO FRESHNESS INSTRUMENT WAS BUILT — CONSIDERED AND DECLINED
+  (2026-09-07), not held.** The failure mode is already closed: a figure
+  bound to a named tree cannot go stale, so what an instrument adds is
+  freshness, which is nicer and not load-bearing. Its cost is a sixteenth
+  declared instrument and another sidecar to keep in step — the same bar the
+  glob checker was declined on, and the same reasoning: an existing remedy
+  that closes the hole beats a second one that closes it sooner. `ccf_load.py`
+  is the middle that is actually better than either, a declared
+  NON-instrument whose output is evidence rather than a gate.
+  **IF THAT IS EVER REVISITED, THE CLAUSE THAT HAS TO CHANGE IS THIS ONE,
+  QUOTED SO IT CAN BE FOUND RATHER THAN COUNTED TO** — "bound to a commit,
+  which is the last of the four ways the number rule allows". Naming it by
+  position would have been this session's own defect one more time: a
+  hand-typed address into prose that any insertion above it falsifies. An
+  instrument would make the commit-binding
+  unnecessary rather than merely optional, and that sentence is where the
+  decision is written down, so that is where the argument has to be re-made.
   **THE COMMENT LINES ARE SHARED, AND THAT IS THE THING THE ADJECTIVE
   "LARGER" WAS HIDING IN BOTH DIRECTIONS.** A block above a container
   serves every record inside it, so the load is clauses PLUS blocks, not

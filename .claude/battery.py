@@ -619,6 +619,13 @@ NON_INSTRUMENTS = {
     'extract_citations.py': 'artifact producer, run as this runner preflight, not a gate',
     'figure_search.py': 'read helper — searches ONE fetched document during a claim read; '
                         'has a DONE line but no corpus-wide population to scan',
+    'ccf_load.py': 'read-load measurement for planning a ccf batch — evidence, not a gate. It DOES '
+                   'have a corpus-wide population, unlike figure_search.py, so that is not what '
+                   'keeps it out: it asserts nothing, ratchets nothing, emits no sidecar and has no '
+                   'failing exit, and the freshness instrument it could have been was declined '
+                   '(2026-09-07) because commit-binding already closes the hole. Its --verify '
+                   'reproduces the figures CLAUDE.md binds to 37aa47a, which is a calibration the '
+                   'battery does not run and does not depend on',
     'bake_ao.py': 'offline asset tool (Blender), part of the a131649 reproducible chain',
     'mesh_hygiene.py': 'offline asset tool (Blender), part of the a131649 reproducible chain',
     'render_thumb.py': 'offline asset tool (Blender)',
