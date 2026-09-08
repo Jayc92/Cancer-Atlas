@@ -252,8 +252,28 @@ const HISTOLOGY_SEMINOMA = {
       text:'Tumor cells grow as nests and sheets, divided into poorly demarcated lobules by thin fibrovascular septa — the architecture a low-power view first reveals, well before any single cell\'s features are visible.' },
     { key:'lymphocytes', label:'Lymphocytic infiltrate',
       text:'A lymphocytic infiltrate running through the fibrovascular septa between tumor lobules — often the first thing that draws the eye at low power, and one of the most consistent, recognizable features of this tumor across the literature.' },
+    // NO CORPUS COMPARISON HERE, AND THAT IS THE THING NOT TO RE-ADD (2026-09-08). This field used
+    // to close with "unlike the marked pleomorphism this atlas's other tumors often show" — a
+    // FREQUENCY claim about this repo's own content, which the content refutes: grep pleomorph across
+    // js/organs and the only other hits are verbatim quotes from grading criteria for specific
+    // high-grade tumors, while thyroid's FTC entry deliberately records the reverse, that its cells
+    // look benign. The quantifier is also why no instrument caught it — absence_claim_check
+    // adjudicates UNIVERSALS and a frequency word is not one, so at this line the guard cannot be the
+    // mechanism and this comment is. A frequency-claim detector was CONSIDERED AND DECLINED: grep for
+    // often, typically, routinely or usually in js/organs and the hits are overwhelmingly sourced
+    // descriptions of real tumor behaviour, so a matcher on those words would flag mostly-correct
+    // prose, and the population it would have to separate is claims about THIS REPO from claims about
+    // the world — the same semantics problem that has kept the comment-contradicts-record grep
+    // unbuilt. THE COST OF DECLINING is that the next comparison like this one also arrives
+    // unguarded, which is what makes this comment load-bearing rather than decorative.
+    //   Seminoma's monotony is a real diagnostic point and is kept; what was dropped is the
+    // comparative half, not the cytology. A negative formulation was available and rejected on
+    // purpose: any wording that asserts the ABSENCE of nuclear variation would trade an unsupported
+    // comparison for an unsourced absence claim, which is a class the guard does watch — and it is
+    // described here rather than written out for the same reason the addresses elsewhere are spelled,
+    // since an illustration is not evidence and has no claim on being instantiated.
     { key:'cytology', label:'Clear polygonal cells',
-      text:'Large, round-to-polyhedral cells with distinct cell borders, clear-to-eosinophilic cytoplasm, and prominent nucleoli — uniform from cell to cell, unlike the marked pleomorphism this atlas\'s other tumors often show.' },
+      text:'Large, round-to-polyhedral cells with distinct cell borders, clear-to-eosinophilic cytoplasm, and prominent nucleoli — uniform from cell to cell.' },
   ],
 };
 
