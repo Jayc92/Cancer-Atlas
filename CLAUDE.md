@@ -1779,8 +1779,10 @@ screen pair per organ:
       are unavailable); dMMR prose-only (3–6% per-tumor subset). **TTN
       deliberately absent — zero TTN mentions across four OCCC cohorts
       totalling 634 tumors; passenger slots instead ship the verified
-      quiet-genome story (median 46 non-silent mutations, clock-like
-      SBS1/SBS5 dominant — Chao) and OBSCN R3140Q labeled explicitly as a
+      quiet-genome story (median 46 non-silent mutations; the clock-like
+      signatures SBS1/SBS5 the most widespread, in 92% and 84% of tumors, counted
+      on a median 143 single-base substitutions per tumor — a different base from
+      the 46, so never "dominated" — Chao) and OBSCN R3140Q labeled explicitly as a
       single-tumor observation (Yang, Neoplasia, 2020 supplementary).**
     - **Site model — the gating question, answered with primary sources
       BOTH ways: same routes, different timing. Family 1, NO departure.**
@@ -5275,8 +5277,19 @@ refute it, which is worth more than file order.
   qualifier and `ovary.js:269`'s "dominated by", both on the record line,
   both comment halves clean. `none` stratum: `brain.js:215`'s false
   universal and `prostate.js:231`'s mis-addressed pointer, both repaired at
-  `d17a15f`. The other two need source re-reading rather than a corpus grep
-  and stay OPEN.
+  `d17a15f`. The other two needed source re-reading rather than a corpus grep,
+  and were REPAIRED on 2026-09-08 against the fetched full texts. Brennan 2013
+  (NCBI efetch, PMC3910500 — Europe PMC's fullTextXML again returned zero bytes
+  for this id) reads "at least one RTK was found altered in 67.3% of GBM
+  overall: EGFR (57.4%), PDGFRA (13.1%)": an ALTERATION figure, focal
+  amplification and/or mutation, so the second EGFR record — and the second
+  PDGFRA record, the same shape — now carries the qualifier its sibling already
+  had under a label that says "amplification". Chao 2024 (PMC11566382) reads
+  "The median non-silent mutations count was 46" and, separately, "a median
+  of 143 SBSs ... per tumor" with SBS1/SBS5 "present in 94 (92.2%) and 86
+  (84.3%) of tumors ... with a median of 25 ... and 89 ... mutations attributed
+  to each": the note now states the two bases apart, says "non-silent" where
+  it said "protein-altering", and drops "dominated".
   **`ovary.js:269` IS THE SHARPEST OF THE FOUR, AND IT CUTS AGAINST THE
   UNIT RATHER THAN FOR IT.** The source attributes a median of 25 and 89
   mutations to SBS1/SBS5 — 114, on the all-somatic base. The note welds
@@ -5359,6 +5372,25 @@ refute it, which is worth more than file order.
   BEFORE the repairs and its output was the worklist; the hand count and
   the guard's count were different numbers, which is recorded in
   `d17a15f`'s message rather than restated here.
+  **THE THREE UNIVERSALS THE GUARD FLAGS FOR A READ, READ (2026-09-08).** The
+  guard prints them as needs-a-read on every run by design and will go on doing
+  so; this is the read, and it names each site by file and quoted span rather
+  than by line, because the first draft wrote four `file:line` pointers and the
+  settle run raised `pointer_check`'s ratchet by exactly four — the drift-prone
+  form the pointer ruling retired, caught by the ratchet doing its job. `brain.js`'s White matter hotspot ("every other organ in this atlas has its
+  own 'arises here' structure") is TRUE by census: each of the other thirteen
+  organ files names where its wired cancer arises, in a hotspot text or, for
+  bladder and thyroid, in the organ description. `skin.js`'s organ description ("the only one
+  this atlas shows as a cut block") is TRUE: twelve real meshes and testis's
+  procedural ellipsoid are whole shapes. `prostate.js`'s trunk ccf ("the way every other
+  trunk entry in this atlas represents" a once-for-the-whole-tumor founding
+  event) was FALSE — the status-shaped trunk entries (GBM's IDH-wildtype status,
+  OCCC's TP53 status, bladder's pathway-divergence status, follicular thyroid's
+  RAS-versus-PAX8 status) represent no founding event at all — and is reworded
+  to compare against a shared trunk mutation, with no quantifier over the
+  corpus. `testis.js`'s bare-plural histology comparison ("unlike the marked
+  pleomorphism this atlas's other tumors often show") stays on the open list: it
+  needs a histology read across the slides, not a census.
 - **LUAD's `RB1 loss` REMOVED FROM THE PRIVATE POOL — QUESTION (2) CLOSED ON
   RULING (2026-09-07), AND THE GROUNDS WERE IN-CORPUS ALL ALONG.** The
   exclusion is SOFT, MECHANISTIC-FIT class, and explicitly NOT an

@@ -266,7 +266,7 @@ const TRUNK_OCCC = [
 // TTN deliberately absent: zero TTN mentions across four OCCC cohorts totalling 634 tumors —
 // the atlas does not carry a passenger over from other cancers and relabel it.
 const PRIVATE_POOL_OCCC = [
-  { gene:'Clock-like background variants (signatures SBS1/SBS5)', class:'passenger', note:'Most of this tumor\'s mutations are doing nothing. Whole-exome sequencing of 102 clear-cell carcinomas found a median of just 46 protein-altering mutations per tumor, dominated by the two "clock-like" mutational signatures that accumulate with age in ordinary tissue — and far less chromosome-level chaos than high-grade serous carcinoma carries.' },
+  { gene:'Clock-like background variants (signatures SBS1/SBS5)', class:'passenger', note:'Most of this tumor\'s mutations are doing nothing. Whole-exome sequencing of 102 clear-cell carcinomas found a median of just 46 non-silent mutations per tumor. Counted over all single-base substitutions instead — a median of 143 per tumor — the two "clock-like" signatures that accumulate with age in ordinary tissue were the most widespread, present in 92% and 84% of tumors with a median of 25 and 89 substitutions attributed to each; and the genome carries far less chromosome-level chaos than high-grade serous carcinoma.' },
   { gene:'OBSCN R3140Q (single-tumor observation)', class:'passenger', note:'A one-off change in one of the genome\'s largest genes, reported in exactly one tumor of a 42-case series — shown as the concrete face of background noise. Huge genes collect hits simply because they offer so much DNA to mutate. No clear-cell study reports a recurrent TTN variant, the passenger this atlas uses elsewhere, so none is invented here.' },
 ];
 
