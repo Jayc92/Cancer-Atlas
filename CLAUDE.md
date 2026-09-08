@@ -4252,7 +4252,11 @@ it on every later run, in a file no human is allowed to hand-edit. **A self-wedg
   the written finding be the thing the next run flags?
 - **Recorded at the FAILURE position of `battery.py`'s placement checklist**, because the
   constraint is on that position's home — the problem string — which turned out to have a second
-  reader: the archive.
+  reader: the archive. **That is the part worth keeping** (user): the position as written put its
+  reader at a red terminal, and a leaking problem string is read there once and forgotten — but it
+  is also read durably, in a machine-written file nobody may hand-edit, and the durable reading is
+  the expensive one. The checklist's phrasing never suggested it existed, so whoever writes the
+  next problem string reasons about the terminal and not the log; the position now says so.
 
 ## NO CROSS-BLOCK DEMONSTRATIVE — THE DELETION REMEDY, SWEPT (2026-09-07, user ruling)
 

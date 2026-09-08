@@ -167,23 +167,28 @@
 #     ON THAT LINE, naming the condition and pointing back here. Applied at the three still-globbing
 #     defect counters named above; this is the position the paragraphs above already covered.
 #   FAILURE. The reader is at a red terminal holding a problem string, deciding what to do about it,
-#     and may never open the source at all. Home: THE PROBLEM STRING ITSELF. Established by
+#     and may never open the source at all. Home: THE PROBLEM STRING ITSELF — WHICH HAS TWO READERS,
+#     NOT ONE (user ruling, 2026-09-08). The person at the terminal reads it once and moves on. The
+#     ARCHIVE reads it too: run_checked.sh copies a refusing run's tail into tracked, append-only
+#     refusals.log, a machine-written file nobody may hand-edit, where it persists. So a leaking
+#     problem string costs twice — once ephemerally, once durably — and the durable cost is the
+#     expensive one, and the one this position's original phrasing did not suggest existed, because
+#     whoever writes the next problem string reasons about the terminal, not the log. Established by
 #     citation_paren_ledger.py's UNSCORED text, whose detection was a measurement and whose advice was
 #     stale: annotating that file's docstring alone would have left the wrong instruction sitting
 #     exactly where it was being acted on, which is the whole failure this rule exists to prevent.
 #     AND A CONSTRAINT ON THAT HOME, FOUND BEFORE IT FIRED (user ruling, 2026-09-08): A GUARD THAT
-#     WRITES ITS FINDINGS MUST NOT BE ABLE TO WRITE A FINDING THAT FAILS ITSELF. The problem string has
-#     a second reader nobody had counted — run_checked.sh archives a refusing run's tail into TRACKED,
-#     append-only refusals.log — so assertion 6's message, had it quoted the offending path, would have
-#     committed the very leak it guards against and then fired on it on every later run, in a file no
-#     human may hand-edit. A self-wedging guard. Closed at both ends before shipping: the message
-#     describes and never quotes (machine_path_files), and the writer scrubs the machine's home from
-#     what it archives (log_refusal), each with an arm. THIS IS THE FIRST GUARD FAILURE IN THIS CHAIN
-#     TO BE ANTICIPATED RATHER THAN DISCOVERED — the coverage guard counting the staging it was built
-#     to exclude, deploy_check's byte-matched total printed over stale bytes, the refusal log read as
-#     empty over one present entry: every one was found AFTER it fired. The question that found this
-#     one first, to ask of every guard that writes: what does it write, where does that land, and can
-#     the written finding satisfy the guard's own predicate?
+#     WRITES ITS FINDINGS MUST NOT BE ABLE TO WRITE A FINDING THAT FAILS ITSELF. It follows from the
+#     second reader: assertion 6's message, had it quoted the offending path, would have been archived
+#     into the index — committing the very leak it guards against and then firing on it on every later
+#     run. A self-wedging guard. Closed at both ends before shipping: the message describes and never
+#     quotes (machine_path_files), and the writer scrubs the machine's home from what it archives
+#     (log_refusal), each with an arm. THIS IS THE FIRST GUARD FAILURE IN THIS CHAIN TO BE ANTICIPATED
+#     RATHER THAN DISCOVERED — the coverage guard counting the staging it was built to exclude,
+#     deploy_check's byte-matched total printed over stale bytes, the refusal log read as empty over
+#     one present entry: every one was found AFTER it fired. The question that found this one first,
+#     to ask of every guard that writes: what does it write, where does that land, and can the
+#     written finding satisfy the guard's own predicate?
 #   REVIEW. The reader is looking at a diff or a commit message, deciding whether a change is sound.
 #     Home: THE MACHINE-QUOTED DONE LINE, which commit_checked.sh has been pasting into every message
 #     since it was written. That position has been operating correctly and UNNAMED, which is exactly
