@@ -15,6 +15,25 @@
 # THE LINE THAT WOULD HAVE TO CHANGE IF THAT IS EVER REVISITED is the "bound to a commit because no
 # instrument prints it" clause in CLAUDE.md's load paragraph, which is where the trigger comment
 # sits. Both halves of that clause would become false at once.
+#   READ THE NEXT PARAGRAPH BEFORE ACTING ON THIS ONE. The argument above is the one the decline was
+# MADE on, and it still holds for the decline; it is NOT the reason this file exists, and stopping
+# here would leave a reader thinking the only thing lost was earlier detection.
+#
+# WHY SAVING IT IS WORTH MORE THAN THE INSTRUMENT WOULD HAVE BEEN, and this is THE justification to
+# re-read if anyone re-examines the decline, because it is the one that survives (user ruling,
+# 2026-09-07, revising their own reasoning after watching --verify work): the decline was argued on
+# FRESHNESS — commit-binding already prevents a stale figure, so an instrument would only detect
+# staleness sooner. But freshness is not what --verify turned out to do. IT CHECKS THE PROSE THAT
+# RECORDED THE FIGURE. "They attach 29 blocks" had two candidate antecedents; the script disagreed
+# with all four numbers; chasing the disagreement found AN AMBIGUITY IN THE SENTENCE rather than an
+# error in the tree. In the user's words: "a saved measurement that refuses to agree quietly is a
+# guard on the sentence, and no commit-binding gives you that."
+#   THE TWO REMEDIES ARE THEREFORE NOT COMPARABLE, WHICH IS WHY THE DECLINE AND THE SAVE ARE BOTH
+# RIGHT. Commit-binding fixes a figure to a tree — it says WHEN the number was true, and it cannot
+# say WHAT WAS COUNTED, because the thing that names the population is prose and prose is checked by
+# nothing. A re-derivable measurement is the only artefact that can contradict its own record, and it
+# is worth keeping for THAT, not for currency. An instrument would have added earlier detection of a
+# problem commit-binding already closes; this file adds a check on a claim NOTHING closes.
 #
 # THE UNIT, from CLAUDE.md's ccf re-specification: THE RECORD PLUS ITS PROVENANCE COMMENT, attached
 # mechanically rather than judged — the contiguous `//` block immediately above the record's own

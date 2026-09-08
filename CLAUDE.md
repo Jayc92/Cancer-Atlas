@@ -3700,6 +3700,36 @@ is the fourth item of `battery.py`'s sidecar-convention block.
   tree you're committing, not the tree you're working in.** Those diverge
   the moment an untracked file exists, and the bad ratchet value above was
   caught only by moving the draft aside and re-running.
+- **AND THE RULE EXTENDS PAST METRICS TO REASONING: UNTRACKED THINGS ARE
+  NOT PART OF THE CORPUS, INCLUDING THE CORPUS OF CONVENTIONS** (user
+  ruling, 2026-09-07, correcting their own earlier sentence — the second
+  time this rule has been found by watching it broken rather than by
+  wiring it up). Declining the `ccf_load` instrument, the ruling cited
+  *"the `pointers.py` precedent — a script whose output is evidence rather
+  than a gate."* I reported that no such file exists. **That was the wrong
+  correction.** It does exist, at `/tmp/atlas-guard/pointers.py`, saved
+  during the pointer census; the defect was calling it a **precedent**, in
+  the user's words *"when a file outside the repo can't be a precedent for
+  how to declare something inside it."*
+  - **THE FILE BEING PRESENT IS WHAT MAKES THE POINT, NOT A WEAKENING OF
+    IT.** It is on this disk right now, 8981 bytes, readable by anything
+    running here — and still cannot be cited, because **presence on one
+    machine is not the test; being in the index is.** A precedent has to
+    be something a fresh clone can find, for exactly the reason a ratchet
+    floor has to be a number a fresh clone can reproduce. Same rule, one
+    level up: the tracked set bounds not just what gets measured but
+    **what may be appealed to.**
+  - **The real exemplars are `figure_search.py` and `extract_citations.py`**
+    — tracked, declared, output-is-evidence — and `ccf_load.py`'s header
+    cites those. Note the trap in the near-miss name: `pointer_check.py` IS
+    tracked and IS in `.claude/`, and it is an **instrument**, so citing it
+    would have imported the opposite standing to the one intended.
+  - **The verdict was unaffected**, which is why this is filed as a
+    reasoning defect and not as a reversal: the decline stands on
+    commit-binding, and only the exemplar was wrong. **Say which half of a
+    ruling the error touched** — reporting "your precedent doesn't exist"
+    when the truth is "your precedent isn't citable from here" invites a
+    re-litigation of the decision instead of a fix to the citation.
 
 **A FIFTH PROPERTY** (2026-09-07, user ruling), and the only one found by
 misreading a green DONE line rather than by any check firing.
@@ -3738,6 +3768,51 @@ misreading a green DONE line rather than by any check firing.
   and another arrived and the total held), and it can move the record set
   with every sidecar frozen (any pure line shift, reported as `moved`).
   Neither number implies the other in either direction, so **read both**.
+
+## REPAIRING A LINE SHIFT: NO SINGLE INSTRUMENT'S OUTPUT IS THE WORKLIST (2026-09-07, user ruling)
+
+**One 21-line comment insertion into `js/organs/lungs.js`, three instruments
+that resolve `file:line`, three different reads — and none of them wrong.**
+Each answers a different question, so each is incomplete as a worklist:
+
+| consumer | what it answered | what it said |
+|---|---|---|
+| `record_count.json`'s `record_keys` | did the record SET change? | **nothing** — a same-file shift is `moved`, by design |
+| `pointer_check.py` | do hand-typed refs still land on their referent? | **5 refs OFF LINE**, with a nearest-candidate hint |
+| `citation_paren_ledger.py` | is every scored span still scored? | **2 problems from ONE unmoved span** — `STALE` at the old address, `UNSCORED` at the new |
+
+- **THE PROCEDURE: cross-check across consumers, then repair by CONTENT.**
+  Run all three, take the union as the worklist, and resolve each site by
+  matching the **old line's exact text** against the working copy — not by
+  adding the diff's offset, and not by accepting a tool's suggestion.
+- **THE CONCRETE COST OF TRUSTING ONE OUTPUT IS MEASURED, NOT HYPOTHETICAL:
+  `pointer_check`'s hint was wrong on 1 of 5.** For the ref at `:236` it
+  named `Yoshizawa|2011` at `:253` — the right answer was `:259`, because
+  that name+year occurs **twice** in the file and the hint names the
+  *nearest*. The offsets even agree (+17 and +23 are both plausible for a
+  +21 insertion), so arithmetic cannot break the tie. Content can. This is
+  `NEAREST IS NOT IDENTITY` firing a fifth time; the hint proposes and
+  **never applies**, and that is why.
+- **ONE SPAN CAN PRODUCE TWO PROBLEMS, so problem count is not site count.**
+  The ledger reports the old address as `STALE` and the new one as
+  `UNSCORED` — two lines of output, one edit to make. Counting problems
+  would have over-estimated the work and, worse, invited two independent
+  "fixes" to one span.
+- **RE-ADDRESSING IS NOT NEW EVIDENCE — `basis` STAYS `FIT` THROUGH A MOVE.**
+  The span was byte-identical; only its address changed. Scoring it `TEST`
+  because its line number moved would **manufacture support for the very
+  rule it is recorded to withhold support from**. An address is not an
+  identity. The rationale sits above the key in
+  `citation_paren_ledger.py`, on the line that changed.
+- **AND CLASSIFY THE SITES BEFORE REPAIRING ANY: AN ADDRESS IS LOAD-BEARING
+  ONLY WHERE SOMETHING RESOLVES IT.** 17 sites named the old address; **9
+  were live identities and got repaired**, and the rest were left alone on
+  purpose — opaque fixture strings in `battery.py` (nothing resolves them,
+  so they are just bytes), FLOOR-only prose, and **a dated transcript of a
+  real run, which is annotated rather than corrected**: rewriting it to
+  agree with a tree it predates would make it a worse record, not a
+  fresher one. A sweep that "fixed" all 17 would have broken three
+  fixtures and falsified one transcript.
 
 ## WHAT COUNTS AS A DONE LINE (2026-09-06, user ruling; `.claude/commit_checked.sh`)
 

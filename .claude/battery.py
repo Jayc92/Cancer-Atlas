@@ -521,10 +521,23 @@ import urllib.error
 import urllib.request
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# ON macOS `tempfile.gettempdir()` IS $TMPDIR (a per-user /var/folders/… path), NOT /tmp — and a
+# NEAR-MISS on 2026-09-07 is why that is written here rather than assumed. A stale `/tmp/atlas-battery`
+# from an earlier run under a different environment still existed, TWO DAYS OLD, holding a full set of
+# plausible artefacts. Reading a screenshot out of it to verify a fresh commit would have produced a
+# true sentence ("I read the regression's screenshot of the LUAD panel") about the wrong tree. So:
+# RESOLVE THIS CONSTANT, DO NOT TYPE THE PATH, and check an artefact's mtime before treating it as
+# this run's evidence. `python3 -c "import tempfile,os; print(os.path.join(tempfile.gettempdir(),
+# 'atlas-battery'))"` prints the real one.
 WORK_DIR = os.path.join(tempfile.gettempdir(), 'atlas-battery')
 RECORDS_ARTIFACT = os.path.join(WORK_DIR, 'records.json')
 POLARITY_ARTIFACT = os.path.join(WORK_DIR, 'polarity_scan.json')
 CROSSCHECK_ARTIFACT = os.path.join(WORK_DIR, 'crosscheck_flags.json')
+# The per-cancer panel screenshots land here (`04_cancer_<id>_panel.png`), and they are THE visual
+# evidence path for this repo: the Browser pane resolves launch.json from a different project root, so
+# `preview_start {name: "cancer-atlas"}` cannot reach this tree at all. regress.js asserts
+# `hasTrunk && !hasUndefined` per cancer AND writes the image, so a panel change is verifiable by
+# reading the file. Subject to the $TMPDIR warning above — mtime first.
 REGRESS_OUT_DIR = os.path.join(WORK_DIR, 'regress')
 REGRESS_PORT = '3057'
 
