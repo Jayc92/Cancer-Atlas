@@ -4285,6 +4285,54 @@ it on every later run, in a file no human is allowed to hand-edit. **A self-wedg
   the expensive one. The checklist's phrasing never suggested it existed, so whoever writes the
   next problem string reasons about the terminal and not the log; the position now says so.
 
+## A CONSTRAINT THAT OUTLIVES ITS CAUSE HAS TWO SIGNS (2026-09-08, user ruling)
+
+**This is the first record of the stale-constraint class AS a class; until now
+its instances lived only at their own sites.** The user named the class on
+ruling the `fraction_check` inversion, and it is recorded with both signs
+together because the remedy is the same for both — check whether the reason
+still holds — while the cost of missing one is not.
+
+- **THE RESTRICTION THAT OUTLIVED ITS CAUSE — every instance found before
+  2026-09-08 had this sign.** Three, from one arc. `m ≤ 1` on the tissue
+  mottle is stated in `viewer.js` as clip-safe by construction against a
+  hard 1.0 clip ceiling, and the corrected pipeline has no hard clip — AgX
+  has measured rolloff headroom — so the cause is gone while the constraint
+  stands (the Tier 3 albedo pass named it and closed before relaxing it: a
+  found stale restriction, not a lifted one). The glow diagnosis in
+  `main.js` reasoned from distance-zero clipping, which the corrected
+  pipeline retired — and the re-measurement kept the VERDICT on a different
+  reason, an accent in the illumination path, which is why its comment says
+  not to read it as a constraint AgX lifted. And the ccf read-unit entry's
+  "bound to a commit because no instrument prints it, the only way
+  available" was true when written and false once `ccf_load.py` existed;
+  corrected in place. In each, a statement survived after the condition
+  that made it load-bearing was discharged. An obsolete restriction wastes
+  effort — someone obeys it, or re-derives why it no longer binds — and it
+  is at least visible: the statement is there to be questioned.
+- **THE CAUTION THAT BECOMES A RECOMMENDATION ONCE ITS GUARD EXISTS — the
+  other sign, first instance at `0b2d5c2`.** `fraction_check` was built
+  because remediation was ADDING fraction/percentage pairs with nothing
+  behind them — the repair creating the risk, and the instrument's header
+  opens by saying so. The carry-both form rule now says to add them
+  deliberately. Same action, opposite verdict, and the only thing that
+  changed is whether a guard is watching. From the instrument's birth on
+  2026-09-05 until `0b2d5c2`, the check existed and the practice it made
+  safe was never recommended, because nobody looks for these: a guard
+  landing feels like a closure rather than a moment to revisit what was
+  being discouraged.
+- **WHY THE SECOND SIGN IS THE EXPENSIVE ONE** (user): an obsolete
+  restriction merely wastes effort, while an obsolete caution leaves a good
+  practice discouraged — and nobody notices the absence of something that
+  was never done. The first fails as a statement someone can question; the
+  second fails as silence.
+- **ONE REMEDY, AND THE SECOND SIGN HAS A TRIGGER.** Check whether the
+  reason still holds. For a restriction the prompt is the next pass that
+  bumps into it. For a caution the prompt is a guard landing: when an
+  instrument ships, ask what practice it was built against and whether that
+  practice is now the mechanism. `fraction_check`'s header does this for
+  its own birth caution, as the worked example.
+
 ## NO CROSS-BLOCK DEMONSTRATIVE — THE DELETION REMEDY, SWEPT (2026-09-07, user ruling)
 
 **The ruling:** "apply the deletion remedy for demonstratives, since there's

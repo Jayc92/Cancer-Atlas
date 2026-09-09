@@ -119,6 +119,11 @@
 #   no check behind them — is what this instrument closed; with the check in place, the same act is the
 #   mechanism. The fixed line reads "(27/64, 42.2%) than primaries (26/89, 29.2%)" and the candidate
 #   count rose by exactly one with it, at 80f74fc.
+#   THE INVERSION IS ITS OWN CLASS (user ruling, 2026-09-08): a caution that becomes a recommendation
+#   once its guard exists — the sign-flipped twin of a restriction that outlived its cause. Same remedy,
+#   check whether the reason still holds; worse failure, because a discouraged good practice is an
+#   absence nobody sees. CLAUDE.md records both signs together; the trigger to look for this sign is a
+#   guard landing.
 #   TWO LIMITS STAY WHAT THEY WERE. Blind spot (1): a fraction still cannot verify its own numerator
 #   past rounding. And a source wrong in BOTH its count and its percentage, in agreement with each
 #   other, is out of reach of any self-check — that case needs a second source, not a form.
