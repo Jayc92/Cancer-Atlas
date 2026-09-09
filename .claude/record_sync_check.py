@@ -64,6 +64,12 @@
 # as landed. 7-bis: DONE line last. Wrapper form:
 #   .claude/run_checked.sh "DONE record_sync_check:" python3 .claude/record_sync_check.py
 import json, sys
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it produced no DONE line at all. Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+import os
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 SYNC = [
     # (manifest key,                    target file,                 marker in target)

@@ -132,6 +132,11 @@
 # `glob` is gone from this import on purpose: main()'s default population globbed js/organs/ and now
 # comes from corpus_paths(), below.
 import json, os, sys
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it produced no DONE line (corpus_paths() returns repo-relative names). Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 # extract() fills an absences list as it goes, so one pass yields BOTH sides of the split.

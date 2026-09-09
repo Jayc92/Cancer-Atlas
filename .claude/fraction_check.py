@@ -128,6 +128,12 @@
 #   past rounding. And a source wrong in BOTH its count and its percentage, in agreement with each
 #   other, is out of reach of any self-check — that case needs a second source, not a form.
 import re, sys, glob, html, json
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it exited 3 over zero counts (loud, at least). Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+import os
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # IMPORTED, NOT RE-STATED. A second copy of the attachment rule is the hazard that ccf_load's own
 # attached() was extracted to prevent, and citation_head_check/citation_reach_check set the

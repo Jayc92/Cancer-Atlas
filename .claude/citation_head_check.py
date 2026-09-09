@@ -76,6 +76,11 @@
 #
 # Usage: python3 .claude/citation_head_check.py [--selftest] [file ...defaults to js/organs/*.js]
 import glob, json, os, sys
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it reported 23 problems over 0 records. Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from extract_citations import extract

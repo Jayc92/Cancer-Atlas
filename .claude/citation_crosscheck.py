@@ -87,6 +87,11 @@
 # because a refusing run never reaches a commit. The best evidence this project has produced about
 # its own instruments is the class of evidence it stores least well.
 import json, os, re, sys, tempfile, time, unicodedata, urllib.parse, urllib.request
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it produced no DONE line (citations.json is opened repo-relative). Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # DECLARED UNMAPPABLE, exhaustively and by exact id — deploy_check.js's BENIGN list, same shape and
 # same reason: every entry is a thing this gate has been told not to see, so the list stays short and

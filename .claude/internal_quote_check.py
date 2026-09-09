@@ -205,6 +205,11 @@ import json, os, re, subprocess, sys
 # because a ratcheted metric must derive from tracked files. Leaving the import would leave the tool
 # for the next reader to reach for.
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it produced no DONE line (it opens its targets repo-relative even though it knew REPO_ROOT). Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+os.chdir(REPO_ROOT)
 
 # The marker token is held in a NAME so no FIXTURE can become a marker: every fixture below composes
 # its marker lines from this constant, and none writes one at line start. The header's worked example

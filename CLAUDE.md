@@ -4108,6 +4108,13 @@ produced two false FAILs (and my own scratch server, started from /tmp, served a
 page first — the same ambient-cwd class, twice in one pass). Explicit form over
 ambient state: the harness now roots every repo read at its own location, proven
 by a run launched from /tmp reporting the same 171 checks / 2 known failures.
+GENERALISED THE SAME DAY (user): **a wrapper that reliably supplies a condition
+hides every dependency on it** — the battery pinned cwd for every member, so the
+sweep that followed found 4 of 15 independent, 8 failing loudly from /tmp and 3
+passing GREEN over an empty corpus. The rule, the table and the mechanism (every
+member runs from a bare directory; the counts, not the verdict, are the
+discriminator) live as convention D in `battery.py`'s READ THIS BEFORE WRITING A
+NEW INSTRUMENT block, which is where a new member's author is told to read.
 
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 

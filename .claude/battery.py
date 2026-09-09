@@ -108,12 +108,14 @@
 # READ THIS BEFORE WRITING A NEW INSTRUMENT, OR A NEW MATCHER (user ruling, 2026-09-07 — the
 # LOCATION is the ruling, not only the contents).
 #
-# THREE CONVENTIONS LIVE HERE, and they are here TOGETHER on purpose:
+# FOUR CONVENTIONS LIVE HERE, and they are here TOGETHER on purpose:
 #
 #   A. THE SIDECAR CONVENTION — how an instrument reports numbers that a machine will read.
 #   B. THE SCRATCH-PATH RULE — what a tool that OWNS A FILE needs on its first commit.
 #   C. THE ANCHOR RULE — how a matcher over a file that also holds hand prose must match, with the
 #      family of such matchers enumerated and each member's status.
+#   D. THE BARE-CWD RULE — an instrument may not depend on anything the wrapper supplies beyond what
+#      it declares (its marker, its argv), and bare-cwd execution is how that is proven.
 #
 # WHY HERE AND NOT IN CLAUDE.md, which is the other obvious home: the test is WHO NEEDS IT AND
 # WHEN. CLAUDE.md is read before touching the project at all. A, B and C are needed at a narrower
@@ -555,6 +557,35 @@
 # block. Still not built, because the ruling asked for the remedy applied to the family, not a new
 # instrument. The superseded sentence is corrected here rather than reworded away: it was true when
 # written and was overturned by a measurement.
+#
+# D. THE BARE-CWD RULE (user ruling, 2026-09-09 — the class, not the incident).
+#
+#   A WRAPPER THAT RELIABLY SUPPLIES A CONDITION HIDES EVERY DEPENDENCY ON IT. This runner always ran
+#   members with cwd=REPO_ROOT, so a member's dependence on the working directory was invisible for the
+#   member's whole life — the same shape as the regression asserting that markers RESOLVE rather than
+#   resolve CORRECTLY. Found when regress.js, run by hand from /tmp, produced two false FAILs.
+#   THE SWEEP (2026-09-09; every declared pre-commit member run from /tmp with absolute paths, DONE-line
+#   integers and sidecar metrics compared against the wrapped run): 4 of 15 INDEPENDENT (syntax_check,
+#   pointer_check, margin_reserve_check, regress — the last fixed the same day); 8 FAILED LOUDLY
+#   (fraction_check exit 3 over zero counts; record_sync_check, internal_quote_check, citation_polarity,
+#   citation_crosscheck, citation_paren_ledger no DONE line; citation_reach_check 5 problems over 0 spans;
+#   citation_head_check 23 problems over 0 records); 3 PASSED GREEN OVER AN EMPTY CORPUS —
+#   absence_claim_check '0 cancers indexed', share_sum_check '0 families checked', duplicate_figure_check
+#   '0 pairs compared'. THE VERDICT IS NOT THE DISCRIMINATOR; THE COUNTS ARE: the same green with a
+#   different denominator means a path resolved somewhere else, and a glob that resolved to nothing is a
+#   VACUOUS PASS — the dangerous form, and the one this rule exists for.
+#   THE RULE: an instrument may not depend on anything the wrapper supplies beyond what it declares — its
+#   marker and its argv — and BARE-CWD EXECUTION IS HOW THAT IS PROVEN. run_member() and the extractor
+#   preflight run from BARE_CWD, an empty directory under WORK_DIR, with absolute paths; a member that
+#   leans on the caller's cwd fails or reports different counts, and a different count meets the ratchet
+#   or the record. THE FIX applied to the eleven (and to extract_citations.py, which every downstream
+#   member reads): each tool roots ITSELF at the repo it lives in — os.chdir to its own parent-of-parent —
+#   so relative paths stay record identities while their resolution stops belonging to the caller.
+#   THE RESIDUAL, stated rather than hidden: bare execution turns a cwd dependence into a failure or a
+#   count change, and a count change is caught only where the count is ratcheted or the tool refuses
+#   zero — so the three that passed green over nothing now REFUSE an empty corpus (exit 3), the form
+#   fraction_check already had. deploy_check (post-push) also runs from BARE_CWD and earns the same proof
+#   on its next run. A NEW MEMBER earns it on its first battery run, which is the point of the location.
 # ==================================================================================================
 #
 # WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
@@ -620,6 +651,10 @@ CROSSCHECK_ARTIFACT = os.path.join(WORK_DIR, 'crosscheck_flags.json')
 # `hasTrunk && !hasUndefined` per cancer AND writes the image, so a panel change is verifiable by
 # reading the file. Subject to the $TMPDIR warning above — mtime first.
 REGRESS_OUT_DIR = os.path.join(WORK_DIR, 'regress')
+# THE BARE DIRECTORY every member (and the extractor preflight) runs FROM (convention D in the block above):
+# empty, under WORK_DIR, so nothing a member finds there is the repo, and a member that leans on the caller's
+# working directory fails or reports different counts instead of passing on a condition the runner supplied.
+BARE_CWD = os.path.join(WORK_DIR, 'bare-cwd')
 REGRESS_PORT = '3057'
 
 # The ratchet's state, and the only file in .claude/ that a tool writes rather than a human. It is
@@ -1360,8 +1395,9 @@ def regenerate_records():
     come to disagree, and load_ratchet() refuses a file where they do. Here they cannot."""
     os.makedirs(WORK_DIR, exist_ok=True)
     print('--- preflight: regenerating the v2 records artifact')
-    proc = subprocess.run(['python3', '.claude/extract_citations.py', RECORDS_ARTIFACT],
-                          cwd=REPO_ROOT, capture_output=True, text=True)
+    os.makedirs(BARE_CWD, exist_ok=True)
+    proc = subprocess.run(['python3', os.path.join(REPO_ROOT, '.claude', 'extract_citations.py'), RECORDS_ARTIFACT],
+                          cwd=BARE_CWD, capture_output=True, text=True)
     sys.stdout.write(''.join(f'    {line}\n' for line in proc.stdout.split('\n') if line.strip()))
     if proc.returncode != 0:
         sys.stderr.write(proc.stderr)
@@ -1555,8 +1591,12 @@ def run_member(name, marker, argv):
     member's name prefixed so a long battery log stays readable, and DONE lines are passed through
     UNCHANGED so `commit_checked.sh "<subject>" "DONE "` can quote every one of them verbatim."""
     print(f'--- {name}')
-    proc = subprocess.run(['sh', '.claude/run_checked.sh', marker] + argv,
-                          cwd=REPO_ROOT, capture_output=True, text=True)
+    # BARE-CWD EXECUTION (convention D): absolute wrapper, absolute member, empty working directory. The
+    # member's own .claude/ path in INSTRUMENTS stays relative as its declaration; it is made absolute HERE.
+    os.makedirs(BARE_CWD, exist_ok=True)
+    abs_argv = [os.path.join(REPO_ROOT, a) if a.startswith('.claude/') else a for a in argv]
+    proc = subprocess.run(['sh', os.path.join(REPO_ROOT, '.claude', 'run_checked.sh'), marker] + abs_argv,
+                          cwd=BARE_CWD, capture_output=True, text=True)
     combined = proc.stdout + proc.stderr
     for line in combined.split('\n'):
         if not line.strip():

@@ -16,6 +16,12 @@
 # window with 57.4% vs 55%) and PASSES a real agreeing pair captured from the census.
 # Condition (8): first live run is calibration.
 import re, sys, glob, html
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it passed GREEN over an EMPTY corpus (0 pairs compared). Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+import os
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from itertools import combinations
 
 WINDOW = 5
@@ -92,7 +98,10 @@ if __name__ == '__main__':
     SRC_STOP = {'TCGA', 'GENIE', 'SEER', 'WHO', 'PMID', 'PMC', 'KGCA', 'NCI', 'PDQ'}
     print()
     total_pairs = flagged = 0
-    for f in sorted(glob.glob('js/organs/*.js')):
+    corpus = sorted(glob.glob('js/organs/*.js'))
+    if not corpus:   # a glob that resolved to nothing is a VACUOUS PASS — the dangerous form (sweep, 2026-09-09)
+        print('duplicate_figure_check: REFUSING TO REPORT — the corpus glob resolved to nothing'); sys.exit(3)
+    for f in corpus:
         src = open(f, encoding='utf-8').read()
         strings = []
         for m in FIELDS.finditer(src):

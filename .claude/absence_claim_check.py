@@ -47,6 +47,12 @@
 # 7-bis: DONE line last. Wrapper form:
 #   .claude/run_checked.sh "DONE absence_claim_check:" python3 .claude/absence_claim_check.py
 import re, sys, glob
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it passed GREEN over an EMPTY corpus (0 cancers indexed). Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+import os
+os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 FIELD = re.compile(r"(\w+):'((?:[^'\\]|\\.)*)'")
 READ_FIELDS = ('note', 'ccf', 'desc', 'text', 'detail', 'label')
@@ -508,6 +514,8 @@ if __name__ == '__main__':
     if '--selftest' in sys.argv:
         sys.exit(0)
     paths = sorted(glob.glob('js/organs/*.js'))
+    if not paths:   # a glob that resolved to nothing is a VACUOUS PASS — the dangerous form (sweep, 2026-09-09)
+        print('absence_claim_check: REFUSING TO REPORT — the corpus glob resolved to nothing'); sys.exit(3)
     presence, owner = corpus_scan(paths)
     counts = {}
     defects = []

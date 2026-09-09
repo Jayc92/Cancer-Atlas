@@ -266,6 +266,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from citation_polarity import classify_window, window_for
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
+# always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
+# 2026-09-09 ran it from /tmp and it would have produced an EMPTY records artifact for every downstream member to read. Relative paths stay the record identities; their resolution no
+# longer belongs to the caller. Proven by the battery, which now runs every member from a bare directory.
+os.chdir(REPO_ROOT)
 CORPUS_DIR = 'js/organs'
 CORPUS_EXT = 'js'
 
