@@ -6729,6 +6729,38 @@ refute it, which is worth more than file order.
   not an argument: number-matching gives false assurance on claims
   already marked checked; the population the number describes is
   where the defects live.
+  THE THYROID DEMONSTRATION — the second worked example of a limit on
+  the method, recorded beside the first on the user's ruling
+  (2026-09-08), and a NEW CLASS: THE ATLAS WAS ACCURATE TO ITS SOURCE
+  AND THE SOURCE WAS WRONG. Every defect class before it was
+  divergence from a correct source. This is faithful copying of an
+  incorrect one: thyroid.js's NRAS branch note carried the GENIE
+  metastatic rate as 42.4%, which is what Hsia et al. (J Pers Med
+  2025, PMC12843263) print in their abstract — while their Results say
+  "27 NRAS mutations (42.2%) among 64 samples" and their Discussion
+  repeats 42.2%; 27/64 = 42.19%, and 42.4% matches no count in the
+  paper. Verbatim verification PASSES on that line, because "42.4%
+  appears in the abstract" is true, and the contract's verified-quoted
+  is silent on it by construction. The defect was findable only by
+  checking the paper against itself. Bladder showed that
+  figure-checking misses scope drift; this shows that verbatim-checking
+  misses source error. Same discipline, two different blind spots, both
+  now with a case attached rather than an argument. It is also none of
+  the three entry-time defect shapes: the attribution is right, the
+  pointer resolves, and the content matches its source.
+  THE REMEDY GENERALISES INTO A CONTENT CONVENTION (user): WHEREVER THE
+  SOURCE GIVES BOTH A COUNT AND A PERCENTAGE, CARRY BOTH, in the same
+  parenthetical. Putting 27/64 beside 42.2% did not just fix the line —
+  it converted a source-dependent claim into a self-checking one and
+  extended fraction_check's reach without touching the instrument: a
+  bare percentage is invisible to every guard in the chain, a
+  percentage with its fraction is arithmetic that holds itself, and
+  27/64 against 42.4% would have fired at authoring time. No
+  instrument, no declaration, no ratchet — a form rule that puts
+  existing machinery onto claims it cannot currently see. Recorded at
+  fraction_check too, where a reader of its reach needs to know that
+  the population is partly a function of how claims are written. The
+  line was fixed at 80f74fc.
   THE DIRECTION, AS A CONCLUSION: across ~50 claims read, not one has
   turned out narrower than its source — compression toward the
   general, qualifiers dropped never added, a durable property of how

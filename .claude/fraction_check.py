@@ -97,6 +97,31 @@
 # stylistic: the field and comment surfaces cannot legitimately reach zero, but 8 shared fractions
 # across 5 files can — a re-sourcing that removes one duplicated fraction empties it correctly. The
 # candidate count is printed in the DONE line instead, so a zero stays VISIBLE without being fatal.
+#
+# THE POPULATION IS PARTLY A FUNCTION OF HOW CLAIMS ARE WRITTEN (2026-09-08, user ruling) — the thing
+# a reader of this file's reach needs to know that the DONE line's candidate count does not say. The
+# count of field strings with fraction+percent is not a property of the corpus's CLAIMS; it is a
+# property of their FORM. A bare percentage is invisible to this instrument and to every other guard
+# in the chain; a percentage with its fraction beside it is arithmetic that holds itself.
+#   THE CASE. thyroid.js's NRAS branch note carried the GENIE metastatic rate as 42.4%, copied
+#   FAITHFULLY from its source — and the source was wrong. Hsia et al. (J Pers Med 2025, PMC12843263)
+#   print 42.4% in the abstract, "27 NRAS mutations (42.2%) among 64 samples" in the Results and 42.2%
+#   in the Discussion; 27/64 = 42.19%, and 42.4% matches no count in the paper. Verbatim verification
+#   PASSES on that line, because "42.4% appears in the abstract" is true, so the defect was findable
+#   only by checking the paper against itself. A NEW CLASS: the atlas accurate to its source and the
+#   source wrong, where every prior class was divergence from a correct source. The method half — the
+#   second worked example of a limit on the method, beside the bladder demonstration — is in CLAUDE.md.
+#   THE FORM RULE, the remedy generalised (user): WHEREVER THE SOURCE GIVES BOTH A COUNT AND A
+#   PERCENTAGE, CARRY BOTH, in the same parenthetical, which is the form this file pairs. No instrument,
+#   no declaration, no ratchet — a way of writing that puts existing machinery onto claims it currently
+#   cannot see, and it would have caught this one AT AUTHORING TIME, since 27/64 and 42.4% do not agree.
+#   The hazard named at this instrument's birth — remediation adding fractions beside percentages with
+#   no check behind them — is what this instrument closed; with the check in place, the same act is the
+#   mechanism. The fixed line reads "(27/64, 42.2%) than primaries (26/89, 29.2%)" and the candidate
+#   count rose by exactly one with it, at 80f74fc.
+#   TWO LIMITS STAY WHAT THEY WERE. Blind spot (1): a fraction still cannot verify its own numerator
+#   past rounding. And a source wrong in BOTH its count and its percentage, in agreement with each
+#   other, is out of reach of any self-check — that case needs a second source, not a form.
 import re, sys, glob, html, json
 
 # IMPORTED, NOT RE-STATED. A second copy of the attachment rule is the hazard that ccf_load's own
