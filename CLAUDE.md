@@ -3787,6 +3787,23 @@ is the fourth item of `battery.py`'s sidecar-convention block.
     ruling the error touched** — reporting "your precedent doesn't exist"
     when the truth is "your precedent isn't citable from here" invites a
     re-litigation of the decision instead of a fix to the citation.
+  - **THE THIRD INSTANCE OF ONE CLASS, AND ITS NAME (user ruling, 2026-09-08):
+    A CLAIM ABOUT THE REPO'S CONTENTS CARRIED FROM A SESSION SUMMARY RATHER
+    THAN READ FROM THE TREE.** The `pointers.py` precedent cited from memory
+    is the first. The second is the 2026-09-07 "personal files moved out"
+    report accepted without checking the population it actually measured —
+    old paths, not the tree — which stood false for three days. The third is
+    `f26bf63`'s correction: the 7d6c221 bullet that called the testis
+    bare-plural comparison open when `6e3c310` had removed it from the served
+    field two days earlier, written from a compaction summary's open-items
+    list. The three differ in what they asserted and agree in where the
+    assertion came from. **THE REMEDY IS THE FORM RULE ONE LEVEL UP: A CLAIM
+    ABOUT THE TREE GETS READ FROM THE TREE** — not from a prior report, not
+    from a summary, not from memory of having done it. The form rule replaced
+    an ambient cwd with an absolute path because ambient state is invisible in
+    the transcript; a summary is ambient state one level up, and an open-items
+    list inherited from one is a set of claims about the tree, each of which
+    is read against the tree before it is repeated.
 
 **A FIFTH PROPERTY** (2026-09-07, user ruling), and the only one found by
 misreading a green DONE line rather than by any check firing.
@@ -5416,10 +5433,26 @@ refute it, which is worth more than file order.
   design-gate discussion in its shared opener block; the other two (pancreas
   grade, skin subtype) read clean. Real, tiny, and carrying the polarity
   guard's known false-positive mode, so it wants the flag-then-read contract
-  if it is ever built. Whether it becomes a read-flag arm in
-  `absence_claim_check` is a REACH decision and is OPEN, not taken; the probe
-  is scratch and deliberately not in the tracked set, and the lexicon above is
-  the shape to rebuild it from.
+  if it is ever built. **DECLINED AT THIS SIZE, WITH A TRIGGER (user ruling,
+  2026-09-08).** Today the arm would be 0 signal and 1 noise, and clearing the
+  noise means either declaring bladder's comment permanently or making the arm
+  depend on `citation_polarity`'s classification — real machinery for three
+  items. The growth argument is the only good one and it is genuine: at ~120
+  cancers the population grows with the corpus. So the decline is a CONDITION
+  rather than an open deferral: **revisit when the axis-independence claim
+  count crosses roughly fifteen**, decidable by re-running the lexicon above,
+  which is already the measurement. The probe is scratch and deliberately not
+  in the tracked set; the lexicon is the shape to rebuild it from.
+  **THE DESIGN CONSTRAINT WHOEVER REVISITS WILL HIT FIRST: REMEDIATION PROSE
+  TRIPS LEXICON MATCHERS BY NAMING WHAT IT REPAIRED.** The single flag is a
+  false positive caused by the repair text — bladder's fixed comment names the
+  descriptor it removed, and a lexicon matcher cannot see the negation. Fourth
+  instance of that family: Colombino's negated mention inside an authorship
+  correction, Boutros backfilled onto a negated mention, the pointer addresses
+  that are the evidence of their own staleness, and now bladder. And here the
+  negated mention IS the evidence of the repair, so the corollary applies: it
+  stays, spelled rather than removed — if the arm is ever built, the bladder
+  comment is rewritten into a form the matcher does not count, never deleted.
   **THE ADJUDICATION HELD A STAKE AND WAS RESOLVED AGAINST IT, recorded
   because nothing else would show it.** `testis.js:230`'s two candidates
   both dissolved at the source, leaving one borderline: the ccf says
