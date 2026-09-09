@@ -995,3 +995,84 @@ Proposed the same day and ratified with one change — the one that decides whet
   prominent on precisely the organ whose carcinoma the user expects to be grossly inapparent — which
   sharpens the open question above (a status that draws no mass) without deciding it, since no source
   yet states the inapparency.
+- 2026-09-09 (TNBC — PRE-REGISTERED BEFORE THE READ; the circumscribed family's remaining member, cell
+  (a)'s prediction transferred). LADDER: (1) StatPearls Triple-Negative Breast Cancer via PubMed
+  `statpearls[book]` → NBK → Bookshelf, Gross/Histopathology (per-chapter lesson); (2) Europe PMC OA
+  full text, "triple-negative" or "basal-like" breast carcinoma with grossly/macroscopically and a
+  margin word (circumscri|pushing|well-defined|lobulat|ill-defined|infiltrat|border|margin). REGISTER
+  RISKS, two of them: the pushing border is Livasy's HISTOLOGIC invasive-front finding (14/23), and the
+  circumscribed appearance of TNBC is most often described in the IMAGING register ("circumscribed
+  margins on mammography/ultrasound, mimicking benign masses") — neither is gross; a sentence in
+  either register alone scores NEGATIVE, as FTC's did. PREDICTION: a gross-register sentence exists
+  and says TNBC/basal-like carcinomas are (often) well circumscribed or pushing-bordered grossly, with
+  a qualifier to carry (often/frequently); the derived region is wellCircumscribed's, so under ARM 3
+  the render is shared BY REFERENCE with a new category key carrying TNBC's own badge source, declared
+  `sameAppearanceAs: 'wellCircumscribed'` — COLLAPSE AT THE PARAMETER LEVEL, the badge saying so.
+  SCORING: POSITIVE = a gross/macroscopic sentence about TNBC or basal-like carcinoma's margin;
+  DIVERGENCE = the source splits (e.g. circumscribed in most, infiltrative in some) — carried as a named
+  divergence with counts if given; NEGATIVE = histologic or imaging register only → `uncharacterised`.
+  The direction that would surprise: a gross sentence carrying a feature the knobs express that
+  seminoma's citation lacks (lobulation, nodularity) — then the ranges differ on the citation's
+  authority. Skipped on purpose: the in-atlas breast.js histology block already cited (Livasy) — it is
+  the histologic register and cannot be re-read as gross.
+- 2026-09-09 (R23 — THE TNBC READ, scored against the pre-registration): NEGATIVE ON THE REGISTER RULE,
+  the third harvest-backed status in a row to fall there (FTC, acinar, TNBC — all three seeds were
+  histologic). Rung 1: PubMed `statpearls[book]` has NO triple-negative chapter. Rung 2, five Europe PMC
+  OA queries, about thirty-five full texts. What exists in the gross register is about OTHER entities:
+  secretory carcinoma (Cancers 2021, PMC8616217, CC BY, section 7.1: "Grossly, the typical appearance is
+  that of a rounded, circumscribed, greyish-white mass, sometimes with tan to yellow discolouration"),
+  fibromatosis-like metaplastic carcinoma (Cancers 2025, PMC12651393, CC BY, section 3.3.6: "The tumors
+  are typically well-circumscribed grossly but show microscopic infiltrative borders"),
+  adenomyoepithelioma (Virchows Arch 2022, PMC8983547) and secretory carcinoma again (J Pathol Clin Res
+  2025, PMC12590242: "Grossly, 25 tumours appeared as well-circumscribed, round to oval nodules, whereas
+  4 were ill-defined and stellate") — the favourable-prognosis special subtypes, a minority of TNBC,
+  not the basal-like carcinoma the entry describes; by the FVPTC lesson a sentence about an adjacent
+  entity does not cite this one. The one GENERAL gross vocabulary found is about invasive breast
+  carcinoma as a whole, not TNBC: the Korean Standardized Pathology Report for Breast Cancer (J Breast
+  Cancer 2021, PMC7920867; J Pathol Transl Med 2021, PMC7829577; CC BY-NC): "The tumor margins of IBC can
+  be grossly described as ill-demarcated, well-demarcated (circumscribed), or mixed" and "Approximately
+  one-third of tumors have grossly circumscribed margins" (no count given; the fraction is carried as
+  the source states it). It is the gross-register VOCABULARY for the breast margin axis and is recorded
+  for that reason — it does not characterise TNBC. Basal-like-specific gross sentences: none in the
+  twelve basal-like-titled OA papers (all molecular/model work). OUTCOME: `tnbc` → `uncharacterised`
+  (not characterised at gross level in the sources read), ref carrying Livasy's histologic finding and
+  the IBC vocabulary source. Cell (a) is now NOT REACHED TWICE (FTC and TNBC both fell at the read); the
+  circumscribed family keeps seminoma alone. A PATTERN WORTH THE USER'S EYE: gross descriptions of the
+  common carcinomas live in textbooks and in PathologyOutlines' "Gross description" sections, which
+  is precisely the gated source (429, window ≈ 2026-09-10T01:38Z); when the window opens, one probe
+  each for TNBC, FTC, prostate acinar and ccRCC is the cheapest route from `uncharacterised` back to
+  `cited` — recorded as the path, not taken tonight.
+- 2026-09-09 (TNBC LOOK): `node .claude/capture_organs.js /tmp/atlas-verify/tnbc1 Breast --port 3068`
+  from the working tree of this commit (HEAD-stamped 4323525, whose table says `unread`). Form and colour
+  unchanged from the status-repair look above (the same reserved sea-glass mass at the upper-left of the
+  gland); the only change is the chip, read from the DOM by the tool: "generic mass · margin not
+  characterised" replaces "generic mass · margin source not yet read" — checkable in facts.json without
+  opening the image, which is why no new image reading is claimed here.
+- 2026-09-09 (MELANOMA — PRE-REGISTERED BEFORE THE DERIVATION; the ill-defined family's second slot,
+  tested against the now-shared PTC/PDAC indistinct-edge form). R9 (Cancers 2025, PMC12427887, PMID
+  40941017), SSM section: "The surface of the tumor is either a macule or plaque with an irregular
+  border, which ranges in size up to centimeters." Register already ruled: a skin lesion's clinical
+  surface IS its gross appearance, and this is not the ABCD dermoscopic vocabulary. THE DERIVATION
+  QUESTION: is "irregular border" the same property as "poorly defined" / "poorly delineated"? The
+  user's framing for this slot: a third collapse onto the shared form would say the ill-defined family
+  has one appearance and three names. PREDICTION: NO COLLAPSE — SEPARATION ON A DIFFERENT PROPERTY.
+  "Irregular" describes the border's OUTLINE (uneven, notched, scalloped — a shape word); "poorly
+  defined/delineated" describes the border's DISTINCTNESS (blurred, indistinct — an edge-sharpness
+  word). A macule with an irregular border can be sharply demarcated. In the five knobs: an irregular
+  outline is coarse undulation with NO projections — amplitude legible, freq at the coarse end of the
+  cited band [3.5, 9.0] (it may not enter the reserved band [1.6, 2.4], by the ratified rule),
+  spikeCount 0, spikeLength 0, sharpness 0; the indistinct edge is many short broad projections over
+  fine noise (spikeCount 10–14). Disjoint on spikeCount, so parametrically separate by construction;
+  the interesting question is perceptual, at the default framing, against BOTH the shared indistinct
+  form and the reserved placeholder (which is also spike-free undulation — the colour now carries that
+  distinction, by the ruling, so a form-level resemblance to the placeholder is acceptable and is
+  pre-registered as EXPECTED). SCORING: SEPARATION = at the default framing the skin mass reads as a
+  smooth-surfaced blob with an uneven outline while PTC/PDAC read as finely knobbed — the ill-defined
+  family keeps two names on one appearance and gains no third; COLLAPSE = the two are not
+  distinguishable at the framing → arm 3 applies, melanoma shares the indistinct form by reference and
+  the badge says so (NOT tuned apart). LIMITS DISCLOSED IN ADVANCE: the renderer draws a deformed
+  sphere; a macule/plaque is flat, and its flatness is not modelled — the category speaks only to the
+  outline; every magnitude is illustrative (the citation gives none). WIRING FORM if separation holds:
+  a new category `irregularBorder` with its own ranges and render, badge from R9; `melanoma` status
+  stays `cited`, category set; the check's arm-1 property (reserved form unreachable) is re-proven by
+  the disjoint freq band; categories 4→5.

@@ -218,11 +218,14 @@ export const MARGIN_STATUS = Object.freeze({
   ccrcc:    { status: 'unread',          ref: 'R3 — blocked-to-tooling (PathologyOutlines gated)' },
   gdiff:    { status: 'unread',          ref: 'second tier — stomach margin not yet read' },
   uc:       { status: 'unread',          ref: 'second tier — bladder margin not yet read' },
-  // TNBC: the harvest backing is Livasy CA et al., Mod Pathol 2006 (PMID 16341146, doi 10.1038/modpathol.3800528),
-  // 'pushing margin of invasion' in 14/23 basal-like tumours — a HISTOLOGIC assessment of the invasive front, so
-  // the GROSS-register margin source is not yet read. 'cited' was an over-statement of the register (2026-09-09);
-  // the identifier check caught the missing backing, the register rule caught the rest.
-  tnbc:     { status: 'unread',          ref: 'Livasy 2006 Mod Pathol PMID 16341146 (histologic pushing margin, 14/23) — gross-register source not yet read' },
+  // TNBC: the harvest backing was Livasy CA et al., Mod Pathol 2006 (PMID 16341146, doi 10.1038/modpathol.3800528),
+  // 'pushing margin of invasion' in 14/23 basal-like tumours — a HISTOLOGIC assessment of the invasive front.
+  // R23, read 2026-09-09 (pre-registered ladder): no StatPearls TNBC chapter; ~35 OA full texts; the gross-register
+  // circumscription sentences belong to special low-grade subtypes (secretory, fibromatosis-like metaplastic),
+  // not to the basal-like entry; the general invasive-breast-carcinoma gross vocabulary (ill-demarcated /
+  // well-demarcated / mixed, about one-third grossly circumscribed — Standardized Pathology Report, PMC7920867)
+  // is not entry-specific. NEGATIVE → not characterised at gross level in the sources read.
+  tnbc:     { status: 'uncharacterised', ref: 'R23 — read 2026-09-09: no gross-register TNBC/basal-like margin sentence found; Livasy PMID 16341146 is histologic; IBC vocabulary PMC7920867 is not entry-specific' },
   hcc:      { status: 'cited', category: 'nodular', ref: 'R11 — named divergence with counts (nodular 348/400 vs infiltrative 52/400), RENDERED third, 2026-09-09' },
   // GBM: re-read 2026-09-09 on the user's biology-first distrust (the seed was a growth fact borrowed as a margin).
   // R21, Iacob & Dinca, J Med Life 2009 (PMC3019011, PMID 20108752, CC BY), Pathology: "Grossly, it appears
