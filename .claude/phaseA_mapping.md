@@ -232,7 +232,14 @@ Proposed the same day and ratified with one change — the one that decides whet
      reserved values otherwise lack: the reserved form must be UNREACHABLE from any cited
      category's parameter range.** Checkable rather than judged; the orthogonal axis satisfies
      it for free where a midpoint never can. The check ships WITH the build, before the first
-     cited category is wired (guard before repair).
+     cited category is wired (guard before repair) — A FIRST FOR THIS PROJECT: every guard so
+     far arrived after a defect or alongside a repair; this one ships before anything it guards
+     exists. DECIDED UP FRONT (user, 2026-09-09): condition (7) is therefore satisfied against a
+     FIXTURE, and that is the CORRECT form here, not the weak one — the guard's purpose is that
+     the population never contains a violation, so a live firing would mean the rule had already
+     been broken. THE CHECK'S OWN HEADER MUST STATE THIS, so no later reader takes "fixture-only"
+     for a gap and goes looking for a real demonstration that should not exist. General form in
+     CLAUDE.md's condition (7-quater).
   3. **THE LABEL AND A BADGE CARRY THE HONESTY, ON SCREEN — BADGE NON-OPTIONAL.** The
      tumour's in-product text and aria state it (draft wording: "Margin: not characterised at
      gross level in the cited sources; drawn as the atlas's generic mass."), and a DOM BADGE
@@ -406,3 +413,11 @@ Proposed the same day and ratified with one change — the one that decides whet
   the build. Badge yes, non-optional (metadata about the record); dashed silhouette no (a shape,
   hence a margin claim). Label weighted above recurrence, because most visitors see one cancer.
   One shared default, growth governs where cited, and no silent upgrade stand as written.
+- 2026-09-09 (user): **THE BUILD IS NOT BLOCKED ON ccRCC.** The two unreached items resolve either to
+  cited categories or to the reserved default, and the default is ratified, so the renderer handles
+  both outcomes today. Fold ccRCC in when PathologyOutlines' window passes; "the ccRCC pair, then the
+  build" read as sequential and is not.
+- 2026-09-09 (user): **THE UNREACHABILITY CHECK IS THE PROJECT'S FIRST GUARD TO SHIP BEFORE ITS
+  POPULATION EXISTS**, and condition (7) is satisfied against a fixture BY DESIGN — folded into part 2
+  of the default and recorded as CLAUDE.md's condition (7-quater), with the requirement that the
+  check's own header says so.

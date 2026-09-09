@@ -3328,6 +3328,26 @@ screen pair per organ:
   a separate arm asserts the 4b2c8c5 shape (loaded page, null state)
   reports all three. AN ARM THAT FAILS FOR THE WRONG REASON IS NOT A
   CAPABILITY CHECK FOR THE RIGHT ONE.
+  (7-quater) THE GUARD THAT SHIPS BEFORE ITS POPULATION EXISTS
+  (2026-09-09, user ruling, on the uncharacterised-margin default's
+  unreachability check — a FIRST for this project). Every guard so far
+  arrived after a defect or alongside a repair: the coverage guard after
+  the plinth occlusion, the ratchet after a silent shrink, the universals
+  guard after the TTN claim. The unreachability check — the reserved
+  margin form must be unreachable from any cited category's parameter
+  range — ships before the first cited category is wired, so nothing it
+  guards exists when it lands. CONSEQUENCE, DECIDED UP FRONT: condition
+  (7) is satisfied against a FIXTURE, because there is no live population
+  to fire on. Normally that is the weak form and real bytes are pushed
+  for; HERE IT IS THE CORRECT FORM — the guard's whole purpose is that
+  the population never contains a violation, so a live firing would mean
+  the rule had already been broken. THE CHECK ITSELF MUST SAY SO, in its
+  own header, or a later reader will read "fixture-only" as a gap and go
+  looking for the real demonstration that should not exist. The general
+  form, for the next guard of this kind: when a guard precedes its
+  population, fixture-only demonstration is the design, not the
+  shortfall, and the absence of a live positive is the property being
+  guarded.
 
 ## ABSENCE-CLAIM instrument (2026-09-05, user-directed; ninth in the battery)
 
