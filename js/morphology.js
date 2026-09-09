@@ -42,10 +42,12 @@ export const CITED_FREQ_BAND = Object.freeze([3.5, 9.0]);
 // THE RESERVED FORM — one shared parameter set AND seed, so recurrence is recognisable.
 // spikeCount 0 means organicSpiculate contributes no fingers at all: the form is undulation only.
 export const RESERVED_MARGIN = Object.freeze({
-  // amplitude 0.18, not the 0.10 first tried: at 0.10 the undulation was barely legible in the live
-  // capture and the mass read as a smooth sphere — i.e. as "circumscribed", the very misread the rule
-  // exists to prevent. Legibility is what the magnitude is chosen for; the value is illustrative.
-  mode: 'reserved', amplitude: 0.18, freq: 2.0, seed: 3.7, spikeCount: 0, spikeLength: 0, sharpness: 0,
+  // amplitude 0.24, the third value. 0.10 read as a smooth sphere in the first live capture; 0.18 read
+  // smooth again at the default framing when set beside the first wired category (PTC, 2026-09-09) —
+  // and smooth is "circumscribed", the very misread the rule exists to prevent. THE COLLISION RULE moved
+  // THIS form, not PTC's: these values are illustrative and have no citation to violate. Legibility is
+  // what the magnitude is chosen for; the undulation stays uniform and inside the reserved band.
+  mode: 'reserved', amplitude: 0.24, freq: 2.0, seed: 3.7, spikeCount: 0, spikeLength: 0, sharpness: 0,
 });
 
 // Cited margin categories → parameter RANGES. EMPTY AT BIRTH (see BUILD ORDER above). Shape:
@@ -69,13 +71,32 @@ export const RESERVED_MARGIN = Object.freeze({
 //      checkable, "verified distinct" is not and is what a tired reader writes at the end of a wiring
 //      commit. A look recorded as a sentence about what someone DID, silent about what they COMPARED,
 //      is the annotation shape that spent three days over-claiming in this repo.
-export const MARGIN_CATEGORIES = Object.freeze({});
+export const MARGIN_CATEGORIES = Object.freeze({
+  // FIRST CATEGORY WIRED (2026-09-09), chosen as the HARDEST perceptual case on the user's ruling: it sits
+  // closest to the reserved undulation. Category cited (R17, the in-atlas StatPearls Papillary Thyroid
+  // Carcinoma chapter, NBK536943, Gross Findings: "Grossly, PTC typically presents as an invasive neoplasm
+  // with poorly defined margins, a firm consistency, and a granular white-cut surface."); every number
+  // below is illustrative magnitude. "Poorly defined" is rendered as an INDISTINCT EDGE — many short,
+  // broad-based projections over fine granular noise — and deliberately NOT as long fingers, which would
+  // be a spiculated category the citation does not support. THE COLLISION RULE (user, 2026-09-09): if this
+  // form and the reserved form collide perceptually, the RESERVED form moves; these values are never pushed
+  // sharper to flatter the render, because that would invent magnitude the citation does not carry.
+  poorlyDefined: Object.freeze({
+    label: 'poorly defined',
+    ranges: Object.freeze({ amplitude: [0.10, 0.16], freq: [5.0, 7.0], spikeCount: [10, 14], spikeLength: [0.10, 0.18], sharpness: [4, 7] }),
+    render: Object.freeze({ amplitude: 0.13, freq: 6.0, seed: 5.1, spikeCount: 12, spikeLength: 0.14, sharpness: 5.5 }),
+    badgeSource: 'StatPearls, Papillary Thyroid Carcinoma',
+    badgeQuote: 'typically presents as an invasive neoplasm with poorly defined margins',
+  }),
+});
 
 // The illustrative mass colour — UNSOURCED and disclosed in #disclaimer. One colour for every
 // reserved mass, for the same reason as one form: sameness is what a placeholder looks like.
 export const MASS_COLOUR = 0xa89a8c;
-// Mass radius as a fraction of the organ's bounding radius (magnitude, illustrative).
-export const MASS_RADIUS_FRACTION = 0.16;
+// Mass radius as a fraction of the organ's bounding radius (magnitude, illustrative). 0.22, from 0.16:
+// at 0.16 a mass was a few dozen pixels at the default framing and neither form's edge was legible —
+// a presentation knob shared by EVERY mass, so raising it changes no category's form.
+export const MASS_RADIUS_FRACTION = 0.22;
 
 // Per active entry: the MARGIN half's status in the Phase A ledger (.claude/phaseA_mapping.md
 // status log and the manifest's `_phaseA_citations`, items R1–R19 and the in-atlas harvest).
@@ -100,7 +121,7 @@ export const MARGIN_STATUS = Object.freeze({
   pdac:     { status: 'cited',           ref: 'R1 — poorly delineated, not yet rendered' },
   melanoma: { status: 'cited',           ref: 'R9 — irregular border (clinical surface), not yet rendered' },
   seminoma: { status: 'cited',           ref: 'harvest — well-circumscribed nodule, not yet rendered' },
-  ptc:      { status: 'cited',           ref: 'R17 — poorly defined margins, not yet rendered' },
+  ptc:      { status: 'cited', category: 'poorlyDefined', ref: 'R17 — poorly defined margins, RENDERED (first category wired, 2026-09-09)' },
   ftc:      { status: 'cited',           ref: 'harvest — seeded (encapsulated), not yet rendered' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
@@ -129,7 +150,12 @@ export const ORIGIN_HOTSPOT = Object.freeze({
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never
 // a second uncharacterised entry (user ruling). Non-optional. Chip = the short on-model badge;
 // sentence = the accessible name and the info-card text.
-export function marginBadge(entryName, status){
+export function marginBadge(entryName, status, category){
+  if(category) return {
+    chip: 'margin: ' + category.label + ' \u00b7 cited',
+    sentence: entryName + ' \u2014 margin: ' + category.label + ', the gross category its cited source describes (' + category.badgeSource
+      + ': "' + category.badgeQuote + '"); the drawn magnitude is illustrative, not measured.',
+  };
   if(status === 'uncharacterised') return {
     chip: 'generic mass · margin not characterised',
     sentence: entryName + ' — margin: not characterised at gross level in the cited sources; drawn as the atlas\'s generic mass.',
@@ -138,7 +164,7 @@ export function marginBadge(entryName, status){
     chip: 'generic mass · margin source not yet read',
     sentence: entryName + ' — margin: the gross-pathology source is not yet read; drawn as the atlas\'s generic mass until it is.',
   };
-  return null; // 'cited' entries render nothing until their category is wired
+  return null; // 'cited' entries with no wired category render nothing — nothing stands in for a cited shape
 }
 
 // ---- pure predicates, shared with the battery member --------------------------------------
@@ -151,12 +177,27 @@ export function boxContains(ranges, vec){
 // = unreachable). Three tests, all needed: a category whose box contains the reserved vector;
 // a category whose range on the reserved axis touches the reserved band; and a category that
 // leaves a knob unbounded (an unbounded knob reaches everything).
+// A wired category's RENDER values must sit inside its own declared RANGES — otherwise the ranges the
+// check reasons about are decorative and the drawn form is unconstrained by the citation's category.
+export function categoryRenderViolations(name, category){
+  const out = [];
+  if(!category || !category.ranges || !category.render){ out.push(`category ${name} lacks ranges or render values`); return out; }
+  for(const k of MARGIN_KNOBS){
+    const r = category.ranges[k];
+    if(!Array.isArray(r) || r.length !== 2){ out.push(`category ${name} leaves ${k} unbounded`); continue; }
+    if(typeof category.render[k] !== 'number' || !inRange(category.render[k], r)) out.push(`category ${name} renders ${k}=${category.render[k]} outside its own range [${r}]`);
+  }
+  if(!Number.isInteger(category.render.spikeCount)) out.push(`category ${name} renders a non-integer spikeCount`);
+  return out;
+}
+
 export function reservedViolations(reserved, categories, axis, citedBand){
   const out = [];
   if(!inRange(reserved[axis.knob], axis.band)) out.push(`reserved form's ${axis.knob} ${reserved[axis.knob]} is outside the reserved band [${axis.band}]`);
   if(reserved.spikeCount !== 0) out.push(`reserved form carries spikes (spikeCount ${reserved.spikeCount}) — that is the cited categories' axis`);
   if(bandsOverlap(axis.band, citedBand)) out.push(`reserved band [${axis.band}] overlaps the cited band [${citedBand}]`);
-  for(const [name, ranges] of Object.entries(categories)){
+  for(const [name, category] of Object.entries(categories)){
+    const ranges = (category && category.ranges) || {};
     for(const k of MARGIN_KNOBS){
       if(!Array.isArray(ranges[k]) || ranges[k].length !== 2) out.push(`category ${name} leaves ${k} unbounded — an unbounded knob reaches everything`);
     }

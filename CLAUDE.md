@@ -4517,6 +4517,18 @@ derives."
   as its declared FLOOR-only boundary says it will for prose pointers. The
   class is graduating the way the ratchet class did — toward caught rather
   than found — with the difference that the catch is still a person reading.
+- **THIRD MOVE, SAME FILE, SAME DAY — SO THE THREE POINTERS WERE CONVERTED, NOT
+  RE-POINTED AGAIN (2026-09-09).** Wiring the first cited category added lines
+  inside the same renderer, above the site-map code, and the three pointers
+  moved a third time (caught pre-commit, by the same reading). "Two catches by
+  the same method isn't a mechanism" (user), and a third would not have been
+  one either — so the pointer ruling's own remedy was applied: name the file
+  and quote the span. The roadmap now names the site-map blob loop's
+  organicSpiculate call by the constants on its next line, and the two
+  idiom-collision records quote the spread-pattern comment they already
+  carried beside the number. pointer_check's floor was LOWERED by exactly
+  three on the record (`--lower-ratchet` with its reason), the same step the
+  six spelled pointers took. No tracked `main.js:<line>` pointer remains.
 
 ## THE GUARD CAME BEFORE THE REPAIR, AND THE FLOOR WAS THE DECISIVE NUMBER (2026-09-07, user ruling; `.claude/pointer_check.py`)
 
@@ -4866,7 +4878,9 @@ refute it, which is worth more than file order.
   stage-size (radius ← SEER Summary Stage). PREMISE VERIFIED in
   source 2026-09-05: organicSpiculate(geometry, {amplitude, freq,
   seed, spikeCount, spikeLength, sharpness}) at viewer.js:223, driven
-  today by constants + idx-seed at main.js:567 — the pass is
+  today by constants + idx-seed at the site-map blob loop's
+  organicSpiculate call in main.js (the one whose next line carries
+  `amplitude:0.14, freq:4.2`) — the pass is
   re-pointing existing knobs at cited behaviour, not a new renderer.
   New citation class (4 properties × cancers, ~64 items) —
   CLASSIFICATION-FACT EXCEPTION (2026-09-05, resolves the Phase-B

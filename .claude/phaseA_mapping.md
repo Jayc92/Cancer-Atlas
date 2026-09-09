@@ -139,7 +139,7 @@ Multifocal (several independent PRIMARY foci) and the tumour site map (several b
 SITES OF INVOLVEMENT) are different concepts that could share a visual idiom. Code
 check: the site map is a SEPARATE screen with its own viewer (`state.siteViewer`,
 `screenCancer`), organ-less, accent-coloured, and schematic by its own declaration
-(main.js:606: "four abstract blobs POSITIONED TO ENCODE A SPREAD PATTERN, not
+(main.js's own comment: "four abstract blobs POSITIONED TO ENCODE A SPREAD PATTERN, not
 objects"; the aria-label says "coloured cell clusters"). RULE so the registers never
 converge: multifocal foci render ONLY in the gross-tissue register, attached to the
 organ mesh, tissue-coloured; site-map blobs render ONLY in the accent-schematic
@@ -493,3 +493,60 @@ Proposed the same day and ratified with one change — the one that decides whet
 - 2026-09-09 (user, on the pointer record's closing line): "two catches by the same method isn't a
   mechanism" — the honest note that the catch is still a person reading was the right thing to write,
   and calling it a graduation outright would have overclaimed what changed. Left as written.
+- 2026-09-09 (BEFORE LOOKING — written before the first capture of the wired form): **PTC WIRED
+  FIRST, THE HARDEST PERCEPTUAL CASE** (user): its cited category, "poorly defined margins" (R17,
+  StatPearls NBK536943), sits closest to the reserved undulation, so it is the binding constraint on
+  whether the reserved form works at all — better discovered with one category wired than eight.
+  **PRE-REGISTERED: PTC MAY NOT BE PERCEPTUALLY DISTINCT FROM THE RESERVED FORM.** That is a finding,
+  not a failure, and the outcome the build order exists to surface early. The specific expectation:
+  at the default framing each mass is a few dozen pixels across, and at that size PTC's many short,
+  broad-based projections over fine granular noise may blur into a "rough sphere" while the reserved
+  form's two broad swells read as a "lumpy sphere" — a collision at roughly even odds. **THE
+  COLLISION RULE** (user): if they collide, THE RESERVED FORM MOVES, never PTC. Pushing PTC's
+  sharpness up until the two separate would be inventing magnitude in the direction that flatters
+  the render — the cited-category / illustrative-magnitude split abused rather than applied. The
+  reserved form's values are illustrative by design and have no citation to violate; it yields.
+  PTC's category as wired (category cited; every number illustrative): ranges amplitude [0.10,
+  0.16], freq [5.0, 7.0] (inside the cited band), spikeCount [10, 14], spikeLength [0.10, 0.18],
+  sharpness [4, 7] — many SHORT, BROAD-BASED projections and fine granularity, i.e. an indistinct
+  edge, deliberately not the long fingers that would be a spiculated category; render values
+  amplitude 0.13, freq 6.0, seed 5.1, spikeCount 12, spikeLength 0.14, sharpness 5.5.
+- 2026-09-09: **THE RECORDED LOOK — PTC (poorly defined) BESIDE THE RESERVED FORM.**
+  (a) THE CAPTURE: `node .claude/capture_organs.js <outDir> Thyroid Kidneys Lungs`, default pose,
+  run twice on the working tree of the wiring commit (the commit that carries this entry; parent
+  `4ec6c06`): FIRST with the reserved form at amplitude 0.18, mass radius 0.16 × organ radius,
+  outward offset 0.35 × mass radius; SECOND, the look that stands, at amplitude 0.24, radius 0.22,
+  offset 0.6 — the reserved form and two presentation knobs shared by every mass moved; PTC's
+  category values (amplitude 0.13, freq 6.0, spikeCount 12, spikeLength 0.14, sharpness 5.5) did
+  not, per the collision rule. Re-running the command at this commit regenerates both images.
+  (b) THE TWO FORMS: PTC's poorly-defined category on Papillary carcinoma, anchored at the thyroid's
+  right-lobe hotspot; the reserved form on Clear cell renal cell carcinoma (kidneys, unread) and on
+  Adenocarcinoma (lungs, uncharacterised).
+  (c) WHAT DISTINGUISHED THEM, checkable by opening the images: THE SCALE OF THE SURFACE FEATURE.
+  PTC's edge is finely knobbed — bumps a small fraction of the mass radius, a crenellated silhouette
+  with no clean boundary line; the reserved form's edge is smooth at fine scale and carries one or
+  two BROAD swells, a large fraction of the radius, so the mass reads as an uneven egg rather than
+  a sphere. In the first capture that distinction did NOT hold: at 0.18 and a few dozen pixels the
+  reserved masses read as smooth spheres — i.e. as circumscribed, the misread the rule forbids —
+  and PTC's mass sat mostly behind its gland, so the edge under judgement was hidden. So the
+  pre-registered collision partly fired, and not where predicted: PTC was distinguishable from the
+  reserved form even then (knobby against smooth), but the reserved form collided with the
+  circumscribed reading of ITSELF. The second capture separates PTC and reserved on feature scale
+  and takes the reserved form off "sphere". RESIDUAL, stated rather than smoothed over: the reserved
+  mass still has a continuous, well-defined edge — a reader could call it smooth-bordered — and no
+  gentle uniform undulation can avoid that, because a solid placeholder has an edge. That is why the
+  label was weighted above recurrence at ratification; geometry carries "not PTC", the badge carries
+  "not a claim". Also seen: at the default framing the badge chip overlaps the upper part of the PTC
+  mass (its anchor sits near the frame's top, where the clamp pulls the chip down) — a layout
+  nuisance, not a claim, noted for the next presentation pass.
+  PRE-REGISTRATION SCORED: "PTC may not be perceptually distinct from the reserved form" — did not
+  fire as stated; the collision that appeared was the reserved form's own legibility, and it was
+  resolved by moving the reserved form, never PTC. Check after the move: unreachable from 1 cited
+  category, PTC's render inside its declared ranges, 0 problems.
+- 2026-09-09: **THE THREE POINTERS INTO main.js MOVED A THIRD TIME AND WERE CONVERTED TO SPAN FORM.**
+  Wiring PTC added lines inside addOriginMasses, above the site-map code, the same shape as build
+  step 1 and 893b3c8; caught pre-commit by re-reading the pointed lines. Re-pointing a third time
+  would have been the same non-mechanism, so the pointer ruling's remedy was applied instead: this
+  document's idiom-collision paragraph and the manifest's copy now cite main.js by the comment they
+  quote, and CLAUDE.md's roadmap names the site-map call by the constants on its next line.
+  pointer_check's floor lowered by exactly three on the record.

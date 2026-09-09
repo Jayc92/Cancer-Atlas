@@ -14,7 +14,7 @@ import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
-import { RESERVED_MARGIN, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, MASS_RADIUS_FRACTION, marginBadge } from './morphology.js';
+import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, MASS_RADIUS_FRACTION, marginBadge } from './morphology.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -213,14 +213,19 @@ function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadiu
   let placed = 0;
   CANCERS.filter(c=>c.organKey===organKey && c.active).forEach(entry=>{
     const st = MARGIN_STATUS[entry.id];
-    const badge = st ? marginBadge(entry.name, st.status) : null;
-    if(!badge) return;   // 'cited' (recorded, not yet rendered) or unknown: nothing stands in for a cited shape
+    const category = st && st.category ? MARGIN_CATEGORIES[st.category] : null;
+    const badge = st ? marginBadge(entry.name, st.status, category) : null;
+    if(!badge) return;   // 'cited' with no wired category, or unknown: nothing stands in for a cited shape
     const geo = new THREE.IcosahedronGeometry(massR, 4);
-    organicSpiculate(geo, { ...RESERVED_MARGIN });   // spikeCount 0: the reserved undulation only
+    // A wired category draws its own render values (inside its declared ranges — margin_reserve_check
+    // asserts that); everything else draws the reserved form (spikeCount 0: undulation only).
+    organicSpiculate(geo, { ...(category ? category.render : RESERVED_MARGIN) });
     const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: MASS_COLOUR, roughness: 0.55, specularIntensity: 0.25 }));
     // Straddle the surface at the origin structure (the cheap extent read: the depth buffer hides
     // the inside portion). A second entry on the same organ sits beside the first along a tangent.
-    const pos = anchor.clone().addScaledVector(outward, massR*0.35);
+    // 0.6, from 0.35: at 0.35 the first wired mass (PTC) sat mostly behind its gland at the default
+    // framing, hiding the very edge the look has to judge. Shared by every mass; no category changes.
+    const pos = anchor.clone().addScaledVector(outward, massR*0.6);
     if(placed > 0){
       const t = new THREE.Vector3(0, 1, 0).cross(outward);
       if(t.lengthSq() < 1e-6) t.set(1, 0, 0);
@@ -231,7 +236,7 @@ function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadiu
     const el = document.createElement('div');
     el.className = 'tumour-badge';
     el.textContent = badge.chip;
-    makeActivatable(el, ()=>showOrganInfo({ label: entry.name + ' — tumour mass (placeholder form)', text: badge.sentence }), { label: badge.sentence });
+    makeActivatable(el, ()=>showOrganInfo({ label: entry.name + (category ? ' — tumour mass (cited margin category)' : ' — tumour mass (placeholder form)'), text: badge.sentence }), { label: badge.sentence });
     container.appendChild(el);
     organMasses.push({ mesh, el, stack: placed });
     placed++;
