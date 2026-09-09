@@ -7,7 +7,7 @@
   "internal_quote_check.internal_quote.marked": 15,
   "pointer_check.pointer.pointers": 577,
   "pointer_check.pointer.identity_oracle": 266,
-  "margin_reserve_check.categories": 1
+  "margin_reserve_check.categories": 2
  },
  "lowers": [
   {

@@ -167,7 +167,13 @@ generalised as predicted)
 Grep of the atlas's own cited prose against the margin/growth vocabulary. Per-entry
 ledger (CITED = category-grade material with citation in the existing verified content):
 - **testis/seminoma — margin DONE:** "well-circumscribed solid intratesticular nodule"
-  (CITED, PMC6906820, testis.js:239). No external read needed.
+  (CITED, PMC6906820, testis.js:239). No external read needed. **ATTRIBUTION CORRECTED IN PLACE
+  (2026-09-09, on re-reading the source line before wiring): that span is PMC13218944's (a Front
+  Oncol 2026 case report, in its introduction, with the qualifier — "It typically affects young men
+  and presents as a well-circumscribed solid intratesticular nodule with fibrous septa and
+  lymphocytic infiltrates"); PMC6906820 carries its OWN general statement, in its literature
+  review: "Macroscopically, seminomas are well circumscribed, tan to pale yellow lesions with
+  necrotic or hemorrhagic foci." The verdict stands; the span was filed under the wrong id.**
 - **prostate/acinar — growth (multifocal) DONE:** the best-cited morphology fact in the
   atlas (Fontugne 59.7% of 233, Mehra 21/30, Cooper; prostate.js:155–219). Margin
   seeded (pattern-4/5 infiltrating descriptions, cited, :244).
@@ -550,3 +556,62 @@ Proposed the same day and ratified with one change — the one that decides whet
   document's idiom-collision paragraph and the manifest's copy now cite main.js by the comment they
   quote, and CLAUDE.md's roadmap names the site-map call by the constants on its next line.
   pointer_check's floor lowered by exactly three on the record.
+- 2026-09-09 (BEFORE LOOKING — written before the first capture of the wired form): **SEMINOMA
+  SECOND, NOT TNBC** (user): the PTC look inverted the ordering logic — PTC separated cleanly even
+  at the first capture, and the reserved form's stated residual runs toward CIRCUMSCRIBED (a
+  defined edge a reader could call smooth-bordered), so the binding constraint is seminoma's
+  well-circumscribed nodule. Same hardest-first reasoning, now pointed at the right target.
+  **PRE-REGISTERED: seminoma and the reserved form may not separate.** Specific expectation: seminoma
+  renders as a near-sphere (amplitude ≤0.05, no spikes) and the reserved form as an uneven egg with
+  broad swells at 0.24; at the default framing I expect them to separate on SPHERICITY — round or
+  ovoid against visibly uneven — perhaps seven times in ten; the failure mode is that the reserved
+  form's smooth continuous edge makes a reader call BOTH circumscribed, the swells reading as mere
+  ovoid asymmetry. **THE COLLISION RULE, PRE-REGISTERED AGAIN** (user): if they do not separate, the
+  reserved form moves; seminoma's "well-circumscribed" is cited and has nothing to give. **AND THE
+  POSSIBILITY NAMED BEFORE THE CAPTURE** (user): the reserved form may have NOWHERE LEFT TO GO — it has
+  been moved twice, and every move away from circumscribed is a move toward one of the other cited
+  categories. If seminoma forces a third move, the honest conclusion may be that a single shared
+  reserved form cannot sit clear of both ends of the margin axis; the answer would then be the
+  badge carrying more weight, or a non-geometric treatment — not a fourth tuning pass.
+  Seminoma's category as wired (category cited; every number illustrative): ranges amplitude
+  [0.0, 0.05], freq [3.5, 5.5] (inside the cited band), spikeCount [0, 0], spikeLength [0, 0],
+  sharpness [0, 0]; render amplitude 0.03, freq 4.5, seed 7.3, spikeCount 0, spikeLength 0,
+  sharpness 0 — a smooth, sharply bounded nodule, nothing more, because the citation says nothing
+  more. Sources: PMC6906820 ("Macroscopically, seminomas are well circumscribed, tan to pale yellow
+  lesions with necrotic or hemorrhagic foci."), PMC13218944 ("typically ... presents as a
+  well-circumscribed solid intratesticular nodule"), PMC9162935 (Acad Pathol educational case:
+  "This lesion is grossly characterized as well-circumscribed, tan-white, and homogeneous").
+- 2026-09-09: **THE RECORDED LOOK — SEMINOMA (well circumscribed) BESIDE THE RESERVED FORM.**
+  (a) THE CAPTURE: `node .claude/capture_organs.js <outDir> Testis Kidneys Lungs Thyroid`, default
+  pose, run once on the working tree of the wiring commit (the commit that carries this entry;
+  parent `c76a14c`); nothing moved after it — no second capture was needed. Re-running the command
+  at this commit regenerates the images.
+  (b) THE TWO FORMS: seminoma's well-circumscribed category on Seminoma, anchored at the testis's
+  seminiferous-tubule hotspot (render amplitude 0.03, freq 4.5, no spikes); the reserved form,
+  unchanged from the PTC look (amplitude 0.24, freq 2.0), on Clear cell renal cell carcinoma
+  (kidneys, unread) and Adenocarcinoma (lungs, uncharacterised). PTC's thyroid capture rode along
+  as the third point of reference.
+  (c) WHAT DISTINGUISHED THEM, checkable by opening the images: UNIFORMITY OF CURVATURE, not edge
+  sharpness. Seminoma's nodule is a circle of near-constant radius — a round ball with one smooth
+  highlight gradient and a crisp rim. The reserved masses are not circles: the lungs mass is an egg
+  with a distinct bulge at its lower right, the kidneys mass an oblong with one flattened side; both
+  deviate from a sphere visibly, the lungs one strongly, the kidneys one modestly. WHAT THEY SHARE,
+  stated: a crisp, continuous boundary with no fuzz. "Well-defined edge" is true of both, and it is
+  exactly what a "circumscribed" reading keys on — so the geometric separation rests on a reader
+  noticing unevenness, and on the kidney it is a modest unevenness. The badge does the rest, as
+  ratification weighted it: geometry says "not a sphere", the badge says "not a claim".
+  PRE-REGISTRATION SCORED: separation on sphericity was expected roughly seven times in ten; it
+  held, on the predicted discriminator, in both reserved captures. The pre-registered failure mode
+  (both read as circumscribed on edge sharpness) is REAL AS A RESIDUAL and not decisive, because the
+  shapes differ. THE COLLISION RULE WAS NOT TRIGGERED: the reserved form did not move; seminoma's
+  values, which had nothing to give, were never in question.
+  THE NOWHERE-LEFT-TO-GO POSSIBILITY, SCORED AS A BOUNDARY REACHED, NOT A FAILURE: the reserved form
+  now sits between the two ends of the margin axis sharing one property with each — a smooth edge
+  with seminoma, unevenness with PTC's irregularity — and the only further separation from
+  circumscribed available to a gentle uniform undulation is more amplitude, which walks toward a
+  LOBULATED reading (discrete bulges with clefts), a category the atlas will likely cite for another
+  entry. So the geometry has used its room. The rule as ratified already answers this: a fourth
+  tuning pass is not the remedy; the badge and label carry the "not a claim" half, and they are
+  non-optional for exactly this reason. No third move made; none proposed.
+  ALSO SEEN: the badge chip overlaps the top of the seminoma nodule at the default framing, the same
+  layout nuisance as PTC's; still a presentation-pass item, not a claim.

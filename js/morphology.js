@@ -88,6 +88,23 @@ export const MARGIN_CATEGORIES = Object.freeze({
     badgeSource: 'StatPearls, Papillary Thyroid Carcinoma',
     badgeQuote: 'typically presents as an invasive neoplasm with poorly defined margins',
   }),
+  // SECOND CATEGORY WIRED (2026-09-09), on the user's re-aimed hardest-first: the reserved form's residual
+  // runs toward CIRCUMSCRIBED, so the binding constraint is seminoma's well-circumscribed nodule. Category
+  // cited three ways, all read at source: Case Rep Urol 2019 (PMC6906820, PMID 31871817, literature review):
+  // "Macroscopically, seminomas are well circumscribed, tan to pale yellow lesions with necrotic or
+  // hemorrhagic foci."; Front Oncol 2026 (PMC13218944, introduction): "typically ... presents as a
+  // well-circumscribed solid intratesticular nodule"; Acad Pathol 2022 (PMC9162935): "grossly characterized
+  // as well-circumscribed, tan-white, and homogeneous". Rendered as a SMOOTH, SHARPLY BOUNDED NODULE and
+  // nothing more, because the citation says nothing more. THE COLLISION RULE applies here in full: this
+  // category has nothing to give; if it and the reserved form do not separate, the reserved form moves —
+  // or, if the reserved form has nowhere left to go, the badge carries more weight (mapping document).
+  wellCircumscribed: Object.freeze({
+    label: 'well circumscribed',
+    ranges: Object.freeze({ amplitude: [0.0, 0.05], freq: [3.5, 5.5], spikeCount: [0, 0], spikeLength: [0, 0], sharpness: [0, 0] }),
+    render: Object.freeze({ amplitude: 0.03, freq: 4.5, seed: 7.3, spikeCount: 0, spikeLength: 0, sharpness: 0 }),
+    badgeSource: 'Case Reports in Urology 2019, literature review',
+    badgeQuote: 'Macroscopically, seminomas are well circumscribed',
+  }),
 });
 
 // The illustrative mass colour — UNSOURCED and disclosed in #disclaimer. One colour for every
@@ -120,7 +137,7 @@ export const MARGIN_STATUS = Object.freeze({
   acinar:   { status: 'cited',           ref: 'harvest — seeded (infiltrating patterns), not yet rendered' },
   pdac:     { status: 'cited',           ref: 'R1 — poorly delineated, not yet rendered' },
   melanoma: { status: 'cited',           ref: 'R9 — irregular border (clinical surface), not yet rendered' },
-  seminoma: { status: 'cited',           ref: 'harvest — well-circumscribed nodule, not yet rendered' },
+  seminoma: { status: 'cited', category: 'wellCircumscribed', ref: 'harvest — well circumscribed (PMC6906820 general statement; PMC13218944 typically; PMC9162935), RENDERED second, 2026-09-09' },
   ptc:      { status: 'cited', category: 'poorlyDefined', ref: 'R17 — poorly defined margins, RENDERED (first category wired, 2026-09-09)' },
   ftc:      { status: 'cited',           ref: 'harvest — seeded (encapsulated), not yet rendered' },
 });
