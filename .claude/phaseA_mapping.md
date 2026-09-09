@@ -283,3 +283,47 @@ arithmetic either way.
   gap and no comparator); (d) `absence_claim_check`'s flag tier catches world-scoped universals —
   morphology categories are comparative by nature, so no "uniquely", "the only" or "unlike any
   other" enters a category claim.
+- 2026-09-09: **THE 19 READ — LEDGER** (full records with verbatim quotes and identifiers in the
+  manifest's `_phaseA_citations`, items R1–R19 + EXT; every source retrieved 2026-09-09; hierarchy
+  rung (2) throughout because PathologyOutlines stayed gated). CITED 12: PDAC margin (poorly
+  delineated, G) and growth (infiltrative, H disclosed); CRC growth (named divergence: ulcerating
+  55–60% / polypoid 25% / flat 15–20% / diffuse 1%, review ranges without counts); melanoma margin
+  (irregular border, C disclosed) and growth (radial then vertical); HCC margin (named divergence
+  with counts: nodular types I–III 348/400 against infiltrative 52/400, smooth against extranodular
+  inside the nodular majority) and growth (LCSGJ nodular classification; satellites ≤2 cm); HGSOC
+  growth (bilateral large masses, rung 1 + corroboration); OCCC growth (cystic-and-solid unilateral
+  mass, rung 1); PTC margin (poorly defined, rung 1) and growth (invasive); bladder exophytic-
+  papillary growth (named divergence: ~75% NMIBC whose Ta component is non-invasive papillary
+  carcinoma, against ~25% MIBC). NEGATIVE 5: CRC margin (subsumed by growth form), LUAD margin,
+  LUAD growth, HGSOC margin (the source itself says the surface is variable), OCCC margin (no
+  category in the source). UNREACHED 2: ccRCC margin and growth — blocked-to-tooling, not
+  negative; retry PathologyOutlines after the window; a near-miss is recorded there (a papillary-
+  RCC table row's pseudocapsule sentence, checked by position and not taken for ccRCC). EXTENT:
+  one read for all sixteen — NCI's public-domain staging page carries the five Summary Stage
+  categories verbatim (in situ / localized / regional / distant / unknown); the SEER 2018 manual
+  is named, its PDF not fetched.
+- 2026-09-09: **PRE-REGISTRATION SCORED.** Expected 3 negatives (range 2–4); measured 5 — OVER BY
+  ONE, reported as measured. Named candidates: LUAD margin FIRED, CRC margin FIRED, PTC margin DID
+  NOT (StatPearls' Gross Findings carries "typically presents as an invasive neoplasm with poorly
+  defined margins"), skin margin DID NOT (a skin lesion's clinical surface is its gross appearance,
+  and the source's sentence is not the ABCD dermoscopic vocabulary). Unnamed negatives: LUAD growth,
+  HGSOC margin, OCCC margin. THE FINDING THE SCORE CARRIES: negatives are 4 of 9 MARGIN halves
+  against 1 of 10 GROWTH halves — the gross literature carries growth FORM as a category far more
+  often than margin CHARACTER, above all for cystic or variable tumours (both ovarian entries),
+  and the pre-registration undercounted because it reasoned per ENTRY rather than per PROPERTY.
+  The pull toward finding something citable was real and was resisted where it mattered: HGSOC's
+  expected "papillary excrescences" gave way to the source's own "may be smooth, coarse or
+  sometimes entirely exophytic", and the negative was taken.
+- 2026-09-09: **THE FOUR RULES, APPLIED.** (a) counts carried where the source gives them (HCC
+  118/129/101/52 of 400; the CRC and bladder sources give percentages only, said so); (b) every
+  quoted figure checked against its own document (Gut 2023's counts sum to 400 and its
+  percentages recompute; the NMIBC review's over / more than / the majority (75%) agree, and the
+  cross-source "almost 75%" is carried as ~75%); (c) no defect was found by contrast, so no sibling
+  sweep was triggered; (d) no "uniquely", "the only" or "unlike any other" entered a category claim.
+- 2026-09-09: **SOURCE-LANDSCAPE LESSONS FOR THE REMAINING READS.** WHO-classification summary papers
+  (digestive PMC7003895, female genital PMC8494521) carry no gross sentences and the lung,
+  urogenital, skin and endocrine summaries are not open access; StatPearls chapters carry no
+  gross text for colon, lung, liver, ovary or pancreas — the PTC chapter's Gross Findings
+  subsection is the exception to lesson #1; the gross classifications WITH COUNTS live in
+  pathology cohort papers and macroscopic-characterization reviews, reachable by Europe PMC BODY:
+  phrase search over the open-access subset (which does search full text — measured, not assumed).
