@@ -14,7 +14,7 @@ import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
-import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, MASS_RADIUS_FRACTION, marginBadge } from './morphology.js';
+import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge } from './morphology.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -220,7 +220,14 @@ function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadiu
     // A wired category draws its own render values (inside its declared ranges — margin_reserve_check
     // asserts that); everything else draws the reserved form (spikeCount 0: undulation only).
     organicSpiculate(geo, { ...(category ? category.render : RESERVED_MARGIN) });
-    const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: MASS_COLOUR, roughness: 0.55, specularIntensity: 0.25 }));
+    // A cited mass wears the illustrative tissue-tan; a RESERVED mass wears the reserved colour, a
+    // desaturated interface teal from outside the tissue gamut (user ruling on the HCC deadlock — see
+    // RESERVED_COLOUR). NAMED, so a measurement script can exclude reserved masses BY IDENTITY: they
+    // carry no citation to deviate from and would register as an enormous hue error against a value
+    // never claimed (the lit-face fidelity measurement reads identity, not geometry — condition (3)).
+    const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: category ? MASS_COLOUR : RESERVED_COLOUR, roughness: 0.55, specularIntensity: 0.25 }));
+    mesh.name = 'phaseA-mass';
+    mesh.userData.phaseA = { reserved: !category, margin: category ? category.label : 'reserved', entry: entry.id };
     // Straddle the surface at the origin structure (the cheap extent read: the depth buffer hides
     // the inside portion). A second entry on the same organ sits beside the first along a tangent.
     // 0.6, from 0.35: at 0.35 the first wired mass (PTC) sat mostly behind its gland at the default

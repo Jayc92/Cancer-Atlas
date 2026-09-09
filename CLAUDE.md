@@ -3130,6 +3130,14 @@ screen pair per organ:
   plausible wrong numbers, the geometry-type heuristic in different
   clothes. (JSON-chunk metadata — names, accessor counts, extensions — is
   uncompressed and stays fair game either way.)
+  APPLIED AT THE PHASE A BUILD (2026-09-09, user): the tumour masses are
+  NAMED (`phaseA-mass`, with `userData.phaseA.reserved`) so the lit-face
+  fidelity measurement EXCLUDES reserved masses BY IDENTITY — they wear a
+  colour from outside the tissue gamut on purpose, carry no citation to
+  deviate from, and left in would register as an enormous hue and saturation
+  error against a value that was never claimed. Cited masses wear an
+  unsourced tissue-tan and are excluded for the same reason: no cited
+  albedo, nothing to measure fidelity to.
   (4) Recorded at the 4A masters ruling: GIT HISTORY IS THE RAW-ASSET
   ARCHIVE — `git show a131649:assets/<organ>.glb` reproduces any
   uncompressed master byte-exactly, and no second copy is kept because a

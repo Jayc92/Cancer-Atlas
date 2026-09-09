@@ -65,6 +65,17 @@ async function loadMorphology(){
 function organFiles(){
   return fs.readdirSync(path.join(REPO, 'js', 'organs')).filter(f => f.endsWith('.js') && f !== 'index.js').sort();
 }
+// Every hex albedo in the organ files — the cited tissue colours (and the skin block's layer colours).
+// viewer.js and main.js are NOT scanned: they hold the marker accent and the light colours, which are
+// interface and illumination, not tissue, and the reserved colour is derived from the marker on purpose.
+function tissueAlbedos(){
+  const out = new Set();
+  for(const f of organFiles()){
+    const s = fs.readFileSync(path.join(REPO, 'js', 'organs', f), 'utf8');
+    for(const m of s.matchAll(/0x([0-9a-fA-F]{6})\b/g)) out.add(parseInt(m[1], 16));
+  }
+  return [...out];
+}
 function activeEntries(){
   const out = [];
   for(const f of organFiles()){
@@ -96,6 +107,10 @@ function liveProblems(M){
   const problems = [];
   problems.push(...M.reservedViolations(M.RESERVED_MARGIN, M.MARGIN_CATEGORIES, M.RESERVED_AXIS, M.CITED_FREQ_BAND));
   for(const [name, cat] of Object.entries(M.MARGIN_CATEGORIES)) problems.push(...M.categoryRenderViolations(name, cat));
+  // THE COLOUR FIELD (user ruling on the HCC deadlock, 2026-09-09): the reserved colour must be unreachable
+  // from every cited tissue albedo — the colour twin of the geometry's unreachability, and not grey.
+  const albedos = tissueAlbedos().concat([M.MASS_COLOUR]);   // the cited-mass tan is a tissue-side colour too
+  problems.push(...M.colourViolations(M.RESERVED_COLOUR, albedos, M.RESERVED_COLOUR_RULES));
   const entries = activeEntries();
   const ids = new Set(entries.map(e => e.id));
   for(const e of entries){
@@ -117,7 +132,9 @@ function liveProblems(M){
   for(const key of Object.keys(M.ORIGIN_HOTSPOT)) if(!hs[key]) problems.push(`origin-hotspot names organ '${key}', which has no organ file`);
   const counts = { uncharacterised: 0, unread: 0, cited: 0, rendered: 0 };
   for(const e of entries){ const st = M.MARGIN_STATUS[e.id]; if(st && counts[st.status] !== undefined) counts[st.status]++; if(st && st.category && M.MARGIN_CATEGORIES[st.category]) counts.rendered++; }
-  return { problems, entries, counts, organs: Object.keys(hs).length };
+  let nearest = 360;
+  for(const hx of albedos){ const c = M.hexToHsl(hx); if(c.s >= M.RESERVED_COLOUR_RULES.achromaticBelow) nearest = Math.min(nearest, M.hueDistance(M.hexToHsl(M.RESERVED_COLOUR).h, c.h)); }
+  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest };
 }
 
 // ---- condition (7), FIXTURE FORM BY DESIGN (see the header) --------------------------------
@@ -154,6 +171,12 @@ function selftest(M){
       M.inRange(R.freq, AX.band) && R.spikeCount === 0);
   // 7. the status-coverage assertion fires on a fixture entry with no status
   arm('status assertion would flag an entry the table omits', !M.MARGIN_STATUS['fixture-entry-with-no-status']);
+  // 8b–8d. THE COLOUR FIELD: a grey reserved colour fires (grey is inside the tissue gamut), a reserved
+  // colour inside the tissue hue arc fires, and the live teal is silent against warm tissue albedos.
+  const rules = M.RESERVED_COLOUR_RULES;
+  arm('fires on a grey reserved colour', M.colourViolations(0x9a9a9a, [0xc17055], rules).length > 0);
+  arm('fires on a reserved colour inside the tissue hue arc', M.colourViolations(0xb97c68, [0xc17055, 0x8c3a30], rules).length > 0);
+  arm('silent on the live reserved colour against warm tissue albedos', M.colourViolations(M.RESERVED_COLOUR, [0xc17055, 0xd6b98f, 0xffffff], rules).length === 0);
   // 8. the origin-word test accepts the phrasing the corpus uses and rejects a bland label
   arm('origin-word test fires/passes as intended', ORIGIN_WORDS.test('adenocarcinoma most commonly arises here') && !ORIGIN_WORDS.test('a smooth capsule'));
   console.log(ok ? 'SELFTEST PASS — fixture-form by design: no live population can carry a violation while the rule holds (condition (7-quater))'
@@ -165,17 +188,17 @@ function selftest(M){
   const M = await loadMorphology();
   const selfOnly = process.argv.includes('--selftest');
   if(!selftest(M)){ console.log('margin_reserve_check: REFUSING to check — selftest failed'); process.exit(2); }
-  if(selfOnly){ console.log('DONE margin_reserve_check_selftest: 10 arms run, 0 failures'); return; }
-  const { problems, entries, counts, organs } = liveProblems(M);
+  if(selfOnly){ console.log('DONE margin_reserve_check_selftest: 13 arms run, 0 failures'); return; }
+  const { problems, entries, counts, organs, albedos, nearest } = liveProblems(M);
   for(const p of problems) console.log('  PROBLEM: ' + p);
   const nCat = Object.keys(M.MARGIN_CATEGORIES).length;
   console.log('SIDECAR ' + JSON.stringify({
     name: 'margin_reserve_check',
-    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, problems: problems.length },
+    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), problems: problems.length },
     ratchet: ['categories'],
   }));
   console.log(`DONE margin_reserve_check: reserved form on the ${M.RESERVED_AXIS.knob} band [${M.RESERVED_AXIS.band}] unreachable from ${nCat} cited categories (fixture-form (7) by design), `
     + `${entries.length - problems.filter(p => /no margin status|unknown margin status/.test(p)).length}/${entries.length} active entries carry a margin status `
-    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, ${problems.length} problems`);
+    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${problems.length} problems`);
   process.exit(problems.length ? 1 : 0);
 })().catch(e => { console.error('margin_reserve_check: harness error', e); process.exit(2); });

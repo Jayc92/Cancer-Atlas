@@ -691,3 +691,57 @@ Proposed the same day and ratified with one change — the one that decides whet
   framing — the render sits mid-range in its declared ranges, and whether "multinodular" is
   under-drawn is a question about fidelity to the CITATION (discrete nodules), which is the only
   ground on which HCC's values may ever move. It must not be moved for separation. Not moved here.
+- 2026-09-09 (RULING on the HCC deadlock, user): **OPTION 2, WITH ONE CHANGE — NOT GREY.** Grey is
+  inside the space of real tissue appearance (necrosis is grey, fibrous tissue grey-white), so a
+  grey mass can be read as a claim about what the tissue is: the amplitude-0.10 midpoint relocated
+  from geometry to colour, a value chosen inside the space of things the render could be asserting.
+  The colour comes from OUTSIDE the tissue gamut, and the atlas already has the vocabulary: the
+  marker teal is the app's established "this is interface, not anatomy" colour, no tissue in the
+  corpus is teal, and a desaturated version says placeholder in a language the product already
+  speaks. THE TESTABLE PROPERTY, the colour twin of the geometry's: the reserved colour must be
+  unreachable from every cited tissue albedo — checkable by extending `margin_reserve_check` one
+  field, not by building anything. OPTION 3 REJECTED: translucency is inside the space of real
+  appearances too (cystic, mucinous, gelatinous are gross descriptions), so a see-through mass reads
+  as a material property — one misread swapped for another. OPTION 1 REJECTED: it relocates the
+  misread from "reads as circumscribed" to "reads as nodular", and the badge-blind visitor is
+  precisely the reader the ratification identified as carrying the whole honesty burden. THE
+  IMPLEMENTATION NOTE THAT WOULD OTHERWISE BITE (user): exclude the reserved masses from the
+  cited-albedo fidelity measurement — they have no citation to deviate from and would register as
+  an enormous hue and saturation error against a value never claimed. And the HCC-lobulation
+  sentence stays exactly as written: fidelity to the citation is the only ground its values may
+  ever move on, never separation — the thing that stops the next tuning pass arriving dressed as
+  accuracy.
+- 2026-09-09 (BUILT, before looking): `RESERVED_COLOUR` 0x6aafaa — the marker teal 0x35c9c1 desaturated
+  to hue 176°, saturation 0.30, lightness 0.55; MEASURED FIRST: every hex albedo in js/organs sits on
+  the warm arc, hue 355°–46°, the nearest 129° away. `RESERVED_COLOUR_RULES` = at least 90° of hue
+  from every chromatic tissue albedo, saturation at least 0.20 (never grey). `colourViolations()` in
+  the module; the check's colour field asserts it over every hex in js/organs plus the cited-mass
+  tan, with three fixture arms (a grey reserved colour fires; a reserved colour inside the tissue
+  arc fires; the live teal is silent). It is an ALBEDO, not a light — standing condition (5) is about
+  the illumination path, and this pipeline has no bounce. Cited masses keep the tissue-tan
+  `MASS_COLOUR`. Every mass is now NAMED `phaseA-mass` with `userData.phaseA.reserved`, so the
+  lit-face fidelity measurement excludes reserved masses BY IDENTITY (condition (3): read identity,
+  never infer it) — recorded beside condition (3) in CLAUDE.md. #disclaimer says which masses wear
+  which colour and why. PRE-REGISTERED FOR THE COLOUR LOOK: the muted teal is expected to read as
+  interface/placeholder against every organ colour; the risk to watch is the deep-red kidney, where
+  the complementary contrast may make the placeholder pop like a marker rather than sit like a mass.
+- 2026-09-09 (THE COLOUR LOOK, recorded in evidentiary form): (a) `node .claude/capture_organs.js
+  /tmp/atlas-verify/colour1 Kidneys Lungs Ovary Liver Thyroid --port 3064` then `... Ovaries --port
+  3065` (the sidebar label is "Ovaries"; the first run recorded "no sidebar row matched" for "Ovary" —
+  a wrong label, not a missing organ), served from the working tree of THIS commit (the tool stamps
+  HEAD, f63aa37, whose morphology.js has no RESERVED_COLOUR — the bytes it served are the ones this
+  commit records). (b) Two treatments compared: the RESERVED masses (kidneys, lungs, both ovary
+  masses) against the CITED masses (liver HCC, thyroid PTC) and every organ body in frame.
+  (c) WHAT DISTINGUISHED THEM, measured in the PNGs (mean of a rectangle inside each mass, pure-PNG
+  decode, HLS): kidneys reserved mass #688a7e hue 159°; lungs reserved mass #5c746e hue 164°; liver
+  cited mass #a18e7a hue 30°; thyroid cited mass #72665e hue 26°; organ bodies kidneys #70291e 8°,
+  lungs #9f655e 7°, liver #5c2d22 11°. The reserved colour renders on the cool side (159–164°) and
+  everything cited in frame on the warm arc (7–30°): about 130° apart in the RENDERED image, not just
+  in the albedo. Honest limit: under the warm key light and AgX the rendered saturation of the reserved
+  mass falls to 0.12–0.14 (the albedo's is 0.30) — it reads as sea-glass, a pale matte green-grey, not
+  as a vivid teal; its HUE is unambiguous, its vividness is not, so anyone re-checking should compare
+  hue, not "how teal it looks". THE PRE-REGISTERED RISK DID NOT FIRE: on the deep-red kidney the mass
+  sits as a matte pale lump while the markers stay small saturated glowing dots; nothing pops like a
+  marker. Ovaries: two stacked reserved masses, both sea-glass, badge chips stacked above. Checkable
+  by opening kidneys.png beside liver.png: one mass is green-grey, the other tan — no organ on any
+  screen is in the green-grey family.

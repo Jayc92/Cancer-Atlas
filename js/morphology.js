@@ -124,9 +124,47 @@ export const MARGIN_CATEGORIES = Object.freeze({
   }),
 });
 
-// The illustrative mass colour — UNSOURCED and disclosed in #disclaimer. One colour for every
-// reserved mass, for the same reason as one form: sameness is what a placeholder looks like.
+// The illustrative colour of a CITED mass — UNSOURCED and disclosed in #disclaimer (a tissue-tan).
 export const MASS_COLOUR = 0xa89a8c;
+// THE RESERVED COLOUR (user ruling, 2026-09-09, on the HCC deadlock): the reserved form's geometry could
+// not clear both ends of the margin axis, so the reserved masses take a NON-GEOMETRIC treatment — a
+// colour from OUTSIDE the tissue gamut. Not grey: grey is inside the space of real tissue appearance
+// (necrosis is grey, fibrous tissue grey-white), so a grey mass reads as a claim about what the tissue
+// is — the amplitude-0.10 midpoint relocated from geometry to colour. Not translucent: cystic,
+// mucinous and gelatinous are real gross descriptions, so a see-through mass reads as a material
+// property. The marker teal (0x35c9c1) is the app's established "interface, not anatomy" colour and
+// no tissue in the corpus is teal; this is that teal desaturated (hue 176°, saturation 0.30,
+// lightness 0.55), so it says placeholder in a language the product already speaks. Measured before
+// choosing: every tissue albedo in js/organs sits on the warm arc, hue 355°–46°, at least 129° away.
+// It is an ALBEDO, not a light — standing condition (5) forbids accents in the ILLUMINATION path, and
+// this pipeline has no bounce, so a teal albedo pushes no hue onto any cited albedo.
+export const RESERVED_COLOUR = 0x6aafaa;
+// THE TESTABLE PROPERTY, the colour twin of the geometry's: the reserved colour must be UNREACHABLE
+// from every cited tissue albedo — at least hueMarginDeg of hue from each chromatic albedo, and never
+// grey (saturation at or above minSaturation). margin_reserve_check asserts it over js/organs/*.js.
+export const RESERVED_COLOUR_RULES = Object.freeze({ hueMarginDeg: 90, minSaturation: 0.2, achromaticBelow: 0.05 });
+export function hexToHsl(hex){
+  const r = ((hex >> 16) & 255) / 255, g = ((hex >> 8) & 255) / 255, b = (hex & 255) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), l = (max + min) / 2, d = max - min;
+  if(d === 0) return { h: 0, s: 0, l };
+  const s = d / (1 - Math.abs(2 * l - 1));
+  let h;
+  if(max === r) h = ((g - b) / d) % 6; else if(max === g) h = (b - r) / d + 2; else h = (r - g) / d + 4;
+  h = (h * 60 + 360) % 360;
+  return { h, s, l };
+}
+export function hueDistance(a, b){ const d = Math.abs(a - b) % 360; return Math.min(d, 360 - d); }
+export function colourViolations(reservedHex, tissueHexes, rules){
+  const out = [], rc = hexToHsl(reservedHex);
+  if(rc.s < rules.minSaturation) out.push(`reserved colour 0x${reservedHex.toString(16)} is grey (saturation ${rc.s.toFixed(2)} below ${rules.minSaturation}) — grey is inside the tissue gamut`);
+  for(const hx of tissueHexes){
+    const c = hexToHsl(hx);
+    if(c.s < rules.achromaticBelow) continue;   // an achromatic albedo has no hue to be near
+    const dist = hueDistance(rc.h, c.h);
+    if(dist < rules.hueMarginDeg) out.push(`reserved colour sits ${dist.toFixed(0)}° from tissue albedo 0x${hx.toString(16)} (margin ${rules.hueMarginDeg}°)`);
+  }
+  return out;
+}
 // Mass radius as a fraction of the organ's bounding radius (magnitude, illustrative). 0.22, from 0.16:
 // at 0.16 a mass was a few dozen pixels at the default framing and neither form's edge was legible —
 // a presentation knob shared by EVERY mass, so raising it changes no category's form.
