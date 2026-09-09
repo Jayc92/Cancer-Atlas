@@ -261,7 +261,7 @@ const TRUNK_OCCC = [
 // amplification only 6% / 3–6% per-tumor subset, prose-only). The verified drivers that DO
 // fit (KRAS, ZNF217, PPP2R1A) all serve as region branches above. What remains for the
 // per-cell private slot is the honest story: OCCC's genome is comparatively QUIET — median
-// 46 non-silent mutations (Chao 2024), chromosomal instability far below HGSOC (Kuo 2010) —
+// 46 non-silent mutations (Chao et al., BMC Cancer, 2024, PMID 39543535, PMC11566382), chromosomal instability far below HGSOC (Kuo 2010) —
 // so the pool ships two verified passenger entries and zero drivers, a first for the atlas.
 // TTN deliberately absent: zero TTN mentions across four OCCC cohorts totalling 634 tumors —
 // the atlas does not carry a passenger over from other cancers and relabel it.

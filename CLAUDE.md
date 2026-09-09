@@ -1698,7 +1698,7 @@ screen pair per organ:
     Res, 2022 — the largest sequenced cohort), honest range ~40–65%;
     discovery figures 46% (55/119, Wiegand, NEJM, 2010) and 57% (24/42,
     Jones, Science, 2010), BOTH sequencing; biallelic 45.1% (46/102, Chao,
-    BMC Cancer, 2024).** The atlas's FIFTH temporal trunk and the first
+    BMC Cancer, 2024, PMID 39543535, PMC11566382).** The atlas's FIFTH temporal trunk and the first
     documented in a benign precursor: ARID1A protein absent from the
     endometriotic cyst lining in DIRECT CONTINUITY with the carcinoma in
     31/31 informative cases while distant endometriosis retains it (Ayhan,
@@ -5401,6 +5401,25 @@ refute it, which is worth more than file order.
   `fraction_check.py` carrying the correct `283/357` in its own header,
   where the instrument holding the right number still cannot catch the
   wrong one.
+  **ONE SUB-SHAPE OF THAT GREP MEASURED (2026-09-08, queue), NOT BUILT.** A
+  record that claims INDEPENDENCE over an axis — stage, grade, subtype, age,
+  sex; "evenly distributed across", "independent of", "across every grade",
+  "stage-independent" — while its attached provenance comment (ccf_load's
+  attached(): own block plus the array-opener block) names a RESTRICTED LEVEL
+  of that axis (NMIBC, stage II, high-grade, basal-like, pediatric) is
+  decidable by lexicon, and it is the exact shape bladder had: "evenly
+  distributed across stage and grade" over a comment saying "primary NMIBC
+  cohort". A scratch probe FIRES on bladder.js at `2f35ac8^`, the pre-repair
+  tree, and against the tree at this commit finds 3 independence claims among
+  143 records and 1 candidate — the same bladder record, now firing on the
+  repaired comment's NEGATED mention of the old descriptor and on the
+  design-gate discussion in its shared opener block; the other two (pancreas
+  grade, skin subtype) read clean. Real, tiny, and carrying the polarity
+  guard's known false-positive mode, so it wants the flag-then-read contract
+  if it is ever built. Whether it becomes a read-flag arm in
+  `absence_claim_check` is a REACH decision and is OPEN, not taken; the probe
+  is scratch and deliberately not in the tracked set, and the lexicon above is
+  the shape to rebuild it from.
   **THE ADJUDICATION HELD A STAKE AND WAS RESOLVED AGAINST IT, recorded
   because nothing else would show it.** `testis.js:230`'s two candidates
   both dissolved at the source, leaving one borderline: the ccf says
@@ -5462,8 +5481,13 @@ refute it, which is worth more than file order.
   RAS-versus-PAX8 status) represent no founding event at all — and is reworded
   to compare against a shared trunk mutation, with no quantifier over the
   corpus. `testis.js`'s bare-plural histology comparison ("unlike the marked
-  pleomorphism this atlas's other tumors often show") stays on the open list: it
-  needs a histology read across the slides, not a census.
+  pleomorphism this atlas's other tumors often show") was NOT open: `6e3c310` had
+  already dropped it from the served field, and the phrase survives only in the
+  comment recording that removal — which is why the guard does not list it. The
+  first draft of this sentence said it "stays on the open list", a false claim
+  about the repo's own contents written into the record of adjudicating three
+  others, and carried from a summary instead of read from the tree; corrected
+  in place (2026-09-08).
 - **LUAD's `RB1 loss` REMOVED FROM THE PRIVATE POOL — QUESTION (2) CLOSED ON
   RULING (2026-09-07), AND THE GROUNDS WERE IN-CORPUS ALL ALONG.** The
   exclusion is SOFT, MECHANISTIC-FIT class, and explicitly NOT an
