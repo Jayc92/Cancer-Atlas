@@ -2205,7 +2205,13 @@ screen pair per organ:
       57 (33.9%, Q61R 63% of those), TERT 38 (22.6%, all promoter, adults
       only), DICER1 26 (15.5%; pediatric 44.4% vs adult 4.6%), HRAS 20
       (11.9%), PTEN 18 (10.7%), ATM 13 (7.7%), KMT2D 12 (7.1%); NRAS more
-      frequent in metastatic samples (42.4% vs 29.2%). **Build-time
+      frequent in metastatic samples — 27/64 = 42.2% vs 26/89 = 29.2%, the
+      Results text's own counts. **The abstract prints 42.4%, which matches
+      no count anywhere in the paper, and the served note carried that
+      figure until 2026-09-08**: cite the Results — the same rule rule 21
+      records for Bolton's abstract-versus-Results PIK3CA figure — and put
+      the counts beside the percentage, which is what lets `fraction_check`
+      hold the arithmetic from now on. **Build-time
       exclusivity discovery: NRAS–DICER1 mutually exclusive (p=0.02, zero
       co-occurring samples; NRAS–HRAS p<0.001) → DICER1 appears NOWHERE in
       the modeled NRAS-founded tumor** — its pediatric-third-road story
@@ -3678,6 +3684,25 @@ is the fourth item of `battery.py`'s sidecar-convention block.
     clones next, who did nothing wrong. The written record is what buys
     that down — it is the thing to find when `SHRANK` fires on a fresh
     clone with a clean tree.
+  - **DEMONSTRATED BY A ROUTINE RUN, NOT BY A HAND AUDIT** (2026-09-08,
+    user: "a graduation worth noting"). The first settle run for `7d6c221`
+    printed `RATCHET RAISED: pointer_check.pointer.pointers 580 -> 584` on a
+    CLAUDE.md draft that had named four adjudicated sites by `file:line`,
+    the form the pointer ruling retired. Every prior instance of a defect
+    written while documenting one — the stale pointers in the pointer
+    instrument's own header, the heading that broke its own uniqueness,
+    the slash-joined composite — was found by a hand audit or by an
+    instrument on its first run. This one was caught by an existing guard
+    on a routine run, on a population change that WAS the defect. In the
+    user's words, that is the class moving from "found by looking" to
+    "caught by the chain", and the mechanism is the one this decline
+    leaned on: *the ratchet fires on the population, and the population is
+    what a bad pointer changes.* It fired at authoring time, in the
+    author's own tree, because a settle run before staging is a checkout
+    of the tree about to be committed — so the declared cost of declining,
+    later and indirect and landing on whoever clones next, was paid by
+    nobody. The pointers were replaced by file-plus-span and the raise was
+    discarded rather than staged.
   - **The bar is reusable, which is why the reasoning is recorded and not
     just the verdict: "the existing guard already fires on this" is enough
     to turn down a new instrument.** Same reasoning that stops the chain

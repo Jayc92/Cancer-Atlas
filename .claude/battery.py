@@ -329,6 +329,11 @@
 #       says a named metric SHRANK, not "your floor came from an untracked file" — and it lands on
 #       whoever clones next, who did nothing wrong. This paragraph is what buys that down: it is the
 #       thing to find when SHRANK fires on a fresh clone with a clean tree.
+#       DEMONSTRATED LIVE 2026-09-08 (user: "a graduation worth noting"): a routine pre-staging settle
+#       run printed RATCHET RAISED on pointer_check.pointer.pointers, 580 -> 584, for four file:line
+#       pointers a CLAUDE.md draft had written — the retired form, and the population change WAS the
+#       defect. Caught by the chain rather than found by looking, at authoring time, by the author:
+#       the ratchet fires on the population, and the population is what a bad pointer changes.
 #       AND THE BAR IS REUSABLE, which is why the decline is recorded as reasoning and not as a verdict:
 #       "THE EXISTING GUARD ALREADY FIRES ON THIS" is enough to turn down a new instrument. That is the
 #       same reasoning that stops this chain at four layers, one level down. Contrast the two genuinely
