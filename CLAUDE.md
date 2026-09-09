@@ -4065,6 +4065,50 @@ unchanged. The 4px pair is anatomy — prostate internal, scrotum external, one
 height on the front surface — the crowding FLOOR, not tuned away; the marker
 SIZE pass that follows is sized against the measured pairwise separations.
 
+## BODY MARKER SIZE — a conflation, not a constraint; sized against a measurement (2026-09-09, user)
+
+The body spheres were at 23px visible because "the spheres dipped under the floor
+when zoomed out" — but Tier 1 had already separated VISIBLE SIZE from HIT TARGET:
+the body click and hover paths use the 24px screen-space test
+(`BODY_MARKER_HIT_RADIUS_PX` 12) and the 24×24 DOM proxies hold the WCAG floor, so
+the sphere is free to shrink and the organ screen already ran this way at 11px.
+Placement was fixed first (previous section), because a marker on the wrong body
+part is part of the perceived crowding.
+
+THE MEASUREMENT (regress.js `body_markers_<sex>.json`, every visible marker at
+the default framing): female 15 markers, 105 pairs — 4.1px Ovaries~Bladder, then
+13.4px the Ovaries pair, 14.1px Pancreas~Stomach, 14.9px Ovaries~Bladder (other
+side), 17.0px Ovaries~Colon and Ovaries~Kidneys; male 16 markers, 120 pairs — 4.0px
+Prostate~Testis, 7.2px Testis~Bladder, 10.0px Prostate~Bladder, 11.7px
+Pancreas~Stomach, 12.6px Prostate~Testis (other side), 14.4px the Testis pair. THE
+RULE — visible diameter below HALF the minimum pairwise separation — cannot be met
+by any legible dot: half of the true minimum is 2px, and even excluding the pelvic
+set it is 5.8px, against the Pancreas~Stomach pair, which is itself anatomically
+adjacent (the stomach lies over the pancreas). So the pairs under ~12px are
+reported as THE FLOOR — genuine anatomical proximity on one height of the front
+surface, not a rendering fault — and the size is chosen against everything else.
+**11px**: the organ screen's value (one law product-wide), a 2.1× reduction; at
+11px the only overlapping pairs at the default framing are the pelvic set (female
+Ovaries~Bladder; male Prostate~Testis, Testis~Bladder, Prostate~Bladder); at 23px
+there were 9 (female) and 10 (male). Constant-screen-size behaviour kept — it is
+what separates markers as the user zooms in. Hit test untouched.
+
+VERIFIED: regression re-run on the size-changed tree — placement green both sexes,
+minDist pairs and values identical (female 4px Ovaries~Bladder, male 4px
+Prostate~Testis), 15/16 visible, centres unmoved apart from two male markers by 1px
+between runs (auto-rotation timing, not the diameter). Look: torso crops of the
+regression's own screenshots (/tmp/atlas-verify/size3/, ephemeral) — at 23px the
+abdominal discs merge into blobs; at 11px every dot is distinct inside its ring and
+only the pelvic cluster still stacks.
+
+A HARNESS HAZARD FOUND ON THE WAY, fixed in the same commit: `regress.js` read
+`assets` and the manifest's code_refs relative to process.cwd(). The battery always
+pinned cwd to the repo, so it never saw it; a standalone run launched from /tmp
+produced two false FAILs (and my own scratch server, started from /tmp, served a 404
+page first — the same ambient-cwd class, twice in one pass). Explicit form over
+ambient state: the harness now roots every repo read at its own location, proven
+by a run launched from /tmp reporting the same 171 checks / 2 known failures.
+
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
 **The instrument that refuses to scan without its input could still

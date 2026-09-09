@@ -311,9 +311,25 @@ function toggleBodySex(sex){
 }
 
 // Same two-scaling-laws fix as the organ markers (see main.js MARKER_PROJECTED_PX): the body
-// spheres hold a constant projected diameter — 23px, what the approved default framing already
-// showed — and the pointer paths above use the 24px screen-space target instead of a raycast.
-const BODY_MARKER_PROJECTED_PX = 23;
+// spheres hold a constant projected diameter, and the pointer paths above use the 24px
+// screen-space target (BODY_MARKER_HIT_RADIUS_PX) instead of a raycast — so the VISIBLE size is
+// free to shrink; the accessibility floor is held by the hit test and the 24×24 DOM proxies, not
+// by the sphere. 23px was a CONFLATION, not a constraint (user, 2026-09-09): it was kept because
+// 'the spheres dipped under the floor when zoomed out', a problem the constant-projected-size
+// law had already removed. SIZED AGAINST A MEASUREMENT, not a guess — pairwise projected
+// separations of every visible marker at the default framing, both sexes (regress.js writes
+// body_markers_<sex>.json): female 105 pairs, min 4.1px (Ovaries~Bladder), next 13.4px
+// (the Ovaries pair), 14.1px (Pancreas~Stomach); male 120 pairs, min 4.0px (Prostate~Testis),
+// 7.2px (Testis~Bladder), 10.0px (Prostate~Bladder), 11.7px (Pancreas~Stomach). The rule
+// 'visible diameter below half the minimum separation' cannot be met by any legible dot (2px),
+// and the pairs under ~12px are anatomically adjacent organs on one height of the front surface
+// — the FLOOR, reported as anatomy rather than tuned away. 11px is the organ screen's value
+// (one law product-wide), a 2.1× reduction, and at 11px the only overlapping pairs at the
+// default framing are that pelvic set (female Ovaries~Bladder; male Prostate~Testis,
+// Testis~Bladder, Prostate~Bladder); everything else separates, and the constant-screen-size
+// law separates the rest as the user zooms in. Centres do not move, so the regression's
+// minDist pairs must not move with this change — asserted by re-running it.
+const BODY_MARKER_PROJECTED_PX = 11;
 const BODY_MARKER_HIT_RADIUS_PX = 12;
 const BODY_MARKER_BASE_R = 0.03;
 

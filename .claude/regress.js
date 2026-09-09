@@ -16,6 +16,11 @@ const fs = require('fs');
 const path = require('path');
 
 const OUT = process.argv[2] || '/tmp/atlas-verify/out';
+// EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): every repo file this harness reads is rooted here, at the
+// harness's own location, never at process.cwd(). Two cwd-relative reads survived below until a standalone run
+// launched from /tmp produced two false FAILs (ENOENT 'assets'; every code_ref 'missing') — the battery had
+// always pinned cwd to the repo, so the hazard was invisible to it and real to anyone else.
+const REPO = path.resolve(__dirname, '..');
 const PORT = process.argv[3] || process.env.ATLAS_PORT || '3055';
 fs.mkdirSync(OUT, { recursive: true });
 const report = { errors: [], checks: [] };
@@ -358,7 +363,7 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     for (const e of manifest.entries) {
       for (const ref of (e.code_refs || [])) {
         const file = ref.split(':')[0];
-        if (!fsMod.existsSync(file)) badRefs.push(`${e.id} -> ${ref}`);
+        if (!fsMod.existsSync(path.join(REPO, file))) badRefs.push(`${e.id} -> ${ref}`);
       }
     }
     check('citations: every entry points at a real file', badRefs.length === 0, badRefs.join('; '));
@@ -369,7 +374,7 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     const missingColour = mottleOrgans.filter(o => !colourIds.has('col-' + o));
     check('citations: every mottle organ colour has a manifest entry', missingColour.length === 0, missingColour.join(','));
     // (b) every shipped GLB is covered by a licence-class entry (bodies incl.)
-    const glbs = fsMod.readdirSync('assets').filter(f => f.endsWith('.glb')).map(f => f.replace('.glb',''));
+    const glbs = fsMod.readdirSync(path.join(REPO, 'assets')).filter(f => f.endsWith('.glb')).map(f => f.replace('.glb',''));
     const licRefs = manifest.entries.filter(e => e.cls === 'licence').flatMap(e => (e.code_refs || []).join(' ') + ' ' + e.claim);
     const covered = (g) => licRefs.some(t => t.includes(g.replace('_body','').replace('female','').replace('male','')) || t.toLowerCase().includes(g.replace('_','').replace('body','')));
     const uncovered = glbs.filter(g => {
