@@ -139,7 +139,7 @@ Multifocal (several independent PRIMARY foci) and the tumour site map (several b
 SITES OF INVOLVEMENT) are different concepts that could share a visual idiom. Code
 check: the site map is a SEPARATE screen with its own viewer (`state.siteViewer`,
 `screenCancer`), organ-less, accent-coloured, and schematic by its own declaration
-(main.js:536: "four abstract blobs POSITIONED TO ENCODE A SPREAD PATTERN, not
+(main.js:606: "four abstract blobs POSITIONED TO ENCODE A SPREAD PATTERN, not
 objects"; the aria-label says "coloured cell clusters"). RULE so the registers never
 converge: multifocal foci render ONLY in the gross-tissue register, attached to the
 organ mesh, tissue-coloured; site-map blobs render ONLY in the accent-schematic
@@ -421,3 +421,38 @@ Proposed the same day and ratified with one change — the one that decides whet
   POPULATION EXISTS**, and condition (7) is satisfied against a fixture BY DESIGN — folded into part 2
   of the default and recorded as CLAUDE.md's condition (7-quater), with the requirement that the
   check's own header says so.
+- 2026-09-09: **BUILD STEP 1 SHIPPED — THE CHECK AND THE RESERVED DEFAULT, ONE UNIT.** Re-
+  parameterisation, not a new renderer: `organicSpiculate` and `IcosahedronGeometry` unchanged.
+  - `js/morphology.js` (new, no `three` import so node can load it): `RESERVED_AXIS` = the
+    undulation frequency band [1.6, 2.4]; `CITED_FREQ_BAND` = [3.5, 9.0] (existing cited-side
+    geometry undulates at 4.2 and 6.5, inside it); `RESERVED_MARGIN` = amplitude 0.18 (0.10 was tried first and read as a smooth sphere in the live
+    capture — the circumscribed misread — so it was raised for legibility), freq 2.0,
+    seed 3.7, spikeCount 0 — one shared form and seed; `MARGIN_CATEGORIES` EMPTY AT BIRTH by the
+    build order; `MARGIN_STATUS` for all 16 active entries from the ledger (4 uncharacterised —
+    HGSOC, OCCC, LUAD, CRC; 3 unread — ccRCC, diffuse gastric, urothelial; 9 cited, not yet
+    rendered); `ORIGIN_HOTSPOT` per organ (the cited "arises here" structure); `MASS_COLOUR`
+    0xa89a8c and `MASS_RADIUS_FRACTION` 0.16 — MAGNITUDES, illustrative by the split, disclosed
+    in #disclaimer; `marginBadge()` = the two label texts; `reservedViolations()` = the predicate.
+  - `.claude/margin_reserve_check.js` (new, SIXTEENTH battery member): asserts the reserved form
+    is unreachable from every cited category (axis band disjoint, box excludes the vector, no
+    knob unbounded), every active entry carries a status, every organ anchors its mass at a
+    hotspot whose text or organ description speaks of origin. Condition (7) FIXTURE-FORM BY
+    DESIGN — eight arms, including the rejected midpoint proposal, which FIRES — and the header
+    says why (condition (7-quater)). Sidecar ratchets `categories` (coverage: grows as cited
+    categories are wired). First live run: 0 categories, 16/16 statuses, 14/14 organs, 0 problems.
+  - `js/main.js`: `addOriginMasses()` after the hotspot loop; the anchor arithmetic factored into
+    `hotspotPosition()` so the markers and the masses cannot drift; badges projected in
+    `organTick`, removed in `disposeOrganViewer`. WHAT RENDERS TODAY: 7 masses on 6 organs —
+    ovary ×2 (HGSOC, OCCC side by side), lungs, colon, kidneys, stomach, bladder. The 9 cited
+    entries draw NOTHING until their category is wired: no placeholder ever stands in for a
+    cited shape, which is the build order's point. The mass straddles the surface at the origin
+    hotspot (the cheap extent read); a second entry sits beside the first along a tangent.
+  - BADGE, NON-OPTIONAL: a `.tumour-badge` DOM chip per mass ("generic mass · margin not
+    characterised" / "generic mass · margin source not yet read"), a real button whose accessible
+    name is the full sentence; activating it writes the sentence into the investigate card. It is
+    metadata about the record — pointer-events none, no geometry touched, no dashed silhouette.
+  - #disclaimer opens with the disclosure: placeholder masses, one reserved form, unsourced colour,
+    status on the badge, morphology illustrative of cited behaviour.
+  - NEXT: wire the first cited category (candidates with clean citations: PTC poorly-defined,
+    seminoma well-circumscribed, TNBC pushing) into `MARGIN_CATEGORIES` with ranges inside the
+    cited band, flip its status, and let the check prove the reserved form stays unreachable.

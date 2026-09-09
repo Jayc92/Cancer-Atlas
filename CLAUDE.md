@@ -4832,7 +4832,13 @@ refute it, which is worth more than file order.
   overclaim as a scope drift, expressed in mesh instead of prose.
   Record the two halves separately per property; the UI-facing
   provenance states that tumour morphology is illustrative of cited
-  behaviour, not measured from it. COLD-SESSION ENTRY POINTER: read
+  behaviour, not measured from it. BUILD STEP 1 SHIPPED (2026-09-09): the
+  unreachability check (`margin_reserve_check`, the sixteenth battery
+  member, fixture-form (7) by design per (7-quater)) and the reserved
+  default rendered for uncharacterised/unread entries with its
+  non-optional badge — full record in `.claude/phaseA_mapping.md`; cited
+  categories wire in next, each proving the reserved form still
+  unreachable. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin
@@ -4850,7 +4856,7 @@ refute it, which is worth more than file order.
   stage-size (radius ← SEER Summary Stage). PREMISE VERIFIED in
   source 2026-09-05: organicSpiculate(geometry, {amplitude, freq,
   seed, spikeCount, spikeLength, sharpness}) at viewer.js:223, driven
-  today by constants + idx-seed at main.js:497 — the pass is
+  today by constants + idx-seed at main.js:567 — the pass is
   re-pointing existing knobs at cited behaviour, not a new renderer.
   New citation class (4 properties × cancers, ~64 items) —
   CLASSIFICATION-FACT EXCEPTION (2026-09-05, resolves the Phase-B

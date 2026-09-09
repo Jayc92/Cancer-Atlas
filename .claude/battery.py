@@ -674,6 +674,14 @@ INSTRUMENTS = [
     # (a TOTAL floor, a PARTIAL identity check) and why it proposes repairs and never applies them.
     ('pointer_check', 'pre-commit', 'DONE pointer_check:',
      ['python3', '.claude/pointer_check.py']),
+    # THE FIRST MEMBER TO SHIP BEFORE ITS POPULATION EXISTS (2026-09-09, user ruling; CLAUDE.md condition
+    # (7-quater)). It guards the Phase A reserved margin form's one property — unreachable from every cited
+    # category's parameter range — and MARGIN_CATEGORIES is empty at birth by the ratified build order, so
+    # its condition-(7) demonstration is FIXTURE-FORM BY DESIGN: a live firing would mean the rule had already
+    # been broken. Its header says so at length; read that before reading its selftest as a gap. Node, not
+    # python, because the thing it checks is an ES module the renderer imports.
+    ('margin_reserve_check', 'pre-commit', 'DONE margin_reserve_check:',
+     ['node', '.claude/margin_reserve_check.js']),
     ('citation_polarity', 'pre-commit', 'DONE citation_polarity:',
      ['python3', '.claude/citation_polarity.py', RECORDS_ARTIFACT, POLARITY_ARTIFACT]),
     ('citation_crosscheck', 'pre-commit', 'DONE citation_crosscheck:',

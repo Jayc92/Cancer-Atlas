@@ -14,6 +14,7 @@ import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
+import { RESERVED_MARGIN, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, MASS_RADIUS_FRACTION, marginBadge } from './morphology.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -145,8 +146,10 @@ function disposeOrganViewer(){
   state.organViewer.renderer.dispose();
   state.organViewer.renderer.domElement.remove();
   organMarkers.forEach(m=>m.el.remove());
+  organMasses.forEach(o=>o.el.remove());
   state.organViewer = null;
   organMarkers.length = 0;
+  organMasses.length = 0;
   const loadingEl = document.getElementById('organLoading');
   if(loadingEl){ loadingEl.hidden = false; loadingEl.textContent = 'Loading 3D model…'; }
 }
@@ -179,6 +182,62 @@ function disposeOrganViewer(){
 // TARGET, not the DOM — see the standing condition recorded at this fix.
 const MARKER_PROJECTED_PX = 11;
 const MARKER_HIT_RADIUS_PX = 12;
+// PHASE A — THE RESERVED DEFAULT (build step 1, 2026-09-09; rule ratified in .claude/phaseA_mapping.md,
+// data in js/morphology.js, guarded by .claude/margin_reserve_check.js). One tumour mass per active
+// entry whose gross MARGIN category is a recorded negative or not yet read, anchored at the organ's
+// own cited "arises here" hotspot, drawn with ONE shared reserved form on the reserved undulation
+// axis — the same parameters and seed on every such entry, so sameness reads as a placeholder —
+// and carrying a NON-OPTIONAL DOM badge whose label says the margin is not characterised (or not
+// yet read). Entries whose category IS cited draw nothing here until that category is wired: the
+// reserved default renders first and fixes the axis the cited categories must then avoid. The
+// badge is metadata about the record, not a modification of the mass (no dashed silhouette — a
+// shape is a claim). The mass colour is illustrative and unsourced, disclosed in #disclaimer.
+const organMasses = [];   // {mesh, el} — projected each frame in organTick, cleared in disposeOrganViewer
+
+// One place for the anchor arithmetic the hotspot loop below and the mass renderer both need.
+function hotspotPosition(h, detail){
+  if(h.pos) return new THREE.Vector3(h.pos[0], h.pos[1], h.pos[2]);
+  const d = new THREE.Vector3(h.dir[0], h.dir[1], h.dir[2]).normalize();
+  return new THREE.Vector3(d.x*detail.hotspotScale.x*1.04, d.y*detail.hotspotScale.y*1.04, d.z*detail.hotspotScale.z*1.04);
+}
+
+function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadius, container){
+  const idx = ORIGIN_HOTSPOT[organKey];
+  const h = detail.hotspots[idx];
+  if(!h) return;
+  const anchor = hotspotPosition(h, detail);
+  const organRadius = isRealMesh ? meshBoundingRadius
+    : Math.max(detail.hotspotScale.x, detail.hotspotScale.y, detail.hotspotScale.z) || 1;
+  const massR = organRadius * MASS_RADIUS_FRACTION;
+  const outward = anchor.lengthSq() > 1e-9 ? anchor.clone().normalize() : new THREE.Vector3(0, 1, 0);
+  let placed = 0;
+  CANCERS.filter(c=>c.organKey===organKey && c.active).forEach(entry=>{
+    const st = MARGIN_STATUS[entry.id];
+    const badge = st ? marginBadge(entry.name, st.status) : null;
+    if(!badge) return;   // 'cited' (recorded, not yet rendered) or unknown: nothing stands in for a cited shape
+    const geo = new THREE.IcosahedronGeometry(massR, 4);
+    organicSpiculate(geo, { ...RESERVED_MARGIN });   // spikeCount 0: the reserved undulation only
+    const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: MASS_COLOUR, roughness: 0.55, specularIntensity: 0.25 }));
+    // Straddle the surface at the origin structure (the cheap extent read: the depth buffer hides
+    // the inside portion). A second entry on the same organ sits beside the first along a tangent.
+    const pos = anchor.clone().addScaledVector(outward, massR*0.35);
+    if(placed > 0){
+      const t = new THREE.Vector3(0, 1, 0).cross(outward);
+      if(t.lengthSq() < 1e-6) t.set(1, 0, 0);
+      pos.addScaledVector(t.normalize(), massR*2.2*placed);
+    }
+    mesh.position.copy(pos);
+    viewer.scene.add(mesh);
+    const el = document.createElement('div');
+    el.className = 'tumour-badge';
+    el.textContent = badge.chip;
+    makeActivatable(el, ()=>showOrganInfo({ label: entry.name + ' — tumour mass (placeholder form)', text: badge.sentence }), { label: badge.sentence });
+    container.appendChild(el);
+    organMasses.push({ mesh, el, stack: placed });
+    placed++;
+  });
+}
+
 function initOrganViewer(organKey){
   if(organKey === state.organViewer?.organKey) return; // already built for this organ
   disposeOrganViewer();
@@ -302,17 +361,12 @@ function initOrganViewer(organKey){
       const glowDistance = isRealMesh ? meshBoundingRadius * 0.9 : 1.2;
 
       detail.hotspots.forEach(h=>{
-        let pos;
-        if(h.pos){
-          // Real-mesh organs: a literal anchor point (meters, local mesh space) found by
-          // raycasting against the actual imported GLB surface — not the ellipsoid-shaped
-          // dir*hotspotScale approximation the procedural organs below still use, which only
-          // ever worked because those organs' own geometry is a scaled ellipsoid to begin with.
-          pos = new THREE.Vector3(h.pos[0], h.pos[1], h.pos[2]);
-        } else {
-          const d = new THREE.Vector3(h.dir[0], h.dir[1], h.dir[2]).normalize();
-          pos = new THREE.Vector3(d.x*detail.hotspotScale.x*1.04, d.y*detail.hotspotScale.y*1.04, d.z*detail.hotspotScale.z*1.04);
-        }
+        // Real-mesh organs: a literal anchor point (meters, local mesh space) found by raycasting
+        // against the actual imported GLB surface — not the ellipsoid-shaped dir*hotspotScale
+        // approximation the procedural organs still use, which only ever worked because those
+        // organs' own geometry is a scaled ellipsoid to begin with. Shared with the Phase A mass
+        // renderer above (hotspotPosition), so the two cannot drift.
+        const pos = hotspotPosition(h, detail);
         const mMesh = new THREE.Mesh(
           new THREE.SphereGeometry(markerRadius, 16, 16),
           new THREE.MeshBasicMaterial({ color:0x35c9c1 })
@@ -370,6 +424,7 @@ function initOrganViewer(organKey){
 
         organMarkers.push({ mesh:mMesh, data:h, el:point, baseR:markerRadius });
       });
+      addOriginMasses(organKey, detail, thisViewer, isRealMesh, meshBoundingRadius, container);
     })
     .catch(err=>{
       if(state.organViewer !== thisViewer) return;
@@ -410,6 +465,21 @@ function organTick(){
       // MARKER_PROJECTED_PX at this marker's current depth, over the sphere's base diameter.
       const d = mvCam.position.distanceTo(m.mesh.position);
       m.mesh.scale.setScalar((MARKER_PROJECTED_PX / mvH) * d * mvTan / m.baseR);
+    });
+    // The Phase A badges ride their mass the same way; the mass itself keeps world size (it is
+    // geometry about the tumour, not a marker), so no scaling law applies to it.
+    // Badges are clamped inside the viewer so a mass near the frame edge keeps a readable label
+    // (the first live capture clipped two of them), and a second entry's badge on the same organ
+    // is stepped down so the two never overprint. The chip's own transform centres it on `left`.
+    const wrapEl = state.organViewer.renderer.domElement.parentElement;
+    const wrapW = wrapEl ? wrapEl.clientWidth : 0, wrapH = wrapEl ? wrapEl.clientHeight : 0;
+    organMasses.forEach(o=>{
+      const p = state.organViewer.project(o.mesh.position);
+      const halfW = (o.el.offsetWidth || 0) / 2, chipH = o.el.offsetHeight || 0;
+      const x = wrapW ? Math.min(Math.max(p.x, halfW + 4), wrapW - halfW - 4) : p.x;
+      const y = wrapH ? Math.min(Math.max(p.y + o.stack * (chipH + 6), chipH * 1.7 + 4), wrapH - 4) : p.y;
+      o.el.style.left = x+'px';
+      o.el.style.top = y+'px';
     });
   }
   requestAnimationFrame(organTick);

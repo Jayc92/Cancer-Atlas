@@ -6,7 +6,8 @@
   "citation_paren_ledger.basis_test": 0,
   "internal_quote_check.internal_quote.marked": 15,
   "pointer_check.pointer.pointers": 580,
-  "pointer_check.pointer.identity_oracle": 266
+  "pointer_check.pointer.identity_oracle": 266,
+  "margin_reserve_check.categories": 0
  },
  "lowers": [
   {
