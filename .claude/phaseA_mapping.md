@@ -69,6 +69,12 @@ anchored to existing structure rather than case-by-case taste:
   (exist; viewer.js:223).
 
 ### 3. Growth pattern — the CONSEQUENCE is rendered, not the pattern (ruling 2026-09-05)
+- **DESIGN DOCUMENT (2026-09-09): `.claude/phaseA_growth_design.md`** — the four-mechanism
+  decomposition (count / edge falloff / placement / wall) tested against every cited growth word
+  in the ledger; survives with two amendments (parenchymal diffuseness is edge extent; a fifth
+  kind, composition, exists); per-mechanism category/magnitude/reserved design; build order;
+  four rulings requested before code. Nothing below this line is superseded; the document
+  refines the consequence mapping rather than replacing it.
 - **CATEGORY (cited):** exophytic / infiltrative / diffuse / multifocal, from PDQ
   pathology sections and WHO classification.
 - **Consequence mapping (design, per ruling):**

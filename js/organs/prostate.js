@@ -10,7 +10,7 @@ import { cssVar, applyTissueMottleVertexColors } from '../viewer.js';
 // collision-free. sexes:['male'] was already correct before this pass — verified, not assumed.
 export const organEntry = { key:'prostate', label:'Prostate', system:'Reproductive', active:true, sexes:['male'],   aliases:['prostate','prostatic'] };
 
-export const markerSpec = { points:[{heightFrac:0.46, angle:0}] };
+export const markerSpec = { points:[{heightFrac:0.46, angle:0}] }; // MARGIN, ON THIS LINE ON PURPOSE (user, 2026-09-09): the anchor lands at 0.458 of height; the male crotch (perineum, measured) is at 0.453 — 0.005, about 8.5 mm on a 1.7 m body, less than a finger's width above the placement check's floor. NOTHING MOVES: the prostate sits this low, and raising it for margin trades an anatomical fact for a comfort number; what the margin buys is that any re-export, mesh swap or crotch-measure change trips regress.js's 'body marker placement' check LOUDLY instead of relocating this marker onto a thigh. Full record: CLAUDE.md, 'BODY MARKERS RESOLVED, BUT NOT CORRECTLY'. Kept on one line because fourteen hand-typed pointers into this file sit below it.
 
 export const cancerEntries = [
   // Unlike every prior organ's list, this is not a meaningful multi-way split — it's one

@@ -4046,10 +4046,18 @@ marker (CONCORD-3). Per-anchor geometry lands in `body_marker_anchors_<sex>.json
 THE WORKLIST IT PRODUCED, before any repair: exactly the two Testis anchors on
 the male body; every other marker on both bodies sits on the trunk column (the
 "more than one" prediction answered in the negative), with one margin worth
-knowing — Prostate at 0.458 clears the male crotch by 0.005 of height. The L2
-re-export is NOT the cause: 0.40 is 9 cm below the crotch, and Catmull-Clark
-moves surfaces by millimetres — reasoning from the measured gap, not re-measured
-on the 21K cage.
+knowing — Prostate at 0.458 clears the male crotch by 0.005 of height, about
+8.5 mm on a 1.7 m body: THE FINDING, NOT A FOOTNOTE (user). Nothing moves — the
+prostate genuinely sits that low — and the margin is recorded beside the spec in
+prostate.js, because it reframes what the audit bought: not the one defect it
+found but the conversion of a scheduled silent failure (any re-export, mesh swap
+or change to the crotch measurement) into a loud one. The L2 re-export is NOT the
+cause — AN INFERENCE, NOT A MEASUREMENT: 0.40 is 9 cm below the crotch and
+Catmull-Clark moves surfaces by millimetres; the 21K cage was not re-measured and
+this must not be remembered as if it had been. ON PREDICTING COUNTS (user, on
+their own errors running both directions — three dry wells that were not dry, one
+family that was a single): the lesson is not to adjust the prior; it is to stop
+predicting counts and specify the measurement, which is what the guard did anyway.
 
 THE FIX, probed on a height/angle grid with the check's own two tests: 0.455
 still lands under the crotch (the curved surface puts the hit at 0.4527); 0.457
@@ -4084,7 +4092,10 @@ Pancreas~Stomach, 12.6px Prostate~Testis (other side), 14.4px the Testis pair. T
 RULE — visible diameter below HALF the minimum pairwise separation — cannot be met
 by any legible dot: half of the true minimum is 2px, and even excluding the pelvic
 set it is 5.8px, against the Pancreas~Stomach pair, which is itself anatomically
-adjacent (the stomach lies over the pancreas). So the pairs under ~12px are
+adjacent (the stomach lies over the pancreas). The rule was set against the global
+minimum where the pelvic cluster is adjacent anatomy and overlap is the correct
+depiction — a mis-specification the user named, and the reason reporting beat
+relaxing it. So the pairs under ~12px are
 reported as THE FLOOR — genuine anatomical proximity on one height of the front
 surface, not a rendering fault — and the size is chosen against everything else.
 **11px**: the organ screen's value (one law product-wide), a 2.1× reduction; at
@@ -4100,6 +4111,19 @@ between runs (auto-rotation timing, not the diameter). Look: torso crops of the
 regression's own screenshots (/tmp/atlas-verify/size3/, ephemeral) — at 23px the
 abdominal discs merge into blobs; at 11px every dot is distinct inside its ring and
 only the pelvic cluster still stacks.
+
+THE PELVIC HIT TEST, MEASURED AND NOT REPAIRED (user: measure first). Three
+targets inside 10px with 24px rings; the app's rule is in-radius 12px then DEPTH
+(nearest to the camera wins). Probed in-page on the male body at the default
+framing, clicking each pelvic marker's own centre: prostate → BLADDER selected;
+testis(L) → BLADDER selected; testis(R) → testis(R); bladder → bladder. Nearest-
+centre would have matched the clicked dot in all four cases. At the six pair
+midpoints the two rules disagree in six of six (ambiguous by construction). Camera
+distances differ by ~1.5% (bladder 3.663, prostate 3.684, testis(L) 3.721): these
+markers sit at similar depth on one surface, where depth is the wrong
+discriminator — depth is right when one thing occludes another. Recorded as a
+measurement at one camera pose (the body auto-rotates; the order of depths changes
+with yaw); no change made. Evidence: the probe's table, ephemeral under /tmp.
 
 A HARNESS HAZARD FOUND ON THE WAY, fixed in the same commit: `regress.js` read
 `assets` and the manifest's code_refs relative to process.cwd(). The battery always
@@ -5026,7 +5050,10 @@ refute it, which is worth more than file order.
   collapse that relocates a word to the growth axis (GBM's "topographically
   diffuse") lands only once the growth axis DRAWS that property — held
   until the growth build, because a property drawn nowhere is worse than a
-  declined axis position. COLD-SESSION ENTRY POINTER: read
+  declined axis position. THE GROWTH AXIS IS DESIGNED, NOT BUILT:
+  `.claude/phaseA_growth_design.md` (2026-09-09) — four mechanisms tested
+  against the ledger, two amendments, four rulings requested before code;
+  build order count → edge falloff → extent breach → wall. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin
