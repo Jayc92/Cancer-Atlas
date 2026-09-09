@@ -250,11 +250,14 @@ export const MARGIN_STATUS = Object.freeze({
   hcc:      { status: 'cited', category: 'nodular', ref: 'R11 — named divergence with counts (nodular 348/400 vs infiltrative 52/400), RENDERED third, 2026-09-09' },
   // GBM: re-read 2026-09-09 on the user's biology-first distrust (the seed was a growth fact borrowed as a margin).
   // R21, Iacob & Dinca, J Med Life 2009 (PMC3019011, PMID 20108752, CC BY), Pathology: "Grossly, it appears
-  // topographically diffuse, a poorly delineated mass with no capsula" — the ill-defined vocabulary with a
-  // DIFFUSE qualifier. Whether that qualifier is a fourth axis position ("no discrete margin" as the finding)
-  // or a candidate for the shared indistinct-edge form under arm 3 is decided at wiring, on its own
-  // pre-registration — not here.
-  gbm:      { status: 'cited',           ref: 'R21 — poorly delineated, topographically diffuse, no capsule (PMC3019011, PMID 20108752), not yet rendered; fourth-position question open' },
+  // topographically diffuse, a poorly delineated mass with no capsula". RULED (user, 2026-09-09): the margin
+  // COLLAPSES onto the shared indistinct-edge form — "poorly delineated" is PTC's word; "topographically diffuse"
+  // is the GROWTH property, already cited on that axis, and reading it into margin would double-count one phrase
+  // across two properties; "no capsula" distinguishes nothing. HELD, by the ruling's own condition: the collapse
+  // lands only once the growth axis DRAWS the diffuseness, and the growth axis is designed, not built
+  // (phaseA_mapping.md, section 3 — no growth consequence is rendered anywhere yet). Until then GBM stays cited
+  // with no category and draws nothing, rather than relocating a property to an axis that is not showing it.
+  gbm:      { status: 'cited',           ref: 'R21 — poorly delineated (PMC3019011, PMID 20108752); ruled to share the indistinct-edge form, HELD until the growth axis draws the diffuseness' },
   // PROSTATE ACINAR: the seed was Gleason pattern-4/5 infiltrating descriptions — HISTOLOGIC, not a gross margin.
   // R22, read 2026-09-09 (pre-registered ladder): StatPearls Prostate Cancer (NBK470550) describes histology only;
   // no StatPearls pathology chapter exists; ~40 OA full texts across five queries yield no gross-register

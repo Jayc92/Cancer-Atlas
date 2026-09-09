@@ -4006,6 +4006,11 @@ source EXISTS, not that it speaks of the entry at gross register — that
 remains the read's job under the register rule. Guard before repair applied:
 the check was written and run first, fired on exactly the three seeded
 statuses (TNBC, GBM, prostate acinar), and that output was the worklist.
+**The harvest stays useful, gated by this property rather than distrusted**
+(user): it found histology because the atlas's own richest prose is
+histologic — a selection effect in the instrument (good recall, poor
+register precision), not a property of the entries — and the property
+catches exactly that failure.
 
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
@@ -4910,7 +4915,14 @@ refute it, which is worth more than file order.
   two categories rendering identically with the distinction carried in
   prose is the truthful outcome; manufacturing a difference between them
   is the invention the split forbids. A harvest seed is not a citation
-  and does not make a category wireable. COLD-SESSION ENTRY POINTER: read
+  and does not make a category wireable. THREE COLLAPSES ARE A VOCABULARY
+  FINDING, NOT THE AXIS RUNNING OUT OF ROOM (user, 2026-09-09): the
+  ill-defined family carries several names on one appearance while
+  melanoma separated on a different property the same day; and a margin
+  collapse that relocates a word to the growth axis (GBM's "topographically
+  diffuse") lands only once the growth axis DRAWS that property — held
+  until the growth build, because a property drawn nowhere is worse than a
+  declined axis position. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin

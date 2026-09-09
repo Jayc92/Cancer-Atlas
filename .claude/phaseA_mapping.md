@@ -1101,3 +1101,53 @@ Proposed the same day and ratified with one change — the one that decides whet
   recorded not acted on: the mass anchors at the skin block's origin hotspot on its right face rather
   than on the epidermal top surface; where a melanoma sits on the block is a hotspot-placement matter
   outside this pass. Renderer limit stands as disclosed: the macule's flatness is not modelled.
+- 2026-09-09 (RULING ON GBM, user): **GBM COLLAPSES ONTO THE SHARED INDISTINCT-EDGE FORM.** The margin
+  word in R21 is "poorly delineated" — PTC's words, exactly what collapsed PDAC. What remained as a
+  candidate for a fourth position is the diffuseness, and diffuseness is the GROWTH property, already
+  cited for GBM and accounted for on that axis; reading it into margin double-counts one source phrase
+  across two properties and creates an axis position on the strength of a word that belongs elsewhere.
+  "No capsula" distinguishes nothing: it is the absence of a feature PTC's citation also never claims.
+  **ONE CHECK BEFORE THE COLLAPSE LANDS (user):** the ruling rests on the diffuseness living on the
+  growth axis, and that is only honest if the growth axis is DRAWING it — confirm GBM's growth category
+  is wired and rendering diffusely-infiltrative before collapsing the margin; otherwise the property is
+  relocated to an axis that is not showing it and ends up drawn nowhere, which is worse than the fourth
+  position being declined.
+- 2026-09-09 (THE CHECK, read from the tree — THE CONDITION FAILS; THE COLLAPSE IS HELD): the growth axis
+  is DESIGNED, NOT BUILT. `grep -n -i growth js/morphology.js js/main.js` finds two comments and no
+  code; spec section 3 above maps "infiltrative → indistinct boundary — soft falloff at the tumour
+  margin" and "diffuse → thickened, rigid ORGAN WALL ... design before building", and none of the four
+  consequences is rendered anywhere (the stomach's linitis plastica is histology-panel text; no organ
+  file or module draws a wall change or a falloff). What GBM has today: the Explore-screen tumour map's
+  "Infiltrative margin" region — one of four colour-labelled ZONES of one mass with genes assigned to
+  it (brain.js), a schematic position with a label, not a rendering of diffuse growth — and the
+  histology panel's "the diffusely infiltrative background this tumor grows as", which is prose. So the
+  diffuseness is drawn nowhere as a growth property, and the ruling's own condition says the margin
+  collapse waits. HELD: `MARGIN_STATUS.gbm` stays `cited` with no category (draws nothing, as every
+  cited-without-category entry does); the ref now says so. WHAT LANDS THE COLLAPSE: the growth axis
+  drawing GBM's diffuseness — which is the growth BUILD, a design step by the spec's own words, and a
+  scope decision for the user, not a wiring. DESIGN TENSION TO CARRY INTO THAT STEP, flagged not
+  decided: the spec's INFILTRATIVE consequence ("soft falloff at the tumour margin") and the margin
+  axis's INDISTINCT-EDGE idiom would draw the same visual property from two axes; GBM's growth is the
+  DIFFUSE consequence (no discrete boundary; brain-tissue involvement), which the spec reserves for
+  "design before building" — the two consequences must be kept apart on paper before either is drawn,
+  or the double-count the ruling just refused on the margin side reappears on the growth side.
+- 2026-09-09 (THE VOCABULARY FINDING, recorded as a POSITIVE result, user): once GBM lands, the
+  ill-defined family has THREE NAMES ON ONE APPEARANCE (poorly defined / poorly delineated / poorly
+  delineated-and-diffuse) — a finding about the literature's vocabulary, not a failure of the axis. It
+  pairs with melanoma the same day: the family gained no third APPEARANCE and does gain a third NAME.
+  Stated here so that three collapses in a row are not read as the axis running out of room: the axis
+  separated melanoma on a different property in the same session, which is what "room" means. Today's
+  count: two names on one appearance (PTC, PDAC), the third held on the growth condition above.
+- 2026-09-09 (THE REGISTER PATTERN, re-described, user): the harvest found histology because the atlas's
+  own richest prose IS histologic — a selection effect in the instrument, not a property of the
+  entries. The harvest has good RECALL and poor REGISTER PRECISION, and the fourth property (a status
+  claim carries its backing) now catches exactly that failure at build time. So the harvest stays
+  useful, GATED by the new property rather than distrusted; the three register falls (FTC, acinar,
+  TNBC) are the gate working on the harvest's known weakness, not a reason to stop harvesting.
+- 2026-09-09 (BLOCKED-TO-TOOLING, first time with no alternative, user): the four-probe PathologyOutlines
+  run when the 429 window opens (≈ 2026-09-10T01:38Z; TNBC, FTC, prostate acinar, ccRCC) is the right
+  route back to `cited`, and it is the first time the gated source is the ONLY one that would answer:
+  every earlier "blocked to tooling" (R3/R4 ccRCC) had an alternative rung that could in principle
+  supply the sentence; for the gross register of common carcinomas the OA corpus has now been shown
+  thin four times over, and the textbook-style gross description lives behind the gate. Recorded so
+  the next reader does not spend another evening on rung 2 for these four.
