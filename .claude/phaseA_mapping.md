@@ -236,3 +236,50 @@ arithmetic either way.
   (PathologyOutlines, WHO) and radiology vocabularies (BI-RADS) — per-property source
   classes corrected in `_phaseA_citations`. Pancreas/breast/kidney reads queued under
   the corrected classes.
+- 2026-09-08 (reads opened, 2026-09-09T01:38Z): **RATE-LIMIT MEASUREMENT RESULT — RE-SOURCE.** The
+  first fetch of the plan (pancreasductal.html, one request, headers recorded) returned HTTP 429,
+  `retry-after: 86400`, `server: Sucuri/Cloudproxy`, body a "Too Many Requests" page with no
+  CAPTCHA. The limit had NOT cleared for this client despite the 2026-09-06 window. Per the plan
+  no second probe inside a Retry-After window; whether the cap is daily or persistent is
+  indistinguishable from one fetch and irrelevant to today's work, so the verdict is the plan's
+  re-source branch. Recorded as GATED, not bypassed. PathologyOutlines is "unreachable today" and
+  the hierarchy's rung (2) carries the reads: WHO-named statements in reachable open-access
+  sources (WHO-classification summary papers, PMC reviews and series with gross descriptions),
+  StatPearls chapters that carry a gross section, PDQ pathology text where it exists; teaching-
+  atlas captions or Libre Pathology only as disclosed tertiaries of last resort, Phase-3 form,
+  text only and never images.
+- 2026-09-08 (before any read): **THE EXTERNAL QUEUE, ENUMERATED — 19 items.** The thin-in-atlas
+  set × {margin, growth}: pancreas/PDAC, kidneys/ccRCC, colon/CRC, lungs/LUAD (gross), skin/
+  melanoma (register caution), liver/HCC, ovary/HGSOC, ovary/OCCC, thyroid/PTC = 18; plus the
+  bladder/UC exophytic-papillary growth half = 19. Second tier, not in this queue: stomach margin,
+  testis growth, bladder margin, FTC growth, GBM margin (the same fact as its growth), prostate
+  margin and TNBC growth (both seeded). Extent is ONE read for all sixteen (SEER Summary Stage
+  extent categories), not a per-entry read; site stays retired to the existing pos3d citations.
+- 2026-09-08 (before any read — the only fetch so far returned a block page carrying no content):
+  **PRE-REGISTRATION: 3 of the 19 are expected to land in the pre-registered negative (range 2–4)**,
+  named so a low number afterwards is a result and not a relief. LUAD gross margin — a peripheral
+  grey-white mass whose margin the literature describes as variable, so a generic mass with an
+  honest label; PTC margin — infiltrative and encapsulated variants straddle the divergence
+  threshold, expected to resolve as a NAMED divergence or the negative; skin/melanoma margin — the
+  gross register may not carry the category at all (ABCD border vocabulary is clinical-
+  dermoscopic), a SOURCE-LANDSCAPE negative rather than a biological one. Fourth candidate: colon
+  margin, likely subsumed by the ulcerated/annular growth category. Everything else is expected to
+  carry a distinctive gross category: PDAC infiltrative and ill-defined; ccRCC circumscribed with a
+  pseudocapsule; CRC exophytic/ulcerated/annular; HCC nodular with pseudocapsule and satellite
+  nodules in a cirrhotic liver; HGSOC papillary excrescences on a solid-cystic mass; OCCC a mural
+  nodule in a cyst; bladder papillary fronds; melanoma radial-then-vertical growth. Also pre-
+  registered: at least one register-substitution temptation (skin), to be DISCLOSED if used, never
+  silently taken. Sourcing work pulls toward finding something citable for every entry; "no
+  distinctive morphology" is the outcome that pull suppresses, which is why the count is written
+  down first.
+- 2026-09-08: **FOUR RULES POSTDATE THIS DOCUMENT AND BIND EVERY READ** (user): (a) CARRY THE COUNT
+  WITH THE PERCENTAGE — wherever a source gives both, both go in the same parenthetical (a bare
+  percentage is invisible to `fraction_check`); (b) CHECK THE SOURCE AGAINST ITSELF — abstract,
+  Results and Discussion read for internal agreement before any figure is quoted (thyroid's 42.4%
+  was faithfully copied from an abstract that disagreed with its own Results, and verbatim
+  verification passes on that class); (c) A DEFECT FOUND BY CONTRAST HAS SIBLINGS WITHOUT ONE —
+  when a read finds a defect by comparing two records, sweep the whole block for the shape (the
+  EGFR qualifier gap surfaced only because its sibling carried the clause; PDGFRA had the identical
+  gap and no comparator); (d) `absence_claim_check`'s flag tier catches world-scoped universals —
+  morphology categories are comparative by nature, so no "uniquely", "the only" or "unlike any
+  other" enters a category claim.
