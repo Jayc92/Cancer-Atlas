@@ -208,6 +208,46 @@ interval — measure whether the limit is per-burst (pacing works) or a daily ca
 harvest already shrank the measured need to the low twenties, which changes the
 arithmetic either way.
 
+## The uncharacterised-margin default (PROPOSED 2026-09-09 — settle before the build)
+User, on the reads report: "A negative on margin needs a rendering answer, not only a record."
+- **THE PROBLEM.** Margin drives `sharpness` and `spikeCount`, the most visually distinctive
+  knobs in the mapping, and after the reads five entries (four if ccRCC resolves) carry NO
+  cited margin category. A renderer must still draw something, and every shape a mesh can
+  take reads as an assertion about margin: a smooth default says "circumscribed", a spiky one
+  says "infiltrative". If those entries render whatever the seed produces, the geometry makes
+  exactly the characterisation the negative declined to make.
+- **THE RULE PROPOSED, in five parts:**
+  1. **ONE SHARED DEFAULT.** Every entry whose margin half is a recorded negative renders the
+     SAME margin parameter set — same `sharpness`, `spikeCount`, `spikeLength` AND seed — so the
+     placeholder is recognisable by recurrence: a reader who sees two uncharacterised entries
+     sees the same mass twice, which is what a default looks like and a measurement never does.
+  2. **RESERVED, NOT NEUTRAL.** The default set is declared in the mapping table as RESERVED:
+     no cited category maps to it and it maps to no cited category — cited circumscribed sits
+     below it and cited infiltrative above it on the spike axis — so a cited entry never
+     renders like the placeholder and the placeholder never renders like a cited entry.
+     "Neutral" is not a category the literature has; "reserved" is a property of the mapping
+     the atlas controls.
+  3. **THE LABEL CARRIES THE HONESTY, ON SCREEN.** The tumour's in-product text and aria state
+     it — wording to ratify: "Margin: not characterised at gross level in the cited sources;
+     drawn as the atlas's generic mass." Data rule 2 applied to a shape: geometry cannot say
+     "uncharacterised", prose can, and the manifest alone is not user-facing.
+  4. **GROWTH GOVERNS WHERE GROWTH IS CITED.** Where the growth half is cited and dictates the
+     mass form — CRC's ulcerated form, OCCC's cystic-and-solid mass, bladder's papillary
+     fronds — the growth expression governs the silhouette and the margin knobs stay at the
+     reserved default. A margin negative never overrides a cited growth form, and a cited
+     growth form is never read back as a margin category.
+  5. **NO SILENT UPGRADE.** The negative stands until a source supplies the category. A default
+     that happens to look right for an entry is not evidence; the pre-registered outcome
+     changes only by a read, recorded in the ledger.
+- **NOT SETTLED HERE, FOR RATIFICATION:** the label wording; whether the placeholder also
+  carries a DOM-register cue (a dashed silhouette or legend badge — permitted, since it is unlit
+  and outside the illumination path per condition (5)) or whether recurrence plus label is
+  enough; and the reserved values themselves, which are magnitude — illustrative by the split,
+  chosen for legibility at build time and disclosed.
+- **WHERE THE CONSTRAINT BINDS:** the knob line in `main.js` carries the trigger comment,
+  appended to the line so no tracked pointer into that file moved; that is the line the build
+  will edit, and the person editing it may never open this document.
+
 ## Status log
 - 2026-09-05: document opened; knobs verified in source; consequence mapping and
   epistemic split recorded; calibration batch defined.
@@ -327,3 +367,22 @@ arithmetic either way.
   subsection is the exception to lesson #1; the gross classifications WITH COUNTS live in
   pathology cohort papers and macroscopic-characterization reviews, reachable by Europe PMC BODY:
   phrase search over the open-access subset (which does search full text — measured, not assumed).
+- 2026-09-09 (user, on the reads report): **THE MARGIN/GROWTH ASYMMETRY HAS A BUILD CONSEQUENCE
+  THE CITATION RECORD DOES NOT COVER** — recorded as the uncharacterised-margin default above,
+  PROPOSED and awaiting ratification before any build touches the knobs.
+- 2026-09-09: **THE PRE-REGISTRATION LESSON, RESTATED IN THE USER'S FORM.** "You reasoned about
+  which cancers would fail when the structure was which property fails — per cell rather than
+  per axis. When a population is a grid, register per axis: the row and column effects are
+  usually larger than the cell ones, and they're what a per-cell prediction can't see." Adopted
+  as the form for every future pre-registration over a grid (entries × properties): state the
+  expected row and column totals, then the cells.
+- 2026-09-09: **CALIBRATION LESSON #1 SCOPED DOWN** (user): StatPearls being thin on gross pathology
+  is PER-CHAPTER, not per-source — the PTC chapter carries a Gross Findings subsection — so a
+  chapter is checked for one before it is ruled out, never assumed thin from its siblings. For
+  the ccRCC retry the scoping changes nothing (NBK470336, NBK557644 and NBK563230 were scanned
+  whole and carry none), but the next chapter is read before it is dismissed.
+- 2026-09-09: **THE NEAR-MISS, NAMED** (user): the position check doing its job — a pseudocapsule
+  sentence in a papillary-RCC table row would have been a clean, verbatim, entirely wrong
+  citation. Third instance of verbatim-correct, subject-wrong (bladder's scope, thyroid's
+  abstract, this table row); carried to the ccRCC retry as its first check: which row, which
+  subtype, before which words.
