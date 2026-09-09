@@ -51,6 +51,14 @@ export const RESERVED_MARGIN = Object.freeze({
 // Cited margin categories → parameter RANGES. EMPTY AT BIRTH (see BUILD ORDER above). Shape:
 //   circumscribed: { amplitude:[0.02,0.06], freq:[3.5,5.0], spikeCount:[0,0], spikeLength:[0,0], sharpness:[0,0] }
 // Every range must lie inside CITED_FREQ_BAND on freq and must exclude the reserved form.
+// WIRING PROCEDURE, PER CATEGORY (user ruling, 2026-09-09) — you are on the line it applies to:
+//   1. add the category's ranges here, inside CITED_FREQ_BAND, and flip its entries' MARGIN_STATUS;
+//   2. run .claude/margin_reserve_check.js — that proves PARAMETER DISJOINTNESS, nothing more;
+//   3. CAPTURE AND LOOK, this category beside the reserved form. Parameter disjointness does not
+//      imply PERCEPTUAL DISTINCTNESS: at amplitude 0.10 the reserved form passed the check and read as
+//      circumscribed. Each category wired narrows the perceptual space the reserved form must stay
+//      distinct from, and only the parametric half is gated — so the look happens here, per category,
+//      not once when all nine are in. Nothing gates looking; that is why this is written on the line.
 export const MARGIN_CATEGORIES = Object.freeze({});
 
 // The illustrative mass colour — UNSOURCED and disclosed in #disclaimer. One colour for every

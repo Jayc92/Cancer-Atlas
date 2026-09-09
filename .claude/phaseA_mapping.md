@@ -456,3 +456,22 @@ Proposed the same day and ratified with one change — the one that decides whet
   - NEXT: wire the first cited category (candidates with clean citations: PTC poorly-defined,
     seminoma well-circumscribed, TNBC pushing) into `MARGIN_CATEGORIES` with ranges inside the
     cited band, flip its status, and let the check prove the reserved form stays unreachable.
+- 2026-09-09 (user, on the build report): **THE AMPLITUDE CORRECTION FOUND A LIMIT IN THE CHECK,
+  RECORDED IN ITS HEADER BEFORE ITS GREEN IS READ AS COVERAGE.** At amplitude 0.10 the reserved
+  form was parametrically UNREACHABLE — the check passed it — and perceptually CIRCUMSCRIBED, the
+  misread the rule exists to prevent. The check proves PARAMETER DISJOINTNESS; the property that
+  matters is PERCEPTUAL DISTINCTNESS, and the first does not imply the second. Fixture-only is
+  correct, unreachability is verified, and neither means the reserved form cannot be mistaken for
+  a cited one; only looking establishes that, and nothing gates looking.
+- 2026-09-09 (user): **THE VISUAL READ HAPPENS PER CATEGORY WIRED**, not once when all nine are in.
+  Every cited category narrows the perceptual space the reserved form must stay distinct from,
+  and only the parametric half of that narrowing is gated — PTC's poorly-defined margin sits
+  closer to an undulating form than seminoma's circumscribed nodule, and the check cannot ask
+  about PTC specifically. Procedure, written on the `MARGIN_CATEGORIES` line in `js/morphology.js`
+  where the wirer edits: add ranges, run the check, then CAPTURE AND LOOK at the new category
+  beside the reserved form, and record the look with the wiring commit.
+- 2026-09-09 (user): the main.js pointer staleness in build step 1 is the same file doing the same
+  thing twice (the first at 893b3c8, in a settle run); this time caught PRE-COMMIT because the
+  pointed lines were read from the tree instead of the draft message being trusted. That class is
+  graduating the way the ratchet class did — from found-by-looking toward caught-by-procedure —
+  though here the procedure is still a person reading, not a guard.

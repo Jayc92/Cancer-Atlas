@@ -19,6 +19,23 @@
 // broken. Do not go looking for the real demonstration; it should not exist. Recorded as CLAUDE.md
 // condition (7-quater), user ruling 2026-09-09.
 //
+// WHAT THIS CHECK PROVES, AND WHAT IT DOES NOT (user ruling, 2026-09-09 — found by the amplitude
+// correction the same day the check shipped, and recorded here before anyone reads its green as
+// coverage). It proves PARAMETER DISJOINTNESS. The property that matters is PERCEPTUAL DISTINCTNESS —
+// that a reader cannot mistake the reserved form for a cited one — and the first does not imply the
+// second. The case: at amplitude 0.10 the reserved form was parametrically unreachable (this check
+// passed it — the vector sat outside every cited box) and perceptually CIRCUMSCRIBED in the live
+// capture, exactly the misread the rule exists to prevent. So: fixture-only is correct, unreachability
+// is verified, and neither means the reserved form cannot be mistaken for a cited one. Only LOOKING
+// establishes that, and nothing gates looking. CONSEQUENCE FOR EVERY CATEGORY WIRED: each one narrows
+// the perceptual space the reserved form must stay distinct from, and only the parametric half of
+// that narrowing is gated here — PTC's poorly-defined margin sits closer to an undulating form than
+// seminoma's circumscribed nodule does, and this check cannot ask about PTC specifically. THE VISUAL
+// READ HAPPENS PER CATEGORY WIRED — capture the reserved form beside the newly wired category and
+// look — not once when all nine are in, or the first look comes after the space has closed around a
+// form nobody re-checked. The procedure is written again on the MARGIN_CATEGORIES line in
+// js/morphology.js, because that is the line the wirer edits and this header is the one they skip.
+//
 // SECONDARY ASSERTIONS, structural, on the same module: every active cancer entry carries a margin
 // status from the allowed set (the renderer reads it — an entry missing here renders nothing and
 // nobody would know); every organ has an origin-hotspot index that points at a hotspot whose text

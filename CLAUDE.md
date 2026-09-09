@@ -4507,6 +4507,16 @@ derives."
   AND THE FLOOR WAS THE DECISIVE NUMBER". The reach change happened the way this
   bullet asked for: declared before it happened, measured after, and the
   measurement is a saved instrument rather than a number.
+- **THE SAME FILE, THE SAME THING TWICE, CAUGHT EARLIER (2026-09-09).** Phase A's
+  build step inserted a renderer above main.js's site-map code and moved every
+  later line, staling the three tracked pointers into that file — the shape
+  893b3c8 found in a settle run. This time it was caught PRE-COMMIT, because the
+  pointed lines were re-read from the tree rather than the draft message's own
+  claim ("both insertions sit below those lines", false) being trusted; all
+  three were re-pointed by content. pointer_check reported green throughout,
+  as its declared FLOOR-only boundary says it will for prose pointers. The
+  class is graduating the way the ratchet class did — toward caught rather
+  than found — with the difference that the catch is still a person reading.
 
 ## THE GUARD CAME BEFORE THE REPAIR, AND THE FLOOR WAS THE DECISIVE NUMBER (2026-09-07, user ruling; `.claude/pointer_check.py`)
 
