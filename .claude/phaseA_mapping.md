@@ -208,42 +208,55 @@ interval — measure whether the limit is per-burst (pacing works) or a daily ca
 harvest already shrank the measured need to the low twenties, which changes the
 arithmetic either way.
 
-## The uncharacterised-margin default (PROPOSED 2026-09-09 — settle before the build)
+## The uncharacterised-margin default (RATIFIED 2026-09-09, with one substantive change)
 User, on the reads report: "A negative on margin needs a rendering answer, not only a record."
+Proposed the same day and ratified with one change — the one that decides whether the rest works.
 - **THE PROBLEM.** Margin drives `sharpness` and `spikeCount`, the most visually distinctive
   knobs in the mapping, and after the reads five entries (four if ccRCC resolves) carry NO
   cited margin category. A renderer must still draw something, and every shape a mesh can
   take reads as an assertion about margin: a smooth default says "circumscribed", a spiky one
   says "infiltrative". If those entries render whatever the seed produces, the geometry makes
   exactly the characterisation the negative declined to make.
-- **THE RULE PROPOSED, in five parts:**
+- **THE RULE, in five parts:**
   1. **ONE SHARED DEFAULT.** Every entry whose margin half is a recorded negative renders the
-     SAME margin parameter set — same `sharpness`, `spikeCount`, `spikeLength` AND seed — so the
-     placeholder is recognisable by recurrence: a reader who sees two uncharacterised entries
-     sees the same mass twice, which is what a default looks like and a measurement never does.
-  2. **RESERVED, NOT NEUTRAL.** The default set is declared in the mapping table as RESERVED:
-     no cited category maps to it and it maps to no cited category — cited circumscribed sits
-     below it and cited infiltrative above it on the spike axis — so a cited entry never
-     renders like the placeholder and the placeholder never renders like a cited entry.
-     "Neutral" is not a category the literature has; "reserved" is a property of the mapping
-     the atlas controls.
-  3. **THE LABEL CARRIES THE HONESTY, ON SCREEN.** The tumour's in-product text and aria state
-     it — wording to ratify: "Margin: not characterised at gross level in the cited sources;
-     drawn as the atlas's generic mass." Data rule 2 applied to a shape: geometry cannot say
-     "uncharacterised", prose can, and the manifest alone is not user-facing.
+     SAME reserved form — same parameters AND seed — so the placeholder is recognisable by
+     recurrence to anyone who sees two uncharacterised entries.
+  2. **RESERVE AN AXIS, NOT A POINT** (the user's change). The proposal placed the default
+     between cited circumscribed and cited infiltrative; that puts it ON the spike scale, and a
+     midpoint on a scale is a value — it reads as "intermediate margin", a claim the negative
+     declined to make, the whole proposal's failure one level in. The reserved form is
+     ORTHOGONAL: a treatment the cited categories never use — for instance a gentle uniform
+     undulation at a frequency outside the cited range — not smooth, not spiculated, and not on
+     the line between them. A MODE rather than a value, so a reader sees "this is doing
+     something different" instead of "this is a bit spiky". **TESTABLE PROPERTY, which the
+     reserved values otherwise lack: the reserved form must be UNREACHABLE from any cited
+     category's parameter range.** Checkable rather than judged; the orthogonal axis satisfies
+     it for free where a midpoint never can. The check ships WITH the build, before the first
+     cited category is wired (guard before repair).
+  3. **THE LABEL AND A BADGE CARRY THE HONESTY, ON SCREEN — BADGE NON-OPTIONAL.** The
+     tumour's in-product text and aria state it (draft wording: "Margin: not characterised at
+     gross level in the cited sources; drawn as the atlas's generic mass."), and a DOM BADGE
+     marks the record. Weight these ABOVE the recurrence argument: recurrence signals only to
+     someone browsing two uncharacterised entries, and most visitors arrive at one cancer from
+     a search and leave — for them label plus badge are the entire honesty mechanism. Data
+     rule 2 applied to a shape: geometry cannot say "uncharacterised", prose can.
+     **DASHED SILHOUETTE: NO.** A dashed outline modifies the mass, so it is another shape
+     that reads as a claim about the tumour — poorly demarcated, which is precisely a margin
+     assertion. A badge is unambiguously metadata about the RECORD. Same division the marker
+     system already runs on: the DOM carries what geometry cannot say, and geometry stops
+     trying.
   4. **GROWTH GOVERNS WHERE GROWTH IS CITED.** Where the growth half is cited and dictates the
      mass form — CRC's ulcerated form, OCCC's cystic-and-solid mass, bladder's papillary
-     fronds — the growth expression governs the silhouette and the margin knobs stay at the
-     reserved default. A margin negative never overrides a cited growth form, and a cited
-     growth form is never read back as a margin category.
-  5. **NO SILENT UPGRADE.** The negative stands until a source supplies the category. A default
-     that happens to look right for an entry is not evidence; the pre-registered outcome
+     fronds — the growth expression governs the silhouette and the margin treatment stays the
+     reserved form. A margin negative never overrides a cited growth form, and a cited growth
+     form is never read back as a margin category.
+  5. **NO SILENT UPGRADE — the part that will be tested first.** The negative stands until a
+     source supplies the category. A reserved form that happens to look right for some entry
+     is the exact moment someone reaches for a quiet promotion; the pre-registered outcome
      changes only by a read, recorded in the ledger.
-- **NOT SETTLED HERE, FOR RATIFICATION:** the label wording; whether the placeholder also
-  carries a DOM-register cue (a dashed silhouette or legend badge — permitted, since it is unlit
-  and outside the illumination path per condition (5)) or whether recurrence plus label is
-  enough; and the reserved values themselves, which are magnitude — illustrative by the split,
-  chosen for legibility at build time and disclosed.
+- **STILL OPEN AT BUILD TIME, INSIDE THE RULE:** the final label wording (the draft above
+  stands until then) and the reserved values themselves — magnitude, illustrative by the
+  split, chosen for legibility, DISCLOSED, and subject to the unreachability check.
 - **WHERE THE CONSTRAINT BINDS:** the knob line in `main.js` carries the trigger comment,
   appended to the line so no tracked pointer into that file moved; that is the line the build
   will edit, and the person editing it may never open this document.
@@ -386,3 +399,10 @@ User, on the reads report: "A negative on margin needs a rendering answer, not o
   citation. Third instance of verbatim-correct, subject-wrong (bladder's scope, thyroid's
   abstract, this table row); carried to the ccRCC retry as its first check: which row, which
   subtype, before which words.
+- 2026-09-09: **THE DEFAULT RATIFIED** (user), with one substantive change folded into the section
+  above: reserve an AXIS, not a point on the shared spike scale (a midpoint is a value and reads
+  as "intermediate margin"); the reserved form is orthogonal and must be UNREACHABLE from any
+  cited category's parameter range — a testable property, checked by a guard that ships with
+  the build. Badge yes, non-optional (metadata about the record); dashed silhouette no (a shape,
+  hence a margin claim). Label weighted above recurrence, because most visitors see one cancer.
+  One shared default, growth governs where cited, and no silent upgrade stand as written.

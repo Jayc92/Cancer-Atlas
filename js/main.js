@@ -496,7 +496,7 @@ function initSiteViewer(cancerId){
     const geo = new THREE.IcosahedronGeometry(0.6, 5);
     organicSpiculate(geo, {
       amplitude:0.14, freq:4.2, seed:idx*2.1 + 0.4,
-      spikeCount:7, spikeLength:0.42, sharpness:11, // PHASE A UNCHARACTERISED-MARGIN DEFAULT (2026-09-09, proposed in .claude/phaseA_mapping.md): when cited categories drive these knobs, an entry whose MARGIN half is a recorded NEGATIVE renders ONE shared, RESERVED default set (same values, same seed, mapped to no cited category) plus an on-screen "not characterised" label — never a per-entry value, because every shape reads as a margin claim.
+      spikeCount:7, spikeLength:0.42, sharpness:11, // PHASE A UNCHARACTERISED-MARGIN DEFAULT (RATIFIED 2026-09-09, .claude/phaseA_mapping.md): when cited categories drive these knobs, an entry whose MARGIN half is a recorded NEGATIVE renders ONE shared reserved form on an ORTHOGONAL axis the cited categories never use (not a point on the spike scale — a midpoint reads as "intermediate margin"), UNREACHABLE from any cited category's parameter range (the check ships with the build), plus a NON-OPTIONAL DOM badge and label; no dashed silhouette (a shape is a claim); no silent upgrade.
     });
     applyMottleVertexColors(geo, region.color, idx*2.1 + 0.4);
     const mat = new THREE.MeshStandardMaterial({
