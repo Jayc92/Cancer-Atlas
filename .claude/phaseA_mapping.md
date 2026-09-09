@@ -615,3 +615,79 @@ Proposed the same day and ratified with one change — the one that decides whet
   non-optional for exactly this reason. No third move made; none proposed.
   ALSO SEEN: the badge chip overlaps the top of the seminoma nodule at the default framing, the same
   layout nuisance as PTC's; still a presentation-pass item, not a claim.
+- 2026-09-09 (BEFORE LOOKING — written before the first capture of the wired form): **HCC THIRD, NOT
+  TNBC** (user), and the reason is in the seminoma look's own scoring of the boundary: the reserved
+  form's only remaining separation from circumscribed is more amplitude, which walks toward a
+  LOBULATED reading — and HCC's named divergence is nodular against infiltrative, with the nodular
+  majority characteristically multinodular in gross appearance (Gut 2023: types II and III, single
+  nodular with extranodular growth and confluent multinodular, 230/400 between them; single smooth
+  nodular type I 118/400; infiltrative type IV 52/400). Nodular HCC is the closest thing to
+  lobulated among the remaining seven. **PRE-REGISTERED: A DEADLOCK IS THE EXPECTED OUTCOME.** If
+  the nodular form and the reserved form do not separate, the collision rule says the reserved form
+  yields — and it has nowhere to yield to: less amplitude walks into seminoma's sphere, more into
+  HCC's lobules. Specific expectation: both render as "a blob with a few broad bulges"; the
+  discriminator, if any, is that HCC's nodules are DISCRETE rounded lobules with clefts between
+  them while the reserved swells are a CONTINUOUS undulation with no clefts — a distinction I expect
+  to be legible at the default framing perhaps four times in ten. **WHAT HAPPENS ON DEADLOCK, DECIDED
+  NOW** (user): a fourth tuning pass is the thing NOT to reach for. The answer stops being geometric:
+  the badge carries more weight, or the reserved form takes a NON-GEOMETRIC treatment — and which,
+  is a ruling for the user, not a build-time choice. Candidates to lay out if it comes to that, none
+  taken here: a distinct placeholder colour (colour is already illustrative and disclosed for every
+  mass, and a placeholder-grey against a tissue-tan is metadata a badge-blind visitor still sees),
+  or a translucent placeholder (opacity, not transmission — the transmission investigation was a
+  null result in this pipeline). Both leave the geometry as it is. Better to reach this at category
+  three than at seven with four more looks recorded against a boxed-in form.
+  HCC's category as wired (category cited; the divergence NAMED on the badge; every number
+  illustrative): render the nodular MAJORITY as a mass with a few large, broad, rounded protrusions —
+  ranges amplitude [0.02, 0.06], freq [3.5, 5.0] (inside the cited band), spikeCount [2, 4],
+  spikeLength [0.25, 0.45], sharpness [1.5, 3.0] (LOW sharpness = wide cones = lobules, deliberately
+  the opposite corner of the spike axis from PTC's many short sharp bumps); render amplitude 0.04,
+  freq 4.0, seed 9.2, spikeCount 3, spikeLength 0.35, sharpness 2.2. The infiltrative minority (52 of
+  400) is NAMED on the badge and not drawn — one tumour per entry, per the unit decision; drawing
+  the infiltrative form would be a split, which is an explicit decision this step does not take.
+- 2026-09-09 (user): **THE LEDGER ATTRIBUTION ERROR DESERVES ITS LINE.** A span filed under the wrong
+  PMC id, inside the Phase A record, written days ago under this discipline: the class does not
+  exempt the records built to avoid it. Catching it BEFORE wiring rather than after is guard-before-
+  repair applied to citation data instead of code — the first time that ordering has been tested on
+  something other than a defect in the corpus. Recorded in CLAUDE.md beside the guard-before-repair
+  ruling.
+- 2026-09-09: **THE RECORDED LOOK — HCC (nodular) BESIDE THE RESERVED FORM: THE DEADLOCK FIRED.**
+  (a) THE CAPTURE: `node .claude/capture_organs.js <outDir> Liver Kidneys Lungs Testis`, default
+  pose, run once on the working tree of the wiring commit (the commit that carries this entry;
+  parent `d24513d`). Nothing was moved after it, by rule. Re-running the command at this commit
+  regenerates the images.
+  (b) THE TWO FORMS: HCC's nodular category on Hepatocellular carcinoma, anchored at the liver's
+  hepatocyte hotspot (render amplitude 0.04, freq 4.0, three broad lobules of length 0.35 at
+  sharpness 2.2); the reserved form, unchanged since the PTC look (amplitude 0.24, freq 2.0), on
+  Clear cell renal cell carcinoma (kidneys) and Adenocarcinoma (lungs); seminoma's sphere on the
+  testis rode along as the circumscribed reference.
+  (c) WHAT WAS SEEN, checkable by opening the images: NO FEATURE SEPARATES THEM AT THE DEFAULT
+  FRAMING. HCC's mass reads as a rounded pale lump with one broad bulge and a faint notch on its
+  left side — the lobules are there in the geometry but at a few dozen pixels they read as
+  unevenness, not as discrete nodules with clefts. The reserved masses read, as before, as an egg
+  with a bulge (lungs) and an oblong with a flattened side (kidneys). "A blob with a few broad
+  bulges" describes all three. The pre-registered discriminator — discrete lobules with clefts
+  against a continuous undulation — is not legible at this size; I could not write a sentence about
+  the liver image that a reader could not also write about the lungs image. Seminoma's sphere, by
+  contrast, is still distinct from all of them (uniform curvature, crisp rim).
+  PRE-REGISTRATION SCORED: the deadlock was named as the expected outcome and it occurred. The
+  collision rule says the reserved form yields; it has nowhere to yield to — less amplitude walks
+  into seminoma's sphere (the seminoma look put the reserved form's residual there already), more
+  walks further into HCC's lobules. THE RESERVED FORM WAS NOT MOVED, HCC's VALUES WERE NOT TOUCHED,
+  and a fourth tuning pass was not reached for, per the decision made before the capture.
+  WHAT THIS ESTABLISHES: a single shared reserved form on the undulation axis cannot sit clear of
+  BOTH ends of the margin axis once a lobulated-family category is wired. The geometry has used its
+  room, as the seminoma look scored; the answer is no longer geometric. TWO THINGS STAND AS THEY ARE
+  TODAY: the badges already separate the two on screen ("margin: nodular · cited" against "generic
+  mass · margin not characterised / source not yet read"), and every reserved mass carries its
+  label; what is missing is a distinction a badge-blind visitor sees. FOR THE USER'S RULING, laid
+  out and not taken: (1) badge weight only — accept geometric non-separation and rely on the
+  non-optional label; (2) a distinct PLACEHOLDER COLOUR for reserved masses (colour is illustrative
+  and disclosed for every mass; a placeholder-grey against tissue-tan is metadata a badge-blind
+  visitor still sees, and it modifies no shape, so it makes no margin claim); (3) a TRANSLUCENT
+  placeholder (material opacity, not transmission), reading as "not asserted". Each leaves the
+  geometry as it is; none is a tuning pass.
+  ONE MORE THING SEEN, kept apart from the deadlock: HCC's lobulation is FAINT at the default
+  framing — the render sits mid-range in its declared ranges, and whether "multinodular" is
+  under-drawn is a question about fidelity to the CITATION (discrete nodules), which is the only
+  ground on which HCC's values may ever move. It must not be moved for separation. Not moved here.

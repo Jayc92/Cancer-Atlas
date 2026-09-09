@@ -105,6 +105,23 @@ export const MARGIN_CATEGORIES = Object.freeze({
     badgeSource: 'Case Reports in Urology 2019, literature review',
     badgeQuote: 'Macroscopically, seminomas are well circumscribed',
   }),
+  // THIRD CATEGORY WIRED (2026-09-09), chosen because it is where the collision rule may DEADLOCK (user):
+  // the reserved form's only remaining move away from circumscribed is toward lobulated, and nodular HCC is
+  // the closest thing to lobulated in the atlas. R11, Gut 2023 (PMC10579519, PMID 37549980), 400 resected
+  // HCCs: "A total of 52 (13.0%) individuals had type IV nodules, while 118 (29.5%), 129 (32.3%) and 101
+  // (25.3%) had HCCs belonging to type I, type II and type III nodules, respectively." — a NAMED DIVERGENCE
+  // (nodular 348/400 against infiltrative 52/400). One tumour per entry: the nodular MAJORITY is drawn as a
+  // mass with a few large, broad, rounded protrusions (LOW sharpness = wide cones = lobules, the opposite
+  // corner of the spike axis from PTC's many short sharp bumps); the infiltrative minority is NAMED on the
+  // badge and not drawn — drawing it would be an entry split, an explicit decision not taken here.
+  nodular: Object.freeze({
+    label: 'nodular',
+    ranges: Object.freeze({ amplitude: [0.02, 0.06], freq: [3.5, 5.0], spikeCount: [2, 4], spikeLength: [0.25, 0.45], sharpness: [1.5, 3.0] }),
+    render: Object.freeze({ amplitude: 0.04, freq: 4.0, seed: 9.2, spikeCount: 3, spikeLength: 0.35, sharpness: 2.2 }),
+    badgeSource: 'Gut 2023, 400 resected HCCs',
+    badgeQuote: '118 (29.5%), 129 (32.3%) and 101 (25.3%) had HCCs belonging to type I, type II and type III nodules',
+    divergence: 'the nodular majority (348 of 400) is drawn; the infiltrative type IV minority (52 of 400) is named here and not drawn',
+  }),
 });
 
 // The illustrative mass colour — UNSOURCED and disclosed in #disclaimer. One colour for every
@@ -132,7 +149,7 @@ export const MARGIN_STATUS = Object.freeze({
   gdiff:    { status: 'unread',          ref: 'second tier — stomach margin not yet read' },
   uc:       { status: 'unread',          ref: 'second tier — bladder margin not yet read' },
   tnbc:     { status: 'cited',           ref: 'harvest — pushing margin (Livasy), not yet rendered' },
-  hcc:      { status: 'cited',           ref: 'R11 — named divergence with counts, not yet rendered' },
+  hcc:      { status: 'cited', category: 'nodular', ref: 'R11 — named divergence with counts (nodular 348/400 vs infiltrative 52/400), RENDERED third, 2026-09-09' },
   gbm:      { status: 'cited',           ref: 'harvest — diffusely infiltrative, not yet rendered' },
   acinar:   { status: 'cited',           ref: 'harvest — seeded (infiltrating patterns), not yet rendered' },
   pdac:     { status: 'cited',           ref: 'R1 — poorly delineated, not yet rendered' },
@@ -171,7 +188,8 @@ export function marginBadge(entryName, status, category){
   if(category) return {
     chip: 'margin: ' + category.label + ' \u00b7 cited',
     sentence: entryName + ' \u2014 margin: ' + category.label + ', the gross category its cited source describes (' + category.badgeSource
-      + ': "' + category.badgeQuote + '"); the drawn magnitude is illustrative, not measured.',
+      + ': "' + category.badgeQuote + '")' + (category.divergence ? '; ' + category.divergence : '')
+      + '; the drawn magnitude is illustrative, not measured.',
   };
   if(status === 'uncharacterised') return {
     chip: 'generic mass · margin not characterised',

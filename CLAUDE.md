@@ -4664,6 +4664,17 @@ hand."* Census → guard → repair, in that order, on separate commits.
   user's ruling: `battery.py` was right, and the general form is that a ratcheted
   metric must derive from tracked files** — recorded, with the fix, the declared
   scope and the procedural half, as the sidecar convention's fourth property.
+- **THE ORDERING TESTED ON CITATION DATA, NOT CODE (2026-09-09, user ruling).**
+  Re-reading testis.js before wiring seminoma's margin category showed the Phase
+  A harvest ledger had filed the span "well-circumscribed solid intratesticular
+  nodule" under PMC6906820; it is PMC13218944's, a different case report, and
+  PMC6906820 carries its own general statement. A span under the wrong id,
+  inside the record built to avoid exactly that, written days earlier under
+  this discipline — the class does not exempt the records built to avoid it.
+  Caught BEFORE wiring rather than after, which is guard-before-repair applied
+  to citation data: the first time that ordering has been tested on something
+  other than a defect in the corpus. The verdict stood; only the filing moved,
+  corrected in place in both homes.
 
 ## ANY MACHINE-DERIVABLE NUMBER RESTATED IN PROSE WILL DRIFT (2026-09-05)
 
