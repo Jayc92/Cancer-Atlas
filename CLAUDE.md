@@ -4879,7 +4879,16 @@ refute it, which is worth more than file order.
   default rendered for uncharacterised/unread entries with its
   non-optional badge — full record in `.claude/phaseA_mapping.md`; cited
   categories wire in next, each proving the reserved form still
-  unreachable. COLD-SESSION ENTRY POINTER: read
+  unreachable. THE COLLISION RULE HAS THREE ARMS (user, 2026-09-09):
+  reserved-versus-cited, the reserved form yields; deadlock, a
+  non-geometric answer (taken: `RESERVED_COLOUR`, a desaturated interface
+  teal from outside the tissue gamut, its unreachability from every
+  cited tissue albedo asserted by the same check); CITED-VERSUS-CITED,
+  NEITHER MOVES — two citations may describe one gross appearance, and
+  two categories rendering identically with the distinction carried in
+  prose is the truthful outcome; manufacturing a difference between them
+  is the invention the split forbids. A harvest seed is not a citation
+  and does not make a category wireable. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin

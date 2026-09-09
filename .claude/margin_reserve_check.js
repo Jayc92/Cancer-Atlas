@@ -68,6 +68,13 @@ function organFiles(){
 // Every hex albedo in the organ files — the cited tissue colours (and the skin block's layer colours).
 // viewer.js and main.js are NOT scanned: they hold the marker accent and the light colours, which are
 // interface and illumination, not tissue, and the reserved colour is derived from the marker on purpose.
+// TWO THINGS THIS CHECK CANNOT SEE, stated so nobody reads green as more than it is: (a) the status census
+// counts DECLARATIONS — it cannot tell a category cited from a read apart from one seeded from a harvest
+// comment (FTC stood at 'cited' on a seed about a different entity until 2026-09-09); (b) two CITED
+// categories whose ranges overlap or coincide are NOT a violation — by the collision rule's third arm
+// (cited-versus-cited: neither moves) that is the truthful rendering of two citations describing one
+// appearance, and asserting cited-vs-cited disjointness here would FORCE the invention the rule forbids.
+// What IS asserted for such a pair is that its declaration is true: sameAppearanceViolations below.
 function tissueAlbedos(){
   const out = new Set();
   for(const f of organFiles()){
@@ -109,6 +116,7 @@ function liveProblems(M){
   for(const [name, cat] of Object.entries(M.MARGIN_CATEGORIES)) problems.push(...M.categoryRenderViolations(name, cat));
   // THE COLOUR FIELD (user ruling on the HCC deadlock, 2026-09-09): the reserved colour must be unreachable
   // from every cited tissue albedo — the colour twin of the geometry's unreachability, and not grey.
+  problems.push(...M.sameAppearanceViolations(M.MARGIN_CATEGORIES));   // arm 3: declarations of one appearance must be true
   const albedos = tissueAlbedos().concat([M.MASS_COLOUR]);   // the cited-mass tan is a tissue-side colour too
   problems.push(...M.colourViolations(M.RESERVED_COLOUR, albedos, M.RESERVED_COLOUR_RULES));
   const entries = activeEntries();
@@ -134,7 +142,8 @@ function liveProblems(M){
   for(const e of entries){ const st = M.MARGIN_STATUS[e.id]; if(st && counts[st.status] !== undefined) counts[st.status]++; if(st && st.category && M.MARGIN_CATEGORIES[st.category]) counts.rendered++; }
   let nearest = 360;
   for(const hx of albedos){ const c = M.hexToHsl(hx); if(c.s >= M.RESERVED_COLOUR_RULES.achromaticBelow) nearest = Math.min(nearest, M.hueDistance(M.hexToHsl(M.RESERVED_COLOUR).h, c.h)); }
-  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest };
+  const shared = Object.values(M.MARGIN_CATEGORIES).filter(c => c.sameAppearanceAs).length;
+  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest, shared };
 }
 
 // ---- condition (7), FIXTURE FORM BY DESIGN (see the header) --------------------------------
@@ -177,6 +186,11 @@ function selftest(M){
   arm('fires on a grey reserved colour', M.colourViolations(0x9a9a9a, [0xc17055], rules).length > 0);
   arm('fires on a reserved colour inside the tissue hue arc', M.colourViolations(0xb97c68, [0xc17055, 0x8c3a30], rules).length > 0);
   arm('silent on the live reserved colour against warm tissue albedos', M.colourViolations(M.RESERVED_COLOUR, [0xc17055, 0xd6b98f, 0xffffff], rules).length === 0);
+  // 8e–8f. ARM 3: a same-appearance declaration backed by a COPY of the render fires; the live table is silent.
+  const root = { label: 'root', ranges: { amplitude: [0, 1] }, render: { amplitude: 0.5 } };
+  arm('fires when a same-appearance declaration is backed by a copy, not the shared object',
+      M.sameAppearanceViolations({ root, twin: { label: 'twin', ranges: { amplitude: [0, 1] }, render: { amplitude: 0.5 }, sameAppearanceAs: 'root' } }).length > 0);
+  arm('silent when the declaration is true by reference', M.sameAppearanceViolations({ root, twin: { label: 'twin', ranges: root.ranges, render: root.render, sameAppearanceAs: 'root' } }).length === 0);
   // 8. the origin-word test accepts the phrasing the corpus uses and rejects a bland label
   arm('origin-word test fires/passes as intended', ORIGIN_WORDS.test('adenocarcinoma most commonly arises here') && !ORIGIN_WORDS.test('a smooth capsule'));
   console.log(ok ? 'SELFTEST PASS — fixture-form by design: no live population can carry a violation while the rule holds (condition (7-quater))'
@@ -188,17 +202,17 @@ function selftest(M){
   const M = await loadMorphology();
   const selfOnly = process.argv.includes('--selftest');
   if(!selftest(M)){ console.log('margin_reserve_check: REFUSING to check — selftest failed'); process.exit(2); }
-  if(selfOnly){ console.log('DONE margin_reserve_check_selftest: 13 arms run, 0 failures'); return; }
-  const { problems, entries, counts, organs, albedos, nearest } = liveProblems(M);
+  if(selfOnly){ console.log('DONE margin_reserve_check_selftest: 15 arms run, 0 failures'); return; }
+  const { problems, entries, counts, organs, albedos, nearest, shared } = liveProblems(M);
   for(const p of problems) console.log('  PROBLEM: ' + p);
   const nCat = Object.keys(M.MARGIN_CATEGORIES).length;
   console.log('SIDECAR ' + JSON.stringify({
     name: 'margin_reserve_check',
-    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), problems: problems.length },
+    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, problems: problems.length },
     ratchet: ['categories'],
   }));
   console.log(`DONE margin_reserve_check: reserved form on the ${M.RESERVED_AXIS.knob} band [${M.RESERVED_AXIS.band}] unreachable from ${nCat} cited categories (fixture-form (7) by design), `
     + `${entries.length - problems.filter(p => /no margin status|unknown margin status/.test(p)).length}/${entries.length} active entries carry a margin status `
-    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${problems.length} problems`);
+    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${problems.length} problems`);
   process.exit(problems.length ? 1 : 0);
 })().catch(e => { console.error('margin_reserve_check: harness error', e); process.exit(2); });

@@ -745,3 +745,128 @@ Proposed the same day and ratified with one change — the one that decides whet
   marker. Ovaries: two stacked reserved masses, both sea-glass, badge chips stacked above. Checkable
   by opening kidneys.png beside liver.png: one mass is green-grey, the other tan — no organ on any
   screen is in the green-grey family.
+- 2026-09-09 (THE COLLISION RULE'S THIRD ARM, user — recorded BEFORE the next capture): the colour
+  removed the constraint that drove the ordering, so the binding constraint moved somewhere the two
+  existing arms do not reach. Arm 1, reserved-versus-cited: the reserved form yields — now largely
+  moot, the colour carries the placeholder reading. Arm 2, deadlock: non-geometric answer — taken.
+  **ARM 3, CITED-VERSUS-CITED: NEITHER MOVES.** Two cited categories that do not separate is WORSE
+  than either failing to separate from the placeholder: both are claims, both are tissue-coloured,
+  and no badge says they are different. But both have citations and neither has magnitude to spend
+  without inventing it. So if two cited categories do not separate, the conclusion is not a tuning
+  problem — the citations may describe ONE gross appearance, which the literature would likely
+  agree with; two categories rendering identically with the distinction carried in prose is the
+  truthful outcome. Manufacturing a visual difference between them would be exactly the invention
+  the split forbids, pointed at a second cited category instead of at the placeholder. So the
+  capture is informative either way: SEPARATION means the axis has room; COLLAPSE means the
+  citations describe one appearance and the atlas should SAY SO (on the badge, in words).
+- 2026-09-09 (ORDERING, fourth application of hardest-first, user): the six unwired cited categories
+  fall into two families each holding one wired member — CIRCUMSCRIBED: seminoma (wired), TNBC
+  pushing, FTC encapsulated; ILL-DEFINED: PTC (wired), PDAC poorly delineated, melanoma irregular
+  border. Wire the closest pair next, aimed at the pairs most likely to collapse: FTC (nearest to
+  seminoma) and PDAC (nearest to PTC).
+- 2026-09-09 (FOUND BEFORE WIRING, read from the tree): `MARGIN_STATUS.ftc` has stood at `cited` since
+  build step 1 on the strength of `ref: 'harvest — seeded (encapsulated), not yet rendered'`. The seed
+  is the thyroid.js comment at its line 270 — "invasive encapsulated FVPTC with the RAS-like
+  malignancies alongside FTC" — a sentence about ENCAPSULATED FVPTC (follicular variant of
+  papillary carcinoma), not about follicular carcinoma's gross margin, and the harvest ledger above
+  already called it "FVPTC-adjacent context". A seed is not a citation, and `cited` was an
+  over-statement of my own making: the status census counts DECLARATIONS and cannot tell a seed
+  from a read (limit now stated in the check's header). So FTC gets its own read before any wiring,
+  and the status is corrected whatever the read returns: cited (with the real source) if a gross
+  sentence about FTC exists; otherwise `unread`, and the census count moves 9→8.
+- 2026-09-09 (PRE-REGISTERED BEFORE THE FTC READ): ladder (1) the StatPearls Follicular Thyroid
+  Cancer/Carcinoma chapter via PubMed `statpearls[book]` → NBK → Bookshelf HTML (per-chapter lesson:
+  StatPearls' Gross/Histopathology content varies chapter to chapter); (2) Europe PMC OA full text,
+  "follicular thyroid carcinoma" with "encapsulated" in a GROSS description. PREDICTION: FTC's gross
+  margin is ENCAPSULATED with a NAMED DIVERGENCE — minimally invasive FTC is an encapsulated nodule,
+  widely invasive FTC is not — because the standard framing of FTC is by capsular and vascular
+  invasion. THE RISK: that framing is HISTOLOGIC (capsular invasion seen on section), so the
+  sentence found may be in the wrong register; a histologic-only sentence scores NEGATIVE on the
+  register rule (gross-specimen construct), not positive. Scoring: POSITIVE = a sentence describing
+  FTC's gross appearance as encapsulated/well-circumscribed; DIVERGENCE = the source splits
+  minimally from widely invasive; NEGATIVE = invasion language only, or nothing gross.
+- 2026-09-09 (PRE-REGISTERED FOR THE PAIR, per axis on the grid pairs × outcome): the five knobs are
+  amplitude, freq, spikeCount, spikeLength, sharpness. Each new category's ranges are derived from
+  ITS OWN citation's words and nothing else; arm 3 forbids adding any difference the words do not
+  carry. (a) FTC–SEMINOMA: "encapsulated" and "well circumscribed" both describe a smooth, sharply
+  bounded nodule; the capsule itself is a feature none of the five knobs can express, and a new
+  renderer (a rim) is outside the ratified build (re-parameterisation, not a new renderer).
+  PREDICTED: COLLAPSE AT THE PARAMETER LEVEL — the derived region is wellCircumscribed's, so the
+  render is identical by construction, shared by reference and declared (`sameAppearanceAs`), and
+  the badge says so in words. (b) PDAC–PTC: R1 "atrophy of flanking pancreatic parenchyma and
+  fibrosis often blur the macroscopic delineation of the tumour" against R17 "invasive neoplasm
+  with poorly defined margins". PTC's idiom is the INDISTINCT EDGE (many short broad-based
+  projections over granular noise, explicitly not fingers), justified from "poorly defined";
+  "blurred delineation" is the same property in a synonym. Reading "blur" as softer than "poorly
+  defined" (lower sharpness, fewer projections) would manufacture a difference from synonyms.
+  PREDICTED: COLLAPSE AT THE PARAMETER LEVEL, same treatment. WHAT THIS MOVES: if both derivations
+  collapse, the informative step is the derivation, not the capture — the capture then checks the
+  thing the axis exists for, that two cited masses on ONE organ (PTC and FTC on the thyroid) separate
+  ACROSS families, and that every badge says what it must. The direction that would surprise: an FTC
+  or PDAC sentence carrying a gross feature the knobs CAN express (lobulation, nodularity) that the
+  wired sibling's citation lacks — then the ranges differ on the citation's authority and the axis
+  has room. Colour is not available as a cited difference: cited masses wear one unsourced tan.
+- 2026-09-09 (THE FTC READ — R20 — scored against the pre-registration): NEGATIVE ON THE REGISTER RULE;
+  the divergence structure is real but lives in the histopathologic register. Rung 1: StatPearls
+  "Follicular Thyroid Cancer" (NBK539775, PMID 30969597; identity from the page's own title tag) has
+  NO Gross or Histopathology section — its only capsule-adjacent sentences are treatment/survival
+  lines and a reference title (per-chapter lesson, third instance). Rung 2, Europe PMC OA: J Clin
+  Endocrinol Metab 2025, "Impact of Reclassification of Oncocytic and Follicular Thyroid Carcinoma
+  by the 2022 WHO Classification" (PMC12012812): "The 2022 WHO Classification categorizes oncocytic
+  (OTC) and follicular thyroid carcinoma (FTC), based on the degree of capsular and vascular
+  invasion, into minimally invasive (MI), encapsulated angio-invasive (EA), and widely invasive
+  tumors (WI)." and "Encapsulated lesions with VI and with or without CI were classified as EAFTC or
+  EAOTC (see Fig. 1B), and WI tumors showed extensive growth into the thyroid or adjacent thyroid
+  tissue, with no or partial encapsulation, often with a multinodular pattern (see Fig. 1C)." and,
+  with the counts carried: "gross extra-thyroidal extension (OTC: n = 4 [12.5%], and FTC: n = 7
+  [30.4%]) and multinodular growth (OTC: n = 21 [67.7%], and FTC: n = 12 [52.2%]) were only observed
+  in the WI subtypes" (FTC cohort MI 32 / EA 34 / WI 23). That is the predicted divergence
+  (encapsulated MI/EA versus non-encapsulated, multinodular WI) — stated as a histology-based
+  classification, never as a gross description; the pre-registration scored exactly this case
+  NEGATIVE, and it stays negative rather than being re-read as gross because the features happen to
+  be macroscopic in scale. Endocr Pathol 2025 (PMC12641037) speaks of FA and FT-UMP, not FTC's
+  margin. Two further targeted queries ("grossly"/"macroscopically" with "encapsulated") over twelve
+  OA full texts, then a loose re-scan of the on-point review "Encapsulated neoplasms of the thyroid
+  gland" (Virchows Arch 2026, PMC12876452, CC BY): classification-register statements only ("Low-risk
+  encapsulated follicular-patterned thyroid tumors include ... minimally invasive, follicular and
+  oncocytic carcinomas"), no gross sentence. OUTCOME: `MARGIN_STATUS.ftc` → `uncharacterised` (not
+  characterised at gross level in the sources read), drawing the reserved placeholder beside PTC's
+  cited mass; the histopathologic divergence is recorded here for Phase B (histology shares), where
+  the register is right for it. Census: cited 9→8, uncharacterised 4→5. THE OVER-STATEMENT LASTED
+  ONE DAY and was found by reading the status's own `ref` before wiring on it — the ordering (read
+  the record, then act) working on a status I had written myself.
+- 2026-09-09 (PAIR GRID, OUTCOMES): cell (a) FTC–seminoma NOT REACHED — FTC fell at the read, so the
+  collapse prediction for that cell stands untested; the circumscribed family's next candidate is
+  TNBC pushing. Cell (b) PDAC–PTC: COLLAPSE AT THE PARAMETER LEVEL, AS PREDICTED. Derived from R1's
+  words alone ("blur the macroscopic delineation"): one property, an indistinct gross boundary,
+  nothing about projections, nodularity or lobulation that R17 lacks — so the derivation lands on
+  the indistinct-edge region already used for PTC. Under ARM 3 the render is SHARED BY REFERENCE
+  (`INDISTINCT_EDGE_RANGES` / `INDISTINCT_EDGE_RENDER`, hoisted; PTC's values unchanged) and DECLARED
+  (`sameAppearanceAs: 'poorlyDefined'`); the badge sentence says so in words ("Drawn with the same
+  form as the poorly defined category: the two citations describe one gross appearance, so the
+  distinction is carried here in words, not in shape"); `sameAppearanceViolations` asserts only that
+  the declaration is TRUE (same render object, equal ranges, referent wired and not chained) — never
+  that the pair differs, which would force the invention arm 3 forbids. Categories 3→4 (ratchet).
+  The informative step was the derivation, not the capture; what the capture now checks is the
+  thing the axis exists for — PTC (cited) and FTC (placeholder) on ONE organ, and PDAC against PTC
+  across screens, identical by construction.
+- 2026-09-09 (THE PAIR LOOK, recorded in evidentiary form): (a) `node .claude/capture_organs.js
+  /tmp/atlas-verify/pair1 Thyroid Pancreas Testis --port 3066`, served from the working tree of THIS
+  commit (the tool stamps HEAD, fd250f2, whose morphology.js has neither `poorlyDelineated` nor FTC
+  at `uncharacterised`; the bytes served are the ones this commit records). (b) Three things
+  compared: on the THYROID, PTC's cited mass beside FTC's placeholder — the first organ carrying a
+  cited mass and a reserved mass together; PDAC on the PANCREAS against PTC across screens; seminoma
+  on the TESTIS unchanged as the circumscribed reference. (c) WHAT WAS SEEN, checkable by opening the
+  PNGs: thyroid.png — two masses at the upper-left lobe, the PTC mass tan and finely knobbed, the FTC
+  mass sea-glass green-grey and smooth, with the two chips stacked above ("margin: poorly defined ·
+  cited" over "generic mass · margin not characterised"); the pair separates on colour family at a
+  glance and on surface texture on inspection — the cited-versus-placeholder distinction holds on one
+  organ, which is what the colour ruling was for. pancreas.png — one tan knobbed mass at the head of
+  the gland with "margin: poorly delineated · cited"; its form is PTC's by construction (same render
+  object, asserted by the check), so the image differs from thyroid.png's PTC mass only in placement
+  and lighting; the badge's aria text carries the shared-form sentence verbatim (read from the DOM by
+  the capture tool's facts.json). testis.png — seminoma's smooth tan sphere, unchanged. PRESENTATION
+  LIMIT, recorded not acted on: the pancreas's own albedo is a tan (0xd8b98e), so the cited-mass tan
+  (0xa89a8c) has low contrast there — the mass reads as a slightly greyer lump at the head, and the
+  badge carries the identification. Cited-mass colour is illustrative and unsourced; changing it is
+  a presentation decision, not a fidelity one, and is not taken here.

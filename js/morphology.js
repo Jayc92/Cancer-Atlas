@@ -54,6 +54,16 @@ export const RESERVED_MARGIN = Object.freeze({
 //   circumscribed: { amplitude:[0.02,0.06], freq:[3.5,5.0], spikeCount:[0,0], spikeLength:[0,0], sharpness:[0,0] }
 // Every range must lie inside CITED_FREQ_BAND on freq and must exclude the reserved form.
 // WIRING PROCEDURE, PER CATEGORY (user ruling, 2026-09-09) — you are on the line it applies to:
+//   0. THE COLLISION RULE HAS THREE ARMS (user, 2026-09-09). (1) reserved-versus-cited: the reserved form
+//      yields, never a cited category. (2) deadlock: a non-geometric answer, never a fourth tuning pass —
+//      taken, as RESERVED_COLOUR. (3) CITED-VERSUS-CITED: NEITHER MOVES. Both have citations and neither
+//      has magnitude to spend without inventing it; if two cited categories do not separate, the citations
+//      may describe ONE gross appearance, and two categories rendering identically with the distinction
+//      carried in prose is the truthful outcome. Manufacturing a visual difference between them is the
+//      invention the split forbids, pointed at a second cited category. Derive each category's ranges from
+//      ITS OWN citation's words; where the words carry no difference, share the render BY REFERENCE, declare
+//      it (sameAppearanceAs), and let the badge say so. A citation, not a status, is what makes a category
+//      wireable: a harvest SEED is not a citation (FTC stood at 'cited' on one for a day).
 //   1. add the category's ranges here, inside CITED_FREQ_BAND, and flip its entries' MARGIN_STATUS;
 //   2. run .claude/margin_reserve_check.js — that proves PARAMETER DISJOINTNESS, nothing more;
 //   3. CAPTURE AND LOOK, this category beside the reserved form. Parameter disjointness does not
@@ -71,6 +81,11 @@ export const RESERVED_MARGIN = Object.freeze({
 //      checkable, "verified distinct" is not and is what a tired reader writes at the end of a wiring
 //      commit. A look recorded as a sentence about what someone DID, silent about what they COMPARED,
 //      is the annotation shape that spent three days over-claiming in this repo.
+// THE INDISTINCT-EDGE FORM, hoisted so that two cited categories whose citations describe ONE appearance
+// can share it BY REFERENCE (collision rule, arm 3): many short, broad-based projections over fine granular
+// noise, deliberately not fingers. Values first set for PTC; a sibling that shares them declares it.
+export const INDISTINCT_EDGE_RANGES = Object.freeze({ amplitude: [0.10, 0.16], freq: [5.0, 7.0], spikeCount: [10, 14], spikeLength: [0.10, 0.18], sharpness: [4, 7] });
+export const INDISTINCT_EDGE_RENDER = Object.freeze({ amplitude: 0.13, freq: 6.0, seed: 5.1, spikeCount: 12, spikeLength: 0.14, sharpness: 5.5 });
 export const MARGIN_CATEGORIES = Object.freeze({
   // FIRST CATEGORY WIRED (2026-09-09), chosen as the HARDEST perceptual case on the user's ruling: it sits
   // closest to the reserved undulation. Category cited (R17, the in-atlas StatPearls Papillary Thyroid
@@ -83,8 +98,8 @@ export const MARGIN_CATEGORIES = Object.freeze({
   // sharper to flatter the render, because that would invent magnitude the citation does not carry.
   poorlyDefined: Object.freeze({
     label: 'poorly defined',
-    ranges: Object.freeze({ amplitude: [0.10, 0.16], freq: [5.0, 7.0], spikeCount: [10, 14], spikeLength: [0.10, 0.18], sharpness: [4, 7] }),
-    render: Object.freeze({ amplitude: 0.13, freq: 6.0, seed: 5.1, spikeCount: 12, spikeLength: 0.14, sharpness: 5.5 }),
+    ranges: INDISTINCT_EDGE_RANGES,
+    render: INDISTINCT_EDGE_RENDER,
     badgeSource: 'StatPearls, Papillary Thyroid Carcinoma',
     badgeQuote: 'typically presents as an invasive neoplasm with poorly defined margins',
   }),
@@ -104,6 +119,23 @@ export const MARGIN_CATEGORIES = Object.freeze({
     render: Object.freeze({ amplitude: 0.03, freq: 4.5, seed: 7.3, spikeCount: 0, spikeLength: 0, sharpness: 0 }),
     badgeSource: 'Case Reports in Urology 2019, literature review',
     badgeQuote: 'Macroscopically, seminomas are well circumscribed',
+  }),
+  // FOURTH CATEGORY WIRED (2026-09-09), the first under ARM 3 (cited-versus-cited: neither moves), chosen as the
+  // ill-defined family's member nearest PTC. R1, Cancers 2022 (PMC9139767, PMID 35626076): "Furthermore, atrophy
+  // of flanking pancreatic parenchyma and fibrosis often blur the macroscopic delineation of the tumour." The
+  // words carry ONE property — an indistinct boundary at gross — and nothing about projections, nodularity or
+  // lobulation that PTC's citation lacks. Reading "blur" as softer than "poorly defined" would manufacture a
+  // difference from synonyms, so the derivation lands on the indistinct-edge region already used for PTC and
+  // the render is SHARED BY REFERENCE and DECLARED (sameAppearanceAs) — pre-registered as the expected outcome,
+  // confirmed at the parameter level before any capture. The badge says so in words; margin_reserve_check
+  // asserts the declaration is true (identical render object, equal ranges), never that the pair differs.
+  poorlyDelineated: Object.freeze({
+    label: 'poorly delineated',
+    ranges: INDISTINCT_EDGE_RANGES,
+    render: INDISTINCT_EDGE_RENDER,
+    sameAppearanceAs: 'poorlyDefined',
+    badgeSource: 'Cancers 2022, PDAC review',
+    badgeQuote: 'atrophy of flanking pancreatic parenchyma and fibrosis often blur the macroscopic delineation of the tumour',
   }),
   // THIRD CATEGORY WIRED (2026-09-09), chosen because it is where the collision rule may DEADLOCK (user):
   // the reserved form's only remaining move away from circumscribed is toward lobulated, and nodular HCC is
@@ -190,11 +222,18 @@ export const MARGIN_STATUS = Object.freeze({
   hcc:      { status: 'cited', category: 'nodular', ref: 'R11 — named divergence with counts (nodular 348/400 vs infiltrative 52/400), RENDERED third, 2026-09-09' },
   gbm:      { status: 'cited',           ref: 'harvest — diffusely infiltrative, not yet rendered' },
   acinar:   { status: 'cited',           ref: 'harvest — seeded (infiltrating patterns), not yet rendered' },
-  pdac:     { status: 'cited',           ref: 'R1 — poorly delineated, not yet rendered' },
+  pdac:     { status: 'cited', category: 'poorlyDelineated', ref: 'R1 — blurred macroscopic delineation, RENDERED fourth (2026-09-09) with the same form as poorlyDefined under arm 3' },
   melanoma: { status: 'cited',           ref: 'R9 — irregular border (clinical surface), not yet rendered' },
   seminoma: { status: 'cited', category: 'wellCircumscribed', ref: 'harvest — well circumscribed (PMC6906820 general statement; PMC13218944 typically; PMC9162935), RENDERED second, 2026-09-09' },
   ptc:      { status: 'cited', category: 'poorlyDefined', ref: 'R17 — poorly defined margins, RENDERED (first category wired, 2026-09-09)' },
-  ftc:      { status: 'cited',           ref: 'harvest — seeded (encapsulated), not yet rendered' },
+  // FTC: stood at 'cited' for a day on a harvest SEED whose sentence was about encapsulated FVPTC, a different
+  // entity. READ 2026-09-09 (pre-registered ladder): StatPearls Follicular Thyroid Cancer (NBK539775) has no
+  // gross section; the 2022-WHO reclassification cohort (PMC12012812) describes encapsulation per subtype in the
+  // HISTOPATHOLOGIC register (minimally invasive and encapsulated angio-invasive encapsulated; widely invasive
+  // 'with no or partial encapsulation, often with a multinodular pattern') — a named divergence for Phase B,
+  // not a gross citation; thirteen further OA full texts, no gross sentence. NEGATIVE on the register rule,
+  // so: not characterised at gross level in the sources read. Draws the reserved placeholder beside PTC.
+  ftc:      { status: 'uncharacterised', ref: 'read 2026-09-09 — encapsulation described only in the histopathologic register (PMC12012812), no gross sentence found; was a harvest seed' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -227,7 +266,9 @@ export function marginBadge(entryName, status, category){
     chip: 'margin: ' + category.label + ' \u00b7 cited',
     sentence: entryName + ' \u2014 margin: ' + category.label + ', the gross category its cited source describes (' + category.badgeSource
       + ': "' + category.badgeQuote + '")' + (category.divergence ? '; ' + category.divergence : '')
-      + '; the drawn magnitude is illustrative, not measured.',
+      + '; the drawn magnitude is illustrative, not measured.'
+      + (category.sameAppearanceAs ? ' Drawn with the same form as the ' + MARGIN_CATEGORIES[category.sameAppearanceAs].label
+         + ' category: the two citations describe one gross appearance, so the distinction is carried here in words, not in shape.' : ''),
   };
   if(status === 'uncharacterised') return {
     chip: 'generic mass · margin not characterised',
@@ -264,6 +305,21 @@ export function categoryRenderViolations(name, category){
   return out;
 }
 
+// ARM 3's one assertion: a category that DECLARES the same appearance as a sibling must actually share its
+// render object (identity, not a copy that can drift) and its ranges; the referent must exist and must not
+// itself point onward. Nothing here asserts that two cited categories DIFFER — that would force invention.
+export function sameAppearanceViolations(categories){
+  const out = [];
+  for(const [name, cat] of Object.entries(categories)){
+    if(!cat.sameAppearanceAs) continue;
+    const ref = categories[cat.sameAppearanceAs];
+    if(!ref){ out.push(`${name} declares the same appearance as '${cat.sameAppearanceAs}', which is not wired`); continue; }
+    if(ref.sameAppearanceAs) out.push(`${name} points at ${cat.sameAppearanceAs}, which itself points onward — declare the root`);
+    if(cat.render !== ref.render) out.push(`${name} declares the same appearance as ${cat.sameAppearanceAs} but does not share its render object — a copy can drift`);
+    if(JSON.stringify(cat.ranges) !== JSON.stringify(ref.ranges)) out.push(`${name} declares the same appearance as ${cat.sameAppearanceAs} but its ranges differ`);
+  }
+  return out;
+}
 export function reservedViolations(reserved, categories, axis, citedBand){
   const out = [];
   if(!inRange(reserved[axis.knob], axis.band)) out.push(`reserved form's ${axis.knob} ${reserved[axis.knob]} is outside the reserved band [${axis.band}]`);
