@@ -740,6 +740,10 @@ NON_INSTRUMENTS = {
     'mesh_hygiene.py': 'offline asset tool (Blender), part of the a131649 reproducible chain',
     'render_thumb.py': 'offline asset tool (Blender)',
     'nocache_server.py': 'local dev server; started by this runner for the regression',
+    'capture_organs.js': 'evidence tool for the Phase A per-category visual read — regenerates the capture a '
+                         'wiring commit describes (command + commit are the durable form of "the capture path"; '
+                         'a /tmp path would be the scratch pointer this project stopped writing); asserts nothing, '
+                         'prints facts, writes PNGs outside the tree — not a gate',
     'citations.json': 'the manifest — data, not a tool',
     'record_count.json': 'the ratchet — machine-written state, not a tool; this runner is the '
                          'only writer, and it is committed so a fresh clone inherits the floor',

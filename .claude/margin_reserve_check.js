@@ -35,6 +35,9 @@
 // look — not once when all nine are in, or the first look comes after the space has closed around a
 // form nobody re-checked. The procedure is written again on the MARGIN_CATEGORIES line in
 // js/morphology.js, because that is the line the wirer edits and this header is the one they skip.
+// THE RECORDED LOOK IS EVIDENTIARY, NOT A SENTENCE SAYING "CHECKED" (user ruling, same day): the
+// capture command and commit (.claude/capture_organs.js regenerates the image), the two forms named,
+// and what specifically distinguished them — checkable by opening the image. Recorded there, not here.
 //
 // SECONDARY ASSERTIONS, structural, on the same module: every active cancer entry carries a margin
 // status from the allowed set (the renderer reads it — an entry missing here renders nothing and

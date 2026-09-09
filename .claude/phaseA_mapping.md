@@ -475,3 +475,21 @@ Proposed the same day and ratified with one change — the one that decides whet
   pointed lines were read from the tree instead of the draft message being trusted. That class is
   graduating the way the ratchet class did — from found-by-looking toward caught-by-procedure —
   though here the procedure is still a person reading, not a guard.
+- 2026-09-09 (user): **WHAT THE RECORDED LOOK CONSISTS OF — EVIDENTIARY, NOT "VERIFIED DISTINCT".** A
+  recorded look that is a sentence saying "checked, distinct" is the shape of the annotations that
+  spent three days over-claiming: true about what someone did, silent about what they compared. So
+  each per-category look records (a) the capture, (b) the two forms named, (c) what specifically
+  distinguished them — "PTC's spiculation reads as directional; the reserved undulation reads as
+  uniform" is checkable by opening the image; "verified distinct" is not, and is what a tired reader
+  writes at the end of a wiring commit. Cheaper to fix in the procedure than after nine exist.
+  THE CAPTURE PATH, MADE DURABLE: a /tmp path is the scratch pointer this repo stopped writing, so
+  "the capture" is the command `node .claude/capture_organs.js <outDir> <Organ>...` plus the commit
+  it ran at — `.claude/capture_organs.js` is now tracked and declared a NON-instrument (evidence, not
+  a gate: it asserts nothing, prints facts, writes PNGs outside the tree), promoted from the scratch
+  shooter that verified build step 1; the PNG stays out of the tree and is regenerable. Written into
+  step 4 of the wiring procedure on the `MARGIN_CATEGORIES` line and referenced from the check's
+  header. Demonstrated on Kidneys + Liver at `f845157` (facts.json: one badge on the kidney, none on
+  the liver, four markers each, the benign favicon 404 the only console error).
+- 2026-09-09 (user, on the pointer record's closing line): "two catches by the same method isn't a
+  mechanism" — the honest note that the catch is still a person reading was the right thing to write,
+  and calling it a graduation outright would have overclaimed what changed. Left as written.

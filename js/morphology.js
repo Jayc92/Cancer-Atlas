@@ -59,6 +59,16 @@ export const RESERVED_MARGIN = Object.freeze({
 //      circumscribed. Each category wired narrows the perceptual space the reserved form must stay
 //      distinct from, and only the parametric half is gated — so the look happens here, per category,
 //      not once when all nine are in. Nothing gates looking; that is why this is written on the line.
+//   4. RECORD THE LOOK IN EVIDENTIARY FORM (user ruling, 2026-09-09), in the wiring commit's message
+//      and the mapping document's status log: (a) the capture — the exact command
+//      `node .claude/capture_organs.js <outDir> <Organ>...` and the commit it ran at, which together
+//      regenerate the image (never a /tmp path: a scratch location cannot keep the retrievability a
+//      path promises); (b) the TWO FORMS NAMED — this category on its entry, the reserved form on an
+//      uncharacterised entry; (c) WHAT SPECIFICALLY DISTINGUISHED THEM, checkable by opening the
+//      image — "PTC's spiculation reads as directional; the reserved undulation reads as uniform" is
+//      checkable, "verified distinct" is not and is what a tired reader writes at the end of a wiring
+//      commit. A look recorded as a sentence about what someone DID, silent about what they COMPARED,
+//      is the annotation shape that spent three days over-claiming in this repo.
 export const MARGIN_CATEGORIES = Object.freeze({});
 
 // The illustrative mass colour — UNSOURCED and disclosed in #disclaimer. One colour for every
