@@ -268,6 +268,11 @@ function buildBodyMarkers(){
         );
         mesh.position.copy(anchor);
         mesh.visible = sex === state.currentBodySex;
+        // IDENTITY FOR MEASUREMENT (2026-09-09): the placement check in regress.js reads which organ
+        // and which spec point a sphere belongs to from here, never from where it projects. `site`
+        // is the point's DECLARED target — 'limb' for the one marker that means to sit on a leg
+        // (skin, female, CONCORD-3); everything else is asserted to sit on the trunk/head column.
+        mesh.userData.marker = { organ: organ.key, sex, heightFrac: point.heightFrac, angle: point.angle, site: point.site || 'trunk' };
         group.add(mesh);
 
         const el = document.createElement('div');

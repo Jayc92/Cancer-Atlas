@@ -69,6 +69,56 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     await page.screenshot({ path: path.join(OUT, `01_body_${sex}.png`) });
   }
 
+  // ---- body marker PLACEMENT: resolve CORRECTLY, not merely resolve (2026-09-09, user finding) ----
+  // The body is a closed mesh, so findBodySurfaceAnchor's inward ray ALWAYS hits something and its
+  // miss-logging never fires; the visible-count and minDist checks above pass while a marker sits on a
+  // thigh (testis at heightFrac 0.40 was below the crotch: the ray entered the inter-leg gap and took
+  // hits[0] off a leg). Same floor-versus-identity gap as prose pointers: range-checked, not identity-
+  // checked. Two geometric facts per marker, read from the mesh itself: (a) BELOW-CROTCH — a ray up the
+  // central axis from under the feet meets the perineum first; any anchor lower than that is on a leg;
+  // (b) BEYOND-TRUNK — from the axis at the anchor's height, a ray toward the anchor (materials made
+  // double-sided for the probe, then restored) exits the trunk/head column at some distance; an anchor
+  // materially farther out than that exit sits on a limb the inward ray met first. A point may DECLARE
+  // `site:'limb'` (skin's female lower-leg marker) and is then exempt; identity comes from
+  // mesh.userData.marker, set in body.js, never from screen position.
+  const placement = await page.evaluate(async () => {
+    const THREE = await import('three');
+    const { state } = await import('./js/state.js');
+    const out = {};
+    for (const sex of ['female', 'male']) {
+      const group = sex === 'female' ? state.femaleBodyGroup : state.maleBodyGroup;
+      const body = [], markers = [];
+      group.traverse(o => { if (!o.isMesh) return; (o.userData && o.userData.marker ? markers : body).push(o); });
+      const bbox = new THREE.Box3(); body.forEach(m => bbox.expandByObject(m));
+      const H = bbox.max.y - bbox.min.y;
+      const up = new THREE.Raycaster(new THREE.Vector3(0, bbox.min.y - 0.5, 0), new THREE.Vector3(0, 1, 0), 0, H + 1);
+      const perineum = up.intersectObjects(body, true)[0];
+      const crotchFrac = perineum ? (perineum.point.y - bbox.min.y) / H : null;
+      const sides = body.map(m => m.material.side); body.forEach(m => { m.material.side = THREE.DoubleSide; });
+      const rows = markers.map(mk => {
+        const p = mk.position, id = mk.userData.marker;
+        const frac = (p.y - bbox.min.y) / H, radial = Math.hypot(p.x, p.z);
+        const u = new THREE.Vector3(p.x, 0, p.z).normalize();
+        const exit = new THREE.Raycaster(new THREE.Vector3(0, p.y, 0), u, 0, 5).intersectObjects(body, true)[0];
+        const trunkExit = exit ? exit.distance : null;
+        return { organ: id.organ, spec: [id.heightFrac, id.angle], site: id.site, frac: +frac.toFixed(3), x: +p.x.toFixed(3), z: +p.z.toFixed(3),
+                 radial: +radial.toFixed(3), trunkExit: trunkExit === null ? null : +trunkExit.toFixed(3),
+                 belowCrotch: crotchFrac !== null && frac < crotchFrac,
+                 beyondTrunk: trunkExit !== null && radial > trunkExit + 0.03 };
+      });
+      body.forEach((m, i) => { m.material.side = sides[i]; });
+      out[sex] = { crotchFrac: crotchFrac === null ? null : +crotchFrac.toFixed(3), rows };
+    }
+    return out;
+  });
+  for (const sex of ['female', 'male']) {
+    const { crotchFrac, rows } = placement[sex];
+    fs.writeFileSync(path.join(OUT, `body_marker_anchors_${sex}.json`), JSON.stringify({ crotchFrac, rows }, null, 1));
+    const bad = rows.filter(r => r.site !== 'limb' && (r.belowCrotch || r.beyondTrunk));
+    check(`body marker placement ${sex}`, crotchFrac !== null && bad.length === 0,
+      `crotch at ${crotchFrac}; ${rows.length} anchors; ${bad.length} on a limb: ` + bad.map(r => `${r.organ}@${r.spec.join('/')} frac ${r.frac}${r.belowCrotch ? ' BELOW-CROTCH' : ''}${r.beyondTrunk ? ` BEYOND-TRUNK (radial ${r.radial} > exit ${r.trunkExit})` : ''}`).join('; '));
+  }
+
   // ---- body mesh resolution guard ----
   // The bodies ship at Multires level 2 (338,720 tris each, meshopt-compressed). body.js
   // documents TWO silent re-export traps (multires levels regressing, bbox centering), and a

@@ -4012,6 +4012,59 @@ histologic — a selection effect in the instrument (good recall, poor
 register precision), not a property of the entries — and the property
 catches exactly that failure.
 
+## BODY MARKERS RESOLVED, BUT NOT CORRECTLY — the placement check (2026-09-09, user finding)
+
+THE BUG: the two Testis markers rendered on the LEGS. THE MECHANISM: the spec
+sat at `heightFrac 0.40`, below the male mesh's crotch (the perineum is at 0.453
+of standing height, 0.464 on the female mesh — measured by a ray up the central
+axis from under the feet), so `findBodySurfaceAnchor`'s inward ray entered the
+inter-leg gap and took `hits[0]` off the front of each thigh: valid geometry,
+wrong body part, 17 cm off the axis against a trunk exit of 4 cm. The spec's own
+comment shows it was tuned for pixel SEPARATION between the two dots and never
+for placement — the "comfortable ~55px" it settled on was the symptom (two
+thighs are far apart; two testes are not).
+
+THE FINDING WORTH MORE THAN THE BUG (user): **`regress.js` verified that markers
+RESOLVE, not that they resolve CORRECTLY.** The body is a closed mesh, so the
+raycast always hits something and the miss-logging never fires; 15/16 visible
+with matching minDist pairs was green while a marker sat on a thigh, since the
+specs were written. The floor-versus-identity gap of the prose pointers, in the
+body screen: range-checked, not identity-checked. **On a medical atlas an organ
+marker on the wrong body part is the same severity class as a wrong figure** —
+something a reader carries away as fact — so it was fixed in its own commit at
+once, not batched.
+
+THE CHECK, guard before repair (`regress.js`, 'body marker placement <sex>'):
+two facts per marker read from the mesh itself — BELOW-CROTCH (anchor lower
+than the perineum hit) and BEYOND-TRUNK (from the axis at the anchor's height, a
+double-sided probe ray toward the anchor exits the trunk/head column at some
+distance; an anchor more than 3 cm farther out sits on a limb the inward ray met
+first). Identity is READ, not inferred: `body.js` now stamps every marker sphere
+with `userData.marker` (organ, sex, spec point, declared site); a spec point may
+declare `site:'limb'` and is exempt — exactly one does, skin's female lower-leg
+marker (CONCORD-3). Per-anchor geometry lands in `body_marker_anchors_<sex>.json`.
+THE WORKLIST IT PRODUCED, before any repair: exactly the two Testis anchors on
+the male body; every other marker on both bodies sits on the trunk column (the
+"more than one" prediction answered in the negative), with one margin worth
+knowing — Prostate at 0.458 clears the male crotch by 0.005 of height. The L2
+re-export is NOT the cause: 0.40 is 9 cm below the crotch, and Catmull-Clark
+moves surfaces by millimetres — reasoning from the measured gap, not re-measured
+on the 21K cage.
+
+THE FIX, probed on a height/angle grid with the check's own two tests: 0.455
+still lands under the crotch (the curved surface puts the hit at 0.4527); 0.457
+is the lowest height on the trunk column — the lowest front of the pelvis, where
+the scrotum hangs — and ±30° gives the pair 16px at the default framing, 3.3 cm
+either side of the midline. Look: before/after crops of the regression's own
+male screenshot (evidence under /tmp/atlas-verify/audit2/, ephemeral) — before,
+two dots on the thighs below the pelvic cluster; after, both at the base of the
+pelvis, nothing on the legs. BASELINE MOVED, as expected of a placement fix:
+male minDist 10px (Prostate~Bladder) → 4px (Prostate~Testis); female unchanged
+at 4px (Ovaries~Bladder); regress 169 → 171 checks, the 2 known failures
+unchanged. The 4px pair is anatomy — prostate internal, scrotum external, one
+height on the front surface — the crowding FLOOR, not tuned away; the marker
+SIZE pass that follows is sized against the measured pairwise separations.
+
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
 **The instrument that refuses to scan without its input could still

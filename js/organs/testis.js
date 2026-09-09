@@ -7,16 +7,16 @@ import { cssVar, organicDisplace } from '../viewer.js';
 // family should land here; the organ has no other real home for that term.
 export const organEntry = { key:'testis', label:'Testis', system:'Reproductive', active:true, sexes:['male'], aliases:['testis','testicle','testicles','testicular','seminoma','germ cell tumor','germ cell','tgct'] };
 
-// Paired organ, symmetric placement — same convention as Ovary's two-point markerSpec. The
-// first values tried (±18–30deg at heightFrac 0.36–0.42, modeled loosely on Ovary's own ±25deg)
-// hit a REAL bug, caught by live probing rather than assumed fine from a single screenshot:
-// both points projected to the IDENTICAL pixel at every heightFrac from 0.30–0.39, and only 2px
-// apart at 0.42/±30 — the same ray-through-the-thigh-gap trap this codebase's own Colon marker
-// comment already documents, here in a more extreme form because the scrotum sits right at the
-// groin crease where the two legs are closest together. A wider angle sweep (probed live, same
-// technique as the colon pass) found real separation starting around ±55–60deg and settling at
-// a comfortable ~55px by ±65deg — heightFrac nudged down slightly to 0.40 in the same pass.
-export const markerSpec = { points:[{heightFrac:0.40, angle:-65}, {heightFrac:0.40, angle:65}] };
+// Paired organ, symmetric placement — same convention as Ovary's two-point markerSpec.
+// PLACEMENT BUG FIXED 2026-09-09 (user report: the two dots rendered on the LEGS). The old spec,
+// 0.40/±65, sat BELOW the male mesh's crotch (perineum at 0.453 of height, measured), so the inward
+// ray entered the inter-leg gap and took hits[0] off each thigh — valid geometry, wrong body part,
+// 17 cm off the axis. It had been tuned for pixel SEPARATION, never placement; the '~55px' it found
+// was two thighs. The regression now asserts every marker sits on the trunk column ('body marker
+// placement'). Probed on a height/angle grid with that check: 0.455 still lands under the crotch;
+// 0.457 is the lowest trunk-column height (the pelvis's lowest front, where the scrotum hangs), ±30°
+// gives 16px between the pair; ~4px from Prostate is anatomy, the crowding floor (CLAUDE.md section).
+export const markerSpec = { points:[{heightFrac:0.457, angle:-30}, {heightFrac:0.457, angle:30}] };
 
 // Two-way split, deliberately NOT the three-way WHO 2022 histologic list (seminoma / embryonal
 // carcinoma / yolk sac / choriocarcinoma / teratoma / mixed): under WHO 2022, "mixed germ cell

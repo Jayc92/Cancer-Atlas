@@ -169,3 +169,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   | SIDECAR {"metrics": {"basis_fit": 3, "basis_test": 0, "kept": 1, "population": 4, "preregistered": 4, "problems": 2, "scored_confirms": 3, "scored_falsifies": 0, "spent": 3}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
   | DONE citation_paren_ledger: 4 paren spans (3 spent, 1 kept), 4 scored (0 as TEST, 3 as FIT and worth no support), 0 falsifying, 2 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-09T20:58:03Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 28 lines, last 12 below
+  |   ok   and THIS FILE, which exists on disk, stays out of a tracked list that omits it — the glob this replaced would have taken it in, which is how an untracked draft moved a ratchet
+  | SELFTEST PASS — fires on both dangling shapes, on a referent off its line, on one absent from the file, and on all five ways an exemption can be wrong; keeps floor-only pointers out of the identity count; refuses a substring match for a short surname and accepts a non-ASCII one; finds a far-away referent in real corpus bytes; and takes its population from git rather than from the filesystem
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:101 — Androl|1986 is at 110 (offset +9, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:177 — Coffey|2008 is at 186 (offset +9, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:177 — Shen|2018 is at 186 (offset +9, name+year), 5 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:177 — Paly|2013 is at 186 (offset +9, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:179 — Wood|1996 is at 174 (offset -5, name+year), 4 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:183 — Wood|1996 is at 188 (offset +5, name+year), 4 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/testis.js: 6 off line, 3 distinct [-5, 5, 9]
+  | SIDECAR {"metrics": {"pointer.exempt": 0, "pointer.flags": 6, "pointer.identity_oracle": 266, "pointer.on_line": 260, "pointer.pointers": 577}, "name": "pointer_check", "ratchet": ["pointer.pointers", "pointer.identity_oracle"]}
+  | DONE pointer_check: 577/577 hand-typed pointers resolve (file tracked, line in range), 260/266 with an author+year oracle land on their referent's line, 0 declared off-line, 6 flags, 29 files scanned for prose pointers
+==== END REFUSAL

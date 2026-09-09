@@ -31,7 +31,7 @@ export const organEntry = { key:'skin', label:'Skin', system:'Integumentary', ac
 // Probed with the same height/angle grid harness as the colon marker, on both bodies.
 export const markerSpec = { points:[
   { heightFrac:0.78, angle:33,  sexes:['male']   },  // upper right anterior chest (trunk)
-  { heightFrac:0.17, angle:75,  sexes:['female'] },  // left lower leg (calf/shin)
+  { heightFrac:0.17, angle:75,  sexes:['female'], site:'limb' },  // left lower leg (calf/shin) — DECLARED limb site: the placement check exempts it
 ] };
 
 // The cancer list is the real skin-cancer landscape, and its headline asymmetry is stated
