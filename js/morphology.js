@@ -137,6 +137,27 @@ export const MARGIN_CATEGORIES = Object.freeze({
     badgeSource: 'Cancers 2022, PDAC review',
     badgeQuote: 'atrophy of flanking pancreatic parenchyma and fibrosis often blur the macroscopic delineation of the tumour',
   }),
+  // FIFTH CATEGORY WIRED (2026-09-09), the ill-defined family's second slot tested against the shared indistinct-edge
+  // form, PRE-REGISTERED AS A SEPARATION, NOT A COLLAPSE. R9, Cancers 2025 (PMC12427887, PMID 40941017), superficial
+  // spreading melanoma: "The surface of the tumor is either a macule or plaque with an irregular border, which ranges
+  // in size up to centimeters." Register ruled earlier: a skin lesion's clinical surface IS its gross appearance.
+  // THE DERIVATION: "irregular" is an OUTLINE word (uneven, notched, scalloped); "poorly defined" / "poorly
+  // delineated" (PTC, PDAC) are EDGE-DISTINCTNESS words (blurred). A macule with an irregular border can be sharply
+  // demarcated, so the words carry a real difference and arm 3 does not bind: separate ranges on the citation's
+  // authority. In the knobs an irregular outline is COARSE, SPIKE-FREE undulation — freq at the coarse end of the
+  // cited band (never inside the reserved band [1.6, 2.4]), amplitude legible, no projections — disjoint from the
+  // indistinct-edge form on spikeCount and from wellCircumscribed on amplitude. Every magnitude is illustrative;
+  // the citation gives none. LIMIT DISCLOSED ON THE BADGE: a macule or plaque is flat and the renderer draws a
+  // deformed sphere — the category speaks only to the outline. The form-level resemblance to the reserved
+  // placeholder (also spike-free undulation) is EXPECTED and acceptable: the colour carries that distinction.
+  irregularBorder: Object.freeze({
+    label: 'irregular border',
+    ranges: Object.freeze({ amplitude: [0.14, 0.22], freq: [3.5, 4.5], spikeCount: [0, 0], spikeLength: [0, 0], sharpness: [0, 0] }),
+    render: Object.freeze({ amplitude: 0.18, freq: 3.8, seed: 11.4, spikeCount: 0, spikeLength: 0, sharpness: 0 }),
+    badgeSource: 'Cancers 2025, superficial spreading melanoma',
+    badgeQuote: 'The surface of the tumor is either a macule or plaque with an irregular border',
+    divergence: 'a macule or plaque is flat and that flatness is not modelled — the drawn category speaks only to the outline',
+  }),
   // THIRD CATEGORY WIRED (2026-09-09), chosen because it is where the collision rule may DEADLOCK (user):
   // the reserved form's only remaining move away from circumscribed is toward lobulated, and nodular HCC is
   // the closest thing to lobulated in the atlas. R11, Gut 2023 (PMC10579519, PMID 37549980), 400 resected
@@ -244,7 +265,7 @@ export const MARGIN_STATUS = Object.freeze({
   // should draw no mass at all stays open and conditional on a source saying so.
   acinar:   { status: 'uncharacterised', ref: 'R22 — read 2026-09-09: no gross-register margin or visibility sentence found (NBK470550 histology only; PMC11048607 implies, does not state); was a histologic seed' },
   pdac:     { status: 'cited', category: 'poorlyDelineated', ref: 'R1 — blurred macroscopic delineation, RENDERED fourth (2026-09-09) with the same form as poorlyDefined under arm 3' },
-  melanoma: { status: 'cited',           ref: 'R9 — irregular border (clinical surface), not yet rendered' },
+  melanoma: { status: 'cited', category: 'irregularBorder', ref: 'R9 — irregular border (clinical surface = gross for skin; PMC12427887), RENDERED fifth (2026-09-09) as coarse spike-free undulation, separate from the indistinct-edge form on the citation\'s own word' },
   seminoma: { status: 'cited', category: 'wellCircumscribed', ref: 'harvest — well circumscribed (PMC6906820 general statement; PMC13218944 typically; PMC9162935), RENDERED second, 2026-09-09' },
   ptc:      { status: 'cited', category: 'poorlyDefined', ref: 'R17 — poorly defined margins, RENDERED (first category wired, 2026-09-09)' },
   // FTC: stood at 'cited' for a day on a harvest SEED whose sentence was about encapsulated FVPTC, a different

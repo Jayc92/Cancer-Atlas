@@ -1076,3 +1076,28 @@ Proposed the same day and ratified with one change — the one that decides whet
   a new category `irregularBorder` with its own ranges and render, badge from R9; `melanoma` status
   stays `cited`, category set; the check's arm-1 property (reserved form unreachable) is re-proven by
   the disjoint freq band; categories 4→5.
+- 2026-09-09 (MELANOMA — THE DERIVATION AND THE LOOK, scored against the pre-registration): SEPARATION, as
+  predicted. DERIVED from R9's word alone: `irregularBorder` = amplitude [0.14, 0.22], freq [3.5, 4.5]
+  (the coarse end of the cited band, outside the reserved band), spikeCount [0, 0], spikeLength [0, 0],
+  sharpness [0, 0]; render 0.18 / 3.8 / seed 11.4 / 0 / 0 / 0. Disjoint from the indistinct-edge form
+  on spikeCount and from wellCircumscribed on amplitude — the axis has room, and arm 3 does not bind
+  because the citations' words differ (outline versus edge-distinctness). Categories 4→5 (ratchet
+  raised on record); the reserved form re-proven unreachable from all five; 6/6 cited statuses backed.
+  THE LOOK, evidentiary: (a) `node .claude/capture_organs.js /tmp/atlas-verify/mel1 Skin Thyroid
+  Kidneys --port 3069`, served from the working tree of THIS commit (tool stamps HEAD 2cc0ce8, whose
+  table has no `irregularBorder`). (b) Compared: melanoma (skin) against PTC's indistinct-edge form
+  (thyroid, the shared PTC/PDAC form) and against the reserved placeholder (kidneys). (c) Seen, checkable
+  in the PNGs: skin.png — one tan mass on the right face of the skin block, SMOOTH-SURFACED with a
+  coarse, uneven, lumpy OUTLINE (a few large swells, no fine projections), chip "margin: irregular
+  border · cited", the badge's aria text carrying the flatness limit verbatim (facts.json);
+  thyroid.png — PTC's mass finely knobbed all over (many small projections over granular noise): the
+  two differ on FEATURE SCALE AND COUNT — few large swells against many small knobs — legible at the
+  default framing; kidneys.png — the placeholder is a spike-free undulating blob too, with broader,
+  fewer swells, and sea-glass rather than tan: the pre-registered form-level resemblance is present and
+  the colour separates them at a glance, as the ruling intended. VERDICT: the ill-defined family keeps
+  TWO names on ONE appearance (PTC, PDAC) and does not gain a third; "irregular border" is a distinct
+  appearance — an outline category, not an edge-distinctness one — so the taxonomy that placed melanoma
+  in the ill-defined family was a hypothesis the derivation refined, not confirmed. PRESENTATION NOTE,
+  recorded not acted on: the mass anchors at the skin block's origin hotspot on its right face rather
+  than on the epidermal top surface; where a melanoma sits on the block is a hotspot-placement matter
+  outside this pass. Renderer limit stands as disclosed: the macule's flatness is not modelled.
