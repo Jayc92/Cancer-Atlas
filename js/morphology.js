@@ -218,10 +218,28 @@ export const MARGIN_STATUS = Object.freeze({
   ccrcc:    { status: 'unread',          ref: 'R3 — blocked-to-tooling (PathologyOutlines gated)' },
   gdiff:    { status: 'unread',          ref: 'second tier — stomach margin not yet read' },
   uc:       { status: 'unread',          ref: 'second tier — bladder margin not yet read' },
-  tnbc:     { status: 'cited',           ref: 'harvest — pushing margin (Livasy), not yet rendered' },
+  // TNBC: the harvest backing is Livasy CA et al., Mod Pathol 2006 (PMID 16341146, doi 10.1038/modpathol.3800528),
+  // 'pushing margin of invasion' in 14/23 basal-like tumours — a HISTOLOGIC assessment of the invasive front, so
+  // the GROSS-register margin source is not yet read. 'cited' was an over-statement of the register (2026-09-09);
+  // the identifier check caught the missing backing, the register rule caught the rest.
+  tnbc:     { status: 'unread',          ref: 'Livasy 2006 Mod Pathol PMID 16341146 (histologic pushing margin, 14/23) — gross-register source not yet read' },
   hcc:      { status: 'cited', category: 'nodular', ref: 'R11 — named divergence with counts (nodular 348/400 vs infiltrative 52/400), RENDERED third, 2026-09-09' },
-  gbm:      { status: 'cited',           ref: 'harvest — diffusely infiltrative, not yet rendered' },
-  acinar:   { status: 'cited',           ref: 'harvest — seeded (infiltrating patterns), not yet rendered' },
+  // GBM: re-read 2026-09-09 on the user's biology-first distrust (the seed was a growth fact borrowed as a margin).
+  // R21, Iacob & Dinca, J Med Life 2009 (PMC3019011, PMID 20108752, CC BY), Pathology: "Grossly, it appears
+  // topographically diffuse, a poorly delineated mass with no capsula" — the ill-defined vocabulary with a
+  // DIFFUSE qualifier. Whether that qualifier is a fourth axis position ("no discrete margin" as the finding)
+  // or a candidate for the shared indistinct-edge form under arm 3 is decided at wiring, on its own
+  // pre-registration — not here.
+  gbm:      { status: 'cited',           ref: 'R21 — poorly delineated, topographically diffuse, no capsule (PMC3019011, PMID 20108752), not yet rendered; fourth-position question open' },
+  // PROSTATE ACINAR: the seed was Gleason pattern-4/5 infiltrating descriptions — HISTOLOGIC, not a gross margin.
+  // R22, read 2026-09-09 (pre-registered ladder): StatPearls Prostate Cancer (NBK470550) describes histology only;
+  // no StatPearls pathology chapter exists; ~40 OA full texts across five queries yield no gross-register
+  // sentence about the carcinoma's margin or its visibility — only methods sentences that IMPLY frequent gross
+  // invisibility ("If there was no grossly visible tumor, a systematic sampling strategy was used", Cancers 2024
+  // PMC11048607). NEGATIVE → not characterised at gross level in the sources read. The user's prediction
+  // ("grossly inapparent") was NOT FOUND stated, so it is not claimed; the question whether an inapparent tumour
+  // should draw no mass at all stays open and conditional on a source saying so.
+  acinar:   { status: 'uncharacterised', ref: 'R22 — read 2026-09-09: no gross-register margin or visibility sentence found (NBK470550 histology only; PMC11048607 implies, does not state); was a histologic seed' },
   pdac:     { status: 'cited', category: 'poorlyDelineated', ref: 'R1 — blurred macroscopic delineation, RENDERED fourth (2026-09-09) with the same form as poorlyDefined under arm 3' },
   melanoma: { status: 'cited',           ref: 'R9 — irregular border (clinical surface), not yet rendered' },
   seminoma: { status: 'cited', category: 'wellCircumscribed', ref: 'harvest — well circumscribed (PMC6906820 general statement; PMC13218944 typically; PMC9162935), RENDERED second, 2026-09-09' },

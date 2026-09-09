@@ -68,9 +68,17 @@ function organFiles(){
 // Every hex albedo in the organ files — the cited tissue colours (and the skin block's layer colours).
 // viewer.js and main.js are NOT scanned: they hold the marker accent and the light colours, which are
 // interface and illumination, not tissue, and the reserved colour is derived from the marker on purpose.
-// TWO THINGS THIS CHECK CANNOT SEE, stated so nobody reads green as more than it is: (a) the status census
-// counts DECLARATIONS — it cannot tell a category cited from a read apart from one seeded from a harvest
-// comment (FTC stood at 'cited' on a seed about a different entity until 2026-09-09); (b) two CITED
+// THE FOURTH PROPERTY OF A DECLARATION — A STATUS CLAIM CARRIES ITS BACKING (user, 2026-09-09). The other
+// three (evidence not conclusion; reason required; closed enumerated set) govern what a declaration SAYS;
+// this one governs whether it is ENTITLED to say it. A 'cited' margin status must carry a resolvable
+// identifier — PMCID, PMID, NBK, DOI — either in its own ref or in the ledger record (_phaseA_citations)
+// that an R-number in its ref resolves to. A harvest seed has none, so this fires at build time instead of
+// at wiring time: FTC's 'cited' rested on a seed about a different entity for four build commits and
+// nothing could see it. citedBackingViolations below; the ledger is read from .claude/citations.json.
+//
+// ONE THING THIS CHECK STILL CANNOT SEE, stated so nobody reads green as more than it is: (a) the backing
+// test proves an identifier EXISTS, not that the identified source speaks of the entry's margin at GROSS
+// register — that is the read's job and the register rule's (FTC's identified source was histologic); (b) two CITED
 // categories whose ranges overlap or coincide are NOT a violation — by the collision rule's third arm
 // (cited-versus-cited: neither moves) that is the truthful rendering of two citations describing one
 // appearance, and asserting cited-vs-cited disjointness here would FORCE the invention the rule forbids.
@@ -82,6 +90,32 @@ function tissueAlbedos(){
     for(const m of s.matchAll(/0x([0-9a-fA-F]{6})\b/g)) out.add(parseInt(m[1], 16));
   }
   return [...out];
+}
+// The Phase A ledger: _phaseA_citations in citations.json, split into its records (R-numbered reads and
+// '||'-separated notes). Read from the tree, never from a summary.
+function ledgerRecords(){
+  const j = JSON.parse(fs.readFileSync(path.join(REPO, '.claude', 'citations.json'), 'utf8'));
+  return String(j._phaseA_citations || '').split(/(?<=\.)\s(?=R\d+\s)|\s\|\|\s/);
+}
+const IDENTIFIER = /\b(PMC\d{5,}|PMID:?\s?\d{6,}|NBK\d{4,}|doi:?\s?10\.\d{4,}\/\S+|10\.\d{4,}\/[^\s,;)]+)/i;
+// A 'cited' status is entitled to its claim only if its backing resolves: an identifier in the ref itself, or
+// an R-number in the ref that resolves to a ledger record carrying one. Statuses other than 'cited' make no
+// category claim and are not tested here (their refs record reads or blocks, and may carry identifiers too).
+function citedBackingViolations(statuses, records){
+  const out = [];
+  for(const [id, st] of Object.entries(statuses)){
+    if(st.status !== 'cited') continue;
+    const ref = String(st.ref || '');
+    if(IDENTIFIER.test(ref)) continue;
+    const rs = [...ref.matchAll(/\bR(\d+)\b/g)].map(m => 'R' + m[1]);
+    if(rs.length === 0){ out.push(`entry ${id} is 'cited' but its ref carries no identifier and names no ledger record — a seed, not a citation: "${ref.slice(0, 80)}"`); continue; }
+    for(const r of rs){
+      const rec = records.find(x => new RegExp('^' + r + '\\b').test(x.trim()));
+      if(!rec) out.push(`entry ${id} is 'cited' on ${r}, which resolves to no ledger record`);
+      else if(!IDENTIFIER.test(rec)) out.push(`entry ${id} is 'cited' on ${r}, whose ledger record carries no resolvable identifier`);
+    }
+  }
+  return out;
 }
 function activeEntries(){
   const out = [];
@@ -117,6 +151,8 @@ function liveProblems(M){
   // THE COLOUR FIELD (user ruling on the HCC deadlock, 2026-09-09): the reserved colour must be unreachable
   // from every cited tissue albedo — the colour twin of the geometry's unreachability, and not grey.
   problems.push(...M.sameAppearanceViolations(M.MARGIN_CATEGORIES));   // arm 3: declarations of one appearance must be true
+  const records = ledgerRecords();
+  problems.push(...citedBackingViolations(M.MARGIN_STATUS, records));   // the fourth property: a status claim carries its backing
   const albedos = tissueAlbedos().concat([M.MASS_COLOUR]);   // the cited-mass tan is a tissue-side colour too
   problems.push(...M.colourViolations(M.RESERVED_COLOUR, albedos, M.RESERVED_COLOUR_RULES));
   const entries = activeEntries();
@@ -143,7 +179,9 @@ function liveProblems(M){
   let nearest = 360;
   for(const hx of albedos){ const c = M.hexToHsl(hx); if(c.s >= M.RESERVED_COLOUR_RULES.achromaticBelow) nearest = Math.min(nearest, M.hueDistance(M.hexToHsl(M.RESERVED_COLOUR).h, c.h)); }
   const shared = Object.values(M.MARGIN_CATEGORIES).filter(c => c.sameAppearanceAs).length;
-  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest, shared };
+  const citedIds = entries.filter(e => M.MARGIN_STATUS[e.id] && M.MARGIN_STATUS[e.id].status === 'cited').map(e => e.id);
+  const backed = citedIds.filter(id => citedBackingViolations({ [id]: M.MARGIN_STATUS[id] }, records).length === 0).length;
+  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest, shared, citedTotal: citedIds.length, backed, ledger: records.length };
 }
 
 // ---- condition (7), FIXTURE FORM BY DESIGN (see the header) --------------------------------
@@ -186,6 +224,15 @@ function selftest(M){
   arm('fires on a grey reserved colour', M.colourViolations(0x9a9a9a, [0xc17055], rules).length > 0);
   arm('fires on a reserved colour inside the tissue hue arc', M.colourViolations(0xb97c68, [0xc17055, 0x8c3a30], rules).length > 0);
   arm('silent on the live reserved colour against warm tissue albedos', M.colourViolations(M.RESERVED_COLOUR, [0xc17055, 0xd6b98f, 0xffffff], rules).length === 0);
+  // 8g–8k. THE FOURTH PROPERTY: a 'cited' status on a seed fires; on an unresolvable R-number fires; on an R-number
+  // whose record has no identifier fires; on an R-number whose record carries a PMCID is silent; on a ref that
+  // carries its own PMCID is silent; a non-cited status with a bare ref is not tested.
+  const ledgerFx = ['R1 PDAC MARGIN (PMC9139767, PMID 35626076)', 'R5 CRC MARGIN = NEGATIVE: no source gives a margin descriptor.'];
+  arm('fires on a cited status backed by a harvest seed', citedBackingViolations({ x: { status: 'cited', ref: 'harvest — seeded (encapsulated), not yet rendered' } }, ledgerFx).length === 1);
+  arm('fires on a cited status naming an R-number with no record', citedBackingViolations({ x: { status: 'cited', ref: 'R99 — something' } }, ledgerFx).length === 1);
+  arm('fires on a cited status whose record carries no identifier', citedBackingViolations({ x: { status: 'cited', ref: 'R5 — margin' } }, ledgerFx).length === 1);
+  arm('silent on a cited status resolving to an identified record', citedBackingViolations({ x: { status: 'cited', ref: 'R1 — poorly delineated' } }, ledgerFx).length === 0);
+  arm('silent on a cited ref carrying its own PMCID, and not testing non-cited statuses', citedBackingViolations({ x: { status: 'cited', ref: 'harvest — (PMC6906820)' }, y: { status: 'unread', ref: 'second tier' } }, ledgerFx).length === 0);
   // 8e–8f. ARM 3: a same-appearance declaration backed by a COPY of the render fires; the live table is silent.
   const root = { label: 'root', ranges: { amplitude: [0, 1] }, render: { amplitude: 0.5 } };
   arm('fires when a same-appearance declaration is backed by a copy, not the shared object',
@@ -202,17 +249,17 @@ function selftest(M){
   const M = await loadMorphology();
   const selfOnly = process.argv.includes('--selftest');
   if(!selftest(M)){ console.log('margin_reserve_check: REFUSING to check — selftest failed'); process.exit(2); }
-  if(selfOnly){ console.log('DONE margin_reserve_check_selftest: 15 arms run, 0 failures'); return; }
-  const { problems, entries, counts, organs, albedos, nearest, shared } = liveProblems(M);
+  if(selfOnly){ console.log('DONE margin_reserve_check_selftest: 20 arms run, 0 failures'); return; }
+  const { problems, entries, counts, organs, albedos, nearest, shared, citedTotal, backed, ledger } = liveProblems(M);
   for(const p of problems) console.log('  PROBLEM: ' + p);
   const nCat = Object.keys(M.MARGIN_CATEGORIES).length;
   console.log('SIDECAR ' + JSON.stringify({
     name: 'margin_reserve_check',
-    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, problems: problems.length },
+    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, cited_backed: backed, cited_total: citedTotal, ledger_records: ledger, problems: problems.length },
     ratchet: ['categories'],
   }));
   console.log(`DONE margin_reserve_check: reserved form on the ${M.RESERVED_AXIS.knob} band [${M.RESERVED_AXIS.band}] unreachable from ${nCat} cited categories (fixture-form (7) by design), `
     + `${entries.length - problems.filter(p => /no margin status|unknown margin status/.test(p)).length}/${entries.length} active entries carry a margin status `
-    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${problems.length} problems`);
+    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, ${problems.length} problems`);
   process.exit(problems.length ? 1 : 0);
 })().catch(e => { console.error('margin_reserve_check: harness error', e); process.exit(2); });

@@ -870,3 +870,128 @@ Proposed the same day and ratified with one change — the one that decides whet
   (0xa89a8c) has low contrast there — the mass reads as a slightly greyer lump at the head, and the
   badge carries the identification. Cited-mass colour is illustrative and unsourced; changing it is
   a presentation decision, not a fidelity one, and is not taken here.
+- 2026-09-09 (THE FOURTH PROPERTY OF A DECLARATION, user — acting on the FTC finding beyond the entry):
+  a `cited` status rested on a harvest seed for four build commits and nothing could see it, because
+  the status census counts declarations and cannot tell one backed by a citation from one backed by a
+  seed. Closable with the discipline already in place: **a `cited` status must carry a resolvable
+  identifier in its ledger record.** A seed has none, so the check fires at build step 1 rather than
+  at wiring time — an extension to `margin_reserve_check`, which already reads the module, not a new
+  member. It is the fourth property of a declaration, after evidence-not-conclusion, reason-required
+  and closed-enumerated-set: **a status claim carries its backing.** The other three govern what a
+  declaration says; this one governs whether it is entitled to say it. GUARD BEFORE REPAIR: the check
+  is written and run first; its output is the worklist recorded below.
+- 2026-09-09 (ORDER, user): TNBC next — cell (a)'s collapse prediction transfers cleanly and it is the
+  circumscribed family's remaining member. Then melanoma, testing the ill-defined family's second slot
+  against the now-shared PTC/PDAC form — the more interesting of the two, because a third collapse
+  onto the same form would say the ill-defined family has one appearance and three names. BUT GBM AND
+  PROSTATE GET THEIR STATUS RE-READ BEFORE EITHER IS WIRED, separately from the queue, for reasons
+  drawn from what the citations are likely to say rather than what the ledger claims: GBM is
+  characteristically DIFFUSELY INFILTRATIVE WITH NO DISCRETE MARGIN — possibly a fourth position on
+  the axis rather than a variant of ill-defined, the one entry where "no margin" is the finding rather
+  than the absence of one; prostate acinar carcinoma is characteristically GROSSLY INAPPARENT,
+  frequently invisible on cut section — if that is what its source says, its honest status is
+  uncharacterised for the same reason FTC's is, and wiring it would repeat the error just caught. FTC
+  demonstrated the status field can be wrong; the cheapest response is to distrust it for the two
+  entries where the biology predicts trouble, before the identifier check exists to distrust it
+  systematically.
+- 2026-09-09 (PRE-REGISTERED BEFORE THE TWO RE-READS AND THE TNBC BACKING LOOKUP). GBM — ladder: (1)
+  StatPearls Glioblastoma via PubMed `statpearls[book]` → NBK → Bookshelf (per-chapter: a Gross or
+  Histopathology section may or may not exist); (2) Europe PMC OA full text, "glioblastoma" with
+  "grossly"/"macroscopically" and a margin word (demarcat|delineat|ill-defined|poorly defined|
+  infiltrat|discrete|border). PREDICTION (the user's): a gross sentence exists and says the tumour is
+  poorly demarcated / infiltrates beyond any visible edge — the finding is "no discrete margin".
+  SCORING: FOURTH-POSITION = the source says the tumour has no discernible/discrete boundary or
+  infiltrates far beyond the apparent mass (a new axis position, DESIGNED later, not wired today);
+  ILL-DEFINED = the source gives poorly demarcated/ill-defined and nothing more (a candidate for the
+  shared indistinct-edge form under arm 3 — decided at wiring, not today); NEGATIVE = no gross
+  sentence → `uncharacterised`. Either positive keeps `cited` and REPLACES the seed ref with the
+  identified source. PROSTATE ACINAR — ladder: (1) StatPearls Prostate Cancer / Prostatic
+  Adenocarcinoma chapters via `statpearls[book]`; (2) Europe PMC OA, "prostatic adenocarcinoma" or
+  "prostate cancer" with "grossly"/"gross examination"/"cut surface" and (not (grossly )?visible|
+  inapparent|difficult to identify|ill-defined|yellow|firm). PREDICTION (the user's): a sentence
+  says carcinoma is frequently NOT identifiable grossly. SCORING: INAPPARENT = such a sentence →
+  `uncharacterised` (the FTC reason: not characterised as a gross margin), and a QUESTION for the user
+  recorded, not decided — whether "grossly inapparent" deserves a status of its own that draws no
+  mass, since drawing even the placeholder asserts a visible mass the source says is usually absent;
+  MARGIN = the source gives a gross margin character when the tumour IS visible (e.g. ill-defined firm
+  yellow-white nodules) → `cited` with the identified source, wired later on its own pre-registration;
+  NEGATIVE = nothing gross → `uncharacterised`. TNBC BACKING — not a content read: the harvest ref
+  names Livasy 2006 (Mod Pathol) without an identifier; look the identifier up from a bibliographic
+  record (Europe PMC search on the title), verify the title matches breast.js's citation line, and
+  record it. Register note for the wiring step to pre-register: Livasy's "pushing margin of invasion"
+  is a HISTOLOGIC assessment of the invasive front (14/23), so TNBC's gross-register margin source is
+  NOT YET READ — the truthful interim status is `unread`, not `cited`, until the wiring step's ladder
+  runs; if that ladder finds a gross-register sentence TNBC is wired, if not it goes `uncharacterised`
+  as FTC did. THE WORKLIST the guard produced is recorded in the next entry, before any repair.
+- 2026-09-09 (THE GUARD'S WORKLIST, recorded before repair): `citedBackingViolations` shipped with five
+  fixture arms (seed fires; unresolvable R-number fires; R-number to an unidentified record fires;
+  R-number to an identified record silent; own PMCID silent and non-cited statuses untested) and ran
+  live RED on exactly three entries — `tnbc` ("harvest — pushing margin (Livasy)"), `gbm` ("harvest —
+  diffusely infiltrative"), `acinar` ("harvest — seeded (infiltrating patterns)") — 5/8 cited statuses
+  backed against 22 ledger records. The three are the two the user named from the biology, plus TNBC,
+  whose backing exists but was never written down as an identifier. LIVASY RESOLVED (bibliographic
+  lookup, title and first author matched against breast.js's own citation line): Livasy CA et al.,
+  Mod Pathol 2006, PMID 16341146, doi 10.1038/modpathol.3800528 — "pushing margin of invasion" 14/23,
+  a HISTOLOGIC assessment. TNBC's status becomes `unread` (its gross-register source not yet read) with
+  the identifier in the ref; the wiring step's ladder decides between wired and uncharacterised.
+- 2026-09-09 (R21 — THE GBM RE-READ, scored against the pre-registration): rung 1, StatPearls Glioblastoma
+  Multiforme (NBK558954, PMID 32644380): Histopathology is microscopic only (pleomorphic cells,
+  microvascular proliferation, pseudopalisading necrosis), no gross sentence. Rung 2, Europe PMC OA,
+  title-restricted: Iacob G, Dinca EB, "Current data and strategy in glioblastoma multiforme", J Med
+  Life 2009 (PMC3019011, PMID 20108752, CC BY), Pathology section, antecedent confirmed from the
+  paragraph ("Most GBMs are intraparenchymal ... Grossly, it appears ..."): "Grossly, it appears
+  topographically diffuse, a poorly delineated mass with no capsula, with prominent areas of old and
+  recent hemorrhage (extensive areas of yellowish–brown to red discoloration) and necrosis (as much as
+  80% of the total tumor mass), cystic areas sometimes alternating with firm tissue." Same paragraph,
+  not gross-register: "It usually presents as an irregular mass in the white matter, infiltrating the
+  surrounding parenchyma by coursing along white matter tracts" and "tumor cells are considered to be
+  already disseminated at time of diagnosis far in the surrounding parenchyma". Corroboration at a
+  broader entity (gliomas, not the citation): Cancer Biol Ther 2026 (PMC12758302, PMID 41439468, CC
+  BY): "Macroscopically, gliomas appear as poorly defined masses with grayish peripheries and
+  yellowish necrotic centers." A paediatric-GBM xenograft description (PLoS One 2015, PMC4527837) is
+  animal tissue and not used. SCORED: ILL-DEFINED WITH A DIFFUSE QUALIFIER. The gross sentence's own
+  category word is "poorly delineated" — the same word as PDAC's R1 — and it still calls the tumour "a
+  mass"; the fourth-position reading ("no discrete margin" as the finding) is carried by
+  "topographically diffuse" and "no capsula" in that sentence and by the dissemination sentence,
+  which is not gross-register. So the user's hypothesis is SUPPORTED BUT NOT STATED by the source. GBM
+  stays `cited`, the seed ref replaced by the identified source; WHETHER the diffuse qualifier is a
+  fourth axis position or a third member of the shared indistinct-edge form under arm 3 is a wiring
+  decision with its own pre-registration, not made today. VERIFIED-QUOTED.
+- 2026-09-09 (R22 — THE PROSTATE ACINAR RE-READ, scored against the pre-registration): NEGATIVE. Rung
+  1: StatPearls Prostate Cancer (NBK470550, PMID 29261872) — Histopathology is the Gleason system,
+  microscopic only; the PubMed `statpearls[book]` search finds no prostate pathology/adenocarcinoma
+  chapter at all. Rung 2: five Europe PMC OA queries (grossly/gross examination/cut surface with
+  visibility and margin words; title-restricted to prostat*), about forty full texts fetched — no
+  sentence characterises the carcinoma's gross margin, and no sentence STATES that it is frequently
+  invisible on cut section. The nearest are methods sentences that IMPLY it: Cancers 2024
+  (PMC11048607): "In cases where larger glands were partially sampled, we followed the protocol by
+  submitting the entire tumor if grossly visible ... If there was no grossly visible tumor, a
+  systematic sampling strategy was used." and a regional finding about the transition zone (World J
+  Urol 2025, PMC12698729: "Macroscopically visible tumor infiltration was rare in this region
+  (affecting less than 1% of prostates)"), which is about a region, not the entity. OUTCOME: `acinar`
+  → `uncharacterised` (not characterised at gross level in the sources read) — the status the user
+  predicted, reached on DIFFERENT GROUNDS: the "grossly inapparent" statement was not found, so it is
+  not claimed. THE USER'S QUESTION STAYS OPEN AND CONDITIONAL: if a source is found that states the
+  carcinoma is usually not grossly visible, drawing even the placeholder asserts a visible mass the
+  source says is usually absent, and a status that draws no mass would need designing; until such a
+  source exists the placeholder with its "not characterised" badge is the truthful rendering. The seed
+  ("infiltrating patterns", prostate.js Gleason pattern-4/5 text) was HISTOLOGIC — the FTC shape again.
+- 2026-09-09 (CENSUS AFTER THE THREE REPAIRS): cited 6 (hcc, gbm, pdac, melanoma, seminoma, ptc — 6/6
+  carrying a resolvable identifier), uncharacterised 6 (hgsoc, clear, luad, crc, ftc, acinar), unread 4
+  (ccrcc, gdiff, uc, tnbc); 4 categories rendered. Two placeholders newly drawn: TNBC on the breast,
+  acinar on the prostate (both previously drew nothing as cited-without-category). Look recorded next.
+- 2026-09-09 (THE STATUS-REPAIR LOOK, evidentiary): (a) `node .claude/capture_organs.js
+  /tmp/atlas-verify/status1 Breast Prostate Brain --port 3067`, served from the working tree of THIS
+  commit (tool stamps HEAD 7d748cd, whose status table still says cited for all three). (b) Compared:
+  the two NEW placeholders (TNBC on the breast, acinar on the prostate) against the cited-without-
+  category case (GBM on the brain, which draws nothing). (c) Seen, checkable in the PNGs: breast.png —
+  one sea-glass green-grey mass at the upper-left of the tan gland with the chip "generic mass ·
+  margin source not yet read" (the `unread` wording, correct for TNBC's state); prostate.png — one
+  sea-glass mass below the gland with "generic mass · margin not characterised" (the `uncharacterised`
+  wording, correct for acinar); brain.png — no mass and no chip (facts.json badges: []), the
+  cited-without-category behaviour unchanged. Both placeholders read as interface-coloured, not
+  tissue. TWO PRESENTATION NOTES, recorded not acted on: the prostate placeholder is LARGE relative to
+  the gland (`MASS_RADIUS_FRACTION` 0.22 of a small elongated mesh's bounding radius), and it is
+  prominent on precisely the organ whose carcinoma the user expects to be grossly inapparent — which
+  sharpens the open question above (a status that draws no mass) without deciding it, since no source
+  yet states the inapparency.

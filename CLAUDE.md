@@ -3985,6 +3985,28 @@ QUOTES .claude/commit_checked.sh
   that.** The pollution is recorded here with its range instead:
   `58748d3` … `aafbe04`, 2026-09-05 to 2026-09-06.
 
+## A STATUS CLAIM CARRIES ITS BACKING — the fourth property of a declaration (2026-09-09, user ruling)
+
+A `cited` margin status rested on a harvest seed for four build commits and
+nothing could see it: the status census counts declarations, and it cannot
+tell a declaration backed by a citation from one backed by a seed. The seed's
+sentence was about a different entity (encapsulated FVPTC, not follicular
+carcinoma). Closed with the discipline already in place — **a `cited` status
+must carry a resolvable identifier (PMCID, PMID, NBK, DOI) in its own ref or
+in the ledger record its R-number resolves to** — as an extension to
+`margin_reserve_check` (`citedBackingViolations`), not a new member. A seed
+has none, so the check fires at build step 1 rather than at wiring time.
+
+This is the fourth property of a declaration, after evidence-not-conclusion,
+reason-required and closed-enumerated-set (the three the coverage-split
+section below and the battery's declared sets already enforce). **The other
+three govern what a declaration says; this one governs whether it is entitled
+to say it.** Its limit is stated in the check's header: an identifier proves a
+source EXISTS, not that it speaks of the entry at gross register — that
+remains the read's job under the register rule. Guard before repair applied:
+the check was written and run first, fired on exactly the three seeded
+statuses (TNBC, GBM, prostate acinar), and that output was the worklist.
+
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
 **The instrument that refuses to scan without its input could still
