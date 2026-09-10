@@ -1210,3 +1210,18 @@ Proposed the same day and ratified with one change — the one that decides whet
     one field because extraction assumed one paper per author-year — split into Nature (PMID 39112715, resolved by hand
     from the candidate list) and Molecular Cancer (PMID 39587554). Bladder: in situ 50% reported as its own category
     with in-situ-modal framing. Depth (Breslow) measured per-layer in the skin block — see phaseA_extent_design.md §9.
+- 2026-09-10 (ITEM 5 READS, 16:38Z): **PATHOLOGYOUTLINES IS CLOSED TO THIS CLIENT.** Probe #1 of the four-probe plan
+    (kidneytumormalignantrccclear.html, one request, honest UA naming this project, headers recorded) → HTTP 429,
+    `retry-after: 86400`, `server: Sucuri/Cloudproxy`, `x-sucuri-id: 14017`, no CAPTCHA. THIRD consecutive window
+    (2026-09-06; 2026-09-09T01:38Z; 2026-09-10T16:38Z), each entered after the previous Retry-After had elapsed: the cap
+    is not daily, it is persistent for this client. Per the plan no second probe inside a window — TNBC, FTC, prostate
+    acinar NOT probed; the rows keep their `until` dates but the PathologyOutlines route back to `cited` is CLOSED for
+    this tooling, and it was the only route (2026-09-09 entry above). Recorded as GATED, not bypassed. TNBC GROSS-REGISTER
+    READ (OA rung): PMC esearch ×3 (gross/circumscribed/pushing terms, open access) → congress abstracts and case reports
+    plus PMC7550871 (Front Oncol 2020, Pathology of Hereditary Breast and Ovarian Cancer), read in full: pushing borders,
+    necrosis, sheet-like growth, medullary pattern — all HISTOLOGIC register; its only gross/macroscopic sentences are
+    tubo-ovarian protocol text. Fifth thin result for the OA gross corpus. TNBC growth row unread → UNCHARACTERISED
+    (R24; the read happened and found nothing in the register — a downgrade, not a dated promise a closed source cannot
+    keep). COMPOSITION RE-COUNT (growth design §10 C method, ledger + harvest spans): 4, UNCHANGED — OCCC, ccRCC, GBM,
+    seminoma; the same two exclusions (TNBC "mixed" is a margin word; "mucinous" is a subtype share); the probes returned
+    nothing, so nothing rose. Composition stays a candidate sibling axis.

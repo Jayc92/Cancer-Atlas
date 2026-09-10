@@ -211,6 +211,9 @@ uncharacterised on growth with its composition in prose; the count is re-taken a
 PathologyOutlines probes, since gross descriptions routinely carry these words and the count
 is likelier to rise than fall. Whatever the count, **composition is not growth**: it describes
 what the mass is made of, not how it spreads — a sibling of growth, never a fifth member.
+RE-TAKEN 2026-09-10 after the probe run: FOUR, unchanged (the PathologyOutlines probe returned 429 for the third
+window and the OA TNBC read was histologic-register only, so no gross description entered the ledger). Still a
+candidate sibling axis; the next re-take is triggered by the next gross description actually read, not by a date.
 
 **D. One reserved colour, bound to the object.** Two would collide on a mass uncharacterised
 on both axes; the colour means *at least one property here is uncharacterised* and the badge

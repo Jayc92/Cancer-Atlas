@@ -4490,6 +4490,23 @@ block is re-proportioned; true scale rejected (hairline epidermis), uniform ×8 
 day and not recommended now; the axis designed as CITED MAGNITUDE, generic, Breslow first, text by
 default. No build without the ruling.
 
+## PATHOLOGYOUTLINES IS CLOSED TO THIS CLIENT — measured over three windows (2026-09-10)
+
+Probe #1 of the four-probe plan (ccRCC page, 2026-09-10T16:38Z, one request, honest user agent
+naming this project) returned HTTP 429 with `retry-after: 86400` from Sucuri/Cloudproxy — the THIRD
+consecutive window (2026-09-06, 2026-09-09T01:38Z, 2026-09-10T16:38Z), each entered after the
+previous Retry-After had elapsed. One fetch cannot distinguish a daily cap from a persistent block;
+three windows can: the block is persistent for this client. No second probe inside a window (plan
+rule), so TNBC, FTC and prostate acinar were not probed. Consequences, recorded rather than worked
+around: (1) the gross-register route back to `cited` for those rows is closed to this tooling, and
+it was the only route (the OA corpus has now been shown thin FIVE times — the fifth is
+PMC7550871, read in full for TNBC: histologic register only); (2) the rows stay `uncharacterised`
+(TNBC growth moved there from `unread` on the read — R24), which is the honest state, not a
+failure; (3) the way back is a HUMAN read of the gated pages — a quoted sentence with the page URL
+and a verified date is a citation under the fourth property whoever fetched it — and that is the
+user's call, asked, not assumed. Bypassing the limit (other clients, archives, proxies) is not on
+the table. Composition re-counted after the run by the §10 C method: four, unchanged.
+
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
 **The instrument that refuses to scan without its input could still
