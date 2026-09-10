@@ -205,5 +205,12 @@ carrier is uniformly scaled and the badge states the scale — the §4 criterion
 first: the quantity is thickness in millimetres from the granular layer, the source must be a
 non-AJCC one (Breslow 1970 for the measurement; a SEER or PMC source for any distribution), and the
 staging cut-points are never reproduced (constraint C). Phase C members waiting on the same axis:
-tumour size thresholds and nodal counts — same shape, same text-first default. **No build until the
-ruling.**
+tumour size thresholds and nodal counts — same shape, same text-first default. **RULED 2026-09-10 (user): TEXT, and the re-proportion is DECLINED.** Per-layer was the
+pre-committed criterion, and it measured per-layer, so the ruling follows without a further build
+step. On the uniform-×8 option specifically: it buys exactly one rendered property today (a Breslow
+plug on melanoma), and at ×8 the epidermis is 0.8 mm against a dermis of 8 mm — the epidermis stays a
+sliver relative to the dermis either way, so the re-proportion likely would not even restore reliable
+in-situ-vs-invasive visibility, the property a depth plug would exist to show. Half a day for a
+marginal epidermis and one entry is the wrong trade. The axis stays written as CITED MAGNITUDE,
+generic, Breslow first, text by default — that part cost nothing to design and Phase C's size
+thresholds and nodal counts will use the same shape.

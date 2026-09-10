@@ -207,6 +207,17 @@ function liveProblems(M){
       const trueModalKey = shareEntries.reduce((best, cur) => cur[1] > best[1] ? cur : best)[0];
       const trueModal = trueModalKey === 'inSitu' ? 'in situ' : trueModalKey;
       if(xs.modal !== trueModal) problems.push(`entry ${e.id} extent modal is '${xs.modal}' but its own shares (${JSON.stringify(xs.shares)}) make '${trueModal}' the largest — the framing sentence would assert a false majority`);
+      // THE OTHER TWO BRANCHES ASSERT THEIR OWN CLAUSE, NOT JUST 'MODAL IS SELF-CONSISTENT' (2026-09-10, user: the
+      // guard above proves modal matches the data; it doesn't prove each branch's SENTENCE is true for its branch —
+      // the same shape one level up). The in-situ branch hardcodes 'the next largest share localized'; true only for
+      // today's one in-situ entry (bladder) because its own second-largest share happens to be localized. The 'other'
+      // branch (regional/distant) says 'least extensive; found already beyond it', which regional and distant satisfy
+      // but 'unknown' does not — unknown means undetermined, not beyond.
+      if(xs.modal === 'in situ'){
+        const second = shareEntries.filter(([k]) => k !== 'inSitu').reduce((best, cur) => cur[1] > best[1] ? cur : best)[0];
+        if(second !== 'localized') problems.push(`entry ${e.id} modal is 'in situ' but its second-largest share is '${second}', not 'localized' — the hardcoded in-situ sentence clause 'the next largest share localized' would be false for this entry`);
+      }
+      if(xs.modal === 'unknown') problems.push(`entry ${e.id} modal is 'unknown' — no current framing branch can honestly render this ('most are found already beyond it' does not describe an undetermined stage); needs its own sentence before this entry ships cited`);
     }
     if(!gs) problems.push(`active entry ${e.id} has no growth status`);
     else if(!M.GROWTH_STATUSES.includes(gs.status)) problems.push(`entry ${e.id} carries an unknown growth status '${gs.status}'`);

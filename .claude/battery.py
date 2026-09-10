@@ -783,6 +783,9 @@ NON_INSTRUMENTS = {
                                'pre-committed by the user 2026-09-10: SEER not AJCC, breach is modal); asserts nothing, ratchets nothing',
     'phaseA_growth_design.md': 'design document — the growth axis on paper before code (spec §3: design before '
                                'building; the GBM hold of 2026-09-09 waits on it); asserts nothing, ratchets nothing',
+    'phaseA_closeout.md': 'a record — what Phase A built, resolved to text, or bounded, and why; not a tool',
+    'phaseB_design.md': 'design document — the build-time/runtime decision and the provenance-schema question it '
+                        'depends on, opened 2026-09-10; asserts nothing, ratchets nothing, no code to touch until ruled on',
     'capture_organs.js': 'evidence tool for the Phase A per-category visual read — regenerates the capture a '
                          'wiring commit describes (command + commit are the durable form of "the capture path"; '
                          'a /tmp path would be the scratch pointer this project stopped writing); asserts nothing, '

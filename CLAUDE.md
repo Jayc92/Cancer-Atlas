@@ -4579,6 +4579,8 @@ since it has not yet fired on a live defect. Proven with its own negative contro
 `'localized'` against its true `'distant'` fired with the exact sentence naming the false majority,
 then the file was restored byte-identical.
 
+**Follow-up (user): the guard proves `modal` matches the data, not that each branch's SENTENCE is true for its branch — the same shape one level up.** Checked by hand, then guarded the same way. The in-situ branch hardcodes "the next largest share localized"; true today only because bladder (the one live in-situ entry) happens to have localized in second place. The "other" branch's "least extensive; found already beyond it" covers regional and distant correctly but would be false for a hypothetical `modal: 'unknown'` entry (undetermined is not "beyond"). Two more arms added to the same reserve_check.js block: an in-situ entry's own second-largest share must be `localized` (else the hardcoded clause is wrong for it), and `modal === 'unknown'` is flagged outright since no current branch can honestly render it. Both proven with negative controls (bladder's second-place share forced to regional; its modal forced to `'unknown'`) and both silent on the live tree; file restored byte-identical after each.
+
 ## THE REGISTER FINDING — established for three entities, not ruled universal (2026-09-10, user question)
 
 **The question:** is TNBC's negative read (R23/R24) the same failure as FTC (R20) and prostate acinar
@@ -4623,6 +4625,59 @@ they are diagnosed (invasion-graded, often-inapparent, or receptor-defined rathe
 morphology-defined), a comparable fraction of Phase C's roughly 120 entities should be EXPECTED to
 land on `uncharacterised` permanently, and that expected fraction is a ceiling to budget for now
 rather than a debt to keep chasing with more reads later.
+
+**Sized (user: "the sizing is what makes it actionable"), from the live `MARGIN_STATUS` table, not estimated.** Of 16 entries: 6 cited (37.5%); 3 uncharacterised for the REGISTER reason (tnbc, acinar, ftc, 18.75%); 4 uncharacterised for an UNRELATED reason each (hgsoc: source says the surface is variable; clear: no margin-character category in the source; luad: a pre-registered negative; crc: margin subsumed by the cited growth form — 25%); 3 unread/pending (ccrcc, gdiff, uc — 18.75%). Among the 9 entries where the register question was actually DECIDED (the 6 cited plus the 3 register-limited), **3/9 = 33% hit the wall** — the same rate as 3/16 = 19% applied to everyone, by two independent routes to the same range: roughly a fifth to a third.
+
+**Projected to Phase C's ~120:** both routes land close together — 120 × 3/16 ≈ 22.5, or (120 × 9/16) tested-equivalent × 1/3 ≈ 22.5 — **roughly 20–25 of 120 entries permanently margin-uncharacterised on the register limit alone**, before counting whichever fraction of the other-reason class (25% today, with no articulated mechanism to project confidently) recurs at scale. That other-reason class is reported for completeness, not folded into the headline number: it has no identified generalisable cause the way the register limit does.
+
+**The intersection the user named: masses per organ.** SMALL-POPULATION INVARIANTS already flagged 8–9 masses per organ at Phase C scale as structurally crowded. Every uncharacterised or unread entry renders its mass in the reserved default (teal), not a cited category's form — so the register limit's ~20% (of all 16) to ~33% (of tested entries) rate, applied to 8–9 masses on one organ, means roughly **1.5 to 3 of every organ's 8–9 masses would be permanently, indistinguishably teal** — on top of, not instead of, the crowding the invariant already named (one shared origin hotspot, one stacking tangent, 22%-of-radius sizing). Two flagged hazards intersect: the organs already scheduled to carry the most masses lose colour as a distinguishing cue for a fixed fraction of them, and losing colour is exactly the cue the crowding hazard needs most. Recorded as a Phase C design input, not solved here.
+
+## THE COUPLING AUDIT NEEDED ITS OWN POSITIVE CONTROL (2026-09-10, user: "closes the loop on itself")
+
+**The point, sharpened:** "exactly one instance in 19" from the prior audit rested on a script that
+had already shown a boundary bug in the direction that's visible (over-capture, five false positives,
+caught because five wrong answers look wrong). An under-capturing regex produces silence, which looks
+identical to a clean bill. The audit needed the same fix everything else in this session got: prove
+the checker fires, on a synthetic case, before trusting what it reports about the real one.
+
+**The fixture, planted (scratch, `/tmp/ca-coupling-fixture.py`, not a repo file):** a `main()` with a
+live corpus read (`glob('js/organs/*.js')`) feeding a conditional `sys.exit`, disguised on purpose —
+no "known positive" phrasing, and not inside a `def selftest()`. Both properties were chosen to defeat
+the ORIGINAL audit method specifically: it searched for suspicious phrases, and it scanned only
+`selftest()` bodies. **The original method missed the fixture, exactly as predicted** — an empirical
+demonstration of the gap, not just an admission of one.
+
+**The fix: broaden from phrase-matching to a one-hop data-flow heuristic** — inside every top-level
+function, track which names are tainted by a live `glob`/`open`/`urlopen` call (directly, or one
+assignment downstream), then flag any `assert` or `sys.exit` whose nearby lines mention a tainted name.
+This caught the fixture. Re-run against the real instrument suite, it also raised 10 candidates across
+7 files that the narrower method had never looked at — the correct outcome for a broadened net, and
+each was read by hand, not auto-cleared:
+- **8 of 10 are the REFUSING-TO-REPORT-on-an-empty-population pattern** (`citation_head_check`,
+  `citation_reach_check`, `absence_claim_check`, `duplicate_figure_check`, `share_sum_check`) or a
+  tool's own **normal result-reporting exit** (`sys.exit(1 if fires else 0)` in `figure_search`,
+  `internal_quote_check`, `pointer_check`, `record_sync_check` — `fires` there is the tool's OWN finding
+  list; exiting non-zero because a real scan found real problems is the correct, wanted behaviour of a
+  defect detector, not a capability self-check). Different, already-understood, deliberate mechanisms —
+  cleared.
+- **The remaining 2 are the crosscheck's OWN already-fixed synthetic control** (`assert live is not
+  None`, `assert any('author:' in f for f in check_one('Zzyzx-Not-An-Author', ...))`). This is the
+  audit's honest limit, stated plainly rather than smoothed over: **a structural heuristic cannot tell
+  the fix from the bug**, because both touch live-fetched data — the difference is that the asserted
+  condition's truth is guaranteed by the SYNTHETIC probe value, not by a property the corpus happens to
+  have, and that is a semantic fact about the assert's logic, not a syntactic one about its inputs. It
+  had to be read, same as the first time. Cleared by reading, not by the detector.
+
+**Net result: still zero new instances, now shown against a detector proven capable of catching the
+disguised shape, with the one genuinely ambiguous hit correctly requiring — and getting — a human
+read rather than an auto-clear.** "One in 19" now means "one that a broadened, fixture-verified method
+can see," which is a materially stronger claim than the first pass supported.
+
+**Considered and declined: a permanent `coupling_audit` battery instrument.** Every one of the 10
+broadened-detector hits on real files needed a human read to clear; a heuristic with that false-positive
+rate is not a hard pass/fail gate, it is a triage aid. Kept as a documented, repeatable manual method
+(this section, plus the fixture and both detector versions, reconstructable from this write-up) to
+re-run whenever a new instrument's self-test design is in question, rather than wired into every commit.
 
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
@@ -5576,7 +5631,14 @@ refute it, which is worth more than file order.
   measured PER-LAYER, so depth is text unless the block is re-proportioned; priced, not
   recommended; no build without the ruling); `EXTENT_STATUS` wired for all sixteen from 14
   SEER Stat Facts pages, detection-framed. TOLERATED COUNTS RESOLVED 2026-09-10 (own
-  section; `.claude/tolerated.py`, one mechanism). Then wall; multifocal when it has a renderable
+  section; `.claude/tolerated.py`, one mechanism). PHASE A CLOSED 2026-09-10 (`.claude/phaseA_closeout.md`): wall is the one unbuilt growth
+  mechanism with real, unblocked members (stomach, CRC); placement has members behind an
+  unmeasured luminal-reachability precondition; count/multifocal has none (checked, not
+  assumed — register-H, model-precondition-blocked, or cited-equal-to-default, one reason each);
+  composition stays deferred at four. PHASE B OPENED (`.claude/phaseB_design.md`): build-time
+  vs runtime, coupled to a provenance-schema question (`pulled`, proposed, unbuilt) every
+  existing detector's population would need to account for; ruling requested, nothing built.
+  Then wall; multifocal when it has a renderable
   member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.

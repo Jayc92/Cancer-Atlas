@@ -1243,3 +1243,23 @@ Proposed the same day and ratified with one change — the one that decides whet
     — Joe's call, not touched. Gate-script audit: run_checked.sh/commit_checked.sh already capture `$?`
     or use `grep -q` inside a conditional everywhere; the grep-as-last-command false alarm was this
     session's own ad hoc verification command, not a repo defect.
+- 2026-09-10 (audit closes its own loop; sizing; colon.glb cleared; Phase A closed, Phase B opened):
+    coupling audit given a positive control — a disguised synthetic fixture (no suspicious phrasing,
+    not inside selftest()) that the ORIGINAL narrow method missed, exactly as predicted; a broadened
+    one-hop data-flow detector catches it, then re-run against the real 17 instruments raised 10
+    candidates, all triaged by hand (8 are the empty-population refusal or a tool's own normal
+    result-reporting exit; 2 are the crosscheck's own already-fixed synthetic control, which a
+    structural heuristic cannot distinguish from the original bug — read, cleared). Net: still zero
+    new instances, now behind a detector proven capable of the disguised shape. A permanent battery
+    instrument for this considered and declined (every real hit needed a human read). Bladder-caption
+    follow-up: two more reserve_check.js arms (an in-situ entry's own second-largest share must be
+    localized; modal='unknown' flagged outright), both proven with negative controls. Register limit
+    SIZED from the live table: 3/16 directly or 3/9 among decided entries (both ~20-33%), projecting
+    to roughly 20-25 of Phase C's ~120; intersected with the 8-9-masses-per-organ hazard (roughly 1.5-3
+    teal masses per crowded organ). Breslow RULED: text, re-proportion declined (one property, half a
+    day, unlikely to even restore in-situ visibility at uniform x8). colon.glb metadata dug fully (51
+    named nodes, zero identifiers of any kind) and its Sketchfab page read directly: an artist's
+    histology-teaching model (typo-laden description, generic tags, 2020 publish date, 1000+
+    downloads) — cleared of the personal-medical-data concern, reported to Joe. Phase A CLOSED
+    (phaseA_closeout.md); Phase B OPENED (phaseB_design.md) — build-time/runtime plus the
+    provenance-schema question, ruling requested, nothing built.
