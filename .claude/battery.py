@@ -775,6 +775,8 @@ NON_INSTRUMENTS = {
     'mesh_hygiene.py': 'offline asset tool (Blender), part of the a131649 reproducible chain',
     'render_thumb.py': 'offline asset tool (Blender)',
     'nocache_server.py': 'local dev server; started by this runner for the regression',
+    'phaseA_extent_design.md': 'design document — stage-extent and breach on paper before code (spec §4; two constraints '
+                               'pre-committed by the user 2026-09-10: SEER not AJCC, breach is modal); asserts nothing, ratchets nothing',
     'phaseA_growth_design.md': 'design document — the growth axis on paper before code (spec §3: design before '
                                'building; the GBM hold of 2026-09-09 waits on it); asserts nothing, ratchets nothing',
     'capture_organs.js': 'evidence tool for the Phase A per-category visual read — regenerates the capture a '

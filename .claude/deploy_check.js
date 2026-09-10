@@ -146,14 +146,27 @@ async function probe(url) {
     page.on('response', (r) => { if (r.status() >= 400) events.push([`HTTP${r.status()}`, r.url()]); });
     await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
     await new Promise((r) => setTimeout(r, 4000));
-    const st = await page.evaluate(async () => {
+    // A PROBE FAILURE IS NOT A FINDING ABOUT THE PAGE (2026-09-10). The first post-push run of 8c51c96 lost its frame
+    // mid-evaluate ('Attempted to use detached Frame') and this checker reported '0 hotspots live — the app did not
+    // initialise': a measurement error dressed as an outage. The re-run on the same bytes measured 31. So: one retry
+    // after a short wait (a detached frame is the page having navigated under us), and if the probe still cannot
+    // measure, the verdict is a PROBE FAILURE — still red, still a refusal, but named as the checker's own failure
+    // with the hotspot count printed as UNMEASURED rather than as zero.
+    const measure = () => page.evaluate(async () => {
       const { state } = await import('./js/state.js');
       return {
         female: state.femaleBodyGroup ? 'present' : 'MISSING',
         male: state.maleBodyGroup ? 'present' : 'MISSING',
         hotspots: document.querySelectorAll('.hotspot').length,
       };
-    }).catch((e) => ({ evalError: String(e) }));
+    });
+    let st = await measure().catch((e) => ({ evalError: String(e) }));
+    if (st.evalError) {
+      events.push(['PROBE', `first evaluate failed (${st.evalError}); retrying once after 3 s`]);
+      await new Promise((r) => setTimeout(r, 3000));
+      st = await measure().catch((e) => ({ evalError: String(e), retried: true }));
+      if (!st.evalError) st.probeRetried = true;
+    }
     return { st, events };
   } finally {
     await browser.close();
@@ -162,7 +175,7 @@ async function probe(url) {
 
 function initFailures(st) {
   const bad = [];
-  if (!st || st.evalError) { bad.push(`state module unreachable: ${st && st.evalError}`); return bad; }
+  if (!st || st.evalError) { bad.push(`PROBE FAILURE — the checker could not measure the page (${st && st.evalError}); this is the checker's own failure, not a finding about the app: re-run before reading it as an outage`); return bad; }
   if (st.female !== 'present') bad.push('state.femaleBodyGroup MISSING — the app did not initialise');
   if (st.male !== 'present') bad.push('state.maleBodyGroup MISSING — the app did not initialise');
   if (!(st.hotspots > 0)) bad.push(`0 hotspots rendered — the app did not initialise`);
@@ -299,7 +312,7 @@ async function selftest() {
   // green-looking summary. Caught by reading its own first real output against its own findings.
   console.log(`DONE deploy_check: ${assets.length - stale.length}/${assets.length} assets `
     + `byte-matched to HEAD ${head.slice(0, 7)}, `
-    + `${st && st.hotspots ? st.hotspots : 0} hotspots live, `
+    + `${st && !st.evalError ? st.hotspots + ' hotspots live' : 'hotspots UNMEASURED (probe failure)'}${st && st.probeRetried ? ' (probe retried once)' : ''}, `
     + `${unexplained.length} unexplained page errors (${benignSeen.length} declared-benign), `
     + `${problems.length} problems`);
   process.exit(problems.length ? 1 : 0);

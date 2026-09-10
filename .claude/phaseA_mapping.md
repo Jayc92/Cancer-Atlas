@@ -88,6 +88,12 @@ anchored to existing structure rather than case-by-case taste:
   distribution.
 
 ### 4. Stage-EXTENT — how far the mass has gone (split 2026-09-05; SIZE demoted)
+- **DESIGN DOCUMENT (2026-09-10): `.claude/phaseA_extent_design.md`** — two constraints pre-committed by
+  the user before any entry source is read (SEER Summary Stage, never AJCC; breach is MODAL and the render
+  must not make it factual), the second-structure problem designed first, the corpus inventory, the
+  modality analysis, a pre-committed decision criterion, and the predicted outcome: fifteen entries to
+  TEXT via the generalised understated-extent form fed from SEER Stat Facts distributions, melanoma the
+  one geometric candidate (the skin block models the layers). Three rulings requested before code.
 - **THE SPLIT:** stage-size conflated two things and only one is freely sourceable.
   SEER Summary Stage categorises EXTENT (in situ / localised / regional / distant) and
   gives no tumour size; size-in-cm is T-category territory, and the T thresholds live

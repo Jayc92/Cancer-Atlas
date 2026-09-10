@@ -199,3 +199,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   | SIDECAR {"metrics": {"pointer.exempt": 0, "pointer.flags": 14, "pointer.identity_oracle": 266, "pointer.on_line": 252, "pointer.pointers": 577}, "name": "pointer_check", "ratchet": ["pointer.pointers", "pointer.identity_oracle"]}
   | DONE pointer_check: 577/577 hand-typed pointers resolve (file tracked, line in range), 252/266 with an author+year oracle land on their referent's line, 0 declared off-line, 14 flags, 30 files scanned for prose pointers
 ==== END REFUSAL
+==== REFUSAL 2026-09-10T06:52:50Z reason=exit=1 marker="DONE deploy_check:" tool=deploy_check.js
+     output 13 lines, last 12 below
+  |   ok   benign filter swallows the declared favicon 404
+  |   ok   benign filter does NOT swallow a different 404 (the list cannot widen silently)
+  |   ok   benign filter does NOT swallow the 4b2c8c5 parse error
+  |   ok   initialisation assertion fails on a blank page (1 failure(s) reported)
+  |   ok   reports all three initialisation failures on the 4b2c8c5 shape (loaded page, null state) — got 3
+  |   ok   reports no failures on a healthy state (the gate is not stuck failing)
+  |   ok   excuses the console echo when every HTTP error observed was declared benign
+  |   ok   keeps the console echo as a finding when an UNDECLARED 404 is also present
+  | SELFTEST PASS — all three layers shown able to fail: stale bytes, a widened benign list, a dead page
+  | DONE deploy_check_selftest: 9 arms run, 0 failures
+  |   NOT INITIALISED: state module unreachable: Error: Attempted to use detached Frame '664C3096E2223782E2C329A8A99015B7'.
+  | DONE deploy_check: 28/28 assets byte-matched to HEAD 8c51c96, 0 hotspots live, 0 unexplained page errors (2 declared-benign), 1 problems
+==== END REFUSAL

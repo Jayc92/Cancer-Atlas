@@ -5285,9 +5285,14 @@ refute it, which is worth more than file order.
   INVARIANTS enumerated before Phase C (own section). Extent-by-category rationale
   recorded beside the constants. 2026-09-10: label overlaps fixed and regression
   failures made fatal behind a declared list; puppeteer-core off /tmp; identity
-  pattern scoped; render coverage counted (9/17). Next: the extent-breach design
-  document (SEER Summary Stage, never AJCC; breach is modal), then wall; multifocal
-  when it has a renderable member. COLD-SESSION ENTRY POINTER: read
+  pattern scoped; render coverage counted (9/17). THE EXTENT-BREACH DESIGN DOCUMENT
+  (`.claude/phaseA_extent_design.md`, 2026-09-10): two constraints pre-committed by
+  the user before any entry source is read — SEER Summary Stage, never AJCC; breach is
+  MODAL and the render must not make it factual — plus the second-structure problem
+  designed first; predicted outcome fifteen entries to TEXT (the understated-extent
+  form generalised from SEER Stat Facts distributions), melanoma the one geometric
+  candidate; three rulings requested. Then wall; multifocal when it has a renderable
+  member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin
