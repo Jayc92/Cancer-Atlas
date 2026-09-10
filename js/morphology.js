@@ -263,7 +263,7 @@ export const MARGIN_STATUS = Object.freeze({
   // lands only once the growth axis DRAWS the diffuseness, and the growth axis is designed, not built
   // (phaseA_mapping.md, section 3 — no growth consequence is rendered anywhere yet). Until then GBM stays cited
   // with no category and draws nothing, rather than relocating a property to an axis that is not showing it.
-  gbm:      { status: 'cited',           ref: 'R21 — poorly delineated (PMC3019011, PMID 20108752); ruled to share the indistinct-edge form, HELD until the growth axis draws the diffuseness' },
+  gbm:      { status: 'cited', category: 'poorlyDelineated', badgeSource: 'J Med Life 2009 (PMC3019011)', badgeQuote: 'a poorly delineated mass with no capsula', ref: 'R21 PMC3019011 PMID 20108752 — poorly delineated: shares the indistinct-edge form under arm 3 (ruled 2026-09-09); the hold lifted when the growth axis drew the diffuseness (rim-blend, wide extent) — RENDERED; its own citation on the badge, not PDAC\'s' },
   // PROSTATE ACINAR: the seed was Gleason pattern-4/5 infiltrating descriptions — HISTOLOGIC, not a gross margin.
   // R22, read 2026-09-09 (pre-registered ladder): StatPearls Prostate Cancer (NBK470550) describes histology only;
   // no StatPearls pathology chapter exists; ~40 OA full texts across five queries yield no gross-register
@@ -293,13 +293,32 @@ export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cite
 // is the margin axis's channel), protrusion (exophytic — the mass on the luminal side of the wall), wall (hollow-organ
 // diffuse/annular — the organ mesh itself deforms). The RESERVED growth vector is the ABSENCE of an expression: one
 // mass, hard junction, on the surface, no wall change — it asserts nothing, so it needs no colour of its own beyond
-// the object-bound reserved colour above. GROWTH_CATEGORIES is EMPTY here on purpose: reserve_check asserts the
-// reserved vector unreachable from every cited growth category (fixture-form (7-quater) until the first is wired),
-// and the first category wired is INFILTRATIVE, after its falloff channel wins a bake-off with a pre-registered
-// criterion (design document §E). A cited category names ONE knob and a RANGE on it that excludes the reserved value.
+// the object-bound reserved colour above. GROWTH_CATEGORIES was EMPTY at birth (fixture-form (7-quater)); the first
+// two categories, both infiltrative, were wired on 2026-09-09 after rim-blend won the bake-off (design document §9)
+// and the reserved apex floor was measured (§10). A cited category names ONE knob and a RANGE on it that excludes
+// the reserved value; reserve_check asserts the reserved vector unreachable from every one of them.
 export const GROWTH_KNOBS = Object.freeze(['count', 'falloff', 'protrusion', 'wall']);
 export const RESERVED_GROWTH = Object.freeze({ count: 1, falloff: 0, protrusion: 0, wall: 0 });
-export const GROWTH_CATEGORIES = Object.freeze({});
+// THE FIRST GROWTH CATEGORIES WIRED (2026-09-09, after the bake-off and the apex-floor ruling): both on the falloff knob,
+// both drawn by rim-blend — the mass's boundary dissolves into the organ's own albedo, its depth (extent, in mass radii
+// of band height) illustrative by the split. Two categories, not one, because the cited WORDS differ and carry a
+// difference in extent: "infiltrative"/"invasive" (PDAC R2, PTC R18) against "topographically diffuse" (GBM R21) — arm 3
+// forbids only manufactured difference. Ranges exclude the reserved falloff of 0 (reserve_check asserts it) and the
+// render sits inside its range (growthRenderViolations). The citation lives on the STATUS (per entry), not here: two
+// entries share a category on different sources.
+export const GROWTH_CATEGORIES = Object.freeze({
+  infiltrative:          Object.freeze({ label: 'infiltrative',           knob: 'falloff', range: Object.freeze([0.6, 1.4]), render: Object.freeze({ extent: 1.0 }) }),
+  diffuselyInfiltrative: Object.freeze({ label: 'diffusely infiltrative', knob: 'falloff', range: Object.freeze([2.0, 3.0]), render: Object.freeze({ extent: 2.5 }) }),
+});
+export function growthRenderViolations(categories){
+  const out = [];
+  for(const [name, cat] of Object.entries(categories)){
+    const v = cat.render && cat.render[cat.knob === 'falloff' ? 'extent' : cat.knob];
+    if(v === undefined) out.push(`growth category ${name} has no render value for its knob '${cat.knob}'`);
+    else if(!(v >= cat.range[0] && v <= cat.range[1])) out.push(`growth category ${name} renders ${v} outside its declared range [${cat.range[0]}, ${cat.range[1]}]`);
+  }
+  return out;
+}
 // THE INFILTRATIVE FALLOFF — BAKE-OFF STATE (2026-09-09; design document §E). The EDGE mechanism is a MATERIAL
 // transition at the mass–organ junction, and WHICH material channel carries it is decided by a bake-off against a
 // pre-registered criterion, not by a guess: it must read as 'boundary not determinable' (not 'soft boundary'), must
@@ -308,7 +327,8 @@ export const GROWTH_CATEGORIES = Object.freeze({});
 // main.js (applyGrowthFalloff) and selected here; 'none' is the committed state until the ruling — the channels
 // are DORMANT in production and were exercised by captures made from a temporary working-tree wiring of
 // GROWTH_RENDER, recorded in the design document. Magnitude (extent, in mass radii) is illustrative by the split.
-export const FALLOFF_CHANNELS = Object.freeze(['none', 'opacity', 'albedoBleed', 'roughAlbedo', 'darken', 'rimBlend']);
+// The losing channels (opacity; organ-side albedoBleed, roughAlbedo, darken) were removed from main.js with the wiring; their
+// record — measurements, looks, and the structural retirement of the organ-side family — is design document §9–§10.
 // BAKE-OFF RUN 2026-09-09 (design document §9): rimBlend is the one channel that met the criterion — it dissolves the
 // boundary while the mass stays opaque, touches no organ pixel, survives AO and AgX by construction, and bleeds nothing
 // into the organ. opacity failed (ghost tissue, 86% teal contamination on the reserved cross-product); the organ-side
@@ -316,7 +336,45 @@ export const FALLOFF_CHANNELS = Object.freeze(['none', 'opacity', 'albedoBleed',
 // scale and imperceptible per pixel). Recorded here as the decision; PRODUCTION IS UNCHANGED while GROWTH_RENDER is
 // empty — wiring waits on two rulings (§9 (a) placeholder base colour, (b) GBM's labelled extent).
 export const FALLOFF_CHANNEL = 'rimBlend';
-export const GROWTH_RENDER = Object.freeze({});   // entryId -> { extent }  — empty until the first growth category is wired
+
+// GROWTH STATUS PER ENTRY — the second axis's census, the same three statuses as margin, the same fourth property (a
+// 'cited' status carries a resolvable identifier in its ref; reserve_check asserts it), the citation on the entry.
+// `register` discloses H where the cited description is histologic (R2's form). A cited category with no wired
+// mechanism (count, wall, placement) is 'cited' with no `category`: drawn as nothing extra, said so on the badge.
+export const GROWTH_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
+export const GROWTH_STATUS = Object.freeze({
+  hgsoc:    { status: 'cited', label: 'bilateral', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'R14 PMC8070731 — bilateral: a COUNT category with a model precondition (one ovary modelled); not drawn' },
+  clear:    { status: 'cited', label: 'unilateral, cystic and solid', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'R16 PMC8070731 — count 1 equals the default; composition unexpressed (design §10); not drawn' },
+  luad:     { status: 'uncharacterised', ref: 'R8 — no gross growth category claimable' },
+  crc:      { status: 'cited', label: 'ulcerating-annular (majority), polypoid (a quarter)', register: 'G', badgeSource: 'Int J Mol Sci 2018 (PMC6165083)', ref: 'R6 PMC6165083 — WALL (majority) and PLACEMENT (25%), a named divergence; not drawn' },
+  ccrcc:    { status: 'unread', ref: 'R3/R4 — blocked-to-tooling (PathologyOutlines gated)' },
+  gdiff:    { status: 'cited', label: 'diffuse (linitis plastica)', register: 'G', badgeSource: 'NCI PDQ, Gastric Cancer Treatment (HP), updated February 21, 2025', ref: 'https://www.cancer.gov/types/stomach/hp/stomach-treatment-pdq — WALL; not drawn (page re-verified 2026-09-09: title, the ledger sentence and the update date match)' },
+  uc:       { status: 'cited', label: 'papillary, exophytic (majority)', register: 'G', badgeSource: 'Future Sci OA 2026 (PMC12893692); J Clin Invest 2026 (PMC12948436)', ref: 'R19 PMC12893692 — PLACEMENT (~75% non-muscle-invasive), invasive minority named; not drawn' },
+  tnbc:     { status: 'unread', ref: 'harvest seed only (NST page, syncytial infiltrative — H); the gross-register growth source is not yet read' },
+  hcc:      { status: 'cited', label: 'single nodular (majority)', register: 'G', badgeSource: 'J Hepatocell Carcinoma 2024 (PMC11007400); Gut 2023 (PMC10579519)', ref: 'R12 PMC11007400 — COUNT: the majority (types I+II, 247/400 by R11) is single, which is the default; confluent multinodular minority named; not drawn' },
+  gbm:      { status: 'cited', category: 'diffuselyInfiltrative', register: 'G', badgeSource: 'J Med Life 2009 (PMC3019011)', badgeQuote: 'Grossly, it appears topographically diffuse, a poorly delineated mass with no capsula', ref: 'R21 PMC3019011 PMID 20108752 — EDGE at the wide extent (design §3(b), ruled 2026-09-09); RENDERED' },
+  acinar:   { status: 'cited', label: 'multifocal', register: 'H', badgeSource: 'Fontugne et al., JCI Insight 2022 (PMC8876549)', ref: 'PMC8876549 PMID 35050902 — COUNT from whole-mount histology (H disclosed); not renderable at gross register; not drawn' },
+  pdac:     { status: 'cited', category: 'infiltrative', register: 'H', badgeSource: 'Int J Mol Sci 2021 (PMC8268881)', badgeQuote: 'neoplastic cells arranged in small tubular glands that infiltrate a desmoplastic stroma', ref: 'R2 PMC8268881 PMID 34201897 — EDGE, histologic (H disclosed), corroborated at gross by R1; RENDERED' },
+  melanoma: { status: 'cited', label: 'radial then vertical growth phase', register: 'G', badgeSource: 'Cancers 2025 (PMC12427887)', ref: 'R10 PMC12427887 — PLACEMENT (radial phase) and EXTENT breach (vertical phase); not drawn' },
+  seminoma: { status: 'unread', ref: 'growth source not read (listed for an external read; none made)' },
+  ptc:      { status: 'cited', category: 'infiltrative', register: 'G', badgeSource: 'StatPearls, Papillary Thyroid Carcinoma (NBK536943)', badgeQuote: 'typically presents as an invasive neoplasm', ref: 'R18 NBK536943 PMID 30725628 — EDGE ("an invasive neoplasm"); the margin half of the same sentence is R17 — two words, two axes, declared; RENDERED' },
+  ftc:      { status: 'unread', ref: 'growth source not read' },
+});
+
+// KNOWN TO UNDERSTATE — the generic form (user ruling 2, 2026-09-09). A badge that merely adds a fact next to a drawn
+// boundary loses to the boundary: vision beats text. So where a cited EXTENT exceeds what gross-register rendering can
+// show, the badge states that the drawing is known to understate it AND in which direction — 'illustrative' alone
+// implies an unknown error direction, and here it is one-way and known. Keyed by entry, reusable: GBM is the first
+// instance (its diffuseness is drawn as a degree of dissolve, not as spatial extent); perineural spread in PDAC is the
+// next claimant once its extent is read at a citable register.
+export const EXTENT_UNDERSTATED = Object.freeze({
+  gbm: Object.freeze({
+    direction: 'the drawn mass is smaller than the cited extent',
+    statement: 'the source describes the tumour as topographically diffuse, with no capsule — its extent exceeds any boundary this mass shows, and the dissolve at its base depicts that only as a degree',
+    source: 'J Med Life 2009 (PMC3019011)',
+    quote: 'Grossly, it appears topographically diffuse, a poorly delineated mass with no capsula',
+  }),
+});
 // THE RIM-BLEND BAND, shared by the renderer (main.js) and the check so both read one formula: weight 1 at and below
 // the contact plane (−0.2·R along the outward axis), falling by smoothstep to 0 at height 0.35·extent·R.
 export const RIM_BAND = Object.freeze({ contact: -0.2, heightPerExtent: 0.35 });
@@ -391,11 +449,37 @@ export const ORIGIN_HOTSPOT = Object.freeze({
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never
 // a second uncharacterised entry (user ruling). Non-optional. Chip = the short on-model badge;
 // sentence = the accessible name and the info-card text.
-export function marginBadge(entryName, status, category){
+// THE MASS BADGE — margin and growth on one chip, the text naming which property is which and, where applicable,
+// that the drawing is KNOWN TO UNDERSTATE (colour flags, text specifies — ruling D).
+export function massBadge(entryName, marginSt, marginCat, growthSt, growthCat, falloff, understated){
+  const base = marginBadge(entryName, marginSt.status, marginCat, marginSt);
+  if(!base) return null;
+  let chip = base.chip, sentence = base.sentence;
+  if(growthSt && growthSt.status === 'cited' && growthCat){
+    chip += ' \u00b7 growth: ' + growthCat.label + ' \u00b7 cited';
+    sentence += ' Growth: ' + growthCat.label + ', the pattern its cited source describes (' + growthSt.badgeSource + ': "' + growthSt.badgeQuote + '")'
+      + (growthSt.register === 'H' ? ' \u2014 a histologic description, disclosed as such' : '')
+      + '; drawn as the mass\'s boundary dissolving into the organ\'s own colour, its depth illustrative, not measured.';
+    if(falloff && falloff.capped) sentence += ' The dissolve is capped on this placeholder mass so its reserved colour stays legible: a reserved signal outranks an illustrative magnitude.';
+  } else if(growthSt && growthSt.status === 'cited'){
+    sentence += ' Growth: ' + (growthSt.label || 'a cited pattern') + ' is cited (' + growthSt.badgeSource + ') and not drawn \u2014 the growth axis expresses only infiltration so far.';
+  } else if(growthSt && growthSt.status === 'uncharacterised'){
+    sentence += ' Growth: not characterised at gross level in the cited sources.';
+  } else if(growthSt && growthSt.status === 'unread'){
+    sentence += ' Growth: the gross-pathology source is not yet read.';
+  }
+  if(understated) sentence += ' KNOWN TO UNDERSTATE \u2014 ' + understated.direction + ': ' + understated.statement + ' (' + understated.source + ': "' + understated.quote + '").';
+  return { chip, sentence };
+}
+// THE CITATION BELONGS TO THE ENTRY when a category is shared (found 2026-09-09 in the first wired capture: GBM's badge
+// quoted PDAC's source because both wear `poorlyDelineated`). A status may carry its own badgeSource/badgeQuote, which
+// override the category's; the category's pair remains the default for the entry it was first written for.
+export function marginBadge(entryName, status, category, own){
+  const src = own && own.badgeSource ? own : category;
   if(category) return {
     chip: 'margin: ' + category.label + ' \u00b7 cited',
-    sentence: entryName + ' \u2014 margin: ' + category.label + ', the gross category its cited source describes (' + category.badgeSource
-      + ': "' + category.badgeQuote + '")' + (category.divergence ? '; ' + category.divergence : '')
+    sentence: entryName + ' \u2014 margin: ' + category.label + ', the gross category its cited source describes (' + src.badgeSource
+      + ': "' + src.badgeQuote + '")' + (category.divergence ? '; ' + category.divergence : '')
       + '; the drawn magnitude is illustrative, not measured.'
       + (category.sameAppearanceAs ? ' Drawn with the same form as the ' + MARGIN_CATEGORIES[category.sameAppearanceAs].label
          + ' category: the two citations describe one gross appearance, so the distinction is carried here in words, not in shape.' : ''),

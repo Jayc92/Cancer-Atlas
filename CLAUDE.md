@@ -5161,8 +5161,14 @@ refute it, which is worth more than file order.
   RULED 2026-09-09: rim-blend approved; the reserved apex floor measured on a fixture
   and encoded (`RESERVED_APEX`, cap 1.0 for margin-reserved masses); GBM's extent
   as a KNOWN-TO-UNDERSTATE label in a reusable form; composition re-tested as
-  mischaracterised-vs-unexpressed — all four unexpressed, deferral stands. Wiring
-  of infiltrative growth follows. COLD-SESSION ENTRY POINTER: read
+  mischaracterised-vs-unexpressed — all four unexpressed, deferral stands. INFILTRATIVE
+  WIRED (2026-09-09, design §11): growth statuses for all sixteen entries under the
+  fourth property (11 cited / 1 uncharacterised / 4 unread), PDAC and PTC drawn at
+  extent 1.0, GBM at 2.5 — THE GBM HOLD IS LIFTED, its badge stating the drawing is
+  known to understate the cited extent. A class caught in the first capture: when a
+  category is shared, the citation belongs to the entry (GBM's badge had quoted
+  PDAC's source). Next on the growth axis: extent breach, then wall; multifocal when it
+  has a renderable member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin

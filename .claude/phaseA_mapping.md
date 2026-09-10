@@ -1163,3 +1163,12 @@ Proposed the same day and ratified with one change — the one that decides whet
   growth reserve hooks (RESERVED_GROWTH, GROWTH_CATEGORIES empty at birth, growthReservedViolations)
   live in it in fixture form. Earlier entries above keep the old name because it was the name then.
   The ratchet key moved by hand (`reserve_check.categories`, count unchanged, disclosed in the commit).
+- 2026-09-09 (GROWTH AXIS: INFILTRATIVE WIRED; design document §9–§11): rim-blend won the bake-off against
+  the pre-registered criterion (opacity failed as predicted; the organ-side family retired STRUCTURALLY on
+  the 22%-radius reason); the reserved apex floor was measured on a fixture and encoded (RESERVED_APEX,
+  cap 1.0 for margin-reserved masses); GROWTH_STATUS gives every entry a status with backing (11 cited /
+  1 uncharacterised / 4 unread; the stomach's PDQ page backs its status by a live-verified URL);
+  infiltrative (PDAC R2 H-disclosed, PTC R18) and diffuselyInfiltrative (GBM R21) are drawn. THE GBM HOLD
+  IS LIFTED: margin poorlyDelineated under arm 3, growth drawn at the wide extent, the badge stating the
+  drawing is KNOWN TO UNDERSTATE the cited extent. Class found in the first capture and fixed before
+  shipping: a shared margin category's citation belongs to the ENTRY (GBM had quoted PDAC's source).

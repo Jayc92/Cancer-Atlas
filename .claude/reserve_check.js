@@ -113,7 +113,9 @@ function ledgerRecords(){
   const j = JSON.parse(fs.readFileSync(path.join(REPO, '.claude', 'citations.json'), 'utf8'));
   return String(j._phaseA_citations || '').split(/(?<=\.)\s(?=R\d+\s)|\s\|\|\s/);
 }
-const IDENTIFIER = /\b(PMC\d{5,}|PMID:?\s?\d{6,}|NBK\d{4,}|doi:?\s?10\.\d{4,}\/\S+|10\.\d{4,}\/[^\s,;)]+)/i;
+// A resolvable identifier: PMCID, PMID, NBK, DOI — or a URL (2026-09-09: the stomach's growth citation is an NCI PDQ page
+// with no other identifier; a URL resolves by definition and was re-verified live before it backed a status).
+const IDENTIFIER = /\b(PMC\d{5,}|PMID:?\s?\d{6,}|NBK\d{4,}|doi:?\s?10\.\d{4,}\/\S+|10\.\d{4,}\/[^\s,;)]+)|https?:\/\/\S+/i;
 // A 'cited' status is entitled to its claim only if its backing resolves: an identifier in the ref itself, or
 // an R-number in the ref that resolves to a ledger record carrying one. Statuses other than 'cited' make no
 // category claim and are not tested here (their refs record reads or blocks, and may carry identifiers too).
@@ -171,6 +173,8 @@ function liveProblems(M){
   problems.push(...M.reservedApexViolations(M.RESERVED_APEX));   // the reserved apex floor: the band cap for reserved-margin masses sits at a MEASURED extent that meets the floor
   const records = ledgerRecords();
   problems.push(...citedBackingViolations(M.MARGIN_STATUS, records));   // the fourth property: a status claim carries its backing
+  problems.push(...citedBackingViolations(M.GROWTH_STATUS, records).map(p => 'growth: ' + p));   // the fourth property, growth axis
+  problems.push(...M.growthRenderViolations(M.GROWTH_CATEGORIES));   // every wired growth category renders inside its range
   const albedos = tissueAlbedos().concat([M.MASS_COLOUR]);   // the cited-mass tan is a tissue-side colour too
   problems.push(...M.colourViolations(M.RESERVED_COLOUR, albedos, M.RESERVED_COLOUR_RULES));
   const entries = activeEntries();
@@ -181,6 +185,11 @@ function liveProblems(M){
     else if(!M.MARGIN_STATUSES.includes(st.status)) problems.push(`entry ${e.id} carries an unknown margin status '${st.status}'`);
     if(st && st.category && !M.MARGIN_CATEGORIES[st.category]) problems.push(`entry ${e.id} names category '${st.category}', which is not wired`);
     if(st && st.category && st.status !== 'cited') problems.push(`entry ${e.id} carries a category but its status is '${st.status}' — only a cited entry renders a category`);
+    const gs = M.GROWTH_STATUS[e.id];
+    if(!gs) problems.push(`active entry ${e.id} has no growth status`);
+    else if(!M.GROWTH_STATUSES.includes(gs.status)) problems.push(`entry ${e.id} carries an unknown growth status '${gs.status}'`);
+    if(gs && gs.category && !M.GROWTH_CATEGORIES[gs.category]) problems.push(`entry ${e.id} names growth category '${gs.category}', which is not wired`);
+    if(gs && gs.category && gs.status !== 'cited') problems.push(`entry ${e.id} carries a growth category but its status is '${gs.status}'`);
   }
   for(const id of Object.keys(M.MARGIN_STATUS)) if(!ids.has(id)) problems.push(`margin status names '${id}', which is not an active entry`);
   const hs = organHotspots();
@@ -198,9 +207,11 @@ function liveProblems(M){
   for(const hx of albedos){ const c = M.hexToHsl(hx); if(c.s >= M.RESERVED_COLOUR_RULES.achromaticBelow) nearest = Math.min(nearest, M.hueDistance(M.hexToHsl(M.RESERVED_COLOUR).h, c.h)); }
   const shared = Object.values(M.MARGIN_CATEGORIES).filter(c => c.sameAppearanceAs).length;
   const growthCats = Object.keys(M.GROWTH_CATEGORIES).length;
+  const growth = { cited: 0, drawn: 0, uncharacterised: 0, unread: 0 };
+  for(const e of entries){ const gs = M.GROWTH_STATUS[e.id]; if(gs && growth[gs.status] !== undefined) growth[gs.status]++; if(gs && gs.category && M.GROWTH_CATEGORIES[gs.category]) growth.drawn++; }
   const citedIds = entries.filter(e => M.MARGIN_STATUS[e.id] && M.MARGIN_STATUS[e.id].status === 'cited').map(e => e.id);
   const backed = citedIds.filter(id => citedBackingViolations({ [id]: M.MARGIN_STATUS[id] }, records).length === 0).length;
-  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest, shared, citedTotal: citedIds.length, backed, ledger: records.length, growthCats };
+  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest, shared, citedTotal: citedIds.length, backed, ledger: records.length, growthCats, growth };
 }
 
 // ---- condition (7), FIXTURE FORM BY DESIGN (see the header) --------------------------------
@@ -252,6 +263,9 @@ function selftest(M){
   arm('fires on a cited status whose record carries no identifier', citedBackingViolations({ x: { status: 'cited', ref: 'R5 — margin' } }, ledgerFx).length === 1);
   arm('silent on a cited status resolving to an identified record', citedBackingViolations({ x: { status: 'cited', ref: 'R1 — poorly delineated' } }, ledgerFx).length === 0);
   arm('silent on a cited ref carrying its own PMCID, and not testing non-cited statuses', citedBackingViolations({ x: { status: 'cited', ref: 'harvest — (PMC6906820)' }, y: { status: 'unread', ref: 'second tier' } }, ledgerFx).length === 0);
+  // 8r–8s. GROWTH RENDER: a category rendering outside its range fires; the live table is silent.
+  arm('growth: fires when a category renders outside its range', M.growthRenderViolations({ fx: { knob: 'falloff', range: [0.6, 1.4], render: { extent: 2.0 } } }).length > 0);
+  arm('growth: silent on the live categories', M.growthRenderViolations(M.GROWTH_CATEGORIES).length === 0);
   // 8o–8q. THE RESERVED APEX FLOOR: a cap with no fixture measurement fires; a cap whose measurement is below the
   // floor fires; the live declaration is silent.
   arm('apex: fires when the cap has no measurement', M.reservedApexViolations({ floor: 0.3, measured: [[1.0, 0.34]], capForReservedMargin: 2.5 }).length > 0);
@@ -278,17 +292,17 @@ function selftest(M){
   const M = await loadMorphology();
   const selfOnly = process.argv.includes('--selftest');
   if(!selftest(M)){ console.log('reserve_check (née margin_reserve_check): REFUSING to check — selftest failed'); process.exit(2); }
-  if(selfOnly){ console.log('DONE reserve_check_selftest: 26 arms run, 0 failures'); return; }
-  const { problems, entries, counts, organs, albedos, nearest, shared, citedTotal, backed, ledger, growthCats } = liveProblems(M);
+  if(selfOnly){ console.log('DONE reserve_check_selftest: 28 arms run, 0 failures'); return; }
+  const { problems, entries, counts, organs, albedos, nearest, shared, citedTotal, backed, ledger, growthCats, growth } = liveProblems(M);
   for(const p of problems) console.log('  PROBLEM: ' + p);
   const nCat = Object.keys(M.MARGIN_CATEGORIES).length;
   console.log('SIDECAR ' + JSON.stringify({
     name: 'reserve_check',
-    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, cited_backed: backed, cited_total: citedTotal, ledger_records: ledger, growth_categories: growthCats, problems: problems.length },
+    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, cited_backed: backed, cited_total: citedTotal, ledger_records: ledger, growth_categories: growthCats, growth_cited: growth.cited, growth_drawn: growth.drawn, problems: problems.length },
     ratchet: ['categories', 'growth_categories'],
   }));
   console.log(`DONE reserve_check: reserved form on the ${M.RESERVED_AXIS.knob} band [${M.RESERVED_AXIS.band}] unreachable from ${nCat} cited categories (fixture-form (7) by design), `
     + `${entries.length - problems.filter(p => /no margin status|unknown margin status/.test(p)).length}/${entries.length} active entries carry a margin status `
-    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, reserved growth vector unreachable from ${growthCats} cited growth categor${growthCats === 1 ? 'y' : 'ies'} (fixture-form at birth), reserved-margin band cap ${M.RESERVED_APEX.capForReservedMargin} at a measured apex fraction meeting the ${M.RESERVED_APEX.floor} floor, ${problems.length} problems`);
+    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, reserved growth vector unreachable from ${growthCats} cited growth categor${growthCats === 1 ? 'y' : 'ies'} (growth census: ${growth.cited} cited of which ${growth.drawn} drawn, ${growth.uncharacterised} uncharacterised, ${growth.unread} unread), reserved-margin band cap ${M.RESERVED_APEX.capForReservedMargin} at a measured apex fraction meeting the ${M.RESERVED_APEX.floor} floor, ${problems.length} problems`);
   process.exit(problems.length ? 1 : 0);
 })().catch(e => { console.error('reserve_check (née margin_reserve_check): harness error', e); process.exit(2); });

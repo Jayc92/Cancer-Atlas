@@ -8,7 +8,7 @@
   "pointer_check.pointer.pointers": 577,
   "pointer_check.pointer.identity_oracle": 266,
   "reserve_check.categories": 5,
-  "reserve_check.growth_categories": 0
+  "reserve_check.growth_categories": 2
  },
  "lowers": [
   {

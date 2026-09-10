@@ -385,6 +385,40 @@ is re-asked when composition is next counted.
 
 Pointers at six hours: workaround wins, accepted, closed (user).
 
+## 11. Infiltrative wired (2026-09-09) — the first growth categories drawn, the GBM hold lifted
+
+WHAT LANDED. `GROWTH_STATUS` for all sixteen entries, a resolvable identifier on every 'cited' one
+(11 cited, 1 uncharacterised, 4 unread), the citation on the entry and its register disclosed;
+`GROWTH_CATEGORIES.infiltrative` (falloff [0.6, 1.4], extent 1.0 — PDAC on R2, PTC on R18) and
+`diffuselyInfiltrative` ([2.0, 3.0], extent 2.5 — GBM on R21), two categories because the cited
+words differ and carry a difference in extent; rim-blend as the sole channel, the band cap applied
+by identity, the losing channels removed. Cited-but-unwired growth (count, wall, placement) draws
+nothing extra and says so on the badge. The stomach's PDQ citation backs its status by URL — the
+identifier set now admits a URL, and the page was re-verified live first (title, the ledger's
+sentence and the February 21, 2025 update date all match). GBM's margin collapse landed with the
+growth that discharges its hold: margin `poorlyDelineated` under arm 3, growth diffusely
+infiltrative, and the KNOWN-TO-UNDERSTATE statement in the stated direction on its badge.
+
+A DEFECT THE FIRST CAPTURE EXPOSED, fixed before shipping: GBM's badge quoted PDAC's margin source
+("atrophy of flanking pancreatic parenchyma…"), because a margin category carries one citation and
+two entries now share `poorlyDelineated`. The class: WHEN A CATEGORY IS SHARED, THE CITATION BELONGS
+TO THE ENTRY — growth had this right from the start (citation on the status); margin now takes an
+optional per-entry override, GBM carries R21's "a poorly delineated mass with no capsula", and the
+re-captured badge reads it. A wrong source on a served badge is the wrong-figure class; it never
+reached production.
+
+THE LOOK (frozen; `node .claude/capture_organs.js <out> Pancreas Thyroid Brain --port 3082 --freeze`
+at HEAD fae364a with this commit's tree; facts.json holds every badge's chip and text and each
+mass's falloff coverage by identity). BRAIN: the knobbed poorly-delineated mass at the upper right
+dissolves into the brain's red-brown over its lower half and keeps the tan apex — it reads as
+growing out of the parenchyma with no clean boundary; the chip reads "margin: poorly delineated ·
+cited · growth: diffusely infiltrative · cited". PANCREAS: the same dissolve is faint, because the
+pancreas tan and the mass tan nearly coincide — legible as a lump of the gland at its base, not as
+a colour change; recorded as the tan-on-tan limit noted at the bake-off. THYROID: PTC's mass takes
+the dissolve at extent 1.0; FTC's teal placeholder beside it is untouched (growth unread) and its
+badge says so. Coverage by identity: every drawn mass reports channel rimBlend, extent as declared,
+capped false (no live margin-reserved mass carries infiltrative growth yet).
+
 ## 8-old. Rulings requested before code (as first written)
 
 (i) §3(b): is parenchymal diffuseness edge extent (GBM at tier 2) or a distinct treatment
