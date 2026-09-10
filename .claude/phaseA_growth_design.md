@@ -248,6 +248,91 @@ STATUS OF THE FOUR REQUESTS: (i) GBM tier — settled to EDGE pending its falsif
 composition — counted at four, sibling axis, deferred; (iii) colour — ruled, one colour bound
 to the object; (iv) falloff channel — criterion pre-registered, bake-off next.
 
+## 9. The falloff bake-off — run 2026-09-09, verdict by the pre-registered criterion
+
+FIVE CHANNELS BUILT (main.js `applyGrowthFalloff`, dormant behind `FALLOFF_CHANNEL`/`GROWTH_RENDER`):
+`opacity` (the mass turns translucent), three ORGAN-SIDE channels that alter the organ's vertex
+colours in a ring beyond the mass silhouette — `albedoBleed` (toward the mass colour),
+`roughAlbedo` (weaker blend plus a per-vertex roughness rise through a shader injection),
+`darken` (hue-neutral) — and one MASS-SIDE channel, `rimBlend` (the mass stays opaque; its own
+vertex colours take the organ's albedo where it meets the organ and keep the mass colour at the
+apex). Captured on Pancreas (PDAC, AO organ), Brain (GBM at the wide 'diffuse' extent, AO organ,
+with the ruled margin collapse applied TEMPORARILY so a mass existed), Thyroid (PTC, textured, no
+AO) and Lungs (the CROSS-PRODUCT: LUAD's uncharacterised-margin reserved-teal mass given
+infiltrative growth for the capture), from a temporary working-tree wiring never committed.
+
+THREE HARNESS LESSONS PAID FOR BEFORE THE NUMBERS COULD BE TRUSTED. (1) Auto-rotation advances
+between captures, so pixel comparisons across runs were polluted by pose drift; `capture_organs.js`
+gained `--freeze`. (2) `controls.reset()` was the wrong freeze — it restores the CONSTRUCTION pose,
+not the framed default, and three of four masses left the frame (opacity and rimBlend measured
+zero changed pixels: identical to baseline because invisible); the freeze now stops rotation the
+instant the viewer exists. (3) The organ-side channels' COVERAGE, read by identity from
+`userData.growthFalloff` (now in facts.json): at extent 1.0 the ring covered the pancreas head
+entirely (7609/7609 vertices) and at GBM's 2.5 covered 111,411 of the brain's 113,252 — because
+a mass is 22% of the organ's bounding radius, so any ring measured in mass radii is organ-scale.
+The first probe misread this as a frame-conversion bug; the numbers said otherwise (the meshopt
+GLBs are quantised to integer local units with a ~1e-5 scale, and the conversion was right).
+
+LIKE-FOR-LIKE MEASUREMENT (frozen pose, changed = pixel differs from baseline by >6/255 in any
+channel, over the organ's own pixels; hue shift and lightening over changed pixels; teal% = share
+of changed pixels landing in the reserved hue band):
+
+| organ | channel | changed px | of organ | hue shift | teal% | lighter% | spread r90 |
+|---|---|---|---|---|---|---|---|
+| pancreas | opacity | 2049 | 6.0% | 14.7° | 0 | 8 | 27 px |
+| pancreas | albedoBleed | 1131 | 3.3% | 1.6° | 0 | 0 | 28 px |
+| pancreas | darken | 1048 | 3.1% | 0.6° | 0 | 0 | 26 px |
+| pancreas | rimBlend | 1316 | 3.9% | 3.7° | 0 | 85 | 23 px |
+| brain (GBM 2.5) | opacity | 2121 | 6.8% | 16.2° | 0 | 0 | 26 px |
+| brain (GBM 2.5) | albedoBleed | 7993 | 25.7% | 0.9° | 0 | 9 | 67 px |
+| brain (GBM 2.5) | darken | 8147 | 26.2% | 0.5° | 0 | 0 | 65 px |
+| brain (GBM 2.5) | rimBlend | 2208 | 7.1% | 9.3° | 0 | 6 | 62 px |
+| lungs (teal ×-product) | opacity | 1890 | 8.5% | 33.1° | 86 | 0 | 24 px |
+| lungs (teal ×-product) | albedoBleed | 841 | 3.8% | 4.1° | 0 | 0 | 32 px |
+| lungs (teal ×-product) | darken | 756 | 3.4% | 0.7° | 0 | 0 | 33 px |
+| lungs (teal ×-product) | rimBlend | 1346 | 6.0% | 110.2° | 1 | 62 | 23 px |
+
+THE LOOKS (side-by-side 3× crops, baseline left, channel right; /tmp/atlas-verify/bake4/pair_*,
+ephemeral; `node .claude/capture_organs.js <out> Pancreas Brain Lungs --port 3079 --freeze` with
+the temporary wiring): OPACITY — the mass becomes a ghost through which the organ and even a
+marker dot show; on the teal mass 86% of changed pixels land in the reserved hue band — the
+hue-contamination class that killed the glow, as predicted. ORGAN-SIDE (albedoBleed, darken) —
+nothing visible at the crop scale on any organ although a quarter of the brain's pixels moved:
+per-pixel shifts of 0.5–1.6° spread over organ-scale rings; a channel that changes 26% of an
+organ without a reader seeing anything fails (1) and (2) at once, and albedo blend is blind on
+tan-on-tan (pancreas) while bleeding hue where there is contrast. RIMBLEND — pancreas: the mass
+base takes the pancreas tan and the knobbed lump reads as growing out of the gland, subtle
+because the two tans nearly coincide; brain: the lower half of the mass takes the brain's
+red-brown and the apex stays tan — plainly 'merging into the brain'; lungs: the reserved teal
+mass's base takes the lung's pink while its apex stays teal — no teal enters the organ (1%), but
+the organ's colour enters the placeholder.
+
+VERDICT BY THE CRITERION. `opacity` FAILS (translucency reads as lighter tissue; contamination).
+The organ-side channels FAIL: no legible middle exists at the atlas's framing — rings measured
+in mass radii are organ-scale and imperceptible per pixel; rings small enough to be rings are a
+few pixels. `rimBlend` PASSES: (1) the boundary dissolves while the mass stays opaque; (2) no
+organ pixel changes, so 'diseased throughout' is impossible by construction; (3) it lives on the
+mass, so the baked-AO composition on the seven AO organs cannot wash it out, and AgX acts on both
+blended colours alike; (4) the cross-product bleeds nothing INTO the organ. It is the user's
+guessed direction — an albedo blend that keeps the mass opaque and dissolves only its boundary —
+on the mass side rather than the organ side.
+
+TWO QUESTIONS THE BAKE-OFF RAISED, FOR RULING BEFORE WIRING. (a) THE REVERSE CROSS-PRODUCT: may
+a placeholder (uncharacterised-margin) mass wear the ORGAN's albedo at its base when its growth
+is cited infiltrative? The reserved-colour flag survives at the apex and the badge still names
+the uncharacterised property, but the colour's reading weakens; today no live entry has this
+combination (TNBC's growth is a harvest seed), so the question is real but not yet load-bearing.
+(b) GBM: rimBlend carries diffuseness as a DEGREE (a taller dissolved band), not as spatial
+EXTENT — the centimetres-beyond-any-margin fact is not drawn. The pre-registered falsifier
+therefore resolves in its second form: the edge tier carries GBM's boundary character, and the
+extent is a LABELLED statement on the badge, not a visual one. GBM at tier 2 stands with that
+qualification; nothing on the organ is shaded.
+
+WHAT IS COMMITTED: the five channels dormant in main.js (the losers kept until the ruling so the
+captures can be regenerated, then removed), `FALLOFF_CHANNEL = 'rimBlend'` as the recorded
+decision with `GROWTH_RENDER` still EMPTY (no production render changes until the ruling on (a)
+and (b) and the growth-status wiring), and `--freeze` in the capture tool.
+
 ## 8-old. Rulings requested before code (as first written)
 
 (i) §3(b): is parenchymal diffuseness edge extent (GBM at tier 2) or a distinct treatment

@@ -300,6 +300,23 @@ export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cite
 export const GROWTH_KNOBS = Object.freeze(['count', 'falloff', 'protrusion', 'wall']);
 export const RESERVED_GROWTH = Object.freeze({ count: 1, falloff: 0, protrusion: 0, wall: 0 });
 export const GROWTH_CATEGORIES = Object.freeze({});
+// THE INFILTRATIVE FALLOFF — BAKE-OFF STATE (2026-09-09; design document §E). The EDGE mechanism is a MATERIAL
+// transition at the mass–organ junction, and WHICH material channel carries it is decided by a bake-off against a
+// pre-registered criterion, not by a guess: it must read as 'boundary not determinable' (not 'soft boundary'), must
+// not read as 'organ diseased throughout', must survive the baked-AO vertex-colour composition and AgX, and must
+// not bleed the reserved colour into the organ on an uncharacterised-margin mass. The candidates are implemented in
+// main.js (applyGrowthFalloff) and selected here; 'none' is the committed state until the ruling — the channels
+// are DORMANT in production and were exercised by captures made from a temporary working-tree wiring of
+// GROWTH_RENDER, recorded in the design document. Magnitude (extent, in mass radii) is illustrative by the split.
+export const FALLOFF_CHANNELS = Object.freeze(['none', 'opacity', 'albedoBleed', 'roughAlbedo', 'darken', 'rimBlend']);
+// BAKE-OFF RUN 2026-09-09 (design document §9): rimBlend is the one channel that met the criterion — it dissolves the
+// boundary while the mass stays opaque, touches no organ pixel, survives AO and AgX by construction, and bleeds nothing
+// into the organ. opacity failed (ghost tissue, 86% teal contamination on the reserved cross-product); the organ-side
+// channels failed for want of a legible middle (a mass is 22% of the organ radius, so rings in mass radii are organ-
+// scale and imperceptible per pixel). Recorded here as the decision; PRODUCTION IS UNCHANGED while GROWTH_RENDER is
+// empty — wiring waits on two rulings (§9 (a) placeholder base colour, (b) GBM's labelled extent).
+export const FALLOFF_CHANNEL = 'rimBlend';
+export const GROWTH_RENDER = Object.freeze({});   // entryId -> { extent }  — empty until the first growth category is wired
 export function growthReservedViolations(reserved, categories){
   const out = [];
   for(const [name, cat] of Object.entries(categories)){

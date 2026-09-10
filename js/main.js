@@ -14,7 +14,7 @@ import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
-import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge } from './morphology.js';
+import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, FALLOFF_CHANNEL, GROWTH_RENDER } from './morphology.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -201,6 +201,120 @@ function hotspotPosition(h, detail){
   return new THREE.Vector3(d.x*detail.hotspotScale.x*1.04, d.y*detail.hotspotScale.y*1.04, d.z*detail.hotspotScale.z*1.04);
 }
 
+// GROWTH FALLOFF CHANNELS — the bake-off candidates (2026-09-09, design document §E). Dormant in production: the
+// committed FALLOFF_CHANNEL is 'none' and GROWTH_RENDER is empty until the ruling on the channel. Every channel
+// touches the ORGAN SURFACE around the mass (its vertex colours, or its roughness through a shader injection) —
+// never the mass's silhouette, which is the margin axis's channel — except 'opacity', which touches the mass and
+// is included because it is the obvious candidate and the user pre-registered the expectation that it fails.
+//   opacity     — the mass turns translucent (the 'obvious' candidate)
+//   albedoBleed — organ vertex colours within the extent blend toward the mass colour
+//   roughAlbedo — a weaker albedo blend plus a roughness rise in the same zone (per-vertex, via onBeforeCompile)
+//   darken      — hue-neutral: organ vertex colours darken toward the junction; no mass hue leaves the mass
+//   rimBlend    — MASS-SIDE: the mass stays opaque, its own vertex colours take the ORGAN's colour where it meets
+//                 the organ (the contact rim) and keep the mass colour at the apex, so the boundary dissolves
+//                 without translucency and without any mass hue entering the organ (no bleed on a reserved mass)
+// The extent is in mass radii, illustrative by the split. Identity: touched organ meshes get userData.growthFalloff.
+function ensureVertexColours(mesh){
+  const geo = mesh.geometry;
+  if(!geo.getAttribute('color')){
+    const n = geo.getAttribute('position').count, c = new Float32Array(n * 3).fill(1);
+    geo.setAttribute('color', new THREE.BufferAttribute(c, 3));
+  }
+  if(!mesh.material.vertexColors){ mesh.material.vertexColors = true; mesh.material.needsUpdate = true; }
+}
+function installRoughnessInjection(material){
+  if(material.userData.roughnessInjected) return;
+  material.userData.roughnessInjected = true;
+  material.onBeforeCompile = (shader)=>{
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nattribute float aFalloff;\nvarying float vFalloff;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvFalloff = aFalloff;');
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying float vFalloff;')
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor, 0.95, clamp(vFalloff, 0.0, 1.0));');
+  };
+  material.customProgramCacheKey = ()=>'growth-falloff-roughness';
+  material.needsUpdate = true;
+}
+const smooth01 = (t)=>{ t = Math.min(1, Math.max(0, t)); return t*t*(3-2*t); };
+// GEOMETRY OF THE ZONE (corrected after the first captures): the falloff is a RING on the organ surface BEYOND the
+// mass silhouette — full weight where the surface meets the mass (distance ≈ massR from the mass centre), fading to
+// zero at massR·(1 + extent). Measured from the centre alone, a 1.3-radius zone covered only the surface UNDER the
+// mass and a ring three pixels wide: 95 changed pixels on the pancreas, invisible. `extent` is therefore the ring's
+// width in mass radii, and the mass position is read after the scene's matrices are current.
+const albedoCache = new WeakMap();
+function organAlbedo(material){
+  if(albedoCache.has(material)) return albedoCache.get(material);
+  const c = material.color.clone();
+  const img = material.map && material.map.image;
+  if(img && img.width && img.height){
+    try{
+      const cv = document.createElement('canvas'); cv.width = 16; cv.height = 16;
+      const ctx = cv.getContext('2d'); ctx.drawImage(img, 0, 0, 16, 16);
+      const d = ctx.getImageData(0, 0, 16, 16).data; let r = 0, g = 0, b = 0;
+      for(let i = 0; i < d.length; i += 4){ r += d[i]; g += d[i+1]; b += d[i+2]; }
+      const n = d.length / 4, tex = new THREE.Color(r / n / 255, g / n / 255, b / n / 255).convertSRGBToLinear();
+      c.multiply(tex);
+    }catch(e){ /* a cross-origin or not-yet-decoded image: fall back to material.color */ }
+  }
+  albedoCache.set(material, c);
+  return c;
+}
+function applyGrowthFalloff(viewer, mass, spec, channel){
+  if(!spec || !channel || channel === 'none') return;
+  viewer.scene.updateMatrixWorld(true);
+  mass.geometry.computeBoundingSphere();
+  const massR = mass.geometry.boundingSphere.radius, R0 = massR, Rf = massR * (1 + (spec.extent || 1.0));
+  if(channel === 'opacity'){ mass.material.transparent = true; mass.material.opacity = 0.55; return; }
+  if(channel === 'rimBlend'){
+    // THE ORGAN'S ALBEDO AT THE JUNCTION. A material with no texture carries it in material.color; a textured scan
+    // (lungs, thyroid, stomach, colon) carries it in the texture and its material.color is WHITE — the first capture
+    // blended the lungs' reserved mass toward white for exactly that reason. So: colour × the texture's mean, the
+    // mean taken once per material from the image itself (linear working space, like the vertex colours).
+    let organColour = null;
+    viewer.scene.traverse(o=>{ if(organColour) return; if(o.isMesh && o.name !== 'phaseA-mass' && !/^ground/.test(o.name || '') && o.material && (o.material.isMeshPhysicalMaterial || o.material.isMeshStandardMaterial)) organColour = organAlbedo(o.material); });
+    if(!organColour) return;
+    const geo = mass.geometry, pos = geo.getAttribute('position'), n = pos.count, cols = new Float32Array(n * 3);
+    const outward = mass.userData.phaseA && mass.userData.phaseA.outward ? mass.userData.phaseA.outward : new THREE.Vector3(0, 1, 0);
+    const mc = mass.material.color, height = massR * (spec.extent || 1.0) * 0.35;   // the dissolved band's height above the contact plane (0.6 covered nearly the whole visible mass on the pancreas)
+    for(let i = 0; i < n; i++){
+      const hgt = pos.getX(i) * outward.x + pos.getY(i) * outward.y + pos.getZ(i) * outward.z;   // signed height along the outward axis
+      const w = hgt <= -0.2 * massR ? 1 : 1 - smooth01((hgt + 0.2 * massR) / (height + 0.2 * massR));  // 1 at/below the contact plane → 0 at `height`
+      cols[i*3] = mc.r + (organColour.r - mc.r) * w; cols[i*3+1] = mc.g + (organColour.g - mc.g) * w; cols[i*3+2] = mc.b + (organColour.b - mc.b) * w;
+    }
+    geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+    mass.material.color.setRGB(1, 1, 1); mass.material.vertexColors = true; mass.material.needsUpdate = true;
+    mass.userData.growthFalloff = { channel, extent: spec.extent || 1.0 };
+    return;
+  }
+  const target = mass.material.color;   // linear working space, like the vertex colours
+  const tmpM = new THREE.Matrix4(), local = new THREE.Vector3();
+  viewer.scene.traverse(o=>{
+    if(!o.isMesh || o.name === 'phaseA-mass' || /^ground/.test(o.name || '')) return;
+    if(!(o.material && (o.material.isMeshPhysicalMaterial || o.material.isMeshStandardMaterial))) return;   // unlit markers excluded
+    ensureVertexColours(o);
+    o.updateMatrixWorld(true);
+    tmpM.copy(o.matrixWorld).invert(); local.copy(mass.position).applyMatrix4(tmpM);
+    const sc = o.matrixWorld.getMaxScaleOnAxis(), RfLocal = Rf / sc, R0Local = R0 / sc;
+    const geo = o.geometry, pos = geo.getAttribute('position'), col = geo.getAttribute('color');
+    let fall = geo.getAttribute('aFalloff');
+    if(channel === 'roughAlbedo' && !fall){ fall = new THREE.BufferAttribute(new Float32Array(pos.count), 1); geo.setAttribute('aFalloff', fall); }
+    let touched = 0;
+    for(let i = 0; i < pos.count; i++){
+      const d = Math.hypot(pos.getX(i) - local.x, pos.getY(i) - local.y, pos.getZ(i) - local.z);
+      if(d >= RfLocal) continue;
+      const w = d <= R0Local ? 1 : 1 - smooth01((d - R0Local) / (RfLocal - R0Local));   // 1 at the mass edge → 0 at the ring's outer rim
+      const r = col.getX(i), g = col.getY(i), b = col.getZ(i);
+      if(channel === 'albedoBleed'){ const k = 0.85 * w; col.setXYZ(i, r + (target.r - r) * k, g + (target.g - g) * k, b + (target.b - b) * k); }
+      else if(channel === 'roughAlbedo'){ const k = 0.55 * w; col.setXYZ(i, r + (target.r - r) * k, g + (target.g - g) * k, b + (target.b - b) * k); fall.setX(i, Math.max(fall.getX(i), w)); }
+      else if(channel === 'darken'){ const k = 1 - 0.45 * w; col.setXYZ(i, r * k, g * k, b * k); }
+      touched++;
+    }
+    if(touched){ col.needsUpdate = true; if(fall) fall.needsUpdate = true; o.userData.growthFalloff = { channel, touched, extent: spec.extent || 1.0 }; }
+    if(channel === 'roughAlbedo'){ if(!fall){ geo.setAttribute('aFalloff', new THREE.BufferAttribute(new Float32Array(pos.count), 1)); } installRoughnessInjection(o.material); }
+  });
+}
+
 function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadius, container){
   const idx = ORIGIN_HOTSPOT[organKey];
   const h = detail.hotspots[idx];
@@ -227,7 +341,7 @@ function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadiu
     // never claimed (the lit-face fidelity measurement reads identity, not geometry — condition (3)).
     const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: category ? MASS_COLOUR : RESERVED_COLOUR, roughness: 0.55, specularIntensity: 0.25 }));
     mesh.name = 'phaseA-mass';
-    mesh.userData.phaseA = { reserved: !category, margin: category ? category.label : 'reserved', entry: entry.id };
+    mesh.userData.phaseA = { reserved: !category, margin: category ? category.label : 'reserved', entry: entry.id, outward: outward.clone() };
     // Straddle the surface at the origin structure (the cheap extent read: the depth buffer hides
     // the inside portion). A second entry on the same organ sits beside the first along a tangent.
     // 0.6, from 0.35: at 0.35 the first wired mass (PTC) sat mostly behind its gland at the default
@@ -240,6 +354,7 @@ function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadiu
     }
     mesh.position.copy(pos);
     viewer.scene.add(mesh);
+    applyGrowthFalloff(viewer, mesh, GROWTH_RENDER[entry.id], FALLOFF_CHANNEL);   // dormant: GROWTH_RENDER is empty until the ruling
     const el = document.createElement('div');
     el.className = 'tumour-badge';
     el.textContent = badge.chip;

@@ -29,6 +29,11 @@ const { spawn } = require('child_process');
 const REPO = path.resolve(__dirname, '..');
 
 const argv = process.argv.slice(2);
+// --freeze (2026-09-09): stop the organ viewer's auto-rotation before the screenshot, so two captures of one organ
+// differ only in what changed in the tree. Without it the pose drifts with load timing (0.0016 rad/frame), which
+// polluted the first falloff bake-off's pixel comparisons with rotation jitter. The default pose is unchanged;
+// only its advance is frozen. Recorded in facts.json as frozen:true so a record says which kind of capture it was.
+const freezeIdx = argv.indexOf('--freeze'); const FREEZE = freezeIdx >= 0; if (FREEZE) argv.splice(freezeIdx, 1);
 const portIdx = argv.indexOf('--port');
 const PORT = portIdx >= 0 ? argv.splice(portIdx, 2)[1] : '3062';
 const OUT = argv.shift();
@@ -44,6 +49,7 @@ fs.mkdirSync(OUT, { recursive: true });
     headless: 'new', args: ['--use-gl=angle', '--enable-webgl', '--window-size=1400,940'],
   });
   const facts = { commit: null, organs: {}, errors: [] };
+  facts.frozen = FREEZE;
   try {
     try { facts.commit = require('child_process').execSync('git rev-parse --short HEAD', { cwd: REPO }).toString().trim(); } catch { facts.commit = 'unknown'; }
     const page = await browser.newPage();
@@ -59,13 +65,28 @@ fs.mkdirSync(OUT, { recursive: true });
         if (!row) return false; row.click(); return true;
       }, organ);
       if (!clicked) { facts.organs[organ] = { error: 'no sidebar row matched' }; continue; }
+      if (FREEZE) {
+        // Stop auto-rotation THE MOMENT the organ viewer exists, before any frame advances it, so the capture is
+        // the framed default pose with zero rotation. (controls.reset() was tried and rejected: it restores the
+        // construction pose, not the framed one — three of four masses left the frame.) Polled, because the
+        // viewer is created asynchronously after the sidebar click.
+        for (let i = 0; i < 60; i++) {
+          const done = await page.evaluate(async () => { const { state } = await import('./js/state.js'); const v = state.organViewer; if (v && v.controls) { v.controls.autoRotate = false; return true; } return false; });
+          if (done) break;
+          await new Promise(r => setTimeout(r, 50));
+        }
+      }
       await new Promise(r => setTimeout(r, 4500));   // GLB load + framing + first frames
+      if (FREEZE) await page.evaluate(async () => { const { state } = await import('./js/state.js'); if (state.organViewer && state.organViewer.controls) state.organViewer.controls.autoRotate = false; });
       facts.organs[organ] = await page.evaluate(() => ({
         badges: [...document.querySelectorAll('.tumour-badge')].map(b => ({ text: b.textContent, aria: b.getAttribute('aria-label') })),
         markers: document.querySelectorAll('.organ-point').length,
       }));
       const wrap = await page.$('#organViewerWrap');
       const file = path.join(OUT, organ.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.png');
+      // growth-falloff coverage, read by identity from the organ meshes' userData (bake-off evidence)
+      const falloff = await page.evaluate(async () => { const { state } = await import('./js/state.js'); const out = []; if (state.organViewer) state.organViewer.scene.traverse(o => { if (o.isMesh && o.userData && o.userData.growthFalloff) out.push({ name: o.name || '(unnamed)', vertices: o.geometry.getAttribute('position').count, ...o.userData.growthFalloff }); }); return out; });
+      if (falloff.length) facts.organs[organ] = Object.assign(facts.organs[organ] || {}, { growthFalloff: falloff });
       await wrap.screenshot({ path: file, captureBeyondViewport: false });
       facts.organs[organ].png = path.basename(file);
     }

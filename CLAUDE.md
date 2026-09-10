@@ -5113,7 +5113,13 @@ refute it, which is worth more than file order.
   object, falloff channel by bake-off against a pre-registered criterion;
   BUILD ORDER FLIPPED — infiltrative falloff first (multifocal has ZERO
   renderable members today), then extent breach, then wall; the growth reserve
-  hooks exist in `reserve_check` in fixture form. COLD-SESSION ENTRY POINTER: read
+  hooks exist in `reserve_check` in fixture form. THE FALLOFF BAKE-OFF RAN
+  (design document §9): rimBlend — the mass keeps its colour at the apex and
+  takes the organ's albedo where it meets the organ — is the one channel that
+  met the pre-registered criterion; opacity and every organ-side channel failed
+  on measurement. Dormant in production pending two rulings: whether a
+  placeholder mass may wear the organ albedo at its base, and GBM's extent as a
+  labelled statement. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin
