@@ -108,6 +108,25 @@
 # WHAT IT COSTS TO OBEY: one `git status --porcelain --untracked-files=all` before the gate run, and if
 # it is not empty, either stage the file or move it out of the tree and run again.
 #
+# THE OTHER HALF OF THE SAME PRINCIPLE IS NOT A JUDGEMENT CALL, AND IS MECHANISED (2026-09-10, user:
+# "the gate reads the working tree, not the index" — the fourth accidental invariant again, a property
+# holding by habit rather than enforcement). An UNTRACKED file is ambiguous (draft, or forgotten?), which is
+# why the paragraph above stops at a human pre-check. A TRACKED file with unstaged changes has no such
+# ambiguity: there is no legitimate reason a real edit to a file already in the index should silently not
+# count, and every prior commit here only avoided this because staging happened to be complete, not because
+# anything enforced it. INCIDENT: db195f0 staged 2 of 7 changed files; the gate read the working tree (all 7
+# edits applied on disk) and passed; the commit captured the other 5 files' PREVIOUS content. Checked out
+# clean, db195f0 alone fails its own battery. Fixed forward as b9e1c60, disclosed in its message.
+# THE TELL WAS PRINTED AND MISREAD, the third time in this project information failed to be read because it
+# did not change a verdict (two label overlaps inside a check count; three record defects inside a flag
+# count; five unstaged files inside a `git status --porcelain` line read as noise). A line that reports
+# state without gating it stops being read. So this does not print and wait for a human to notice — it
+# refuses, before the gate even runs, so a five-minute battery is never wasted on a tree that cannot be
+# committed as intended anyway. `.claude/refusals.log` is exempt: this script itself leaves it tracked-but-
+# unstaged between a refusal and the next successful commit BY DESIGN (see "THE REFUSAL LOG RIDES ALONG"
+# below) — refusing on its own designed staleness would make a repo that has ever refused once unable to
+# ever commit again.
+#
 # Condition (7) at birth: --selftest builds a scratch git repo in TMPDIR and proves both arms
 # against real commits — a gate printing no marker leaves the repo with ZERO new commits, and
 # a gate printing one produces a message containing that line verbatim. A tool whose job is
@@ -149,6 +168,16 @@ WRAPPER="$(cd "$(dirname "$0")" && pwd)/run_checked.sh"
 do_commit() {
   # $1 subject, $2 marker, rest: gate command
   subject="$1"; marker="$2"; shift 2
+  # GATE THE TREE YOU'RE COMMITTING, TRACKED HALF (2026-09-10): refuse before running the gate at
+  # all if any TRACKED file has unstaged changes — the gate is about to certify disk, and disk is
+  # not what `git commit` is about to capture unless every such file is staged first.
+  unstaged="$(git diff --name-only -- . ':!.claude/refusals.log')"
+  if [ -n "$unstaged" ]; then
+    echo "COMMIT_CHECKED: tracked file(s) have unstaged changes — the gate would verify disk, not" >&2
+    echo "what this commit would capture. Stage them or revert them, then retry. REFUSING TO COMMIT:" >&2
+    echo "$unstaged" | sed 's/^/    /' >&2
+    return 3
+  fi
   out="$(mktemp)"
   if ! sh "$WRAPPER" "$marker" "$@" >"$out" 2>&1; then
     cat "$out"
@@ -301,11 +330,41 @@ if [ "${1:-}" = "--selftest" ]; then
     echo "  FAIL the refusal log was not carried into the commit"; ok=0
   fi
 
+  # arm 8: a tracked file with unstaged changes refuses BEFORE the gate even runs — proven by a
+  # sentinel the gate command would create, absent after the refusal, not just by the commit count.
+  base8="$(git rev-list --count HEAD)"
+  echo change8 >> f.txt   # tracked (seeded at repo init), left unstaged on purpose
+  rm -f gate_ran.marker
+  do_commit "should not land, unstaged tracked file" "DONE test:" \
+    sh -c 'touch gate_ran.marker; echo "DONE test: 1 checked"' >/dev/null 2>&1
+  if [ "$(git rev-list --count HEAD)" = "$base8" ] && [ ! -f gate_ran.marker ]; then
+    echo "  ok   refuses on an unstaged tracked file, before running the gate (no commit, gate never ran)"
+  else
+    echo "  FAIL committed with an unstaged tracked file present, or ran the gate anyway"; ok=0
+  fi
+  git checkout -q -- f.txt   # discard arm 8's unstaged edit so later arms see a clean f.txt
+
+  # arm 9: the refusals.log EXEMPTION survives once the log is tracked, not just the first time it's
+  # created (arm 7 already committed it, tracking it); leave it unstaged-modified the way a real second
+  # refusal would, then confirm a real, fully-staged change still commits — the exemption must not
+  # regress into "a repo that has ever refused once can never commit again".
+  echo "==== REFUSAL 2026-01-02T00:00:00Z reason=exit=3 marker=\"DONE y:\" tool=z" >> .claude/refusals.log
+  base9="$(git rev-list --count HEAD)"
+  echo change9 >> f.txt; git add f.txt
+  do_commit "should land despite tracked-but-unstaged refusals.log" "DONE test:" \
+    sh -c 'echo "DONE test: 1 checked"' >/dev/null 2>&1
+  if [ "$(git rev-list --count HEAD)" != "$base9" ]; then
+    echo "  ok   a tracked-but-unstaged refusals.log does not block a real commit (exemption survives past its first write)"
+  else
+    echo "  FAIL the refusals.log exemption regressed — a legitimate commit was blocked"; ok=0
+  fi
+
   cd "$DIR" || exit 2
   rm -rf "$scratch" "$RUN_CHECKED_REFUSAL_LOG"
   if [ $ok -eq 1 ]; then
     echo "SELFTEST PASS — refuses on no-marker, non-zero exit and prose-only output; quotes both "\
-"DONE forms verbatim and no prose; carries the refusal log"
+"DONE forms verbatim and no prose; carries the refusal log; refuses an unstaged tracked file before "\
+"the gate runs, exempting refusals.log's own designed staleness"
     exit 0
   fi
   echo "SELFTEST FAIL — do not trust commits made through this script"

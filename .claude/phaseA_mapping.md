@@ -1263,3 +1263,24 @@ Proposed the same day and ratified with one change — the one that decides whet
     downloads) — cleared of the personal-medical-data concern, reported to Joe. Phase A CLOSED
     (phaseA_closeout.md); Phase B OPENED (phaseB_design.md) — build-time/runtime plus the
     provenance-schema question, ruling requested, nothing built.
+- 2026-09-10 (the staging error generalised; the audit given a trigger; density and schema
+    recorded): commit_checked.sh now REFUSES before running the gate at all when a tracked file
+    carries unstaged changes (git diff --name-only, .claude/refusals.log exempted since it is
+    left tracked-but-unstaged BY DESIGN between a refusal and the next successful commit) --
+    the mechanical half of "gate the tree you're committing" that the untracked-file half was
+    always going to stay a human pre-check for; two new selftest arms (refuses before the gate
+    runs; the refusals.log exemption survives past its first write), both run, plus a live
+    negative control on this repo itself (caught its own author's unstaged edit to
+    commit_checked.sh mid-session, restored). The coupling-audit method got a fifth convention
+    (E) in battery.py's instrument-authoring block: writing or editing a selftest now means
+    running the method, pointing back at CLAUDE.md rather than duplicating it. The
+    reserved-density semantic-drift question (two permanently-teal masses per crowded organ
+    reading as its own tumour category, not an absence of knowledge) is recorded as sized and
+    explicitly deferred to Phase C -- not solved here. phaseA_extent_design.md's Breslow
+    provenance-schema proposal amended BEFORE any build: retrieval fields (endpoint, retrievedDate,
+    discipline) alone would rebuild this project's own defect history at Phase C/D scale, so
+    five meaning fields (measures, register, population, vintage, licensedAssertions) were added,
+    each traced to a specific defect this project already found (scope drift, denominator
+    transplants, certainty drift, the gross/histologic register mismatch, stage-read-as-growth,
+    a SEER entity broader than its entry). No detector, schema, or fetch code touched -- ruling
+    still requested on phaseB_design.md as a whole.

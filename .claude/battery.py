@@ -108,7 +108,7 @@
 # READ THIS BEFORE WRITING A NEW INSTRUMENT, OR A NEW MATCHER (user ruling, 2026-09-07 — the
 # LOCATION is the ruling, not only the contents).
 #
-# FOUR CONVENTIONS LIVE HERE, and they are here TOGETHER on purpose:
+# FIVE CONVENTIONS LIVE HERE, and they are here TOGETHER on purpose:
 #
 #   A. THE SIDECAR CONVENTION — how an instrument reports numbers that a machine will read.
 #   B. THE SCRATCH-PATH RULE — what a tool that OWNS A FILE needs on its first commit.
@@ -116,6 +116,8 @@
 #      family of such matchers enumerated and each member's status.
 #   D. THE BARE-CWD RULE — an instrument may not depend on anything the wrapper supplies beyond what
 #      it declares (its marker, its argv), and bare-cwd execution is how that is proven.
+#   E. THE SELF-TEST COUPLING TRIGGER — a new or edited selftest()/live-run self-check gets the
+#      coupling-audit method run against it before it ships, not added to a list nobody revisits.
 #
 # WHY HERE AND NOT IN CLAUDE.md, which is the other obvious home: the test is WHO NEEDS IT AND
 # WHEN. CLAUDE.md is read before touching the project at all. A, B and C are needed at a narrower
@@ -586,6 +588,36 @@
 #   zero — so the three that passed green over nothing now REFUSE an empty corpus (exit 3), the form
 #   fraction_check already had. deploy_check (post-push) also runs from BARE_CWD and earns the same proof
 #   on its next run. A NEW MEMBER earns it on its first battery run, which is the point of the location.
+# ==================================================================================================
+#
+# ==================================================================================================
+# E. THE SELF-TEST COUPLING TRIGGER (user ruling, 2026-09-10 — a manual method needs an owner and a
+# moment, or it is the liver-share gap: an instruction to a human with no trigger and no date).
+#
+#   CHECK-VALIDATED-BY-DEFECT is the fourth accidental invariant (CLAUDE.md, "THE COUPLING AUDIT
+#   NEEDED ITS OWN POSITIVE CONTROL"): a self-test whose positive control is live/production data
+#   rather than a synthetic or frozen fixture is validated BY the defect it exists to find, and goes
+#   quiet — not merely fails, quiet — the moment the defect is fixed, which is exactly backwards for
+#   a project that is supposed to get stricter as it improves. `citation_crosscheck.py`'s live
+#   known-positive assertion was this bug, live, for as long as two real author-field defects existed.
+#
+#   DECLINED AS A BATTERY MEMBER, ON PURPOSE, AND THE REASON GENERALISES: every real candidate the
+#   audit's own detector raised needed a human read to clear (8 of 10 were an unrelated, already-
+#   understood pattern; the other 2 were the crosscheck's own fix, which no structural check can tell
+#   apart from the bug it replaced — the difference is that the asserted condition's truth is
+#   guaranteed by a SYNTHETIC probe value, not by a corpus property, and that is a fact about the
+#   assert's logic, not its inputs). A gate that emits judgement calls is a queue of judgements,
+#   which is a tolerated count waiting to be born — the exact defect class `.claude/tolerated.py` was
+#   built to retire. Building this into an instrument would recreate it one door down.
+#
+#   THE TRIGGER, so the manual method has an owner and a moment instead of sitting on a list: WRITING
+#   OR EDITING A `def selftest()` (or any live-run assertion that checks a tool's own capability
+#   rather than reporting a real finding) MEANS RUNNING THE COUPLING-AUDIT METHOD before it ships —
+#   plant or reuse a disguised synthetic fixture (a live-corpus-coupled assert with no "known positive"
+#   phrasing, outside any selftest() body, since both properties defeat a naive check), confirm the
+#   broadened one-hop data-flow detector catches it, then read whatever it flags on the real file by
+#   hand. Method, fixture shape and full worked example are in CLAUDE.md at the section named above;
+#   not duplicated here, per this block's own "one home, not two."
 # ==================================================================================================
 #
 # WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
