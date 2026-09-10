@@ -1178,3 +1178,24 @@ Proposed the same day and ratified with one change — the one that decides whet
   IS LIFTED: margin poorlyDelineated under arm 3, growth drawn at the wide extent, the badge stating the
   drawing is KNOWN TO UNDERSTATE the cited extent. Class found in the first capture and fixed before
   shipping: a shared margin category's citation belongs to the ENTRY (GBM had quoted PDAC's source).
+- 2026-09-10 (EXTENT TO TEXT — EXT2, the per-site read; design document `.claude/phaseA_extent_design.md` §8): SEER
+  Cancer Stat Facts, 'Percent of Cases by Stage at Diagnosis', public domain, one page per site, fourteen pages for
+  sixteen entries (ovary covers HGSOC and OCCC; thyroid covers PTC and FTC). Recorded per entry in morphology.js
+  `EXTENT_STATUS` with the SEER entity named where it is broader than the entry, the registry set and diagnosis
+  years as the vintage, and the date the page was followed; carried on every mass badge as a PRIMARY, DETECTION-
+  FRAMED extent line ('found at diagnosis', never 'spreads'). The testis page publishes no distribution → extent
+  uncharacterised for seminoma. VERIFIED-QUOTED shares:
+    pancreas: localized 15%, regional 28%, distant 51%, unknown 5% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/pancreas.html verified 2026-09-10
+    melanoma of the skin: localized 77%, regional 10%, distant 5%, unknown 9% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/melan.html verified 2026-09-10
+    brain and other nervous system: localized 77%, regional 14%, distant 2%, unknown 7% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/brain.html verified 2026-09-10
+    female breast: localized 64%, regional 27%, distant 6%, unknown 2% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/breast.html verified 2026-09-10
+    colon and rectum: localized 34%, regional 37%, distant 23%, unknown 6% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/colorect.html verified 2026-09-10
+    kidney and renal pelvis: localized 66%, regional 17%, distant 15%, unknown 3% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/kidrp.html verified 2026-09-10
+    liver and intrahepatic bile duct: localized 45%, regional 23%, distant 21%, unknown 10% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/livibd.html verified 2026-09-10
+    lung and bronchus: localized 24%, regional 21%, distant 51%, unknown 4% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/lungb.html verified 2026-09-10
+    ovary: localized 22%, regional 18%, distant 54%, unknown 6% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/ovary.html verified 2026-09-10
+    prostate: localized 69%, regional 14%, distant 9%, unknown 8% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/prost.html verified 2026-09-10
+    stomach: localized 32%, regional 23%, distant 35%, unknown 9% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/stomach.html verified 2026-09-10
+    testis: no stage-at-diagnosis distribution on the page (https://seer.cancer.gov/statfacts/html/testis.html, checked 2026-09-10)
+    thyroid: localized 63%, regional 31%, distant 3%, unknown 3% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/thyro.html verified 2026-09-10
+    urinary bladder: in situ 50%, localized 34%, regional 7%, distant 6%, unknown 3% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/urinb.html verified 2026-09-10

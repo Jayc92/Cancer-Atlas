@@ -367,6 +367,48 @@ export const GROWTH_STATUS = Object.freeze({
   ftc:      { status: 'unread', ref: 'growth source not read' },
 });
 
+// THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
+// DISTRIBUTION and the atlas draws one illustrative mass, so geometry shows one state where the source gives several;
+// the default confined mass already reads as the localized case. Every mass badge therefore carries a PRIMARY extent
+// line (not an exception marker): the SEER Summary Stage shares at diagnosis for the entry's SITE, DETECTION-FRAMED —
+// 'found at diagnosis', never 'spreads' (stage at diagnosis measures screening and symptom onset as much as behaviour;
+// 'usually spreads beyond the organ' is the trimmed version that will suggest itself and is false to the source) — with
+// the SEER entity named where it is broader than the entry, the registry set and diagnosis years (the vintage), the
+// submission where the page states it, and the date the page was followed. Source: SEER Cancer Stat Facts, public
+// domain; never AJCC (licensed). The reader-side argument (user): the render must not depict a stage the reader might
+// not have — text can correct a conservative picture upward, but a frightening one cannot be unseen.
+export const EXTENT_STATUSES = Object.freeze(['uncharacterised', 'cited']);
+export const EXTENT_STATUS = Object.freeze({
+  pdac: { status: 'cited', site: 'pancreas', siteNote: 'the site as a whole (pancreatic cancer), of which ductal adenocarcinoma is the large majority', shares: { localized: 15, regional: 28, distant: 51, unknown: 5 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Pancreatic Cancer', ref: 'https://seer.cancer.gov/statfacts/html/pancreas.html — verified 2026-09-10' },
+  melanoma: { status: 'cited', site: 'melanoma of the skin', siteNote: 'melanoma of the skin — the entry itself', shares: { localized: 77, regional: 10, distant: 5, unknown: 9 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Melanoma of the Skin', ref: 'https://seer.cancer.gov/statfacts/html/melan.html — verified 2026-09-10' },
+  gbm: { status: 'cited', site: 'brain and other nervous system', siteNote: 'brain and other nervous system cancers as a whole, not glioblastoma alone', shares: { localized: 77, regional: 14, distant: 2, unknown: 7 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Brain and Other Nervous System Cancer', ref: 'https://seer.cancer.gov/statfacts/html/brain.html — verified 2026-09-10' },
+  tnbc: { status: 'cited', site: 'female breast', siteNote: 'female breast cancer as a whole, not the triple-negative subtype', shares: { localized: 64, regional: 27, distant: 6, unknown: 2 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Female Breast Cancer', ref: 'https://seer.cancer.gov/statfacts/html/breast.html — verified 2026-09-10' },
+  crc: { status: 'cited', site: 'colon and rectum', siteNote: 'colon and rectum cancers as a whole', shares: { localized: 34, regional: 37, distant: 23, unknown: 6 }, modal: 'regional', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Colorectal Cancer', ref: 'https://seer.cancer.gov/statfacts/html/colorect.html — verified 2026-09-10' },
+  ccrcc: { status: 'cited', site: 'kidney and renal pelvis', siteNote: 'kidney and renal pelvis cancers as a whole, not clear-cell carcinoma alone', shares: { localized: 66, regional: 17, distant: 15, unknown: 3 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Kidney and Renal Pelvis Cancer', ref: 'https://seer.cancer.gov/statfacts/html/kidrp.html — verified 2026-09-10' },
+  hcc: { status: 'cited', site: 'liver and intrahepatic bile duct', siteNote: 'liver and intrahepatic bile duct cancers as a whole, not hepatocellular carcinoma alone', shares: { localized: 45, regional: 23, distant: 21, unknown: 10 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Liver and Intrahepatic Bile Duct Cancer', ref: 'https://seer.cancer.gov/statfacts/html/livibd.html — verified 2026-09-10' },
+  luad: { status: 'cited', site: 'lung and bronchus', siteNote: 'lung and bronchus cancers as a whole, not adenocarcinoma alone', shares: { localized: 24, regional: 21, distant: 51, unknown: 4 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Lung and Bronchus Cancer', ref: 'https://seer.cancer.gov/statfacts/html/lungb.html — verified 2026-09-10' },
+  hgsoc: { status: 'cited', site: 'ovary', siteNote: 'ovarian cancer as a whole, not the high-grade serous subtype alone', shares: { localized: 22, regional: 18, distant: 54, unknown: 6 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Ovarian Cancer', ref: 'https://seer.cancer.gov/statfacts/html/ovary.html — verified 2026-09-10' },
+  clear: { status: 'cited', site: 'ovary', siteNote: 'ovarian cancer as a whole, not clear-cell carcinoma alone', shares: { localized: 22, regional: 18, distant: 54, unknown: 6 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Ovarian Cancer', ref: 'https://seer.cancer.gov/statfacts/html/ovary.html — verified 2026-09-10' },
+  acinar: { status: 'cited', site: 'prostate', siteNote: 'prostate cancer as a whole, of which acinar adenocarcinoma is the large majority', shares: { localized: 69, regional: 14, distant: 9, unknown: 8 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Prostate Cancer', ref: 'https://seer.cancer.gov/statfacts/html/prost.html — verified 2026-09-10' },
+  gdiff: { status: 'cited', site: 'stomach', siteNote: 'stomach cancer as a whole, not the diffuse type alone', shares: { localized: 32, regional: 23, distant: 35, unknown: 9 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Stomach Cancer', ref: 'https://seer.cancer.gov/statfacts/html/stomach.html — verified 2026-09-10' },
+  seminoma: { status: 'uncharacterised', site: 'testis', ref: 'https://seer.cancer.gov/statfacts/html/testis.html — the page publishes no stage-at-diagnosis distribution for this site (checked 2026-09-10)' },
+  ptc: { status: 'cited', site: 'thyroid', siteNote: 'thyroid cancer as a whole, not papillary carcinoma alone', shares: { localized: 63, regional: 31, distant: 3, unknown: 3 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Thyroid Cancer', ref: 'https://seer.cancer.gov/statfacts/html/thyro.html — verified 2026-09-10' },
+  ftc: { status: 'cited', site: 'thyroid', siteNote: 'thyroid cancer as a whole, not follicular carcinoma alone', shares: { localized: 63, regional: 31, distant: 3, unknown: 3 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Thyroid Cancer', ref: 'https://seer.cancer.gov/statfacts/html/thyro.html — verified 2026-09-10' },
+  uc: { status: 'cited', site: 'urinary bladder', siteNote: 'bladder cancer as a whole', shares: { inSitu: 50, localized: 34, regional: 7, distant: 6, unknown: 3 }, modal: 'in situ', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Bladder Cancer', ref: 'https://seer.cancer.gov/statfacts/html/urinb.html — verified 2026-09-10' },
+});
+export function extentSentence(entryName, ext){
+  if(!ext) return '';
+  if(ext.status !== 'cited') return ' Extent: drawn confined; ' + (ext.site ? 'the SEER page for ' + ext.site : 'the source') + ' publishes no stage-at-diagnosis distribution, so extent is not characterised.';
+  const s = ext.shares;
+  const framing = (ext.modal === 'localized' || ext.modal === 'in situ')
+    ? 'The drawing shows the localized case, which is how most are found.'
+    : 'The drawing shows the localized case \u2014 the least extensive; most are found already beyond it.';
+  const inSitu = s.inSitu !== undefined ? s.inSitu + '% in situ, ' : '';   // SEER reports an in situ share for some sites (bladder: half of cases)
+  return ' Extent: drawn confined. Found at diagnosis — ' + ext.site + (ext.siteNote && !/the entry itself/.test(ext.siteNote) ? ' (SEER reports ' + ext.siteNote + ')' : '')
+    + ': ' + inSitu + s.localized + '% localized, ' + s.regional + '% regional, ' + s.distant + '% distant, ' + s.unknown + '% unknown'
+    + ' (' + ext.source + '; ' + ext.basis + '; ' + ext.ref.replace(/^https?:\/\/\S+ — /, '') + '). ' + framing;
+}
+
 // KNOWN TO UNDERSTATE — the generic form (user ruling 2, 2026-09-09). A badge that merely adds a fact next to a drawn
 // boundary loses to the boundary: vision beats text. So where a cited EXTENT exceeds what gross-register rendering can
 // show, the badge states that the drawing is known to understate it AND in which direction — 'illustrative' alone
@@ -473,7 +515,7 @@ export const ORIGIN_HOTSPOT = Object.freeze({
 // sentence = the accessible name and the info-card text.
 // THE MASS BADGE — margin and growth on one chip, the text naming which property is which and, where applicable,
 // that the drawing is KNOWN TO UNDERSTATE (colour flags, text specifies — ruling D).
-export function massBadge(entryName, marginSt, marginCat, growthSt, growthCat, falloff, understated){
+export function massBadge(entryName, marginSt, marginCat, growthSt, growthCat, falloff, understated, extent){
   const base = marginBadge(entryName, marginSt.status, marginCat, marginSt);
   if(!base) return null;
   let chip = base.chip, sentence = base.sentence;
@@ -491,6 +533,7 @@ export function massBadge(entryName, marginSt, marginCat, growthSt, growthCat, f
   } else if(growthSt && growthSt.status === 'unread'){
     sentence += ' Growth: the gross-pathology source is not yet read.';
   }
+  sentence += extentSentence(entryName, extent);
   if(understated) sentence += ' KNOWN TO UNDERSTATE \u2014 ' + understated.direction + ': ' + understated.statement + ' (' + understated.source + ': "' + understated.quote + '").';
   return { chip, sentence };
 }

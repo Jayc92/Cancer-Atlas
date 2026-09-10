@@ -14,7 +14,7 @@ import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
-import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, massBadge, GROWTH_STATUS, GROWTH_CATEGORIES, EXTENT_UNDERSTATED, RESERVED_APEX, rimBlendWeight } from './morphology.js';
+import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, massBadge, GROWTH_STATUS, GROWTH_CATEGORIES, EXTENT_UNDERSTATED, EXTENT_STATUS, RESERVED_APEX, rimBlendWeight } from './morphology.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -305,7 +305,7 @@ function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadiu
     const gst = GROWTH_STATUS[entry.id] || null;
     const gcat = gst && gst.status === 'cited' && gst.category ? GROWTH_CATEGORIES[gst.category] : null;
     const falloff = gcat ? applyRimBlend(viewer, mesh, gcat.render.extent) : null;
-    const full = massBadge(entry.name, st, category, gst, gcat, falloff, EXTENT_UNDERSTATED[entry.id]) || badge;
+    const full = massBadge(entry.name, st, category, gst, gcat, falloff, EXTENT_UNDERSTATED[entry.id], EXTENT_STATUS[entry.id]) || badge;
     const el = document.createElement('div');
     el.className = 'tumour-badge';
     el.textContent = full.chip;

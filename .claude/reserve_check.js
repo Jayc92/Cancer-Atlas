@@ -177,6 +177,7 @@ function liveProblems(M){
   const records = ledgerRecords();
   problems.push(...citedBackingViolations(M.MARGIN_STATUS, records));   // the fourth property: a status claim carries its backing
   problems.push(...citedBackingViolations(M.GROWTH_STATUS, records).map(p => 'growth: ' + p));   // the fourth property, growth axis
+  problems.push(...citedBackingViolations(M.EXTENT_STATUS, records).map(p => 'extent: ' + p));   // the fourth property, extent axis (URL + verified date)
   problems.push(...M.growthRenderViolations(M.GROWTH_CATEGORIES));   // every wired growth category renders inside its range
   const albedos = tissueAlbedos().concat([M.MASS_COLOUR]);   // the cited-mass tan is a tissue-side colour too
   problems.push(...M.colourViolations(M.RESERVED_COLOUR, albedos, M.RESERVED_COLOUR_RULES));
@@ -189,6 +190,15 @@ function liveProblems(M){
     if(st && st.category && !M.MARGIN_CATEGORIES[st.category]) problems.push(`entry ${e.id} names category '${st.category}', which is not wired`);
     if(st && st.category && st.status !== 'cited') problems.push(`entry ${e.id} carries a category but its status is '${st.status}' — only a cited entry renders a category`);
     const gs = M.GROWTH_STATUS[e.id];
+    const xs = M.EXTENT_STATUS[e.id];
+    if(!xs) problems.push(`active entry ${e.id} has no extent status`);
+    else if(!M.EXTENT_STATUSES.includes(xs.status)) problems.push(`entry ${e.id} carries an unknown extent status '${xs.status}'`);
+    if(xs && xs.status === 'cited'){
+      const sum = (xs.shares.inSitu || 0) + xs.shares.localized + xs.shares.regional + xs.shares.distant + xs.shares.unknown;   // in situ where SEER reports it (bladder)
+      if(!(sum >= 98 && sum <= 102)) problems.push(`entry ${e.id} extent shares sum to ${sum}, not ~100`);
+      if(!/\d{4}[–-]\d{4}/.test(xs.basis || '')) problems.push(`entry ${e.id} extent basis carries no diagnosis-year range — a share without its vintage can be re-checked but not re-verified`);
+      if(!/\bspread/i.test('') && /spreads?\b/i.test(M.extentSentence(e.id, xs))) problems.push(`entry ${e.id} extent sentence says 'spread' — extent wording must stay detection-framed ('found at')`);
+    }
     if(!gs) problems.push(`active entry ${e.id} has no growth status`);
     else if(!M.GROWTH_STATUSES.includes(gs.status)) problems.push(`entry ${e.id} carries an unknown growth status '${gs.status}'`);
     if(gs && gs.category && !M.GROWTH_CATEGORIES[gs.category]) problems.push(`entry ${e.id} names growth category '${gs.category}', which is not wired`);
@@ -217,11 +227,12 @@ function liveProblems(M){
   // the AGGREGATE is what nobody would notice. Counted per entry: a cited property is RENDERED when its category is
   // wired and drawn (growth additionally requires a cited margin, since a placeholder suppresses the dissolve), else
   // TEXT-ONLY. Reported, not ratcheted — a ratio to watch, so drift is visible if it happens.
-  const coverage = { cited: 0, rendered: 0, textOnly: 0, perEntry: [] };
+  const coverage = { cited: 0, rendered: 0, textOnly: 0, textByDesign: 0, perEntry: [] };
   for(const e of entries){
     const ms = M.MARGIN_STATUS[e.id], gs = M.GROWTH_STATUS[e.id]; let cited = 0, rendered = 0;
     if(ms && ms.status === 'cited'){ cited++; if(ms.category && M.MARGIN_CATEGORIES[ms.category]) rendered++; }
     if(gs && gs.status === 'cited'){ cited++; if(gs.category && M.GROWTH_CATEGORIES[gs.category] && ms && ms.status === 'cited') rendered++; }
+    const xs2 = M.EXTENT_STATUS[e.id]; if(xs2 && xs2.status === 'cited') coverage.textByDesign++;   // extent: text by ruling (a distribution cannot be one drawn state)
     coverage.cited += cited; coverage.rendered += rendered; coverage.textOnly += cited - rendered;
     coverage.perEntry.push(`${e.id}:${rendered}/${cited}`);
   }
@@ -320,11 +331,11 @@ function selftest(M){
   const nCat = Object.keys(M.MARGIN_CATEGORIES).length;
   console.log('SIDECAR ' + JSON.stringify({
     name: 'reserve_check',
-    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, cited_backed: backed, cited_total: citedTotal, ledger_records: ledger, growth_categories: growthCats, growth_cited: growth.cited, growth_drawn: growth.drawn, render_cited: coverage.cited, render_rendered: coverage.rendered, render_text_only: coverage.textOnly, problems: problems.length },
+    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, cited_backed: backed, cited_total: citedTotal, ledger_records: ledger, growth_categories: growthCats, growth_cited: growth.cited, growth_drawn: growth.drawn, render_cited: coverage.cited, render_rendered: coverage.rendered, render_text_only: coverage.textOnly, render_text_by_design: coverage.textByDesign, problems: problems.length },
     ratchet: ['categories', 'growth_categories'],
   }));
   console.log(`DONE reserve_check: reserved form on the ${M.RESERVED_AXIS.knob} band [${M.RESERVED_AXIS.band}] unreachable from ${nCat} cited categories (fixture-form (7) by design), `
     + `${entries.length - problems.filter(p => /no margin status|unknown margin status/.test(p)).length}/${entries.length} active entries carry a margin status `
-    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, reserved growth vector unreachable from ${growthCats} cited growth categor${growthCats === 1 ? 'y' : 'ies'} (growth census: ${growth.cited} cited of which ${growth.drawn} drawn, ${growth.uncharacterised} uncharacterised, ${growth.unread} unread), reserved-margin dissolve cap ${M.RESERVED_APEX.capForReservedMargin} (${M.RESERVED_APEX.capForReservedMargin === 0 ? 'no dissolve on a placeholder; floor ' + M.RESERVED_APEX.floor + ' holds by construction' : 'sweep-backed against the ' + M.RESERVED_APEX.floor + ' floor'}), render coverage ${coverage.rendered}/${coverage.cited} cited properties rendered (${coverage.textOnly} text-only), ${problems.length} problems`);
+    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, reserved growth vector unreachable from ${growthCats} cited growth categor${growthCats === 1 ? 'y' : 'ies'} (growth census: ${growth.cited} cited of which ${growth.drawn} drawn, ${growth.uncharacterised} uncharacterised, ${growth.unread} unread), reserved-margin dissolve cap ${M.RESERVED_APEX.capForReservedMargin} (${M.RESERVED_APEX.capForReservedMargin === 0 ? 'no dissolve on a placeholder; floor ' + M.RESERVED_APEX.floor + ' holds by construction' : 'sweep-backed against the ' + M.RESERVED_APEX.floor + ' floor'}), render coverage ${coverage.rendered}/${coverage.cited} cited margin/growth properties rendered (${coverage.textOnly} text-only pending a mechanism) plus ${coverage.textByDesign} cited extent distributions text by design, ${problems.length} problems`);
   process.exit(problems.length ? 1 : 0);
 })().catch(e => { console.error('reserve_check (née margin_reserve_check): harness error', e); process.exit(2); });
