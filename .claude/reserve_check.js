@@ -268,9 +268,12 @@ function selftest(M){
   arm('growth: silent on the live categories', M.growthRenderViolations(M.GROWTH_CATEGORIES).length === 0);
   // 8o–8q. THE RESERVED APEX FLOOR: a cap with no fixture measurement fires; a cap whose measurement is below the
   // floor fires; the live declaration is silent.
-  arm('apex: fires when the cap has no measurement', M.reservedApexViolations({ floor: 0.3, measured: [[1.0, 0.34]], capForReservedMargin: 2.5 }).length > 0);
-  arm('apex: fires when the cap measured below the floor', M.reservedApexViolations({ floor: 0.3, measured: [[1.0, 0.34], [2.5, 0.10]], capForReservedMargin: 2.5 }).length > 0);
-  arm('apex: silent on the live declaration', M.reservedApexViolations(M.RESERVED_APEX).length === 0);
+  arm('apex: fires when a nonzero cap has no measurement', M.reservedApexViolations({ floor: 0.3, measured: [[1.0, { defaultPose: 0.34 }]], capForReservedMargin: 2.5, minOrgansForACap: 2 }).length > 0);
+  arm('apex: fires when a nonzero cap is backed only by a default-pose number', M.reservedApexViolations({ floor: 0.3, measured: [[1.0, { defaultPose: 0.34 }]], capForReservedMargin: 1.0, minOrgansForACap: 2 }).length > 0);
+  arm('apex: fires when the sweep minimum on any organ is below the floor', M.reservedApexViolations({ floor: 0.3, measured: [[1.0, { sweepMin: { lungs: 0.20, kidneys: 0.03 } }]], capForReservedMargin: 1.0, minOrgansForACap: 2 }).length > 0);
+  arm('apex: fires when the sweep covers too few organs', M.reservedApexViolations({ floor: 0.3, measured: [[0.5, { sweepMin: { lungs: 0.31 } }]], capForReservedMargin: 0.5, minOrgansForACap: 2 }).length > 0);
+  arm('apex: silent when a nonzero cap is backed by a two-organ sweep at or above the floor', M.reservedApexViolations({ floor: 0.3, measured: [[0.5, { sweepMin: { lungs: 0.31, kidneys: 0.30 } }]], capForReservedMargin: 0.5, minOrgansForACap: 2 }).length === 0);
+  arm('apex: silent on the live declaration (cap 0: no dissolve on a placeholder)', M.reservedApexViolations(M.RESERVED_APEX).length === 0);
   // 8l–8n. GROWTH RESERVE: a cited growth category whose range reaches the reserved value on its knob fires; one
   // that starts above it is silent; a category on an unknown knob fires (the knob set is closed).
   arm('growth: fires when a cited count range reaches the reserved count of 1', M.growthReservedViolations(M.RESERVED_GROWTH, { fx: { label: 'fx', knob: 'count', range: [1, 3] } }).length > 0);
@@ -292,7 +295,7 @@ function selftest(M){
   const M = await loadMorphology();
   const selfOnly = process.argv.includes('--selftest');
   if(!selftest(M)){ console.log('reserve_check (née margin_reserve_check): REFUSING to check — selftest failed'); process.exit(2); }
-  if(selfOnly){ console.log('DONE reserve_check_selftest: 28 arms run, 0 failures'); return; }
+  if(selfOnly){ console.log('DONE reserve_check_selftest: 31 arms run, 0 failures'); return; }
   const { problems, entries, counts, organs, albedos, nearest, shared, citedTotal, backed, ledger, growthCats, growth } = liveProblems(M);
   for(const p of problems) console.log('  PROBLEM: ' + p);
   const nCat = Object.keys(M.MARGIN_CATEGORIES).length;
@@ -303,6 +306,6 @@ function selftest(M){
   }));
   console.log(`DONE reserve_check: reserved form on the ${M.RESERVED_AXIS.knob} band [${M.RESERVED_AXIS.band}] unreachable from ${nCat} cited categories (fixture-form (7) by design), `
     + `${entries.length - problems.filter(p => /no margin status|unknown margin status/.test(p)).length}/${entries.length} active entries carry a margin status `
-    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, reserved growth vector unreachable from ${growthCats} cited growth categor${growthCats === 1 ? 'y' : 'ies'} (growth census: ${growth.cited} cited of which ${growth.drawn} drawn, ${growth.uncharacterised} uncharacterised, ${growth.unread} unread), reserved-margin band cap ${M.RESERVED_APEX.capForReservedMargin} at a measured apex fraction meeting the ${M.RESERVED_APEX.floor} floor, ${problems.length} problems`);
+    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, reserved growth vector unreachable from ${growthCats} cited growth categor${growthCats === 1 ? 'y' : 'ies'} (growth census: ${growth.cited} cited of which ${growth.drawn} drawn, ${growth.uncharacterised} uncharacterised, ${growth.unread} unread), reserved-margin dissolve cap ${M.RESERVED_APEX.capForReservedMargin} (${M.RESERVED_APEX.capForReservedMargin === 0 ? 'no dissolve on a placeholder; floor ' + M.RESERVED_APEX.floor + ' holds by construction' : 'sweep-backed against the ' + M.RESERVED_APEX.floor + ' floor'}), ${problems.length} problems`);
   process.exit(problems.length ? 1 : 0);
 })().catch(e => { console.error('reserve_check (née margin_reserve_check): harness error', e); process.exit(2); });

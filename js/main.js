@@ -239,6 +239,13 @@ function applyRimBlend(viewer, mass, requestedExtent){
   const reservedMargin = !!(mass.userData.phaseA && mass.userData.phaseA.reserved);
   const extent = reservedMargin ? Math.min(requestedExtent, RESERVED_APEX.capForReservedMargin) : requestedExtent;   // THE CAP, by identity
   const capped = reservedMargin && requestedExtent > RESERVED_APEX.capForReservedMargin;
+  if(reservedMargin && extent <= 0){
+    // NO DISSOLVE ON A PLACEHOLDER (RESERVED_APEX, 2026-09-10): the reserved colour keeps every pixel; the cited growth is
+    // carried on the badge in words. Recorded by identity so the harness can see the suppression in facts.json.
+    const rec = { channel: 'rimBlend', extent: 0, requested: requestedExtent, capped: true, suppressed: true };
+    mass.userData.growthFalloff = rec;
+    return rec;
+  }
   const geo = mass.geometry, pos = geo.getAttribute('position'), n = pos.count, cols = new Float32Array(n * 3);
   const outward = (mass.userData.phaseA && mass.userData.phaseA.outward) || new THREE.Vector3(0, 1, 0);
   const mc = mass.material.color;

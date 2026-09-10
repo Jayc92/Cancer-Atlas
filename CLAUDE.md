@@ -4221,15 +4221,67 @@ pixels — the reserved teal apex against rim-blend's dissolved band on a margin
 uncharacterised mass with cited infiltrative growth — the reserved signal wins. One is a
 provenance truth-claim; the other is invented-and-disclosed by construction, and
 degrading the claim to preserve the invention has the trade backwards. Applied as a
-MEASURED FLOOR encoded in `reserve_check` (`RESERVED_APEX`: at least 0.30 of a reserved
-mass's pixels stay reserved-coloured; the band cap for such masses sits at a fixture-
-measured extent, 1.0 → 0.34, and raising it without re-measuring fires), enforced
+MEASURED FLOOR encoded in `reserve_check` (`RESERVED_APEX`). RE-DERIVED ACROSS THE ORBIT
+(2026-09-10, user: the check had verified the cap matched a measurement, not that the
+measurement generalised — one pose, one organ, on a viewer that auto-rotates): a 24-yaw
+sweep on two organs found the default pose FAVOURABLE (lungs 0.34 at default, 0.20 at
+its worst yaw; kidneys 0.03) and no nonzero band cap surviving the kidney geometry, so a
+placeholder now draws NO dissolve and says so on its badge; a nonzero cap must be backed
+by a two-organ sweep minimum at or above the floor, never a default-pose number. Enforced
 before any live entry has the combination — which is exactly why it would otherwise
 arrive unannounced. THE ORGAN-SIDE FALLOFF FAMILY IS RETIRED STRUCTURALLY in the same
 pass: a mass is 22% of the organ radius, so a ring in mass radii is organ-scale by
 construction — 98% of the brain's vertices at half a degree of hue, invisible and
 'diseased throughout' at once. Not a tuning question; do not re-open it in Phase C
 (design document §10).
+
+## SMALL-POPULATION INVARIANTS — enumerated before Phase C (2026-09-10, user; desk exercise, no fixes)
+
+THE FAMILY: cwd-always-pinned hid the harness's path dependence; closed-mesh-always-resolves
+hid the body markers' identity gap; one-entry-per-category hid the badge's citation keying.
+Each was an invariant that held by accident of population size, silent until the population
+grew. Phase C takes sixteen active entries to roughly a hundred and twenty — a seven-fold
+increase, and this class is its defining hazard. Listed now, by prompt, while it is cheap.
+
+KEYED BY CATEGORY RATHER THAN ENTRY: the margin category's default `badgeSource`/`badgeQuote`
+still lives on the category — a second entry sharing a category inherits the first's citation
+silently unless it carries its own (GBM caught it; a check that requires an own citation on
+every sharer does not yet exist); `sameAppearanceAs` and `divergence` are per category too.
+ONE ORIGIN HOTSPOT PER ORGAN (`ORIGIN_HOTSPOT`): every cancer of an organ shares one origin
+and one anchor — at 8–9 entries per organ, cancers that arise at different sites (cardia vs
+antrum, cortex vs pelvis) would all sit on one point. STACKING BY COUNT: masses march along one
+tangent at 2.2 radii per extra entry (`massR*2.2*placed`) and badge chips stack vertically —
+both walk off the organ and out of the frame past three or four. A MASS IS 22% OF THE ORGAN
+RADIUS (`MASS_RADIUS_FRACTION`): fine for one or two, organ-covering for eight.
+
+UNIQUENESS RESTING ON n≈1: bare-basename pointer resolution (a second `colon.js` anywhere in
+the tree resolves every `colon.js:N` to nothing); internal-quote spans required to occur
+exactly once in their file; the mapping document's single record_sync marker; ONE declared-
+benign 404 in `deploy_check`; ONE declared-unmappable id in `citation_crosscheck`; one shared
+organ material per GLB, which the rim-blend albedo sampler and the depth-pass injection both
+lean on.
+
+ASSERTIONS VACUOUS OR TRIVIAL AT PRESENT COUNTS: `citation_paren_ledger.basis_test` ratcheted at
+0 (any count passes); one `sameAppearanceAs` declaration; two growth categories; the regression's
+hard counts — exactly 4 hotspots per organ, exactly 4 sites per cancer, ≥20 cells, ≥3 histology
+features, ≥9 body markers — shaped to today's authoring, not to a rule; `citedBackingViolations`
+accepts any identifier-shaped token, and since 2026-09-09 any https URL, without resolving it.
+
+RATCHETS WHOSE INCREMENT IS NOISE-SIZED: `internal_quote.marked` 15, `reserve_check.categories`
+5, `growth_categories` 2, `citation_crosscheck.records` 145 — a change of one is a real event
+today and will be background at a hundred and twenty entries; the set-composition audit
+(`record_keys`) is what still sees a swap under a flat total.
+
+LAYOUTS THAT FIT SIXTEEN: two label-overlap failures already stand (GBM, acinar) at today's
+density; the pelvic body-marker cluster already forced a measured floor; the tumour-badge chip
+carries two axes and will be asked to carry composition; the sidebar's per-organ cancer list is
+one to two rows deep today; the regression loops per cancer, so the five-minute gate scales with
+the corpus. Fixes are a separate decision (user).
+
+TOOLING NOTE, same day: `/tmp/atlas-verify/node_modules` (the scratch `puppeteer-core` every
+headless gate depends on) vanished overnight; re-installed at the same path. The cure is
+`cd /tmp/atlas-verify && npm install puppeteer-core`; the battery's $TMPDIR warning already
+said not to trust that directory's contents, and now its tooling too.
 
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
@@ -5167,8 +5219,11 @@ refute it, which is worth more than file order.
   extent 1.0, GBM at 2.5 — THE GBM HOLD IS LIFTED, its badge stating the drawing is
   known to understate the cited extent. A class caught in the first capture: when a
   category is shared, the citation belongs to the entry (GBM's badge had quoted
-  PDAC's source). Next on the growth axis: extent breach, then wall; multifocal when it
-  has a renderable member. COLD-SESSION ENTRY POINTER: read
+  PDAC's source). APEX FLOOR RE-DERIVED ACROSS THE ORBIT (2026-09-10): placeholders
+  draw no dissolve; a nonzero cap needs a two-organ sweep minimum. SMALL-POPULATION
+  INVARIANTS enumerated before Phase C (own section). Extent-by-category rationale
+  recorded beside the constants. Next on the growth axis: extent breach, then wall;
+  multifocal when it has a renderable member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin

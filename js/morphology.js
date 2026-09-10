@@ -306,6 +306,12 @@ export const RESERVED_GROWTH = Object.freeze({ count: 1, falloff: 0, protrusion:
 // forbids only manufactured difference. Ranges exclude the reserved falloff of 0 (reserve_check asserts it) and the
 // render sits inside its range (growthRenderViolations). The citation lives on the STATUS (per entry), not here: two
 // entries share a category on different sources.
+// WHY EXTENT IS KEYED TO THE CATEGORY, AND WHAT WOULD BREAK IT (user, 2026-09-10). GBM at 2.5 against PDAC at 1.0 is an
+// ORDINAL claim, and no source ranks those two cancers against each other. It survives because the claim is about the
+// TERMS — 'diffusely infiltrating' orders above 'infiltrative'/'poorly delineated' in pathology usage — not about the
+// diseases; extent is a property of the category, which is what keeps it inside the illustrative disclosure. If extent
+// ever varies PER ENTRY within a category, it becomes a claim about the cancers and needs more than the illustrative
+// disclosure carries: a re-ruling, with a source that makes the comparison.
 export const GROWTH_CATEGORIES = Object.freeze({
   infiltrative:          Object.freeze({ label: 'infiltrative',           knob: 'falloff', range: Object.freeze([0.6, 1.4]), render: Object.freeze({ extent: 1.0 }) }),
   diffuselyInfiltrative: Object.freeze({ label: 'diffusely infiltrative', knob: 'falloff', range: Object.freeze([2.0, 3.0]), render: Object.freeze({ extent: 2.5 }) }),
@@ -384,35 +390,51 @@ export function rimBlendWeight(hgt, massR, extent){
   const t = Math.min(1, Math.max(0, (hgt - h0) / (height - h0)));
   return 1 - t * t * (3 - 2 * t);
 }
-// THE RESERVED APEX FLOOR (user ruling, 2026-09-09 — 'a reserved signal outranks an illustrative magnitude'). When a
-// mass is uncharacterised on margin (reserved teal) but cited infiltrative on growth, rim-blend dresses its base in
-// the organ's albedo and the reserved signal survives only at the apex; the more infiltrative the band, the less
-// teal the mass — the most infiltrative uncharacterised mass is the least teal one. Reachability is intact (the
-// apex keeps the reserved colour, which no cited colour may enter); LEGIBILITY is the exposure, the amplitude-0.10
-// lesson in new clothes. MEASURED ON A FIXTURE before any live entry has the combination (none does; TNBC's growth
-// is a seed): the lungs' reserved mass with rim-blend, frozen default pose, `node .claude/capture_organs.js <out>
-// Lungs --port 3081 --freeze` with a temporary GROWTH_RENDER for luad — teal pixels of the mass remaining teal:
-// extent 1.0 → 0.34 (a coherent cap, reads as the placeholder); extent 2.5 → 0.10 (a sliver, does not read). The
-// renderer's own zone formula predicts 0.58 and 0.41 — parametric fraction is not perceptual fraction, so the
-// pixel measurement is the oracle and the analytic value is only the monotone sanity check. THE FLOOR: at least
-// 0.30 of a reserved mass's projected pixels stay reserved-coloured. THE CAP: for margin-RESERVED masses the band
-// extent is capped at 1.0 (measured 0.34 ≥ 0.30) and the cap is disclosed on the badge. THE PRINCIPLE, standing for
-// this class: when a reserved signal competes with an illustrative magnitude, the reserved signal wins — one is a
-// provenance truth-claim, the other is invented-and-disclosed by construction. reserve_check asserts the cap sits
-// at a measured extent whose fraction meets the floor; raising the cap without re-measuring fires it.
+// THE RESERVED APEX FLOOR — SECOND DERIVATION (2026-09-10; the first, one pose on one organ, was the resolve-versus-
+// resolve-correctly gap one level up: the check verified that the cap matched a measurement, not that the measurement
+// generalised). The exposure: when a margin-reserved (teal) mass carries cited infiltrative growth, rim-blend dresses
+// its base in the organ's albedo and the reserved signal survives only at the apex — and the apex is what the camera
+// sees LEAST from base-facing yaws. Production auto-rotates, so the default pose is one sample of a distribution.
+// MEASURED ACROSS THE ORBIT (fixture: the lungs' and the kidneys' reserved masses given infiltrative growth in a
+// temporary working-tree wiring; 24 yaws at the default pitch and radius, frozen, baseline against wired, teal pixels of
+// the mass still teal; scratch harness /tmp/ca-yaw-sweep.js, evidence /tmp/atlas-verify/sweep-*, ephemeral):
+//   cap 1.0 → lungs min 0.20 (below the 0.30 floor at 8 of 22 visible yaws; the default pose's 0.34 was a FAVOURABLE pose),
+//             kidneys min 0.03 at yaw 6 (below the floor at 5 yaws; the mass is base-on to the camera there);
+//   cap 0.5 → lungs min 0.31, kidneys min 0.06 (yaws 4–6);   cap 0.3 → lungs min 0.35, kidneys min 0.08 (yaws 4–6).
+// No nonzero cap survives the kidney geometry: from base-facing yaws the visible mass IS the band, whatever its height.
+// THE DECISION, by the standing principle (a reserved signal outranks an illustrative magnitude — provenance
+// truth-claim over invented-and-disclosed magnitude): capForReservedMargin = 0. A margin-reserved mass draws NO
+// dissolve; its cited growth is carried on the badge in words ('not drawn on a placeholder mass'), its reserved colour
+// keeps every pixel, and the floor holds at 1.0 by construction. The cost is nil today (no live entry combines the two)
+// and disclosed when one does. THE RULE THE CHECK NOW ENFORCES: a nonzero cap must be backed by a SWEEP MINIMUM over at
+// least two organs, every one at or above the floor — a default-pose number backs nothing. Raising the cap without
+// that measurement fires reserve_check.
+// THE ZONE FORMULA IS ORDERING-ONLY (user): it predicted 0.58 and 0.41 against measured 0.34 and 0.10 — off by 70% and
+// 4×, and in a CONSISTENT direction (it over-predicts reserved area), so as a pre-filter it would pass masses that fail.
+// Two ordered points are monotone by construction; it agreed on ordering and on nothing else. Keep it out of any
+// legibility claim; it is not a sanity check.
 export const RESERVED_APEX = Object.freeze({
   floor: 0.30,
-  measured: Object.freeze([[1.0, 0.34], [2.5, 0.10]]),   // [band extent, teal fraction of the reserved mass's pixels], fixture 2026-09-09
-  capForReservedMargin: 1.0,
+  // [band extent, { defaultPose: teal fraction at the framed default pose (lungs), sweepMin: per-organ minimum over 24 yaws }]
+  measured: Object.freeze([
+    [2.5, Object.freeze({ defaultPose: 0.10 })],
+    [1.0, Object.freeze({ defaultPose: 0.34, sweepMin: Object.freeze({ lungs: 0.20, kidneys: 0.03 }) })],
+    [0.5, Object.freeze({ sweepMin: Object.freeze({ lungs: 0.31, kidneys: 0.06 }) })],
+    [0.3, Object.freeze({ sweepMin: Object.freeze({ lungs: 0.35, kidneys: 0.08 }) })],
+  ]),
+  capForReservedMargin: 0,
+  minOrgansForACap: 2,
 });
 export function reservedApexViolations(apex){
   const out = [];
+  if(apex.capForReservedMargin === 0) return out;   // no dissolve on a reserved mass: the floor holds at 1.0 by construction
   const at = apex.measured.find(([e]) => e === apex.capForReservedMargin);
-  if(!at) out.push(`the reserved-margin band cap ${apex.capForReservedMargin} has no fixture measurement — measure before raising`);
-  else if(at[1] < apex.floor) out.push(`the reserved-margin band cap ${apex.capForReservedMargin} measured ${at[1]} reserved pixels, below the floor ${apex.floor}`);
-  for(const [e, f] of apex.measured){
-    if(e < apex.capForReservedMargin && f < apex.floor) out.push(`a measured extent ${e} below the cap keeps only ${f} — the band is not monotone or the cap is wrong`);
-  }
+  if(!at){ out.push(`the reserved-margin band cap ${apex.capForReservedMargin} has no measurement — sweep before raising`); return out; }
+  const sweep = at[1].sweepMin;
+  if(!sweep){ out.push(`the reserved-margin band cap ${apex.capForReservedMargin} is backed only by a default-pose number — a sweep minimum over ${apex.minOrgansForACap}+ organs is required`); return out; }
+  const organs = Object.keys(sweep);
+  if(organs.length < apex.minOrgansForACap) out.push(`the cap's sweep covers ${organs.length} organ(s); ${apex.minOrgansForACap} are required`);
+  for(const o of organs) if(sweep[o] < apex.floor) out.push(`the cap ${apex.capForReservedMargin} keeps only ${sweep[o]} of the reserved mass on ${o} at its worst yaw, below the floor ${apex.floor}`);
   return out;
 }
 export function growthReservedViolations(reserved, categories){
@@ -459,8 +481,9 @@ export function massBadge(entryName, marginSt, marginCat, growthSt, growthCat, f
     chip += ' \u00b7 growth: ' + growthCat.label + ' \u00b7 cited';
     sentence += ' Growth: ' + growthCat.label + ', the pattern its cited source describes (' + growthSt.badgeSource + ': "' + growthSt.badgeQuote + '")'
       + (growthSt.register === 'H' ? ' \u2014 a histologic description, disclosed as such' : '')
-      + '; drawn as the mass\'s boundary dissolving into the organ\'s own colour, its depth illustrative, not measured.';
-    if(falloff && falloff.capped) sentence += ' The dissolve is capped on this placeholder mass so its reserved colour stays legible: a reserved signal outranks an illustrative magnitude.';
+      + (falloff && falloff.suppressed ? '.' : '; drawn as the mass\'s boundary dissolving into the organ\'s own colour, its depth illustrative, not measured.');
+    if(falloff && falloff.suppressed) sentence += ' Not drawn on this placeholder mass: its reserved colour outranks the illustrative dissolve (measured across the orbit, no dissolve depth kept the placeholder legible from every angle).';
+    else if(falloff && falloff.capped) sentence += ' The dissolve is capped on this placeholder mass so its reserved colour stays legible: a reserved signal outranks an illustrative magnitude.';
   } else if(growthSt && growthSt.status === 'cited'){
     sentence += ' Growth: ' + (growthSt.label || 'a cited pattern') + ' is cited (' + growthSt.badgeSource + ') and not drawn \u2014 the growth axis expresses only infiltration so far.';
   } else if(growthSt && growthSt.status === 'uncharacterised'){

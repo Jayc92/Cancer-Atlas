@@ -419,6 +419,36 @@ the dissolve at extent 1.0; FTC's teal placeholder beside it is untouched (growt
 badge says so. Coverage by identity: every drawn mass reports channel rimBlend, extent as declared,
 capped false (no live margin-reserved mass carries infiltrative growth yet).
 
+## 12. The apex floor, re-derived across the orbit (2026-09-10)
+
+THE GAP (user): the check verified that the cap matched a measurement, not that the measurement
+generalised — two extents, one pose, one organ, on a viewer that auto-rotates in production. The
+resolve-versus-resolve-correctly distinction one level up. FIRST, THE LIVE QUESTION, read from the
+module: no live entry combines a reserved margin with drawn infiltrative growth (PDAC, PTC and GBM
+all carry cited margins), so the exposure was prospective, not live.
+
+THE SWEEP: 24 yaws at the default pitch and radius, frozen, on the lungs AND kidneys reserved
+masses given infiltrative growth in a temporary wiring; baseline against wired at the same yaws;
+the fraction of the mass's baseline teal pixels still teal. Cap 1.0: lungs minimum 0.20 (below the
+0.30 floor at 8 of 22 visible yaws — the default pose's 0.34 was a favourable pose), kidneys
+minimum 0.03 at yaw 6, five yaws below the floor. Cap 0.5: lungs 0.31, kidneys 0.06. Cap 0.3:
+lungs 0.35, kidneys 0.08 (yaws 4–6 on both smaller caps). No nonzero cap survives the kidney
+geometry, because from base-facing yaws the visible part of the mass IS the band, whatever its
+height — the collapse is geometric, not a matter of depth.
+
+THE DECISION, by the standing principle: `capForReservedMargin = 0`. A margin-reserved mass draws
+no dissolve; its cited growth is carried on the badge in words ("not drawn on this placeholder
+mass"); the reserved colour keeps every pixel and the floor holds at 1.0 by construction. Verified
+on the fixture: a placeholder given infiltrative growth reports `suppressed: true` by identity in
+facts.json, its badge carries the disclosure, and its mass keeps 1878 of the baseline's 1880 teal
+pixels (a dissolve at extent 1.0 leaves 618) — verified by count, not by pixel identity, because
+two separate runs differ by sub-pixel pose jitter across the whole organ (759 pixels over the
+6/255 threshold outside the chip band) and an identity claim across runs would be false. THE RULE NOW ENFORCED by `reserve_check`: a nonzero cap must be
+backed by a sweep minimum over at least two organs, every one at or above the floor — a default-
+pose number backs nothing; six apex arms. THE ZONE FORMULA is recorded as ordering-only: it missed
+by 70% and 4× in a consistent direction (over-predicting reserved area), so it would pass masses
+that fail; it stays out of legibility reasoning.
+
 ## 8-old. Rulings requested before code (as first written)
 
 (i) §3(b): is parenchymal diffuseness edge extent (GBM at tier 2) or a distinct treatment
