@@ -685,6 +685,10 @@ INSTRUMENTS = [
      ['python3', '.claude/share_sum_check.py']),
     ('duplicate_figure_check', 'pre-commit', 'DONE duplicate_figure_check:',
      ['python3', '.claude/duplicate_figure_check.py']),
+    # the ONE tolerated-count mechanism (2026-09-10): imported by absence/fraction/share_sum/duplicate; its selftest
+    # proves the four verdict classes (undeclared, expired, stale, reasonless) before any instrument relies on them
+    ('tolerated_selftest', 'pre-commit', 'DONE tolerated_selftest:',
+     ['python3', '.claude/tolerated.py']),
     ('record_sync_check', 'pre-commit', 'DONE record_sync_check:',
      ['python3', '.claude/record_sync_check.py']),
     # declared next to record_sync_check because they are the same idea pointed two ways:
@@ -784,6 +788,9 @@ NON_INSTRUMENTS = {
                          'a /tmp path would be the scratch pointer this project stopped writing); asserts nothing, '
                          'prints facts, writes PNGs outside the tree — not a gate',
     'citations.json': 'the manifest — data, not a tool',
+    'reach_unreached.json': 'machine-written tracked set — citation_reach_check.py is the only writer; the sorted multiset of '
+                            'unreached citation-shaped spans keyed by content, so the count becomes an identity list whose '
+                            'ADDED/REMOVED prints every run and whose staged diff is the acceptance (2026-09-10)',
     'record_count.json': 'the ratchet — machine-written state, not a tool; this runner is the '
                          'only writer, and it is committed so a fresh clone inherits the floor',
     'refusals.log': 'the refusal log — machine-written state, not a tool; run_checked.sh is the '

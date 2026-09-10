@@ -47,6 +47,17 @@
 # 7-bis: DONE line last. Wrapper form:
 #   .claude/run_checked.sh "DONE absence_claim_check:" python3 .claude/absence_claim_check.py
 import re, sys, glob
+import os as _os_t; sys.path.insert(0, _os_t.path.dirname(_os_t.path.abspath(__file__)))
+from tolerated import resolve
+# THE UNIVERSALS 'FLAGGED FOR A READ' ARE A COUNT TOO (2026-09-10; see tolerated.py): four printed on every run with
+# no owner and no date. Resolved here — two settled by construction (declared permanently, with the census that
+# settles one of them run beside it), two world-scoped anatomical claims dated for a textbook read.
+DECLARED = [
+    {'key': 'js/organs/brain.js|text|directly paralleling how every other org', 'reason': 'settled by construction: every active organ declares the origin site its cancer arises at, and deploy_check counts those hotspots on the served page; this gene-keyed check cannot read a structural claim', 'until': None},
+    {'key': 'js/organs/skin.js|desc|and the only one this atlas shows as a c', 'reason': 'settled by the layerSlab census run beside this declaration: exactly one organ file builds a cut block; if a second appears the census flags it and this declaration is re-read', 'until': None},
+    {'key': 'js/organs/stomach.js|desc|Uniquely in the digestive tract', 'reason': 'world-scoped anatomical claim (three muscle layers unique to the stomach wall); textbook read owed — OpenStax Anatomy & Physiology is CC BY and quotable', 'until': '2026-10-01'},
+    {'key': 'js/organs/stomach.js|text|and an inner oblique layer found nowhere', 'reason': 'the same anatomical claim as the desc field, stated at the wall site; the same textbook read settles both', 'until': '2026-10-01'},
+]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
 # 2026-09-09 ran it from /tmp and it passed GREEN over an EMPTY corpus (0 cancers indexed). Relative paths stay the record identities; their resolution no
@@ -564,6 +575,13 @@ if __name__ == '__main__':
     for f, i, fld, cl, why in world:
         print(f'  world-scoped universal needs a read: {f}:{i} [{fld}] — {why}')
         print(f'      {cl[:160]}')
+    # Tolerated-count resolution (2026-09-10): every 'needs a read' universal is a flag keyed by file|field|span head
+    # (content, not line numbers); undeclared, expired or stale → problem → exit 1.
+    universal_flags = {f'{f}|{fld}|{cl[:40]}': f'{f}:{i} [{fld}] {why}' for f, i, fld, cl, why in unresolved + world}
+    blocks = [f for f in paths if 'layerSlab(' in open(f, encoding='utf-8').read()]   # the census that settles skin.js's 'only cut block'
+    if len(blocks) != 1:
+        universal_flags['layerSlab-census'] = f'{len(blocks)} organ files build a cut block ({blocks}); the skin.js "only one" claim needs a re-read'
+    problems_t = resolve('absence_claim_check', universal_flags, DECLARED)
     tally = ', '.join(f'{k} {v}' for k, v in sorted(counts.items()))
     bad = len(defects) + len(universals)
     # DONE line last (7-bis): a clean scan is never a pass without it.
@@ -571,5 +589,5 @@ if __name__ == '__main__':
           f'({len(defects)} absence, {len(universals)} false corpus universal), '
           f'{len(unresolved)} universals flagged for a read, '
           f'{len(world)} world-scoped, '
-          f'{len(presence)} cancers indexed ({tally or "no claims found"})')
-    sys.exit(1 if bad else 0)
+          f'{len(presence)} cancers indexed ({tally or "no claims found"}), {len(problems_t)} tolerated-count problems')
+    sys.exit(1 if (bad or problems_t) else 0)

@@ -1691,7 +1691,7 @@
    "author": "Nunes",
    "year": "2024",
    "journal": "Nature",
-   "status": "still-ambiguous",
+   "status": "backfilled",
    "userFacing": true,
    "refs": [
     "js/organs/colon.js:244",
@@ -1708,6 +1708,17 @@
      "title": "Artificial intelligence needs a scientific method-driven reset",
      "id": "10.1038/s41567-024-02403-5"
     }
+   ],
+   "pmid": "39112715",
+   "resolvedTitle": "Prognostic genome and transcriptome signatures in colorectal cancers.",
+   "resolvedJournal": "Nature",
+   "resolved": "2026-09-10",
+   "method": "manual resolution 2026-09-10 from the two-candidate list: PubMed esummary 39112715 = Nature 2024 Sep, first author Nunes L, the CRC whole-genome cohort the corpus quotes (colon.js:244 largest CRC WGS cohort; :276 timed early in 801 tumors; :278 module-level exclusivity); the other candidate (10.1038/s41567-024-02403-5) is a Nature Physics comment on AI, not colorectal cancer",
+   "fieldsChecked": [
+    "author",
+    "journal",
+    "year",
+    "topic:corpus-claims"
    ]
   },
   {
@@ -1752,7 +1763,8 @@
     "year"
    ],
    "triage": "class audit 2026-09-04: MULTI-MENTION window \u2014 the record conflates two real same-author-same-year citations (Nunes et al., Nature, 2024 and Nunes et al., Molecular Cancer, 2024), both with journals on the line. The resolved pmid matches the Molecular Cancer mention; the Nature mention is unresolved at record level. Extraction v2 splits per-mention.",
-   "journalOnLine": "Nature + Molecular Cancer (two mentions)"
+   "journalOnLine": "Molecular Cancer",
+   "fixNote": "2026-09-10 crosscheck defect: journalOnLine carried BOTH journals (\"Nature + Molecular Cancer (two mentions)\") because the extractor assumed one paper per author-year; this record's one ref (colon.js:277) is the Molecular Cancer mention, so the field now names that journal alone. The Nature mention has its own backfilled record (PMID 39112715)."
   },
   {
    "author": "Arends",
@@ -3928,9 +3940,9 @@
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
   {
-   "author": "PNAS",
+   "author": "Sottoriva",
    "year": "2013",
-   "journal": null,
+   "journal": "PNAS",
    "status": "entry-time-identifier",
    "userFacing": false,
    "refs": [
@@ -3943,7 +3955,8 @@
     "author",
     "year"
    ],
-   "triage": "class audit 2026-09-04: the source line carries PMID 23412337 on the citation itself \u2014 entry-time, extraction miss (the \u00b12-line census missed it because the stale results file still said no-match, which the census filter excluded). Triage resolution had independently converged on the same PMID \u2014 validation datum."
+   "triage": "class audit 2026-09-04: the source line carries PMID 23412337 on the citation itself \u2014 entry-time, extraction miss (the \u00b12-line census missed it because the stale results file still said no-match, which the census filter excluded). Triage resolution had independently converged on the same PMID \u2014 validation datum.",
+   "fixNote": "2026-09-10: the journal had been recorded as the author (crosscheck flag since 2026-09-06); brain.js:160 reads \"Sottoriva et al. (PNAS, 2013\""
   },
   {
    "author": "Brennan",
@@ -4027,9 +4040,9 @@
    "journalOnLine": "PNAS"
   },
   {
-   "author": "Neuro-Oncology",
+   "author": "Louis",
    "year": "2021",
-   "journal": null,
+   "journal": "Neuro-Oncology",
    "status": "backfilled",
    "userFacing": true,
    "refs": [
@@ -4049,7 +4062,8 @@
     "year"
    ],
    "classAudit": "verified-title 2026-09-04 (exhaustive no-journal-class read)",
-   "journalOnLine": "Neuro-Oncology"
+   "journalOnLine": "Neuro-Oncology",
+   "fixNote": "2026-09-10: the journal had been recorded as the author (crosscheck flag since 2026-09-06); brain.js:217/227/248 read \"Louis et al., Neuro-Oncology, 2021\""
   },
   {
    "author": "Killela",

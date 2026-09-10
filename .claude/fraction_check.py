@@ -128,6 +128,17 @@
 #   past rounding. And a source wrong in BOTH its count and its percentage, in agreement with each
 #   other, is out of reach of any self-check — that case needs a second source, not a form.
 import re, sys, glob, html, json
+import os as _os_t; sys.path.insert(0, _os_t.path.dirname(_os_t.path.abspath(__file__)))
+from tolerated import resolve
+# THE ONE MISMATCH PAIR, DECLARED PERMANENTLY WITH THE MECHANISM NAMED (2026-09-10; see tolerated.py): pancreas SMAD4 —
+# '~50%' is the pathway-level SMAD4 loss share and '25/84' (Hahn 1996) is the homozygous-DELETION mechanism's share
+# within it. The matcher pairs the nearest percent with the nearest fraction and cannot see that they answer
+# different questions: a FALSE POSITIVE by construction, once in the field string and once in the comment block
+# that mirrors it. A permanent declaration must name the mechanism; a dated one must name the re-read owed.
+DECLARED = [
+    {'key': 'pancreas|field|~50%|25/84', 'reason': 'false positive: ~50% is the pathway-level SMAD4 loss share, 25/84 the homozygous-deletion mechanism share within it (Hahn 1996); the matcher pairs nearest percent to nearest fraction', 'until': None},
+    {'key': 'pancreas|comment|~50%|25/84', 'reason': 'the comment block mirrors the field string above: same false positive, same mechanism', 'until': None},
+]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
 # 2026-09-09 ran it from /tmp and it exited 3 over zero counts (loud, at least). Relative paths stay the record identities; their resolution no
@@ -409,6 +420,7 @@ if __name__ == '__main__':
         sys.exit(0)
     print()
     checked = flagged = 0
+    mismatch_flags = {}   # organ|field-or-comment|stated|fraction (content, not line numbers) → detail; resolved against DECLARED
     comments_checked = comments_flagged = 0
     cross_pairs = cross_flags = 0
     tworange = []
@@ -431,6 +443,7 @@ if __name__ == '__main__':
                 for ptxt, ftxt, fval in check_string(t):
                     flagged += 1
                     print(f'  MISMATCH? {short}:{ln}  stated {ptxt} vs {ftxt} = {fval}%')
+                    mismatch_flags[f'{short}|field|{ptxt}|{ftxt}'] = f'{short}:{ln} stated {ptxt} vs {ftxt} = {fval}%'
             yrs = {(a, b) for a, b in YEARRANGE.findall(html.unescape(t))}
             if len(yrs) >= 2:
                 tworange.append((short, ln, sorted(yrs)))
@@ -445,6 +458,7 @@ if __name__ == '__main__':
                 for ptxt, ftxt, fval in check_string(t, sentence_split=True):
                     comments_flagged += 1
                     print(f'  COMMENT MISMATCH? {short}:{ln}  stated {ptxt} vs {ftxt} = {fval}%')
+                    mismatch_flags[f'{short}|comment|{ptxt}|{ftxt}'] = f'{short}:{ln} stated {ptxt} vs {ftxt} = {fval}%'
         # THE CROSS-HALF SURFACE (2026-09-08) — the closure PREMISE, per the header block. Counted
         # apart from the other two for the same reason the comment surface was: a new reach has to
         # stay distinguishable from flags already adjudicated.
@@ -479,8 +493,11 @@ if __name__ == '__main__':
         'ratchet': [],
     }, sort_keys=True))
     # DONE line last (2026-09-05 sweep): absence-of-flags is never a pass.
+    problems = resolve('fraction_check', mismatch_flags, DECLARED)
     print(f'DONE fraction_check: {checked} field strings with fraction+percent, {flagged} mismatch '
           f'flags; {comments_checked} comment blocks, {comments_flagged} comment flags; '
-          f'{cross_pairs} cross-half shared fractions, {cross_flags} unpaired')
+          f'{cross_pairs} cross-half shared fractions, {cross_flags} unpaired; {len(problems)} tolerated-count problems')
     if vacuous:
         sys.exit(3)
+    if problems:
+        sys.exit(1)

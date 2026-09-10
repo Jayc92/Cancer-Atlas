@@ -16,6 +16,18 @@
 # window with 57.4% vs 55%) and PASSES a real agreeing pair captured from the census.
 # Condition (8): first live run is calibration.
 import re, sys, glob, html
+import os as _os_t; sys.path.insert(0, _os_t.path.dirname(_os_t.path.abspath(__file__)))
+from tolerated import resolve
+# THE FOUR DRIFT FLAGS, READ (2026-09-10; see tolerated.py). They printed as '4 drift flags' on every run and were the
+# KNOWN RESIDUAL FP CLASS named at calibration below ('the human read rules these out') — an instruction with no record
+# of the read. The read: every pair is two DIFFERENT quantities on one shared template, not one quantity drifted.
+# Keys carry the paired figures, so a figure that changes makes a NEW, undeclared key and gets read again.
+DECLARED = [
+    {'key': 'pancreas|CDKN2A (p16) loss|1997|1998', 'reason': 'false positive: the years of two different papers on one journal template — Schutte et al., Cancer Res, 1997 (pathway-level loss) and Wilentz et al., Cancer Res, 1998 (PanIN-1A p16 loss); the matcher reads a year as a figure', 'until': None},
+    {'key': 'skin|CDKN2A loss|49%, 44%|29%, 27%', 'reason': 'false positive: per-site involvement figures on the shared Riihimaki 2018 template — brain 49%/44% (men/women) at one site, liver 29%/27% at the other; the subject is the site, not the gene', 'until': None},
+    {'key': 'stomach|RHOA mutation|0.3|0.4', 'reason': 'false positive: per-site odds ratios from one study (Riihimaki 2016) — signet-ring under-use of the liver (OR 0.3) at one site and of the lungs (OR 0.4) at the other', 'until': None},
+    {'key': 'stomach|CLDN18–ARHGAP fusion|32%|12%', 'reason': 'false positive: per-site involvement shares on the template "of metastatic gastric-cancer patients" — peritoneum 32% at one site, bone 12% at the other', 'until': None},
+]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
 # 2026-09-09 ran it from /tmp and it passed GREEN over an EMPTY corpus (0 pairs compared). Relative paths stay the record identities; their resolution no
@@ -98,6 +110,7 @@ if __name__ == '__main__':
     SRC_STOP = {'TCGA', 'GENIE', 'SEER', 'WHO', 'PMID', 'PMC', 'KGCA', 'NCI', 'PDQ'}
     print()
     total_pairs = flagged = 0
+    drift_flags = {}   # organ|gene|figures A|figures B (content, not line numbers) → detail; resolved against DECLARED
     corpus = sorted(glob.glob('js/organs/*.js'))
     if not corpus:   # a glob that resolved to nothing is a VACUOUS PASS — the dangerous form (sweep, 2026-09-09)
         print('duplicate_figure_check: REFUSING TO REPORT — the corpus glob resolved to nothing'); sys.exit(3)
@@ -143,7 +156,11 @@ if __name__ == '__main__':
                     continue
                 flagged += 1
                 print(f'  DRIFT? {f.split("/")[-1][:-3]}:{l1} vs :{l2}  (gene A={g1!r} B={g2!r})')
+                drift_flags[f'{f.split("/")[-1][:-3]}|{g1}|{", ".join(na)}|{", ".join(nb)}'] = f'{f.split("/")[-1][:-3]}:{l1} vs :{l2} A={na} B={nb}'
                 print(f'     window: {win}')
                 print(f'     A={na}  B={nb}')
+    problems = resolve('duplicate_figure_check', drift_flags, DECLARED)
     print(f'\nDONE duplicate_figure_check: {total_pairs} same-file string pairs compared, '
-          f'{flagged} drift flags')
+          f'{flagged} drift flags, {len(problems)} tolerated-count problems')
+    if problems:
+        sys.exit(1)

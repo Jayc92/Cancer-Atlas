@@ -371,10 +371,16 @@ def main():
     for pmid, a, y, ref, origin, flags in flagged:
         print(f'  {pmid} {a} {y} [{origin}] {ref}')
         for f in flags: print(f'      {f}')
-    # condition (7) live assertion: the fragment record keys guarantee author flags exist
-    assert any('author:' in f for _, _, _, _, _, fl in flagged for f in fl), \
-        'live known-positives absent — the checker cannot be firing correctly'
-    print('\nlive known-positive assertion: PASS (author flags present as expected)')
+    # condition (7) live assertion, REWRITTEN 2026-09-10: it used to assert that author flags EXIST in the real run, which
+    # was only ever true because two real record defects (a journal in the author field) sat in the corpus — the check
+    # could not be green on a clean corpus, so its known positive was a defect it thereby preserved (the tolerated-count
+    # laundering shape, from the inside). Now the live control is SYNTHETIC on REAL fetched data: one resolved esummary
+    # record is checked against an author no paper has; if that does not raise an author flag, the checker is not firing.
+    live = next((d for d in es.values() if isinstance(d, dict) and d.get('title')), None)
+    assert live is not None, 'live known-positive impossible — no esummary record resolved at all'
+    assert any('author:' in f for f in check_one('Zzyzx-Not-An-Author', '1900', None, live)), \
+        'live known-positive absent — a synthetic wrong author raised no author flag; the checker cannot be firing correctly'
+    print('\nlive known-positive assertion: PASS (a synthetic wrong author flags against real fetched data)')
     # The flags artefact went to a hardcoded scratch dir that no longer exists — the second way
     # this tool could die after doing all its work, and the same one polarity had. Overridable,
     # and it creates its own directory: a refusal that only moves the crash is not a fix.

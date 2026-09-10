@@ -154,3 +154,56 @@ documents revised each submission; "79%" is a figure with a vintage. Every exten
 registry set and diagnosis-year range ("SEER 21 (Excluding IL) 2016–2022") and the data submission
 where the page states it, alongside the retrieval date — the difference between a citation someone
 can re-verify and one they can only re-check against whatever the page says later.
+
+## 9. The depth question, measured (2026-09-10) — Breslow as the first cited magnitude
+
+**The question the user set:** is the skin block's layer exaggeration uniform or per-layer? If
+uniform, a depth could be drawn at a true relative position against a declared scale; if per-layer,
+a plug placed at a real millimetre lands in the wrong layer and depth goes to text unless the block
+is re-proportioned. One measurement, then the ruling.
+
+**The measurement, read from `js/organs/skin.js` (design units are metres; the block renders at
+`SCALE = 5`).** The block is parametric: five layer constants (`Y_TOP`, `DEJ_BASE`, `BAND`,
+`DH_BASE`, `Y_BOT`) plus surface/junction undulation amplitudes and two follicles anchored at a
+bulb height. Layer thicknesses and the real figures the file itself records beside them:
+
+| layer | block (design mm) | share of the 16 mm section | real figure the file cites | exaggeration |
+|---|---|---|---|---|
+| epidermis | 2.2 (basal band 0.7 inside it) | 14% | 31.2–596.6 µm measured across 37 sites (Lintzeri 2022); ~0.1 mm typical | 3.7× the measured MAXIMUM; ~22× typical |
+| dermis | 8.0 | 49% | 1.5–4 mm (SEER) | 2–5.3× |
+| hypodermis | 5.8, truncated by the block floor | 37% | millimetres to centimetres, site-dependent | ~1×, and cut off |
+
+**Finding: PER-LAYER.** The factors differ by an order of magnitude between the epidermis and the
+hypodermis, and the file says as much ("a legibility scale, not an anatomical one"). Consequence for
+a Breslow depth: a 1.0 mm thickness — a thin melanoma that in life has crossed the junction and sits
+in the papillary dermis — placed at 1.0 mm below this block's surface would sit INSIDE the 2.2 mm
+epidermis. The drawing would show a confined lesion for a number that means invasion. That is the
+extent-axis failure of §3 in a different coat: geometry making a register claim the source did not.
+So under the criterion of §4, depth is TEXT unless the block is re-proportioned.
+
+**Pricing re-proportioning (the block is parametric, so it can be priced).**
+- *True scale (×1):* epidermis 0.1 mm design → 0.5 mm rendered at SCALE 5 — a hairline; the basal
+  band, the junction undulation and the "this is skin" follicle emergence all vanish. **REJECTED**, as
+  the user pre-registered ("reject it if true scale makes the epidermis a hairline").
+- *Uniform ×8:* epidermis 0.8 mm design (4 mm rendered), dermis 16 mm, hypodermis truncated at the
+  floor; section grows from 16 to ~20 mm or the dermis share is cut. Feasible: six constants change,
+  but the junction undulation (0.55 mm amplitude) must shrink below the new epidermis, the basal band
+  (0.7 mm) becomes ~0.25 mm and may not read, the bulb (0.75 mm radius) and follicle depth
+  (−1.2 mm) re-derive, the description's "~14%/49%/37% of a 16 mm section" and the REAL FIGURES
+  comment rewrite, and the skin capture is re-read for whether it still reads as skin at a glance.
+  Estimate: about half a day including the visual re-verification. What it buys is ONE drawable
+  magnitude (a depth plug at a true relative position with "×8" on the badge). Not recommended now:
+  the render currently carries two cited melanoma properties (irregular border; growth) that a
+  re-proportioned block would have to re-verify, for an axis whose first member can be carried in
+  text at zero cost.
+
+**The axis, designed generically: CITED MAGNITUDE.** A per-entry table in `js/morphology.js`
+(`MAGNITUDE_STATUS`, statuses `uncharacterised | cited`), each cited row carrying `{quantity,
+value, unit, framing, basis, source, ref}` with the fourth property (a resolvable identifier and a
+verified date) and a text sentence on the badge by default. A magnitude is drawn only when its
+carrier is uniformly scaled and the badge states the scale — the §4 criterion, unchanged. Breslow
+first: the quantity is thickness in millimetres from the granular layer, the source must be a
+non-AJCC one (Breslow 1970 for the measurement; a SEER or PMC source for any distribution), and the
+staging cut-points are never reproduced (constraint C). Phase C members waiting on the same axis:
+tumour size thresholds and nodal counts — same shape, same text-first default. **No build until the
+ruling.**

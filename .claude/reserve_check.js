@@ -205,6 +205,21 @@ function liveProblems(M){
     if(gs && gs.category && gs.status !== 'cited') problems.push(`entry ${e.id} carries a growth category but its status is '${gs.status}'`);
   }
   for(const id of Object.keys(M.MARGIN_STATUS)) if(!ids.has(id)) problems.push(`margin status names '${id}', which is not an active entry`);
+  // STATUS TABLES CARRY DATES (2026-09-10, user: 'status tables get dates'; mechanism in .claude/tolerated.py). An 'unread'
+  // row is a tolerated non-zero count — a read owed — and must say by when; past that date it is OVERDUE and this check is
+  // red until the row is read (status changes) or re-dated with a reason on the line. An 'uncharacterised' row is a read
+  // that found nothing and must say what was read (its ref), or it is indistinguishable from unread.
+  const today = new Date().toISOString().slice(0, 10);
+  for(const [axis, table] of [['margin', M.MARGIN_STATUS], ['growth', M.GROWTH_STATUS], ['extent', M.EXTENT_STATUS]]){
+    for(const [id, row] of Object.entries(table)){
+      if(row.status === 'unread'){
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(row.until || '')) problems.push(`${axis} status ${id} is 'unread' with no until date — a read owed with no date is a bare count`);
+        else if(row.until < today) problems.push(`${axis} status ${id} is 'unread' past its until date ${row.until} — the read is overdue: read it, or re-date it with the reason on the line`);
+      }
+      if(row.status === 'uncharacterised' && !(row.ref && row.ref.length >= 20)) problems.push(`${axis} status ${id} is 'uncharacterised' without saying what was read`);
+      if(row.status === 'cited' && row.until) problems.push(`${axis} status ${id} is 'cited' but carries an until date — a cited row owes no read`);
+    }
+  }
   const hs = organHotspots();
   for(const key of Object.keys(hs)){
     const idx = M.ORIGIN_HOTSPOT[key];

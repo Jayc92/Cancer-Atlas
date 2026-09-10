@@ -4412,6 +4412,84 @@ record set is empty, as the corpus-glob checks now do. The three formerly vacuou
 already refuse an empty corpus; `deploy_check` now retries once and prints 'hotspots
 UNMEASURED (probe failure)'; `capture_organs` names a missed sidebar row as its own miss.
 
+## AN UNDECLARED COUNT IS EVIDENCE OF AN UNREAD COUNT (2026-09-10, user ruling; `.claude/tolerated.py`)
+
+**The ruling, verbatim in substance:** "Three flags turning out to be three real record-format
+defects is the second confirmed instance ... An undeclared count is evidence of an unread count ...
+every tolerated non-zero count resolves to fixed, declared-with-reason, or dated-for-re-read. No
+count persists as a bare number." The two instances: the regression's "2 known failures" (two live
+label overlaps, printed in every report) and the crosscheck's "3 flags" (a journal in the author
+field, twice; one journal field carrying two journals). Both sat in green gates for as long as the
+gates existed. Why the rule holds: if someone had read the count and found it benign they would have
+declared it benign — so a bare number accumulates real defects by construction.
+
+**The mechanism, ported once, not reinvented per instrument.** `.claude/tolerated.py::resolve(name,
+flags, declared)` is regress.js's `KNOWN_FAILURES` shape: an instrument computes its flags as
+`{content-key: detail}`, keeps a `DECLARED` list of `{key, reason, until}` beside its other
+declarations, and gets back the problems — UNDECLARED flag, EXPIRED date (the re-read is owed),
+STALE declaration (declared but no longer flagged), REASONLESS declaration. Any problem is fatal to
+the instrument's exit code. Keys are CONTENT (organ|gene|figures; file|field|span head), never line
+numbers, so an edit above the flag does not churn the declaration and a changed figure makes a new,
+undeclared key that gets read again. Its selftest proves the four classes and runs in the battery
+(`tolerated_selftest`).
+
+**Every tolerated count, resolved (read from the tree at bcb625a, then acted on):**
+- `citation_crosscheck` — 3 flags → FIXED. PMID 23412337 author `PNAS`→`Sottoriva`, PMID 34185076
+  author `Neuro-Oncology`→`Louis` (fixNotes on the records). The third was the ONE-PAPER-PER-AUTHOR-
+  YEAR INVARIANT: the Nunes 2024 record carried `Nature + Molecular Cancer (two mentions)` in one
+  journal field because extraction assumed an author-year names one paper; colon.js cites two (Nature
+  at :244/:276/:278, Molecular Cancer at :277). Split: the Nature record resolved BY HAND from its
+  two-candidate list to PMID 39112715 (esummary: Nature 2024 Sep, first author Nunes L, the CRC
+  whole-genome cohort the corpus quotes; the other candidate was a Nature Physics comment on AI); the
+  Molecular Cancer record (PMID 39587554) now names its journal alone. 0 flags of 146 records.
+- `duplicate_figure_check` — 4 drift flags → READ, all four DECLARED PERMANENTLY with the mechanism:
+  each is two DIFFERENT quantities on one shared template, the residual false-positive class the check
+  named at calibration and left to "the human read" with no record of the read. Years of two papers
+  on one journal template (Schutte 1997 / Wilentz 1998); brain vs liver involvement (Riihimaki 2018);
+  liver vs lung odds ratios (Riihimaki 2016); peritoneum vs bone shares. The user's "get dates"
+  assumed unread; read, they are settled, so they carry reasons rather than dates.
+- `fraction_check` — 1+1 mismatch → DECLARED PERMANENTLY: pancreas `~50%` is the pathway-level SMAD4
+  loss share and `25/84` the homozygous-deletion mechanism's share within it; the matcher pairs the
+  nearest percent to the nearest fraction. The comment block mirrors the field.
+- `share_sum_check` — the liver gap (sum 87.5) → OWNED AND DATED to 2026-10-01: re-read the cited
+  epidemiology source for the ~12.5% remainder, then add the row or scope the label. "Human reads the
+  label" was an instruction with no owner and no date.
+- `absence_claim_check` — 4 universals "flagged for a read" → 2 PERMANENT (every organ has an
+  "arises here" site, settled by construction and counted on the served page; skin is the only cut
+  block, settled by a `layerSlab` census that now runs beside the declaration), 2 DATED to
+  2026-10-01 (the stomach's "uniquely three muscle layers" claim, twice — a textbook read; OpenStax
+  A&P is CC BY and quotable).
+- `regress.js` — "2 page errors" → both the browser's favicon.ico 404 → DECLARED BENIGN in
+  `BENIGN_PAGE_ERRORS`; an undeclared page error or a stale benign declaration now exits 1.
+- `citation_reach_check` — 150 unreached spans → a TRACKED SET, not a number:
+  `.claude/reach_unreached.json` (machine-written, 95 content keys `file|kind|head|year`, multiset
+  counts). ADDED/REMOVED prints on every whole-corpus run; the staged diff is the acceptance, so a
+  new unreached span is read at the commit that adds it. Second run: 0 added, 0 removed, file
+  byte-identical. THE 151ST SPAN, identified first as ordered: `js/organs/prostate.js:13
+  [data-span-year] 2026` — this author's own margin note "(user, 2026-09-09)", a digit year inside a
+  data line. Date spelled out; census back to 150. A note written to record a finding created the
+  next finding.
+- STATUS TABLES — every `unread` row in `MARGIN_STATUS` / `GROWTH_STATUS` carries `until`
+  (2026-09-17 for the reads scheduled today — ccRCC's PathologyOutlines probe, TNBC's gross-register
+  read; 2026-10-01 for second-tier reads). `reserve_check` reports an unread row with no date, an
+  overdue date, an uncharacterised row that does not say what was read, and a cited row carrying a
+  date. Three negative controls (DELETE the date, SUBSTITUTE a past date, ADD a date to a cited row)
+  each exited 1 with the right sentence; the file was restored byte-identical.
+
+**Two more from the same message.** Reach and head now REFUSE an unmeasurable population (empty
+glob, or an extractor that produced 0 records) instead of reporting "5 problems" about declarations —
+the measured-catastrophe rule applied to themselves. Bladder: the extent shares first summed to 50
+because the check summed four categories and the page has five; in situ (50%) is now REPORTED AS ITS
+OWN CATEGORY in the row, the sum, the ledger and the sentence ("most are found in situ, before any
+invasion, and the next largest share localized"), not scoped out.
+
+**The depth measurement (item 4) is in `.claude/phaseA_extent_design.md` §9:** the skin block's
+exaggeration is PER-LAYER (epidermis ≥3.7× the measured maximum, dermis 2–5×, hypodermis ~1× and
+truncated), so a Breslow millimetre placed in it lands in the wrong layer; depth is text unless the
+block is re-proportioned; true scale rejected (hairline epidermis), uniform ×8 priced at about half a
+day and not recommended now; the axis designed as CITED MAGNITUDE, generic, Breslow first, text by
+default. No build without the ruling.
+
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
 **The instrument that refuses to scan without its input could still
@@ -5359,7 +5437,12 @@ refute it, which is worth more than file order.
   MODAL and the render must not make it factual — plus the second-structure problem
   designed first; predicted outcome fifteen entries to TEXT (the understated-extent
   form generalised from SEER Stat Facts distributions), melanoma the one geometric
-  candidate; three rulings requested. Then wall; multifocal when it has a renderable
+  candidate; three rulings requested. RULED 2026-09-10 (design §8): SIXTEEN to text — melanoma's plug is
+  DEPTH, not breach, reassigned to a cited-magnitude axis (§9: the skin block's exaggeration
+  measured PER-LAYER, so depth is text unless the block is re-proportioned; priced, not
+  recommended; no build without the ruling); `EXTENT_STATUS` wired for all sixteen from 14
+  SEER Stat Facts pages, detection-framed. TOLERATED COUNTS RESOLVED 2026-09-10 (own
+  section; `.claude/tolerated.py`, one mechanism). Then wall; multifocal when it has a renderable
   member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.

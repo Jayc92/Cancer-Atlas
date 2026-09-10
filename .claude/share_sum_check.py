@@ -23,6 +23,15 @@
 # names the remainder class implicitly non-exhaustive). Condition (8): the first live run
 # is calibration — triage flags before reading them as findings.
 import re, sys, glob, html
+import os as _os_t; sys.path.insert(0, _os_t.path.dirname(_os_t.path.abspath(__file__)))
+from tolerated import resolve
+# THE LIVER GAP, OWNED AND DATED (2026-09-10; see tolerated.py). 'Human reads the label' was an instruction with no
+# owner and no date, so it was coverage the check was not providing (user). The family's stated shares leave ~12.5%
+# unaccounted; whether that remainder is the rarer primaries the family does not list or a transplanted denominator
+# is the re-read owed by the date below — after it, the declaration expires and the gate goes red.
+DECLARED = [
+    {'key': 'liver', 'reason': 'sum 87.5: the listed primaries leave ~12.5% of the family unaccounted; re-read the cited liver-cancer epidemiology source for the remainder, then either add the missing row or scope the label to the primaries listed', 'until': '2026-10-01'},
+]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
 # 2026-09-09 ran it from /tmp and it passed GREEN over an EMPTY corpus (0 families checked). Relative paths stay the record identities; their resolution no
@@ -103,6 +112,7 @@ if __name__ == '__main__':
         sys.exit(0)
     print()
     families = gaps = 0
+    gap_flags = {}   # family → verdict; resolved against DECLARED
     corpus = sorted(glob.glob('js/organs/*.js'))
     if not corpus:   # a glob that resolved to nothing is a VACUOUS PASS — the dangerous form (sweep, 2026-09-09)
         print('share_sum_check: REFUSING TO REPORT — the corpus glob resolved to nothing'); sys.exit(3)
@@ -113,7 +123,10 @@ if __name__ == '__main__':
         name, verdict, s, ex = check_family(f.split('/')[-1][:-3], shares)
         print(f'  {name:<9} {verdict}')
         families += 1
-        if verdict.startswith('GAP'): gaps += 1
+        if verdict.startswith('GAP'): gaps += 1; gap_flags[name] = verdict
     # DONE line last (2026-09-05 sweep): a mid-loop crash must not read as a short clean
     # list — absence-of-flags is never a pass.
-    print(f'DONE share_sum_check: {families} families checked, {gaps} gap flags')
+    problems = resolve('share_sum_check', gap_flags, DECLARED)
+    print(f'DONE share_sum_check: {families} families checked, {gaps} gap flags, {len(problems)} tolerated-count problems')
+    if problems:
+        sys.exit(1)

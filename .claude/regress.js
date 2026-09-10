@@ -39,6 +39,15 @@ const report = { errors: [], checks: [] };
 // Failing checks tolerated BY NAME, each with a reason (see the verdict block at the end). Empty means every red check
 // fails the gate. Shape: { check: '<exact check name>', reason: '<why it is tolerated, and until when>' }.
 const KNOWN_FAILURES = [];
+// PAGE ERRORS ARE A COUNT TOO (2026-09-10, user: 'an undeclared count is evidence of an unread count'). This harness
+// printed '2 page errors' on every run for as long as it has existed and nobody read them until a tolerated-count sweep
+// did: both are the browser's own favicon.ico request 404ing (no favicon is shipped). Same mechanism as KNOWN_FAILURES,
+// ported not reinvented: every page error not matched by a declaration below makes the run exit 1; a declaration that
+// matches nothing is STALE and reported. `match` is tested against the error's text; `type` must agree.
+const BENIGN_PAGE_ERRORS = [
+  { type: '404', match: /\/favicon\.ico$/, reason: 'no favicon is shipped; the browser requests one on every load; a 404 there says nothing about the app' },
+  { type: 'console', match: /^Failed to load resource: the server responded with a status of 404 \((Not Found|File not found)\) @ .*\/favicon\.ico$/, reason: 'the console echo of the favicon.ico 404 above — the same request reported a second way; the handler appends the resource URL so this matches favicon alone, never a missing asset' },
+];
 const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); if(!ok) console.log('FAIL', name, detail || ''); else console.log('ok  ', name, detail || ''); };
 
 (async () => {
@@ -60,7 +69,9 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     };
   });
   page.on('pageerror', e => report.errors.push({ type: 'pageerror', msg: String(e) }));
-  page.on('console', m => { if(m.type() === 'error') report.errors.push({ type: 'console', msg: m.text() }); });
+  // the console echo of a failed resource carries no URL in its text; the location is appended so a benign declaration
+  // can name the resource instead of tolerating every 404-shaped console error (2026-09-10)
+  page.on('console', m => { if(m.type() === 'error'){ const loc = (typeof m.location === 'function' && m.location()) || {}; report.errors.push({ type: 'console', msg: m.text() + (loc.url ? ' @ ' + loc.url : '') }); } });
   page.on('response', r => { if(r.status() === 404) report.errors.push({ type: '404', msg: r.url() }); });
 
   await page.goto(`http://localhost:${PORT}/cancer-atlas.html`, { waitUntil: 'networkidle0', timeout: 60000 });
@@ -501,7 +512,10 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     check('citations: structural checks ran', false, String(e).slice(0, 120));
   }
   const fails2 = report.checks.filter(c => !c.ok).length;
-  console.log(`\n==== DONE: ${report.checks.length} checks, ${fails2} failures, ${report.errors.length} page errors ====`);
+  const benignOf = e => BENIGN_PAGE_ERRORS.find(b => b.type === e.type && b.match.test(e.msg));
+  const undeclaredErrors = report.errors.filter(e => !benignOf(e));
+  const staleBenign = BENIGN_PAGE_ERRORS.filter(b => !report.errors.some(e => b.type === e.type && b.match.test(e.msg)));
+  console.log(`\n==== DONE: ${report.checks.length} checks, ${fails2} failures, ${report.errors.length} page errors (${report.errors.length - undeclaredErrors.length} declared benign, ${undeclaredErrors.length} undeclared) ====`);
   // A FAILURE IS A VERDICT (2026-09-10, user: 'already failing' had to be triaged — a check was red inside a GREEN gate,
   // because this harness printed its failure count and exited 0 regardless; two label overlaps sat red since they
   // were written). Now: every failing check not DECLARED below with a reason makes the run exit non-zero, so
@@ -511,7 +525,9 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
   const undeclared = report.checks.filter(c => !c.ok && !KNOWN_FAILURES.some(k => k.check === c.name));
   const stale = KNOWN_FAILURES.filter(k => report.checks.some(c => c.name === k.check && c.ok));
   if (stale.length) console.log('STALE DECLARATION: ' + stale.map(k => k.check).join('; ') + ' — declared tolerated but now passing; remove the declaration');
-  if (undeclared.length || stale.length) { console.log(`REGRESS VERDICT: ${undeclared.length} undeclared failing check(s), ${stale.length} stale declaration(s) — exit 1`); process.exitCode = 1; }
+  if (staleBenign.length) console.log('STALE BENIGN-ERROR DECLARATION: ' + staleBenign.map(b => String(b.match)).join('; ') + ' — matched no page error this run; remove the declaration');
+  if (undeclaredErrors.length) console.log('UNDECLARED PAGE ERROR(S): ' + JSON.stringify(undeclaredErrors.slice(0, 5)) + ' — read them, then fix or declare with a reason');
+  if (undeclared.length || stale.length || undeclaredErrors.length || staleBenign.length) { console.log(`REGRESS VERDICT: ${undeclared.length} undeclared failing check(s), ${stale.length} stale declaration(s), ${undeclaredErrors.length} undeclared page error(s), ${staleBenign.length} stale benign declaration(s) — exit 1`); process.exitCode = 1; }
   if (report.errors.length) console.log(JSON.stringify(report.errors.slice(0, 10), null, 1));
   await browser.close();
 })().catch(e => { console.error('HARNESS ERROR', e); process.exit(1); });

@@ -227,3 +227,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   NOT A MARKER: _uncited_migrating_watchlist <-> CLAUDE.md ['2026-10-17'] — marker matches more than one place (not a marker), 2 occurrences in the target
   | DONE record_sync_check: 18/19 declared pairs present in both homes under a unique marker, 0 half-landed, 0 stale declarations, 1 non-unique markers
 ==== END REFUSAL
+==== REFUSAL 2026-09-10T16:18:31Z reason=exit=1 marker="==== DONE:" tool=regress.js
+     output 189 lines, last 12 below
+  | UNDECLARED PAGE ERROR(S): [{"type":"console","msg":"Failed to load resource: the server responded with a status of 404 (File not found)"}] — read them, then fix or declare with a reason
+  | REGRESS VERDICT: 0 undeclared failing check(s), 0 stale declaration(s), 1 undeclared page error(s), 0 stale benign declaration(s) — exit 1
+  | [
+  |  {
+  |   "type": "404",
+  |   "msg": "http://localhost:3057/favicon.ico"
+  |  },
+  |  {
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found)"
+  |  }
+  | ]
+==== END REFUSAL

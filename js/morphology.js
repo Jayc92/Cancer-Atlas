@@ -242,9 +242,9 @@ export const MARGIN_STATUS = Object.freeze({
   clear:    { status: 'uncharacterised', ref: 'R15 — no margin-character category in the source' },
   luad:     { status: 'uncharacterised', ref: 'R7 — pre-registered negative, fired' },
   crc:      { status: 'uncharacterised', ref: 'R5 — margin subsumed by the cited growth form' },
-  ccrcc:    { status: 'unread',          ref: 'R3 — blocked-to-tooling (PathologyOutlines gated)' },
-  gdiff:    { status: 'unread',          ref: 'second tier — stomach margin not yet read' },
-  uc:       { status: 'unread',          ref: 'second tier — bladder margin not yet read' },
+  ccrcc:    { status: 'unread',          ref: 'R3 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
+  gdiff:    { status: 'unread',          ref: 'second tier — stomach margin not yet read', until: '2026-10-01' },
+  uc:       { status: 'unread',          ref: 'second tier — bladder margin not yet read', until: '2026-10-01' },
   // TNBC: the harvest backing was Livasy CA et al., Mod Pathol 2006 (PMID 16341146, doi 10.1038/modpathol.3800528),
   // 'pushing margin of invasion' in 14/23 basal-like tumours — a HISTOLOGIC assessment of the invasive front.
   // R23, read 2026-09-09 (pre-registered ladder): no StatPearls TNBC chapter; ~35 OA full texts; the gross-register
@@ -347,24 +347,24 @@ export const FALLOFF_CHANNEL = 'rimBlend';
 // 'cited' status carries a resolvable identifier in its ref; reserve_check asserts it), the citation on the entry.
 // `register` discloses H where the cited description is histologic (R2's form). A cited category with no wired
 // mechanism (count, wall, placement) is 'cited' with no `category`: drawn as nothing extra, said so on the badge.
-export const GROWTH_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
+export const GROWTH_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);   // an 'unread' row carries `until` (YYYY-MM-DD): a read owed says by when; reserve_check reports overdue rows (2026-09-10, user: status tables get dates)
 export const GROWTH_STATUS = Object.freeze({
   hgsoc:    { status: 'cited', label: 'bilateral', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'R14 PMC8070731 — bilateral: a COUNT category with a model precondition (one ovary modelled); not drawn' },
   clear:    { status: 'cited', label: 'unilateral, cystic and solid', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'R16 PMC8070731 — count 1 equals the default; composition unexpressed (design §10); not drawn' },
   luad:     { status: 'uncharacterised', ref: 'R8 — no gross growth category claimable' },
   crc:      { status: 'cited', label: 'ulcerating-annular (majority), polypoid (a quarter)', register: 'G', badgeSource: 'Int J Mol Sci 2018 (PMC6165083)', ref: 'R6 PMC6165083 — WALL (majority) and PLACEMENT (25%), a named divergence; not drawn' },
-  ccrcc:    { status: 'unread', ref: 'R3/R4 — blocked-to-tooling (PathologyOutlines gated)' },
+  ccrcc:    { status: 'unread', ref: 'R3/R4 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
   gdiff:    { status: 'cited', label: 'diffuse (linitis plastica)', register: 'G', badgeSource: 'NCI PDQ, Gastric Cancer Treatment (HP), updated February 21, 2025', ref: 'https://www.cancer.gov/types/stomach/hp/stomach-treatment-pdq — WALL; not drawn (page re-verified 2026-09-09: title, the ledger sentence and the update date match)' },
   uc:       { status: 'cited', label: 'papillary, exophytic (majority)', register: 'G', badgeSource: 'Future Sci OA 2026 (PMC12893692); J Clin Invest 2026 (PMC12948436)', ref: 'R19 PMC12893692 — PLACEMENT (~75% non-muscle-invasive), invasive minority named; not drawn' },
-  tnbc:     { status: 'unread', ref: 'harvest seed only (NST page, syncytial infiltrative — H); the gross-register growth source is not yet read' },
+  tnbc:     { status: 'unread', ref: 'harvest seed only (NST page, syncytial infiltrative — H); the gross-register growth source is not yet read', until: '2026-09-17' },
   hcc:      { status: 'cited', label: 'single nodular (majority)', register: 'G', badgeSource: 'J Hepatocell Carcinoma 2024 (PMC11007400); Gut 2023 (PMC10579519)', ref: 'R12 PMC11007400 — COUNT: the majority (types I+II, 247/400 by R11) is single, which is the default; confluent multinodular minority named; not drawn' },
   gbm:      { status: 'cited', category: 'diffuselyInfiltrative', register: 'G', badgeSource: 'J Med Life 2009 (PMC3019011)', badgeQuote: 'Grossly, it appears topographically diffuse, a poorly delineated mass with no capsula', ref: 'R21 PMC3019011 PMID 20108752 — EDGE at the wide extent (design §3(b), ruled 2026-09-09); RENDERED' },
   acinar:   { status: 'cited', label: 'multifocal', register: 'H', badgeSource: 'Fontugne et al., JCI Insight 2022 (PMC8876549)', ref: 'PMC8876549 PMID 35050902 — COUNT from whole-mount histology (H disclosed); not renderable at gross register; not drawn' },
   pdac:     { status: 'cited', category: 'infiltrative', register: 'H', badgeSource: 'Int J Mol Sci 2021 (PMC8268881)', badgeQuote: 'neoplastic cells arranged in small tubular glands that infiltrate a desmoplastic stroma', ref: 'R2 PMC8268881 PMID 34201897 — EDGE, histologic (H disclosed), corroborated at gross by R1; RENDERED' },
   melanoma: { status: 'cited', label: 'radial then vertical growth phase', register: 'G', badgeSource: 'Cancers 2025 (PMC12427887)', ref: 'R10 PMC12427887 — PLACEMENT (radial phase) and EXTENT breach (vertical phase); not drawn' },
-  seminoma: { status: 'unread', ref: 'growth source not read (listed for an external read; none made)' },
+  seminoma: { status: 'unread', ref: 'growth source not read (listed for an external read; none made)', until: '2026-10-01' },
   ptc:      { status: 'cited', category: 'infiltrative', register: 'G', badgeSource: 'StatPearls, Papillary Thyroid Carcinoma (NBK536943)', badgeQuote: 'typically presents as an invasive neoplasm', ref: 'R18 NBK536943 PMID 30725628 — EDGE ("an invasive neoplasm"); the margin half of the same sentence is R17 — two words, two axes, declared; RENDERED' },
-  ftc:      { status: 'unread', ref: 'growth source not read' },
+  ftc:      { status: 'unread', ref: 'growth source not read', until: '2026-10-01' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -400,9 +400,14 @@ export function extentSentence(entryName, ext){
   if(!ext) return '';
   if(ext.status !== 'cited') return ' Extent: drawn confined; ' + (ext.site ? 'the SEER page for ' + ext.site : 'the source') + ' publishes no stage-at-diagnosis distribution, so extent is not characterised.';
   const s = ext.shares;
-  const framing = (ext.modal === 'localized' || ext.modal === 'in situ')
-    ? 'The drawing shows the localized case, which is how most are found.'
-    : 'The drawing shows the localized case \u2014 the least extensive; most are found already beyond it.';
+  // Three framings, one per modal stage — IN SITU IS ITS OWN CATEGORY, never folded into 'localized' (user, 2026-09-10:
+  // bladder's in situ half is the best-outcome group, and a line that normalised it away would drop it from a
+  // patient-facing figure). The drawing is a confined mass in every case; the sentence says what that stands for.
+  const framing = ext.modal === 'in situ'
+    ? 'The drawing shows a confined mass; most are found in situ, before any invasion, and the next largest share localized.'
+    : ext.modal === 'localized'
+      ? 'The drawing shows the localized case, which is how most are found.'
+      : 'The drawing shows the localized case \u2014 the least extensive; most are found already beyond it.';
   const inSitu = s.inSitu !== undefined ? s.inSitu + '% in situ, ' : '';   // SEER reports an in situ share for some sites (bladder: half of cases)
   return ' Extent: drawn confined. Found at diagnosis — ' + ext.site + (ext.siteNote && !/the entry itself/.test(ext.siteNote) ? ' (SEER reports ' + ext.siteNote + ')' : '')
     + ': ' + inSitu + s.localized + '% localized, ' + s.regional + '% regional, ' + s.distant + '% distant, ' + s.unknown + '% unknown'

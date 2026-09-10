@@ -1199,3 +1199,14 @@ Proposed the same day and ratified with one change — the one that decides whet
     testis: no stage-at-diagnosis distribution on the page (https://seer.cancer.gov/statfacts/html/testis.html, checked 2026-09-10)
     thyroid: localized 63%, regional 31%, distant 3%, unknown 3% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/thyro.html verified 2026-09-10
     urinary bladder: in situ 50%, localized 34%, regional 7%, distant 6%, unknown 3% — SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage; submission not stated on the page; https://seer.cancer.gov/statfacts/html/urinb.html verified 2026-09-10
+
+2026-09-10 — tolerated-count sweep resolved (user: an undeclared count is evidence of an unread count). One mechanism,
+    `.claude/tolerated.py`, ported from regress.js's KNOWN_FAILURES into absence/fraction/share_sum/duplicate; regress
+    declares its favicon-404 page errors benign; the reach check's 150 unreached spans became a content-keyed tracked set
+    (`.claude/reach_unreached.json`, 95 keys); unread status rows carry `until` dates and reserve_check reports overdue
+    reads (three negative controls run). The 151st unreached span was this author's own prostate.js:13 note ("(user,
+    2026-09-09)" read as a data-span year) — date spelled out, census back to 150. Crosscheck's three flags were three
+    record defects, fixed: PNAS and Neuro-Oncology sat in author fields; the Nunes 2024 record carried two journals in
+    one field because extraction assumed one paper per author-year — split into Nature (PMID 39112715, resolved by hand
+    from the candidate list) and Molecular Cancer (PMID 39587554). Bladder: in situ 50% reported as its own category
+    with in-situ-modal framing. Depth (Breslow) measured per-layer in the skin block — see phaseA_extent_design.md §9.

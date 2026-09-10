@@ -339,7 +339,13 @@ def main():
     # (2026-09-07, same item) because the ratchet itself fires one checkout later. So this comment is
     # the mechanism at authoring time, not a reminder that one exists.
     paths = [a for a in sys.argv[1:] if not a.startswith('--')] or sorted(glob.glob('js/organs/*.js'))
+    if not paths:
+        print('citation_head_check: REFUSING TO REPORT — the corpus glob resolved to nothing (population unmeasured; not a finding)'); sys.exit(3)
     records = extract(paths)
+    if not records:
+        # FAILED-TO-MEASURE IS NOT A FINDING (standing rule, 2026-09-10): this check once reported '23 problems' about
+        # declared heads over an EMPTY record set — the unmeasurable phrased as defects.
+        print('citation_head_check: REFUSING TO REPORT — the extractor produced 0 records over %d corpus files (population unmeasured; not a finding)' % len(paths)); sys.exit(3)
     heads = {}
     for record in records:
         if multi_token(record['author']):

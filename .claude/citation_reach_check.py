@@ -83,7 +83,7 @@ os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from collections import Counter
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from extract_citations import unreached_spans
+from extract_citations import unreached_spans, extract
 
 GATED_KINDS = ('etal-malformed-head', 'etal-out-of-range')
 
@@ -424,6 +424,47 @@ def sidecar_metrics(spans, counts, problems):
     return metrics
 
 
+TRACKED_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'reach_unreached.json')
+TRACKED_SHOWN = 20
+
+
+def span_key(s):
+    """Content key: file|kind|head|year. No line number — a line number churns under every edit above the span."""
+    return f"{os.path.basename(s['file'])}|{s['kind']}|{s.get('key') or ''}|{s['year']}"
+
+
+def track_unreached(spans):
+    """Compare this run's unreached multiset with the tracked file, print ADDED/REMOVED, rewrite the file. Returns (added, removed)."""
+    from collections import Counter
+    now = Counter(span_key(s) for s in spans)
+    before = Counter()
+    existed = os.path.exists(TRACKED_FILE)
+    if existed:
+        with open(TRACKED_FILE, encoding='utf-8') as fh:
+            before = Counter({k: n for k, n in json.load(fh)['spans']})
+    added = sorted((now - before).elements())
+    removed = sorted((before - now).elements())
+    if not existed:
+        print(f'  TRACKED SET INITIALISED: {sum(now.values())} unreached spans written to .claude/reach_unreached.json — git add it in this commit')
+    for k in added[:TRACKED_SHOWN]:
+        print(f'  + unreached span ADDED (read it: fix, or accept by staging the tracked file): {k}')
+    for k in removed[:TRACKED_SHOWN]:
+        print(f'  - unreached span REMOVED: {k}')
+    if len(added) > TRACKED_SHOWN or len(removed) > TRACKED_SHOWN:
+        print(f'  ... {max(0, len(added) - TRACKED_SHOWN)} more additions, {max(0, len(removed) - TRACKED_SHOWN)} more removals')
+    if added or removed or not existed:
+        with open(TRACKED_FILE, 'w', encoding='utf-8') as fh:
+            json.dump({'_note': 'MACHINE-WRITTEN by citation_reach_check.py: the sorted multiset of citation-shaped spans the extractor '
+                                'produced no record for, keyed file|kind|head|year (content, never line numbers). The check prints '
+                                'ADDED/REMOVED against this file on every whole-corpus run and rewrites it; staging the diff is the '
+                                'acceptance, so a new unreached span is read at the commit that adds it instead of vanishing into a count.',
+                       'spans': sorted(now.items())}, fh, indent=1, ensure_ascii=True)
+            fh.write('\n')
+        if existed:
+            print('  tracked set rewritten — git add .claude/reach_unreached.json in this commit')
+    return len(added), len(removed)
+
+
 def main():
     # STILL A GLOB, AND DECLARED AS SUCH. The tracked-set rule binds a producer whose metric is
     # RATCHETED; this sidecar's ratchet array is empty, for the reason given beside it below.
@@ -434,7 +475,20 @@ def main():
     # (2026-09-07, same item) because the ratchet itself fires one checkout later. So this comment is
     # the mechanism at authoring time, not a reminder that one exists.
     paths = [a for a in sys.argv[1:] if not a.startswith('--')] or sorted(glob.glob('js/organs/*.js'))
+    # FAILED-TO-MEASURE IS NOT A FINDING (standing rule, 2026-09-10): an empty corpus or an extractor that produced no
+    # records is an unmeasurable population, and this check once phrased that as '5 problems' about declarations.
+    if not paths:
+        print('citation_reach_check: REFUSING TO REPORT — the corpus glob resolved to nothing (population unmeasured; not a finding)'); sys.exit(3)
+    if not extract(paths):
+        print('citation_reach_check: REFUSING TO REPORT — the extractor produced 0 records over %d corpus files (population unmeasured; not a finding)' % len(paths)); sys.exit(3)
     spans = unreached_spans(paths)
+    # THE UNREACHED COUNT IS A TRACKED SET, NOT A NUMBER (2026-09-10, user: 'an undeclared count is evidence of an unread
+    # count' — the 151st span was only read because someone asked, and it turned out to be a note's digit year). Every
+    # span is keyed by CONTENT (file|kind|head|year, never a line number, so an edit above it does not churn the set) and
+    # the sorted multiset lives in .claude/reach_unreached.json, machine-written by this check alone. ADDED/REMOVED
+    # against the tracked file is printed on every run; the acceptance is the staged diff — read it at commit time.
+    # Only the default whole-corpus run compares (an explicit subset is a different population).
+    tracked_delta = track_unreached(spans) if all(a.startswith('--') for a in sys.argv[1:]) else None
     problems, gated, counts = evaluate(spans)
     problems += stale_declarations(gated)
     problems += unknown_kinds(counts)
@@ -465,7 +519,8 @@ def main():
         'ratchet': [],
     }, sort_keys=True))
     # DONE last (condition 7-bis), after the sidecar and every listing above
-    print(f'DONE citation_reach_check: {len(spans)} unreached spans, '
+    delta_txt = '' if tracked_delta is None else f' ({tracked_delta[0]} added, {tracked_delta[1]} removed vs the tracked set)'
+    print(f'DONE citation_reach_check: {len(spans)} unreached spans{delta_txt}, '
           f'{sum(counts.get(k, 0) for k in GATED_KINDS)} gated '
           f'({len(DECLARED_UNREACHED)} declared), {len(problems)} problems')
     if problems:
