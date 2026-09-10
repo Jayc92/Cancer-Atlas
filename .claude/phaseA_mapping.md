@@ -1225,3 +1225,21 @@ Proposed the same day and ratified with one change — the one that decides whet
     keep). COMPOSITION RE-COUNT (growth design §10 C method, ledger + harvest spans): 4, UNCHANGED — OCCC, ccRCC, GBM,
     seminoma; the same two exclusions (TNBC "mixed" is a margin word; "mucinous" is a subtype share); the probes returned
     nothing, so nothing rose. Composition stays a candidate sibling axis.
+- 2026-09-10 (SELF-TEST COUPLING AUDIT + two verifications, user's five-item follow-up): crosscheck's
+    live known-positive assertion required two real defects to exist — CHECK-VALIDATED-BY-DEFECT, the
+    fourth accidental invariant (see CLAUDE.md). Audited all 19 instruments with a selftest/live-check;
+    zero other instances (five apparent hits were one function-boundary regex bug, re-verified clean).
+    BLADDER CAPTION re-verified: the flagged sentence is gated on `modal`, bladder's `modal` is
+    `'in situ'`, no live defect; all 16 EXTENT_STATUS entries' `modal` fields independently recomputed
+    against their own shares — 16/16 match; guard added to reserve_check.js (modal must equal argmax of
+    shares), proven with a negative control, no repair needed. REGISTER FINDING: FTC/acinar/TNBC's four
+    negative reads (R20, R22, R23, R24) are 4/4 the same signature (histologic register, not gross) with
+    a diagnostic reason each; recorded as a principled partial limit on the margin axis, a Phase C
+    budgeting ceiling, not a backlog; ccRCC (R3/R4, literature silence) explicitly NOT folded in — a
+    different, still-open failure mode. Eight untracked root .glb/.webp files inventoried (report only,
+    nothing moved): six are raw Sketchfab downloads already processed into currently-shipped, tracked,
+    documented assets (lungs, stomach, thyroid, ovary's pelvic-organs source, colon's intestine source);
+    two (colon.glb/iqcenter, digestive_system__human_anatomy.glb/adimed) have no CLAUDE.md trail at all
+    — Joe's call, not touched. Gate-script audit: run_checked.sh/commit_checked.sh already capture `$?`
+    or use `grep -q` inside a conditional everywhere; the grep-as-last-command false alarm was this
+    session's own ad hoc verification command, not a repo defect.

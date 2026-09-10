@@ -4507,6 +4507,123 @@ and a verified date is a citation under the fourth property whoever fetched it �
 user's call, asked, not assumed. Bypassing the limit (other clients, archives, proxies) is not on
 the table. Composition re-counted after the run by the §10 C method: four, unchanged.
 
+## CHECK-VALIDATED-BY-DEFECT — the fourth accidental invariant, and a full self-test audit (2026-09-10, user finding)
+
+**The species, named.** The crosscheck's live known-positive assertion required two real author-field
+defects to exist in the corpus to pass. It was never a hermetic self-test — it was validated by the
+very defects the tool exists to catch, so it could only be green WHILE the corpus was broken, and
+would have gone silent, not merely quiet, the moment the corpus was cleaned. Fixing the defects
+should have broken the self-test; had that happened at any earlier point the likely response would
+have been to weaken the assertion rather than notice the coupling. This is the opposite of what a
+ratchet is for: checks are supposed to get stricter as a project improves, not weaker.
+
+**The family, four members now.** An accidental invariant is a property that held in every case seen
+so far, got relied on without being stated, and stayed invisible until a case violated it:
+1. **cwd-always-pinned** — "CONTENT-ANCHORED POINTERS" (2026-09-09, the cwd-hazard passage): the battery always ran from the repo root, so nothing noticed every instrument's paths were relative until a run from elsewhere produced false fails and false-green vacuous passes. Generalised as convention D: every member roots itself, and the counts (not the verdict) are the discriminator.
+2. **closed-mesh-always-resolves** — "BODY MARKERS RESOLVED, BUT NOT CORRECTLY — the placement check" (2026-09-09, user finding): the body is a closed mesh, so a raycast always hits something and a miss never fires; the regression verified markers RESOLVE, never that they resolve to the right one, while one sat on a thigh.
+3. **one-paper-per-author-year** — "AN UNDECLARED COUNT IS EVIDENCE OF AN UNREAD COUNT" (2026-09-10, own section above): citation extraction assumed one author+year names one paper, so a record silently carried two different journals in one field until the crosscheck's OWN flags forced the read.
+4. **check-validated-by-defect** (this entry): a self-test's positive control was the corpus's own defect rather than a fixture, so the check's validity was coupled to the thing it exists to find — it fails in the direction nobody watches, since a project getting healthier makes the coupled check go quiet, and quiet reads as passing.
+
+**The fix already shipped (previous commit):** the crosscheck's live assertion no longer needs a real
+defect. It resolves one real esummary record from the actual fetched data, then checks a SYNTHETIC
+wrong author (`'Zzyzx-Not-An-Author'`) against it — proof that the checker fires, decoupled from
+whether the corpus currently has anything wrong.
+
+**The audit, run today, all 19 instruments with a `selftest()` or an equivalent live-run
+self-check** (`absence_claim_check`, `battery`, `ccf_load`, `citation_crosscheck`, `citation_head_check`,
+`citation_paren_ledger`, `citation_polarity`, `citation_reach_check`, `deploy_check.js`,
+`duplicate_figure_check`, `extract_citations`, `figure_search`, `fraction_check`, `internal_quote_check`,
+`pointer_check`, `record_sync_check`, `reserve_check.js`, `share_sum_check`, `tolerated`):
+**exactly one instance found, and it is the crosscheck instance already fixed. Zero others.** Method:
+every `selftest()` body was checked for a live read of the real corpus (`glob('js/organs/*.js')`,
+`open('.claude/citations.json')`) used as its OWN proof of firing, then re-checked more broadly for
+real filenames, `RECORD`/`attached(`/`unreached_spans(` calls, `sys.argv`-driven paths. `duplicate_figure_check`,
+`absence_claim_check`, `fraction_check`, `share_sum_check` and `record_sync_check` each showed a live
+read on the FIRST pass — all five were the same false positive: a function-boundary regex that
+over-captured past `selftest()`'s own `return` into the inlined `main()` block below it; re-bounded at
+`if __name__`, all five are clean (synthetic fixtures only). `citation_paren_ledger`, `pointer_check`
+and `battery` each mention real organ filenames (`js/organs/thyroid.js`, `.../lungs.js`,
+`.../prostate.js`) inside their selftests; every occurrence checked by hand is a LITERAL STRING
+constant used as fixture input (e.g. `battery.py`'s arm 17, "the REAL ones from d54bd1a,
+TRANSCRIBED" — a frozen snapshot of a historical commit, not a live read), never an `open()`/`glob()`
+call. `reserve_check.js`'s own selftest is explicitly fixture-form BY DESIGN ("no live population can
+carry a violation while the rule holds") — it was already built the honest way round. Nothing here
+needs converting; there was nothing else coupled.
+
+## THE BLADDER CAPTION, VERIFIED — and a guard against the next drift (2026-09-10, user question)
+
+**Is "which is how most are found" still live on bladder? No.** The phrase is still in
+`extentSentence` (`js/morphology.js`) — it is a shared template, not a per-entry string — but it is
+gated behind `ext.modal === 'localized'`, and bladder's `modal` is `'in situ'`, which routes to its
+own dedicated sentence instead. The three-way form (in situ / localized / other) that makes this
+routing possible landed in `c440900`, already pushed and deploy-verified; the two-way form it
+replaced would have sent anything that wasn't `'localized'` to the same "beyond it" branch bladder
+now gets its own sentence for. There is no live instance of the flagged defect.
+
+**Is it templated on the other fifteen, and could pancreatic be next? Checked directly, not
+inferred.** Every cited entry's `modal` field was independently recomputed from its OWN `shares` (the
+true argmax) and compared against the stored value: **16/16 match, zero mismatches.** Pancreatic
+(pdac) is `modal: 'distant'` (51% of its own SEER distribution), matching its true argmax exactly —
+it gets the "least extensive; most are found already beyond it" framing, not the flagged one. The six
+entries whose true modal is regional or distant (pdac, crc, luad, hgsoc, clear, gdiff) all route
+correctly; the eight whose true modal is localized (melanoma, gbm, tnbc, ccrcc, hcc, acinar, ptc, ftc)
+all route correctly, and "which is how most are found" is TRUE for every one of them by their own
+cited numbers. The predicted second casualty did not materialize because the fix already generalises
+on the data, not on the entry.
+
+**The guard, added anyway.** Nothing here is broken, but a `modal` field is exactly the kind of prose-
+that-summarises-data the user has flagged before: it can go stale the moment a `shares` value is
+corrected without anyone re-checking which share is still largest. `reserve_check.js` now asserts, for
+every cited extent entry, that `modal` equals the argmax of its own `shares` — a GUARD, not a repair,
+since it has not yet fired on a live defect. Proven with its own negative control: `pdac.modal` set to
+`'localized'` against its true `'distant'` fired with the exact sentence naming the false majority,
+then the file was restored byte-identical.
+
+## THE REGISTER FINDING — established for three entities, not ruled universal (2026-09-10, user question)
+
+**The question:** is TNBC's negative read (R23/R24) the same failure as FTC (R20) and prostate acinar
+(R22) — gross-register description systematically unavailable rather than merely unfound — and does
+ccRCC (R3/R4) make a fourth?
+
+**Four actual reads, four-for-four the same signature.** Of the six margin/growth records touching
+these entities, four were READS (a search happened, register checked) and two (R3, R4, ccRCC) are
+explicitly UNREACHED (the record's own words: "blocked-to-tooling, NOT a negative"). All four reads —
+FTC margin (R20), prostate acinar margin (R22), TNBC margin (R23), TNBC growth (R24) — found real,
+citable literature that answers a DIFFERENT question than the one the axis asks: histologic
+(microscopic-architecture) register, not gross (macroscopic-appearance) register. That is 4/4, not a
+coincidence sample of one.
+
+**Established for three entities, with a reason each, not just a count.** The pattern has a cause,
+checkable in the same records already in the ledger, not only a tally:
+- **FTC** is diagnosed BY capsular/vascular invasion (R20's own quote: MI/EA/WI subtypes, defined by
+  how far the tumour crosses its capsule) — a criterion invisible without a microscope. Gross
+  literature has little reason to describe a margin no gross exam can resolve.
+- **Prostate acinar adenocarcinoma** is frequently GROSSLY INAPPARENT — R22's own near-miss quote
+  ("If there was no grossly visible tumor, a systematic sampling strategy was used") describes the
+  clinical workaround for a tumour often invisible to the eye it would need a margin description of;
+  this is the same "grossly inapparent" shape pre-registered before the read (R22), now supported by
+  adjacent textual evidence rather than a direct statement.
+- **TNBC** is defined by receptor immunophenotype (ER/PR/HER2 status), not by any gross morphology of
+  its own — R23's own findings show the ONLY entity-specific gross-circumscription sentences found
+  belong to rare morphologic SUBTYPES (secretory carcinoma, fibromatosis-like metaplastic carcinoma),
+  which have their own distinct look precisely because they are morphologic exceptions to ordinary
+  TNBC, not because TNBC itself has one.
+
+**ccRCC is a different failure mode, and stays open, not folded in.** R3/R4 found NO description in
+either register (a colour statement and an unpredicated "solid or cystic" are the nearest misses) —
+literature silence, not a register mismatch. That is evidence for a different, more basic problem
+(nothing found yet) and is neither confirmation nor refutation of the register limit; ccRCC keeps its
+`unread` status and `until` date rather than being downgraded by analogy.
+
+**Recorded as a PRINCIPLED, PARTIAL limit on the margin axis, not a search-effort backlog.** For
+FTC, prostate acinar and TNBC, more searching is not expected to change the outcome: the register
+mismatch follows from how each entity is actually diagnosed or defined, not from where the corpus
+was drawn. **Phase C implication:** if 3 of the ~14 entities read so far hit a limit intrinsic to how
+they are diagnosed (invasion-graded, often-inapparent, or receptor-defined rather than
+morphology-defined), a comparable fraction of Phase C's roughly 120 entities should be EXPECTED to
+land on `uncharacterised` permanently, and that expected fraction is a ceiling to budget for now
+rather than a debt to keep chasing with more reads later.
+
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
 **The instrument that refuses to scan without its input could still

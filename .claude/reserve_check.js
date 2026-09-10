@@ -198,6 +198,15 @@ function liveProblems(M){
       if(!(sum >= 98 && sum <= 102)) problems.push(`entry ${e.id} extent shares sum to ${sum}, not ~100`);
       if(!/\d{4}[–-]\d{4}/.test(xs.basis || '')) problems.push(`entry ${e.id} extent basis carries no diagnosis-year range — a share without its vintage can be re-checked but not re-verified`);
       if(!/\bspread/i.test('') && /spreads?\b/i.test(M.extentSentence(e.id, xs))) problems.push(`entry ${e.id} extent sentence says 'spread' — extent wording must stay detection-framed ('found at')`);
+      // MODAL MUST BE THE ENTRY'S OWN TRUE ARGMAX (2026-09-10, user: the bladder caption was a templated claim that
+      // could go stale exactly like this — a share can be corrected without anyone re-checking whether `modal` still
+      // names the largest one, and `extentSentence`'s three-way framing trusts `modal` without recomputing it). This
+      // is a GUARD, not a repair: every entry read clean when checked by hand (2026-09-10), so the arm has never yet
+      // fired on a live defect — it exists to catch the NEXT edit that moves a share without moving `modal` with it.
+      const shareEntries = Object.entries(xs.shares);
+      const trueModalKey = shareEntries.reduce((best, cur) => cur[1] > best[1] ? cur : best)[0];
+      const trueModal = trueModalKey === 'inSitu' ? 'in situ' : trueModalKey;
+      if(xs.modal !== trueModal) problems.push(`entry ${e.id} extent modal is '${xs.modal}' but its own shares (${JSON.stringify(xs.shares)}) make '${trueModal}' the largest — the framing sentence would assert a false majority`);
     }
     if(!gs) problems.push(`active entry ${e.id} has no growth status`);
     else if(!M.GROWTH_STATUSES.includes(gs.status)) problems.push(`entry ${e.id} carries an unknown growth status '${gs.status}'`);
