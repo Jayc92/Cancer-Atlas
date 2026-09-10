@@ -449,6 +449,23 @@ pose number backs nothing; six apex arms. THE ZONE FORMULA is recorded as orderi
 by 70% and 4× in a consistent direction (over-predicting reserved area), so it would pass masses
 that fail; it stays out of legibility reasoning.
 
+## 13. Render coverage, and the trigger for the surface question (2026-09-10)
+
+Two mechanisms now push cited properties out of the render and into text: the understated-
+extent label (§10, ruling 2) and the suppressed dissolve on a margin-reserved mass (§12). Each
+was forced by a measurement and each is individually right; the aggregate is what nobody would
+notice. `reserve_check` reports RENDER COVERAGE — cited-and-rendered against cited-and-text-only,
+per entry and in total. At this commit: 9 of 17 cited properties render; the 8 text-only are all
+growth categories whose mechanism is not built (count, wall, placement) — none is a suppression
+yet. The number is reported, not ratcheted: it is a ratio to watch, and a fall is the signal.
+
+THE TRIGGER (user): the class "margin-reserved with cited infiltrative growth" is empty today,
+and the entries most likely to fill it — TNBC, FTC, prostate acinar, ccRCC — are all demoted
+pending gross-register sources, TNBC's read next. When the first entry lands in the class, it is
+fair to reopen whether the reserved signal belongs on the mass surface at all, rather than
+somewhere the dissolve cannot reach; declined on speculation earlier, the kidney sweep is
+evidence. Not before the first entry lands.
+
 ## 8-old. Rulings requested before code (as first written)
 
 (i) §3(b): is parenchymal diffuseness edge extent (GBM at tier 2) or a distinct treatment

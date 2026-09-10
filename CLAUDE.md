@@ -4206,6 +4206,17 @@ harness emit the coverage or geometry that produced it, read from the objects'
 declared identity, alongside the pixels. It costs a few lines and it is what lets a
 look be argued with.
 
+THE PATTERN'S SCOPE (user, 2026-09-10 — before it gets miscited): IDENTITY FOR DISCRETE,
+ENUMERABLE POPULATIONS; COUNT FOR SAMPLED ONES THAT TWO CORRECT RUNS CAN LEGITIMATELY
+DIFFER ON. The test is exactly that question — can two correct runs differ? If they can,
+an identity claim is false however much you want it. Worked example, the same day the
+pattern was written: verifying that a placeholder mass drew no dissolve, an identity claim
+("pixel-identical to the baseline") was about to go in the record; between two correct
+frozen runs 759 pixels differed by more than 6/255 across the whole organ from sub-pixel
+pose jitter, so identity was false — while the COUNT (1878 of 1880 baseline teal pixels
+kept, against 618 when dissolved) was true and sufficient. Anchors, coverage, statuses:
+identity. Renders across runs: counts with a threshold.
+
 TWO HARNESS NOTES THAT BELONG BESIDE IT (user). (1) THE MECHANISM GETS MEASURED BEFORE
 IT GETS CHOSEN: the obvious visibility gate for the body picker — a facing test on the
 anchor's normal — failed outright across 24 yaws on both bodies, and only the
@@ -4282,6 +4293,56 @@ TOOLING NOTE, same day: `/tmp/atlas-verify/node_modules` (the scratch `puppeteer
 headless gate depends on) vanished overnight; re-installed at the same path. The cure is
 `cd /tmp/atlas-verify && npm install puppeteer-core`; the battery's $TMPDIR warning already
 said not to trust that directory's contents, and now its tooling too.
+
+## FOUR SHORT ITEMS, 2026-09-10 (user): the overlaps triaged, /tmp retired, the pattern scoped, render coverage counted
+
+1. THE LABEL OVERLAPS WERE A RED CHECK INSIDE A GREEN GATE. `regress.js` printed its failure
+   count and exited 0 regardless, so its 173 checks were reporting-only and none could fail
+   the gate — the two site-label overlaps (GBM: Infiltrative margin ~ Peritumoral edema;
+   acinar: Peripheral zone A ~ Transition zone) had been red since they were written, and the
+   record called them "known". Visually: chips intersecting by a few pixels at the default
+   pose, text legible — minor, but live. BOTH HALVES FIXED THE SAME DAY: a deterministic
+   per-frame collision resolver in the site tick (labels pushed down by the overlap plus a
+   gap, box computed from the CSS anchor), and the regression now exits non-zero on any
+   failing check not DECLARED by name with a reason (`KNOWN_FAILURES`, empty at birth; a
+   declaration whose check passes is reported stale). A regression that reports and never
+   refuses is the resolve-versus-resolve-correctly gap in the gate itself.
+2. /tmp IS RETIRED AS A DEPENDENCY. puppeteer-core lives at `~/.cache/cancer-atlas/`
+   (persistent, machine-local, path built from the home directory at runtime — no literal in
+   the tree); resolution is installed → `PUPPETEER_CORE` → the home cache → the old /tmp path
+   last. THE QUESTION THAT MATTERED MORE: when it vanished, would the gate refuse or skip?
+   Measured by simulation (every copy hidden, the refusal log redirected): the wrapped
+   regression exits 1 and logs a refusal — the gate REFUSES. Convention D holds for this
+   failure mode.
+3. The identity pattern is scoped where it is recorded (above).
+4. RENDER COVERAGE IS NOW A NUMBER. Two mechanisms push cited properties out of the render
+   and into text — the understated-extent label and growth on a margin-reserved mass; each
+   was forced by a measurement and each is right, and the aggregate is what nobody would
+   notice: an atlas drifting toward a text database with a decorative 3D view inverts the
+   premise. `reserve_check` now reports cited-and-rendered against cited-and-text-only, per
+   entry and in total (today 9 of 17 cited properties render; 8 are text-only, all of them
+   growth categories with no mechanism built yet). Reported, not ratcheted — a ratio to watch.
+   THE TRIGGER (user): the class "margin-reserved with cited infiltrative growth" is empty
+   today; TNBC, FTC, prostate acinar and ccRCC are all demoted pending gross-register sources
+   and TNBC's read is next. When the FIRST entry lands in the class, reopen whether the
+   reserved signal belongs on the mass surface at all rather than somewhere the dissolve
+   cannot reach — declined on speculation earlier; the kidney sweep is evidence. Not before.
+
+THREE CORRECTIONS TO THE ENUMERATION ABOVE (user): the label overlaps were present-tense,
+not a Phase C hazard (item 1). EIGHT OR NINE MASSES PER ORGAN AT 22% OF ORGAN RADIUS is the
+largest rendering hazard on the list and has no current symptom to triage — COSTED EARLY:
+the mass code places one mass at the organ's single origin hotspot and marches extras along
+one tangent at 2.2 radii; at eight entries the masses cover the organ and leave it, and the
+badge chips stack out of frame. The options are structural, not parametric: masses shrink
+(and the reserved form's legibility, tuned at 22%, is re-derived), OR the per-organ view
+changes (one mass shown at a time, selected by the cancer list, the rest as markers), OR
+origin becomes per-entry so masses sit at their own sites. Any of the three reshapes Phase
+C's content model rather than patching it — decide before Phase C content is written. THE
+URL-ACCEPTING IDENTIFIER CHECK was misfiled: not a small-population property but a check
+that did not check — the instrument that would have caught the pancreas's dangling citation
+and the prostate's unverifiable quote. Treated on its own merits: a URL identifier must now
+carry the date it was last followed (`verified YYYY-MM-DD`), asserted by `reserve_check`
+without network; a link nobody has followed is not a resolved identifier.
 
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
@@ -5222,8 +5283,11 @@ refute it, which is worth more than file order.
   PDAC's source). APEX FLOOR RE-DERIVED ACROSS THE ORBIT (2026-09-10): placeholders
   draw no dissolve; a nonzero cap needs a two-organ sweep minimum. SMALL-POPULATION
   INVARIANTS enumerated before Phase C (own section). Extent-by-category rationale
-  recorded beside the constants. Next on the growth axis: extent breach, then wall;
-  multifocal when it has a renderable member. COLD-SESSION ENTRY POINTER: read
+  recorded beside the constants. 2026-09-10: label overlaps fixed and regression
+  failures made fatal behind a declared list; puppeteer-core off /tmp; identity
+  pattern scoped; render coverage counted (9/17). Next: the extent-breach design
+  document (SEER Summary Stage, never AJCC; breach is modal), then wall; multifocal
+  when it has a renderable member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin

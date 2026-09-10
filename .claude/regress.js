@@ -6,12 +6,24 @@
 // Usage: node .claude/regress.js [outDir] [port]
 //   outDir — screenshots + report.json destination (default /tmp/atlas-verify/out)
 //   port   — the nocache dev server's port (default 3055; or set ATLAS_PORT).
-// Needs puppeteer-core: resolved normally if installed, else from PUPPETEER_CORE, else the
-// /tmp/atlas-verify/node_modules convention the packet tooling uses. Chrome path overridable
+// Needs puppeteer-core: resolved normally if installed, else from PUPPETEER_CORE, else the persistent
+// ~/.cache/cancer-atlas/node_modules (2026-09-10), else the old /tmp/atlas-verify convention. Chrome path overridable
 // via CHROME_PATH (default is the macOS install location).
 let puppeteer;
 try { puppeteer = require('puppeteer-core'); }
-catch { puppeteer = require(process.env.PUPPETEER_CORE || '/tmp/atlas-verify/node_modules/puppeteer-core'); }
+catch {
+  // RESOLUTION ORDER (2026-09-10): an explicit PUPPETEER_CORE, then the persistent machine-local cache built from the
+  // home directory AT RUNTIME (no literal path in the tree — assertion 6), then the old /tmp convention as a last
+  // resort. /tmp bit this project twice (a stale artefact, then node_modules vanishing overnight); the cure for
+  // the class is not to depend on it: `mkdir -p ~/.cache/cancer-atlas && cd ~/.cache/cancer-atlas && npm install
+  // puppeteer-core`. A missing module is a REFUSAL, not a skip: the require throws, node exits 1, run_checked.sh
+  // propagates it and logs the refusal — measured on 2026-09-10 by hiding every copy (exit 1, refusal logged).
+  const os = require('os'), pathMod = require('path');
+  const candidates = [process.env.PUPPETEER_CORE, pathMod.join(os.homedir(), '.cache', 'cancer-atlas', 'node_modules', 'puppeteer-core'), '/tmp/atlas-verify/node_modules/puppeteer-core'].filter(Boolean);
+  let err;
+  for (const c of candidates) { try { puppeteer = require(c); break; } catch (e) { err = e; } }
+  if (!puppeteer) throw err;
+}
 const fs = require('fs');
 const path = require('path');
 
@@ -24,6 +36,9 @@ const REPO = path.resolve(__dirname, '..');
 const PORT = process.argv[3] || process.env.ATLAS_PORT || '3055';
 fs.mkdirSync(OUT, { recursive: true });
 const report = { errors: [], checks: [] };
+// Failing checks tolerated BY NAME, each with a reason (see the verdict block at the end). Empty means every red check
+// fails the gate. Shape: { check: '<exact check name>', reason: '<why it is tolerated, and until when>' }.
+const KNOWN_FAILURES = [];
 const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); if(!ok) console.log('FAIL', name, detail || ''); else console.log('ok  ', name, detail || ''); };
 
 (async () => {
@@ -471,6 +486,16 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
   }
   const fails2 = report.checks.filter(c => !c.ok).length;
   console.log(`\n==== DONE: ${report.checks.length} checks, ${fails2} failures, ${report.errors.length} page errors ====`);
+  // A FAILURE IS A VERDICT (2026-09-10, user: 'already failing' had to be triaged — a check was red inside a GREEN gate,
+  // because this harness printed its failure count and exited 0 regardless; two label overlaps sat red since they
+  // were written). Now: every failing check not DECLARED below with a reason makes the run exit non-zero, so
+  // run_checked.sh refuses and the gate goes red. The declared list is the coverage-split form (declared-and-
+  // tolerated vs fatal): each entry names the check and why it is tolerated, and an entry whose check now passes is a
+  // stale declaration, reported. Empty at birth: the two overlaps were fixed in the same commit.
+  const undeclared = report.checks.filter(c => !c.ok && !KNOWN_FAILURES.some(k => k.check === c.name));
+  const stale = KNOWN_FAILURES.filter(k => report.checks.some(c => c.name === k.check && c.ok));
+  if (stale.length) console.log('STALE DECLARATION: ' + stale.map(k => k.check).join('; ') + ' — declared tolerated but now passing; remove the declaration');
+  if (undeclared.length || stale.length) { console.log(`REGRESS VERDICT: ${undeclared.length} undeclared failing check(s), ${stale.length} stale declaration(s) — exit 1`); process.exitCode = 1; }
   if (report.errors.length) console.log(JSON.stringify(report.errors.slice(0, 10), null, 1));
   await browser.close();
 })().catch(e => { console.error('HARNESS ERROR', e); process.exit(1); });

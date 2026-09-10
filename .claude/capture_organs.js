@@ -23,7 +23,19 @@
 'use strict';
 let puppeteer;
 try { puppeteer = require('puppeteer-core'); }
-catch { puppeteer = require(process.env.PUPPETEER_CORE || '/tmp/atlas-verify/node_modules/puppeteer-core'); }
+catch {
+  // RESOLUTION ORDER (2026-09-10): an explicit PUPPETEER_CORE, then the persistent machine-local cache built from the
+  // home directory AT RUNTIME (no literal path in the tree — assertion 6), then the old /tmp convention as a last
+  // resort. /tmp bit this project twice (a stale artefact, then node_modules vanishing overnight); the cure for
+  // the class is not to depend on it: `mkdir -p ~/.cache/cancer-atlas && cd ~/.cache/cancer-atlas && npm install
+  // puppeteer-core`. A missing module is a REFUSAL, not a skip: the require throws, node exits 1, run_checked.sh
+  // propagates it and logs the refusal — measured on 2026-09-10 by hiding every copy (exit 1, refusal logged).
+  const os = require('os'), pathMod = require('path');
+  const candidates = [process.env.PUPPETEER_CORE, pathMod.join(os.homedir(), '.cache', 'cancer-atlas', 'node_modules', 'puppeteer-core'), '/tmp/atlas-verify/node_modules/puppeteer-core'].filter(Boolean);
+  let err;
+  for (const c of candidates) { try { puppeteer = require(c); break; } catch (e) { err = e; } }
+  if (!puppeteer) throw err;
+}
 const fs = require('fs'), path = require('path');
 const { spawn } = require('child_process');
 const REPO = path.resolve(__dirname, '..');

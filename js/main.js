@@ -697,12 +697,27 @@ function siteTick(){
     // set AND its state is NONE, so a drag in progress suppresses the idle spin for free.
     state.siteViewer.update();
     state.siteViewer.renderer.render(state.siteViewer.scene, state.siteViewer.camera);
-    siteBlobs.forEach((b,i)=>{
-      const p = state.siteViewer.project(b.mesh.position);
-      siteLabelEls[i].style.left = p.x+'px';
-      siteLabelEls[i].style.top = p.y+'px';
-      siteLabelEls[i].style.opacity = p.z < 1 ? '1' : '0';
-    });
+    // LABEL COLLISION RESOLVER (2026-09-10). Two site labels intersected on the GBM and acinar maps — a check that had
+    // been red inside a GREEN gate since it was written, because the regression reported failures and exited 0 (fixed
+    // the same day: undeclared failures now fail the gate). Greedy and deterministic per frame: in projected-y order, a
+    // label whose box intersects an already-placed one is pushed DOWN by the overlap plus a 4px gap. The box follows
+    // the CSS anchor exactly — `.site-label` is translate(-50%, -160%), so a label at (x, y) spans x∓w/2 and
+    // y−1.6h .. y−0.6h. The blob stays put; a nudged label sits a little below its site rather than on a neighbour.
+    const placed = [];
+    siteBlobs.map((b, i)=>{ const p = state.siteViewer.project(b.mesh.position); const el = siteLabelEls[i]; return { i, p, w: el.offsetWidth || 0, h: el.offsetHeight || 0 }; })
+      .sort((a, b)=>a.p.y - b.p.y)
+      .forEach(o=>{
+        let y = o.p.y;
+        const box = ()=>({ x0: o.p.x - o.w/2, x1: o.p.x + o.w/2, y0: y - 1.6*o.h, y1: y - 0.6*o.h });
+        for(let guard = 0; guard < 8; guard++){
+          const bx = box(); const hit = placed.find(q=>bx.x0 < q.x1 && q.x0 < bx.x1 && bx.y0 < q.y1 && q.y0 < bx.y1);
+          if(!hit) break;
+          y += (hit.y1 - bx.y0) + 4;
+        }
+        placed.push(box());
+        const el = siteLabelEls[o.i];
+        el.style.left = o.p.x+'px'; el.style.top = y+'px'; el.style.opacity = o.p.z < 1 ? '1' : '0';
+      });
   }
   requestAnimationFrame(siteTick);
 }

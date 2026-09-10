@@ -120,7 +120,9 @@ async function comparePublished(repo, assets) {
 
 // ---- layers 2 and 3: INITIALISES and CLEAN ------------------------------------------------
 function loadPuppeteer() {
-  for (const m of ['puppeteer', 'puppeteer-core', '/tmp/atlas-verify/node_modules/puppeteer-core']) {
+  // Resolution order (2026-09-10): installed, explicit PUPPETEER_CORE, the persistent home-cache install (path built at
+  // runtime, no literal in the tree), then the old /tmp convention last — see regress.js for why /tmp is last.
+  for (const m of ['puppeteer', 'puppeteer-core', process.env.PUPPETEER_CORE, require('path').join(require('os').homedir(), '.cache', 'cancer-atlas', 'node_modules', 'puppeteer-core'), '/tmp/atlas-verify/node_modules/puppeteer-core'].filter(Boolean)) {
     try { return require(m); } catch { /* next */ }
   }
   throw new Error('no puppeteer available');
