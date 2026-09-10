@@ -111,3 +111,46 @@ SEER distribution — as the honest expression of a modal property for fifteen e
 melanoma's dermal plug as the one geometric breach. (iii) Confirm the SEER Cancer Stat Facts pages
 as the per-site source (public domain, "SEER 21 (Excluding IL) 2016–2022"), identified by URL and
 verification date.
+
+## 8. Rulings received (2026-09-10), and the melanoma question settled before building
+
+**RULING 1 — text default ACCEPTED, with two additions.** (a) An independent argument that lands the
+same way and is about who reads this: the render must not depict a stage the reader might not have.
+A person with localized pancreatic disease seeing it drawn invasive is a worse failure than the
+reverse — text can correct a conservative picture upward but cannot unsee a frightening one. (b) A
+CONSTRAINT: stage at diagnosis is a fact about DETECTION, not about growth. Pancreatic cancer is 79%
+regional-or-distant at diagnosis largely because there is no screening and symptoms come late;
+melanoma is 77% localized largely because it is visible on skin. Under a growth heading, "usually
+regional or distant" reads as a claim about how the tumour behaves, which is not what SEER measured.
+THE WORDING STAYS DETECTION-FRAMED — "found at" — and that phrasing is protected, because it is
+exactly the qualifier that gets trimmed for space in a badge ("usually spreads beyond the organ" is
+the trimmed version that will suggest itself, and it is false to the source). (c) Fifteen instances
+change the form: the understated-extent badge was designed as an exception annotation for one entry;
+at fifteen it becomes the PRIMARY carrier of extent information and is designed as one — an EXTENT
+line on every mass badge, not an exception marker on nearly every entry.
+
+**RULING 2 — NOT as stated; the melanoma question answered first (user).** Is the dermal plug a
+breach into a second structure, or invasion DEPTH within one? READ FROM THE TREE: the skin block's
+slabs (skin.js) are the layers of ONE organ — epidermis from the surface to the dermal-epidermal
+junction, a 0.7 mm pigmented basal band, dermis down to the dermis/hypodermis boundary, hypodermis
+below — and a plug from the epidermis into the dermis occupies the skin's own thickness. THAT IS
+DEPTH, NOT BREACH. Depth of invasion in melanoma is Breslow thickness, a millimetre measurement
+cited per tumour (and distributed at population level), which would make it the FIRST CITED
+MAGNITUDE in this atlas — outside the category-cited / magnitude-illustrative split that has governed
+every geometric parameter so far, and therefore a claim to its own axis and its own ruling, not a
+slot in extent breach. ONE FACT THAT RULING MUST CARRY: the block is not to scale. Its section is
+16 mm of design units with an epidermis ~2.2 mm deep and a dermis ~8 mm (rendered at ×5), against
+real skin's ~0.1 mm epidermis and 1–4 mm dermis; a Breslow depth drawn true-to-millimetre would sit
+inside the model's epidermis, and one drawn to the model's layer proportions would not be the
+measurement. Either the layer scale is declared and the plug drawn against it with the true
+millimetres on the badge, or depth stays in text. Melanoma therefore leaves this document's
+geometric column: extent on THIS axis is text for melanoma too, and the depth axis is a separate
+proposal. PREDICTION ACCOUNTING: the pre-registered "fifteen to text, melanoma geometric" comes out
+as SIXTEEN to text on the extent axis — the sixteenth not refuted but reassigned to an axis that did
+not exist when the prediction was written.
+
+**RULING 3 — Stat Facts pages ACCEPTED, with the data vintage.** SEER Cancer Stat Facts are living
+documents revised each submission; "79%" is a figure with a vintage. Every extent status records the
+registry set and diagnosis-year range ("SEER 21 (Excluding IL) 2016–2022") and the data submission
+where the page states it, alongside the retrieval date — the difference between a citation someone
+can re-verify and one they can only re-check against whatever the page says later.

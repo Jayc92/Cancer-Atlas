@@ -4344,6 +4344,74 @@ and the prostate's unverifiable quote. Treated on its own merits: a URL identifi
 carry the date it was last followed (`verified YYYY-MM-DD`), asserted by `reserve_check`
 without network; a link nobody has followed is not a resolved identifier.
 
+## A TOLERATED COUNT LAUNDERS A DEFECT INTO A CONSTANT (2026-09-10, user; the sweep — report, not fix)
+
+THE REFRAME (user): the two label overlaps were not hidden — they were PUBLISHED, in every
+report, as "2 known failures". Everyone matched the number, nobody re-read the list, and a
+stable 2 became indistinguishable from health. The bare-cwd sweep made "same counts, not
+just green" the discriminator — and a laundered defect is precisely a stable count, so the
+instrument built to catch vacuous passes was structurally blind to this. The fix shape is
+zero, or a NAMED list with reasons, with stale declarations reported; the healthy pattern
+is the watchlist's EXPIRY DATE, which is what stops a count becoming furniture.
+
+THE SWEEP, every accepted non-zero count in the battery's DONE lines, classified by the one
+question — is it a list someone re-reads, or a number people match?
+
+LISTS WITH REASONS (healthy, no expiry): `deploy_check` BENIGN (one favicon 404); crosscheck
+`DECLARED_UNMAPPABLE` (one id); reach `DECLARED_UNREACHED` (five, with kinds); the absence
+check's three EXEMPT classes (each instance reasoned); the paren ledger's four scored spans;
+`KNOWN_FAILURES` (empty at birth). WITH AN EXPIRY (the pattern that works): only
+`_uncited_migrating_watchlist` (its expiry date is the record-sync marker for that pair, so it is not repeated here).
+
+NUMBERS PEOPLE MATCH (furniture risk, in order of what they may be hiding):
+- `citation_crosscheck` "3 flags": the list lives only in a $TMPDIR artifact. Read: Nunes
+  2024 recorded under journal 'Nature + Molecular Cancer (two mentions)' vs 'Mol Cancer';
+  'PNAS' 2013 and 'Neuro-Oncology' 2021 recorded with the JOURNAL in the author field
+  (Sottoriva A; Louis DN). Three real record-format defects, tolerated since 2026-09-06.
+- `duplicate_figure_check` "4 drift flags": printed each run, never declared. skin.js
+  391 vs 395 carry different CDKN2A figures at two sites (49%/44% vs 29%/27%) with a note
+  saying they are the same event; pancreas 212 a 1997/1998 year pair; stomach RHOA 0.3 vs
+  0.4 and the CLDN18 pair. Each is either a deliberate different denominator or a real
+  drift, and the count cannot say which — a re-read per flag is owed.
+- `fraction_check` "1 mismatch, 1 comment flag": pancreas 206/149, "classically ~50% …
+  (25/84 tumors, Hahn 1996)" — read: a FALSE POSITIVE (the 25/84 is the deletion
+  mechanism's share, not the ~50%'s fraction), tolerated as a stable 1 for want of a
+  declaration mechanism; the instrument has one for two-year ranges and not for this.
+- `share_sum_check` "1 gap": liver family sums to 87.5 — "transplant candidate, human reads
+  the label" — an instruction to a human with no owner and no date.
+- `absence_claim_check` "2 universals flagged for a read, 2 world-scoped": kidneys 'unlike
+  every other organ', bladder 'unlike any other wall modeled', lungs 'Uniquely among
+  organs', stomach 'found nowhere else in the GI tract' — printed each run as pending reads,
+  no expiry; the earlier queue read three universals and these four remained.
+- `citation_reach_check` "151 unreached spans": a census by kind, moved 150 → 151 this week
+  and nobody asked which span.
+- `regress` "2 page errors": the favicon 404, twice — declared benign in deploy_check, not
+  here.
+- THE STATUS TABLES (margin 7 uncharacterised / 3 unread; growth 4 unread / 1
+  uncharacterised): lists with refs — but no expiry; the PathologyOutlines window that
+  would resolve four of them is recorded in prose, not on the rows.
+Fixes are a separate decision (user). The shape of each would be: a declaration with a
+reason and a date, printed and expiring — or zero.
+
+## MEASURED-CATASTROPHE VERSUS FAILED-TO-MEASURE — a standing rule (2026-09-10, user)
+
+Any instrument that can emit a catastrophic verdict must distinguish MEASURED catastrophe
+from FAILED-TO-MEASURE, and failed-to-measure may never borrow the other's wording. The
+deploy checker dressing its own detached frame as "the app did not initialise" was the
+third of a family — the /tmp false failures, the oracle sampling the wrong point — and the
+worst, because it manufactured the most severe verdict the system has: the alarm that
+would roll back a healthy deploy. THE AUDIT of the other instruments for the same exposure:
+`regress.js` could report 173 manufactured failures about a page it never saw (a 404 from a
+mis-rooted server read as 'body markers female 0 visible') — FIXED: an initialisation
+precondition names a PROBE FAILURE and runs no check, proven against an empty server root
+(exit 1, 'the app did not initialise in the harness … not a finding about the app').
+`citation_reach_check` and `citation_head_check` over an EMPTY record artifact report
+'N problems' phrased as declaration defects ('declared gated ids missing') rather than as
+an unmeasurable population — the same exposure, lower stakes, an open item: refuse when the
+record set is empty, as the corpus-glob checks now do. The three formerly vacuous instruments
+already refuse an empty corpus; `deploy_check` now retries once and prints 'hotspots
+UNMEASURED (probe failure)'; `capture_organs` names a missed sidebar row as its own miss.
+
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
 **The instrument that refuses to scan without its input could still

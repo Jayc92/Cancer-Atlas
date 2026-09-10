@@ -66,6 +66,22 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
   await page.goto(`http://localhost:${PORT}/cancer-atlas.html`, { waitUntil: 'networkidle0', timeout: 60000 });
   await new Promise(r => setTimeout(r, 2500));
 
+  // ---- PRECONDITION: did the app initialise in this browser at all? (2026-09-10, standing rule) ----
+  // An instrument that can emit a catastrophic verdict must distinguish MEASURED catastrophe from FAILED-TO-MEASURE,
+  // and the second may never wear the first's words. Run against a 404 page (a mis-rooted server) this harness
+  // once reported 'body markers female 0 visible' as a FINDING — 173 manufactured failures about a page it never
+  // saw. So: if the state module is unreachable or the sidebar is empty, this is a PROBE FAILURE, named as such,
+  // exit 1, and none of the checks below run.
+  const initialised = await page.evaluate(async () => {
+    try { const { state } = await import('./js/state.js'); return { ok: !!state, rows: document.querySelectorAll('#sidebarList > *').length, title: document.title }; }
+    catch (e) { return { ok: false, error: String(e), title: document.title }; }
+  }).catch(e => ({ ok: false, error: String(e) }));
+  if (!initialised.ok || !(initialised.rows > 0)) {
+    console.log(`PROBE FAILURE — the app did not initialise in the harness (${initialised.error || ('sidebar rows: ' + initialised.rows)}; page title: ${JSON.stringify(initialised.title || '')}). `
+      + 'This is the harness\'s own failure, not a finding about the app; no check was run. Is the server rooted at the repo? Is Chrome launching?');
+    await browser.close(); process.exit(1);
+  }
+
   // ---- body screen: markers per sex ----
   for (const sex of ['female', 'male']) {
     await page.evaluate(s => {

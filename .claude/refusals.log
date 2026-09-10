@@ -214,3 +214,16 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   NOT INITIALISED: state module unreachable: Error: Attempted to use detached Frame '664C3096E2223782E2C329A8A99015B7'.
   | DONE deploy_check: 28/28 assets byte-matched to HEAD 8c51c96, 0 hotspots live, 0 unexplained page errors (2 declared-benign), 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-10T14:46:56Z reason=exit=1 marker="DONE record_sync_check:" tool=record_sync_check.py
+     output 10 lines, last 12 below
+  |   ok   fires on half-landed (manifest-only)
+  |   ok   fires on half-landed (target-only)
+  |   ok   passes a fully-landed pair
+  |   ok   fires on a pair absent from BOTH homes (stale declaration, not a silent pass)
+  |   ok   counts pairs FOUND, not pairs declared
+  |   ok   fires when the marker matches more than once, and does not count it as found
+  |   ok   and a single match is still a landed pair
+  | SELFTEST PASS — fires on either half missing, on a pair present in neither home and on a marker that matches more than once, passes landed records, and counts what it found
+  |   NOT A MARKER: _uncited_migrating_watchlist <-> CLAUDE.md ['2026-10-17'] — marker matches more than one place (not a marker), 2 occurrences in the target
+  | DONE record_sync_check: 18/19 declared pairs present in both homes under a unique marker, 0 half-landed, 0 stale declarations, 1 non-unique markers
+==== END REFUSAL
