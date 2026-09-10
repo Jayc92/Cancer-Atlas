@@ -183,7 +183,7 @@ function disposeOrganViewer(){
 const MARKER_PROJECTED_PX = 11;
 const MARKER_HIT_RADIUS_PX = 12;
 // PHASE A — THE RESERVED DEFAULT (build step 1, 2026-09-09; rule ratified in .claude/phaseA_mapping.md,
-// data in js/morphology.js, guarded by .claude/margin_reserve_check.js). One tumour mass per active
+// data in js/morphology.js, guarded by .claude/reserve_check.js). One tumour mass per active
 // entry whose gross MARGIN category is a recorded negative or not yet read, anchored at the organ's
 // own cited "arises here" hotspot, drawn with ONE shared reserved form on the reserved undulation
 // axis — the same parameters and seed on every such entry, so sameness reads as a placeholder —
@@ -217,7 +217,7 @@ function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadiu
     const badge = st ? marginBadge(entry.name, st.status, category) : null;
     if(!badge) return;   // 'cited' with no wired category, or unknown: nothing stands in for a cited shape
     const geo = new THREE.IcosahedronGeometry(massR, 4);
-    // A wired category draws its own render values (inside its declared ranges — margin_reserve_check
+    // A wired category draws its own render values (inside its declared ranges — reserve_check
     // asserts that); everything else draws the reserved form (spikeCount 0: undulation only).
     organicSpiculate(geo, { ...(category ? category.render : RESERVED_MARGIN) });
     // A cited mass wears the illustrative tissue-tan; a RESERVED mass wears the reserved colour, a

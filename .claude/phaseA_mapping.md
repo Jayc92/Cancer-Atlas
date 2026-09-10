@@ -1157,3 +1157,9 @@ Proposed the same day and ratified with one change — the one that decides whet
   supply the sentence; for the gross register of common carcinomas the OA corpus has now been shown
   thin four times over, and the textbook-style gross description lives behind the gate. Recorded so
   the next reader does not spend another evening on rung 2 for these four.
+- 2026-09-09 (RENAME, with the ruling that caused it): `margin_reserve_check.js` → `reserve_check.js`. One
+  reserved colour, bound to the OBJECT: the colour means "at least one property of this mass is
+  uncharacterised" and the badge names which; the check's obligation is therefore every axis, and the
+  growth reserve hooks (RESERVED_GROWTH, GROWTH_CATEGORIES empty at birth, growthReservedViolations)
+  live in it in fixture form. Earlier entries above keep the old name because it was the name then.
+  The ratchet key moved by hand (`reserve_check.categories`, count unchanged, disclosed in the commit).

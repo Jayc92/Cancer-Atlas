@@ -3994,7 +3994,7 @@ sentence was about a different entity (encapsulated FVPTC, not follicular
 carcinoma). Closed with the discipline already in place — **a `cited` status
 must carry a resolvable identifier (PMCID, PMID, NBK, DOI) in its own ref or
 in the ledger record its R-number resolves to** — as an extension to
-`margin_reserve_check` (`citedBackingViolations`), not a new member. A seed
+`margin_reserve_check` — since renamed `reserve_check` — (`citedBackingViolations`), not a new member. A seed
 has none, so the check fires at build step 1 rather than at wiring time.
 
 This is the fourth property of a declaration, after evidence-not-conclusion,
@@ -4156,6 +4156,25 @@ eligible marker's own projected centre selects that marker, and the gate agrees 
 the raycast oracle at the default framing and across an 8-yaw sweep — green at
 15/15 + 16/16 own-centre picks, 0/248 sweep disagreements, both bodies. Regress
 171 → 173 checks, the 2 known failures unchanged.
+
+## CONTENT-ANCHORED POINTERS — the cost, estimated not paid (2026-09-09, user: "I want the number, not the change")
+
+Third pointer-shift refusal (testis comment, prostate note, and the class before them).
+MEASURED with `pointer_check`'s own `collect()`: 581 hand-typed `file:line` occurrences
+(339 in `citations.json`'s refs, 70 in CLAUDE.md, the rest in instrument headers and
+fixtures), 281 distinct targets across 20 files, all organ files; 266 carry an
+author+year oracle. ANCHORABILITY: 572 of 581 target lines are unique in their file by
+whole stripped text, so a `path:"quoted line"` form converts mechanically; 9 point at
+structural lines (`];`, `};`, a blank, a comment rule — span ends) and need a
+line-after-phrase form or a hand anchor; 7 more are under twelve characters (weak but
+unique). THE COST: a converter (~1.5 h), a resolver in `pointer_check` with arms and
+unchanged ratchet semantics (~2 h), the two consumers that split refs on `:` —
+`regress.js`'s citations check and the manifest's `code_refs` format — (~1 h), the run
+and a diff review across the 20 target files' homes (~1 h), the nine by hand (~0.5 h):
+**about six hours, most of a day.** By the ruling's own threshold (an hour is worth it, a
+day is not) THE WORKAROUND WINS: notes go on the existing line or in CLAUDE.md, and an
+insertion above pointed lines in an organ file is expected to trip `pointer_check`.
+Re-estimate if the refusal count keeps climbing — the converter is 98.5% mechanical.
 
 A HARNESS HAZARD FOUND ON THE WAY, fixed in the same commit: `regress.js` read
 `assets` and the manifest's code_refs relative to process.cwd(). The battery always
@@ -5061,7 +5080,9 @@ refute it, which is worth more than file order.
   Record the two halves separately per property; the UI-facing
   provenance states that tumour morphology is illustrative of cited
   behaviour, not measured from it. BUILD STEP 1 SHIPPED (2026-09-09): the
-  unreachability check (`margin_reserve_check`, the sixteenth battery
+  unreachability check (`margin_reserve_check`, renamed `reserve_check` on
+  2026-09-09 when the ruling bound the reserved colour to the object and the
+  obligation to every axis; the sixteenth battery
   member, fixture-form (7) by design per (7-quater)) and the reserved
   default rendered for uncharacterised/unread entries with its
   non-optional badge — full record in `.claude/phaseA_mapping.md`; cited
@@ -5084,8 +5105,15 @@ refute it, which is worth more than file order.
   until the growth build, because a property drawn nowhere is worse than a
   declined axis position. THE GROWTH AXIS IS DESIGNED, NOT BUILT:
   `.claude/phaseA_growth_design.md` (2026-09-09) — four mechanisms tested
-  against the ledger, two amendments, four rulings requested before code;
-  build order count → edge falloff → extent breach → wall. COLD-SESSION ENTRY POINTER: read
+  against the ledger, two amendments; RULED the same day: GBM → EDGE tier
+  (tier follows ORGAN ARCHITECTURE, not the clinical word — hollow/parenchymal
+  dimension in the mechanism table; pre-registered falsifier: a falloff that
+  reads as whole-organ tumour sends GBM to a labelled extent), composition
+  counted at FOUR (a sibling axis, deferred), one reserved colour bound to the
+  object, falloff channel by bake-off against a pre-registered criterion;
+  BUILD ORDER FLIPPED — infiltrative falloff first (multifocal has ZERO
+  renderable members today), then extent breach, then wall; the growth reserve
+  hooks exist in `reserve_check` in fixture form. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin

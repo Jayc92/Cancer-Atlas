@@ -1,5 +1,5 @@
 // Phase A — tumour-morphology mapping: DATA AND PURE PREDICATES, deliberately with no `three`
-// import, because .claude/margin_reserve_check.js loads this file under node (copied to an .mjs
+// import, because .claude/reserve_check.js loads this file under node (copied to an .mjs
 // so node parses it as ESM, the same trick syntax_check.sh uses) and asserts its one property.
 //
 // THE RULE THIS MODULE IMPLEMENTS is the uncharacterised-margin default, ratified 2026-09-09 in
@@ -26,7 +26,7 @@
 // is wired, so it fixes the axis the cited categories must then avoid. MARGIN_CATEGORIES is
 // therefore EMPTY at birth, on purpose. When a cited category is wired: add it there with ranges
 // inside CITED_FREQ_BAND, flip its entry's status below from 'cited' (recorded, not yet rendered)
-// to a category name, and let margin_reserve_check prove the reserved form is still unreachable.
+// to a category name, and let reserve_check prove the reserved form is still unreachable.
 
 // The knobs organicSpiculate takes (js/viewer.js). Listed so a category can be checked for a
 // knob it forgot to bound: an unbounded knob is a range of everything, and everything reaches.
@@ -65,7 +65,7 @@ export const RESERVED_MARGIN = Object.freeze({
 //      it (sameAppearanceAs), and let the badge say so. A citation, not a status, is what makes a category
 //      wireable: a harvest SEED is not a citation (FTC stood at 'cited' on one for a day).
 //   1. add the category's ranges here, inside CITED_FREQ_BAND, and flip its entries' MARGIN_STATUS;
-//   2. run .claude/margin_reserve_check.js — that proves PARAMETER DISJOINTNESS, nothing more;
+//   2. run .claude/reserve_check.js — that proves PARAMETER DISJOINTNESS, nothing more;
 //   3. CAPTURE AND LOOK, this category beside the reserved form. Parameter disjointness does not
 //      imply PERCEPTUAL DISTINCTNESS: at amplitude 0.10 the reserved form passed the check and read as
 //      circumscribed. Each category wired narrows the perceptual space the reserved form must stay
@@ -127,7 +127,7 @@ export const MARGIN_CATEGORIES = Object.freeze({
   // lobulation that PTC's citation lacks. Reading "blur" as softer than "poorly defined" would manufacture a
   // difference from synonyms, so the derivation lands on the indistinct-edge region already used for PTC and
   // the render is SHARED BY REFERENCE and DECLARED (sameAppearanceAs) — pre-registered as the expected outcome,
-  // confirmed at the parameter level before any capture. The badge says so in words; margin_reserve_check
+  // confirmed at the parameter level before any capture. The badge says so in words; reserve_check
   // asserts the declaration is true (identical render object, equal ranges), never that the pair differs.
   poorlyDelineated: Object.freeze({
     label: 'poorly delineated',
@@ -192,9 +192,15 @@ export const MASS_COLOUR = 0xa89a8c;
 // It is an ALBEDO, not a light — standing condition (5) forbids accents in the ILLUMINATION path, and
 // this pipeline has no bounce, so a teal albedo pushes no hue onto any cited albedo.
 export const RESERVED_COLOUR = 0x6aafaa;
+// THE COLOUR'S MEANING WIDENED (user ruling, 2026-09-09): ONE reserved colour, bound to the OBJECT, not to the margin
+// axis. Two reserved colours would collide on a mass uncharacterised on both margin and growth, and one colour or
+// a blend would then be a third meaning nobody defined. So this colour means 'at least one property of this mass
+// is uncharacterised' and the badge names which — COLOUR FLAGS, TEXT SPECIFIES. Today the only built axis is
+// margin, so the colour tracks the margin status; when growth wires in, a mass uncharacterised on growth alone
+// also wears it. The cost, accepted: the colour alone no longer says which axis; the badge does.
 // THE TESTABLE PROPERTY, the colour twin of the geometry's: the reserved colour must be UNREACHABLE
 // from every cited tissue albedo — at least hueMarginDeg of hue from each chromatic albedo, and never
-// grey (saturation at or above minSaturation). margin_reserve_check asserts it over js/organs/*.js.
+// grey (saturation at or above minSaturation). reserve_check asserts it over js/organs/*.js.
 export const RESERVED_COLOUR_RULES = Object.freeze({ hueMarginDeg: 90, minSaturation: 0.2, achromaticBelow: 0.05 });
 export function hexToHsl(hex){
   const r = ((hex >> 16) & 255) / 255, g = ((hex >> 8) & 255) / 255, b = (hex & 255) / 255;
@@ -282,9 +288,31 @@ export const MARGIN_STATUS = Object.freeze({
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
+// THE GROWTH AXIS, AT BIRTH (2026-09-09; design: .claude/phaseA_growth_design.md). Four knobs, one per mechanism:
+// count (multifocal), falloff (infiltrative — a MATERIAL transition at the mass–organ junction, never geometry, which
+// is the margin axis's channel), protrusion (exophytic — the mass on the luminal side of the wall), wall (hollow-organ
+// diffuse/annular — the organ mesh itself deforms). The RESERVED growth vector is the ABSENCE of an expression: one
+// mass, hard junction, on the surface, no wall change — it asserts nothing, so it needs no colour of its own beyond
+// the object-bound reserved colour above. GROWTH_CATEGORIES is EMPTY here on purpose: reserve_check asserts the
+// reserved vector unreachable from every cited growth category (fixture-form (7-quater) until the first is wired),
+// and the first category wired is INFILTRATIVE, after its falloff channel wins a bake-off with a pre-registered
+// criterion (design document §E). A cited category names ONE knob and a RANGE on it that excludes the reserved value.
+export const GROWTH_KNOBS = Object.freeze(['count', 'falloff', 'protrusion', 'wall']);
+export const RESERVED_GROWTH = Object.freeze({ count: 1, falloff: 0, protrusion: 0, wall: 0 });
+export const GROWTH_CATEGORIES = Object.freeze({});
+export function growthReservedViolations(reserved, categories){
+  const out = [];
+  for(const [name, cat] of Object.entries(categories)){
+    if(!GROWTH_KNOBS.includes(cat.knob)){ out.push(`growth category ${name} names knob '${cat.knob}', which the reserved vector does not carry`); continue; }
+    const [lo, hi] = cat.range, rv = reserved[cat.knob];
+    if(rv >= lo && rv <= hi) out.push(`growth category ${name} reaches the reserved ${cat.knob} value ${rv} (range [${lo}, ${hi}]) — the reserved form must be unreachable from every cited category`);
+  }
+  return out;
+}
+
 // Which hotspot anchors the mass: the organ's own cited "arises here" structure, by index into
 // ORGAN_DETAILS[key].hotspots. The label in each comment is what the index must keep pointing at;
-// margin_reserve_check verifies the chosen hotspot's text (or the organ description) speaks of
+// reserve_check verifies the chosen hotspot's text (or the organ description) speaks of
 // origin, so a reordered hotspot list fails loudly rather than moving the mass.
 export const ORIGIN_HOTSPOT = Object.freeze({
   ovary: 0,    // Surface epithelium

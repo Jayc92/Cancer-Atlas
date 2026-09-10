@@ -90,7 +90,7 @@ fifth kind, COMPOSITION, exists and is unbuilt.
 Each mechanism is ONE knob on the mass (or the organ), with the category CITED and the
 magnitude ILLUSTRATIVE, recorded separately per property in `_phaseA_citations` exactly as
 margin's are. A `growth_reserve_check` (to be written FIRST, before any category is wired,
-like `margin_reserve_check`) asserts that the reserved growth vector is unreachable from
+like the margin half of `reserve_check`) asserts that the reserved growth vector is unreachable from
 every cited category's range on its knob, and that every cited-equal-to-default declaration
 is true (the `sameAppearanceViolations` form).
 
@@ -169,7 +169,86 @@ not a citation and wires nothing (fourth property).
 4. WALL — stomach, then CRC's annular majority; the expensive member, built last, after
    the cheaper three have tested the decomposition with something cheap to unwind.
 
-## 8. Rulings requested before code
+## 8. Rulings received (2026-09-09), and what each changed
+
+**B. GBM → the EDGE tier. Amendment (b) accepted.** The user's wall mechanism had been derived
+from linitis plastica, a hollow organ where the wall IS the structure, then applied to a brain
+that has none; and R21's "a poorly delineated mass" asserts a mass, so a no-mass rendering would
+exceed the source rather than honour it. THE GENERAL RULE, recorded here as the more valuable
+half: **tier is set by organ architecture, not by the clinical word.** "Diffuse" in a hollow
+organ and "diffuse" in parenchyma are different mechanisms sharing a label, so the mechanism
+table carries a HOLLOW / PARENCHYMAL dimension and the same cited word routes differently
+across it:
+
+| cited word | hollow organ (stomach, colon, bladder) | parenchymal organ (brain, liver, pancreas, kidney, thyroid) |
+|---|---|---|
+| infiltrative | EDGE falloff at the junction | EDGE falloff at the junction |
+| diffuse | WALL — the organ wall itself thickens (linitis plastica; segmental = annular) | EDGE at larger extent — the same falloff channel, wider (GBM) |
+| exophytic / papillary | PLACEMENT into the lumen | — (no lumen; not applicable) |
+| multifocal / bilateral | COUNT | COUNT |
+
+PRE-REGISTERED FALSIFIER, to be tested in the infiltrative bake-off before the tier is closed:
+GBM cells are found centimetres past any imaging margin, sometimes across the midline. If an
+HONEST falloff extent shades so much of the brain that the render reads as *the whole organ is
+tumour*, the edge tier cannot carry GBM and the honest expression is a LABELLED extent rather
+than a purely visual one — the lesion-versus-shadow inversion in a new place. The test:
+capture GBM at the falloff extent the words license and read it against that criterion;
+failure sends GBM to a labelled-extent expression, not to a wider falloff.
+
+**C. Composition — counted before deciding, sibling not member.** The ledger swept for
+cystic / solid / mixed / necrotic / haemorrhagic / mucinous: FOUR entries carry a composition
+word about the mass — OCCC ("cystic, and solid", R16), ccRCC ("either solid or cystic", the
+incidental quote in the unreached R3 record), GBM (R21: "prominent areas of old and recent
+hemorrhage", "necrosis (as much as 80% of the total tumor mass), cystic areas sometimes
+alternating with firm tissue"), seminoma (harvest span: "tan to pale yellow lesions with
+necrotic or hemorrhagic foci"; "solid intratesticular nodule"). Two hits excluded on reading:
+TNBC's "mixed" is a MARGIN word ("ill-demarcated, well-demarcated, or mixed"), and "mucinous"
+appears only as a colorectal subtype share, not a mass description. Adjacent texture words
+(firm, granular, fibrous) occur for PTC, GBM, melanoma and are texture, not composition. FOUR
+sits between the two thresholds the ruling named (one → prose; five or more → a real axis).
+Position taken: composition is a CANDIDATE SIBLING AXIS, not scheduled; OCCC stays
+uncharacterised on growth with its composition in prose; the count is re-taken after the four
+PathologyOutlines probes, since gross descriptions routinely carry these words and the count
+is likelier to rise than fall. Whatever the count, **composition is not growth**: it describes
+what the mass is made of, not how it spreads — a sibling of growth, never a fifth member.
+
+**D. One reserved colour, bound to the object.** Two would collide on a mass uncharacterised
+on both axes; the colour means *at least one property here is uncharacterised* and the badge
+names which. Colour flags, text specifies. The check's obligation widened to every axis and
+the instrument was renamed to match: `margin_reserve_check.js` → `reserve_check.js`, ratchet
+key moved by hand with the count unchanged, growth hooks present in fixture form from birth.
+
+**E. The falloff channel — a bake-off with a PRE-REGISTERED CRITERION, not a winner.** What the
+falloff must achieve: (1) read as *boundary not determinable*, not *boundary is here and
+soft*; (2) NOT read as *this organ is diseased throughout* (the lesion-versus-shadow
+inversion); (3) survive the vertex-colour AO composition on the seven AO organs and the AgX
+tonemap — a channel that works in isolation and washes out downstream repeats the env-map
+lesson exactly; (4) THE CROSS-PRODUCT WITH THE RESERVED COLOUR: each candidate is also
+captured on an uncharacterised-margin mass with infiltrative growth — a falloff that dissolves
+the mass edge into the host albedo would bleed the reserved teal into the organ, a combination
+neither check catches alone. The user's guess, recorded to be falsified rather than planned
+around: opacity is the obvious candidate and is expected to FAIL, because a translucent mass
+over coloured tissue reads as *lighter tissue* rather than *indeterminate edge* — the
+hue-contamination class that killed the glow; a roughness-plus-albedo blend that keeps the
+mass opaque while dissolving only its boundary is the likelier winner. The bake-off decides.
+
+**BUILD ORDER FLIPPED: infiltrative falloff FIRST.** Multifocal is cheap to render and its
+RENDERABLE membership was counted before scheduling: prostate multifocality is whole-mount
+histology, which at gross register means depicting something invisible at that scale — not
+renderable; HGSOC bilaterality needs two ovaries and `assets/ovary.glb` is one excised ovary —
+not renderable on the organ screen; HCC's cited majority is single (types I+II, 247 of 400)
+and the confluent-multinodular minority (101 of 400) is named, not drawn. **Renderable
+multifocal members today: ZERO.** Its cheapness is irrelevant; it is not scheduled.
+Infiltrative discharges the GBM hold, the only correctness hold in Phase A. Order now:
+(1) infiltrative falloff (bake-off per E, then PDAC, PTC, GBM subject to its falsifier);
+(2) extent breach; (3) wall (stomach, then CRC's annular majority); multifocal when it has a
+renderable member.
+
+STATUS OF THE FOUR REQUESTS: (i) GBM tier — settled to EDGE pending its falsifier; (ii)
+composition — counted at four, sibling axis, deferred; (iii) colour — ruled, one colour bound
+to the object; (iv) falloff channel — criterion pre-registered, bake-off next.
+
+## 8-old. Rulings requested before code (as first written)
 
 (i) §3(b): is parenchymal diffuseness edge extent (GBM at tier 2) or a distinct treatment
 (GBM at tier 4)? (ii) §3(c): does COMPOSITION become a fifth mechanism, and when? (iii) §5:

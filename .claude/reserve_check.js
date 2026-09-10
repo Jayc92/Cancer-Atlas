@@ -1,5 +1,21 @@
 #!/usr/bin/env node
-// margin_reserve_check — THE GUARD THAT SHIPS BEFORE ITS POPULATION EXISTS (2026-09-09).
+// reserve_check (until 2026-09-09: reserve_check (née margin_reserve_check)) — THE GUARD THAT SHIPS BEFORE ITS POPULATION EXISTS.
+//
+// RENAMED WITH THE RULING THAT WIDENED ITS OBLIGATION (user, 2026-09-09): ONE RESERVED COLOUR, BOUND TO THE
+// OBJECT, NOT THE AXIS. Two reserved colours would collide on a tumour uncharacterised on both margin and growth,
+// and the resolution — one colour, or a blend — would be a third meaning nobody defined. So the colour means
+// 'at least one property of this mass is uncharacterised' and the badge text names which: COLOUR FLAGS, TEXT
+// SPECIFIES. The obligation follows the meaning: the reserved form must be unreachable from every cited category
+// on EVERY axis — margin today, growth from the moment its first category is wired — which is why the file is
+// no longer named for one axis. The ratchet key moved with the name (record_count.json, by hand, count unchanged,
+// disclosed in the renaming commit); history in CLAUDE.md and the mapping document keeps the old name where it
+// was the name at the time.
+//
+// GROWTH, AT BIRTH (2026-09-09): js/morphology.js RESERVED_GROWTH is the reserved growth vector — one mass, a hard
+// junction, on the surface, no wall change — and GROWTH_CATEGORIES is EMPTY, by the growth design document's build
+// order (.claude/phaseA_growth_design.md: the reserve check first, then infiltrative falloff). Same fixture-form
+// condition (7-quater) as margin had at its birth: growthReservedViolations is proven on fixtures here and has no
+// live population to fire on until the first growth category is wired.
 //
 // PROPERTY: the Phase A reserved margin form (js/morphology.js RESERVED_MARGIN) must be UNREACHABLE
 // from every cited margin category's parameter range (MARGIN_CATEGORIES), on the reserved axis
@@ -45,8 +61,8 @@
 // (or the organ description) speaks of origin, so a reordered hotspot list fails here instead of
 // silently moving the mass.
 //
-// Usage: node .claude/margin_reserve_check.js          (selftest, then the live check)
-//        node .claude/margin_reserve_check.js --selftest
+// Usage: node .claude/reserve_check (née margin_reserve_check).js          (selftest, then the live check)
+//        node .claude/reserve_check (née margin_reserve_check).js --selftest
 // Exit 0 clean, 1 problems, 2 refused (selftest failed). Prints SIDECAR then DONE, DONE last.
 'use strict';
 const fs = require('fs'), os = require('os'), path = require('path');
@@ -151,6 +167,7 @@ function liveProblems(M){
   // THE COLOUR FIELD (user ruling on the HCC deadlock, 2026-09-09): the reserved colour must be unreachable
   // from every cited tissue albedo — the colour twin of the geometry's unreachability, and not grey.
   problems.push(...M.sameAppearanceViolations(M.MARGIN_CATEGORIES));   // arm 3: declarations of one appearance must be true
+  problems.push(...M.growthReservedViolations(M.RESERVED_GROWTH, M.GROWTH_CATEGORIES));   // growth axis: reserved vector unreachable (fixture-form at birth)
   const records = ledgerRecords();
   problems.push(...citedBackingViolations(M.MARGIN_STATUS, records));   // the fourth property: a status claim carries its backing
   const albedos = tissueAlbedos().concat([M.MASS_COLOUR]);   // the cited-mass tan is a tissue-side colour too
@@ -179,9 +196,10 @@ function liveProblems(M){
   let nearest = 360;
   for(const hx of albedos){ const c = M.hexToHsl(hx); if(c.s >= M.RESERVED_COLOUR_RULES.achromaticBelow) nearest = Math.min(nearest, M.hueDistance(M.hexToHsl(M.RESERVED_COLOUR).h, c.h)); }
   const shared = Object.values(M.MARGIN_CATEGORIES).filter(c => c.sameAppearanceAs).length;
+  const growthCats = Object.keys(M.GROWTH_CATEGORIES).length;
   const citedIds = entries.filter(e => M.MARGIN_STATUS[e.id] && M.MARGIN_STATUS[e.id].status === 'cited').map(e => e.id);
   const backed = citedIds.filter(id => citedBackingViolations({ [id]: M.MARGIN_STATUS[id] }, records).length === 0).length;
-  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest, shared, citedTotal: citedIds.length, backed, ledger: records.length };
+  return { problems, entries, counts, organs: Object.keys(hs).length, albedos: albedos.length, nearest, shared, citedTotal: citedIds.length, backed, ledger: records.length, growthCats };
 }
 
 // ---- condition (7), FIXTURE FORM BY DESIGN (see the header) --------------------------------
@@ -233,6 +251,11 @@ function selftest(M){
   arm('fires on a cited status whose record carries no identifier', citedBackingViolations({ x: { status: 'cited', ref: 'R5 — margin' } }, ledgerFx).length === 1);
   arm('silent on a cited status resolving to an identified record', citedBackingViolations({ x: { status: 'cited', ref: 'R1 — poorly delineated' } }, ledgerFx).length === 0);
   arm('silent on a cited ref carrying its own PMCID, and not testing non-cited statuses', citedBackingViolations({ x: { status: 'cited', ref: 'harvest — (PMC6906820)' }, y: { status: 'unread', ref: 'second tier' } }, ledgerFx).length === 0);
+  // 8l–8n. GROWTH RESERVE: a cited growth category whose range reaches the reserved value on its knob fires; one
+  // that starts above it is silent; a category on an unknown knob fires (the knob set is closed).
+  arm('growth: fires when a cited count range reaches the reserved count of 1', M.growthReservedViolations(M.RESERVED_GROWTH, { fx: { label: 'fx', knob: 'count', range: [1, 3] } }).length > 0);
+  arm('growth: silent when a cited count range starts above the reserved count', M.growthReservedViolations(M.RESERVED_GROWTH, { fx: { label: 'fx', knob: 'count', range: [2, 4] } }).length === 0);
+  arm('growth: fires on a knob the reserved vector does not carry', M.growthReservedViolations(M.RESERVED_GROWTH, { fx: { label: 'fx', knob: 'glow', range: [1, 2] } }).length > 0);
   // 8e–8f. ARM 3: a same-appearance declaration backed by a COPY of the render fires; the live table is silent.
   const root = { label: 'root', ranges: { amplitude: [0, 1] }, render: { amplitude: 0.5 } };
   arm('fires when a same-appearance declaration is backed by a copy, not the shared object',
@@ -248,18 +271,18 @@ function selftest(M){
 (async () => {
   const M = await loadMorphology();
   const selfOnly = process.argv.includes('--selftest');
-  if(!selftest(M)){ console.log('margin_reserve_check: REFUSING to check — selftest failed'); process.exit(2); }
-  if(selfOnly){ console.log('DONE margin_reserve_check_selftest: 20 arms run, 0 failures'); return; }
-  const { problems, entries, counts, organs, albedos, nearest, shared, citedTotal, backed, ledger } = liveProblems(M);
+  if(!selftest(M)){ console.log('reserve_check (née margin_reserve_check): REFUSING to check — selftest failed'); process.exit(2); }
+  if(selfOnly){ console.log('DONE reserve_check_selftest: 23 arms run, 0 failures'); return; }
+  const { problems, entries, counts, organs, albedos, nearest, shared, citedTotal, backed, ledger, growthCats } = liveProblems(M);
   for(const p of problems) console.log('  PROBLEM: ' + p);
   const nCat = Object.keys(M.MARGIN_CATEGORIES).length;
   console.log('SIDECAR ' + JSON.stringify({
-    name: 'margin_reserve_check',
-    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, cited_backed: backed, cited_total: citedTotal, ledger_records: ledger, problems: problems.length },
-    ratchet: ['categories'],
+    name: 'reserve_check',
+    metrics: { categories: nCat, entries: entries.length, organs, rendered_default: counts.uncharacterised + counts.unread, rendered_cited: counts.rendered, tissue_albedos: albedos, nearest_hue_deg: Math.round(nearest), same_appearance: shared, cited_backed: backed, cited_total: citedTotal, ledger_records: ledger, growth_categories: growthCats, problems: problems.length },
+    ratchet: ['categories', 'growth_categories'],
   }));
-  console.log(`DONE margin_reserve_check: reserved form on the ${M.RESERVED_AXIS.knob} band [${M.RESERVED_AXIS.band}] unreachable from ${nCat} cited categories (fixture-form (7) by design), `
+  console.log(`DONE reserve_check: reserved form on the ${M.RESERVED_AXIS.knob} band [${M.RESERVED_AXIS.band}] unreachable from ${nCat} cited categories (fixture-form (7) by design), `
     + `${entries.length - problems.filter(p => /no margin status|unknown margin status/.test(p)).length}/${entries.length} active entries carry a margin status `
-    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, ${problems.length} problems`);
+    + `(${counts.uncharacterised} uncharacterised, ${counts.unread} unread, ${counts.cited} cited of which ${counts.rendered} rendered inside their ranges), ${organs}/${organs} organs anchor their mass, reserved colour ${Math.round(nearest)}° of hue from the nearest of ${albedos} tissue albedos (margin ${M.RESERVED_COLOUR_RULES.hueMarginDeg}°), ${shared} cited categor${shared === 1 ? 'y' : 'ies'} declared the same appearance as a sibling under arm 3 (declarations true), ${backed}/${citedTotal} cited statuses carry a resolvable identifier against ${ledger} ledger records, reserved growth vector unreachable from ${growthCats} cited growth categor${growthCats === 1 ? 'y' : 'ies'} (fixture-form at birth), ${problems.length} problems`);
   process.exit(problems.length ? 1 : 0);
-})().catch(e => { console.error('margin_reserve_check: harness error', e); process.exit(2); });
+})().catch(e => { console.error('reserve_check (née margin_reserve_check): harness error', e); process.exit(2); });

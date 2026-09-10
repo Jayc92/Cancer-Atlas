@@ -715,8 +715,8 @@ INSTRUMENTS = [
     # its condition-(7) demonstration is FIXTURE-FORM BY DESIGN: a live firing would mean the rule had already
     # been broken. Its header says so at length; read that before reading its selftest as a gap. Node, not
     # python, because the thing it checks is an ES module the renderer imports.
-    ('margin_reserve_check', 'pre-commit', 'DONE margin_reserve_check:',
-     ['node', '.claude/margin_reserve_check.js']),
+    ('reserve_check', 'pre-commit', 'DONE reserve_check:',
+     ['node', '.claude/reserve_check.js']),   # renamed 2026-09-09 from margin_reserve_check: one reserved colour, every axis
     ('citation_polarity', 'pre-commit', 'DONE citation_polarity:',
      ['python3', '.claude/citation_polarity.py', RECORDS_ARTIFACT, POLARITY_ARTIFACT]),
     ('citation_crosscheck', 'pre-commit', 'DONE citation_crosscheck:',
