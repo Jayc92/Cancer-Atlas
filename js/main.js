@@ -14,7 +14,7 @@ import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
-import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, FALLOFF_CHANNEL, GROWTH_RENDER } from './morphology.js';
+import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, FALLOFF_CHANNEL, GROWTH_RENDER, RESERVED_APEX, rimBlendWeight } from './morphology.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -276,15 +276,20 @@ function applyGrowthFalloff(viewer, mass, spec, channel){
     if(!organColour) return;
     const geo = mass.geometry, pos = geo.getAttribute('position'), n = pos.count, cols = new Float32Array(n * 3);
     const outward = mass.userData.phaseA && mass.userData.phaseA.outward ? mass.userData.phaseA.outward : new THREE.Vector3(0, 1, 0);
-    const mc = mass.material.color, height = massR * (spec.extent || 1.0) * 0.35;   // the dissolved band's height above the contact plane (0.6 covered nearly the whole visible mass on the pancreas)
+    // THE CAP BY IDENTITY (RESERVED_APEX): a margin-reserved mass never dissolves past the extent whose reserved apex was
+    // measured to read; the reserved signal outranks the illustrative magnitude, and the cap is disclosed on the badge.
+    const reservedMargin = !!(mass.userData.phaseA && mass.userData.phaseA.reserved);
+    const extent = reservedMargin ? Math.min(spec.extent || 1.0, RESERVED_APEX.capForReservedMargin) : (spec.extent || 1.0);
+    const capped = reservedMargin && (spec.extent || 1.0) > RESERVED_APEX.capForReservedMargin;
+    const mc = mass.material.color;
     for(let i = 0; i < n; i++){
       const hgt = pos.getX(i) * outward.x + pos.getY(i) * outward.y + pos.getZ(i) * outward.z;   // signed height along the outward axis
-      const w = hgt <= -0.2 * massR ? 1 : 1 - smooth01((hgt + 0.2 * massR) / (height + 0.2 * massR));  // 1 at/below the contact plane → 0 at `height`
+      const w = rimBlendWeight(hgt, massR, extent);   // ONE formula, shared with reserve_check (morphology.js RIM_BAND)
       cols[i*3] = mc.r + (organColour.r - mc.r) * w; cols[i*3+1] = mc.g + (organColour.g - mc.g) * w; cols[i*3+2] = mc.b + (organColour.b - mc.b) * w;
     }
     geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
     mass.material.color.setRGB(1, 1, 1); mass.material.vertexColors = true; mass.material.needsUpdate = true;
-    mass.userData.growthFalloff = { channel, extent: spec.extent || 1.0 };
+    mass.userData.growthFalloff = { channel, extent, requested: spec.extent || 1.0, capped };
     return;
   }
   const target = mass.material.color;   // linear working space, like the vertex colours

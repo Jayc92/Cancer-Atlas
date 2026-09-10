@@ -4191,6 +4191,46 @@ member runs from a bare directory; the counts, not the verdict, are the
 discriminator) live as convention D in `battery.py`'s READ THIS BEFORE WRITING A
 NEW INSTRUMENT block, which is where a new member's author is told to read.
 
+## READ COVERAGE BY IDENTITY INTO THE FACTS FILE — a house pattern (2026-09-09, user: "write it down as one")
+
+Twice in one day a suspicion became a number because the harness wrote, into its own
+facts file, a count read BY IDENTITY from the objects it was testing rather than
+inferred from what they looked like: `body_marker_anchors_<sex>.json` (every anchor's
+height fraction, radial distance and trunk exit, keyed by `userData.marker`) turned
+"the testis looks wrong" into "two anchors, 17 cm off the axis, below a crotch at
+0.453"; `facts.json`'s `growthFalloff` (touched vertices per organ mesh, keyed by
+`userData.growthFalloff`) turned "the ring looks invisible" into "7609 of 7609 vertices
+of the pancreas head, 111,411 of 113,252 of the brain" — and refuted my own frame-bug
+hypothesis on the spot. THE PATTERN: whenever a render is being judged, have the
+harness emit the coverage or geometry that produced it, read from the objects'
+declared identity, alongside the pixels. It costs a few lines and it is what lets a
+look be argued with.
+
+TWO HARNESS NOTES THAT BELONG BESIDE IT (user). (1) THE MECHANISM GETS MEASURED BEFORE
+IT GETS CHOSEN: the obvious visibility gate for the body picker — a facing test on the
+anchor's normal — failed outright across 24 yaws on both bodies, and only the
+measurement said so. (2) TWO INDEPENDENT MECHANISMS DISAGREEING IS HOW YOU LEARN EITHER
+IS WRONG — condition (7) doing its job: the depth-buffer gate and the raycast oracle
+disagreed at three silhouette edges, which is how the oracle's own geometry (a
+zero-width ray to the exact point instead of through the sampled pixel) was found.
+
+## A RESERVED SIGNAL OUTRANKS AN ILLUSTRATIVE MAGNITUDE (2026-09-09, user ruling; standing for the class)
+
+When a reserved (placeholder) signal and an illustrative magnitude compete for the same
+pixels — the reserved teal apex against rim-blend's dissolved band on a margin-
+uncharacterised mass with cited infiltrative growth — the reserved signal wins. One is a
+provenance truth-claim; the other is invented-and-disclosed by construction, and
+degrading the claim to preserve the invention has the trade backwards. Applied as a
+MEASURED FLOOR encoded in `reserve_check` (`RESERVED_APEX`: at least 0.30 of a reserved
+mass's pixels stay reserved-coloured; the band cap for such masses sits at a fixture-
+measured extent, 1.0 → 0.34, and raising it without re-measuring fires), enforced
+before any live entry has the combination — which is exactly why it would otherwise
+arrive unannounced. THE ORGAN-SIDE FALLOFF FAMILY IS RETIRED STRUCTURALLY in the same
+pass: a mass is 22% of the organ radius, so a ring in mass radii is organ-scale by
+construction — 98% of the brain's vertices at half a degree of hue, invisible and
+'diseased throughout' at once. Not a tuning question; do not re-open it in Phase C
+(design document §10).
+
 ## THE COVERAGE SPLIT — DECLARED-AND-TOLERATED vs FATAL (2026-09-06, user ruling; `.claude/citation_crosscheck.py`)
 
 **The instrument that refuses to scan without its input could still
@@ -5117,9 +5157,12 @@ refute it, which is worth more than file order.
   (design document §9): rimBlend — the mass keeps its colour at the apex and
   takes the organ's albedo where it meets the organ — is the one channel that
   met the pre-registered criterion; opacity and every organ-side channel failed
-  on measurement. Dormant in production pending two rulings: whether a
-  placeholder mass may wear the organ albedo at its base, and GBM's extent as a
-  labelled statement. COLD-SESSION ENTRY POINTER: read
+  on measurement (the organ-side family RETIRED STRUCTURALLY — 22% radius ratio).
+  RULED 2026-09-09: rim-blend approved; the reserved apex floor measured on a fixture
+  and encoded (`RESERVED_APEX`, cap 1.0 for margin-reserved masses); GBM's extent
+  as a KNOWN-TO-UNDERSTATE label in a reusable form; composition re-tested as
+  mischaracterised-vs-unexpressed — all four unexpressed, deferral stands. Wiring
+  of infiltrative growth follows. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
   Four cited properties: site (pos3d, already modelled), margin

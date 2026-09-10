@@ -317,6 +317,46 @@ export const FALLOFF_CHANNELS = Object.freeze(['none', 'opacity', 'albedoBleed',
 // empty — wiring waits on two rulings (§9 (a) placeholder base colour, (b) GBM's labelled extent).
 export const FALLOFF_CHANNEL = 'rimBlend';
 export const GROWTH_RENDER = Object.freeze({});   // entryId -> { extent }  — empty until the first growth category is wired
+// THE RIM-BLEND BAND, shared by the renderer (main.js) and the check so both read one formula: weight 1 at and below
+// the contact plane (−0.2·R along the outward axis), falling by smoothstep to 0 at height 0.35·extent·R.
+export const RIM_BAND = Object.freeze({ contact: -0.2, heightPerExtent: 0.35 });
+export function rimBlendWeight(hgt, massR, extent){
+  const h0 = RIM_BAND.contact * massR, height = RIM_BAND.heightPerExtent * (extent || 1.0) * massR;
+  if(hgt <= h0) return 1;
+  const t = Math.min(1, Math.max(0, (hgt - h0) / (height - h0)));
+  return 1 - t * t * (3 - 2 * t);
+}
+// THE RESERVED APEX FLOOR (user ruling, 2026-09-09 — 'a reserved signal outranks an illustrative magnitude'). When a
+// mass is uncharacterised on margin (reserved teal) but cited infiltrative on growth, rim-blend dresses its base in
+// the organ's albedo and the reserved signal survives only at the apex; the more infiltrative the band, the less
+// teal the mass — the most infiltrative uncharacterised mass is the least teal one. Reachability is intact (the
+// apex keeps the reserved colour, which no cited colour may enter); LEGIBILITY is the exposure, the amplitude-0.10
+// lesson in new clothes. MEASURED ON A FIXTURE before any live entry has the combination (none does; TNBC's growth
+// is a seed): the lungs' reserved mass with rim-blend, frozen default pose, `node .claude/capture_organs.js <out>
+// Lungs --port 3081 --freeze` with a temporary GROWTH_RENDER for luad — teal pixels of the mass remaining teal:
+// extent 1.0 → 0.34 (a coherent cap, reads as the placeholder); extent 2.5 → 0.10 (a sliver, does not read). The
+// renderer's own zone formula predicts 0.58 and 0.41 — parametric fraction is not perceptual fraction, so the
+// pixel measurement is the oracle and the analytic value is only the monotone sanity check. THE FLOOR: at least
+// 0.30 of a reserved mass's projected pixels stay reserved-coloured. THE CAP: for margin-RESERVED masses the band
+// extent is capped at 1.0 (measured 0.34 ≥ 0.30) and the cap is disclosed on the badge. THE PRINCIPLE, standing for
+// this class: when a reserved signal competes with an illustrative magnitude, the reserved signal wins — one is a
+// provenance truth-claim, the other is invented-and-disclosed by construction. reserve_check asserts the cap sits
+// at a measured extent whose fraction meets the floor; raising the cap without re-measuring fires it.
+export const RESERVED_APEX = Object.freeze({
+  floor: 0.30,
+  measured: Object.freeze([[1.0, 0.34], [2.5, 0.10]]),   // [band extent, teal fraction of the reserved mass's pixels], fixture 2026-09-09
+  capForReservedMargin: 1.0,
+});
+export function reservedApexViolations(apex){
+  const out = [];
+  const at = apex.measured.find(([e]) => e === apex.capForReservedMargin);
+  if(!at) out.push(`the reserved-margin band cap ${apex.capForReservedMargin} has no fixture measurement — measure before raising`);
+  else if(at[1] < apex.floor) out.push(`the reserved-margin band cap ${apex.capForReservedMargin} measured ${at[1]} reserved pixels, below the floor ${apex.floor}`);
+  for(const [e, f] of apex.measured){
+    if(e < apex.capForReservedMargin && f < apex.floor) out.push(`a measured extent ${e} below the cap keeps only ${f} — the band is not monotone or the cap is wrong`);
+  }
+  return out;
+}
 export function growthReservedViolations(reserved, categories){
   const out = [];
   for(const [name, cat] of Object.entries(categories)){

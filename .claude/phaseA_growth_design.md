@@ -333,6 +333,58 @@ captures can be regenerated, then removed), `FALLOFF_CHANNEL = 'rimBlend'` as th
 decision with `GROWTH_RENDER` still EMPTY (no production render changes until the ruling on (a)
 and (b) and the growth-status wiring), and `--freeze` in the capture tool.
 
+## 10. Rulings on the bake-off (2026-09-09), and what they closed
+
+**THE ORGAN-SIDE FAMILY IS RETIRED STRUCTURALLY, NOT AS A TUNING FAILURE (user).** A mass is 22% of the
+organ's bounding radius, so any ring measured in mass radii is organ-scale BY CONSTRUCTION. At GBM's
+extent the ring touched 98% of the brain's vertices while moving hue half a degree — failing BOTH
+criteria at once and in opposite directions: invisible to a reader, and 'diseased throughout' at
+the parameter level. Neither criterion alone catches that, and no parameter search rescues it,
+because shrinking the ring to a legible width makes it a few pixels. **Do not re-open organ-side
+falloff channels in Phase C**; the fact that kills them is the radius ratio, not the settings.
+Prediction accounting (user's own): opacity failed as predicted and by the predicted mechanism,
+and the mass-side direction was right; but organ-side channels were expected to die of SUBTLETY
+and died of SCALE — a fact about the radius ratio nobody had — right answer, wrong reason, which
+is why the criterion mattered more than the guess.
+
+**RULING 1 — the reverse cross-product: YES, WITH A MEASURED FLOOR.** Reachability is intact (the
+apex keeps the reserved colour; no cited colour may enter the teal band). Legibility is the
+exposure — band height and reserved area trade against each other, so the most infiltrative
+uncharacterised-margin mass is the least teal one; the amplitude-0.10 lesson in new clothes.
+MEASURED on the fixture (lungs' reserved mass, rim-blend, frozen default pose, temporary
+GROWTH_RENDER for luad): teal pixels of the mass still teal — extent 1.0 → 0.34, a coherent cap
+that reads as the placeholder; extent 2.5 → 0.10, a sliver that does not. The renderer's analytic
+zone fraction says 0.58 and 0.41: parametric fraction is not perceptual fraction, so the pixel
+count is the oracle. ENCODED, not remembered: `RESERVED_APEX` in morphology.js (floor 0.30, the
+measurement table, cap 1.0 for margin-reserved masses), the cap applied BY IDENTITY in the
+renderer (`userData.phaseA.reserved`) and disclosed on the badge, and `reserve_check` asserting
+that the cap sits at a measured extent meeting the floor — raising the cap without re-measuring
+fires. THE STANDING PRINCIPLE for this class: **when a reserved signal competes with an
+illustrative magnitude, the reserved signal wins** — one is a provenance truth-claim, the other is
+invented-and-disclosed by construction; degrading the provenance claim to preserve an admittedly
+invented magnitude has the trade backwards.
+
+**RULING 2 — GBM's extent as a label: ACCEPTED, WITH THE DIRECTION OF ERROR STATED.** A badge that
+merely adds a fact next to a drawn boundary loses to the boundary; vision beats text. So the
+badge must say the rendering is KNOWN TO UNDERSTATE the extent and in which direction —
+'illustrative' alone implies the error's direction is unknown, and here it is one-way and known.
+Built as a REUSABLE property for any cancer whose cited extent exceeds gross-register rendering,
+not as a GBM string; perineural spread in PDAC is the next claimant. (Implemented with the wiring,
+§11.)
+
+**COMPOSITION — the count threshold replaced by the right discriminator (user): are the four
+entries MISCHARACTERISED or merely UNEXPRESSED?** Read from the tree: OCCC draws the reserved
+placeholder (margin uncharacterised) — no composition is asserted; ccRCC draws the placeholder
+(unread) — none asserted; GBM draws nothing today — none asserted; seminoma draws a smooth,
+uniform tan sphere for its cited well-circumscribed margin — the source's "necrotic or
+hemorrhagic foci" are absent, but the drawn uniformity asserts nothing (the tan is disclosed
+unsourced, the badge speaks only to margin) and the source's "solid" is what a solid sphere shows.
+None of the four is forced onto an existing axis and rendering as something it is not; all four
+are ABSENT. A completeness gap, not a correctness hold — THE DEFERRAL STANDS, and the question
+is re-asked when composition is next counted.
+
+Pointers at six hours: workaround wins, accepted, closed (user).
+
 ## 8-old. Rulings requested before code (as first written)
 
 (i) §3(b): is parenchymal diffuseness edge extent (GBM at tier 2) or a distinct treatment
