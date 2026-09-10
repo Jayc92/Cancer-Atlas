@@ -5531,13 +5531,28 @@ refute it, which is worth more than file order.
 - **Decisions:** breadth to ~120 cancers (NCI A–Z scope); content
   PULLED from maintained sources (NCI PDQ, SEER, ClinicalTrials.gov
   v2 API, WHO classification as hand-mapped taxonomy) rather than
-  hand-transcribed; tumour visual pass first. Rationale: every defect
-  class this project found — scope drift, denominator transplants,
-  attribution errors — is a COPY error; remove the copy and the class
-  goes with it. The atlas's unique value becomes "renders the
-  authoritative data correctly + shows the anatomy + the hand-written
-  mechanism prose no API supplies" — and the verification discipline
-  CONCENTRATES on that prose rather than thinning across everything.
+  hand-transcribed; tumour visual pass first. RATIONALE CORRECTED IN
+  PLACE (2026-09-10, user: "your wrinkle contradicts the roadmap, and the
+  roadmap should lose") — the original sentence here said every defect
+  class found — scope drift, denominator transplants, attribution errors
+  — was a COPY error, so removing the copy (hand-transcription) removes
+  the class. FALSE, and it was about to justify a design on the strength
+  of being false. A copy error is a transcription typo; this project has
+  found almost none of those. Every defect actually found was semantic —
+  a true figure attached to the wrong population, register, denominator,
+  or certainty (scope drift, denominator transplants, certainty drift, the
+  gross/histologic register mismatch, stage-at-diagnosis read as growth
+  behaviour, a SEER entity broader than its entry) — and every one of
+  those SURVIVES automation intact, several WORSE, because the human read
+  that caught each one is the thing automation removes. Pulling from a
+  maintained source still buys real things (currency, and consistency
+  across a hundred more entries no hand-transcription pass could hold to
+  one standard) — it does not buy freedom from this defect class, and the
+  atlas's verification discipline does not get to concentrate on
+  hand-written prose alone while pulled figures ride unreviewed. See
+  `.claude/phaseB_design.md`'s reviewed-versus-unreviewed reframing, which
+  replaces this rationale and states what governs content nobody reads
+  per-entry.
 - **EPI-PASS RE-SCOPE (executed 2026-09-05, same day):** migrating =
   55 share clauses (~19 unread RETIRED, incl. every remaining orphan
   hunt); not-migrating = 156 ccf clauses + histology + anatomy + all
