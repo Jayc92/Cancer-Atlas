@@ -82,11 +82,13 @@ function findBodySurfaceAnchor(group, bbox, heightFrac, angleDeg){
     // Every spec above was checked against the real mesh before shipping, so this should
     // never fire — but a silent wrong-looking dot is worse than a loud, findable one.
     log_missedBodyRaycast(heightFrac, angleDeg);
-    return new THREE.Vector3(0, targetY, 0);
+    return { point: new THREE.Vector3(0, targetY, 0), normal: new THREE.Vector3(0, 0, 1) };
   }
   const hit = hits[0];
   const worldNormal = hit.face.normal.clone().transformDirection(hit.object.matrixWorld);
-  return hit.point.clone().addScaledVector(worldNormal, 0.005);
+  // The normal travels with the anchor (2026-09-09): the picker's visibility gate reads it, and the
+  // body groups never rotate (OrbitControls orbits the camera), so a world normal taken here stays valid.
+  return { point: hit.point.clone().addScaledVector(worldNormal, 0.005), normal: worldNormal };
 }
 function log_missedBodyRaycast(heightFrac, angleDeg){
   console.warn('Body hotspot raycast missed the mesh entirely', { heightFrac, angleDeg });
@@ -127,6 +129,8 @@ export function initBody(selectOrgan){
   // from the actual mesh anyway, but a nominal opts.radius that starts in the right order of
   // magnitude keeps the initial placement (before framing) sane, and minRadius sets a real
   // "how close can you zoom in" floor scaled to this mesh, not the previous one.
+  // The picker's depth pass renders layer 0 only; the marker spheres sit on BODY_MARKER_LAYER, which the
+  // main camera must also see (layers are set below, after makeViewer returns).
   state.bodyViewer = makeViewer(container, {
     theta:0.5, phi:1.2, radius:2, minRadius:0.9, maxRadius:5, autoRotate:true,
     autoRotateRadPerFrame:0.0015,
@@ -142,22 +146,12 @@ export function initBody(selectOrgan){
       // framing but ~17px zoomed fully out — the pointer target dipped under the floor exactly
       // when markers are hardest to see. `mouse` kept for parity with the site viewer's handler.
       const cx = e.clientX-rect.left, cy = e.clientY-rect.top;
-      const visible = bodyMarkerRecords.filter(r=>r.sex===state.currentBodySex);
-      // Depth tie-break among in-radius candidates, same reasoning as main.js's organ click:
-      // the raycast this replaces gave the front marker priority when two lined up.
-      const candidates = [];
-      visible.forEach(r=>{
-        const pt = state.bodyViewer.project(r.mesh.position);
-        const d = Math.hypot(pt.x-cx, pt.y-cy);
-        if(d<=BODY_MARKER_HIT_RADIUS_PX) candidates.push(r);
-      });
-      if(candidates.length){
-        const cam = state.bodyViewer.camera.position;
-        candidates.sort((a,b)=>cam.distanceTo(a.mesh.position)-cam.distanceTo(b.mesh.position));
-        selectOrganRef(candidates[0].key);
-      }
+      // One picker for click and hover (see pickBodyMarker): depth gates visibility, nearest centre chooses.
+      const hit = pickBodyMarker(cx, cy);
+      if(hit) selectOrganRef(hit.key);
     }
   });
+  state.bodyViewer.camera.layers.enable(BODY_MARKER_LAYER);
 
   const bodyCanvas = state.bodyViewer.renderer.domElement;
   bodyCanvas.setAttribute('role', 'img');
@@ -176,21 +170,8 @@ export function initBody(selectOrgan){
       -((e.clientY-rect.top)/rect.height)*2+1
     );
     const cx = e.clientX-rect.left, cy = e.clientY-rect.top;
-    const visible = bodyMarkerRecords.filter(r=>r.sex===state.currentBodySex);
-    // Same in-radius + depth-priority rule as the click path, so hover always previews
-    // exactly the marker a click would select.
-    const cands = [];
-    visible.forEach(r=>{
-      const pt = state.bodyViewer.project(r.mesh.position);
-      const d = Math.hypot(pt.x-cx, pt.y-cy);
-      if(d<=BODY_MARKER_HIT_RADIUS_PX) cands.push(r);
-    });
-    let hit = null;
-    if(cands.length){
-      const cam = state.bodyViewer.camera.position;
-      cands.sort((a,b)=>cam.distanceTo(a.mesh.position)-cam.distanceTo(b.mesh.position));
-      hit = cands[0];
-    }
+    // The SAME picker as the click path, so hover always previews exactly the marker a click would select.
+    const hit = pickBodyMarker(cx, cy);
     if(hit !== state.hoveredBodyMarker){
       if(state.hoveredBodyMarker) state.hoveredBodyMarker.el.classList.remove('hover');
       state.hoveredBodyMarker = hit;
@@ -258,7 +239,7 @@ function buildBodyMarkers(){
       // lower leg in women — CONCORD-3; see skin.js's markerSpec comment). Every other
       // organ's points omit the field and keep the original both-bodies behavior unchanged.
       spec.points.filter(point => !point.sexes || point.sexes.includes(sex)).forEach(point=>{
-        const anchor = findBodySurfaceAnchor(group, bbox, point.heightFrac, point.angle);
+        const { point: anchor, normal } = findBodySurfaceAnchor(group, bbox, point.heightFrac, point.angle);
         const mesh = new THREE.Mesh(
           // Scaled to this mesh's real-world-meter units (~1.7 tall) — 0.03 is the same
           // fraction of standing height the old 0.3 marker was, against the abandoned
@@ -273,6 +254,7 @@ function buildBodyMarkers(){
         // is the point's DECLARED target — 'limb' for the one marker that means to sit on a leg
         // (skin, female, CONCORD-3); everything else is asserted to sit on the trunk/head column.
         mesh.userData.marker = { organ: organ.key, sex, heightFrac: point.heightFrac, angle: point.angle, site: point.site || 'trunk' };
+        mesh.layers.set(BODY_MARKER_LAYER);   // excluded from the picker's body-depth pass (see renderBodyDepthPass)
         group.add(mesh);
 
         const el = document.createElement('div');
@@ -284,7 +266,7 @@ function buildBodyMarkers(){
         makeActivatable(el, ()=>selectOrganRef(organ.key), { label: organActionLabel(organ) });
         container.appendChild(el);
 
-        bodyMarkerRecords.push({ mesh, el, key:organ.key, sex });
+        bodyMarkerRecords.push({ mesh, el, key:organ.key, sex, normal });
       });
     });
   });
@@ -332,6 +314,91 @@ function toggleBodySex(sex){
 const BODY_MARKER_PROJECTED_PX = 11;
 const BODY_MARKER_HIT_RADIUS_PX = 12;
 const BODY_MARKER_BASE_R = 0.03;
+
+// THE PICKER (repaired 2026-09-09, user authorization). Two jobs, kept apart: DEPTH IS A VISIBILITY GATE,
+// NEAREST CENTRE IS THE CHOOSER. The previous rule — depth breaking ties among in-radius candidates — was
+// measured wrong at the only input where correctness is unambiguous: clicking the centre of the prostate
+// dot selected the bladder, and the left testis dot selected the bladder, because the bladder sat ~1.5%
+// nearer the camera on the SAME surface; nearest-centre matched the clicked dot in 4/4, and under
+// auto-rotation the depth order changes, so the same click resolved differently over time. Depth keeps the
+// job it is right for — front-versus-back on a closed mesh, where a chest click must never select a
+// marker on the spine — as a GATE: an occluded marker is never eligible (the old far-side click-through is
+// gone on purpose). Among eligible candidates inside the 24px target, the nearest centre wins.
+//
+// THE GATE IS A DEPTH-BUFFER TEST, NOT A FACING TEST — measured before choosing (24 yaws × both bodies):
+// no threshold on normal·toCamera separates visible from occluded markers (visible dots down to −0.93 on
+// the skin's leg marker, occluded up to +0.80), and an exact camera→marker raycast costs ~24 ms on the
+// 339K-triangle body — affordable for the regression's cross-check, not for hover. So the gate reads the
+// BODY'S OWN DEPTH: when a pick has candidates, the body is rendered once with a depth-packing material
+// into an offscreen target (the marker spheres live on their own layer and are excluded), and each
+// candidate's centre is compared with the body depth at its pixel; a centre behind the body surface by
+// more than BODY_PICK_DEPTH_TOL is occluded. Exact at pixel resolution; one low-cost depth pass per pick
+// event that has candidates, nothing when the pointer is over empty canvas. regress.js ('body marker
+// picking') asserts every eligible marker's own centre selects it and cross-checks this gate against the
+// exact raycast at the default framing and across a yaw sweep, on both bodies.
+const BODY_PICK_DEPTH_TOL = 0.01;   // metres of view depth; a marker centre sits 5 mm outside its own surface
+const BODY_MARKER_LAYER = 1;
+let pickRT = null;
+const pickDepthMat = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking });
+const pickBuf = new Uint8Array(4), pickClear = new THREE.Color(), pickSize = new THREE.Vector2();
+function perspectiveDepthToViewDistance(fragZ, near, far){ return -((near * far) / ((far - near) * fragZ - far)); }
+function renderBodyDepthPass(){
+  const v = state.bodyViewer, renderer = v.renderer, camera = v.camera;
+  renderer.getDrawingBufferSize(pickSize);
+  if(!pickRT || pickRT.width !== pickSize.x || pickRT.height !== pickSize.y){
+    if(pickRT) pickRT.dispose();
+    pickRT = new THREE.WebGLRenderTarget(pickSize.x, pickSize.y, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true });
+  }
+  const prevTarget = renderer.getRenderTarget(), prevOverride = v.scene.overrideMaterial, prevMask = camera.layers.mask;
+  renderer.getClearColor(pickClear); const prevAlpha = renderer.getClearAlpha();
+  camera.layers.set(0);                                  // the body (and staging) only — spheres are on BODY_MARKER_LAYER
+  v.scene.overrideMaterial = pickDepthMat;
+  renderer.setClearColor(0xffffff, 1);                   // an empty pixel unpacks to depth ≈ 1: background, never an occluder
+  renderer.setRenderTarget(pickRT); renderer.clear(); renderer.render(v.scene, camera);
+  renderer.setRenderTarget(prevTarget); renderer.setClearColor(pickClear, prevAlpha);
+  v.scene.overrideMaterial = prevOverride; camera.layers.mask = prevMask;
+  return pickSize;
+}
+function bodyMarkerOccluded(r, size){
+  const v = state.bodyViewer, camera = v.camera;
+  const ndc = r.mesh.position.clone().project(camera);
+  const px = Math.floor((ndc.x + 1) / 2 * size.x), py = Math.floor((ndc.y + 1) / 2 * size.y);   // GL origin: bottom-left
+  if(px < 0 || py < 0 || px >= size.x || py >= size.y) return true;                              // off-screen: not pickable
+  v.renderer.readRenderTargetPixels(pickRT, px, py, 1, 1, pickBuf);
+  // three 0.185's RGBADepthPacking, unpacked: (255/256) · (r + g/256 + b/256² + a/256³) with each byte /255 — the
+  // MOST SIGNIFICANT BYTE IS RED. Measured, not recalled: the first draft unpacked alpha as the MSB (the older
+  // layout) and every body depth came out near zero, so every marker read as occluded; the raw bytes at a
+  // visible marker's pixel ([255, 85, 232, 0] for a depth of 0.9974) settled the order, and the corrected
+  // unpack reproduces the marker's own projected depth to five decimals. If three is ever re-pinned, re-measure.
+  const bodyFrag = (255 / 256) * ((pickBuf[0] / 255) + (pickBuf[1] / 255) / 256 + (pickBuf[2] / 255) / 65536 + (pickBuf[3] / 255) / 16777216);
+  if(bodyFrag >= 0.9999) return false;                                                            // background at this pixel
+  const bodyDist = perspectiveDepthToViewDistance(bodyFrag, camera.near, camera.far);
+  const markerDist = perspectiveDepthToViewDistance(ndc.z * 0.5 + 0.5, camera.near, camera.far);
+  return bodyDist < markerDist - BODY_PICK_DEPTH_TOL;
+}
+export function pickBodyMarker(cx, cy){
+  const cands = [];
+  bodyMarkerRecords.forEach(r=>{
+    if(r.sex !== state.currentBodySex) return;
+    const pt = state.bodyViewer.project(r.mesh.position);
+    const d = Math.hypot(pt.x-cx, pt.y-cy);
+    if(d <= BODY_MARKER_HIT_RADIUS_PX) cands.push({ r, d });
+  });
+  if(!cands.length) return null;
+  const size = renderBodyDepthPass();
+  cands.sort((a,b)=>a.d-b.d);                            // CHOOSER: nearest centre …
+  for(const c of cands){ if(!bodyMarkerOccluded(c.r, size)) return c.r; }   // … among those the GATE lets through
+  return null;
+}
+// Test-facing view of the current body's markers THROUGH the module's own gate (identity, not a replica):
+// regress.js asserts against this and cross-checks the gate with an exact occlusion raycast.
+export function bodyMarkerEligibility(){
+  const size = renderBodyDepthPass();
+  return bodyMarkerRecords.filter(r=>r.sex === state.currentBodySex).map(r=>{
+    const pt = state.bodyViewer.project(r.mesh.position), p = r.mesh.position;
+    return { key: r.key, x: pt.x, y: pt.y, px: p.x, py: p.y, pz: p.z, eligible: !bodyMarkerOccluded(r, size) };
+  });
+}
 
 export function bodyTick(){
   if(state.screen==='body' && state.bodyViewer){

@@ -4125,6 +4125,38 @@ discriminator — depth is right when one thing occludes another. Recorded as a
 measurement at one camera pose (the body auto-rotates; the order of depths changes
 with yaw); no change made. Evidence: the probe's table, ephemeral under /tmp.
 
+REPAIRED (user authorization, same day): not a preference between two rules but one
+rule wrong at the only input where correctness is unambiguous, and non-deterministic
+under auto-rotation on top. Restructured, not swapped: DEPTH IS A VISIBILITY GATE
+(an occluded marker is never eligible — the old far-side click-through is gone),
+NEAREST CENTRE IS THE CHOOSER, one exported picker shared by click and hover
+(`pickBodyMarker`). THE GATE'S MECHANISM WAS MEASURED, NOT ASSUMED. First candidate,
+a facing test on the anchor's stored normal: across 24 yaws on both bodies NO
+threshold on normal·toCamera separates visible from occluded markers (visible dots
+down to −0.93 on the skin's leg marker, occluded up to +0.80) — parametric
+distinctness is not perceptual distinctness, again. Second candidate, an exact
+camera→marker raycast: correct, but ~24 ms per call on the 339K-triangle body — the
+regression's oracle, not a hover path. Chosen: a DEPTH-BUFFER TEST — when a pick has
+candidates, the body is rendered once with `MeshDepthMaterial` (RGBADepthPacking)
+into an offscreen target with the marker spheres excluded on their own render layer,
+and each candidate's centre is compared with the body depth at its pixel (1 cm
+tolerance; a centre sits 5 mm outside its surface). Exact at pixel resolution, no new
+dependency, nothing spent when the pointer is over empty canvas. TWO LESSONS PAID
+FOR ON THE WAY: (1) three 0.185's RGBADepthPacking puts the MOST SIGNIFICANT BYTE IN
+RED — the first unpack read alpha as the MSB (the older layout) and every marker
+came out occluded; the raw bytes at a visible pixel settled the order and the fix
+reproduces the marker's own depth to five decimals — measure the packing if three is
+ever re-pinned; (2) THE ORACLE MUST MEASURE WHAT THE GATE MEASURES: a zero-width ray
+to the exact marker point disagreed with the 3 mm pixel at three silhouette edges in
+279 samples; the oracle now casts through the centre of the sampled pixel, so a
+disagreement is a defect in the pass, the unpack or the mapping, never quantisation.
+THE ASSERTION, the picking counterpart of the placement check (`regress.js` 'body
+marker picking <sex>', through the module's own exports, never a replica): every
+eligible marker's own projected centre selects that marker, and the gate agrees with
+the raycast oracle at the default framing and across an 8-yaw sweep — green at
+15/15 + 16/16 own-centre picks, 0/248 sweep disagreements, both bodies. Regress
+171 → 173 checks, the 2 known failures unchanged.
+
 A HARNESS HAZARD FOUND ON THE WAY, fixed in the same commit: `regress.js` read
 `assets` and the manifest's code_refs relative to process.cwd(). The battery always
 pinned cwd to the repo, so it never saw it; a standalone run launched from /tmp

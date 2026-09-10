@@ -124,6 +124,87 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
       `crotch at ${crotchFrac}; ${rows.length} anchors; ${bad.length} on a limb: ` + bad.map(r => `${r.organ}@${r.spec.join('/')} frac ${r.frac}${r.belowCrotch ? ' BELOW-CROTCH' : ''}${r.beyondTrunk ? ` BEYOND-TRUNK (radial ${r.radial} > exit ${r.trunkExit})` : ''}`).join('; '));
   }
 
+  // ---- body marker PICKING: every eligible marker's own centre selects that marker (2026-09-09, user) ----
+  // The picking counterpart of the placement check. The old rule (depth breaks ties among in-radius
+  // candidates) selected the bladder when the prostate's or the left testis's own centre was clicked, and
+  // changed its answer as auto-rotation reordered depths. Now depth GATES (a far-side marker is never
+  // eligible) and nearest centre CHOOSES. Asserted through the module's own exports — pickBodyMarker and
+  // bodyMarkerEligibility — never a replica; and the facing gate is cross-checked against an exact
+  // camera→marker occlusion raycast, so a limb occluding a front-facing marker at this framing would show.
+  for (const sex of ['female', 'male']) {
+    await page.evaluate(s => {
+      const btns = [...document.querySelectorAll('#sexToggle button, .sex-toggle button, button')];
+      const b = btns.find(x => x.textContent.trim().toLowerCase() === s);
+      if (b) b.click();
+    }, sex);
+    await new Promise(r => setTimeout(r, 900));
+    const picking = await page.evaluate(async () => {
+      const THREE = await import('three');
+      const { state } = await import('./js/state.js');
+      const { pickBodyMarker, bodyMarkerEligibility } = await import('./js/body.js');
+      const group = state.currentBodySex === 'female' ? state.femaleBodyGroup : state.maleBodyGroup;
+      const body = []; group.traverse(o => { if (o.isMesh && !(o.userData && o.userData.marker)) body.push(o); });
+      const cam = state.bodyViewer.camera.position;
+      // THE ORACLE MEASURES WHAT THE GATE MEASURES: the ray goes through the centre of the drawing-buffer pixel the
+      // gate sampled, out to the marker's depth minus the gate's tolerance. A ray to the exact marker point differed
+      // from the gate only at silhouette edges (three cases in 279 samples), where a 3 mm pixel and a zero-width ray
+      // legitimately disagree; with matched geometry a disagreement is a defect in the pass, the unpack or the mapping.
+      const size = state.bodyViewer.renderer.getDrawingBufferSize(new THREE.Vector2());
+      const camera = state.bodyViewer.camera;
+      const occludedAtPixel = (px, py, pz) => {
+        const target = new THREE.Vector3(px, py, pz), ndc = target.clone().project(camera);
+        const ix = Math.floor((ndc.x + 1) / 2 * size.x), iy = Math.floor((ndc.y + 1) / 2 * size.y);
+        const centre = new THREE.Vector3(((ix + 0.5) / size.x) * 2 - 1, ((iy + 0.5) / size.y) * 2 - 1, ndc.z).unproject(camera);
+        const dir = centre.clone().sub(camera.position), dist = dir.length(); dir.normalize();
+        return !!new THREE.Raycaster(camera.position, dir, 0, dist - 0.01).intersectObjects(body, true)[0];
+      };
+      return bodyMarkerEligibility().map(f => {
+        const picked = pickBodyMarker(f.x, f.y);
+        const pickedKey = picked ? picked.key : null;
+        const occluded = occludedAtPixel(f.px, f.py, f.pz);
+        return { key: f.key, x: Math.round(f.x), y: Math.round(f.y), eligible: f.eligible, pickedKey,
+                 ownCentreOk: f.eligible ? pickedKey === f.key : pickedKey !== f.key, occluded, gateAgrees: occluded === !f.eligible };
+      });
+    });
+    // The same gate across a yaw sweep (the camera moved in-page, then restored): occluded markers change with
+    // rotation, and the gate must agree with the exact raycast at every pose, not only the one the screenshot shows.
+    const sweep = await page.evaluate(async () => {
+      const THREE = await import('three');
+      const { state } = await import('./js/state.js');
+      const { bodyMarkerEligibility } = await import('./js/body.js');
+      const group = state.currentBodySex === 'female' ? state.femaleBodyGroup : state.maleBodyGroup;
+      const body = []; group.traverse(o => { if (o.isMesh && !(o.userData && o.userData.marker)) body.push(o); });
+      const cam = state.bodyViewer.camera, ctr = state.bodyViewer.controls.target.clone(), saved = cam.position.clone();
+      const r0 = saved.clone().sub(ctr), radius = r0.length(), pitch = Math.acos(r0.y / radius);
+      const out = { samples: 0, disagreements: [] };
+      for (let k = 0; k < 8; k++) {
+        const yaw = k * Math.PI / 4;
+        cam.position.set(ctr.x + radius * Math.sin(pitch) * Math.sin(yaw), ctr.y + radius * Math.cos(pitch), ctr.z + radius * Math.sin(pitch) * Math.cos(yaw));
+        cam.lookAt(ctr); cam.updateMatrixWorld(true);
+        const size = state.bodyViewer.renderer.getDrawingBufferSize(new THREE.Vector2());
+        for (const f of bodyMarkerEligibility()) {
+          const target = new THREE.Vector3(f.px, f.py, f.pz), ndc = target.clone().project(cam);
+          const ix = Math.floor((ndc.x + 1) / 2 * size.x), iy = Math.floor((ndc.y + 1) / 2 * size.y);
+          const centre = new THREE.Vector3(((ix + 0.5) / size.x) * 2 - 1, ((iy + 0.5) / size.y) * 2 - 1, ndc.z).unproject(cam);
+          const dir = centre.clone().sub(cam.position), dist = dir.length(); dir.normalize();
+          const occluded = !!new THREE.Raycaster(cam.position, dir, 0, dist - 0.01).intersectObjects(body, true)[0];
+          out.samples++;
+          if (occluded === f.eligible) out.disagreements.push(`${f.key}@${Math.round(yaw * 180 / Math.PI)}° gate=${f.eligible ? 'visible' : 'occluded'} ray=${occluded ? 'occluded' : 'visible'}`);
+        }
+      }
+      cam.position.copy(saved); cam.lookAt(ctr); cam.updateMatrixWorld(true);
+      return out;
+    });
+    fs.writeFileSync(path.join(OUT, `body_marker_picking_${sex}.json`), JSON.stringify({ default: picking, sweep }, null, 1));
+    const eligible = picking.filter(p => p.eligible), wrong = picking.filter(p => !p.ownCentreOk), disagree = picking.filter(p => !p.gateAgrees);
+    check(`body marker picking ${sex}`, wrong.length === 0 && disagree.length === 0 && sweep.disagreements.length === 0,
+      `${picking.length} markers, ${eligible.length} eligible at the default framing, ${picking.length - wrong.length}/${picking.length} own-centre picks correct, `
+      + `${disagree.length} gate/raycast disagreements at default, ${sweep.disagreements.length}/${sweep.samples} across an 8-yaw sweep`
+      + (wrong.length ? '; WRONG: ' + wrong.map(p => `${p.key}→${p.pickedKey}`).join(', ') : '')
+      + (disagree.length ? '; DISAGREE: ' + disagree.map(p => `${p.key} eligible=${p.eligible} occluded=${p.occluded}`).join(', ') : '')
+      + (sweep.disagreements.length ? '; SWEEP: ' + sweep.disagreements.slice(0, 8).join(', ') : ''));
+  }
+
   // ---- body mesh resolution guard ----
   // The bodies ship at Multires level 2 (338,720 tris each, meshopt-compressed). body.js
   // documents TWO silent re-export traps (multires levels regressing, bbox centering), and a
