@@ -242,3 +242,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |  }
   | ]
 ==== END REFUSAL
+==== REFUSAL 2026-09-11T14:06:23Z reason=exit=1 marker="DONE deploy_check:" tool=deploy_check.js
+     output 15 lines, last 12 below
+  |   ok   benign filter does NOT swallow the 4b2c8c5 parse error
+  |   ok   initialisation assertion fails on a blank page (1 failure(s) reported)
+  |   ok   reports all three initialisation failures on the 4b2c8c5 shape (loaded page, null state) — got 3
+  |   ok   reports no failures on a healthy state (the gate is not stuck failing)
+  |   ok   excuses the console echo when every HTTP error observed was declared benign
+  |   ok   keeps the console echo as a finding when an UNDECLARED 404 is also present
+  | SELFTEST PASS — all three layers shown able to fail: stale bytes, a widened benign list, a dead page
+  | DONE deploy_check_selftest: 9 arms run, 0 failures
+  |   NOT PUBLISHED: js/main.js — bytes differ — HEAD 0a3be8ab0851 (50782B) vs served 9be92e5358d1 (49673B)
+  |   NOT PUBLISHED: cancer-atlas.html — bytes differ — HEAD 861ceafb4b83 (74184B) vs served 71956a386edb (68432B)
+  |   NOT PUBLISHED: js/trials.js — HTTP 404
+  | DONE deploy_check: 26/29 assets byte-matched to HEAD 67b21d2, 31 hotspots live, 0 unexplained page errors (2 declared-benign), 3 problems
+==== END REFUSAL
