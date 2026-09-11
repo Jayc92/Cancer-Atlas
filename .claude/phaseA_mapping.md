@@ -1434,3 +1434,42 @@ FIVE-ITEM FOLLOW-UP: THE 401 STATED PLAINLY, A REAL POSITIVE CONTROL, A STALENES
     commit rather than left to trip `vanished_ratchets()`; live split 452 code + 138 prose = 590,
     matching the pre-split total exactly, and the new floored metric correctly initialised
     (condition 8) rather than falsely reporting a shrink.
+
+SEER CLOSED, THE DUPLICATE-BLOCK CONVENTION, THE RECORD-SYNC CLASS, THE RANKER REFRAMED, PHASE D
+    DESIGNED (2026-09-10, user: "everything outstanding, consolidated" follow-up). Six items.
+    (1) SEER framing acknowledged closed in the direction that matters -- no account needed, ever,
+    since the statistics live behind SEER*Stat (a desktop app), not the API. (2) CONVENTION F added
+    to battery.py's standing-conventions block: a parser's condition-(7) fixtures need a
+    PLAUSIBLE-BUT-WRONG member, not only broken ones, named directly from the scraper's own
+    duplicate-block gap -- eight assertions and eight broken-shape fixtures all passed, and only a
+    well-formed fabricated second block surfaced the real failure. (3) The record-sync gap re-scoped
+    from one instance to its class (phaseB_design.md §16): verified two more live members
+    (MARGIN_STATUS/GROWTH_STATUS's per-entry status claims in js/morphology.js; the hand-swept
+    "composition four" in phaseA_growth_design.md §10.C) and split the class into two sub-shapes --
+    claims about text already in the repo (cheaply automatable, left unbuilt on frequency grounds so
+    far, not a structural limit) and claims about literature outside it (not automatable without a
+    live fetch, the same limit external quote-verification has always had). (4) The certainty-drift
+    result re-framed honestly: 44 of 58 ranked clauses are UNREAD, not clean -- the stopping rule
+    certifies the pre-registered low-yield assumption was never contradicted, not that the tail was
+    checked. Recorded separately, and correctly, as a VALIDATED PROPERTY of the ranking itself: the
+    one defect landed at rank 4 with ten clean reads following, real evidence the hedge-absence
+    ordering does useful work, not a lucky run. (5) The cwd-reset rule widened past "a command whose
+    output becomes a claim" to cover every background-issued command -- the third live instance this
+    session was a MUTATION (a commit attempt failing exit 127) that happened to fail safely by luck,
+    not by design; run_checked.sh's header and my own cross-session memory file both updated. (6)
+    PHASE D DESIGNED as its own document (`.claude/phaseD_trials_design.md`), taken ahead of the
+    rest of Phase B since ClinicalTrials.gov v2 is the one source confirmed both available and
+    sufficient. The condition-mapping method was DEMONSTRATED, not just specified: a real live query
+    for ccRCC read back 7 of 8 studies on-topic (one named broadening); a real live query for
+    diffuse-type gastric adenocarcinoma caught a GENUINE cross-domain false match -- a multi-basket
+    brain-tumor trial pulled in purely because "diffuse" collided across two unrelated condition
+    tags -- corrected by dropping the colliding term, re-verified clean at 6/6. The three duty-of-care
+    constraints were given concrete UI form; status/staleness designed around a live-sampled
+    overallStatus enum (9 distinct values seen, filtered by an INCLUDE-list for fail-safe direction);
+    the four-state failure mode specified by direct analogy to deploy_check.js's own
+    measured-catastrophe-vs-failed-to-measure distinction; location handling decided (ignore, with a
+    real number backing it -- one sampled trial carries 128 site locations -- and a revisit trigger).
+    A live CORS check (the same method phaseB_design.md §13 used for SEER) found
+    ClinicalTrials.gov permissive, confirming trials can be a genuine client-side runtime fetch,
+    which the document's own §6 had left open rather than assumed. No served asset changed; nothing
+    in this round is code. Standing gates.

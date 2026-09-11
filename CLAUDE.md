@@ -5723,7 +5723,36 @@ refute it, which is worth more than file order.
   documentation condensation can now proceed without tripping a floor built to protect a
   different population. Migration disclosed: the stale combined key removed from
   record_count.json's stored counts in the same commit; live split 452 code + 138 prose = 590,
-  matching the pre-split total exactly. Then wall; multifocal when it has a renderable
+  matching the pre-split total exactly. CONVENTION F ADDED (battery.py's standing-conventions
+  block): a parser/extractor's own condition-(7) fixture set must include a PLAUSIBLE-BUT-WRONG
+  input, not only a broken one — named from the scraper's own duplicate-block gap, where eight
+  assertions and eight broken-shape fixtures all passed and only a well-formed, fabricated
+  SECOND block surfaced the real failure (silent wrong data, not a refusal). RECORD-SYNC GAP
+  RE-SCOPED TO THE CLASS (phaseB_design.md §16): "the watchlist is resolved" answered the
+  instance, not the class it belongs to; verified two more live members (MARGIN_STATUS/
+  GROWTH_STATUS's per-entry status claims, the hand-swept "composition four") and split the
+  class into two sub-shapes — claims about text already in this repo (cheaply automatable,
+  left unbuilt on frequency grounds, not a structural limit) versus claims about literature
+  outside it (not automatable without a live fetch, the same limit external quote-verification
+  has always had). CERTAINTY-DRIFT RESULT RE-FRAMED (§20): 44 of 58 ranked clauses are UNREAD,
+  not clean — the stopping rule certifies the pre-registered low-yield assumption was never
+  contradicted, not that the tail was checked; recorded separately as a VALIDATED PROPERTY of
+  the ranking itself (the one defect landed at rank 4, ten clean reads followed, real evidence
+  the ordering works, not a lucky run). CWD-RESET RULE WIDENED (run_checked.sh, a third live
+  instance this session): the explicit-form rule covers every background-issued command, not
+  only ones whose output becomes a claim — this one was a mutation (a commit attempt) that
+  failed safely by luck, not by design. PHASE D OPENED AS ITS OWN DESIGN DOCUMENT
+  (`.claude/phaseD_trials_design.md`): the condition-mapping method demonstrated live on two
+  entries (ccRCC clean at 7/8 with one named broadening; gastric diffuse-type caught a REAL
+  cross-domain false match — a brain-tumor basket trial — from naive subtype-keyword matching,
+  corrected by dropping the colliding term), the three duty-of-care constraints made concrete
+  (fixed copy, a neutral sort key, no eligibility reproduction), status/staleness designed
+  (an include-list of open statuses, display + fetch timestamp both), the four-state failure
+  mode specified (borrowing deploy_check's own measured-catastrophe-vs-failed-to-measure
+  distinction), location handling decided (ignore, with reasoning and a revisit trigger), and
+  a live CORS check finding ClinicalTrials.gov permissive (unlike SEER) — confirming trials CAN
+  be a genuine client-side runtime fetch. No fetch code, no component, no schema field touched;
+  a ruling on the document is the next step. Then wall; multifocal when it has a renderable
   member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
@@ -5798,7 +5827,14 @@ refute it, which is worth more than file order.
   is available to the reader); no endorsement, no ranking by apparent
   promise — neutral order, stated; THE HANDOFF IS THE POINT (a reader
   arriving at their oncologist with informed questions, said on the
-  page). Framing designed BEFORE the integration.
+  page). Framing designed BEFORE the integration. **DESIGNED, 2026-09-10:
+  `.claude/phaseD_trials_design.md` — trials taken ahead of the rest of
+  Phase B (the one source confirmed both available and sufficient, no
+  key, and CORS-permissive per a live check, unlike SEER). The
+  condition-mapping method demonstrated on two entries, not just
+  described; the three constraints above given concrete form; status/
+  staleness, the failure-mode states, and location handling all
+  designed with reasoning. Awaiting a ruling before any fetch code.
 - **ccf-READ CONTRACT ADDENDUM (2026-09-05, user-authored; full text
   in the manifest's _ccf_read_addendum):** the ~127 remaining clauses
   are mechanism prose with no number to anchor on. THE ANCHOR IS THE

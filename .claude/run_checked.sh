@@ -47,6 +47,17 @@
 # filename. The inverse is the same drift with the outcome reversed: a real leak checked in the wrong
 # tree and reported clean.
 #
+# THIRD INSTANCE, AND THE RULE WIDENS PAST "A CLAIM" (2026-09-10). A backgrounded invocation of
+# `commit_checked.sh` failed exit 127, "No such file or directory" — the SAME cwd drift, but this
+# time on a MUTATING command (a commit attempt), not a read. No damage: the shell that couldn't find
+# the script also couldn't run it, so nothing committed from the wrong tree — but the drift was not
+# safe by design, it was safe by luck of which command happened to fail first. THE RULE AS WRITTEN
+# ABOVE SAYS "a command whose output becomes a claim," which scopes it to reads and verification; a
+# background-issued MUTATION needs the same explicit form for the same reason — a background call's
+# cwd cannot be assumed to inherit the foreground shell's, at all, regardless of what the command
+# does with it. Widen the practice accordingly: every command issued via run_in_background carries
+# an explicit `cd <absolute> &&` prefix or absolute paths throughout, not only the ones whose result
+# will be read back as evidence.
 # IT GUARDS ONE INVOCATION, NOT THE SET. This header used to enumerate its call sites, which
 # made it a second hand-maintained instrument list going stale beside the real one — it said
 # "six call sites" while ten instruments existed. The enumeration now lives in exactly one

@@ -618,6 +618,47 @@
 #   broadened one-hop data-flow detector catches it, then read whatever it flags on the real file by
 #   hand. Method, fixture shape and full worked example are in CLAUDE.md at the section named above;
 #   not duplicated here, per this block's own "one home, not two."
+#
+# F. THE ADVERSARIAL-POSITIVE-CONTROL RULE (user ruling, 2026-09-10 — "an assertion that has only
+# ever passed is a comment").
+#
+#   TWO WAYS A FIXTURE CAN BE A POSITIVE, AND ONLY ONE OF THEM TESTS WHAT MATTERS. A BROKEN input —
+#   malformed, a required element missing, a value outside its expected shape — makes a parser fail
+#   LOUDLY: an exception, a refusal, a missing marker, something downstream already knows how to
+#   treat as a stop. A PLAUSIBLE-BUT-WRONG input — well-formed, passing every structural check the
+#   parser already runs, but describing the wrong thing — makes a parser fail SILENTLY: it returns an
+#   answer, the answer is wrong, and nothing about the return value marks it as such. The second
+#   failure is the one this project's own two-tier model (phaseB_design.md §7) exists to keep out of
+#   Tier 1 — a confident wrong number is worse than an absent one, because a reader has no way to
+#   tell it apart from a correct one.
+#
+#   THE CASE THAT NAMED IT: the SEER Stat Facts scraper (phaseB_design.md §13, §18) shipped with
+#   eight layout assertions and five negative-control fixtures, all of which were BROKEN shapes — a
+#   renamed column, a reordered header pair, a stage label outside the closed vocabulary, shares that
+#   don't sum to 100, a changed table id. All five correctly refused. Three further, more structural
+#   mutants (move a section, rename a header's own CSS class, reorder distant sections) were still
+#   broken-shape tests, just less surgical ones. NONE of these eight fixtures could have found the
+#   real gap, because the real gap needed a fixture that was NOT broken: a second, well-formed
+#   `survival-factSheet` block, fabricated but internally consistent (percentages summing to 100,
+#   every field present), inserted earlier in the document than the real one. Every existing
+#   assertion passed it — the block LOOKED right. What was wrong was which one the parser chose, and
+#   no shape-check on a single block can see that; only a construction with two plausible candidates
+#   in one document can.
+#
+#   THE RULE, GENERALISED PAST THIS ONE SCRAPER: when writing or extending a condition-(7) fixture
+#   set for anything that PARSES or EXTRACTS (not merely validates) a document, the fixture set is
+#   incomplete until at least one member is PLAUSIBLE-BUT-WRONG — well-formed enough to pass every
+#   existing structural assertion, wrong only in which content it is, or which occurrence of a
+#   pattern it resolves to. A fixture set built entirely from broken shapes proves the parser can
+#   detect damage; it proves nothing about whether the parser can be fooled by something that isn't
+#   damaged at all.
+#
+#   WHY THIS IS CONDITION (7) SHARPENED, NOT A NEW CONDITION: condition (7) already says a check must
+#   be shown capable of firing on a real or planted positive before its zero is trusted. This
+#   convention answers the question condition (7) leaves open — a positive control FOR WHAT SHAPE OF
+#   FAILURE — because "the check can be tripped" and "the check can catch a confident wrong answer"
+#   are different claims, and a fixture set that only ever tests the first can report a clean run
+#   forever while remaining blind to the second.
 # ==================================================================================================
 #
 # WHY THE CHAIN STOPS AT FOUR (user, 2026-09-05 — recorded so nobody adds a fifth from momentum).
@@ -824,6 +865,10 @@ NON_INSTRUMENTS = {
     'phaseA_closeout.md': 'a record — what Phase A built, resolved to text, or bounded, and why; not a tool',
     'phaseB_design.md': 'design document — the build-time/runtime decision and the provenance-schema question it '
                         'depends on, opened 2026-09-10; asserts nothing, ratchets nothing, no code to touch until ruled on',
+    'phaseD_trials_design.md': 'design document — clinical trials integration (condition mapping, the three '
+                               'duty-of-care constraints, status/staleness, failure modes, location handling), '
+                               'opened 2026-09-10; asserts nothing, ratchets nothing, no fetch code or UI '
+                               'component touched until ruled on',
     'capture_organs.js': 'evidence tool for the Phase A per-category visual read — regenerates the capture a '
                          'wiring commit describes (command + commit are the durable form of "the capture path"; '
                          'a /tmp path would be the scratch pointer this project stopped writing); asserts nothing, '

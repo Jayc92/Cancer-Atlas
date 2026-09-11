@@ -544,29 +544,64 @@ in 24 read, against a corpus of 428 fields, is not a corpus-wide drift rate — 
 reading the 24 clauses this method judged most likely to carry one, and 34 more of the ranked 58
 were not read this round.
 
-## 16. Why no record-sync check caught the skin.js discrepancy (2026-09-10, user)
+## 16. The record-sync gap, generalised to the class it actually names (2026-09-10, user: "the gap is that no check compares a record's list membership against the files")
 
-**Checked directly against `record_sync_check.py`'s own declared-pairs list, not inferred from what
-the tool is named.** Exactly one declared pair touches this watchlist at all:
-`('_uncited_migrating_watchlist', 'CLAUDE.md', '2026-10-17')`. Its mechanism is narrow and
-specific: it asserts the literal string `'2026-10-17'` occurs **exactly once** in `CLAUDE.md` — a
-guard against the date being restated and drifting from itself, the same "machine-derivable-number"
-discipline this project applies everywhere else. **It does not read, parse, or check anything about
-which items are on the list, whether they are still uncited, or whether the list's claims match any
-organ file's actual content.** No other instrument in the battery does either — `citation_crosscheck`
-checks a citation record's own metadata against its resolved identifier; `duplicate_figure_check`
-compares same-file string pairs; `absence_claim_check` scopes unscoped-absence language; none of
-them is built to check a free-text manifest note's enumerated claims about the corpus against the
-corpus itself.
+**§16's first draft closed the wrong scope.** "The watchlist is now resolved rather than guarded" is
+true and answers only the one instance skin.js surfaced. The mechanism traced there —
+`record_sync_check.py`'s single declared pair on this watchlist guards the literal string
+`'2026-10-17'` occurring exactly once in `CLAUDE.md`, nothing about which items are on the list or
+whether their claims match any organ file — is real, but the CLASS it belongs to is bigger than one
+watchlist, and this project already has at least three more members of it, verified directly against
+the live tables rather than assumed from memory:
 
-**The honest answer is a gap, not a bug**: this class of check — "does a natural-language claim
-about which items still lack a citation match reality" — has no instrument anywhere in this
-project, and building one generally would mean parsing free prose into a checkable claim, which is
-a much larger undertaking than this task's scope. **Considered and left undone, not merely
-deferred without a reason**: the specific instance is resolved directly in §14 (the watchlist is
-re-read and corrected, not guarded), and the watchlist itself — the one place this exact defect
-could recur — now expires unconditionally on 2026-10-17, which bounds how long a second instance of
-the same mistake could stand before the mechanism's own expiry forces a re-read regardless.
+- **`citations.json`'s `_uncited_migrating_watchlist`** (§14) — resolved this session by re-reading
+  and correcting the list directly, not by building a guard.
+- **`js/morphology.js`'s `MARGIN_STATUS`/`GROWTH_STATUS`** — 16 entries each, every one asserting a
+  `status` (`cited`/`uncharacterised`/`unread`) that is a CONCLUSION about a literature search, not
+  a property of text already sitting in the repo. `reserve_check.js` guards the SHAPE of every
+  entry (`citedBackingViolations`: a `cited` status must carry a resolvable identifier; every status
+  belongs to the declared enum; every entry ID names a real active cancer; a dated `unread` row is
+  checked for `until`/overdue) — but nothing checks whether the STATUS VALUE ITSELF still matches
+  reality: whether a `cited` entry's underlying source still says what its `badgeQuote` claims, or
+  whether an `uncharacterised` entry should have been promoted by a citation added since the status
+  was last set.
+- **The "composition four"** (`phaseA_growth_design.md` §10.C) — OCCC/ccRCC/GBM/seminoma, a
+  hand-swept count of entries whose cited source uses a composition word (cystic/solid/necrotic/
+  hemorrhagic) about the mass, explicitly re-taken by hand after a later probe run ("RE-TAKEN
+  2026-09-10... FOUR, unchanged") rather than by an automated re-sweep.
+
+**The class, stated once rather than per instance: a record asserts something about the corpus's
+own content or the literature behind it, and nothing mechanically re-checks that assertion against
+the thing it describes.** Leaving it unbuilt may still be right — but the reason has to be about the
+class, and the class does not have one shape, which is why one verdict cannot cover it:
+
+**Sub-shape A — a claim about TEXT ALREADY IN THIS REPO** (the watchlist's shape, and
+composition's): "this field in this file has no citation," "this many entries use this word about
+the mass." Both are decidable offline, from bytes already in the tree, with no network fetch —
+exactly the shape `duplicate_figure_check`/`fraction_check`/`share_sum_check` already check for
+other purposes. **This sub-shape is cheaply automatable, and the watchlist and composition-four are
+evidence FOR building it eventually, not against.** It was not built this session because the
+watchlist's own instance was resolved by reading rather than guarding, and composition's count was
+re-taken by hand in the same style at its own birth — both are one-off repairs so far, not yet a
+repeated cost that has forced the question.
+
+**Sub-shape B — a claim about LITERATURE OUTSIDE THIS REPO** (MARGIN_STATUS/GROWTH_STATUS's shape):
+"a gross-register description was or wasn't found for this entity." The truth of this claim lives in
+a source this repo does not contain, so no offline, deterministic check can verify it without a live
+fetch — the same limit that has stopped this project from ever gating on a citation's SUBSTANCE
+against its external source (`citation_crosscheck` checks a resolved identifier's METADATA — author,
+year, journal — never the source text's content). **This sub-shape is not automatable within the
+gate chain as it exists, for the same reason external quote-verification has always been declined,
+and "considered and declined" is the right verdict for it, precisely stated rather than borrowed
+from the instance that doesn't share its reason.**
+
+**Consequence: the verdict splits by sub-shape, where the original write-up gave one verdict for
+both.** Sub-shape A is left unbuilt on cost/frequency grounds (evidence so far is two repairs, not a
+recurring drain) and should be revisited if a third field-level or corpus-sweep instance needs a
+manual repair rather than a built guard. Sub-shape B is left unbuilt on a structural limit (the
+truth is outside the repo) that no amount of frequency changes — building it would need a live
+fetch, which is exactly the runtime dependency Tier 1's whole design (§7, §13) exists to keep out of
+the deterministic gate chain.
 
 ## 17. Gate timing, sized against Phase C before it arrives as a surprise (2026-09-10, user)
 
@@ -726,6 +761,25 @@ stopping point.
 **§15's finding stands unchanged — one real defect, found and fixed, plus two method false
 positives worth keeping on record — but the DEPTH claimed to reach it was wrong, and is corrected
 here rather than left standing next to a number that doesn't match a re-count.**
+
+**The result recorded correctly, not as certainty drift being clean (2026-09-10, user).** 44 of 58
+ranked clauses are UNREAD. The stopping rule does not certify them clean; it certifies that the
+PRE-REGISTERED assumption behind stopping — the unread tail is low-yield — was never contradicted by
+what the rule actually watched (ten consecutive clean reads since the one defect). That is a
+narrower claim than "clean," the same distinction this project draws everywhere else a search stops
+before covering its population (the census's 3%–15% coverage figure, §6; `citation_reach_check`'s
+unreached-span count). Stated as a fraction rather than a verdict: **14 of 58 read, 44 of 58
+UNREAD, the tail's yield ASSUMED low under the stopping rule, not MEASURED low.**
+
+**The other half is a real, validated property of the ranking, not a lucky run, and is worth
+stating as one.** The one live defect landed at rank 4; the next ten ranks, read in strict order,
+were clean. A ranking with no real ordering power would be exactly as likely to place its one
+defect at rank 40 as rank 4 — clustering near the top on the FIRST live use is evidence the hedge-
+absence-times-strength score is doing real prioritization work, not merely noise with a plausible
+story attached. This is the best outcome available for an instrument of this kind: not full
+coverage (44 clauses remain genuinely unread), but a demonstrated ability to put the one thing worth
+finding near the front of the queue. Recorded as a validated property to build on in a future batch,
+not as evidence the search can stop here for good.
 
 ## 21. Leave the ranker noisy — the reasoning lives with the instrument, not just in this document (2026-09-10, user: "for a ranking instrument, a false positive costs one read and a false negative costs a permanent miss")
 
