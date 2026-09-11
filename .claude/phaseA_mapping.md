@@ -1353,3 +1353,38 @@ Proposed the same day and ratified with one change — the one that decides whet
     Architecture ruled SETTLED (phaseB_design.md); feasibility mostly answered (trials yes,
     statistics no pending a hand-registered SEER key, PDQ not found). No detector, schema, or fetch
     code touched.
+
+SEER-401 CORRECTED, SCRAPER PRICED, WATCHLIST RESOLVED (2026-09-10, user: "a rejected request
+    proves auth, not sufficiency"). Four items, all substantively closed (phaseB_design.md §§12-17):
+    (1) SEER's own registrar API documentation (fetched live, not inferred from the 401) confirms
+    the API serves coding reference data -- staging schemas, disease/drug dictionaries, site recode
+    -- never stage-at-diagnosis or survival statistics, at any account tier; the real statistics
+    surface (SEER Research Data) is delivered only through SEER*Stat, a Windows desktop application,
+    not a REST/JSON endpoint at all. A key would not have unlocked what Tier 1 needs.
+    (2) A layout-guarded scraper against the same fifteen Stat Facts pages already cited by hand
+    reproduces every existing share value exactly, correctly detects the one page with no
+    distribution, refuses (rather than mis-parses) on all five constructed negative controls, needs
+    no account, and is confirmed build-time-only (no CORS header on any page). Bonus: recovers
+    5-year survival-by-stage for free, a field this atlas has never modeled. Priced at roughly an
+    hour against the API path's Login.gov + credential-management + battery-assertion cost -- and
+    the API path is now moot regardless, per (1). Not committed as an instrument; a build decision
+    for Joe.
+    (3) The watchlist re-derived, not just re-dated: skin's melanoma share was found to be a
+    bookkeeping miss in the 2026-09-05 note (already cited a week before the note was written, never
+    genuinely unowned); "StatPearls rows" resolves to exactly two bare citations (skin.js SCC/MCC);
+    the merged twelve-item list now expires unconditionally, cite-or-remove, with the "Phase B has
+    landed" trigger struck rather than reworded (its two premises were both weak -- a pull retires
+    the number, not the sentence, and SEER access wouldn't have helped anyway). One live drift
+    instance found via a new certainty-drift RANKING (not sampling) over 58 strong-and-unhedged
+    clauses corpuswide -- liver.js's TERT note dropped Nault et al.'s own "identified... so far"
+    qualifier; fixed in place. Two of the ranking's own top hits were false positives (already
+    self-hedging in language outside the word list), reported as a calibration finding, not tuned
+    away.
+    (4) Record-sync gap explained by reading the actual declared pair, not by assumption: the one
+    pair touching this watchlist guards a single date string's uniqueness in CLAUDE.md, nothing
+    about the list's membership against corpus reality -- a real, named gap in the battery's
+    coverage, left unbuilt since the specific instance is resolved directly and the watchlist's own
+    unconditional expiry now bounds how long a second instance could stand unnoticed.
+    Gate timing sized, not just flagged: today's three-runs-per-commit pattern costs roughly
+    30-45 minutes at 16 cancers, `regress.js` driving nearly all of it by looping per organ/cancer --
+    CLAUDE.md's own SMALL-POPULATION INVARIANTS prediction, now measured rather than merely named.

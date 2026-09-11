@@ -1,11 +1,14 @@
-# Phase B: reviewed versus unreviewed, and the provenance schema it depends on (opened 2026-09-10, reframed 2026-09-10, sharpened 2026-09-10, feasibility-tested 2026-09-10, user)
+# Phase B: reviewed versus unreviewed, and the provenance schema it depends on (opened 2026-09-10, reframed 2026-09-10, sharpened 2026-09-10, feasibility-tested 2026-09-10, 401-corrected 2026-09-10, user)
 
 Phase A closed with the render side settled: one mechanism built, one ready, one blocked on a
-measurement, one empty, one deferred (`phaseA_closeout.md`). The architecture question is now
+measurement, one empty, one deferred (`phaseA_closeout.md`). The architecture question is
 SETTLED (§11): reviewed versus unreviewed (§1), a two-tier render model (§7) with its own
 verification gap corrected before being trusted (§4), and a feasibility check run with real
-requests, not assumed (§5). **What remains open is feasibility, not architecture** — and §5 answers
-most of it already, mixed: one source confirmed usable, one confirmed blocked, one not found.
+requests, not assumed (§5) — then corrected again when the request itself was found to be weaker
+evidence than it was reported as (§12). **Feasibility is now mostly closed rather than open**:
+trials, confirmed usable; SEER's coding API, confirmed to serve the wrong content at any account
+tier, not merely confirmed blocked; the scraper path SEER's public Stat Facts pages actually
+support, priced and proven working (§13); the watchlist, re-derived and made unconditional (§14).
 
 ## 1. The decision, reframed: reviewed versus unreviewed, not build-time versus runtime
 
@@ -295,28 +298,282 @@ or this file; its exact count is unknown without reading, which this task explic
 - The ~9 unowned re-scoped clauses' actual current correctness (§9) — counted, not read.
 - Skin's share discrepancy (§9) — surfaced, not resolved.
 
-## 11. Ruling received: architecture settled, feasibility mostly answered (2026-09-10, user)
+## 11. Ruling received: architecture settled, feasibility mostly answered (2026-09-10, user) — SUPERSEDED IN PART BY §12–§17, SAME DAY
 
 **The architecture question is CLOSED and should not be relitigated by a future session without new
 evidence.** Reviewed versus unreviewed (§1) is the axis. Tier 1 (verbatim + qualifiers, mechanically
 bounded) carries whatever content has a reachable structured feed; Tier 2 (interpreted, hand-read)
 carries everything else and stays small by design; the shed-qualifier boundary (§7) is the
-mechanical check that keeps the two from blurring. This is not provisional.
+mechanical check that keeps the two from blurring. This is not provisional, and nothing in §12–§17
+touches it.
 
-**The feasibility question, mostly answered rather than left open (§5):** trials — yes, confirmed,
-nothing further needed before design. Statistics (SEER) — no, confirmed blocked by this project's
-own standing rule, not by a technical gap. PDQ — not found, a softer no. **Consequence stated
-plainly: Tier 1's breadth applies to trials today. Cancer statistics stay Tier 2 until a person
-obtains SEER API access by hand, which is a decision for Joe, not a task for this session.**
+**The feasibility question, as it stood at first ruling — corrected the same day, not relitigated,
+in §12–§14:** trials — yes, confirmed, nothing further needed before design (unchanged). Statistics
+(SEER) — the 401 was read as "confirmed blocked"; §12 shows the API would not have served this
+content at any account tier, which is a stronger and different finding. PDQ — not found, unchanged.
+**What replaces the original consequence: Tier 1's breadth applies to trials AND, pending a build
+decision, to a layout-guarded scrape of SEER's own public Stat Facts pages (§13) — no account
+needed for either. Cancer statistics no longer wait on a person registering for SEER API access,
+because §12 shows that access would not have helped.**
 
-**What follows, in order:**
-1. Trials integration is the one candidate with nothing left to check architecturally or
+**What follows, in order, updated from the original four:**
+1. Trials integration is still the one candidate with nothing left to check architecturally or
    feasibility-wise — the smallest, safest first Phase B build, whenever building starts.
-2. The ~9 unowned re-scoped clauses (§9) get a decision — read, date, or declare — before they age
-   further; the discrepancy in skin's share gets a read to resolve which it is.
-3. The ten-item watchlist's expiry condition (§9) gets re-worded against what "Phase B has landed"
-   now actually means, before 2026-10-17.
+2. **DONE (§14):** the re-scoped clauses got a decision, not just a date — the ~9 unowned population
+   was found to be 2 concretely, the rest not locatable in the corpus; skin's discrepancy is
+   resolved (never genuinely unowned); the merged twelve-item watchlist expires unconditionally on
+   2026-10-17, cite-or-remove, no downstream trigger.
+3. **NEW, from §13's result:** a build decision on the scraper path — whether to wire it into a
+   tracked instrument and a real `pulled` fetch, now that it is priced and proven rather than
+   hypothetical — is Joe's call, not resolved here (§10's "no fetch code until a ruling" still
+   binds).
 4. The sixth field (§8) stays last, lowest priority, scoped to `backfill`/Tier 2.
+5. **NEW, from §17:** the battery's gate-timing scaling risk is now measured, not just named in
+   CLAUDE.md's own invariants section — sizing it precisely and deciding whether the three-run-per-
+   commit pattern needs to shrink is Phase C content-model work.
 
-No detector, no schema file, and no runtime fetch code is touched until 1–3 above have a ruling of
-their own.
+No detector, no schema file, and no runtime fetch code is touched until 3 above has a ruling of its
+own.
+
+## 12. The 401 was the wrong evidence for the right question (2026-09-10, user: "a rejected request proves auth, not sufficiency")
+
+**§5's SEER finding was overclaimed.** A 401 proves the endpoint requires an account; it says
+nothing about whether the content behind that account is the content this project needs. Checked
+directly against SEER's own registrar-facing documentation (`seer.cancer.gov/registrars/api`,
+fetched live 2026-09-10) rather than inferred from the 401 body's JSON shape:
+
+> "The SEER API ... is available to developers who wish to incorporate SEER resources into their
+> own systems. These resources include databases and tools developed to enhance registry
+> operations and quality improvement ... Some of the databases and tools supported by the SEER API
+> include: Collaborative Staging; Hematopoietic and Lymphoid Neoplasm Database; NAACCR
+> documentation; SEER*Rx — Antineoplastic Drugs Database; SEER Incidence Site Recode."
+
+**Every one of those is registrar coding-reference data** — staging schemas, a disease dictionary,
+a drug-code dictionary, a data-standard reference, a site-recode lookup table. **None of it is
+stage-at-diagnosis distributions or survival by site.** The usage page's own worked examples
+confirm the shape: `rest/staging/cs/.../schemas`, `rest/disease/latest?...`, `rest/ndc/code/...` —
+coding lookups, not population statistics. This is decisive independent of the 401: even a
+registered, keyed account would not unlock the content Tier 1 needs, because that content is not
+served by this API at any tier.
+
+**The real statistics surface is a third, separate thing, and it is heavier than "an account,"
+not lighter.** `seer.cancer.gov/data/access.html` (fetched live) describes SEER Research
+(Plus) Data — the case-level microdata stage/survival figures are computed from: access requires
+either an eRA Commons or HHS account linked to Login.gov, or a lighter individual "Research Data"
+registration (still an application, an email-verification step, and signed data-use agreements —
+not the "click Login.gov, get a key" framing the API's own usage page implies for its own,
+different resource). **And once granted, the data is delivered only through SEER*Stat — "a
+Microsoft Windows application," verbatim on the page — not a REST/JSON endpoint of any kind.**
+A human runs SEER*Stat, exports a result, and would still have to transcribe it — Tier 2 work
+regardless of which door is opened.
+
+**Consequence: the 401 was pointing at a locked door to the wrong room.** The account-cost
+objection (real identity verification, a secret to manage, a battery assertion to keep it out of
+the tree) never had to be weighed against this API, because paying it would not have bought
+stage-at-diagnosis or survival content either way. Confirmed by reading, not by another request —
+no second live probe was needed once the documentation named what each surface actually serves.
+
+**Cancer Stat Facts — the surface already in use — is a fourth, distinct thing from all three
+above,** and is the only one of the four that is public, unauthenticated, and currently reachable:
+a pre-computed summary-statistics publication, not an API and not the restricted microdata. §13
+prices whether it can be treated as Tier 1's structured source in place of an account it turns out
+would not have helped anyway.
+
+## 13. The scraper path, priced and proven (2026-09-10, user: "I'd try that before the key")
+
+**Built and run against all fifteen already-cited SEER Stat Facts pages** (`/tmp/ca-seer-statfacts-
+scraper.py`, scratch, not committed — pricing exercise, per §10's standing "no fetch code until a
+ruling" rule) plus the one uncharacterised page (testis, which the corpus already records as
+carrying no distribution).
+
+**The page template is stable and was designed to be scraped — literally.** Every page carries
+`<table id="scrapeTable_02">` inside a `<div class="statWrap survival-factSheet">` block, headed
+`<strong class="title">Percent of Cases &amp; 5-Year Relative Survival by Stage at Diagnosis:
+<name></strong>`, three columns (`Stage`, `Percent of Cases`, `5-Year Relative Survival`), one row
+per stage drawn from a closed five-word vocabulary (`In Situ`/`Localized`/`Regional`/`Distant`/
+`Unknown`), followed by a `<p class="footnote">` naming the SEER basis string. The table's own `id`
+prefix ("scrapeTable") is the page author's, not this project's.
+
+**The layout assertion refuses rather than guesses, at eight distinct points**: the wrapper div
+missing, the title string not matching the expected form, the table id absent from the located
+block, the header row not matching the exact three expected column names, a stage row not opening
+with the closed vocabulary, a percent/survival cell not parsing as `N%`, the parsed shares not
+summing to 99–101, and no SEER-attributed footnote inside the block. **Demonstrated on five
+constructed negative controls, not asserted**: a renamed column, a reordered pair of columns, a
+renamed stage label, shares no longer summing to 100, and the table's own `id` changed — all five
+raised the refusal, none produced a silent wrong parse.
+
+**Result: 15 of 15 real-distribution pages reproduce `morphology.js`'s hand-transcribed `shares`
+exactly**, to the percentage point, across every stage category including bladder's five-row
+in-situ case — this is a live cross-validation of the fifteen already-shipped extent lines, not a
+new unverified pull. The sixteenth (testis) correctly reports no table present, matching the
+existing `status:'uncharacterised'` entry. **A capability this project has never modeled came out
+for free**: the same table carries 5-year relative survival by stage, on the same public page, no
+account, no additional request.
+
+**No CORS header on any Stat Facts page** (checked live with an `Origin` header set) —
+confirmed this can only ever be a build-time mechanism (a script run by a human, output committed),
+never a client-side fetch from the deployed GitHub Pages app. This matches, rather than changes,
+the architecture already settled in §7/§11: statistics were always going to be build-time.
+
+**Cost, stated against the API path it replaces:** the scraper (design, build, five negative
+controls, a full run against all fifteen pages) cost roughly an hour of this session, needs no
+account, no Login.gov identity verification, no secret to keep out of the tree, and no battery
+assertion built to guard that secret. The API path — even setting aside §12's finding that it
+would not have served this content at all — additionally required a human to create a Login.gov
+identity, manage a bearer credential, and accept a permanent addition to the battery's threat
+surface. **On both fronts — feasibility and cost — the scraper wins outright, and the API
+comparison is now moot rather than merely expensive**, per §12.
+
+**Real, disclosed limitation:** the scraper is validated only against the fifteen pages this
+project already cites; a sixteenth cancer's Stat Facts page could carry a real layout deviation
+this design has not seen (Stat Facts covers roughly sixty sites total, most unused by this atlas
+today). The refusal-on-mismatch design means a future deviation fails loudly rather than silently —
+exactly the property §2's original ask required — but "loud failure" is not the same claim as
+"tested on every page it would ever touch."
+
+**Not built in this pass, on the standing rule:** a tracked `.claude/` instrument, a cache/refresh
+cadence, a `pulled`-schema wiring, or any commit-time or runtime fetch. This is feasibility
+evidence for a ruling, not an integration.
+
+## 14. The watchlist rewritten: merged, corrected, and made unconditional (2026-09-10, user)
+
+**The expiry's condition depended on "Phase B has not landed," which was always the wrong trigger**
+— §9 already found it stale; this round replaces it rather than re-wording it. Struck outright,
+for two independent reasons, not one: the two-tier model means a structured pull was never going to
+retire the sentence around these figures even if SEER became reachable (§7); and §12 now shows the
+one plausible structured source for subtype/share content isn't behind the SEER API at any account
+tier regardless. **Rule now: on 2026-10-17 (date unchanged — only the condition attached to it was
+wrong), every listed item is cited from a real source or removed from the served page,
+unconditionally.** No downstream trigger, nothing to re-read for ambiguity next time.
+
+**Re-deriving the list's membership, not just its rule, because the count needed checking too.**
+The 2026-09-05 note's "~19 unread clauses" named six groups; ten of them (breast×4, ovary×4,
+liver-iCCA, stomach's `gmix` second clause) are the existing watchlist and were re-confirmed still
+bare against the live files just now. The other two named groups do not hold up as named:
+
+- **"Skin's five-clause share" is not an orphan and was never genuinely one.** Read directly:
+  `skin.js`'s melanoma `share` field is extensively and specifically cited — NCI, Bradford et al.
+  (2009, SEER-17-derived), CONCORD-3, and StatPearls with a named chapter — matching CLAUDE.md's
+  own data rule 20 verbatim. That citation pass predates the 2026-09-05 re-scope note by more than
+  a week. **This is the discrepancy the prior message surfaced and left open; resolved here: the
+  re-scope note was wrong when it was written, not stale afterward** — a bookkeeping miss at
+  authoring time, the same shape as this session's own "~19" tildes doing real work.
+- **"StatPearls rows" resolves to exactly two, not nine.** A corpus-wide search for every `share`
+  field mentioning StatPearls at all (five hits total) found three already fully cited with a named
+  chapter or an explicit no-figure-claimed disclaimer (`colon.js:28`, `pancreas.js:29-30`) and
+  **two genuine bare citations with no resolvable identifier** — `skin.js:59` (SCC) and `skin.js:60`
+  (MCC), each tagged only `(StatPearls)` with no chapter title, PMID, or NBK number. No other
+  bare-StatPearls share row exists anywhere in `js/organs/*.js`.
+
+**The corrected list is twelve items, not nineteen, and the gap is reported rather than forced to
+match the old estimate**: the original "~19" cannot be reconciled to a locatable population beyond
+these twelve. Most likely the 2026-09-05 count was itself a wideband guess — consistent with this
+project's own repeated finding that a predicted count is usually wrong about magnitude even when
+the underlying judgment is sound. **`.claude/citations.json`'s `_uncited_migrating_watchlist` is
+rewritten in place** with the merged twelve, the correction narrative, and the unconditional rule;
+`_phase2_rescope`'s own pointer to it is updated to match. The record-sync pair guarding this
+watchlist (`record_sync_check.py`, keyed on the literal string `'2026-10-17'` occurring exactly
+once in CLAUDE.md) is unaffected — the date did not change, only the manifest's prose around it.
+
+## 15. Certainty drift, ranked rather than sampled (2026-09-10, user: "rank every clause ... read the top of that list first")
+
+**Population: every `note`/`ccf`/`text`/`desc`/`share` field in `js/organs/*.js` carrying at least
+one unhedged strong/mechanistic verb (found/shows/demonstrates/confirms/establishes/causes/
+drives/leads-to/proves) and zero matches against a hedge-word list (suggests/proposes/may/might/
+possibly/potential/putative/implicat-/associat-/consistent-with/read-as/appears-to/likely) — 58 of
+428 total fields.** Ranked by count of distinct strong-verb families present, ties broken by file
+order. This is a prioritization, not a coverage claim: it orders a fixed, already-written corpus
+for a human read, and says nothing about the far larger population of hedged or citation-free
+prose (out of scope for this method by construction).
+
+**Read down to roughly the top two-fifths of the ranked list (all of strength ≥2, plus about
+seventeen of the strength-1 tier — the ones each carrying a real external citation, since drift
+needs a source to drift from) — 24 of 58, an explicitly bounded read, not the full list.**
+
+**Yield: one real, live drift instance, found and fixed.** `liver.js:280`'s TERT note said the
+mutation was "the earliest known genetic event in this disease's progression" — Nault et al.
+(Nature Communications, 2013) says "the earliest recurrent genetic event identified in cirrhotic
+preneoplastic lesions **so far**." The atlas's paraphrase quietly dropped "so far," turning the
+source's own dataset-scoped, provisional superlative into a flatter, permanent-sounding one — a
+real instance of the addendum's own named form ("established" for "identified... so far"). Fixed
+in place, restoring the qualifier in the source's own sense, and it is the only defect this read
+found in an otherwise unusually careful paragraph (the same note explicitly states a 39–61%
+cross-cohort range and computes its HCV/HBV split directly from raw counts rather than trusting a
+secondhand percentage).
+
+**Two of the ranking's own top hits are false positives, and that is itself a usable finding about
+the instrument.** `thyroid.js:261` (ATM) and `thyroid.js:263` (KMT2D) both scored at the top of the
+list — and both already carry their own explicit hedge, in-field, in language my word list does
+not match: *"the GENIE registry establishes that ATM mutations recur in this cancer, not that they
+drive it — no functional study of their role in FTC was found here."* A negation ("not that they
+drive it") and an explicit absence statement ("no functional study... was found") are hedges in
+substance that no fixed word list can catch by pattern alone — the same shape as this project's
+own polarity guard's stated limit on negated mentions. Recorded as a calibration finding about the
+ranking, not corrected away: a future re-run of this method should expect this exact false-positive
+shape at its top and read past it, not tune the word list to chase two instances.
+
+**Everything else read (22 of the 24) was faithful** — several were direct quotations (faithful by
+construction), several matched already-verified language recorded in CLAUDE.md's own data rules,
+and two were sites of certainty-drift defects already found and fixed in earlier ccf batches this
+project ran (`ovary.js:269`'s Chao 2024 wording, `prostate.js:230`'s Taylor/TCGA attribution),
+confirmed still correct post-repair rather than re-broken.
+
+**Stated as instructed, not smoothed over: this prioritizes, it does not cover.** One live defect
+in 24 read, against a corpus of 428 fields, is not a corpus-wide drift rate — it is the yield of
+reading the 24 clauses this method judged most likely to carry one, and 34 more of the ranked 58
+were not read this round.
+
+## 16. Why no record-sync check caught the skin.js discrepancy (2026-09-10, user)
+
+**Checked directly against `record_sync_check.py`'s own declared-pairs list, not inferred from what
+the tool is named.** Exactly one declared pair touches this watchlist at all:
+`('_uncited_migrating_watchlist', 'CLAUDE.md', '2026-10-17')`. Its mechanism is narrow and
+specific: it asserts the literal string `'2026-10-17'` occurs **exactly once** in `CLAUDE.md` — a
+guard against the date being restated and drifting from itself, the same "machine-derivable-number"
+discipline this project applies everywhere else. **It does not read, parse, or check anything about
+which items are on the list, whether they are still uncited, or whether the list's claims match any
+organ file's actual content.** No other instrument in the battery does either — `citation_crosscheck`
+checks a citation record's own metadata against its resolved identifier; `duplicate_figure_check`
+compares same-file string pairs; `absence_claim_check` scopes unscoped-absence language; none of
+them is built to check a free-text manifest note's enumerated claims about the corpus against the
+corpus itself.
+
+**The honest answer is a gap, not a bug**: this class of check — "does a natural-language claim
+about which items still lack a citation match reality" — has no instrument anywhere in this
+project, and building one generally would mean parsing free prose into a checkable claim, which is
+a much larger undertaking than this task's scope. **Considered and left undone, not merely
+deferred without a reason**: the specific instance is resolved directly in §14 (the watchlist is
+re-read and corrected, not guarded), and the watchlist itself — the one place this exact defect
+could recur — now expires unconditionally on 2026-10-17, which bounds how long a second instance of
+the same mistake could stand before the mechanism's own expiry forces a re-read regardless.
+
+## 17. Gate timing, sized against Phase C before it arrives as a surprise (2026-09-10, user)
+
+**Measured, not estimated**, on this repo's own instrumentation: a single `regress.js` run under
+`.claude/battery.py` currently accounts for the large majority of a ~13–15 minute battery pass — the
+other fifteen instruments are static-analysis scripts over text files and complete in seconds.
+This round alone ran the battery three times (a standalone settle, the gated commit's own re-run,
+and the clean-worktree verification before the push grant) for a combined round-trip near the
+~30-minute figure named in the standing-gates message.
+
+**`regress.js` loops per organ and per cancer** (hotspot/marker checks per organ, site/label/cell/
+histology checks per cancer, exactly as CLAUDE.md's own SMALL-POPULATION INVARIANTS section already
+flagged: "the regression loops per cancer, so the five-minute gate scales with the corpus"). Today's
+loop covers 14 organs and 16 cancers; Phase C's target is roughly 120 cancer entries and however
+many additional organs that requires — **a roughly seven-fold increase in the looped population**,
+against a fixed per-instance cost (browser launch, page navigation, per-site rendering) that does
+not currently amortize.
+
+**A literal linear extrapolation is not the right number to report, and is not reported as one**:
+some of `regress.js`'s cost is fixed overhead (one browser launch, one page load) rather than
+per-cancer, so the true scaling is sub-linear in the loop but still grows with the corpus, and this
+session has no measurement isolating the fixed cost from the per-cancer cost to extrapolate
+precisely. **What is measured and stated plainly: the current three-runs-per-commit pattern this
+session has used throughout already costs ~30–45 minutes at 16 cancers, and Phase C's own breadth
+target is the thing that would make that number substantially worse, arriving exactly where
+CLAUDE.md's own invariants section predicted it would** — this is that hazard's first real
+measurement, not a new finding. Sizing the fixed-vs-per-cancer split precisely, and deciding
+whether the three-runs-per-commit pattern itself needs to shrink (e.g., skipping the standalone
+settle when the gated commit's own run already proves the same tree), is Phase C content-model
+work, not resolved here.

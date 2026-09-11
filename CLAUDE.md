@@ -5664,17 +5664,36 @@ refute it, which is worth more than file order.
   bounded to the repeated-citation slice only. Declaration layer (Tier 1/Tier 2 boundary check)
   first, sixth field (`certainty`, rescoped to `backfill`/Tier 2) last, fetcher not started.
   FEASIBILITY TESTED WITH REAL REQUESTS (2026-09-10): ClinicalTrials.gov v2 CONFIRMED
-  reachable and structured (a live 200, clean JSON, no account); SEER's real API CONFIRMED
-  BLOCKED (a live 401, "You must supply an API key" — the standing no-account rule, not a
-  technical gap) — the fifteen live extent lines stay Tier 2 by necessity, not by oversight;
-  PDQ has no documented content API found after a real search. ARCHITECTURE now RULED
-  SETTLED; feasibility is answered for trials (yes) and statistics (no, pending a person
-  registering a SEER key by hand). Census given its denominator (6-23 of ~139-180 distinct
-  citations, 3-15% coverage, zero live instances found within it). Epi-pass re-scope re-read:
-  of ~19 clauses retired unread on 2026-09-05, 10 already on the dated watchlist (its own
-  condition now stale — see phaseB_design.md §9), ~9 genuinely unowned; one discrepancy found
-  (skin's melanoma share reads as already-cited, contradicting the re-scope note) and not
-  resolved. Then wall; multifocal when it has a renderable
+  reachable and structured (a live 200, clean JSON, no account); SEER's real API's 401 was READ
+  AS "CONFIRMED BLOCKED" — CORRECTED THE SAME DAY (phaseB_design.md §12): a 401 proves auth,
+  not sufficiency, and SEER's own registrar-facing documentation states directly that this API
+  serves coding reference data (staging schemas, disease/drug dictionaries, site recode) at
+  every account tier, never stage-at-diagnosis or survival statistics, which live behind a
+  separate, heavier microdata-request process delivered only through a Windows desktop
+  application, not any REST/JSON endpoint. A key would not have helped either way. PDQ has no
+  documented content API found after a real search. THE SCRAPER PATH PRICED AND PROVEN
+  (phaseB_design.md §13): a layout-guarded scraper against SEER's own public Stat Facts pages
+  reproduces all fifteen already-shipped extent lines exactly (plus recovers 5-year
+  survival-by-stage, unused anywhere in the app today), refuses correctly on five constructed
+  negative controls, needs no account, and confirmed build-time-only (no CORS header on any
+  page) — not committed as an instrument yet, priced for a build decision. ARCHITECTURE RULED
+  SETTLED; feasibility for statistics now rests on the scraper, not on anyone registering a key.
+  Census given its denominator (6-23 of ~139-180 distinct citations, 3-15% coverage, zero live
+  instances found within it; a separate ranked-not-sampled certainty-drift pass, §15, read 24 of
+  58 flagged clauses and found + fixed one real instance in liver.js, plus two false positives in
+  the ranking method itself). Epi-pass re-scope RE-READ AND RESOLVED (§14): the named "~19"
+  never reconciled to more than twelve locatable items — skin's melanoma share was found to be a
+  bookkeeping miss in the 2026-09-05 note (already cited a week before the note was written, so
+  never unowned), and "StatPearls rows" resolves to exactly two bare citations (skin.js SCC/MCC).
+  The watchlist is merged to twelve and its expiry rewritten to depend on nothing downstream —
+  cite-or-remove, unconditionally, on the date already set (record-sync-guarded, not repeated
+  here). Why no record-sync check caught the discrepancy: the one declared pair touching this
+  watchlist guards a single date string's uniqueness, not the list's membership against reality —
+  a real, named gap, left unbuilt on purpose given the watchlist itself is now resolved rather
+  than guarded. Gate timing sized (§17): ~30-45 min/commit today at 16 cancers, `regress.js`
+  driving nearly all of it and looping per organ/cancer — the SMALL-POPULATION INVARIANTS
+  entry's own predicted hazard, now measured rather than merely named, with Phase C's ~120-entry
+  target as the thing that makes it worse. Then wall; multifocal when it has a renderable
   member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
