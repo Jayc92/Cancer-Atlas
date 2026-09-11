@@ -276,3 +276,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   | SELFTEST FAIL — do not trust a green battery from this build
   | DONE battery_selftest: 73 arms run, 1 failures
 ==== END REFUSAL
+==== REFUSAL 2026-09-11T16:11:31Z reason=exit=1 marker="DONE " tool=deploy_check.js
+     output 17 lines, last 12 below
+  |   ok   a stale file the push did NOT touch is never explained away, however plausible waiting sounds
+  |   ok   nothing stale is never "explainable" — there is nothing to retry, so this must not trigger a wait
+  |   ok   an unknown changed-set (no parent commit) explains nothing — fails safe rather than assuming
+  |   ok   initialisation assertion fails on a blank page (1 failure(s) reported)
+  |   ok   reports all three initialisation failures on the 4b2c8c5 shape (loaded page, null state) — got 3
+  |   ok   reports no failures on a healthy state (the gate is not stuck failing)
+  |   ok   excuses the console echo when every HTTP error observed was declared benign
+  |   ok   keeps the console echo as a finding when an UNDECLARED 404 is also present
+  | SELFTEST PASS — all three layers shown able to fail: stale bytes, a widened benign list, a dead page
+  | DONE deploy_check_selftest: 13 arms run, 0 failures
+  |   NOT PUBLISHED: js/trials.js — bytes differ — HEAD cc6a01d74e7e (18784B) vs served 2fbde6a03d82 (12184B)
+  | DONE deploy_check: 28/29 assets byte-matched to HEAD e1efb6c (publish check retried once, 30s wait), 31 hotspots live, 0 unexplained page errors (2 declared-benign), 1 problems
+==== END REFUSAL
