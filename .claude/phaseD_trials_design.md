@@ -444,3 +444,101 @@ EMPTY-UNANSWERED were verified by reading the render function's own logic and by
 Both are simple, static-copy branches with no fetch logic of their own once `fetchTrialsForEntry`
 has already resolved, so the risk this leaves open is small, and it is named rather than silently
 assumed covered by the RESULTS-state testing above.
+
+## 10. The remaining fourteen mappings — built, both signals reported per entry (2026-09-11)
+
+**Scope opened by the user, with a stated caveat about HOW rather than whether: the fetch-time
+filter changed the economics of building these.** Before the filter existed, a bad mapping
+displayed wrong trials, so each of the sixteen needed careful hand-verification before shipping.
+With the filter live, a bad mapping degrades into fewer trials plus a counted drop — so the
+remaining fourteen were built and verified by the same method as ccrcc/gdiff (query from organ
+biology, a live sample read back by hand against each result's own FULL, never-truncated condition
+list), without a separate per-entry design-approval round before code.
+
+**TWO SIGNALS, BECAUSE THE DROP COUNT ONLY BRACKETS ONE SIDE — the gap named on ruling.** The drop
+count (§1d, already live) catches a mapping that is too BROAD: a query pulling in studies the
+filter then correctly rejects. It is structurally blind to a mapping that is too NARROW, because an
+over-narrow query never fetches the trials it is missing in the first place — nothing gets dropped
+and nothing looks wrong, which is precisely the silent-removal shape with no symptom. The fix,
+`.claude/trials_mapping_check.mjs` (a NON_INSTRUMENT, real network calls, run by hand): for every
+entry, compute `queryTotal / parentTotal` — the entry's own query's real total result count over a
+broad organ-level "parent" query's total — self-calibrating and needing no external data, because
+the parent is just the same kind of query one step broader. A subtype returning a handful while its
+organ term returns hundreds would be visible here regardless of how clean its drops look.
+
+**THE FULL REPORT, from a real run of the checked-in tool against all sixteen entries (not the
+exploratory scratch pass that preceded it, though the fourteen new entries' numbers below matched
+that scratch pass exactly, NCT ids included — the two ccrcc/gdiff numbers differ from their §1
+verification for the reason explained after the table: the corpus moved again, a third live
+instance of §1a's finding inside this same session):**
+
+| entry | query total | parent total | ratio | sample kept/dropped |
+|---|---|---|---|---|
+| ccrcc | 327 | 624 (kidney cancer) | 52.40% | 9/10 (1 dropped: bare "Advanced Solid Tumor") |
+| gdiff | 436 | 1023 (gastric cancer) | 42.62% | 8/10 (2 dropped: bare "Advanced Solid Tumor(s)") |
+| hgsoc | 71 | 1033 (ovarian cancer) | 6.87% | 10/10 |
+| clear | 31 | 1033 (ovarian cancer) | 3.00% | 8/10 (2 dropped: pure-endometrial; bare solid tumor) |
+| tnbc | 474 | 3367 (breast cancer) | 14.08% | 10/10 |
+| luad | 364 | 3180 (lung cancer) | 11.45% | 6/10 (4 dropped, all organ-less basket tags) |
+| hcc | 961 | 1248 (liver cancer) | 77.00% | 10/10 |
+| gbm | 432 | 935 (brain cancer) | 46.20% | 9/10 (1 dropped: organ-less basket tag) |
+| acinar | 227 | 1557 (prostate cancer) | 14.58% | 10/10 |
+| crc | 356 | 2216 (colorectal cancer) | 16.06% | 10/10 |
+| pdac | 308 | 1195 (pancreatic cancer) | 25.77% | 8/10 (2 dropped: organ-less basket tags) |
+| melanoma | 586 | 595 (melanoma) | 98.49% | 10/10 |
+| seminoma | 15 | 73 (testicular cancer) | 20.55% | 10/10 (after the keyword fix below) |
+| uc | 155 | 536 (bladder cancer) | 28.92% | 10/10 |
+| ptc | 51 | 293 (thyroid cancer) | 17.41% | 10/10 |
+| ftc | 9 | 293 (thyroid cancer) | 3.07% | 9/9 |
+
+**No entry is flagged by either signal for a rewrite.** The two lowest ratios (clear 3.00%, ftc
+3.07%) both have a checkable, real-rarity explanation rather than a broken-query signature: OCCC is
+~10% of ovarian carcinoma and follicular is a small minority of thyroid cancer relative to
+papillary, per this app's own already-cited data rules — a rare disease is expected to have fewer
+dedicated trials than its organ overall, which is a different shape from a mistyped or malformed
+query returning almost nothing. Every organ-less basket-tag drop (the "Advanced Solid Tumor(s)" /
+"MTAP-deleted Solid Tumors" cases, recurring across ccrcc/gdiff/luad/gbm/pdac) is the identical,
+already-accepted policy shape as ccrcc's own "Oncology"-only false negative in §1b: a real trial
+with an uninformative structured condition tag, correctly dropped on the safe side rather than
+trusted on a guess.
+
+**ONE REAL KEYWORD BUG, CAUGHT BEFORE SHIPPING, NOT AFTER.** The first draft of seminoma's keyword
+set (`['testicular', 'testis', 'germ cell']`) dropped 3 of its first 10 real results — each tagged
+with the single, bare condition `"Seminoma"`, the exact disease name, maximally on-topic — because
+none of the three keywords is a substring of that word. Caught by reading every drop's full
+conditions rather than trusting the drop count's shape alone (a mapping CAN look broad-clean while
+quietly having this kind of narrow gap in its own keyword list, which neither signal above
+targets directly — this was found by the oldest method in this project's toolkit, reading the
+actual output). Fixed by adding `'seminoma'` itself; re-verified 10/10 kept.
+
+**ONE CASE CHECKED FOR THE "GERM CELL" KEYWORD'S OWN RISK, BEFORE TRUSTING IT.** Unlike an
+organ-level broadening ("Kidney Neoplasms" only ever means kidney), "Germ Cell Tumor" is a
+histologic class spanning multiple organs (testis, ovary, mediastinum, pineal gland,
+sacrococcygeal region) — a genuinely different shape of broadening that crosses organs rather than
+staying within one. The one real sample carrying a bare "Germ Cell Tumor" tag (a 30-condition
+pediatric basket trial) was read in full, not just by its truncated first-eight-conditions view:
+its complete condition list names `"Stage I Testicular Seminoma AJCC v6 and v7"` explicitly, so it
+is a genuine cross-organ basket inclusion, not a false match — and `'testicular'`/`'testis'` alone
+would have kept it regardless of `'germ cell'` being in the set at all.
+
+**TWO ORGANS HAVE TWO WIRED ENTRIES EACH (ovary: hgsoc/clear; thyroid: ptc/ftc) — a collision risk
+ccrcc/gdiff never had to face, since each was the sole entry for its organ.** Checked directly
+rather than assumed either way: CT.gov's ovarian condition tags DO carry histology directly
+("High Grade Serous Adenocarcinoma of Ovary" vs "Ovarian Clear Cell Carcinoma"), unlike gastric
+cancer's Lauren classification, which the registry does not tag at the condition level at all
+(§1c). This raised the question of whether hgsoc/clear (and ptc/ftc) need an AND-of-groups keyword
+architecture (organ-term AND subtype-term) to keep the two sibling entries from cross-matching. On
+the real data, they do not: every genuinely cross-tagged result (a basket trial whose own condition
+list names BOTH histologies at once, checked in full) is relevant to BOTH entries by the same
+named-broadening rule already established for ccrcc's CD70 case — showing the same real trial on
+both an atlas organ's sibling pages is not a defect, it is that rule occurring twice because the
+organ has two entries where kidney has one. No architecture change was needed; the simple
+single-group keyword list, matching ccrcc/gdiff's own shape, is correct here too.
+
+**What remains genuinely open, stated rather than smoothed over:** these are LIVE sample checks
+(10 results per entry, the same size as ccrcc/gdiff's own original verification) and a total-count
+ratio, not an exhaustive read of every trial each query could ever return — the same bounded,
+honest-about-its-bound verification standard this project has held certainty-drift ranking and
+citation coverage to elsewhere. `.claude/trials_mapping_check.mjs` is checked in specifically so
+this can be re-run cheaply whenever a mapping is revisited, rather than needing this write-up
+reconstructed from scratch.

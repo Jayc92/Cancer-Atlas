@@ -891,6 +891,12 @@ NON_INSTRUMENTS = {
                         'filter, extracted so regress.js\'s served-asset-commit scoping (2026-09-11) '
                         'reuses the identical test instead of a second copy that could drift. '
                         'Asserts nothing and ratchets nothing itself; not a gate',
+    'trials_mapping_check.mjs': 'reusable verification for TRIALS_CONDITION_MAP entries — the '
+                        'query-total-over-parent-total ratio (catches an over-narrow mapping, the '
+                        'side the live drop count is structurally blind to) plus a live '
+                        'filterByCondition dry run (the over-broad side). Makes real network calls, '
+                        'so it is run by hand when building or auditing a mapping, never part of a '
+                        'commit gate; asserts nothing and ratchets nothing',
 }
 
 

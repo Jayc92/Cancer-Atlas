@@ -20,24 +20,134 @@ const STATUS_FILTER = 'RECRUITING%7CNOT_YET_RECRUITING%7CENROLLING_BY_INVITATION
 const PAGE_SIZE = 10;
 
 // PER-ENTRY, EXPLICIT, RECORDED (design doc §1) — never computed from an entry's display name
-// at runtime. Verified live against real ClinicalTrials.gov results, twice over (2026-09-10
-// initial verification; 2026-09-11 corpus re-check, which found the corpus had already moved,
-// plus the fetch-time-filter design that followed from that finding). Only the two entries
-// validated live are wired; the remaining fourteen are deliberately not built here.
+// at runtime. `parent` is a broad organ-level query, used only by .claude/trials_mapping_check.mjs
+// (never fetched at runtime) to compute the over-narrow signal — a mapping whose own query returns
+// a handful of studies while its parent returns hundreds is worth rewriting even when every
+// returned study is genuinely on topic, since an over-narrow query never fetches what it's
+// missing in the first place, so nothing about it looks wrong from the drop count alone.
 export const TRIALS_CONDITION_MAP = {
   ccrcc: {
-    query: 'clear cell renal cell carcinoma',
+    query: 'clear cell renal cell carcinoma', parent: 'kidney cancer',
     conditionKeywords: ['renal', 'kidney', 'rcc'],
     note: '1/8 broader (kidney cancer generally, a CD70 imaging trial) — a named, reasoned '
       + 'broadening, not a wrong-disease match; accepted at 8/8 on the property that actually '
       + 'matters, zero wrong-disease results.',
   },
   gdiff: {
-    query: 'gastric adenocarcinoma',
+    query: 'gastric adenocarcinoma', parent: 'gastric cancer',
     conditionKeywords: ['gastric', 'stomach'],
     note: 'dropped "diffuse" from the query after it collided with an unrelated neuro-oncology '
       + 'basket trial via keyword match; the registry does not tag by Lauren classification at '
       + 'the condition level, so subtype specificity is deliberately not in the keyword set.',
+  },
+  // ---- the remaining fourteen, built 2026-09-11 once the scope was opened. Same method as
+  // ccrcc/gdiff: query from organ+histology biology (not the entry's display string), a live
+  // sample read back by hand against its own full (never truncated) condition list, keyword set
+  // at organ/disease-family level. Every entry checked against BOTH signals before being trusted
+  // — the drop count on a live 10-result sample, and the query/parent ratio via
+  // .claude/trials_mapping_check.mjs — full per-entry numbers in phaseD_trials_design.md §10.
+  hgsoc: {
+    query: 'high grade serous ovarian carcinoma', parent: 'ovarian cancer',
+    conditionKeywords: ['ovarian', 'ovary'],
+    note: '10/10 sample kept, 0 dropped. Ovary has two wired entries (hgsoc, clear) sharing one '
+      + 'organ-level keyword set; unlike gdiff, CT.gov DOES tag ovarian histology directly '
+      + '("High Grade Serous Adenocarcinoma of Ovary" vs "Ovarian Clear Cell Carcinoma"), so a '
+      + 'genuine cross-entry basket trial (one real sample carried both tags at once, checked in '
+      + 'full) is correctly kept for both — the same named-broadening shape as ccrcc\'s CD70 '
+      + 'case, occurring twice because this organ has two entries where kidney has one, not a '
+      + 'defect. A bare "Ovarian Cancer" tag with no subtype is also kept, matching the same '
+      + 'acceptance rule ccrcc\'s bare "Renal Cell Carcinoma" tags already established.',
+  },
+  clear: {
+    query: 'ovarian clear cell carcinoma', parent: 'ovarian cancer',
+    conditionKeywords: ['ovarian', 'ovary'],
+    note: '8/10 sample kept, 2 dropped (one pure-endometrial trial with no ovarian tag anywhere '
+      + 'in its full condition list; one bare "Advanced or Metastatic Solid Tumor" with none '
+      + 'either) — both genuinely off-topic on inspection, confirming the filter fires on real '
+      + 'data rather than only a fixture. See hgsoc\'s note on the shared-organ keyword shape.',
+  },
+  tnbc: {
+    query: 'triple negative breast cancer', parent: 'breast cancer',
+    conditionKeywords: ['breast'],
+    note: '10/10 sample kept, 0 dropped.',
+  },
+  luad: {
+    query: 'lung adenocarcinoma', parent: 'lung cancer',
+    conditionKeywords: ['lung', 'pulmonary'],
+    note: '6/10 sample kept, 4 dropped — all four are generic basket-trial tags ("Advanced Solid '
+      + 'Tumor", "MTAP-deleted Solid Tumors") naming no organ in their own structured '
+      + 'conditions; the same policy-consistent drop as ccrcc\'s "Oncology"-only case (design '
+      + 'doc §1b), not a defect in the query.',
+  },
+  hcc: {
+    query: 'hepatocellular carcinoma', parent: 'liver cancer',
+    conditionKeywords: ['hepatocellular', 'liver', 'hepatic'],
+    note: '10/10 sample kept, 0 dropped. Query/parent ratio 77% (961/1248 total studies, not '
+      + 'just the 10-result sample) — expected, since HCC is the large majority of primary '
+      + 'liver cancer (this app\'s own liver.js citation).',
+  },
+  gbm: {
+    query: 'glioblastoma', parent: 'brain cancer',
+    conditionKeywords: ['glioblastoma', 'glioma', 'brain', 'cns', 'central nervous system'],
+    note: '9/10 sample kept, 1 dropped (the same generic "MTAP-deleted Solid Tumors" basket seen '
+      + 'in luad\'s sample, naming no organ of its own).',
+  },
+  acinar: {
+    query: 'prostate adenocarcinoma', parent: 'prostate cancer',
+    conditionKeywords: ['prostate'],
+    note: '10/10 sample kept, 0 dropped.',
+  },
+  crc: {
+    query: 'colorectal adenocarcinoma', parent: 'colorectal cancer',
+    conditionKeywords: ['colorectal', 'colon', 'rectal'],
+    note: '10/10 sample kept, 0 dropped.',
+  },
+  pdac: {
+    query: 'pancreatic ductal adenocarcinoma', parent: 'pancreatic cancer',
+    conditionKeywords: ['pancreatic', 'pancreas'],
+    note: '8/10 sample kept, 2 dropped — both bare "Advanced Solid Tumor(s)" naming no organ, '
+      + 'the same policy-consistent shape as luad\'s drops.',
+  },
+  melanoma: {
+    query: 'cutaneous melanoma', parent: 'melanoma',
+    conditionKeywords: ['melanoma'],
+    note: '10/10 sample kept, 0 dropped. Query/parent ratio 98% (586/595) — cutaneous melanoma '
+      + 'is nearly all of what "melanoma" means in this registry at this scale, so the two '
+      + 'queries nearly coincide; not a sign either query is wrong.',
+  },
+  seminoma: {
+    query: 'testicular seminoma', parent: 'testicular cancer',
+    conditionKeywords: ['testicular', 'testis', 'germ cell', 'seminoma'],
+    note: 'FIRST DRAFT (keywords without "seminoma" itself) dropped 3 of 10 real results tagged '
+      + 'bare "Seminoma" — the exact disease name, maximally on-topic — because the keyword '
+      + 'list omitted the disease\'s own name. Caught by reading every drop\'s full conditions '
+      + 'before trusting the count, not assumed clean; fixed by adding "seminoma", re-verified '
+      + '10/10 kept. "germ cell" was checked against its most concerning real case (a 30-'
+      + 'condition pediatric basket trial spanning ovarian AND testicular germ cell tumors) and '
+      + 'found sound: its full condition list names "Stage I Testicular Seminoma" explicitly, so '
+      + 'it is a genuine cross-organ basket inclusion, not a false match — "testicular"/"testis" '
+      + 'alone would have kept it regardless of "germ cell".',
+  },
+  uc: {
+    query: 'urothelial carcinoma of the bladder', parent: 'bladder cancer',
+    conditionKeywords: ['urothelial', 'bladder'],
+    note: '10/10 sample kept, 0 dropped.',
+  },
+  ptc: {
+    query: 'papillary thyroid carcinoma', parent: 'thyroid cancer',
+    conditionKeywords: ['thyroid'],
+    note: '10/10 sample kept, 0 dropped. Thyroid has two wired entries (ptc, ftc); real samples '
+      + 'show trials genuinely studying both differentiated subtypes together (the same '
+      + 'shared-organ shape as hgsoc/clear), and the bare word "thyroid" already occurs inside '
+      + '"Papillary Thyroid Carcinoma" itself, so no bare-disease-name gap like seminoma\'s '
+      + 'exists here.',
+  },
+  ftc: {
+    query: 'follicular thyroid carcinoma', parent: 'thyroid cancer',
+    conditionKeywords: ['thyroid'],
+    note: '9/9 sample kept, 0 dropped. Query/parent ratio 3% (9/293) — low, but consistent with '
+      + 'real disease rarity (follicular is far less common than papillary thyroid carcinoma), '
+      + 'not with a broken query — see phaseD_trials_design.md §10 for the full reasoning.',
   },
 };
 
