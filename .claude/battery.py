@@ -891,12 +891,25 @@ NON_INSTRUMENTS = {
                         'filter, extracted so regress.js\'s served-asset-commit scoping (2026-09-11) '
                         'reuses the identical test instead of a second copy that could drift. '
                         'Asserts nothing and ratchets nothing itself; not a gate',
-    'trials_mapping_check.mjs': 'reusable verification for TRIALS_CONDITION_MAP entries — the '
-                        'query-total-over-parent-total ratio (catches an over-narrow mapping, the '
-                        'side the live drop count is structurally blind to) plus a live '
-                        'filterByCondition dry run (the over-broad side). Makes real network calls, '
-                        'so it is run by hand when building or auditing a mapping, never part of a '
+    'trials_mapping_check.mjs': 'reusable verification for TRIALS_CONDITION_MAP entries. The '
+                        'over-broad signal (a live filterByCondition dry run against the narrow '
+                        'query\'s own sample) works; TWO attempted over-narrow signals — the query/'
+                        'parent-total ratio, and its exhaustive-fetch replacement — are both RETIRED '
+                        '(2026-09-11), measured to be the same organ-share confound in different '
+                        'arithmetic; no working over-narrow signal exists yet, per the file\'s own '
+                        'header. Makes real network calls, so it is run by hand, never part of a '
                         'commit gate; asserts nothing and ratchets nothing',
+    'seer_statfacts_scraper.py': 'layout-guarded scraper reproducing morphology.js/EXTENT_STATUS '
+                        'stage distributions from SEER Stat Facts pages (rescued from /tmp, '
+                        '2026-09-11). Makes real network calls; run by hand only. NO FETCH '
+                        'INTEGRATION until a ruling on phaseB_design.md opens that scope — committing '
+                        'the code is not committing the integration. Asserts nothing and ratchets '
+                        'nothing itself; not a gate',
+    'at_root.sh': 'single cwd-proof entry point (2026-09-11): cd to this script\'s own resolved '
+                        'parent directory, then exec its arguments — collapses the ambient-cwd scar '
+                        '(six live instances this session) down to one absolute path to get right '
+                        'instead of one per command. Asserts nothing and ratchets nothing itself; '
+                        'not a gate',
 }
 
 

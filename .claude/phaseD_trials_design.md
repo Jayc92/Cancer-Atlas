@@ -542,3 +542,40 @@ honest-about-its-bound verification standard this project has held certainty-dri
 citation coverage to elsewhere. `.claude/trials_mapping_check.mjs` is checked in specifically so
 this can be re-run cheaply whenever a mapping is revisited, rather than needing this write-up
 reconstructed from scratch.
+
+## 11. The query/parent ratio is RETIRED — and so is its attempted replacement, both measured (2026-09-11)
+
+**The ratio failed calibration.** HGSOC — ovary's dominant subtype at ~70% of incidence, already
+validated clean at 8/8 — measured a 6.87% trial ratio, *worse* than clear-cell's 3.00% at ~10%
+incidence: the well-mapped dominant subtype scores worse than the genuinely rare one. Mechanism:
+a dominant subtype's own trials often register under the generic parent-organ condition name rather
+than the specific subtype term the query matches on; a distinct rare subtype's trials are more
+likely to name it specifically. Registration-naming variance moves the ratio in the SAME direction
+as the defect it exists to catch, with no principled way to net it out. Retired as a verdict;
+still printed, informational only, so a mapping's history stays visible.
+
+**The proposed replacement — run the entry's own `filterByCondition` against the full, exhaustively
+paginated parent corpus, comparing kept-from-parent against kept-from-narrow — was built and ALSO
+retired the same day, on direct measurement rather than suspicion.** `conditionKeywords` is
+deliberately organ-level (§1b: "organ-based keywords, not histology-name matching"), so applying it
+to an organ-level parent query mostly re-discovers the size of the organ's own trial pool — a study
+"about kidney cancer" almost always mentions "kidney"/"renal" regardless of which RCC subtype it
+studies. Checked directly: `gap` (parentKept − narrowKept) tracks the retired ratio almost exactly
+— `gap ≈ parentKept × (1 − ratio)` held to within ~1 of the measured value on every one of the 16
+live entries (clear: predicted 884.6, measured 883). This is the same confound in different
+arithmetic, not an independent signal, confirmed with real exhaustive fetches (pageToken
+pagination, confirmed live to cap at pageSize 1000) against all sixteen entries, not asserted from
+the mechanism alone.
+
+**There is currently no working over-narrow signal.** The drop count remains the one live,
+working mapping-quality check (catches over-broad). A genuine over-narrow signal needs a
+SUBTYPE-discriminating check — e.g. searching the parent set's own conditions for each entry's
+distinguishing histologic term ("clear cell" for ccrcc/clear, "seminoma" for seminoma, "papillary"
+for ptc) rather than the organ-level filter. Deliberately NOT attempted under time pressure in this
+pass: several entries' own distinguishing term is the generic "adenocarcinoma" (gdiff, luad,
+acinar, crc), which is too broad within an organ where adenocarcinoma is already the dominant
+histology and would not discriminate there either — a real content task, per-entry, with the same
+failure shape the seminoma keyword bug already taught (an over-broad or over-narrow hand-picked
+term is a confident wrong answer, not a fix). `.claude/trials_mapping_check.mjs`'s exhaustive-fetch
+machinery is kept: the raw counts are genuinely useful data for whoever builds the corrected
+version, even though its derived `gap` must not be read as a verdict about any mapping's quality.
