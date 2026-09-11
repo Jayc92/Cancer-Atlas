@@ -5835,6 +5835,21 @@ refute it, which is worth more than file order.
   described; the three constraints above given concrete form; status/
   staleness, the failure-mode states, and location handling all
   designed with reasoning. Awaiting a ruling before any fetch code.
+  **RULED AND BUILT, 2026-09-11:** a live re-query found the ccRCC corpus
+  had already moved (zero NCT-id overlap with the prior day's sample),
+  which moved the guard from a one-time query verification to a standing
+  FETCH-TIME FILTER on each returned study's own declared conditions —
+  `js/trials.js`, wired for `ccrcc`/`gdiff` via `#txTrialsToggle`/
+  `#txTrialsLayer` at the cancer screen's site-map level. Verified live in
+  the browser on both entries (real fetches, correct sort, the drop count
+  reported in-page, a "multi-condition trial" note firing correctly on
+  basket-trial titles) and against a planted wrong-disease fixture pair
+  (Convention F) before being trusted. One real accessibility gap
+  (`#txSiteViewer` hidden via CSS but not `inert`, leaving its buttons
+  keyboard-reachable underneath the panel) was found and fixed while
+  building, not after. Full record in `.claude/phaseD_trials_design.md`
+  §§1a–1d, §9. The remaining fourteen entries' mappings are still not
+  built — deferred to whenever a ruling opens that scope.
 - **ccf-READ CONTRACT ADDENDUM (2026-09-05, user-authored; full text
   in the manifest's _ccf_read_addendum):** the ~127 remaining clauses
   are mechanism prose with no number to anchor on. THE ANCHOR IS THE

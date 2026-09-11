@@ -233,6 +233,44 @@
   #txHistologyToggle:hover{color:var(--text);border-color:var(--muted);}
   #txHistologyToggle[aria-pressed="true"]{color:var(--teal);border-color:rgba(53,201,193,.4);}
 
+  /* ---------- Clinical trials — cancer screen, level 1 ---------- */
+  /* A peer VIEW MODE of the site-map layer (js/trials.js), at level 1 rather than level 2 —
+     see the markup comment on #txTrialsLayer. Unlike the histology slide, this stays on the
+     app's own dark panel language (it's a list of real, external, fetched content — not a
+     depiction of tissue), so it reuses --panel/--panel-2/--line rather than the H&E palette. */
+  #txTrialsLayer{position:absolute;inset:0;z-index:6;opacity:0;pointer-events:none;transition:opacity .45s ease;display:flex;align-items:center;justify-content:center;padding:90px 20px 74px;overflow-y:auto;}
+  #txTrialsLayer.active{opacity:1;pointer-events:auto;}
+  #trialsPanel{width:min(560px,92vw);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;max-height:calc(100vh - 170px);overflow-y:auto;}
+  #trialsIntro p{font-size:12.5px;color:#c4cee0;line-height:1.55;margin:0 0 8px;}
+  #trialsIntro p:last-child{margin-bottom:0;}
+  #trialsStatusLine{font-family:'IBM Plex Mono';font-size:10.5px;color:var(--muted);margin:14px 0 12px;line-height:1.5;border-top:1px solid var(--line);padding-top:12px;}
+  .trial-card{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-bottom:8px;background:var(--panel-2);}
+  .trial-card a{color:var(--text);font-family:'Space Grotesk';font-size:13.5px;font-weight:600;text-decoration:none;}
+  .trial-card a:hover,.trial-card a:focus-visible{color:var(--teal);text-decoration:underline;}
+  .trial-meta{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:10.5px;color:var(--muted);flex-wrap:wrap;}
+  .trial-status{font-family:'IBM Plex Mono';text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:20px;border:1px solid rgba(53,201,193,.35);color:var(--teal);}
+  .trial-multinote{font-size:11px;color:var(--muted);font-style:italic;margin-top:5px;}
+  /* EMPTY-ANSWERED (a real, meaningful "no trials" result) and EMPTY-UNANSWERED (a probe
+     failure — couldn't reach the API) are visually distinct by colour as well as copy, per the
+     design doc's measured-catastrophe-vs-failed-to-measure requirement: a reader skimming
+     should register "nothing exists" and "something's broken" as different situations. */
+  .trials-empty{font-size:13px;color:var(--muted);text-align:center;padding:18px 6px;}
+  .trials-error{font-size:13px;color:var(--driver);text-align:center;padding:18px 6px;}
+  .trials-error a{color:var(--driver);text-decoration:underline;}
+  #txTrialsToggle{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:25;font-family:'IBM Plex Sans';font-size:12.5px;font-weight:600;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:9px 18px;cursor:pointer;}
+  #txTrialsToggle:hover{color:var(--text);border-color:var(--muted);}
+  #txTrialsToggle[aria-pressed="true"]{color:var(--teal);border-color:rgba(53,201,193,.4);}
+  /* Same suppression discipline the histology .hist-open class already uses, applied to
+     .trials-open instead: the site legend keys the 3D map (irrelevant over this panel), the
+     hint describes dragging/clicking the map, and the corner disclaimer would overlap the
+     panel's own text on narrow screens. */
+  #screenCancer.trials-open #txLegend,#screenCancer.trials-open #txHint{opacity:0;pointer-events:none;}
+  #screenCancer.trials-open #txCenterCaption{opacity:0;}
+  #screenCancer.trials-open ~ #disclaimer{opacity:0;pointer-events:none;}
+  @media (max-width:640px){
+    #txTrialsLayer{padding:210px 12px 90px;}
+  }
+
   #txPanel{position:absolute;top:0;right:0;height:100%;width:360px;max-width:88vw;background:var(--panel);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:30;display:flex;flex-direction:column;box-shadow:-30px 0 60px rgba(0,0,0,.35);}
   #txPanel.open{transform:translateX(0);}
   #txPanelHead{padding:20px 20px 14px;border-bottom:1px solid var(--line);position:relative;}
@@ -449,12 +487,38 @@
           <div class="hi-cite" id="hiCite"></div>
         </div>
       </div>
+      <!-- Clinical trials — a peer view mode of the site-map layer, entered at LEVEL 1 (the
+           opposite level from the histology layer above), because trials describe the whole
+           cancer entry, not one metastatic site. Full design + duty-of-care reasoning in
+           .claude/phaseD_trials_design.md. Built and wired by js/trials.js per cancer; starts
+           inert for the same reason every other swapped layer on this screen does. -->
+      <div id="txTrialsLayer" inert>
+        <div id="trialsPanel" role="region" aria-label="Clinical trials">
+          <div id="trialsIntro">
+            <p>Listed by most recently updated, not by relevance or likelihood of benefit. Eligibility criteria are specific and detailed — read the full listing before assuming you qualify.</p>
+            <p>Bring this list to your oncologist — they can help you understand whether any of these might be relevant to your specific situation.</p>
+            <p>This list doesn't filter by location — open a listing to see its own recruiting sites.</p>
+          </div>
+          <!-- Rewritten per fetch by js/trials.js: the fetch timestamp, plus the drop count
+               when the fetch-time condition filter (design doc §1b) actually drops something —
+               reported here, not just to the console, since it is honest information about
+               why a raw fetch count and a shown count can differ. -->
+          <div id="trialsStatusLine" aria-live="polite"></div>
+          <div id="trialsList" aria-live="polite"></div>
+        </div>
+      </div>
     </div>
     <!-- Real <button> for the same reason the sex toggle's are: a plain toggle with no drag
          gesture near it. aria-pressed carries the mode; the visible text stays fixed so the
          announced name doesn't flip meaning mid-toggle. Hidden except at the cell-scatter
          level (managed by main.js's txEnterRegion/txGoLevel). -->
     <button id="txHistologyToggle" type="button" aria-pressed="false" hidden>Microscopic view</button>
+    <!-- Shown at the OPPOSITE level from the histology toggle above (level 1, the site map —
+         managed by main.js's txGoLevel(1)/txEnterRegion) and hidden whenever the current cancer
+         has no TRIALS_CONDITION_MAP entry (js/trials.js's showTrialsToggle). Same bottom-center
+         slot as the histology toggle — the two are mutually exclusive by level and never show
+         at once, so reusing the position costs no new layout decision. -->
+    <button id="txTrialsToggle" type="button" aria-pressed="false" hidden>Clinical trials</button>
     <div id="txHint"><b>Drag</b> to rotate the tumor · <b>click</b> a colored cluster to enter that site · <b>click</b> a cell to view its mutations</div>
     <div id="txLegend">
       <div class="lg-title" id="txLegendTitle"></div>

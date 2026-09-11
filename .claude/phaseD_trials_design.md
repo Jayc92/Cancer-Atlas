@@ -17,70 +17,179 @@ standing rule every prior design document in this project has followed.
 **The risk, stated plainly:** an atlas entry does not share a vocabulary with ClinicalTrials.gov's
 own condition tagging. A wrong mapping does not fail loudly — it shows a reader trials for a
 different disease, framed with this app's own authority, which is worse than showing none. **Do
-not derive the query from the entry's display name by string match** — confirmed necessary by two
-real, live queries run this session, not assumed:
+not derive the query from the entry's display name by string match** — confirmed necessary by real,
+live queries, and the sample was re-drawn a second time (2026-09-11) specifically to answer a
+question the first round left ambiguous: the corpus moves, and the second draw proved it rather than
+merely asserting it (§1a below).
 
-- **`ccrcc` (clear cell renal cell carcinoma), query `"clear cell renal cell carcinoma"`, 8 studies
-  sampled, RECRUITING only:** 7 of 8 read back as genuinely on-topic (one names "Clear Cell Renal
-  Cell Carcinoma" precisely; the rest tag broader "Renal Cell Carcinoma"/"Renal Cancer," which is
-  correct since ccRCC is ~75–80% of RCC per this app's own kidneys.js citation). **1 of 8** — "CD70-
-  targeted immunoPET Imaging of Kidney Cancer," conditions `['Urologic Neoplasms', 'Urogenital
-  Neoplasms', 'Kidney Neoplasms', 'Neoplasms']` — is broader than the entry (kidney cancer in
-  general, not RCC), a real but modest drift.
-- **`gdiff` (diffuse-type gastric adenocarcinoma), query `"diffuse gastric adenocarcinoma"`, 3
-  studies:** **1 of 3 is a genuine false match, not a modest drift** — "Safety and Efficacy of
-  NEO212 in Patients With Astrocytoma IDH-mutant..." is a multi-basket BRAIN TUMOR trial whose
-  condition list includes "Diffuse Astrocytoma, IDH-Mutant" alongside a dozen unrelated cancer
-  types (one of which happens to be gastric cancer, on a completely different basis). The query
-  matched on the word "diffuse" colliding across two unrelated conditions in the same study record —
-  a reader looking at the stomach entry would have been shown a brain-tumor trial. **Re-run without
-  "diffuse" — query `"gastric adenocarcinoma"`, 6 studies — 6 of 6 genuinely on-topic, zero
-  cross-domain collisions.** The registry does not tag trials by Lauren classification (diffuse vs.
-  intestinal) at the condition level; forcing subtype specificity into the query terms did not
-  narrow the results toward the subtype, it introduced a false positive from an unrelated domain.
+**THE 8TH ccRCC RESULT, NAMED (answering the question left open, not left inferable): "CD70-targeted
+immunoPET Imaging of Kidney Cancer," conditions `['Urologic Neoplasms', 'Urogenital Neoplasms',
+'Kidney Neoplasms', 'Neoplasms']`.** These four conditions are hierarchical umbrella terms for the
+SAME kidney/urologic disease family — not a basket trial listing several different specific cancer
+types the way the gdiff false match (below) does. It is a same-organ, same-disease-family
+broadening (kidney cancer in general, not clear-cell RCC specifically), never a cross-domain
+wrong-disease match.
 
-**The finding this pair of tests actually supports:** the failure mode is not "the mapping is
-usually wrong" (ccRCC's was fine) — it is that **a query built from the entry's own subtype-specific
-name can silently import an unrelated disease's trial via keyword collision, and this cannot be
-predicted from the entry name alone.** It has to be tested per entry, because reading the atlas's
-own name never surfaces "diffuse" is also a term in unrelated neuro-oncology condition tags — the
-same shape as every mechanistic-fit mistake this project's own data rules have caught before (rule
-1's ESR1/MDM4, rule 3's SMAD4/PTEN), transplanted from citation text to a live API query.
+**7/8 IS THE RAW READ-BACK COUNT OF PRECISELY ON-SUBTYPE RESULTS; IT IS NOT THE ACCEPTED RATE, AND
+THE TWO MUST NOT BE CONFLATED.** Seven of the eight name "Clear Cell Renal Cell Carcinoma" precisely
+or tag the broader-but-correct "Renal Cell Carcinoma"/"Renal Cancer" (correct since ccRCC is
+~75–80% of RCC per this app's own kidneys.js citation). The eighth is the CD70 trial above — broader
+still, but never a different disease. Under this document's own acceptance rule (step 5, unchanged
+below): a mapping is accepted when the sample is clean OR the only drift is a named, reasoned
+broadening. The CD70 case is exactly that shape, so **the accepted rate is 8 of 8 on the property
+that actually matters — zero wrong-disease matches — with 1 of 8 disclosed as a modest, same-family
+broadening, not a defect requiring a narrower query.** Reporting "7/8" without this distinction would
+read as a failure rate; it is a precision figure inside an otherwise fully-accepted mapping.
 
-**The design, following from both tests:** the mapping is **per-entry, explicit, and recorded** —
-not computed from `name` or `share.site` at runtime. A candidate shape:
+**A basket trial that genuinely includes the target disease among several conditions is a different
+thing from a wrong-disease match — confirmed on a THIRD live case, today, not just asserted.** The
+2026-09-11 re-draw of the ccRCC query (§1a) turned up NCT05856981, "Phase 1 Study Evaluating the
+Safety and PK of ADU-1805 in Advanced Solid Tumors," a multi-condition basket trial whose own
+`conditionsModule.conditions` list — alongside colorectal, NSCLC, and endometrial cancer — names
+"RCC, Clear Cell Adenocarcinoma" explicitly. This is not a drift and not a collision: the study's own
+structured data says it treats clear-cell RCC. A basket trial genuinely listing the target disease
+passes; a trial that matches only via an unrelated keyword collision, with no genuine target-disease
+tag anywhere in its own conditions, does not. §1b below is what tells the two apart mechanically.
+
+**§1a. THE CORPUS MOVES — MEASURED, NOT ASSUMED, BY RE-DRAWING THE SAME QUERY A DAY LATER.** The
+2026-09-11 re-draw of `query.cond=clear cell renal cell carcinoma` returned an EIGHT-STUDY SET WITH
+ZERO NCT-ID OVERLAP against the 2026-09-10 set recorded above — not a reordering, a different corpus
+slice entirely (no CD70 trial in today's draw at all; today's eighth-ranked concern is a different
+shape, covered in §1b). This is the direct, first-hand confirmation of the architectural point raised
+about this section: a one-time verification of query quality checks today's corpus and says nothing
+about tomorrow's. The fix is not a better one-time check — it is moving the guard to where it can run
+on every fetch, forever, against whatever the corpus looks like on the day. That is §1b.
+
+**§1b. THE QUERY IS NOT THE GUARD — THE RETURNED CONDITIONS ARE.** A query string, however carefully
+chosen, only ever describes what was ASKED FOR; a collision (the gdiff "diffuse" case below) or a
+registry re-tagging can make it return something else, on any given day, for reasons that have
+nothing to do with query wording. What is checkable, on every fetch, against a moving corpus, is what
+each RETURNED STUDY'S OWN `conditionsModule.conditions` actually says. The architecture changes from
+"verify the query once, trust every future result" to a **standing fetch-time filter**: for every
+study a query returns, check whether at least one of that study's own declared conditions names the
+entry's disease family; keep it if so, drop and count it if not. This is a structural check that
+survives however far the corpus moves, because it never trusts the query — it re-derives relevance
+from the one field CT.gov itself uses to say what a study is about, on every single fetch.
+
+- **The filter is a small, per-entry keyword set, not a re-derivation of the query.** `ccrcc:
+  ['renal', 'kidney', 'rcc']`; `gdiff: ['gastric', 'stomach']` — organ/disease-family terms, matched
+  case-insensitively at a WORD BOUNDARY (the `pointer_check.py` scar applies here too: an unboundaried
+  2-3-character needle collides with ordinary English; these are real multi-character medical terms,
+  boundaried the same way regardless of length). A study passes if ANY of its own conditions contains
+  ANY keyword; it is dropped and counted otherwise.
+- **Subtype specificity is deliberately NOT in the keyword set**, for the same reason it was dropped
+  from the query below: the registry does not tag by clear-cell-vs-other RCC or by Lauren
+  classification at the condition level, so requiring it would under-match everything, not just the
+  bad cases.
+- **The trade this makes is disclosed, not hidden: a real trial with an uninformative condition tag
+  gets dropped too, and that is the correct default, not an unhandled edge case.** Today's 2026-09-11
+  ccRCC draw contains NCT07680556, "Promoting Response to IMmunotherapy by Exercise in Patients With
+  Advanced Renal Cell Carcinoma" — unambiguously on-topic by title — tagged with the single condition
+  `['Oncology']`, which the keyword filter does not match. The filter drops it. This is a FALSE
+  NEGATIVE on a real, live case, not a wrong-disease catch, and it is named as exactly that rather
+  than folded into a success count. The asymmetry is deliberate: this project has repeatedly chosen
+  the failure direction that cannot silently show something wrong over the one that occasionally
+  omits something right (the status include-list in §3 makes the identical choice for the identical
+  reason) — a dropped real trial costs a reader nothing they would have known to look for; a shown
+  wrong-disease trial costs them trust in every trial the page ever shows. **This is also why the
+  drop count is reported, not silently absorbed** (§1c): a filter that drops real trials needs its
+  drops visible so a maintainer can tell "the mapping is noisy" from "the mapping is broken."
+- **Condition (7), both directions, demonstrated rather than assumed working:** the 2026-09-11 ccRCC
+  live draw provides the real, non-fixture drop above (NCT07680556 — a false negative, not a
+  wrong-disease catch, honestly labeled as such). Neither live sample drawn today happens to contain a
+  genuine wrong-disease study once condition CONTENT is checked instead of query mechanism (§1c
+  reconsiders the gdiff case on exactly this point and finds it, too, passes on content grounds) — so
+  the TRUE-POSITIVE catch (a study with no genuine target-disease tag anywhere in its conditions) is
+  demonstrated on a planted synthetic fixture instead, verified against the real filter function
+  before it shipped: a fabricated study object carrying only `['Diffuse Astrocytoma, IDH-Mutant',
+  'Glioblastoma, IDH-wildtype', 'Brain Metastases, Adult']` — no gastric/stomach keyword anywhere — is
+  correctly dropped by the gdiff filter, while the same fixture with `'Gastric Cancer'` appended is
+  correctly kept. Both directions checked on the same fixture pair, the way this project's own
+  Convention F requires: a plausible-but-wrong input, not only a broken one.
+
+**§1c. THE GDIFF "FALSE MATCH" IS PARTIALLY RETRACTED — re-examined under the sharper standard §1
+now states for ccRCC, and the retraction is recorded because it changes what the fetch-time filter is
+credited with catching.** NEO212's own `conditionsModule.conditions` — re-fetched live, 2026-09-11 —
+reads: `['Diffuse Astrocytoma, IDH-Mutant', 'Glioblastoma, IDH-wildtype', 'Brain Metastases, Adult',
+'Cervical Cancer', 'Colorectal Cancer', 'Esophageal Cancer', ..., 'Gastric Cancer',
+'Gastroesophageal Junction Adenocarcinoma', ..., 'Renal Cell Carcinoma', ...]`. **"Gastric Cancer" is
+genuinely, structurally present in this study's own declared conditions** — the identical tag form
+("Gastric Cancer") the six "clean" gdiff results below are credited as on-topic for, since the
+registry does not tag by Lauren subtype at the condition level for ANY of them. There is no
+principled basis for treating "Gastric Cancer" as real evidence of relevance in six studies and as
+noise in a seventh; the tag is the tag. **Under a fetch-time filter that checks conditions rather
+than distrusting the query mechanism, NEO212 is KEPT, not dropped** — it is a basket trial that
+genuinely lists the target disease among many, structurally identical in kind to the ccRCC ADU-1805
+case in §1 above, not a wrong-disease match.
+**What was really wrong, restated precisely:** not that NEO212 fails to treat gastric cancer (it
+doesn't fail — it's declared), but that the ORIGINAL verification trusted the QUERY MATCH MECHANISM
+("this surfaced because of the word 'diffuse'") rather than checking the RETURNED CONDITION DATA
+directly. In this specific instance content-checking and query-mechanism-suspicion happen to reach
+different verdicts, which is exactly the case for building the filter on content rather than
+mechanism — a fetch-time filter does not need to know or care why a study was returned, only what it
+declares itself to be about. **One live design refinement this correction motivates, not a rejection
+of NEO212's inclusion:** a basket trial whose own `briefTitle` does not mention the reader's condition
+(NEO212's does not say "stomach" or "gastric" anywhere in its title) can read as confusing on a
+listing card even when its inclusion is correct — addressed as a display concern in §4/§9, not as a
+reason to drop it.
+**The 2026-09-11 re-draw of the corrected query (`gastric adenocarcinoma`, no "diffuse") returned
+studies whose conditions are unchanged in kind from the 2026-09-10 read** — NCT07714538 lists
+`'Gastric Adenocarcinoma'` directly, and every other result in the fresh draw ties to a
+gastric/esophagogastric tag — so the corrected query's own on-topic finding stands; only the
+characterization of the ORIGINAL query's one flagged result changes.
+
+**The design, following from all of this:** the mapping is **per-entry, explicit, and recorded** —
+not computed from `name` or `share.site` at runtime, and now carries the fetch-time filter's own
+keyword set alongside the query. Candidate shape, revised:
 
 ```
 TRIALS_CONDITION_MAP = {
-  ccrcc: { query: 'clear cell renal cell carcinoma', verifiedDate: '2026-09-10',
-           sampleSize: 8, onTopic: 7, note: '1/8 broader (kidney cancer generally), not a false match' },
-  gdiff: { query: 'gastric adenocarcinoma', verifiedDate: '2026-09-10',
-           sampleSize: 6, onTopic: 6, note: 'dropped "diffuse" after it produced a false match on an unrelated neuro-oncology basket trial; the registry does not tag by Lauren classification' },
+  ccrcc: { query: 'clear cell renal cell carcinoma', conditionKeywords: ['renal', 'kidney', 'rcc'],
+           verifiedDate: '2026-09-11', sampleSize: 8, onTopic: 7,
+           note: '1/8 broader (kidney cancer generally, CD70 imaging trial), a named reasoned '
+                 + 'broadening, not a wrong-disease match; accepted at 8/8 on zero-wrong-disease' },
+  gdiff: { query: 'gastric adenocarcinoma', conditionKeywords: ['gastric', 'stomach'],
+           verifiedDate: '2026-09-11', sampleSize: 6, onTopic: 6,
+           note: 'dropped "diffuse" after it collided with an unrelated neuro-oncology basket '
+                 + 'trial\'s condition tag via query keyword match; re-examined under the '
+                 + 'fetch-time filter and found the same trial passes on condition CONTENT (it '
+                 + 'genuinely lists Gastric Cancer) — the registry does not tag by Lauren '
+                 + 'classification at the condition level' },
   ...
 }
 ```
 
 **The verification method, reported before being built into anything, per instruction — and
-already demonstrated live, twice, above, not just described:**
+already demonstrated live, repeatedly, above, not just described:**
 
 1. Build the candidate query from the entry's actual disease biology (organ + histology), not its
    display string.
-2. Fetch a real sample against ClinicalTrials.gov v2 (`query.cond`, `filter.overallStatus=RECRUITING`,
-   a fixed page size — 6–10 is enough to catch a collision without over-reading; both tests above
+2. Fetch a real sample against ClinicalTrials.gov v2 (`query.cond`, `filter.overallStatus`,
+   a fixed page size — 6–10 is enough to catch a collision without over-reading; every test above
    used exactly this size).
 3. Read every returned study's own `conditionsModule.conditions` list and `identificationModule.
    briefTitle` back against the atlas entry — by a human, not by a second keyword match (a second
-   regex would share the first one's blind spot).
-4. Record: entry id, query string, sample size, on-topic count, and — critically — **name every
-   off-topic or borderline hit and why**, not just a pass/fail ratio (the ccRCC drift and the gdiff
-   collision are different in KIND, and collapsing them to "7/8 vs 6/6 passed" would have hidden
-   that the second one was the dangerous shape).
+   regex would share the first one's blind spot) — to choose the entry's `conditionKeywords` set.
+4. Record: entry id, query string, keyword set, sample size, on-topic count, and — critically —
+   **name every off-topic or borderline hit and why**, not just a pass/fail ratio (the ccRCC drift
+   and the gdiff collision are different in KIND, and collapsing them to a ratio would have hidden
+   which one was the dangerous shape).
 5. A mapping is accepted when the sample is clean or the only drift is a named, reasoned
-   broadening (ccRCC's shape); a cross-domain false match (gdiff's first shape) means narrow or
-   change the query and re-verify, not accept with a caveat.
-6. **Re-verify on a cadence, not once** — a registry's own tagging conventions and content change
-   over time; this is the same staleness argument `phaseB_design.md` §19 makes for statistics, applied to a query
-   whose correctness depends on what's currently indexed rather than on a citation that doesn't move.
+   broadening (ccRCC's shape); a cross-domain false match (a study with no genuine target-disease
+   tag anywhere in its own conditions) means narrow or change the query and re-verify, not accept
+   with a caveat.
+6. **The keyword set, once chosen, becomes a STANDING fetch-time filter (§1b) — re-verification is
+   no longer a cadence-dependent human re-read of a sample, it is a mechanical check that runs on
+   every fetch, forever, against whatever the corpus looks like that day.** This replaces, rather
+   than supplements, the original "re-verify on a cadence" plan: a human sampling pass could always
+   miss the one result that matters on a day nobody re-checked; a standing filter cannot, because it
+   checks all of them, every time.
+
+**§1d. The drop count is the mapping's own quality signal, reported per entry, not silently
+absorbed.** Every fetch logs and displays how many returned studies were dropped for lacking a
+matching condition keyword, alongside how many were kept. A mapping producing many drops relative to
+its total is a mapping whose query or keyword set needs rewriting — the count is diagnostic evidence
+about the MAPPING, generated by ordinary use, not a number a maintainer has to go looking for.
 
 **Sixteen entries is enough to prove the pattern (per the user's own framing); the remaining
 fourteen mappings are NOT built here** — two were run live to validate the method itself, which is
@@ -216,13 +325,92 @@ fetch in production.
 
 ## 8. Ordered next steps
 
-1. A ruling on this document — condition-mapping method, the three constraints, status/staleness
-   handling, the failure-mode states, and the location decision — before any fetch code, component,
-   or schema field is written.
-2. If ruled: the remaining fourteen entries' condition mappings, built and verified by the §1 method,
-   with every off-topic or borderline hit named the way the two demonstration cases were here.
-3. Component design for the four §4 states and the §2/§3 page copy, as a follow-on design pass or
-   folded into the build — not decided here.
-4. No detector is added for any of this: runtime content stays outside the battery by the
-   architecture already settled (`phaseB_design.md` §1, §7) — the bounding in §2 is what stands in
-   for a gate, per the roadmap's own original framing.
+**RULED 2026-09-11 (user): build, with §1 amended first** — the condition-mapping method, the three
+constraints, status/staleness handling, the failure-mode states, and the location decision are
+approved as designed above, with two changes settled before code: the ccRCC/gdiff read-back is
+corrected and sharpened (§1), and the guard moves from one-time query verification to a standing
+fetch-time filter on returned conditions (§1b), reported per-entry by its drop count (§1d).
+
+1. **DONE (this ruling):** the §1 amendment — the 8th ccRCC result named and the raw/accepted
+   distinction settled; the gdiff NEO212 characterization corrected under the sharper standard; the
+   fetch-time filter designed, keyworded, and demonstrated (a real drop, a synthetic wrong-disease
+   catch); the `TRIALS_CONDITION_MAP` shape revised to carry `conditionKeywords`.
+2. Build: fetch code + fetch-time filter + the four §4 states + the §2/§3 duty-of-care copy and
+   status/staleness display + §6's location-ignore framing, for the two validated entries (ccrcc,
+   gdiff) — proving the pattern end to end, not just the mapping in isolation.
+3. **NOT built in this pass, still deferred:** the remaining fourteen entries' condition mappings —
+   two were run live to validate the method itself (now including the fetch-time filter), which is
+   what §1 owed before anything is built. Building the other fourteen, and deciding what "verified"
+   means at Phase C's ~120-entry scale, is implementation work for whenever a ruling opens it.
+4. **A small display refinement §1c motivates, folded into the build rather than left as a design
+   gap:** when a kept basket-trial result's own `briefTitle` does not mention the reader's condition
+   in any recognizable form, the listing says so explicitly (e.g. naming it as a multi-condition
+   trial) rather than presenting a title about an apparently unrelated disease with no explanation —
+   a display concern the fetch-time filter's correct inclusion decision does not resolve on its own.
+5. No detector is added for any of this: runtime content stays outside the battery by the
+   architecture already settled (`phaseB_design.md` §1, §7) — the bounding in §1b/§2 is what stands
+   in for a gate, per the roadmap's own original framing. The fetch-time filter is app logic
+   (`js/trials.js`), not a `.claude/` tool, so it is not a candidate for `NON_INSTRUMENTS` either —
+   the same category `js/histology.js` already sits in.
+
+## 9. THE BUILD — done, verified live, not just claimed (2026-09-11)
+
+**Implementation:** `js/trials.js` (new module — fetch, the fetch-time filter, the four §4
+states, the render layer, the register-once toggle wiring, the same shape `js/histology.js`
+already established for a peer view-mode) + `#txTrialsLayer`/`#txTrialsToggle` markup and CSS
+in `cancer-atlas.html` + four wiring points in `js/main.js` (`txEnterRegion` hides the toggle,
+`txGoLevel(1)` shows it, `enterCancerScreen` resets any open panel defensively before a screen
+swap, the bootstrap calls `initTrials()`). No organ file (`kidneys.js`/`stomach.js`) was
+touched — `TRIALS_CONDITION_MAP` lives centrally in `trials.js`, keyed by cancer id, the same
+way `MARGIN_STATUS`/`GROWTH_STATUS` live centrally in `morphology.js` rather than scattered into
+organ files; this is operational fetch configuration, not a citation, so it does not belong in
+the citation-verification discipline those files carry.
+
+**Condition (7), on the real shipped filter, not a re-implementation.** `filterByCondition` was
+imported directly (a minimal `document.getElementById` stub satisfies the module's top-level DOM
+reads, nothing else is mocked) and driven against nine assertions: both keyword sets read back
+exactly as designed; the gdiff synthetic wrong-disease fixture (no gastric/stomach tag anywhere)
+is dropped; the same fixture with `'Gastric Cancer'` appended is kept; a plain clean match is
+kept; the real, live "Oncology"-only ccRCC case is dropped (the honest false-negative, reproduced
+verbatim); the CD70 same-family broadening is kept; the ADU-1805 basket trial is kept via its
+bare `"RCC"` abbreviation specifically, not just the spelled-out form. All nine passed.
+
+**A real accessibility gap was found and fixed WHILE writing the mode-swap, before it ever
+shipped, not after.** The first draft of `applyMode` hid `#txSiteViewer` by toggling its
+existing `.hidden` class alone (opacity:0 + pointer-events:none) — which leaves every site-label
+button inside it still in the tab order and keyboard-activatable, the exact trap `#txCellLayer`'s
+own markup comment already documents in this file. Fixed by also toggling `inert` on
+`#txSiteViewer`, matching every other layer swap on this screen. Verified directly against the
+live DOM (not assumed from reading the CSS): with the trials panel open,
+`txSiteViewer.matches(':disabled, [inert], [inert] *')` on a site-label button reads `true` —
+genuinely inert, not merely visually hidden.
+
+**Live browser verification, both wired entries, real network fetches against the deployed API
+shape (not a mock):**
+- **ccRCC**, live at time of test: 10 studies fetched, 1 dropped (condition mismatch — the console
+  line reports it, and the UI's own status line reports the same count: "1 result omitted
+  (didn't match this condition)"), 9 shown, correctly sorted by `lastUpdatePostDate` descending.
+  One shown result ("Testing the Effectiveness of Two Immunotherapy Drugs... for Rare
+  Genitourinary Tumors") correctly carries the "Multi-condition trial" note, since its own title
+  names none of `renal`/`kidney`/`rcc`.
+- **gdiff**, live at time of test: 2 dropped, results shown correctly sorted, the same
+  multi-condition note firing correctly on a title that doesn't mention gastric/stomach.
+- **Toggle mechanics**: opening and closing the panel correctly restores the site map (verified by
+  screenshot both ways); the toggle is shown at level 1 and hidden at level 2 (confirmed by
+  entering a metastatic site, where the button correctly swaps to "Microscopic view" instead);
+  `enterCancerScreen`'s defensive reset was exercised by navigating cancer → organ → a different
+  organ → trials again, with no stale state carried over.
+- **Mobile** (375×812, fresh load — not a desktop session resized down, which was checked
+  separately and found to be a testing-tool artifact unrelated to this feature): the panel, intro
+  copy, status line, and cards all render correctly within the narrower layout; the toggle
+  remains reachable and correctly reflects `aria-pressed`.
+- **Console**: zero errors across the whole sequence. **Network**: real 200 responses from
+  `clinicaltrials.gov/api/v2/studies`, not stubbed.
+
+**What this does not cover, stated rather than left implicit:** EMPTY-ANSWERED and
+EMPTY-UNANSWERED were verified by reading the render function's own logic and by the design's
+`ccrcc`/`gdiff` live queries never actually returning zero kept studies during this test session
+— neither state was forced live (e.g. by breaking connectivity mid-session) before this commit.
+Both are simple, static-copy branches with no fetch logic of their own once `fetchTrialsForEntry`
+has already resolved, so the risk this leaves open is small, and it is named rather than silently
+assumed covered by the RESULTS-state testing above.

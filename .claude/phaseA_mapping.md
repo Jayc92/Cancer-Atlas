@@ -1473,3 +1473,25 @@ SEER CLOSED, THE DUPLICATE-BLOCK CONVENTION, THE RECORD-SYNC CLASS, THE RANKER R
     ClinicalTrials.gov permissive, confirming trials can be a genuine client-side runtime fetch,
     which the document's own §6 had left open rather than assumed. No served asset changed; nothing
     in this round is code. Standing gates.
+
+- Trials integration RULED AND BUILT (2026-09-11). Two things settled before code, both forced
+  by re-examining the prior round's own read rather than trusting it: the ccRCC 8th result (a
+  same-family broadening, CD70 imaging trial) was distinguished plainly from a wrong-disease
+  match, and re-drawing the same ccRCC query a day later returned a COMPLETELY DIFFERENT
+  eight-study set -- zero NCT-id overlap -- live proof the corpus moves, not an assumption. That
+  moved the architecture from a one-time query-quality check to a standing FETCH-TIME FILTER: at
+  every fetch, each returned study's own declared conditions are checked against a small
+  per-entry keyword set (word-boundaried, case-insensitive), and a mismatch is dropped and
+  counted rather than trusted because the query happened to surface it. The gdiff brain-tumor
+  trial from the prior round was re-examined under this standard and partially retracted: its own
+  conditions genuinely list "Gastric Cancer," so it is a basket trial that genuinely includes the
+  target disease, not a wrong-disease match -- structurally the same shape as a live ccRCC basket
+  trial (ADU-1805) found in today's re-draw, which does list "RCC, Clear Cell Adenocarcinoma"
+  among unrelated conditions. Built as js/trials.js, wired at the cancer screen's site-map level
+  (the opposite level from the histology toggle, since trials describe the whole entry, not one
+  site); verified against a planted synthetic wrong-disease fixture (Convention F) before being
+  trusted, then verified live in the browser on both wired entries (ccrcc, gdiff) -- real fetches,
+  correct sort, the drop count reported in-page, a real accessibility gap (site-map buttons left
+  keyboard-reachable under the panel, `inert` missing) found and fixed while building. Full record
+  in phaseD_trials_design.md §§1a-1d, §9. Served assets changed this round (cancer-atlas.html,
+  js/main.js, the new js/trials.js) -- the push grant and Pages wait apply.

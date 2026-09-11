@@ -14,6 +14,7 @@ import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
+import { initTrials, showTrialsToggle, hideTrialsToggle, resetTrialsMode } from './trials.js';
 import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, massBadge, GROWTH_STATUS, GROWTH_CATEGORIES, EXTENT_UNDERSTATED, EXTENT_STATUS, RESERVED_APEX, rimBlendWeight } from './morphology.js';
 
 // ============================================================
@@ -738,6 +739,11 @@ function txEnterRegion(regionIdx){
   // over from the previous region/cancer; the toggle only appears at this level.
   resetHistologyMode();
   showHistologyToggle();
+  // Trials lives at the OPPOSITE level (the site map, not a region) — hidden here for the
+  // same reason the histology toggle is shown here. applyMode(false) is not called: entering
+  // a region already inerts #txSiteViewer (below), which is what trials mode also inerts, so
+  // there is nothing live left for trials to have been showing over.
+  hideTrialsToggle();
   renderCrumbs();
   // Entering a site inerts the viewer that holds the site label just activated, and this path
   // goes through neither setScreen nor txGoLevel, so it needs its own landing point.
@@ -759,6 +765,9 @@ function txGoLevel(lv){
     // applyMode(false) won't fight the cell-layer state this block just set.
     resetHistologyMode();
     hideHistologyToggle();
+    // Trials lives at THIS level, the opposite of histology's — shown here for the same
+    // reason histology is hidden here.
+    showTrialsToggle();
     if(state.siteViewer){ setTimeout(()=>{ state.siteViewer.autoRotate = true; }, 200); }
     // Stepping back to the site map inerts the cell layer, so the cell that focus would
     // otherwise return to is gone. Land on the screen. Level 2 needs no equivalent: the cell
@@ -772,6 +781,12 @@ function txGoLevel(lv){
 }
 
 function enterCancerScreen(cancerId){
+  // Defensive, not reachable today (every organ with a trials mapping has exactly one active
+  // cancer, so there's no same-organ cancer-to-cancer path that could leave a stale trials
+  // fetch showing) — but cheap, and correct if that ever changes: close any open trials panel
+  // before the screen potentially swaps to a different cancer's data. txGoLevel(1) below
+  // re-shows the toggle for whichever cancer this call is actually entering.
+  resetTrialsMode();
   // initSiteViewer sets currentCancerId — must run before setScreen('cancer'), because
   // setScreen calls renderCrumbs(), which reads CANCER_DETAILS[currentCancerId] to label the
   // breadcrumb. Doing this in the other order looked fine on repeat visits (currentCancerId
@@ -796,6 +811,7 @@ initSidebar(selectOrgan, ()=>{
   if(state.siteViewer) state.siteViewer.resize();
 });
 initHistology();
+initTrials();
 requestAnimationFrame(bodyTick);
 requestAnimationFrame(organTick);
 requestAnimationFrame(siteTick);
