@@ -86,12 +86,36 @@ const cancerListEl = document.getElementById('cancerList');
 // Rebuilds the cancer list for whichever organ is showing. Was a one-time render keyed to the
 // (until now) only organ; now it filters the shared CANCERS list by organKey and re-runs every
 // time renderOrganScreen swaps organs, same reasoning renderSearch already applies per keystroke.
+// A short, non-visual-only status suffix for an active row's margin character — read from the
+// same MARGIN_STATUS the mass badge itself reads, so the list row and the 3D preview it swaps in
+// never disagree about which state an entry is in. '' for an inactive row (no CANCER_DETAILS/
+// MARGIN_STATUS entry exists yet to characterise) or one with no status recorded at all.
+function marginStatusSuffix(c){
+  if(!c || !c.active) return '';
+  const st = MARGIN_STATUS[c.id];
+  if(!st) return '';
+  return st.status === 'cited' ? '; margin character cited' : '; margin character not yet characterised';
+}
+
+// The dot mirrors marginStatusSuffix visually, in the mass preview's own colours (MASS_COLOUR /
+// RESERVED_COLOUR) — so the colour you see in the list is the colour you'll see if you preview
+// that row. aria-hidden because marginStatusSuffix already carries the same information into the
+// row's own accessible label; a screen reader would otherwise announce it twice.
+function marginDot(c){
+  if(!c || !c.active) return '';
+  const st = MARGIN_STATUS[c.id];
+  if(!st) return '';
+  const cited = st.status === 'cited';
+  const title = cited ? 'Margin character: cited from a real source' : 'Margin character: not yet characterised (shown as a placeholder)';
+  return `<span class="cr-dot ${cited?'cited':'reserved'}" title="${title}" aria-hidden="true"></span>`;
+}
+
 function renderCancerList(organKey){
   const list = CANCERS.filter(c=>c.organKey===organKey);
   cancerListEl.innerHTML = list.map(c=>`
     <div class="cancer-row ${c.active?'enabled':''}" data-id="${c.id}">
       <div class="cr-left">
-        <div class="cr-name">${c.name}</div>
+        <div class="cr-name">${c.name}${marginDot(c)}</div>
         <div class="cr-share">${c.share}</div>
       </div>
       <div class="cr-cta ${c.active?'':'disabled'}">${c.active ? 'Explore this cancer →' : 'Profile coming soon'}</div>
@@ -104,8 +128,20 @@ function renderCancerList(organKey){
     }, {
       // Every row responds to activation; only the active one navigates. The difference is
       // currently carried by the CTA's colour and the teal border, so state it in the name too.
-      label: c ? c.name + ', ' + c.share + (c.active ? ' — explore this cancer' : ' — profile coming soon') : row.dataset.id
+      label: c ? c.name + ', ' + c.share + (c.active ? ' — explore this cancer' : ' — profile coming soon') + marginStatusSuffix(c) : row.dataset.id
     });
+    // PHASE B crowding fix: hovering or focusing an active row previews that cancer's own mass on
+    // the organ viewer above, in place of whatever was shown before — the mechanism that keeps
+    // an organ with several cancers to just one visible mass at a time. Inactive rows have no
+    // CANCER_DETAILS entry yet, so nothing to preview; leaving/blurring restores the default (the
+    // organ's first active cancer, same as previewMass()'s own fallback), so the viewer never
+    // goes empty between rows.
+    if(c && c.active){
+      row.addEventListener('mouseenter', ()=>previewMass(c.id));
+      row.addEventListener('focus', ()=>previewMass(c.id));
+      row.addEventListener('mouseleave', ()=>previewMass());
+      row.addEventListener('blur', ()=>previewMass());
+    }
   });
 }
 
@@ -151,6 +187,7 @@ function disposeOrganViewer(){
   state.organViewer = null;
   organMarkers.length = 0;
   organMasses.length = 0;
+  massCtx = null;   // the previewed-mass context (Phase B crowding fix) dies with its viewer too
   const loadingEl = document.getElementById('organLoading');
   if(loadingEl){ loadingEl.hidden = false; loadingEl.textContent = 'Loading 3D model…'; }
 }
@@ -262,7 +299,41 @@ function applyRimBlend(viewer, mass, requestedExtent){
   return rec;
 }
 
-function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadius, container){
+// PHASE B — THE CROWDING FIX (2026-09-11, user-ruled, option B of three costed alternatives).
+// At most ONE mass renders per organ at a time now, chosen by hovering/focusing its row in the
+// cancer list below (js/main.js's renderCancerList), rather than every active cancer's mass
+// simultaneously. The old code placed every entry along one tangent from the organ's single
+// ORIGIN_HOTSPOT (massR*2.2 per step) — fine at one or two entries, but Phase C's projected
+// four-to-six entries per organ would walk masses off the mesh and crowd their badges. This
+// structurally caps the count at 1 regardless of how many cancers an organ eventually carries,
+// and — the reason it won over shrinking the mass (option A) — a reserved mass never renders
+// beside a cited one, so repeated placeholder entries can never visually cluster into what reads
+// as its own tumour category (the risk named at the roughly-a-third-of-entries register limit).
+// It does NOT fix per-entry origin accuracy (option C, not ruled): ovary's clear-cell mass still
+// anchors at the surface-epithelium hotspot even though that hotspot's own text says clear-cell
+// arises in endometriosis instead — a separate, larger, per-entry research cost left open.
+let massCtx = null;   // {organKey, detail, viewer, isRealMesh, meshBoundingRadius, container} for the loaded organ; null when none
+
+function activeCancersFor(organKey){
+  return CANCERS.filter(c=>c.organKey===organKey && c.active);
+}
+
+// previewMass(entryId): shows exactly that entry's mass, disposing whatever was shown before.
+// No id, or an id that isn't one of this organ's active cancers, falls back to the first active
+// entry (registry order — the same order renderCancerList already shows) so a mass is always on
+// screen rather than flashing to empty when the mouse leaves a row.
+function previewMass(entryId){
+  organMasses.forEach(o=>{
+    o.mesh.geometry.dispose(); o.mesh.material.dispose();
+    if(massCtx) massCtx.viewer.scene.remove(o.mesh);
+    o.el.remove();
+  });
+  organMasses.length = 0;
+  if(!massCtx) return;   // no organ loaded yet, or a hover outlived its screen — nothing to draw into
+  const { organKey, detail, viewer, isRealMesh, meshBoundingRadius, container } = massCtx;
+  const list = activeCancersFor(organKey);
+  const entry = (entryId && list.find(c=>c.id===entryId)) || list[0];
+  if(!entry) return;   // this organ has no active cancer at all — nothing stands in
   const idx = ORIGIN_HOTSPOT[organKey];
   const h = detail.hotspots[idx];
   if(!h) return;
@@ -271,50 +342,40 @@ function addOriginMasses(organKey, detail, viewer, isRealMesh, meshBoundingRadiu
     : Math.max(detail.hotspotScale.x, detail.hotspotScale.y, detail.hotspotScale.z) || 1;
   const massR = organRadius * MASS_RADIUS_FRACTION;
   const outward = anchor.lengthSq() > 1e-9 ? anchor.clone().normalize() : new THREE.Vector3(0, 1, 0);
-  let placed = 0;
-  CANCERS.filter(c=>c.organKey===organKey && c.active).forEach(entry=>{
-    const st = MARGIN_STATUS[entry.id];
-    const category = st && st.category ? MARGIN_CATEGORIES[st.category] : null;
-    const badge = st ? marginBadge(entry.name, st.status, category) : null;
-    if(!badge) return;   // 'cited' with no wired category, or unknown: nothing stands in for a cited shape
-    const geo = new THREE.IcosahedronGeometry(massR, 4);
-    // A wired category draws its own render values (inside its declared ranges — reserve_check
-    // asserts that); everything else draws the reserved form (spikeCount 0: undulation only).
-    organicSpiculate(geo, { ...(category ? category.render : RESERVED_MARGIN) });
-    // A cited mass wears the illustrative tissue-tan; a RESERVED mass wears the reserved colour, a
-    // desaturated interface teal from outside the tissue gamut (user ruling on the HCC deadlock — see
-    // RESERVED_COLOUR). NAMED, so a measurement script can exclude reserved masses BY IDENTITY: they
-    // carry no citation to deviate from and would register as an enormous hue error against a value
-    // never claimed (the lit-face fidelity measurement reads identity, not geometry — condition (3)).
-    const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: category ? MASS_COLOUR : RESERVED_COLOUR, roughness: 0.55, specularIntensity: 0.25 }));
-    mesh.name = 'phaseA-mass';
-    mesh.userData.phaseA = { reserved: !category, margin: category ? category.label : 'reserved', entry: entry.id, outward: outward.clone() };
-    // Straddle the surface at the origin structure (the cheap extent read: the depth buffer hides
-    // the inside portion). A second entry on the same organ sits beside the first along a tangent.
-    // 0.6, from 0.35: at 0.35 the first wired mass (PTC) sat mostly behind its gland at the default
-    // framing, hiding the very edge the look has to judge. Shared by every mass; no category changes.
-    const pos = anchor.clone().addScaledVector(outward, massR*0.6);
-    if(placed > 0){
-      const t = new THREE.Vector3(0, 1, 0).cross(outward);
-      if(t.lengthSq() < 1e-6) t.set(1, 0, 0);
-      pos.addScaledVector(t.normalize(), massR*2.2*placed);
-    }
-    mesh.position.copy(pos);
-    viewer.scene.add(mesh);
-    // THE GROWTH AXIS: a cited, wired growth category dissolves the mass's boundary (rim-blend); a cited-but-unwired one,
-    // or an uncharacterised/unread status, draws nothing extra and the badge says which it is.
-    const gst = GROWTH_STATUS[entry.id] || null;
-    const gcat = gst && gst.status === 'cited' && gst.category ? GROWTH_CATEGORIES[gst.category] : null;
-    const falloff = gcat ? applyRimBlend(viewer, mesh, gcat.render.extent) : null;
-    const full = massBadge(entry.name, st, category, gst, gcat, falloff, EXTENT_UNDERSTATED[entry.id], EXTENT_STATUS[entry.id]) || badge;
-    const el = document.createElement('div');
-    el.className = 'tumour-badge';
-    el.textContent = full.chip;
-    makeActivatable(el, ()=>showOrganInfo({ label: entry.name + (category ? ' — tumour mass (cited margin category)' : ' — tumour mass (placeholder form)'), text: full.sentence }), { label: full.sentence });
-    container.appendChild(el);
-    organMasses.push({ mesh, el, stack: placed });
-    placed++;
-  });
+  const st = MARGIN_STATUS[entry.id];
+  const category = st && st.category ? MARGIN_CATEGORIES[st.category] : null;
+  const badge = st ? marginBadge(entry.name, st.status, category) : null;
+  if(!badge) return;   // 'cited' with no wired category, or unknown: nothing stands in for a cited shape
+  const geo = new THREE.IcosahedronGeometry(massR, 4);
+  // A wired category draws its own render values (inside its declared ranges — reserve_check
+  // asserts that); everything else draws the reserved form (spikeCount 0: undulation only).
+  organicSpiculate(geo, { ...(category ? category.render : RESERVED_MARGIN) });
+  // A cited mass wears the illustrative tissue-tan; a RESERVED mass wears the reserved colour, a
+  // desaturated interface teal from outside the tissue gamut (user ruling on the HCC deadlock — see
+  // RESERVED_COLOUR). NAMED, so a measurement script can exclude reserved masses BY IDENTITY: they
+  // carry no citation to deviate from and would register as an enormous hue error against a value
+  // never claimed (the lit-face fidelity measurement reads identity, not geometry — condition (3)).
+  const mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({ color: category ? MASS_COLOUR : RESERVED_COLOUR, roughness: 0.55, specularIntensity: 0.25 }));
+  mesh.name = 'phaseA-mass';
+  mesh.userData.phaseA = { reserved: !category, margin: category ? category.label : 'reserved', entry: entry.id, outward: outward.clone() };
+  // Straddle the surface at the origin structure (the cheap extent read: the depth buffer hides
+  // the inside portion). 0.6, from 0.35: at 0.35 the first wired mass (PTC) sat mostly behind its
+  // gland at the default framing, hiding the very edge the look has to judge. No tangent offset any
+  // more — there is never a second simultaneous mass to place beside this one.
+  mesh.position.copy(anchor.clone().addScaledVector(outward, massR*0.6));
+  viewer.scene.add(mesh);
+  // THE GROWTH AXIS: a cited, wired growth category dissolves the mass's boundary (rim-blend); a cited-but-unwired one,
+  // or an uncharacterised/unread status, draws nothing extra and the badge says which it is.
+  const gst = GROWTH_STATUS[entry.id] || null;
+  const gcat = gst && gst.status === 'cited' && gst.category ? GROWTH_CATEGORIES[gst.category] : null;
+  const falloff = gcat ? applyRimBlend(viewer, mesh, gcat.render.extent) : null;
+  const full = massBadge(entry.name, st, category, gst, gcat, falloff, EXTENT_UNDERSTATED[entry.id], EXTENT_STATUS[entry.id]) || badge;
+  const el = document.createElement('div');
+  el.className = 'tumour-badge';
+  el.textContent = full.chip;
+  makeActivatable(el, ()=>showOrganInfo({ label: entry.name + (category ? ' — tumour mass (cited margin category)' : ' — tumour mass (placeholder form)'), text: full.sentence }), { label: full.sentence });
+  container.appendChild(el);
+  organMasses.push({ mesh, el, stack: 0 });
 }
 
 function initOrganViewer(organKey){
@@ -503,7 +564,8 @@ function initOrganViewer(organKey){
 
         organMarkers.push({ mesh:mMesh, data:h, el:point, baseR:markerRadius });
       });
-      addOriginMasses(organKey, detail, thisViewer, isRealMesh, meshBoundingRadius, container);
+      massCtx = { organKey, detail, viewer: thisViewer, isRealMesh, meshBoundingRadius, container };
+      previewMass();   // no id yet hovered/focused — draw the organ's first active cancer by default
     })
     .catch(err=>{
       if(state.organViewer !== thisViewer) return;

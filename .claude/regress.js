@@ -333,6 +333,35 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     });
     // meshPx > 0 required: a zeroed buffer must FAIL loudly, never pass as "0% blown" again.
     check(`organ ${o.key} blown-white`, blown.err === undefined && blown.meshPx > 0 && parseFloat(blown.pct) < 1.0, JSON.stringify(blown));
+    // Phase B crowding fix (2026-09-11, user-ruled): exactly one tumour mass renders per organ
+    // now — never every active cancer's mass at once — selected by hovering/focusing its row in
+    // the cancer list. Universal half: badge count is 1 on every organ. Swap half: only checked
+    // where the organ actually has a second active cancer to swap to (today: ovary, thyroid).
+    const massInfo = await page.evaluate(async (key) => {
+      const m = await import('./js/organs/index.js');
+      const active = m.CANCERS.filter(c => c.organKey === key && c.active);
+      const badgeCount = () => document.querySelectorAll('.tumour-badge').length;
+      if (active.length < 2) return { badgeCount: badgeCount(), activeCount: active.length };
+      const second = [...document.querySelectorAll('.cancer-row.enabled')].find(r => r.dataset.id === active[1].id);
+      const badgeName = () => {
+        const b = document.querySelector('.tumour-badge');
+        if (!b) return null;
+        b.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        return document.getElementById('oiTitle').textContent;
+      };
+      const nameDefault = badgeName();
+      second.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      const nameHovered = badgeName();
+      second.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+      const nameAfterLeave = badgeName();
+      return { badgeCount: badgeCount(), activeCount: active.length, nameDefault, nameHovered, nameAfterLeave };
+    }, o.key);
+    check(`organ ${o.key} single mass`, massInfo.badgeCount === 1, JSON.stringify(massInfo));
+    if (massInfo.activeCount >= 2) {
+      check(`organ ${o.key} mass swaps on hover`,
+        massInfo.nameHovered !== massInfo.nameDefault && massInfo.nameAfterLeave === massInfo.nameDefault,
+        JSON.stringify(massInfo));
+    }
     await page.screenshot({ path: path.join(OUT, `02_organ_${o.key}.png`) });
   }
 

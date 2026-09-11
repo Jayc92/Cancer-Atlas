@@ -132,6 +132,11 @@
   .cr-share{font-size:11.5px;color:var(--muted);}
   .cr-cta{font-size:12.5px;color:var(--teal);font-weight:600;white-space:nowrap;}
   .cr-cta.disabled{color:var(--muted);}
+  /* Margin-status dot (Phase B crowding fix) — same colours as the mass preview it points at,
+     so the list previews the 3D result rather than adding a third, unrelated colour language. */
+  .cr-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:7px;vertical-align:middle;}
+  .cr-dot.cited{background:#a89a8c;}
+  .cr-dot.reserved{background:#6aafaa;}
 
   /* ---------- 3D viewers (organ screen + tumor site map) ---------- */
   #organViewerWrap{width:100%;max-width:320px;aspect-ratio:1/1;margin:0 auto 6px;border-radius:18px;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 38%,#182338 0%,#0d1320 72%);border:1px solid var(--line);cursor:grab;}
