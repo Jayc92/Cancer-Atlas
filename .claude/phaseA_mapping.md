@@ -1314,3 +1314,42 @@ Proposed the same day and ratified with one change — the one that decides whet
     claimed covered. Sixth field (`certainty`) rescoped to `backfill`/Tier 2 specifically (statistics
     carry no hedge to drift; mechanism prose does) and given lowest priority of the four ordered steps.
     No detector, schema, or fetch code touched.
+- 2026-09-10 (feed feasibility tested with real requests; census given its denominator; the
+    epi-pass re-scope re-read for what its premise reversal implies): three sources tested live,
+    not from documentation alone. ClinicalTrials.gov v2: a real unauthenticated GET returned HTTP
+    200, clean structured JSON (identificationModule/statusModule/conditionsModule/eligibilityModule)
+    -- confirmed sufficient, nothing further to check before design. SEER: a real GET to its own
+    documented REST root returned HTTP 401 "You must supply an API key" -- the API is genuinely
+    structured (a real JSON error from a real service) but registration-gated, which the standing
+    no-account rule forecloses regardless of what fields it would return. This is the single most
+    consequential finding of the round: SEER backs every statistic this project has actually used,
+    and its only confirmed structured path is closed to this tooling. PDQ: a real search across
+    NCI's documented webapis (glossary, drug dictionary, clinical-trials-search, site-search, all
+    confirmed live) found none serving PDQ disease/treatment content specifically -- a good-faith
+    negative, not exhaustive (a licensed syndication feed for approved partners may exist, itself
+    account-shaped). Consequence for the retroactive question: the fifteen live extent lines cannot
+    be promoted to Tier 1 by re-pulling, because the feed they would re-pull from is the one just
+    confirmed blocked -- they stay Tier 2 by necessity, not by grandfathering.
+    CENSUS DENOMINATOR: the citation ledger holds 188 backfill records, 180 distinct identities; a
+    permissive corpus-wide extraction finds ~139 (name, year) candidates by pattern (an over-count);
+    the identity-grouped census's own citation regex recognises 23 of those on its widest pass (6 on
+    its first); of those 23, only 6 are ever cited 2+ times in a user-facing field -- the only
+    population the method can check at all. Restated as a fraction rather than a bare zero: roughly
+    3-15% coverage depending on extraction pass, zero live defects within it (two new candidates on
+    the widened pass, both cleared on a hand read -- one a correctly-unhedged DIFFERENT claim from
+    the already-fixed Gerlinger paper, one a hedge-detector false-positive on "subtype-associated"
+    read as a descriptive adjective rather than an epistemic hedge). The other 85-97% (single-mention
+    citations) is explicitly not claimed covered.
+    EPI-PASS RE-SCOPE RE-READ (report only, nothing fixed): of the ~19 share clauses retired unread
+    on 2026-09-05 under the now-half-retracted "migration retires the clause" premise, 10 (breast x4,
+    ovary x4, liver-iCCA, stomach gmix clause B) are the already-dated ten-item watchlist, confirmed
+    still bare exactly as described six days ago -- its own expiry condition ("if Phase B hasn't
+    landed") is now stale given architecture is ruled settled without an integration landing, flagged
+    not reworded. The remaining ~9 ("skin's five-clause share" + unspecified StatPearls rows) have no
+    date and no owner -- the genuinely unowned population the question asked about. One discrepancy
+    surfaced and left open: skin.js's melanoma share currently carries a citation (NCI, matching the
+    Bradford-2009-derived computation from the skin pass, over a week before the re-scope), which
+    contradicts the re-scope note calling it retired-unread -- not resolved here.
+    Architecture ruled SETTLED (phaseB_design.md); feasibility mostly answered (trials yes,
+    statistics no pending a hand-registered SEER key, PDQ not found). No detector, schema, or fetch
+    code touched.

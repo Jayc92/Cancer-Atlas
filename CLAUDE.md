@@ -5663,7 +5663,18 @@ refute it, which is worth more than file order.
   before being trusted) found no NEW live instance beyond the one already fixed in kidneys.js,
   bounded to the repeated-citation slice only. Declaration layer (Tier 1/Tier 2 boundary check)
   first, sixth field (`certainty`, rescoped to `backfill`/Tier 2) last, fetcher not started.
-  Then wall; multifocal when it has a renderable
+  FEASIBILITY TESTED WITH REAL REQUESTS (2026-09-10): ClinicalTrials.gov v2 CONFIRMED
+  reachable and structured (a live 200, clean JSON, no account); SEER's real API CONFIRMED
+  BLOCKED (a live 401, "You must supply an API key" — the standing no-account rule, not a
+  technical gap) — the fifteen live extent lines stay Tier 2 by necessity, not by oversight;
+  PDQ has no documented content API found after a real search. ARCHITECTURE now RULED
+  SETTLED; feasibility is answered for trials (yes) and statistics (no, pending a person
+  registering a SEER key by hand). Census given its denominator (6-23 of ~139-180 distinct
+  citations, 3-15% coverage, zero live instances found within it). Epi-pass re-scope re-read:
+  of ~19 clauses retired unread on 2026-09-05, 10 already on the dated watchlist (its own
+  condition now stale — see phaseB_design.md §9), ~9 genuinely unowned; one discrepancy found
+  (skin's melanoma share reads as already-cited, contradicting the re-scope note) and not
+  resolved. Then wall; multifocal when it has a renderable
   member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.
