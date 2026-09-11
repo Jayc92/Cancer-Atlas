@@ -792,6 +792,12 @@ NON_INSTRUMENTS = {
     'extract_citations.py': 'artifact producer, run as this runner preflight, not a gate',
     'figure_search.py': 'read helper — searches ONE fetched document during a claim read; '
                         'has a DONE line but no corpus-wide population to scan',
+    'certainty_rank.py': 'ranks the corpus for a bounded human read (hedge absence x mechanistic-'
+                         'claim strength) — evidence for a read order, not a gate; has a real '
+                         'corpus-wide population but asserts nothing about it, ratchets nothing, '
+                         'emits no sidecar. Its own header states why the hedge-word list must not '
+                         'be tightened after a false positive (2026-09-10) — read that before '
+                         'touching the regex',
     'ccf_load.py': 'read-load measurement AND the frame-and-draw for a ccf batch — evidence, not a '
                    'gate. It DOES have a corpus-wide population, unlike figure_search.py, so that is '
                    'not what keeps it out: it asserts nothing about the corpus, ratchets nothing and '

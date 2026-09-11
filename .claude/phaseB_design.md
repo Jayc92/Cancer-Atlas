@@ -337,24 +337,44 @@ own.
 
 ## 12. The 401 was the wrong evidence for the right question (2026-09-10, user: "a rejected request proves auth, not sufficiency")
 
-**§5's SEER finding was overclaimed.** A 401 proves the endpoint requires an account; it says
-nothing about whether the content behind that account is the content this project needs. Checked
-directly against SEER's own registrar-facing documentation (`seer.cancer.gov/registrars/api`,
-fetched live 2026-09-10) rather than inferred from the 401 body's JSON shape:
+**THE FINDING, STATED PLAINLY, NOT LEFT TO BE INFERRED FROM THE NEXT ACTION TAKEN:** the
+authenticated SEER API (`api.seer.cancer.gov`) does not serve Stat Facts content — no
+stage-at-diagnosis distribution, no survival-by-site figure — at any account tier, key, or
+permission level. This is not a guess extrapolated from going straight to a scraper; it is read
+directly off three separate pages SEER itself publishes, checked because a 401 alone cannot
+support the claim (it proves an account is required, not what the account would unlock).
 
-> "The SEER API ... is available to developers who wish to incorporate SEER resources into their
-> own systems. These resources include databases and tools developed to enhance registry
-> operations and quality improvement ... Some of the databases and tools supported by the SEER API
-> include: Collaborative Staging; Hematopoietic and Lymphoid Neoplasm Database; NAACCR
-> documentation; SEER*Rx — Antineoplastic Drugs Database; SEER Incidence Site Recode."
+**§5's SEER finding was overclaimed for exactly that reason.** A 401 proves the endpoint requires
+an account; it says nothing about whether the content behind that account is the content this
+project needs. Checked directly against SEER's own documentation (fetched live 2026-09-10, three
+pages, independently consistent) rather than inferred from the 401 body's JSON shape or from which
+tool got built next:
 
-**Every one of those is registrar coding-reference data** — staging schemas, a disease dictionary,
-a drug-code dictionary, a data-standard reference, a site-recode lookup table. **None of it is
-stage-at-diagnosis distributions or survival by site.** The usage page's own worked examples
-confirm the shape: `rest/staging/cs/.../schemas`, `rest/disease/latest?...`, `rest/ndc/code/...` —
-coding lookups, not population statistics. This is decisive independent of the 401: even a
-registered, keyed account would not unlock the content Tier 1 needs, because that content is not
-served by this API at any tier.
+> `seer.cancer.gov/registrars/api`: "The SEER API ... is available to developers who wish to
+> incorporate SEER resources into their own systems. These resources include databases and tools
+> developed to enhance registry operations and quality improvement ... Some of the databases and
+> tools supported by the SEER API include: Collaborative Staging; Hematopoietic and Lymphoid
+> Neoplasm Database; NAACCR documentation; SEER*Rx — Antineoplastic Drugs Database; SEER Incidence
+> Site Recode."
+
+> `api.seer.cancer.gov` (the API's own root/docs page, a second independent source): "The SEER API
+> powers a variety of SEER tools, including: Glossary for Registrars; Hematopoietic and Lymphoid
+> Database; Observational Research in Oncology Toolbox; SEER*RSA; SEER*Rx Interactive
+> Antineoplastic Drugs Database." Its own "Recent Changes" log (endpoint-level, dated entries back
+> to 2023) names NAACCR-dictionary changes, site-recode additions, MPH-calculation updates, and
+> hematopoietic-histology-range updates — every logged change is a registrar-coding change; none
+> touches statistics.
+
+**Two independently-authored SEER pages, zero overlapping vocabulary with "stage," "survival," or
+"diagnosis" distributions, and full agreement on what the API actually serves.** Every one of those
+resources is registrar coding-reference data — staging schemas, a disease dictionary, a drug-code
+dictionary, a data-standard reference, a site-recode lookup table. **None of it is stage-at-diagnosis
+distributions or survival by site.** The usage page's own worked examples confirm the shape:
+`rest/staging/cs/.../schemas`, `rest/disease/latest?...`, `rest/ndc/code/...` — coding lookups, not
+population statistics. This is decisive independent of the 401: even a registered, keyed account
+would not unlock the content Tier 1 needs, because that content is not served by this API at any
+tier — checked from what the API's own publishers say it does, not inferred from what it declined
+to hand back once.
 
 **The real statistics surface is a third, separate thing, and it is heavier than "an account,"
 not lighter.** `seer.cancer.gov/data/access.html` (fetched live) describes SEER Research
@@ -577,3 +597,192 @@ measurement, not a new finding. Sizing the fixed-vs-per-cancer split precisely, 
 whether the three-runs-per-commit pattern itself needs to shrink (e.g., skipping the standalone
 settle when the gated commit's own run already proves the same tree), is Phase C content-model
 work, not resolved here.
+
+## 18. The layout assertion given a real positive control — and it found a real gap (2026-09-10, user: "an assertion that has only ever passed is a comment")
+
+**The five negative controls in §13 were all surgical, single-property edits authored to trip the
+scraper's own literal conditions — a fair first test, but each one is somewhat self-confirming.**
+Three genuinely more structural mutations were built and run against the pancreas page: **MOVE A
+SECTION** (an entire fake `statWrap` block, with its own closing `additional` div, interleaved
+between the real opening tag and the real closing boundary — simulating a page restructuring that
+inserts new content where the scraper is scanning); **RENAME A HEADER** (the wrapper's own CSS
+class renamed, `survival-factSheet` → `survival-factsheet`, a site-wide markup change rather than a
+content edit); **REORDER** (the entire "New Cases and Deaths" section moved from after the target
+block to before it, simulating SEER swapping section order).
+
+**Two of three correctly refused; the third correctly did NOT refuse, and checking why matters
+more than the raw pass/fail count.** MOVE A SECTION and RENAME A HEADER both corrupt the specific
+block the scraper depends on, and both fired a `LayoutError`. REORDER moves content that has
+nothing to do with the target block — the survival-factSheet div and its own immediately-following
+`additional` div are untouched, just preceded by different content — and the scraper correctly
+parsed it, with output verified byte-identical to the true baseline (`shares`/`survivalByStage`/
+`basis` all exactly matching the unmutated page). **A test that demanded refusal on all three would
+have been the wrong test**: the right property is "corrupting the target block causes a refusal;
+moving unrelated content causes neither a refusal nor a wrong answer," and REORDER is evidence for
+the second half, not a miss.
+
+**A fourth, more serious construction — not one of the three requested, but the same spirit taken
+further — found a real gap the first eight assertion points never covered.** A duplicate, spurious
+`survival-factSheet` block with fabricated, self-consistent data (percentages summing to 100, so
+none of the existing numeric guards catch it) was inserted BEFORE the real block. The scraper's
+`re.search` found the FIRST match and silently returned the fake data — wrong numbers, no error,
+regardless of how wrong the fake data was. **This is exactly the failure mode "an assertion that
+has only ever passed" would hide**: every prior test constructed a single corrupted block; none
+tested what happens when a second, earlier one exists. Fixed with a ninth assertion — the page must
+carry exactly one `statWrap survival-factSheet` div, or the scraper refuses rather than binding to
+whichever occurrence comes first. Re-verified: all 15 real pages still match exactly (each carries
+exactly one such block, as expected), the original 5 negative controls still refuse, MOVE A SECTION
+and RENAME A HEADER still refuse, REORDER still parses correctly, and the duplicate-block
+construction now refuses too.
+
+## 19. Build-time needs a staleness policy, and a second reason it isn't just a CORS accident (2026-09-10, user: "build-time needs a staleness policy, or it recreates the rot")
+
+**The gap: committed output is not self-updating, and "a script someone runs when they remember" is
+the same failure this project already named and fixed once.** The citation durability pass
+(Architecture notes, the epidemiological verification pass) exists because a citation frozen at
+authoring time can go quietly wrong when the source changes underneath it — and a scraped SEER
+figure, committed as static data, has exactly that failure mode, arriving through a new door
+(build-time statistics) at a higher volume (potentially dozens of figures instead of hand-checked
+citations) than the pass that motivated the original discipline.
+
+**Specified: a re-run cadence, keyed to the data's own vintage, not the calendar alone.** Every
+scraped record already carries the page's own footnote (`basis`, e.g. "SEER 21 (Excluding IL)
+2016–2022, All Races, Both Sexes") — SEER's own vintage string, which changes when SEER re-submits
+data (observed historically on roughly an annual cycle). **The staleness check is a STRING COMPARE,
+not a calendar guess**: on each re-run, compare the freshly-scraped `basis` string against the one
+stored at last pull. Unchanged: the figure is still current, regardless of how much calendar time
+has passed. Changed: the figure is stale immediately, regardless of how recently it was checked —
+this is a harder, more specific signal than a fixed expiry date, because it reflects the data
+actually moving rather than an assumed cadence. **Layered under it, a calendar floor**: re-run the
+scraper at least quarterly (SEER's real cycle is roughly annual, so a quarterly check bounds the
+worst-case detection lag to about three months) — this is the fallback for the case where nobody
+remembers to check the vintage string at all, matching the sixth field's own `discipline` vocabulary
+already proposed in §3 (`'refetch-each-session' | 'cached-until:<date>' | 'permanent-snapshot'`):
+scraped SEER statistics would take `'cached-until:<date>'`, with the date set to the next quarterly
+checkpoint, refreshed on every successful re-run.
+
+**A staleness indicator carried on the record itself, so aging is visible, not silent.** Extending
+the `pulled` schema candidate (§3): `retrievedDate` (already proposed) plus `vintage` (the scraped
+basis string itself, not just a fetch timestamp) and a derived `stale` state — `'current'` (vintage
+unchanged since last check, within the calendar floor), `'check-due'` (past the calendar floor,
+vintage not yet re-verified), `'stale'` (vintage string CHANGED on a re-run and the record has not
+yet been re-pulled to match). This is the same outcome-state discipline the `_epi_pass_contract`
+already uses (verified-quoted / verified-derived / failed / not-a-source-claim /
+unverifiable-by-access / verified-figure-scope-drift) — a named state a reader can act on, not a
+boolean that collapses "fine" and "untested" into the same value.
+
+**The other half, recorded because CORS forcing the choice made it easy to treat as the only
+reason: committed output passes the full gate chain, and a runtime fetch never would.** Every other
+piece of user-facing content in this app — every `share`, every `ccf`, every `note` — goes through
+`fraction_check`, `share_sum_check`, `duplicate_figure_check`, `citation_crosscheck`, and the rest of
+the battery on every commit that touches it. A build-time scrape whose output is committed as
+ordinary JS data inherits ALL of that for free, on every subsequent edit, forever. A runtime fetch
+would bypass every one of those checks — the browser would render whatever SEER returns at that
+moment, unseen by any instrument this project has built. **This is a real, independent argument for
+build-time, not a consolation prize for losing the CORS question**: even if SEER someday added
+permissive CORS headers, build-time would still be the correct choice, because only committed
+output stays inside the verification machinery this whole project is built on.
+
+**Not built in this pass**: the `stale` state is designed, not coded; no cadence-tracking script
+exists yet; this is specification for whoever builds the eventual `pulled` fetcher, per §10's
+standing rule.
+
+## 20. The certainty-drift read, redone honestly against a defined stopping rule (2026-09-10, user: "define the stopping rule before reading")
+
+**§15's own read had no stopping rule, and re-checking it against the ranked order it claimed to
+follow found the read itself had not actually followed that order — a real miscount, corrected
+here rather than defended.** §15 reported "roughly the top two-fifths... 24 of 58." Re-derived
+against the actual rank list: the clauses read were ranks 1–5, 7–9, 13–14, 16, 20–21, 32–33, 36, 43,
+55 — **18 distinct ranks, not 24**, and not contiguous: several were chosen because they carried a
+checkable external citation, skipping ranks 6, 10, 11, and 12 entirely without noticing. This is the
+same shape as the liver share gap the instruction named: an open-ended read closed by judgment
+("that seems like enough") rather than by a rule stated in advance.
+
+**Stopping rule, defined now, before reading further: stop after 10 consecutive clean clauses,
+read in strict rank order, counted from the last defect.** Applied retroactively and prospectively
+in the same pass: ranks 6, 10, 11, and 12 — the ones skipped over, not the ones cherry-picked — were
+read fresh to close the gap honestly, rather than assumed clean by extrapolation.
+
+- Rank 6 (`bladder.js:145`): a direct registry-count comparison (8,056 vs. a ~19,000-tumor
+  breakdown), matching CLAUDE.md's own documented figure exactly. Clean.
+- Rank 10 (`bladder.js:277`): a direct quotation in quotation marks — faithful by construction.
+  Clean.
+- Rank 11 (`brain.js:208`, EGFR): "confirmed directly (Snuderl et al., Cancer Cell, 2011)," matching
+  the paper's own finding, and the `ccf` field correctly carries the mutation-and/or-amplification
+  qualifier already fixed onto this exact record in an earlier ccf batch. Clean, and the earlier fix
+  is holding.
+- Rank 12 (`brain.js:212`, PDGFRA): the same pattern, "confirmed directly (Sottoriva et al., PNAS,
+  2013)," matching the paper's own finding. Clean.
+
+**The corrected yield curve, ranks 1 through 14, read in strict order:** 1 clean, 2 clean (a method
+false-positive, §15), 3 clean, **4 DEFECT (found and fixed)**, 5 clean, 6 clean, 7 clean, 8 clean,
+9 clean, 10 clean, 11 clean, 12 clean, 13 clean, 14 clean. **Ten consecutive clean since the one
+defect at rank 4 — the stopping rule is satisfied exactly at rank 14.** Formal, rule-governed depth:
+14 of 58, not 24. The additional ranks spot-checked earlier (16, 20, 21, 32, 33, 36, 43, 55 — eight
+more, all clean) are reported as supplementary, reassuring information, explicitly outside the
+rule-governed read: they were not contiguous, do not extend the streak, and do not change the
+stopping point.
+
+**§15's finding stands unchanged — one real defect, found and fixed, plus two method false
+positives worth keeping on record — but the DEPTH claimed to reach it was wrong, and is corrected
+here rather than left standing next to a number that doesn't match a re-count.**
+
+## 21. Leave the ranker noisy — the reasoning lives with the instrument, not just in this document (2026-09-10, user: "for a ranking instrument, a false positive costs one read and a false negative costs a permanent miss")
+
+**Committed as `.claude/certainty_rank.py`** — a declared NON_INSTRUMENT (the `ccf_load.py`
+precedent: output is evidence for a human read, not a battery gate), so the reasoning below lives
+in the file a future maintainer would actually open before "improving" it, not only in this design
+document.
+
+**Do not tighten the hedge-word list after finding two false positives at the top of the ranking.**
+For a GATE, a false positive costs a wasted commit and a false negative risks shipping a real
+defect — precision matters more, because the cost of a miss is borne later, silently, by whoever
+trusts the green run. For a RANKING instrument feeding a bounded human read, the economics invert:
+a false positive costs one read, already paid for by the time it's identified as one; a false
+negative is a permanent, silent miss — the clause never gets flagged, never gets read, and nothing
+downstream will ever notice. Tightening the word list to eliminate `thyroid.js:261`/`:263`'s two
+false positives can only ever narrow the list, trading away true positives at some unknown rate to
+remove two confirmed non-findings. **The right response to a false positive here is to read past it
+and record why, not to patch the pattern that caught it** — done explicitly in the committed file's
+own header, so the next person who finds the same two false positives and reaches for a tighter
+regex reads the reasoning before making the ranking quietly worse at its actual job.
+
+## 22. The pointer ratchet, split by population (2026-09-10, user: "condensing documentation removes prose pointers without removing verification coverage")
+
+**The 579 shrink (§14, this session) was not a one-off — it was the population's actual failure
+mode, guaranteed to recur as `.claude/` grows.** `pointer_check.py`'s single ratcheted total
+conflated two populations with opposite relationships to editorial change: manifest structured refs
+and `.claude/*.py`/`.sh` comments (pointers load-bearing for an instrument's own correctness or a
+maintainer's understanding of it) do not shrink from legitimate editing, only from a genuine loss of
+coverage; CLAUDE.md/`.claude/*.md` prose and the manifest's own narrative `_`-keys (pointers that
+exist purely to help a human reader navigate a citation trail) shrink every time documentation gets
+condensed, which is routine, healthy editorial work — the exact thing that produced the 579 shrink
+this session. A single floor over both meant every future condensation would face the same choice
+this session did: painstakingly preserve every prose pointer through every rewrite (real friction on legitimate work), or
+reach for `--lower-ratchet` (which is designed as a rare, deliberate act and would instead become
+routine — weakening the floor for the population it actually protects).
+
+**Fixed in `pointer_check.py`: `classify(origin)` splits every collected pointer into `'code'`**
+(manifest `code_refs`/`backfill` refs — structured, carries the author+year oracle, does not shrink
+by condensation — plus pointers found inside scanned `.claude/*.py`/`.sh` files) **or `'prose'`**
+(the manifest's own `_`-prefixed narrative keys, plus every scanned `.claude/*.md` file and
+CLAUDE.md). The sidecar's single `pointer.pointers` metric is retired and replaced by
+`pointer.pointers_code` (ratcheted, unchanged floor semantics) and `pointer.pointers_prose`
+(reported in the same DONE line and sidecar every run, explicitly NOT in the `ratchet` array).
+`pointer.identity_oracle` is left unsplit — it was already scoped to the code population by
+construction, since only `backfill` refs ever carry an oracle. Seven new selftest arms prove
+`classify()` on all four real origin shapes and prove the split is a real partition, not a blend, on
+a synthetic mixed-population fixture (condition (7), on a constructed positive control, per this
+session's own standing discipline for a change to a ratcheting mechanism). Live run: 452 code + 138
+prose = 590, matching the pre-split total exactly — the migration changed nothing about what exists,
+only which part of it is floored.
+
+**Migration, disclosed rather than silent**: the stale `pointer_check.pointer.pointers` key is
+removed from `record_count.json`'s stored `counts` in this same commit (a deliberate retirement, not
+an edit to a value `battery.py` would otherwise own) so `vanished_ratchets()` has nothing orphaned
+to compare against; the two new metrics initialise fresh on their first run, condition (8). This
+round's own §12–§21 rewrite is the first real test of the fix: it added many prose pointers
+(`pointer.pointers_prose` rose accordingly) while the code population was untouched — under the old
+single ratchet this would have been indistinguishable from a shrink risk on the NEXT edit that
+condenses this same prose; under the split, a future condensation of this exact material can proceed
+without needing a diagnosis or a `--lower-ratchet` each time.

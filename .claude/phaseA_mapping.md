@@ -1388,3 +1388,49 @@ SEER-401 CORRECTED, SCRAPER PRICED, WATCHLIST RESOLVED (2026-09-10, user: "a rej
     Gate timing sized, not just flagged: today's three-runs-per-commit pattern costs roughly
     30-45 minutes at 16 cancers, `regress.js` driving nearly all of it by looping per organ/cancer --
     CLAUDE.md's own SMALL-POPULATION INVARIANTS prediction, now measured rather than merely named.
+
+FIVE-ITEM FOLLOW-UP: THE 401 STATED PLAINLY, A REAL POSITIVE CONTROL, A STALENESS POLICY, THE
+    READ RE-DONE HONESTLY, THE RATCHET SPLIT (2026-09-10, user: "everything outstanding,
+    consolidated"). phaseB_design.md SS18-22, all five substantively closed.
+    (1) Two findings written down plainly rather than left inferable: the SEER-401 finding now
+    quotes a SECOND, independent SEER page (the API's own root/docs) with zero vocabulary overlap
+    into statistics, corroborating the registrar-coding-only reading two ways instead of one; and
+    the record-sync gap is traced to the exact declared pair (a date-string-uniqueness check, not
+    a membership-vs-reality check) rather than described in general terms.
+    (2) The layout assertion given a real positive control, not just negative ones: three
+    structural mutants (move a section, rename a header, reorder) -- two correctly refuse, the
+    third correctly does NOT (unrelated content moved, target untouched, output verified
+    byte-correct against the true baseline) -- and a fourth, harder construction (a duplicate
+    spurious block with fabricated, sum-passing data) found a REAL gap none of the original eight
+    assertions covered: first-match semantics silently bind to an earlier duplicate. Fixed with a
+    ninth assertion (exactly one such block per page, or refuse); re-verified against all 15 real
+    pages, all 5 original negative controls, and all 4 new structural tests.
+    (3) A staleness policy specified for build-time content: a vintage-string compare (SEER's own
+    basis footnote) as the primary signal, a quarterly calendar floor under it, a `stale` state
+    (current/check-due/stale) added to the `pulled` schema candidate. Recorded the other half too:
+    committed output passes the full gate chain every other figure does; a runtime fetch never
+    would -- a real, independent argument for build-time, not a consolation prize for losing the
+    CORS question.
+    (4) The certainty-drift read re-done against a stopping rule DEFINED BEFORE reading, not
+    decided by judgment partway through. Re-checking the prior round's own claimed depth ("24 of
+    58") against the actual ranked order found a real miscount: 18 distinct, non-contiguous ranks
+    were actually read, four skipped entirely (6, 10, 11, 12) while later ranks were cherry-picked
+    for carrying a checkable citation. Redone in strict order with a stated rule (stop after 10
+    consecutive clean since the last defect); the four skipped ranks read fresh and confirmed
+    clean; the rule is satisfied exactly at rank 14 -- the corrected, honest depth, reported beside
+    the wrong one rather than silently replacing it. The ranking tool itself committed as
+    `.claude/certainty_rank.py` (declared NON_INSTRUMENT), its own header stating explicitly why
+    the hedge-word list must never be tightened after a false positive: inverted economics from a
+    gate, where a false negative here is permanent and silent while a false positive costs one
+    read.
+    (5) The pointer ratchet split by population: `pointer_check.py`'s single `pointer.pointers`
+    total retired in favor of `pointer.pointers_code` (manifest structured refs plus
+    `.claude/*.py`/`.sh` comments, floored) and `pointer.pointers_prose` (CLAUDE.md,
+    `.claude/*.md`, the manifest's own narrative keys, reported every run, explicitly not
+    floored) -- the 579 shrink was the population's real failure mode, guaranteed to recur as
+    `.claude/` grows, not a one-off. Seven new selftest arms prove `classify()` on all four real
+    origin shapes plus a mixed-population fixture proving the split is a real partition. Migration
+    disclosed: the stale combined key removed from record_count.json's stored counts in the same
+    commit rather than left to trip `vanished_ratchets()`; live split 452 code + 138 prose = 590,
+    matching the pre-split total exactly, and the new floored metric correctly initialised
+    (condition 8) rather than falsely reporting a shrink.

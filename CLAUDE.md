@@ -5693,7 +5693,37 @@ refute it, which is worth more than file order.
   than guarded. Gate timing sized (§17): ~30-45 min/commit today at 16 cancers, `regress.js`
   driving nearly all of it and looping per organ/cancer — the SMALL-POPULATION INVARIANTS
   entry's own predicted hazard, now measured rather than merely named, with Phase C's ~120-entry
-  target as the thing that makes it worse. Then wall; multifocal when it has a renderable
+  target as the thing that makes it worse. FIVE-ITEM FOLLOW-UP (2026-09-10, phaseB_design.md
+  §§18-22): the SEER-401 finding STATED PLAINLY rather than left inferable (a second,
+  independent SEER page — the API's own root/docs — corroborates the registrar-coding-only
+  reading with zero vocabulary overlap into statistics). THE SCRAPER'S LAYOUT ASSERTION GIVEN
+  A REAL POSITIVE CONTROL: three structural mutants (move a section, rename a header, reorder)
+  found the first two correctly refuse and the third correctly does NOT (unrelated content
+  moved, target block untouched, output byte-correct) — and a fourth, more serious construction
+  (a duplicate spurious block with fabricated data) found a REAL gap the original eight
+  assertions never covered: `re.search`'s first-match semantics silently bind to an earlier
+  duplicate. Fixed with a ninth assertion (exactly one such block per page, or refuse).
+  BUILD-TIME STALENESS POLICY DESIGNED: a vintage-string compare (SEER's own basis footnote)
+  as the primary staleness signal, a quarterly calendar floor under it, a `stale` state added
+  to the `pulled` schema candidate (current/check-due/stale) so aging is visible not silent —
+  plus the OTHER argument for build-time, independent of CORS: committed output passes the
+  full gate chain every other figure does, a runtime fetch never would. CERTAINTY-DRIFT READ
+  RE-DONE AGAINST A DEFINED STOPPING RULE: the prior round's own claimed depth (24 of 58) was
+  a miscount — the actual read was 18 distinct, non-contiguous ranks. Redone in strict rank
+  order with a stated rule (stop after 10 consecutive clean since the last defect); the four
+  skipped ranks (6, 10, 11, 12) read fresh and confirmed clean; rule satisfied exactly at rank
+  14 — the corrected, honest depth. RANKER COMMITTED as `.claude/certainty_rank.py` (declared
+  NON_INSTRUMENT), its own header stating explicitly why the hedge-word list must NOT be
+  tightened after a false positive — inverted economics from a gate, a false negative here is
+  permanent and silent. POINTER RATCHET SPLIT BY POPULATION: `pointer_check.py`'s single
+  `pointer.pointers` total is retired in favor of `pointer.pointers_code` (manifest structured
+  refs + .claude/*.py`/`.sh` comments, floored, unchanged semantics) and `pointer.pointers_prose`
+  (CLAUDE.md + `.claude/*.md` + the manifest's own narrative keys, reported every run, explicitly
+  NOT floored) — the 579 shrink was the population's actual failure mode, not a one-off, and a
+  documentation condensation can now proceed without tripping a floor built to protect a
+  different population. Migration disclosed: the stale combined key removed from
+  record_count.json's stored counts in the same commit; live split 452 code + 138 prose = 590,
+  matching the pre-split total exactly. Then wall; multifocal when it has a renderable
   member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
   binding — that is the whole prompt.

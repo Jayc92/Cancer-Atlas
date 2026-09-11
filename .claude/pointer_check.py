@@ -393,11 +393,33 @@ def check(pointers, files, tracked, declared):
 SCANNED_EXTS = ('py', 'sh', 'js', 'md')
 
 
+def classify(origin):
+    """CODE-AND-INSTRUMENT versus PROSE, by origin string alone -- no change to collect()'s tuple
+    shape or check()'s signature, so every existing selftest arm that hand-builds a pointer list
+    keeps working unmodified. (user ruling, 2026-09-10): the manifest's STRUCTURED refs
+    (code_refs/backfill) feed other instruments' identity checks and do not shrink by editorial
+    condensation the way narrative does, so they stay CODE; the manifest's own `_`-prefixed
+    narrative keys are prose wearing a JSON extension, so they join PROSE with every scanned .md
+    file. Scanned .py/.sh files are CODE (a fixture, a selftest arm, a comment tied to a specific
+    line for the instrument's OWN maintenance); scanned .md files (CLAUDE.md included) are PROSE
+    (a human-facing narrative, edited and condensed over time). 'js' files, if any ever carry a
+    pointer, fall to PROSE too -- nothing in this project hand-types a maintenance pointer inside
+    committed application code, and the closed SCANNED_EXTS list has no fifth case to misclassify."""
+    if origin.startswith(MANIFEST + ':code_refs') or origin.startswith(MANIFEST + ':backfill'):
+        return 'code'
+    if origin.startswith(MANIFEST + ':'):
+        return 'prose'
+    path = origin.split(' line ')[0]
+    return 'code' if path.rsplit('.', 1)[-1] in ('py', 'sh') else 'prose'
+
+
+
 def scope(tracked=None):
     """Files scanned for PROSE pointers: the TRACKED sources directly in .claude/, plus CLAUDE.md.
 
     FROM GIT, NOT FROM A GLOB, and this file shipped one commit earlier with the glob — so the
-    correction belongs here rather than being quietly absent. `pointer.pointers` is RATCHETED, and a
+    correction belongs here rather than being quietly absent. `pointer.pointers_code` is RATCHETED,
+    and a
     glob sees untracked scratch, so an untracked draft in .claude/ could raise the floor to a number A
     FRESH CHECKOUT CANNOT REPRODUCE, failing a clean clone with no defect anywhere. The confirmed case
     was the sibling metric: THIS FILE, while untracked, moved internal_quote_check's ratcheted marked
@@ -599,10 +621,48 @@ def selftest():
         'and THIS FILE, which exists on disk, stays out of a tracked list that omits it — the glob '
         'this replaced would have taken it in, which is how an untracked draft moved a ratchet')
 
+    # classify() arms (user ruling, 2026-09-10): the split is by ORIGIN STRING alone, so every one
+    # of collect()'s four real shapes is exercised directly — a fixture here IS a positive control
+    # for the split, the same discipline the SEER scraper's own layout assertion was just held to.
+    arm(classify('%s:code_refs[hcc]' % MANIFEST) == 'code',
+        "classify(): a manifest code_refs origin is CODE — structured, does not shrink by "
+        "condensation")
+    arm(classify('%s:backfill' % MANIFEST) == 'code',
+        "classify(): a manifest backfill origin is CODE — the only population carrying an "
+        "author+year oracle")
+    arm(classify('%s:_uncited_migrating_watchlist' % MANIFEST) == 'prose',
+        "classify(): a manifest `_`-prefixed narrative key is PROSE — free text wearing a JSON "
+        "extension, condensed the same way CLAUDE.md prose is")
+    arm(classify('.claude/battery.py line 42') == 'code',
+        "classify(): a pointer inside a scanned .py file is CODE")
+    arm(classify('.claude/run_checked.sh line 7') == 'code',
+        "classify(): a pointer inside a scanned .sh file is CODE")
+    arm(classify('.claude/phaseB_design.md line 187') == 'prose',
+        "classify(): a pointer inside a scanned .claude/*.md file is PROSE")
+    arm(classify('CLAUDE.md line 5567') == 'prose',
+        "classify(): a pointer inside CLAUDE.md is PROSE, same as every other .md file")
+    # THE POSITIVE CONTROL THE SPLIT EXISTS FOR: a prose-only shrink must not look like a code
+    # shrink, and a code shrink must still look like one. Built from real-shaped origins, not just
+    # classify() in isolation, because the failure this closes was in the AGGREGATE COUNT.
+    mixed = [('%s:backfill' % MANIFEST, 'x', 1, 'A', '2000'),
+             ('%s:backfill' % MANIFEST, 'x', 2, 'B', '2001'),
+             ('.claude/phaseB_design.md line 10', 'x', 3, None, None),
+             ('.claude/phaseB_design.md line 20', 'x', 4, None, None),
+             ('.claude/phaseB_design.md line 30', 'x', 5, None, None)]
+    code_n = len([p for p in mixed if classify(p[0]) == 'code'])
+    prose_n = len([p for p in mixed if classify(p[0]) == 'prose'])
+    arm(code_n == 2 and prose_n == 3,
+        'the code/prose split of a synthetic 2-code/3-prose pointer list is 2/3, not a blend — '
+        'removing one of the three prose entries would drop prose_n to 2 and leave code_n at 2 '
+        'unchanged, which is the whole point: a documentation condensation cannot touch the '
+        'floored metric')
+
     print('SELFTEST', 'PASS — fires on both dangling shapes, on a referent off its line, on one '
           'absent from the file, and on all five ways an exemption can be wrong; keeps floor-only '
           'pointers out of the identity count; refuses a substring match for a short surname and '
-          'accepts a non-ASCII one; finds a far-away referent in real corpus bytes; and takes its '
+          'accepts a non-ASCII one; finds a far-away referent in real corpus bytes; classifies all '
+          'four real origin shapes into CODE-OR-PROSE correctly, with a mixed-population fixture '
+          'proving the split is real and not a blend; and takes its '
           'population from git rather than from the filesystem'
           if ok else 'FAIL — do not trust the scan')
     return ok
@@ -647,22 +707,33 @@ if __name__ == '__main__':
             shape = 'SAME OFFSET' if len(set(offs)) == 1 else '%d distinct' % len(set(offs))
             print('    %s: %d off line, %s %s' % (raw, len(offs), shape, sorted(set(offs))))
     identity_total = sum(1 for _o, _r, _l, author, _y in pointers if author)
-    # `pointers` and `identity_oracle` are COVERAGE and are ratcheted: deleting a pointer, or an
-    # oracle field that makes one checkable, is the cheap way to silence a fire and this is what
-    # makes it not cheap. `flags` is a DEFECT COUNT and is NOT ratcheted — ratcheting it would fail
-    # the battery for repairing a pointer. Keys namespaced per producer, per the sidecar convention.
+    code_pointers = [p for p in pointers if classify(p[0]) == 'code']
+    prose_pointers = [p for p in pointers if classify(p[0]) == 'prose']
+    # SPLIT BY POPULATION (user ruling, 2026-09-10). `pointer.pointers` used to ratchet the raw
+    # collected TOTAL, which meant a legitimate documentation condensation removing prose pointers
+    # (the 579 shrink, diagnosed and repaired rather than lowered) fired the same alarm as losing
+    # real checkable coverage. CODE-AND-INSTRUMENT pointers (manifest structured refs, .py/.sh
+    # comments) stay floored: they do not shrink from editorial condensation, only from a genuine
+    # loss of coverage. PROSE pointers (CLAUDE.md, .claude/*.md, the manifest's own narrative
+    # `_`-keys) are REPORTED, not floored — condensing documentation may remove them freely, and the
+    # number stays visible in every run rather than becoming pressure to lower a floor that exists
+    # to protect a different population. `pointer.identity_oracle` is unsplit on purpose: only
+    # manifest `backfill` refs ever carry an author+year oracle, so it is already scoped to CODE by
+    # construction — see classify()'s own docstring for why code_refs/backfill count as CODE.
     print('SIDECAR ' + json.dumps({
         'name': 'pointer_check',
-        'metrics': {'pointer.pointers': len(pointers),
+        'metrics': {'pointer.pointers_code': len(code_pointers),
+                    'pointer.pointers_prose': len(prose_pointers),
                     'pointer.identity_oracle': identity_total,
                     'pointer.on_line': identity_checked,
                     'pointer.exempt': exempted,
                     'pointer.flags': len(fires)},
-        'ratchet': ['pointer.pointers', 'pointer.identity_oracle'],
+        'ratchet': ['pointer.pointers_code', 'pointer.identity_oracle'],
     }, sort_keys=True))
     print('DONE pointer_check: %d/%d hand-typed pointers resolve (file tracked, line in range), '
+          '%d code-and-instrument (floored) + %d prose (reported, not floored) = %d total, '
           '%d/%d with an author+year oracle land on their referent\'s line, %d declared off-line, '
           '%d flags, %d files scanned for prose pointers'
-          % (resolved, len(pointers), identity_checked, identity_total, exempted, len(fires),
-             len(prose)))
+          % (resolved, len(pointers), len(code_pointers), len(prose_pointers), len(pointers),
+             identity_checked, identity_total, exempted, len(fires), len(prose)))
     sys.exit(1 if fires else 0)
