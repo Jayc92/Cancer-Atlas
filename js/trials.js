@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { makeActivatable } from './accessibility.js';
+import { makeActivatable, updateDisclaimerInert } from './accessibility.js';
 
 // ============================================================
 // CLINICAL TRIALS — cancer screen, level 1 (site-map level)
@@ -198,6 +198,7 @@ function applyMode(on){
   layerEl.classList.toggle('active', on);
   layerEl.toggleAttribute('inert', !on);
   document.getElementById('screenCancer').classList.toggle('trials-open', on);
+  updateDisclaimerInert();
   const siteViewerEl = document.getElementById('txSiteViewer');
   siteViewerEl.classList.toggle('hidden', on);
   // .hidden alone (opacity:0 + pointer-events:none) leaves the site-label buttons inside it

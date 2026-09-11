@@ -886,6 +886,11 @@ NON_INSTRUMENTS = {
                     'would have been',
     'launch.json': 'preview config — data, not a tool',
     'phaseA_mapping.md': 'a record — data, not a tool',
+    'served_assets.js': 'shared discriminator (isServedAssetPath/changedServedAssets) for "does a '
+                        'changeset touch a served byte" — deploy_check.js\'s own PUBLISHED-layer '
+                        'filter, extracted so regress.js\'s served-asset-commit scoping (2026-09-11) '
+                        'reuses the identical test instead of a second copy that could drift. '
+                        'Asserts nothing and ratchets nothing itself; not a gate',
 }
 
 

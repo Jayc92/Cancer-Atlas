@@ -32,9 +32,12 @@
 const { execFileSync } = require('child_process');
 const crypto = require('crypto');
 const path = require('path');
+// The served-asset filter moved to served_assets.js (2026-09-11), shared with regress.js's own
+// serves-nothing-to-check skip — one copy of "which paths are served bytes" instead of two that
+// could drift, since both files are plain Node CommonJS and an actual require() costs nothing.
+const { ENTRY, isServedAssetPath } = require('./served_assets.js');
 
 const ORIGIN = 'https://jayc92.github.io/Cancer-Atlas';
-const ENTRY = 'cancer-atlas.html';
 
 // DECLARED BENIGN, exhaustively and by exact shape. The favicon 404 is pre-existing and known:
 // there is no favicon in the repo. Anything else is a finding. This list is the gate's honesty
@@ -83,7 +86,34 @@ function partition(events) {
 // pushed the bytes being served", and a dirty working tree is not supposed to be live.
 function headTextAssets(repo) {
   const out = execFileSync('git', ['-C', repo, 'ls-tree', '-r', '--name-only', 'HEAD'], { encoding: 'utf8' });
-  return out.split('\n').filter((p) => p === ENTRY || /^js\/.*\.js$/.test(p) || /\.css$/.test(p));
+  return out.split('\n').filter(isServedAssetPath);
+}
+
+// What did the push that produced HEAD actually change? Simpler than the `origin/main@{1}` form
+// this file's own comment below sketches, and deliberately so: `@{1}` reads the LOCAL reflog for
+// origin/main, which is empty on a fresh clone that has never fetched before, so a reflog-based
+// form is the one that would fail exactly when it is first needed. HEAD~1 vs HEAD needs no reflog
+// and is equivalent in this project's own practice, where every push has always been exactly one
+// commit. Returns null (never an empty array) when there is no parent to diff against, so a
+// caller can tell "nothing changed" apart from "couldn't ask" and treat the second one as NOT
+// explaining anything, per the measured-catastrophe-vs-failed-to-measure rule applied here too.
+function pushChangedPaths(repo, head) {
+  try {
+    return execFileSync('git', ['-C', repo, 'diff', '--name-only', `${head}~1`, head], { encoding: 'utf8' })
+      .split('\n').filter(Boolean);
+  } catch (e) {
+    return null;
+  }
+}
+
+// The DECISION, factored out from the wait-and-refetch orchestration around it so it can be
+// proven correct without any real git or network call — the same split this file already uses
+// for initFailures() vs probe(). `changed` is `null` when it could not be computed at all (no
+// parent commit) and must never be read as "empty" — an unknown changed-set explains nothing,
+// which is the fail-safe direction. A `stale` set of length 0 is also never "explainable": there
+// is nothing to retry, so the caller should not wait regardless of what this returns.
+function explainableByPropagation(stale, changed) {
+  return changed !== null && stale.length > 0 && stale.every((s) => changed.includes(s.p));
 }
 
 function headBlob(repo, p) {
@@ -203,6 +233,17 @@ async function selftest() {
   say(!isBenign('PAGEERROR', "SyntaxError: Unexpected identifier 's'"),
     'benign filter does NOT swallow the 4b2c8c5 parse error');
 
+  // arms for explainableByPropagation (2026-09-11) — the propagation-delay retry's own decision,
+  // proven in all four directions before it gets to wait 30 real seconds on anything.
+  say(explainableByPropagation([{ p: 'js/main.js' }], ['js/main.js', 'cancer-atlas.html']),
+    'a stale file the push itself changed IS explainable by propagation (retry it)');
+  say(!explainableByPropagation([{ p: '.claude/refusals.log' }], ['js/main.js']),
+    'a stale file the push did NOT touch is never explained away, however plausible waiting sounds');
+  say(!explainableByPropagation([], ['js/main.js']),
+    'nothing stale is never "explainable" — there is nothing to retry, so this must not trigger a wait');
+  say(!explainableByPropagation([{ p: 'js/main.js' }], null),
+    'an unknown changed-set (no parent commit) explains nothing — fails safe rather than assuming');
+
   // arm 3, end-to-end: the initialisation assertion must FAIL on a page that does not initialise.
   const blank = await probe('data:text/html,<html><body>not the atlas</body></html>')
     .then((r) => r.st).catch((e) => ({ evalError: String(e) }));
@@ -263,7 +304,28 @@ async function selftest() {
   }
 
   const assets = headTextAssets(repo);
-  const stale = await comparePublished(repo, assets);
+  let stale = await comparePublished(repo, assets);
+  // PROPAGATION DELAY GETS ITS OWN STATE, AT THE WRITER (2026-09-11) — mirroring the probe's own
+  // wait-and-retry-once shape above, but with a different outcome on success: a probe failure
+  // that resolves on retry is still worth a note (the harness hiccuped once), but a NOT PUBLISHED
+  // finding that resolves on retry describes NOTHING true about the deployed site any more — the
+  // first reading was simply too early, not a fact about a real state that briefly existed. This
+  // is the fix for a real thing that happened in this project's own use of this file: a genuine
+  // pre-propagation NOT-PUBLISHED result was piped through run_checked.sh, treated as a generic
+  // exit-1 refusal, and logged to the tracked refusals.log for an outcome that resolved 25 seconds
+  // later with no action taken — needing its own follow-up bookkeeping commit just to record that
+  // it had happened. The discriminator this file already wrote down for a HUMAN to apply by hand
+  // ("if a stale file is not one the push touched, waiting will not fix it and it is a real
+  // finding") is mechanized here instead: only retry when EVERY stale path is inside the set the
+  // push itself changed (pushChangedPaths), so a genuinely-unrelated stale asset never gets the
+  // benefit of the doubt. Exactly one retry, exactly like the probe — "wait and re-run once; do
+  // not... explain it away twice" is this file's own rule, quoted rather than reinvented.
+  let publishRetried = false;
+  if (explainableByPropagation(stale, pushChangedPaths(repo, head))) {
+    await new Promise((r) => setTimeout(r, 30000));
+    stale = await comparePublished(repo, assets);
+    publishRetried = true;
+  }
   // THE MOST DANGEROUS MOMENT FOR THIS GATE IS THE FIRST RUN AFTER A PUSH, and the reason is that the
   // benign explanation is sitting right there and is USUALLY TRUE: Pages has not rebuilt yet, so the
   // files the push changed still serve their old bytes and every one of them lands here. Measured
@@ -292,6 +354,21 @@ async function selftest() {
   //   MEASURED on 873baec (`.claude/run_checked.sh` + `.claude/deploy_check.js`, intersection empty):
   // 27/27 byte-matched on the FIRST run with no wait at all. A green first run after a push is not luck
   // and not a reason to relax — it is what an empty intersection predicts.
+  //
+  // MECHANIZED (2026-09-11), because the paragraphs above were a discriminator and a procedure for a
+  // HUMAN to apply by hand, and the incident that forced the point was a human (this session)
+  // applying it by hand anyway: 67b21d2's push produced exactly the predicted, benign, explained-by-
+  // the-intersection NOT PUBLISHED result, and it still went through run_checked.sh as a generic
+  // exit-1 refusal, logged to the tracked refusals.log, needing its OWN follow-up bookkeeping commit
+  // (62f016d) purely to record that a transient had happened and resolved. `explainableByPropagation`
+  // above IS this block's discriminator, computed rather than eyeballed; the wait-once-and-refetch
+  // above it IS "wait and re-run once", done before this function returns rather than by a person
+  // reading this comment. The outcome differs from the probe's own retry on purpose: a probe failure
+  // that resolves on retry still gets a note (the harness hiccuped), but a NOT PUBLISHED finding that
+  // resolves on retry describes nothing true about the CURRENT deployed site any more, so a clean
+  // retry here produces a plain clean DONE line, only flagged with "(publish check retried once)" for
+  // transparency — never logged as a refusal, because by the time this function returns, there is
+  // nothing left to refuse.
   for (const s of stale) problems.push(`NOT PUBLISHED: ${s.p} — ${s.why}`);
 
   let st = null, events = [];
@@ -311,7 +388,7 @@ async function selftest() {
   // mean what they said, in the one instrument whose whole purpose is refusing to accept a
   // green-looking summary. Caught by reading its own first real output against its own findings.
   console.log(`DONE deploy_check: ${assets.length - stale.length}/${assets.length} assets `
-    + `byte-matched to HEAD ${head.slice(0, 7)}, `
+    + `byte-matched to HEAD ${head.slice(0, 7)}${publishRetried ? ' (publish check retried once, 30s wait)' : ''}, `
     + `${st && !st.evalError ? st.hotspots + ' hotspots live' : 'hotspots UNMEASURED (probe failure)'}${st && st.probeRetried ? ' (probe retried once)' : ''}, `
     + `${unexplained.length} unexplained page errors (${benignSeen.length} declared-benign), `
     + `${problems.length} problems`);

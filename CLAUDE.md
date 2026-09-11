@@ -9039,6 +9039,77 @@ refute it, which is worth more than file order.
    with its own hotspot, sharpened against the existing Prostatic urethra
    point, is a plausible separate follow-up, not assumed necessary.
 
+## FOUR THINGS CAUGHT WHILE BUILDING PHASE D THAT GENERALISE PAST IT (2026-09-11, user-directed)
+
+**1. A HIDDEN-WITHOUT-INERT GAP HAS SIBLINGS, AND THE SWEEP FOUND ONE.** The trials.js build caught
+`#txSiteViewer` hidden via its `.hidden` CSS class (opacity:0 + pointer-events:none) with no
+matching `inert`, leaving its site-label buttons keyboard-reachable underneath the panel. Swept
+the whole app for the same shape before assuming it was isolated, per the prediction that a gap in
+one hand-written `applyMode` likely has siblings. It did, and the sibling PREDATES trials.js
+entirely: `#disclaimer` is a real `tabindex="0"` focusable region, hidden by CSS alone under THREE
+conditions (`#app.panel-open`, `#screenCancer.hist-open`, `#screenCancer.trials-open`) with nothing
+in any of `panel.js`/`histology.js`/`trials.js` ever touching its `inert` state. Fixed with one
+shared function rather than three independent toggles: `updateDisclaimerInert()`
+(`js/accessibility.js`) recomputes the OR of all three current conditions on every call, so it is
+correct regardless of which one just changed rather than depending on the three states never
+overlapping (they don't today, by construction — each dismisses the others before activating — but
+that invariant living only in three separate files is exactly the kind of thing that erodes
+silently on a future edit). Verified live against the actual DOM (`inert` true/false correctly
+across all three trigger conditions and their close paths), not assumed from reading the CSS.
+
+**2. THE CWD SCAR, A FOURTH TIME — AND THE ONE PIECE OF IT A SCRIPT CAN ACTUALLY CLOSE.** A
+backgrounded `commit_checked.sh` call failed exit 127 (bare relative path, drifted cwd) — the
+identical third-instance shape, again safe by luck. Investigated rather than just re-recorded:
+`commit_checked.sh` already self-roots (`cd "$DIR"` before `do_commit`, already there) — the
+failure was purely the OUTERMOST layer, the invoking shell unable to find the script's own path at
+all, which NO code inside the script can fix, because that code never runs if the shell can't
+resolve the path to it first. `run_checked.sh` had a DIFFERENT, narrower, genuinely fixable gap:
+it computed its own repo root (`$DIR`) but never `cd`'d there before running the wrapped command
+— so a caller that located `run_checked.sh` correctly but passed a relative-path WRAPPED command
+(`.claude/battery.py`, the documented form throughout this project) still failed if cwd was wrong
+at that moment. Measured live before and after: `cd /tmp && /abs/path/run_checked.sh "DONE x:"
+python3 .claude/battery.py --selftest` failed pre-fix (`can't open file
+'/private/tmp/.claude/battery.py'`) and passes post-fix. **What this does NOT close, stated rather
+than implied:** invoking either wrapper by a bare relative path from the wrong cwd still fails,
+irreducibly, and the only available mitigation for that layer is never doing it — absolute paths
+or an explicit `cd <absolute> &&` on every invocation, a discipline rather than a mechanism, named
+as such rather than oversold as fixed.
+
+**3. `regress.js` IS NOW SCOPED TO SERVED-ASSET COMMITS — using the IDENTICAL discriminator
+`deploy_check.js`'s PUBLISHED layer already applies, extracted into `.claude/served_assets.js`
+(`isServedAssetPath`/`changedServedAssets`) so both files share one copy of "which paths are
+served bytes" instead of keeping two that could drift.** A commit touching only `.claude/` tooling
+or `*.md` prose cannot move a single rendered pixel, so paying the ~15-minute browser-suite cost
+for it was pure waste with zero risk reduction. This is a SKIP WITH A MARKER, not an omission:
+`regress` still runs and still prints a real `==== DONE:` line (`SKIPPED — 0 served-asset paths
+changed`, 0/0/0), so battery.py's assertion 1 (every declared instrument ran and printed its own
+marker) is untouched. Checked both directions on REAL commits from this repo's own history, not
+synthetic fixtures: `62f016d` (refusals.log only) skips; `67b21d2` (cancer-atlas.html/js/main.js/
+js/trials.js) does not — confirmed by pointing the current `served_assets.js` at each commit's own
+worktree directly, after a first attempt mistakenly checked out the OLD regress.js (predating this
+fix) into a historical worktree and ran the full suite regardless — a testing-methodology error
+caught and corrected before it could be mistaken for a result.
+
+**4. PROPAGATION DELAY NOW HAS ITS OWN STATE, AT THE WRITER, MIRRORING THE PROBE'S OWN
+WAIT-AND-RETRY-ONCE SHAPE ALREADY IN THIS FILE.** `deploy_check.js` had already written down, by
+hand, in its own comments, the exact discriminator for "is a NOT PUBLISHED finding explainable by
+propagation delay" (every stale file must be inside the push's own changed-file set) and the exact
+procedure ("wait and re-run once; do not... explain it away twice") — for a HUMAN to apply. The
+incident that forced mechanising it: `67b21d2`'s push produced exactly the predicted, benign,
+explained-by-the-intersection NOT PUBLISHED result, and it still went through `run_checked.sh` as
+a generic exit-1 refusal, logged to the tracked `refusals.log`, needing its OWN follow-up
+bookkeeping commit (`62f016d`) purely to record that a transient had happened and already
+resolved. `explainableByPropagation(stale, changed)` is now a pure, selftested decision function
+(four arms: explainable, not-touched-by-the-push, nothing-stale, unknown-changed-set-fails-safe);
+the orchestration around it waits 30s and re-fetches exactly once on a positive decision. THE
+OUTCOME DIFFERS FROM THE PROBE'S OWN RETRY ON PURPOSE: a probe failure that resolves on retry still
+gets a note (the harness hiccuped once, worth knowing regardless of the outcome); a NOT PUBLISHED
+finding that resolves on retry describes nothing true about the CURRENT deployed site any more, so
+a clean retry here produces a plain clean DONE line (flagged `(publish check retried once)` for
+transparency) and is never logged as a refusal — by the time the function returns, there is
+nothing left to refuse. Verified: the selftest's four new arms pass; a real end-to-end run against
+the already-published HEAD still reports `0 problems` with no spurious retry note.
+
 ## Source files
 `cancer-atlas.html` is now a thin shell (markup + CSS + the three.js import map,
 ~365 lines) that loads `js/main.js` as an ES module — it is no longer the single

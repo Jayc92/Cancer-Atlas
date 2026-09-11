@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { CANCER_DETAILS } from './organs/index.js';
-import { makeActivatable } from './accessibility.js';
+import { makeActivatable, updateDisclaimerInert } from './accessibility.js';
 import { makeSeededRandom, seedFromKey } from './rng.js';
 import { dismissMutationPanel } from './panel.js';
 
@@ -1232,6 +1232,7 @@ function applyMode(on){
   // Hides the site-color legend while the slide is up — it keys the 3D site map, not this
   // view, and it physically overlaps the info card's citation line (see the CSS comment).
   document.getElementById('screenCancer').classList.toggle('hist-open', on);
+  updateDisclaimerInert();
   // The cell layer only re-activates if we're actually AT the cell-scatter level — main.js's
   // txGoLevel(1) owns the level-1 state and calls resetHistologyMode() with the layer already
   // torn down, so this guard keeps the two owners from fighting.

@@ -9,6 +9,29 @@
 // Needs puppeteer-core: resolved normally if installed, else from PUPPETEER_CORE, else the persistent
 // ~/.cache/cancer-atlas/node_modules (2026-09-10), else the old /tmp/atlas-verify convention. Chrome path overridable
 // via CHROME_PATH (default is the macOS install location).
+//
+// SCOPED TO SERVED-ASSET COMMITS (2026-09-11), using the IDENTICAL discriminator deploy_check.js's
+// own PUBLISHED layer already applies (served_assets.js, shared rather than duplicated) — a
+// changeset touching only .claude/ tooling or *.md prose cannot move a single rendered pixel, so
+// paying this suite's ~15-minute cost for it is pure waste with zero risk reduction. This is a
+// SKIP WITH A MARKER, not an omission: battery.py's assertion 1 ("every declared instrument ran
+// and printed its own marker") is still satisfied — this still runs, as regress, and still prints
+// a real ==== DONE: line, it just never starts the server or touches puppeteer when there is
+// nothing served for it to prove. Checked BOTH directions before shipping (condition 7): a real
+// served-asset commit in this repo's own history still runs the full suite; a real docs-only
+// commit (this project has several) skips, and neither reading was assumed — both were run against
+// real commits, not synthetic fixtures, because the discriminator itself is git history, not a
+// constructed case.
+{
+  const served = require('./served_assets.js');
+  const REPO_EARLY = require('path').resolve(__dirname, '..');
+  const changed = served.changedServedAssets(REPO_EARLY);
+  if (changed.length === 0) {
+    console.log('==== DONE: SKIPPED — 0 served-asset paths changed (cancer-atlas.html, js/**/*.js, **/*.css) — 0 checks, 0 failures, 0 page errors (0 declared benign, 0 undeclared) ====');
+    process.exit(0);
+  }
+}
+
 let puppeteer;
 try { puppeteer = require('puppeteer-core'); }
 catch {

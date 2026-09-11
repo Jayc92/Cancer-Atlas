@@ -1,7 +1,7 @@
 import { state, regionCellCache } from './state.js';
 import { CANCER_DETAILS } from './organs/index.js';
 import { cssVar } from './viewer.js';
-import { makeActivatable, landFocus } from './accessibility.js';
+import { makeActivatable, landFocus, updateDisclaimerInert } from './accessibility.js';
 import { makeSeededRandom, seedFromKey, shuffleWithRandom } from './rng.js';
 import { renderCrumbs } from './breadcrumb.js';
 
@@ -281,6 +281,7 @@ export function txOpenCell(regionIdx, cell){
   txPanel.classList.add('open');
   txPanel.toggleAttribute('inert', false);
   appEl.classList.add('panel-open');
+  updateDisclaimerInert();
   renderCrumbs();
   // The panel is the whole point of activating a cell, and its close button is the only way
   // out by keyboard, so move focus into it. Deliberately not a focus trap — the panel is
@@ -306,6 +307,7 @@ export function txClosePanel(updateLevel){
   txPanel.classList.remove('open');
   txPanel.toggleAttribute('inert', true);
   appEl.classList.remove('panel-open');
+  updateDisclaimerInert();
   state.txCurrentCell = null;
   if(updateLevel!==false && state.txLevel===3) state.txLevel = 2;
   // Hand focus back to the cell that opened this. landFocus skips it if that cell has since

@@ -51,14 +51,44 @@ structured data says it treats clear-cell RCC. A basket trial genuinely listing 
 passes; a trial that matches only via an unrelated keyword collision, with no genuine target-disease
 tag anywhere in its own conditions, does not. §1b below is what tells the two apart mechanically.
 
-**§1a. THE CORPUS MOVES — MEASURED, NOT ASSUMED, BY RE-DRAWING THE SAME QUERY A DAY LATER.** The
-2026-09-11 re-draw of `query.cond=clear cell renal cell carcinoma` returned an EIGHT-STUDY SET WITH
-ZERO NCT-ID OVERLAP against the 2026-09-10 set recorded above — not a reordering, a different corpus
-slice entirely (no CD70 trial in today's draw at all; today's eighth-ranked concern is a different
-shape, covered in §1b). This is the direct, first-hand confirmation of the architectural point raised
-about this section: a one-time verification of query quality checks today's corpus and says nothing
-about tomorrow's. The fix is not a better one-time check — it is moving the guard to where it can run
-on every fetch, forever, against whatever the corpus looks like on the day. That is §1b.
+**§1a. THE CORPUS MOVES — MEASURED, NOT ASSUMED, BY RE-DRAWING THE SAME QUERY A DAY LATER, AND THEN
+CHECKED AGAINST THE OBVIOUS ALTERNATIVE EXPLANATION BEFORE BEING TRUSTED.** The 2026-09-11 re-draw of
+`query.cond=clear cell renal cell carcinoma` returned an EIGHT-STUDY SET WITH ZERO NCT-ID OVERLAP
+against the 2026-09-10 set recorded above — not a reordering, a different corpus slice entirely (no
+CD70 trial in today's draw at all; today's eighth-ranked concern is a different shape, covered in
+§1b). Before that was trusted as "the corpus changed," the sharper and more dangerous alternative was
+tested directly: is the SORT itself non-deterministic — a relevance-flavored full-text search
+returning a shuffling slice on every call — rather than the corpus genuinely differing day to day?
+That would be worse than a stale mapping, because it would mean the shipped duty-of-care line
+("Listed by most recently updated, not by relevance or likelihood of benefit") describes a mechanism
+the API does not actually guarantee.
+
+**TESTED, NOT ASSUMED: the identical query was fetched three times within about one second
+(2026-09-11).** All three returned byte-identical, ordered NCT-ID sequences. **The sort is
+deterministic within a tight window — confirmed, not merely trusted** — which settles the sharper
+question and clears the shipped copy: the sort key genuinely is `LastUpdatePostDate`, applied
+consistently, and there is no correctness defect in what the page currently claims about ordering.
+
+**What the day-over-day difference actually reflects, stated more precisely than "new trials
+registered" — which was not established and should not have been implied:** `LastUpdatePostDate` is
+a signal that many PRE-EXISTING trials' metadata touches for routine reasons (a status update, a
+minor amendment, ordinary sponsor housekeeping) far more often than a genuinely new trial gets
+registered against this exact query. A narrow, `pageSize=10` window sorted by that signal is
+therefore volatile day-to-day for a reason that has nothing to do with query-mechanism instability
+and does not require assuming registry growth either — it only requires that SOME fraction of a
+candidate pool larger than ten keeps getting its most-recent-update timestamp bumped, which is
+routine, not exceptional. Whether any of the observed turnover is in fact new registrations was not
+established here and is not needed for the architecture below to hold.
+
+**This finding, once stated precisely rather than sensationally, is if anything a STRONGER argument
+for the fetch-time filter than the original framing, not a weaker one**: a deterministic sort over a
+routinely-volatile signal means the visible window WILL keep changing on an ordinary, frequent
+cadence — not as a rare event a one-time check could reasonably hope to catch by luck, but as the
+expected, permanent behavior of this kind of query. A one-time verification of query quality checks
+one moment against a signal that moves on a normal day; the fix is not a better one-time check — it
+is moving the guard to where it runs on every fetch, forever, against whatever the corpus and its
+metadata look like on the day. That is §1b, unchanged in substance, now resting on the more precise
+and better-supported claim.
 
 **§1b. THE QUERY IS NOT THE GUARD — THE RETURNED CONDITIONS ARE.** A query string, however carefully
 chosen, only ever describes what was ASKED FOR; a collision (the gdiff "diffuse" case below) or a

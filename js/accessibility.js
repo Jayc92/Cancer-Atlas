@@ -27,6 +27,28 @@ export function makeActivatable(el, activate, opts){
   });
 }
 
+// #disclaimer is a real tabindex="0" focusable region, hidden purely by CSS opacity/pointer-events
+// under three independent conditions (#app.panel-open, #screenCancer.hist-open,
+// #screenCancer.trials-open) — none of which ever toggled `inert`, so a keyboard user could always
+// Tab onto an invisible, unclickable region and have a screen reader announce it, in all three
+// states, since before this feature existed. Found by sweeping the app for the same
+// hidden-without-inert shape the trials.js build caught once (2026-09-11), on the prediction that a
+// gap in one hand-written applyMode likely has siblings — it did, in code that predates trials.js
+// entirely. One shared function rather than three independent toggles: three owners flipping their
+// own flag on/off cannot be trusted not to un-inert the disclaimer out from under a DIFFERENT
+// still-active state if any two of them were ever to overlap (they don't today, by construction —
+// each dismisses the others before activating — but that invariant living only in three separate
+// files is exactly the kind of thing that erodes silently on a future edit). Recomputing the OR of
+// all three current conditions on every call is correct regardless of which one just changed.
+export function updateDisclaimerInert(){
+  const app = document.getElementById('app');
+  const cancerScreen = document.getElementById('screenCancer');
+  const hidden = app.classList.contains('panel-open')
+    || cancerScreen.classList.contains('hist-open')
+    || cancerScreen.classList.contains('trials-open');
+  document.getElementById('disclaimer').toggleAttribute('inert', hidden);
+}
+
 // Every navigation destroys or disables the control that triggered it: renderCrumbs() rebuilds
 // the breadcrumb from scratch, and setScreen()/txGoLevel() mark whole layers inert. Focus would
 // therefore fall back to <body> and the next Tab would restart from the top of the document, so

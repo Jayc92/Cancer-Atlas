@@ -257,3 +257,22 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   NOT PUBLISHED: js/trials.js — HTTP 404
   | DONE deploy_check: 26/29 assets byte-matched to HEAD 67b21d2, 31 hotspots live, 0 unexplained page errors (2 declared-benign), 3 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-11T14:38:18Z reason=exit=2 marker="DONE x:" tool=battery.py
+     output 1 lines, last 12 below
+  | /opt/homebrew/Cellar/python@3.14/3.14.5/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python: can't open file '/private/tmp/.claude/battery.py': [Errno 2] No such file or directory
+==== END REFUSAL
+==== REFUSAL 2026-09-11T14:57:33Z reason=exit=1 marker="DONE battery:" tool=battery.py
+     output 75 lines, last 12 below
+  |   ok   prong one fires on this machine's own home under a root prong two cannot see (the arm that keeps prong one from being padding)
+  |   ok   prong two fires on a Users-rooted path naming SOMEONE ELSE's account
+  |   ok   prong two fires on a home-rooted path naming SOMEONE ELSE's account
+  |   ok   both prongs on one file collapse to ONE problem naming both, at the line of the hit
+  |   ok   the problem string names file and line and carries NONE of the offending path — it can be archived into the tracked refusal log without moving the leak into the index
+  |   ok   a binary file is scanned on the same terms, reporting a byte offset where the prefix does not decode as UTF-8
+  |   ok   a tilde-relative reference, a bare home root with no account segment, and an absolute path under neither root all pass — the shapes the corpus legitimately holds
+  |   ok   an unresolved home ('~' returned unchanged) is no needle: nothing fires on a tilde
+  |   ok   a tracked file that cannot be read is reported by name rather than counted as scanned
+  |   ok   the live index holds no machine-specific path (100 tracked files scanned as bytes, binaries included)
+  | SELFTEST FAIL — do not trust a green battery from this build
+  | DONE battery_selftest: 73 arms run, 1 failures
+==== END REFUSAL

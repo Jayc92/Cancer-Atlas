@@ -344,6 +344,27 @@ if [ "${1:-}" = "--selftest" ]; then
   fi
 fi
 
+# FOURTH INSTANCE OF THE CWD SCAR, AND THE ONE PIECE OF IT THIS FILE COULD ACTUALLY CLOSE
+# (2026-09-11). $DIR above has always been computed correctly — once this script is found and
+# started, it always knows its own repo root — but nothing downstream ever cd'd there before
+# running "$@". So a caller that locates THIS script correctly (an absolute path, or a correct
+# cwd) but passes the WRAPPED COMMAND as a relative path (".claude/battery.py", the documented
+# form throughout this project) still failed if cwd was wrong at THAT moment: found live,
+# 2026-09-11 — `run_checked.sh` invoked by absolute path from /tmp, wrapping
+# `python3 .claude/battery.py --selftest`, failed with "can't open file
+# '/private/tmp/.claude/battery.py'". commit_checked.sh already closes this for itself (its own
+# `cd "$DIR"` sits right before it runs anything); this file computed the identical $DIR and
+# never used it for the one thing that needed it. Fixed by cd'ing here, after the marker/argv
+# guards above (which need no cwd) and before "$@" runs (which does).
+# WHAT THIS DOES NOT CLOSE, STATED RATHER THAN IMPLIED: the outermost layer — can the invoking
+# shell find THIS SCRIPT'S OWN PATH at all — is not reachable by any code inside the script,
+# because that code never runs if the shell can't resolve the path to it first. That layer has
+# no mechanism, only the discipline of never invoking .claude/run_checked.sh (or
+# commit_checked.sh) by a bare relative path. Recorded here rather than implied fixed, because
+# claiming more than this closes would be exactly the kind of overstated fix this project's own
+# conventions exist to catch.
+cd "$DIR" || exit 2
+
 if [ $# -lt 2 ]; then
   echo "usage: run_checked.sh <done-marker> <command> [args...]" >&2
   exit 2
