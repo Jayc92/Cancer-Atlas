@@ -321,3 +321,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   FAILED: pointer_check — exit 1
   | DONE battery: phase pre-commit — 15/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 42 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 101/101 tracked files hold no machine-specific path, 490 citation records extracted (ratchet 488->490 raised; 2 added, 46 moved), 7/15 reporting members emitted a sidecar, 5 sidecar metrics ratcheted, 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-11T20:23:54Z reason=exit=1 marker="DONE " tool=deploy_check.js
+     output 20 lines, last 12 below
+  |   ok   initialisation assertion fails on a blank page (1 failure(s) reported)
+  |   ok   reports all three initialisation failures on the 4b2c8c5 shape (loaded page, null state) — got 3
+  |   ok   reports no failures on a healthy state (the gate is not stuck failing)
+  |   ok   excuses the console echo when every HTTP error observed was declared benign
+  |   ok   keeps the console echo as a finding when an UNDECLARED 404 is also present
+  | SELFTEST PASS — all three layers shown able to fail: stale bytes, a widened benign list, a dead page
+  | DONE deploy_check_selftest: 13 arms run, 0 failures
+  |   NOT PUBLISHED: cancer-atlas.html — bytes differ — HEAD 40e1395ad64f (74566B) vs served 861ceafb4b83 (74184B)
+  |   NOT PUBLISHED: js/main.js — bytes differ — HEAD 76970c64bcba (55616B) vs served 0a3be8ab0851 (50782B)
+  |   NOT PUBLISHED: js/morphology.js — bytes differ — HEAD 1306d2f83ef8 (64254B) vs served 20a73ae7850c (63053B)
+  |   NOT PUBLISHED: js/organs/ovary.js — bytes differ — HEAD b1e4fe20dafb (33758B) vs served 125214e4521e (32716B)
+  | DONE deploy_check: 25/29 assets byte-matched to HEAD 24f4466, 31 hotspots live, 0 unexplained page errors (2 declared-benign), 4 problems
+==== END REFUSAL
