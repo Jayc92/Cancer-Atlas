@@ -291,3 +291,33 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   NOT PUBLISHED: js/trials.js — bytes differ — HEAD cc6a01d74e7e (18784B) vs served 2fbde6a03d82 (12184B)
   | DONE deploy_check: 28/29 assets byte-matched to HEAD e1efb6c (publish check retried once, 30s wait), 31 hotspots live, 0 unexplained page errors (2 declared-benign), 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-11T20:03:30Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 40 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/ovary.js:159 — Pathol|2004 is at 168 (offset +9, name+year), 5 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/ovary.js:166 — Malpica|2004 is at 175 (offset +9, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/ovary.js:182 — Kondo|2020 is at 191 (offset +9, name+year), 5 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/ovary.js:196 — Pearce|2012 is at 205 (offset +9, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/ovary.js:211 — Chandler|2015 is at 220 (offset +9, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/ovary.js:259 — Helming|2014 is at 268 (offset +9, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/ovary.js:291 — DeLair|2011 is at 300 (offset +9, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/ovary.js:291 — Uekuri|2013 is at 286 (offset -5, name+year), 2 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/ovary.js: 10 off line, 2 distinct [-5, 9]
+  | SIDECAR {"metrics": {"pointer.exempt": 0, "pointer.flags": 10, "pointer.identity_oracle": 266, "pointer.on_line": 256, "pointer.pointers_code": 452, "pointer.pointers_prose": 143}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 595/595 hand-typed pointers resolve (file tracked, line in range), 452 code-and-instrument (floored) + 143 prose (reported, not floored) = 595 total, 256/266 with an author+year oracle land on their referent's line, 0 declared off-line, 10 flags, 37 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-11T20:06:41Z reason=exit=1 marker="DONE " tool=battery.py
+     output 741 lines, last 12 below
+  |       "type": "404",
+  |       "msg": "http://localhost:3057/favicon.ico"
+  |      },
+  |      {
+  |       "type": "console",
+  |       "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |      }
+  |     ]
+  |     RATCHET RAISED: citation_crosscheck.records 146 -> 148 — growth moves it up with no ceremony; git add .claude/record_count.json in this commit
+  | 
+  |   FAILED: pointer_check — exit 1
+  | DONE battery: phase pre-commit — 15/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 42 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 101/101 tracked files hold no machine-specific path, 490 citation records extracted (ratchet 488->490 raised; 2 added, 46 moved), 7/15 reporting members emitted a sidecar, 5 sidecar metrics ratcheted, 1 problems
+==== END REFUSAL

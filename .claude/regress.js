@@ -339,6 +339,8 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     // where the organ actually has a second active cancer to swap to (today: ovary, thyroid).
     const massInfo = await page.evaluate(async (key) => {
       const m = await import('./js/organs/index.js');
+      const morph = await import('./js/morphology.js');
+      const st = await import('./js/state.js');
       const active = m.CANCERS.filter(c => c.organKey === key && c.active);
       const badgeCount = () => document.querySelectorAll('.tumour-badge').length;
       if (active.length < 2) return { badgeCount: badgeCount(), activeCount: active.length };
@@ -349,18 +351,56 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
         b.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         return document.getElementById('oiTitle').textContent;
       };
+      // ORIGIN-ANCHOR CORRECTNESS (2026-09-11, user-directed): "swaps on hover" above proves the
+      // mass RESOLVES per entry, never that it resolves to the CORRECT anchor — the exact
+      // resolve-vs-resolve-correctly gap this project's own body-marker placement bug already
+      // taught it to check for. Read the live mesh's own world position (state.organViewer.scene,
+      // by mesh.name identity, never by screen projection — this pane's rAF is not at issue here
+      // since Puppeteer's real Chrome ticks normally, but position-by-identity is the house
+      // pattern regardless) and compare it against BOTH candidate hotspot anchors (the organ's
+      // shared default, and any per-entry override) from ORGAN_DETAILS itself — not against a
+      // hardcoded expectation, so this check tracks whichever entry/organ actually carries an
+      // override without needing a second manual addition per override.
+      const massPos = () => {
+        const v = st.state.organViewer; if (!v || !v.scene) return null;
+        let p = null; v.scene.traverse(o => { if (o.name === 'phaseA-mass') p = o.position.clone(); });
+        return p ? [p.x, p.y, p.z] : null;
+      };
+      const dist = (a, b) => a && b ? Math.hypot(a[0]-b[0], a[1]-b[1], a[2]-b[2]) : null;
+      const detail = m.ORGAN_DETAILS[key];
+      const defaultIdx = morph.ORIGIN_HOTSPOT[key];
+      const overrideIdx = morph.ORIGIN_HOTSPOT_ENTRY[active[1].id];
+      const defaultHotspotPos = detail.hotspots[defaultIdx] ? detail.hotspots[defaultIdx].pos : null;
+      const overrideHotspotPos = overrideIdx !== undefined && detail.hotspots[overrideIdx] ? detail.hotspots[overrideIdx].pos : null;
       const nameDefault = badgeName();
+      const posDefault = massPos();
       second.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
       const nameHovered = badgeName();
+      const posHovered = massPos();
       second.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
       const nameAfterLeave = badgeName();
-      return { badgeCount: badgeCount(), activeCount: active.length, nameDefault, nameHovered, nameAfterLeave };
+      return { badgeCount: badgeCount(), activeCount: active.length, nameDefault, nameHovered, nameAfterLeave,
+        overrideEntryId: active[1].id, hasOverride: overrideIdx !== undefined,
+        distDefaultToDefaultHotspot: dist(posDefault, defaultHotspotPos),
+        distDefaultToOverrideHotspot: dist(posDefault, overrideHotspotPos),
+        distHoveredToDefaultHotspot: dist(posHovered, defaultHotspotPos),
+        distHoveredToOverrideHotspot: dist(posHovered, overrideHotspotPos) };
     }, o.key);
     check(`organ ${o.key} single mass`, massInfo.badgeCount === 1, JSON.stringify(massInfo));
     if (massInfo.activeCount >= 2) {
       check(`organ ${o.key} mass swaps on hover`,
         massInfo.nameHovered !== massInfo.nameDefault && massInfo.nameAfterLeave === massInfo.nameDefault,
         JSON.stringify(massInfo));
+      // Only meaningful where the hovered entry actually carries a per-entry override that
+      // differs from its organ's default — today: ovary/clear. An organ with no override here
+      // (e.g. thyroid, where PTC/FTC genuinely share one follicular-cell origin) has nothing to
+      // distinguish and is correctly skipped rather than asserting a difference that shouldn't exist.
+      if (massInfo.hasOverride) {
+        check(`organ ${o.key} origin anchor resolves to the override, not the organ default, for ${massInfo.overrideEntryId}`,
+          massInfo.distHoveredToOverrideHotspot !== null && massInfo.distHoveredToDefaultHotspot !== null
+          && massInfo.distHoveredToOverrideHotspot < massInfo.distHoveredToDefaultHotspot,
+          JSON.stringify(massInfo));
+      }
     }
     await page.screenshot({ path: path.join(OUT, `02_organ_${o.key}.png`) });
   }

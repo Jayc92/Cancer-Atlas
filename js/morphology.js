@@ -515,6 +515,21 @@ export const ORIGIN_HOTSPOT = Object.freeze({
   thyroid: 1,  // Right lobe — its text carries the follicular-cell origin
 });
 
+// PER-ENTRY OVERRIDE (2026-09-11, user-directed fix to a live origin-collapse contradiction found
+// at N=2): ORIGIN_HOTSPOT above is one shared anchor per ORGAN, which is correct only where every
+// active entry of that organ genuinely arises at the same site — true for thyroid's PTC/FTC (both
+// follicular-cell), false for ovary's hgsoc/clear, whose own hotspot text says clear-cell carcinoma
+// arises in endometriosis rather than at hgsoc's surface-epithelium anchor. Keyed by cancer id, not
+// organ; an id absent here uses its organ's ORIGIN_HOTSPOT default unchanged. reserve_check verifies
+// each override's OWN hotspot text speaks of origin directly (no falling back to the organ
+// description, which is generic across every entry the organ carries and is exactly what let the
+// original contradiction pass the per-organ check silently).
+export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
+  clear: 1, // Cortex — see js/organs/ovary.js's Cortex hotspot text and citations (Gordts 2003,
+            // PMID 12758100; Scurry 2001, PMID 11293160): ovarian endometriotic cysts form by
+            // cortical invagination, not from the surface epithelium hgsoc's mass anchors at.
+});
+
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never
 // a second uncharacterised entry (user ruling). Non-optional. Chip = the short on-model badge;
 // sentence = the accessible name and the info-card text.

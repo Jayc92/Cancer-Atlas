@@ -164,6 +164,28 @@ function organHotspots(){
 }
 const ORIGIN_WORDS = /\b(aris(e|es|ing)|origin(ates?|ating)?|begins?|starts?)\b/i;
 
+// PER-ENTRY ORIGIN OVERRIDE (2026-09-11, user-directed): checked STRICTER than the per-organ loop
+// in liveProblems() — the entry's OWN hotspot text must speak of origin directly, with no fallback
+// to the organ description. The organ description is generic across every entry the organ carries,
+// and a generic-desc fallback is exactly what let the original contradiction (ovary's clear-cell
+// mass anchored at Surface epithelium, the shared organ default, while ovary's own desc and Surface
+// epithelium's own text both already said clear-cell arises elsewhere) pass the per-organ check
+// silently — desc already contains an ORIGIN_WORDS hit ("ovarian cancers begin") regardless of
+// which hotspot a mis-sited entry actually used. Extracted as its own function (the citedBackingViolations
+// pattern) so it can be demonstrated capable of firing before its zero on the live tree is trusted.
+function originHotspotEntryViolations(originHotspotEntry, hs, entries){
+  const problems = [];
+  for(const [entryId, idx] of Object.entries(originHotspotEntry)){
+    const entry = entries.find(e => e.id === entryId);
+    if(!entry){ problems.push(`origin-hotspot-entry names '${entryId}', which is not an active entry`); continue; }
+    const h = hs[entry.organKey];
+    if(!h){ problems.push(`origin-hotspot-entry '${entryId}' names organ '${entry.organKey}', which has no organ file`); continue; }
+    if(!(idx >= 0 && idx < h.labels.length)){ problems.push(`origin-hotspot-entry '${entryId}': index ${idx} is out of range (${h.labels.length} hotspots)`); continue; }
+    if(!ORIGIN_WORDS.test(h.texts[idx] || '')) problems.push(`origin-hotspot-entry '${entryId}': hotspot '${h.labels[idx]}' does not itself speak of origin — a per-entry override must not rely on the organ description`);
+  }
+  return problems;
+}
+
 // ---- the check proper ----------------------------------------------------------------------
 function liveProblems(M){
   const problems = [];
@@ -249,6 +271,7 @@ function liveProblems(M){
     if(!(ORIGIN_WORDS.test(h.texts[idx] || '') || ORIGIN_WORDS.test(h.desc))) problems.push(`organ ${key}: neither hotspot '${h.labels[idx]}' nor the organ description speaks of origin — the mass would be anchored to an unsupported structure`);
   }
   for(const key of Object.keys(M.ORIGIN_HOTSPOT)) if(!hs[key]) problems.push(`origin-hotspot names organ '${key}', which has no organ file`);
+  problems.push(...originHotspotEntryViolations(M.ORIGIN_HOTSPOT_ENTRY, hs, entries));
   const counts = { uncharacterised: 0, unread: 0, cited: 0, rendered: 0 };
   for(const e of entries){ const st = M.MARGIN_STATUS[e.id]; if(st && counts[st.status] !== undefined) counts[st.status]++; if(st && st.category && M.MARGIN_CATEGORIES[st.category]) counts.rendered++; }
   let nearest = 360;
@@ -351,6 +374,17 @@ function selftest(M){
   arm('silent when the declaration is true by reference', M.sameAppearanceViolations({ root, twin: { label: 'twin', ranges: root.ranges, render: root.render, sameAppearanceAs: 'root' } }).length === 0);
   // 8. the origin-word test accepts the phrasing the corpus uses and rejects a bland label
   arm('origin-word test fires/passes as intended', ORIGIN_WORDS.test('adenocarcinoma most commonly arises here') && !ORIGIN_WORDS.test('a smooth capsule'));
+  // 9a–9e. PER-ENTRY ORIGIN OVERRIDE (2026-09-11): fixtures first, proving the check can fire
+  // before its zero on the live tree is trusted (condition (7)) — the exact bug shape this exists
+  // to catch is arm 9c, where the hotspot text itself is bland and only the organ description
+  // (not passed to this function at all) speaks of origin.
+  const fxHs = { ovary: { labels: ['Surface epithelium', 'Cortex'], texts: ['Most ovarian cancers arise here.', 'Packed with follicles.'], desc: 'Not modelled.' } };
+  const fxEntries = [{ id: 'clear', organKey: 'ovary' }];
+  arm('fires on an entry id that names no active entry', originHotspotEntryViolations({ ghost: 0 }, fxHs, fxEntries).length > 0);
+  arm('fires on an out-of-range index', originHotspotEntryViolations({ clear: 9 }, fxHs, fxEntries).length > 0);
+  arm('fires when the entry\'s own hotspot text is bland, even though the organ description is not', originHotspotEntryViolations({ clear: 1 }, fxHs, fxEntries).length > 0);
+  arm('silent when the entry\'s own hotspot text speaks of origin directly', originHotspotEntryViolations({ clear: 0 }, fxHs, fxEntries).length === 0);
+  arm('silent on the live ORIGIN_HOTSPOT_ENTRY against the live corpus', originHotspotEntryViolations(M.ORIGIN_HOTSPOT_ENTRY, organHotspots(), activeEntries()).length === 0);
   console.log(ok ? 'SELFTEST PASS — fixture-form by design: no live population can carry a violation while the rule holds (condition (7-quater))'
                  : 'SELFTEST FAIL');
   return ok;

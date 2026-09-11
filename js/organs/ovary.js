@@ -120,7 +120,16 @@ export const organDetail = {
     { key:'surface', label:'Surface epithelium', pos:[-0.00807,0.00805,0.00786],
       text:'A single layer of cells covering the ovary\'s outer surface. Most ovarian cancers, including high-grade serous carcinoma, are now thought to arise here or in the adjacent fallopian tube. Clear-cell and endometrioid carcinomas are the exception — they begin in endometriosis, displaced uterine-lining tissue, rather than in this layer.' },
     { key:'cortex', label:'Cortex', pos:[0.01224,-0.00292,0.00352],
-      text:'The outer functional layer, packed with follicles at every stage of development — from resting to nearly ready to release an egg.' },
+      // Second sentence added 2026-09-11 (fixes a live text/geometry contradiction: this organ's own
+      // Surface-epithelium point below already says clear-cell/endometrioid carcinomas "arise in
+      // endometriosis... rather than" the surface, yet ORIGIN_HOTSPOT_ENTRY had no override and the
+      // clear-cell mass rendered there anyway). Verified directly at two independent sources: Gordts
+      // et al., Best Pract Res Clin Obstet Gynaecol, 2003 (PMID 12758100) — "the invagination of the
+      // cortex results in the formation of an endometriotic pseudocyst," with "primordial follicles
+      // present at the base," the same structure this hotspot's first sentence already names; Scurry
+      // et al., Int J Gynecol Pathol, 2001 (PMID 11293160) — corroborating cortical-invagination as a
+      // named mechanism of ovarian endometriotic-cyst formation.
+      text:'The outer functional layer, packed with follicles at every stage of development — from resting to nearly ready to release an egg. It\'s also where clear-cell and endometrioid carcinomas arise: endometriotic cysts form by invagination of this layer, not from the surface epithelium above it.' },
     { key:'medulla', label:'Medulla', pos:[-0.01266,-0.00122,0.00448],
       text:'The core of the ovary, deep to the cortex — loose connective tissue carrying the blood vessels, lymphatics, and nerves that supply it.' },
     { key:'hilum', label:'Hilum', pos:[-0.00249,0.01130,0.00757],

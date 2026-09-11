@@ -141,7 +141,7 @@
    "retrieved": "2026-09-04",
    "status": "verified",
    "code_refs": [
-    "js/organs/ovary.js:188"
+    "js/organs/ovary.js:197"
    ],
    "sha": "1c29b0f4ba827f82"
   },
@@ -4245,7 +4245,7 @@
    "userFacing": false,
    "refs": [
     "js/organs/ovary.js:20",
-    "js/organs/ovary.js:188"
+    "js/organs/ovary.js:197"
    ],
    "pubmedCount": 246
   },
@@ -4287,7 +4287,7 @@
    "userFacing": false,
    "refs": [
     "js/organs/ovary.js:100",
-    "js/organs/ovary.js:225"
+    "js/organs/ovary.js:234"
    ],
    "pubmedCount": 120
   },
@@ -4308,7 +4308,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/ovary.js:159"
+    "js/organs/ovary.js:168"
    ]
   },
   {
@@ -4318,7 +4318,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/ovary.js:166"
+    "js/organs/ovary.js:175"
    ],
    "pmid": "15087669",
    "resolvedTitle": "Grading ovarian serous carcinoma using a two-tier system.",
@@ -4339,7 +4339,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/ovary.js:182"
+    "js/organs/ovary.js:191"
    ],
    "pmid": "33078599",
    "resolvedTitle": "The post-progression survival of patients with recurrent or persistent ovarian clear cell carcinoma: results from a randomized phase III stu",
@@ -4359,7 +4359,7 @@
    "status": "still-ambiguous",
    "userFacing": false,
    "refs": [
-    "js/organs/ovary.js:196"
+    "js/organs/ovary.js:205"
    ],
    "pubmedCount": 442,
    "candidates": [
@@ -4380,7 +4380,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/ovary.js:211"
+    "js/organs/ovary.js:220"
    ],
    "pmid": "25625625",
    "resolvedTitle": "Coexistent ARID1A-PIK3CA mutations promote ovarian clear-cell tumorigenesis through pro-tumorigenic inflammatory cytokine signalling.",
@@ -4401,7 +4401,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/ovary.js:259"
+    "js/organs/ovary.js:268"
    ],
    "pmid": "24562383",
    "resolvedTitle": "ARID1B is a specific vulnerability in ARID1A-mutant cancers.",
@@ -4421,7 +4421,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/ovary.js:291"
+    "js/organs/ovary.js:300"
    ],
    "pmid": "21164285",
    "resolvedTitle": "Morphologic spectrum of immunohistochemically characterized clear cell carcinoma of the ovary: a study of 155 cases.",
@@ -4441,7 +4441,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/ovary.js:291"
+    "js/organs/ovary.js:286"
    ],
    "pmid": "24179489",
    "resolvedTitle": "Toward an understanding of the pathophysiology of clear cell carcinoma of the ovary (Review).",

@@ -15,7 +15,7 @@ import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
 import { initTrials, showTrialsToggle, hideTrialsToggle, resetTrialsMode } from './trials.js';
-import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, massBadge, GROWTH_STATUS, GROWTH_CATEGORIES, EXTENT_UNDERSTATED, EXTENT_STATUS, RESERVED_APEX, rimBlendWeight } from './morphology.js';
+import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, ORIGIN_HOTSPOT_ENTRY, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, massBadge, GROWTH_STATUS, GROWTH_CATEGORIES, EXTENT_UNDERSTATED, EXTENT_STATUS, RESERVED_APEX, rimBlendWeight } from './morphology.js';
 
 // ============================================================
 // GLOBAL NAV STATE
@@ -309,9 +309,13 @@ function applyRimBlend(viewer, mass, requestedExtent){
 // and — the reason it won over shrinking the mass (option A) — a reserved mass never renders
 // beside a cited one, so repeated placeholder entries can never visually cluster into what reads
 // as its own tumour category (the risk named at the roughly-a-third-of-entries register limit).
-// It does NOT fix per-entry origin accuracy (option C, not ruled): ovary's clear-cell mass still
-// anchors at the surface-epithelium hotspot even though that hotspot's own text says clear-cell
-// arises in endometriosis instead — a separate, larger, per-entry research cost left open.
+// It does NOT fix per-entry origin accuracy in general (option C, not ruled at Phase C scale) — that
+// remains a separate, larger, per-entry research cost. ONE instance is fixed as of 2026-09-11,
+// because it was a live, shipped contradiction rather than a projected risk: ovary's clear-cell mass
+// used to anchor at the surface-epithelium hotspot even though that hotspot's own text says
+// clear-cell arises in endometriosis instead. ORIGIN_HOTSPOT_ENTRY (morphology.js) now overrides
+// ORIGIN_HOTSPOT per cancer id where an organ's entries genuinely arise at different sites; an id
+// absent from it still uses its organ's shared default below.
 let massCtx = null;   // {organKey, detail, viewer, isRealMesh, meshBoundingRadius, container} for the loaded organ; null when none
 
 function activeCancersFor(organKey){
@@ -334,7 +338,7 @@ function previewMass(entryId){
   const list = activeCancersFor(organKey);
   const entry = (entryId && list.find(c=>c.id===entryId)) || list[0];
   if(!entry) return;   // this organ has no active cancer at all — nothing stands in
-  const idx = ORIGIN_HOTSPOT[organKey];
+  const idx = ORIGIN_HOTSPOT_ENTRY[entry.id] !== undefined ? ORIGIN_HOTSPOT_ENTRY[entry.id] : ORIGIN_HOTSPOT[organKey];
   const h = detail.hotspots[idx];
   if(!h) return;
   const anchor = hotspotPosition(h, detail);
