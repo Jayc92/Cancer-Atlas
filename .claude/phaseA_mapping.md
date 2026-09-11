@@ -1284,3 +1284,33 @@ Proposed the same day and ratified with one change — the one that decides whet
     transplants, certainty drift, the gross/histologic register mismatch, stage-read-as-growth,
     a SEER entity broader than its entry). No detector, schema, or fetch code touched -- ruling
     still requested on phaseB_design.md as a whole.
+- 2026-09-10 (Phase B's own self-scoring retracted; two-tier architecture; certainty-drift census
+    run and cross-validated before trusting a zero): the schema's "authoring forces the question"
+    framing was withdrawn -- an unverified declaration is a laundered claim, the same shape as a
+    tolerated count, and under Phase B's own reviewed-vs-unreviewed premise there is no reader left
+    to be prompted by a required field. Re-scored the 7-defect table on derive-vs-type instead: 1 of
+    7 solidly caught (a rendered-text check independent of any typed declaration), 1 caught only if
+    scoped per-axis, 1 already caught by an unrelated existing mechanism (backfill/crosscheck), 4 not
+    caught unless the fetcher queries a real structured API rather than a scraped page -- named as a
+    concrete architectural constraint, not a preference. Consequence: a two-tier model -- Tier 1
+    (verbatim + every qualifier the source attached, rendered together, mechanically checkable,
+    scales to ~120) and Tier 2 (interpreted -- summarised, compared, a qualifier dropped -- hand-read,
+    stays small; every defect this session found lives here). The shed-qualifier boundary (a render
+    that drops a field its own record declared has crossed tiers) is itself a checkable rule, modelled
+    on extentSentence's existing mandatory-field-concatenation discipline.
+    CERTAINTY-DRIFT CENSUS run before the sixth field, three methods: a proximity sweep (STRONG VERB
+    NEAR HEDGE WORD) that was PROVEN to miss a known positive on the pre-fix kidneys.js tree before
+    being trusted on the rest of the corpus (a 400-char window didn't span two sibling records in the
+    same array) -- run anyway, 6 candidates, all 6 false positives on a hand read (negated mentions,
+    a disclosed mouse model, direct quotations); an identity-grouped consistency check (search by
+    citation identity, not by character proximity -- this project's own "search by identity" principle)
+    that DOES catch the known positive and finds no other repeated citation in the corpus with
+    inconsistent hedging (259 fields scanned, 6 citations repeated 2+ times, exactly 1 inconsistent --
+    the already-fixed Gerlinger 2012 kidneys record); a direct model-system disclosure check (2 mentions
+    total, both already disclose "in mice"/"cell line" in the same sentence). Result stated at its
+    true width: zero NEW live instances in the REPEATED-citation slice this method can see; the
+    single-mention slice (the far larger one, per the identifier-harvest's own count of ~372 epi
+    sources mostly cited once) remains fundamentally unmeasured without re-fetching sources, and is not
+    claimed covered. Sixth field (`certainty`) rescoped to `backfill`/Tier 2 specifically (statistics
+    carry no hedge to drift; mechanism prose does) and given lowest priority of the four ordered steps.
+    No detector, schema, or fetch code touched.

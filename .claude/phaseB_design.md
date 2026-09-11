@@ -1,11 +1,11 @@
-# Phase B: reviewed versus unreviewed, and the provenance schema it depends on (opened 2026-09-10, reframed 2026-09-10, user)
+# Phase B: reviewed versus unreviewed, and the provenance schema it depends on (opened 2026-09-10, reframed 2026-09-10, sharpened 2026-09-10, user)
 
 Phase A closed with the render side settled: one mechanism built, one ready, one blocked on a
 measurement, one empty, one deferred (`phaseA_closeout.md`). Phase B is the one decision that gates
-Phase C and D entirely — but the decision is not build-time versus runtime, which was this
-document's own first draft and is now corrected in place (§1). **APPROVED IN PRINCIPLE, PREMISE
-CORRECTED, ORDER CHANGED (2026-09-10, user).** This document opens the question and states what is
-now ruled; §6 records exactly what.
+Phase C and D entirely. The decision is not build-time versus runtime (§1's retired first draft);
+it is reviewed versus unreviewed. **§4 corrects this document's own prior scoring of itself: a declaration nobody
+verifies is not a catch, it is an assertion wearing provenance — the same shape as a tolerated
+count. §9 records what was actually ruled and the order that follows from it.**
 
 ## 1. The decision, reframed: reviewed versus unreviewed, not build-time versus runtime
 
@@ -34,16 +34,15 @@ not yet generalised until now:
 nobody reads per-entry cannot be trusted to carry an unbounded claim — but it does not need a human
 read if the SHAPE of what it is allowed to say is fixed in advance and enforced structurally, the
 way the trials page's neutral-order-no-ranking rule is enforced by never having ranking logic to
-begin with, not by someone checking each render. This reframes what §3's schema is FOR: it is not
-provenance paperwork alongside a review process, it is the substitute for review on content that
-will not get one — which is why §4 below tests it as a substitute, against known defects a human
-review already caught, rather than as an add-on.
+begin with, not by someone checking each render. **§4 sharpens this rule immediately: the shape
+being fixed in advance is not enough on its own if the CONTENT poured into that shape is still a
+free-typed assertion nobody checks. §9 is where that sharpening lands as a ruling.**
 
 **Consequence for the roadmap's build-time/runtime hypothesis:** ratified, but on the corrected
 axis. Statistics stay build-time in the sense that already matters — a human reads the source once
 — and that is REVIEW, not merely early timing; a live-refetched statistic with the same declaration
 discipline would be just as safe, and a baked-but-unread one (the roadmap's original proposal) would
-not be. Trials stay runtime-shaped (or a periodically-regenerated build-time list — §5 leaves this
+not be. Trials stay runtime-shaped (or a periodically-regenerated build-time list — §8 leaves this
 open) precisely because they are UNREVIEWED by nature and the existing bounded-assertion design
 already covers that case. The asymmetry the first draft named (a SEER percentage versus a
 trial-recruitment status) was real; it was just filed under the wrong variable.
@@ -94,124 +93,247 @@ rebuild this entire defect class at Phase C/D's scale and speed — faster, beca
 skips the hand-read that caught every one of the above.
 
 Parallel to `backfill`, a new top-level population — call it `pulled` — with retrieval provenance
-AND a meaning-level declaration, both required, neither sufficient alone:
+AND a meaning-level declaration:
 
 ```
 { endpoint: <url>, field: <what value this backs>, retrievedDate: 'YYYY-MM-DD',
   discipline: 'refetch-each-session' | 'cached-until:<date>' | 'permanent-snapshot',
 
-  measures: <the literal quantity/concept this is — "share of cases by stage at diagnosis",
-            never left to be inferred from the field name it backs>,
+  measures: <the literal quantity/concept this is — "share of cases by stage at diagnosis">,
   register: 'gross' | 'histologic' | 'molecular' | 'clinical' | 'radiologic' | ...,
-  population: <the actual cohort/entity this figure covers, stated explicitly — "pancreatic
-              cancer as a whole", checked against the entry's own scope, not assumed to match it>,
-  vintage: <the DATA's own effective period or edition — distinct from retrievedDate, which is
-           only when the fetch happened, not what period the number describes>,
-  licensedAssertions: [<the sentence shapes the atlas may build from this — e.g.
-                       'detection-framed-stage-share'>],   // absence of a shape is a refusal to license it
+  population: <the actual cohort/entity this figure covers, stated explicitly>,
+  vintage: <the DATA's own effective period or edition, distinct from retrievedDate>,
+  licensedAssertions: [<the sentence shapes the atlas may build from this>],
 
   refs: [...], status: 'pulled', userFacing: true }
 ```
 
-Each meaning field answers one named defect directly: `measures` blocks stage-read-as-growth (a
-record for a stage share cannot silently back a growth sentence, because what it measures is
-written down, not inferred at the point of use); `register` blocks the gross/histologic mismatch
-structurally, the way `reserve_check.js` could check it rather than a human re-deriving it per
-entity; `population` blocks both denominator transplants (two records with different `population`
-values cannot be treated as the same question) and the SEER-broader-than-entry case (the mismatch
-between a record's `population` and its entry becomes a structural check, not a disclosure someone
-has to remember to write); `vintage` blocks silent staleness (a `retrievedDate` of today says
-nothing about whether the underlying data is from a 2016–2022 vintage or a 2024 revision);
-`licensedAssertions` blocks certainty drift by construction — a sentence shape not in the list is
-not available to build, so drift has to be an explicit schema change, not a wording choice made
-once and never revisited. **§4 tests whether that last claim actually holds, and finds it does
-not, cleanly, for one specific shape of drift — see the `certainty` field proposed there.**
+**§4 withdraws the claim that follows in the original draft of this section — that each meaning
+field "blocks" its named defect. It does not, on its own. A field that must be filled in blocks
+nothing if nothing checks what was filled in against anything external.** What each field DOES do,
+honestly, is in §4's table.
 
 `discipline` is still the one retrieval property a paper citation has no analogue for: it states
 what the retrieval date is a PROMISE about. A `permanent-snapshot` record makes the same promise a
 `backfill` record does; `refetch-each-session`/`cached-until` make a weaker one, closer to
-`tolerated.py`'s `until` field than to a citation's `verified` date — reusing that mechanism rather
-than inventing a third is the cheaper move if the discipline needs enforcement later (an "overdue
-re-fetch" check is `reserve_check.js`'s overdue-`unread`-row arm with a different noun).
+`tolerated.py`'s `until` field than to a citation's `verified` date.
 
 The fourth property (a cited status carries a resolvable identifier) extends to the retrieval half
-cleanly, as before. It does NOT extend to the meaning half — `citedBackingViolations` can check that
-an identifier exists; it cannot check that `measures`/`register`/`population` are TRUE of the
-source, only that they are PRESENT and internally consistent (e.g. `population` matching the
-entry's own scope). That gap is read at authoring time, the way every citation in this repo has
-been read so far — the schema makes the gap visible and checkable, it does not close it. **This is
-precisely why §1's reframing matters: on UNREVIEWED content, "read at authoring time" does not
-happen, so the gap this paragraph describes is exactly the gap §1's rule — bounded assertions
-enforced structurally — has to close without a human in the loop. §4 checks how much of it the
-current five fields actually close.**
+cleanly. It does NOT extend to the meaning half — `citedBackingViolations` can check that an
+identifier exists; it cannot check that `measures`/`register`/`population` are TRUE of the source,
+only that they are PRESENT. **§4 is the section that stops treating "present" as good enough.**
 
-## 4. The schema's positive control — validated against the project's own defect log (2026-09-10, user)
+## 4. The declaration-verification gap — why a forced field is not a catch (2026-09-10, user)
 
-**The method, named directly: this is the same discipline as the coupling audit's synthetic
-control, ported to a schema instead of a detector — don't trust an instrument (or a schema) that
-has never caught a known defect.** Unlike the coupling audit, this one costs nothing but the read:
-every defect below is already labelled with its correct verdict, from this project's own history.
-The question for each: if this record had been authored as a `pulled` record under §3's schema
-instead of hand-written prose, would the schema's REQUIRED fields have made the defect visible —
-either because a check would fire, or because the field cannot be filled in without the author
-confronting the exact distinction that was missed?
+**The correction, stated as bluntly as it was given: an unverified declaration is a laundered
+claim, the same shape as a tolerated count.** Someone writes `population: 'US adults, SEER 22'` at
+the exact moment they are least positioned to notice a mismatch — mid-integration, trusting the
+endpoint, under no pressure to doubt it — and it freezes into something that READS as provenance
+while being only an assertion. §1's whole premise is that the reader is being removed. A field that
+"forces someone to write down the answer" is worth close to nothing once there is no one left to be
+prompted by the requirement. The three rows below marked AUTHORING-CAUGHT-ONLY in the table this
+document previously scored as partial credit are corrected here: **they do not count as catches.**
 
-| defect (site) | what went wrong | would §3's schema catch it? |
+**The move that converts a declaration from an assertion into a checked claim: derive it, don't
+type it.** If the source itself returns the value in machine-readable form — SEER's own data year,
+registry set, or query population as structured response fields, not prose on a page a person
+summarised — then the declaration is a COPY of the response, and declared-versus-returned
+divergence becomes mechanically detectable, exactly the shape `citation_crosscheck.py` already uses
+for `backfill` records (compare a recorded field against what the identifier's own metadata says).
+A hand-typed declaration is permitted only where no machine-readable equivalent exists — and how
+often that is true is the number that matters, because it is the size of the surface nothing but a
+human ever checks again.
+
+**Re-scoring the schema's five fields against derive-versus-type, not against "did filling it in
+force a question":**
+
+| field | derivable from a real structured source? | who decides it, and how often |
 |---|---|---|
-| **Testis share, German-registry scope** (testis.js) | a share (64.5%, 22,634/35,066) was read as if it described testicular cancer everywhere; the source is one national registry, 2003–2014 | **AUTHORING-CAUGHT, not machine-caught.** `population` is REQUIRED and must name the actual cohort ("German testicular cancer registry, 2003–2014") — filling it in forces the distinction into view, the way the shipped fix now reads "in a German 2003–2014 registry" inline. Nothing checks that the filled-in value is TRUE or specific enough; a lazy `population: 'testicular cancer patients'` would pass the schema and reintroduce the drift. |
-| **Bladder entity breadth** (bladder.js) | ~92% urothelial was one edit away from reading as "92% of bladder cancer is urothelial" rather than "92% of the four commonest bladder-primary types are" | **AUTHORING-CAUGHT.** `measures` is REQUIRED to state the literal quantity — "share of the four commonest bladder-primary carcinoma types that are urothelial" forces the superset to be named. Same limit as above: nothing verifies the four types are actually exhaustive of what a reader would call "bladder cancer" without a source read. |
-| **Detection read as growth behaviour** (extent axis, all 16 entries) | "found at diagnosis" risks being read as "how the cancer spreads" | **MACHINE-CAUGHT, with a working precedent.** `measures: 'share of cases by stage at diagnosis'` plus `licensedAssertions` naming only detection-framed sentence shapes, checked the way `reserve_check.js` already bans the word "spread" in extent sentences today. This is the schema's strongest case — it generalises a mechanism already built and running. |
-| **Register mismatch** (FTC / prostate acinar / TNBC margin) | histologic-register literature backed a claim the axis requires at gross register | **MACHINE-CAUGHT.** `register` names the distinction directly; a check comparing `record.register` against the axis's required register is the same shape as the extent-sentence ban above, not yet built but structurally trivial once the field exists. This is the field the whole `pulled` proposal is named for, and it is the one with the cleanest catch. |
-| **Denominator transplant** (pancreas SMAD4, ~50% vs 25/84) | a pathway-level share and a deletion-mechanism's share within it were nearly paired as one fact | **AUTHORING-CAUGHT, partially.** Two records with `measures: 'pathway-level SMAD4 loss, any mechanism'` and `measures: 'SMAD4 homozygous deletion specifically'` are visibly different questions once written down — but nothing today would REFUSE an attempt to merge or compare them; that check does not exist and would need building (compare `measures` strings before allowing two records to corroborate one sentence). |
-| **Wang/Park attribution error** (bladder citation) | a real paper's identifier was recorded under the wrong journal/author | **OUT OF SCOPE for `pulled`.** This is a `backfill`-shaped defect (a paper citation, not a live-endpoint field) and is already governed by the fourth property plus `citation_crosscheck`'s identifier-vs-metadata comparison — the mechanism that caught the PNAS/Neuro-Oncology author-field defects earlier this session. Testing `pulled`'s meaning fields against it is a category mismatch; it validates that the EXISTING retrieval-identity mechanism generalises, not that the new fields do. |
-| **Certainty drift** (kidneys.js, Gerlinger "found convergent evolution" for a hedge the source states as "suggesting … phenotypic evolution") | a source's hedge was restated as an established finding | **MISSED. A real gap, found by running this table, not asserted from confidence.** None of the five fields addresses hedge strength. `licensedAssertions` bounds which SENTENCE SHAPES are allowed, not how DEFINITELY a shape may be stated. **Incidental finding while building this table: the identical defect was already fixed once, on the SETD2 record in the same file, and its two siblings — KDM5C and PTEN — still said "found convergent evolution" unhedged, the small-population "second entry inherits the first's citation silently" class recurring one axis over. Fixed in this commit (both now read "which the authors read as suggesting convergent phenotypic evolution," matching SETD2's own already-corrected wording) — a live defect does not wait for the schema conversation to finish.**|
+| `endpoint`, `retrievedDate` | ALWAYS — mechanical facts about the fetch itself, never typed | machine, every record |
+| `vintage` | LIKELY, if the integration uses a real versioned API response (SEER's own data-year/submission metadata) rather than a scraped Stat Facts page — an architectural requirement, not a given | machine, every record, PROVIDED the endpoint choice makes it available |
+| `measures` | DERIVABLE AT THE ENDPOINT LEVEL — which statistic an API series returns (incidence vs. survival vs. stage distribution) is a structural fact about which series was queried, not a per-record judgment | human, ONCE PER ENDPOINT, reused by code for every record that endpoint ever returns |
+| `population` | CONDITIONALLY DERIVABLE — a real API's own query parameters (registry set, age range, sex, race) ARE the population framing if the integration queries a real API; UNRECOVERABLE if the integration instead scrapes a human-facing summary page, which is what this session's own SEER Stat Facts reads did | machine if a real API is used; human, per record, if pages are scraped — **this is the one field where the SOURCE ARCHITECTURE decides the answer, not the schema** |
+| `register`, `licensedAssertions` | NEVER — no cancer-statistics source publishes "gross versus histologic register" or "which sentence shapes are licensed"; these are this project's own invented axes with no external analogue | human, but ONCE PER AXIS/ENDPOINT (register is a property of what kind of source an axis accepts at all; licensedAssertions is a property of the axis, not the record) — decided a handful of times total, not once per entry |
 
-**Score: 2 of 7 mechanically caught, 3 of 7 caught only by forcing the question at authoring time
-(real risk reduction, not a substitute for a correct answer), 1 of 7 out of scope for this schema
-specifically, 1 of 7 missed outright.** Read plainly: the schema is READY to structurally enforce
-the register/detection-framing axis it was built for — that is 2 of 7 with a working precedent
-already running. It is NOT ready to stand in for a human on scope, denominator, or entity-breadth
-questions; it only makes the omission harder to make by accident, which is worth having but is not
-the same claim §3 was making. And it has a clean, nameable hole on certainty.
+**The headline number, made visible rather than left a footnote: the permanently hand-written
+surface is bounded by the number of ENDPOINTS and AXES integrated, not by the number of ENTRIES.**
+`measures`, `register`, and `licensedAssertions` are each a per-endpoint or per-axis decision, made
+once and reused by code across every record that endpoint or axis ever produces — the same shape
+this project's own citation ledger already uses (one record, many refs) rather than the danger case
+(one hand-typed judgement per entry, ~120 times over). `population` is the one field whose
+derivability is an architecture choice: querying a real SEER API with structured parameters makes
+it machine-checked; scraping Stat Facts pages (this session's own method) makes it exactly the
+free-typed liability described above, on every single entry. **This is now the concrete design
+constraint the fetcher has to satisfy, not a preference: Phase C/D's statistics integration must
+use a queryable API with structured response metadata, not a page scrape, or `population` reverts
+to an unguarded per-entry assertion for the entire tier.**
 
-**Consequence: a sixth field, proposed to close the found gap before this schema governs anything
-unreviewed.** `certainty: 'definitive' | 'suggestive' | 'associative'` — the source's OWN hedge
-strength, required wherever the source states one, checked the same way `citation_polarity.py`
-already classifies a window as corrective/caveated/clean: a record whose source text carries a
-hedge marker ("suggest", "propose", "may", "associated with") but declares `certainty:
-'definitive'` is a detectable mismatch, the same shape as `register` mismatching its axis. Not
-built; proposed for the same reason `register` and `measures` were proposed — read against a
-defect this project actually found, not invented in the abstract.
+**Re-reading the seven-defect table under this corrected standard:**
 
-## 5. What this document does not decide
+| defect | original scoring | corrected scoring |
+|---|---|---|
+| Testis German-registry scope drift | "authoring-caught" | **NOT CAUGHT.** `population` typed by hand, unverified, is the exact shape of the defect it claims to prevent — a plausible-looking cohort string nobody checks again. Caught only if the integration derives it from a real API. |
+| Bladder entity breadth | "authoring-caught" | **NOT CAUGHT**, same reason. `measures` typed once per record (rather than once per endpoint and reused) carries the identical risk. |
+| Denominator transplant (pancreas SMAD4) | "authoring-caught, partially" | **NOT CAUGHT** as a per-record field; PARTIALLY MITIGATED if `measures` is fixed per endpoint, since two different endpoints (pathway-level vs. mechanism-level assays) would carry two different, code-enforced `measures` strings that can never silently merge. |
+| Detection read as growth behaviour | "mechanically caught" | **STILL CAUGHT** — this check runs against the RENDERED SENTENCE (a banned-word check on output text), not against a hand-typed declaration; it does not depend on trusting anyone's `measures` field being honest. |
+| Register mismatch (FTC/acinar/TNBC) | "mechanically caught" | **PARTIALLY CAUGHT.** A check comparing `record.register` against an axis's required register catches a record ASSIGNED to the wrong axis; it cannot catch a `register` value that is simply wrong about the source, since nothing external confirms it. Sound IF `register` is decided once per axis by a human who reads carefully, weak if typed per record. |
+| Wang/Park attribution error | "out of scope" | **UNCHANGED — out of scope**, still governed by the existing `backfill`/crosscheck mechanism, which DOES derive-and-compare (declared author/journal versus the identifier's own PubMed metadata) — the one mechanism in this whole document that was already doing this correctly before Phase B was ever opened. |
+| Certainty drift | "missed" | **UNCHANGED — missed**, and see §5's census before treating a sixth field as the fix. |
+
+**Net: of seven, one is solidly caught (a rendered-text check independent of any typed
+declaration), one is soundly caught only if scoped per-axis rather than per-record, one is already
+caught by an unrelated existing mechanism, and four are not caught by anything this schema proposes
+unless the fetcher is built against a real structured API rather than a scraped page.** That is the
+honest number, and it is the same conclusion the coupling audit reached in its own domain: some
+properties need a reader, and no gate substitutes. §6 draws the architectural consequence.
+
+## 5. The certainty-drift census, run before the sixth field (2026-09-10, user)
+
+**The ask, precisely: two live hedge-flattening records were found by accident, in one file, where
+an identical third record had already been fixed. That is an unmeasured rate in served content, and
+a sixth field protecting future unreviewed content while the live corpus carries the same defect
+class unguarded gets the priority backwards.** Three methods run, corpus-wide, over every
+`note`/`ccf`/`text`/`desc` field in `js/organs/*.js`:
+
+1. **Proximity sweep** (a strong/definitive verb — found, shows, causes, confirms — with no hedge
+   word inside the same field, but a hedge word or model-system term sitting within ~400 characters
+   in the same file). **Proven capable of missing a known positive before being trusted**: run
+   against the pre-fix `kidneys.js` from this repo's own history, it caught the PTEN record but
+   MISSED the KDM5C record — the SETD2 record whose hedge would have cleared it sat outside the
+   400-character window, a real, demonstrated method gap, not a hypothetical one. Run corpus-wide
+   anyway, as a first pass: 6 candidates, **all 6 false positives on a hand read** — three were
+   negated mentions ("no interaction analysis... was found", the exact citation_polarity.py class
+   this project already named and mechanised for a different population), two were a `found`
+   inside a verbatim quotation of the source's own words (correct citation practice, not
+   overclaiming), and one was a mouse-model finding that already discloses "In mice" in the same
+   sentence.
+2. **Identity-grouped consistency check**, built after the proximity method's proven blind spot,
+   matching this project's own "search by identity, not by instance" principle rather than a
+   character-radius guess: every `(author, year)` citation extracted from every note/ccf field,
+   grouped by identity, checked for hedge-consistency ACROSS every mention of the same source.
+   259 fields scanned corpus-wide; 6 distinct citations are ever mentioned 2+ times within a
+   note/ccf field; exactly ONE shows inconsistent hedging — **Gerlinger et al. (NEJM, 2012), the
+   already-found, already-fixed kidneys defect, and no other repeated citation in the corpus shows
+   the same pattern.**
+3. **Direct model-system disclosure check**: every field mentioning mouse/murine/cell-line/
+   xenograft work at all (2 in the whole corpus — ovary.js:211, skin.js:393) already discloses the
+   model system in the same sentence. No omission found.
+
+**The honest result, stated at the width the methods actually support, not wider: no NEW live
+certainty-drift instance found by any of the three methods, and the identity-grouped method (the
+one proven not to have the proximity method's blind spot) is the one that matters most — it is
+zero-for-the-corpus on the exact shape it was built to catch.** The bound that must be stated
+alongside this, because a clean sweep is not the same claim as a clean corpus: **all three methods
+can only catch drift that leaves a trace INSIDE this corpus** — a contradicting sibling mention, or
+a nearby hedge word. A citation used EXACTLY ONCE that quietly overclaims relative to a source
+nobody in this session re-fetched is invisible to all three, by construction, and catching that
+requires re-reading the original source — which is precisely the Tier 2, hand-read, stays-small
+work §6 names, not a corpus-internal sweep. Of the 372 epidemiological source keys this project's
+own identifier-harvest already counted, the overwhelming majority are cited exactly once; this
+census bounds the REPEATED-citation slice of certainty drift at zero currently-live instances, and
+says nothing about the much larger single-mention slice, which was never this census's target and
+is not claimed to be covered by it.
+
+## 6. The two-tier model (2026-09-10, user)
+
+**§4's table result — one solid catch, everything else conditional on a reader or an architecture
+choice this document does not control — is the same finding the coupling audit reached in its own
+domain: some properties need a reader, and no gate substitutes.** If most meaning errors are like
+that, the architecture is two tiers, not one:
+
+**TIER 1 — machine-safe.** A figure reproduced VERBATIM with every qualifier its source attached —
+rate, population, data year, stage basis — rendered together, asserting nothing the source didn't.
+The atlas adds no interpretation: no summarising, no comparison across entries, no dropped
+qualifier for space. This is checkable mechanically and it is the tier that scales to Phase C's
+~120 entries. It already has a working precedent in this codebase: `extentSentence`
+(`js/morphology.js`) concatenates `site`/`siteNote`/`shares`/`basis`/`source`/`ref` into one
+sentence unconditionally, by construction — no code path can render a share without its basis or
+its site qualifier, because the function has no branch that omits them. Any new Tier 1 axis follows
+the identical discipline: mandatory-field concatenation, never a free-text summary that could
+silently drop one.
+
+**TIER 2 — reader-required.** Anything interpreted: summarising, comparing across entries, dropping
+a qualifier for space, stating what a number MEANS rather than what it says. Every defect this
+session found lives here, including the two rows §4 still credits as sound (detection-framed
+wording, register-vs-axis) — both require a human to have gotten the underlying judgement right
+once; they differ from the rest only in HOW CHEAPLY a subsequent check can catch a later
+inconsistency, not in whether a reader was needed at all. This tier stays hand-read and therefore
+stays deliberately small — it cannot be the tier that carries Phase C's breadth.
+
+**The boundary is itself checkable, and building the check is part of adopting this model, not a
+separate task:** a rendered figure that has SHED a qualifier its own source record carried has
+crossed from Tier 1 into Tier 2 without anyone deciding it should. For any `pulled` record with a
+Tier 1 declaration (`population`, `vintage`, `basis`, etc. all present), a check comparing the
+record's own fields against the substring content of its rendered sentence — the same shape
+`reserve_check.js` already uses for the extent axis's basis-regex and shares-sum arms — flags any
+render that omits a field the record declares. This does not verify the DECLARATION is true (§4's
+unclosed half); it verifies the RENDER has not silently thrown away a declaration that was checked
+in, which is a real, mechanically enforceable, and previously entirely unguarded failure mode of
+its own.
+
+**What this implies for the original goal, stated plainly rather than left implicit:** Joe's
+"one-stop-shop" gets BREADTH in Tier 1 statistics — verbatim, qualified, scalable to ~120 — and
+DEPTH only where Tier 2 work has actually been done, which stays proportional to how much hand
+reading this project or a future session actually completes. That is an honest answer, probably the
+true one, and a smaller promise than "authoritative data on a hundred and twenty cancers" reads as
+on first hearing. Recorded here so the gap between those two framings is a design decision made
+once, not a surprise found later.
+
+## 7. The sixth field, rescoped to Tier 2 (2026-09-10, user)
+
+**Priority corrected: the census (§5) matters more than this field, and the field's own scope
+shrinks once Tier 1/Tier 2 is drawn.** `certainty` addresses hedge strength — how definitely a
+source states an interpretive claim (`'definitive' | 'suggestive' | 'associative'`). Tier 1 content
+(a rate, a count, a stage share) carries no interpretive claim to hedge; a statistic is a number, not
+an inference. The certainty-drift defect class — confirmed by every example this session
+found, including the census in §5 — lives entirely in Tier 2: hand-authored mechanism prose
+describing what a paper concluded, not a pulled statistic. So `certainty` is not a `pulled`-schema
+field at all; it belongs on `backfill` records, the population Tier 2 content actually comes from,
+checked the way `citation_polarity.py` already classifies a window as corrective/caveated/clean —
+extending that existing classifier to flag a `backfill` record whose note text states a claim more
+definitely than its own classified window, rather than adding a new field to a schema built for
+statistics that will rarely if ever need it.
+
+## 8. What this document does not decide
 
 - Whether ANY Phase C/D content should be runtime at all, versus everything staying build-time and
-  "trials" being reconsidered as a periodically-re-authored build-time list instead (cheaper, no new
-  capability, staler by construction — a real trade, not a strawman). Reframed by §1: this is now a
-  question about review CADENCE, not about a capability gate.
-- Which specific endpoints (if any) would be used, and whether they are reachable without an account
-  or API key under the standing rule.
-- Whether `pulled` is the right name or shape — proposed, amended once already (§3), amended again
-  by §4's `certainty` field, still not ratified.
+  "trials" being reconsidered as a periodically-re-authored build-time list instead. Reframed by
+  §1: a question about review CADENCE, not a capability gate.
+- Which specific endpoints (if any) would be used — now sharpened by §4 into a real constraint: any
+  statistics endpoint must return structured, queryable population/vintage metadata, or `population`
+  reverts to an unguarded per-entry assertion for its entire tier. Whether ClinicalTrials.gov's v2
+  API and a real SEER API (not Stat Facts pages) satisfy this is unchecked.
+- Whether `pulled` is the right name or shape for Tier 1 specifically — proposed, amended twice
+  (§3, this rewrite), still not built.
+- Where, precisely, the Tier 1/Tier 2 line falls for content types not yet named (mutation
+  frequencies, staging thresholds) — §6 states the test (has a qualifier been dropped), not a
+  per-content-type ruling.
 
-## 6. Ruling received, and what follows from it (2026-09-10, user)
+## 9. Ruling received, and what follows from it (2026-09-10, user)
 
-**Approved in principle, premise corrected, order changed.** The build-time/runtime framing is
-retired in favour of §1's reviewed/unreviewed axis, ratified as stated there. The roadmap's own
-"pulling removes the copy error class" rationale is corrected in place at its source (CLAUDE.md)
-rather than only here, since it was the thing about to justify a design on a false premise.
+**Approved in principle, premise corrected, order changed, twice now.** First: build-time/runtime
+retired for reviewed/unreviewed (§1). Second: "the schema forces the question" retired as a form of
+catching anything — an unverified declaration is a laundered claim, and the architecture is now two
+tiers, not one flat schema with five fields of mixed reliability (§4, §6).
 
-**THE ORDER: DECLARATION LAYER FIRST, FETCHER SECOND. No integration work — no endpoint chosen, no
-fetch code written, no detector touched to accommodate a live record — until §4's table is closed
-rather than merely reported.** Concretely, before any fetcher:
-1. Add the `certainty` field §4 proposed and re-run the table's one missed row to confirm it now
-   catches the certainty-drift shape (Gerlinger-style hedge restated as fact) the way `register`
-   already catches its own axis.
-2. Decide whether the three AUTHORING-CAUGHT-ONLY rows (scope, entity breadth, denominator) need a
-   machine check before Phase C/D, or whether "the schema forces the question, a human still answers
-   it" is an accepted, bounded risk for a FIRST unreviewed content type — this is a ruling still
-   owed, not decided by this document.
-3. Only then: name a first candidate endpoint (§5, still open) and build the fetcher against a
-   schema that has already been shown catching most of what it was built to catch.
+**THE ORDER, restated against the corrected model. No integration work — no endpoint chosen, no
+fetch code written, no detector touched to accommodate a live record — until:**
+1. **Census, done (§5).** No new live certainty-drift instance found by either method proven capable
+   of finding one; the single-mention blind spot is named, not claimed closed.
+2. **The three previously-"authoring-caught" rows are recorded as NOT caught (§4)**, and the
+   per-endpoint/per-axis scoping that reduces (without eliminating) the hand-written surface is the
+   design constraint carried forward, not the field-per-record shape originally proposed.
+3. **The two-tier model is ratified as this document's architecture (§6).** Tier 1 (verbatim +
+   qualifiers, mechanically bounded, scales) is where Phase C/D breadth lives; Tier 2 (interpreted,
+   hand-read, stays small) is where every defect this session found actually lives, and it does not
+   get to grow just because Tier 1 exists alongside it. The shed-qualifier boundary check (§6) is
+   part of adopting the model, not a follow-up.
+4. **The sixth field moves to `backfill`/Tier 2, last, lowest priority of the four** (§7) — it
+   protects hand-authored mechanism prose from a defect class the census just measured at a
+   confirmed-zero rate for its detectable slice, which is real but not urgent relative to 1–3.
+5. Only then: name a first candidate endpoint, confirm it returns structured population/vintage
+   metadata (§4's architectural constraint), and confirm it needs no account or API key under the
+   standing rule.
 
-No detector, no schema file, and no runtime fetch code is touched until 1 and 2 above are resolved.
+No detector, no schema file, and no runtime fetch code is touched until 1–3 above are closed, not
+merely reported.

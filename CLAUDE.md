@@ -5652,9 +5652,17 @@ refute it, which is worth more than file order.
   mechanism with real, unblocked members (stomach, CRC); placement has members behind an
   unmeasured luminal-reachability precondition; count/multifocal has none (checked, not
   assumed — register-H, model-precondition-blocked, or cited-equal-to-default, one reason each);
-  composition stays deferred at four. PHASE B OPENED (`.claude/phaseB_design.md`): build-time
-  vs runtime, coupled to a provenance-schema question (`pulled`, proposed, unbuilt) every
-  existing detector's population would need to account for; ruling requested, nothing built.
+  composition stays deferred at four. PHASE B OPENED, then REFRAMED and RE-SCOPED TWICE
+  (`.claude/phaseB_design.md`): reviewed-vs-unreviewed replaced build-time-vs-runtime as the real
+  axis; the roadmap's own "pulling removes the copy class" rationale was corrected in place
+  above (2026-09-10) as wrong and load-bearing; the `pulled` schema's own scoring of itself was
+  then retracted — an unverified declaration is a laundered claim, not a catch — leaving a
+  two-tier architecture (Tier 1 verbatim-plus-qualifiers, machine-checkable, scales; Tier 2
+  interpreted, hand-read, stays small) where every defect this session found lives in Tier 2.
+  A corpus-wide certainty-drift census (three methods, one proven against a known positive
+  before being trusted) found no NEW live instance beyond the one already fixed in kidneys.js,
+  bounded to the repeated-citation slice only. Declaration layer (Tier 1/Tier 2 boundary check)
+  first, sixth field (`certainty`, rescoped to `backfill`/Tier 2) last, fetcher not started.
   Then wall; multifocal when it has a renderable
   member. COLD-SESSION ENTRY POINTER: read
   CLAUDE.md, then Phase A of this roadmap; conditions (1)–(8) are
