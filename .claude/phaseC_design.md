@@ -1191,3 +1191,68 @@ outstanding.
   `trials.js`'s `fetchTrialsForEntry` directly per the approved "cheapest rendering, no new screen"
   design) is the one piece of this ruling's scope still open as of this section being written —
   tracked in the session's own task list, not assumed done by this document's existence.
+
+## 15. Content-anchored pointers, re-costed against observed rounds, not the one incident the
+original ruling was made against (2026-09-13, user-directed)
+
+**The original ruling (CLAUDE.md's "CONTENT-ANCHORED POINTERS" entry) priced building the fix
+against a single incident: ~6 hours (converter ~1.5h, resolver ~2h, the two line-splitting
+consumers ~1h, review ~1h, nine hand cases ~0.5h) against 581 pointers, and the workaround won on
+the ruling's own hour-vs-day threshold.** That comparison was always a one-time build cost against
+a one-time fix cost. It was never compared against the cost of paying the workaround repeatedly —
+which is the comparison this section runs, now that the mechanism has fired on every organ-authoring
+round since, with fourteen organs still ahead of Lungs.
+
+**Three real, measured data points for what "paying the workaround" actually costs per
+occurrence**, not estimated: `3fa9e1a` re-pointed 49 drifted citation refs (the historical batch
+that forced the original `pointer_check` build); `24f4466` (ovary's clear-cell origin fix) needed
+"11 pointer fixes staled by the new citation comment"; this round's `pductal`/`pneuro` pass needed
+13 stale `citations.json` refs, all one root cause (my own insertions in `js/organs/prostate.js`
+shifting every line below them), fixed by reading the OLD committed content at each old line number,
+finding the identical text at its new location, and applying one batch `sed` pass once every mapping
+was verified by content — a handful of tool calls, comfortably under 30 minutes of real elapsed
+work, not a fraction of the original estimate's "most of a day." **Projected against the original
+per-incident estimate: even at 13 stale pointers per remaining organ × 14 organs ≈ 180 more
+individual re-points, at this round's own observed rate that is still on the order of a few hours
+total, not the original ~6-hour ONE-TIME build cost repeated fourteen times over.** On a pure
+elapsed-time basis, the workaround still wins the projection — this section reports that number
+plainly rather than pre-deciding to reopen the build; the original ruling's own threshold (hour vs.
+day) was never violated by any single round measured so far.
+
+**But the raw-minutes comparison is not the whole tax, which is the reason this section exists
+rather than just restating a bigger number in the same units.** The user's own framing: **the
+hygiene tax has two components, and they behave differently under a growing checklist.**
+- **AUTHORING ERRORS** — a real, cited claim written down wrong (a misattributed author, a
+  scope-broadened figure, a category substitution) — are the class every one of this project's
+  standing checklists (data rule 1's mechanistic-fit check, rule 3's competing-driver list, the
+  absence-claim/duplicate-figure/fraction instruments) exists to catch and, over time, to actually
+  PREVENT: a checklist item added after one incident stops that exact shape from recurring.
+- **EDIT MECHANICS** — a citation that was correct when written going stale because a LATER edit
+  inserted content above it and shifted every line number below — is structurally different. No
+  checklist item can prevent it, because the failure isn't a lapse in authoring discipline; it is
+  an unavoidable property of anchoring a pointer to a LINE NUMBER in a file that gets edited again.
+  Every one of the three measured incidents above is this second component, not the first — nobody
+  wrote a wrong citation; a later, correct edit simply moved where the citation used to be.
+
+**"Ovary's seven and prostate's six were not the same six" — verified against the record, and this
+is the finding that actually matters here, not the raw pointer count.** The ovary pilot's own cost
+report (this document's phase-fourteen predecessor entry, landed as `43da93c`) named seven distinct
+gate-driven fixes across `0401fb4`+`e5cf25c`: a citation author mis-parsed as a journal name (and
+two smaller fixes it cascaded into), two absence-claim rewrites, one arithmetic slip, and a
+bare-digit paren-shadow ambiguity that recurred twice. **Not one of those seven is edit-mechanics —
+every one is an AUTHORING ERROR, in a completely different part of the toolchain (citation
+head-shape parsing, absence-claim phrasing, share-sum arithmetic) than any of this round's six**
+(two duplicate-figure template collisions, one fraction-mismatch, one citation-head-shape gap, two
+absence-claim DEFECTs, and the 13 stale pointers as one class). The two rounds' authoring-error
+components share almost no overlap in KIND — confirming that a checklist built from round N's
+specific defects does not anticipate round N+1's differently-shaped ones, so the authoring-error
+half of the tax is not a fixed population a growing checklist eventually exhausts. **The
+edit-mechanics half is the opposite: it is the SAME mechanism, every round, with no variation in
+kind at all** — three incidents, three different authoring passes, one identical root cause each
+time (a line-numbered pointer, an insertion above it). That is the actual argument for treating it
+as a standing, budgeted cost rather than continuing to re-litigate it per round: it is the one
+component of this tax that is fully predictable in shape, if not in exact count, for every one of
+the fourteen organs still ahead. **Re-estimate again if a single round's pointer count moves well
+outside the 11–49 range these three data points span — that is the threshold at which the original
+6-hour build estimate would start looking cheap by comparison, not any fixed organ count on its
+own.**

@@ -4389,6 +4389,14 @@ day is not) THE WORKAROUND WINS: notes go on the existing line or in CLAUDE.md, 
 insertion above pointed lines in an organ file is expected to trip `pointer_check`.
 Re-estimate if the refusal count keeps climbing — the converter is 98.5% mechanical.
 
+**RE-COSTED (2026-09-13, `.claude/phaseC_design.md` §15) against three now-observed rounds
+(49/11/13 pointers each), not the single incident this entry was priced against — the workaround
+still wins on raw elapsed time, but the re-cost's real finding is that the tax's two components
+(authoring errors, which a checklist prevents; edit mechanics, which no checklist can) behave
+differently under repetition: ovary's seven gate-driven fixes and this round's six shared no
+overlap in KIND, while all three pointer-staleness incidents share the identical mechanism. Read
+§15 before assuming this entry's six-hour number is still the only one on the table.
+
 A HARNESS HAZARD FOUND ON THE WAY, fixed in the same commit: `regress.js` read
 `assets` and the manifest's code_refs relative to process.cwd(). The battery always
 pinned cwd to the repo, so it never saw it; a standalone run launched from /tmp
@@ -9322,6 +9330,55 @@ a clean retry here produces a plain clean DONE line (flagged `(publish check ret
 transparency) and is never logged as a refusal — by the time the function returns, there is
 nothing left to refuse. Verified: the selftest's four new arms pass; a real end-to-end run against
 the already-published HEAD still reports `0 problems` with no spurious retry note.
+
+## A DESIGN DOCUMENT IS A NOTE, NOT A SOURCE — verified at the point of use, never trusted from the document (2026-09-13, user ruling)
+
+**The incident that forced this.** `pductal`'s periurethral-origin figure ("69.8% periurethral-only,
+26.7% both") sat in `.claude/phaseC_design.md` as a one-line, uncited-in-full summary, attributed to
+two papers that turned out to be the WRONG two. It was called "already sourced" in this project's own
+authoring pass because a tracked document said so — the misattribution was only caught because a
+dedicated verification agent re-checked the figure against the real literature before it shipped, not
+because anything in the toolchain flagged the design doc's own claim. `.claude/citations.json`,
+`pointer_check.py`, `citation_crosscheck.py`, and `citation_reach_check.py` all verify citations that
+have made it into `js/organs/*.js` — **none of them touch a citation still sitting in a design
+document**, and eleven-plus of these documents (`.claude/phase*.md`, ~5,000 lines total as of this
+ruling) now feed authoring decisions while being checked by nothing.
+
+**The rule: any figure or citation moving from a design document into authored content is verified
+AT THE POINT OF USE — never trusted from the document it was read out of, however recently that
+document was itself written or read.** This is a different failure mode from the project's own
+"a claim about the tree gets read from the tree" rule (the entry above this one, and the pointers.md
+discussion earlier in this file) — that rule is about a SUMMARY going STALE relative to a tree that
+moved out from under it. A design document's own citation can be **wrong from the moment it is
+written**, never stale at all, because a design pass's own literature read can misattribute a figure
+the same way any first-pass read can — the periurethral figure was wrong the day it was typed, not
+years later. Re-reading the design doc fresher does not fix this; only re-checking the doc's claim
+against the primary source does. Treat every design-doc citation the way this project already treats
+a secondary source's summary of a primary finding (the secondary-source rule, Phase B's ccf-read
+addendum): it tells you where to look, not what you will find there.
+
+**Pricing running design-doc PMIDs/DOIs through the existing `citation_crosscheck.py`, per the
+ruling's own instruction — measured, not assumed, and the answer is to stop, not build.** Census: 34
+`PMID` mentions total across the seven tracked `.claude/*.md` design documents (`phaseA_mapping.md`
+8, `phaseC_design.md` 26, the other five carry none). The citation GRAMMAR is nearly identical to the
+code's own ("Seipel et al., *Pathology*, 2016, PMID 27321992" — author/year/journal/PMID in the same
+order `extract_citations.py` already parses), which made the question worth asking rather than
+dismissing on sight. But `extract_citations.py`'s ~500-line `extract()` function is not a reusable
+citation-grammar parser with a swappable front end — it is one function entangled end to end with
+locating citations WITHIN JS STRING LITERALS specifically (`FIELDS`'s `share:'...'`/`ccf:'...'`/
+`note:'...'` field-boundary regex, JS quote-escaping rules `[^'\\]|\\.`, helpers like
+`head_is_journalish`/`closed_year_paren`/`classify_absence` that all operate on byte offsets inside
+those matched field strings). A markdown design document has no such fields to match against at
+all — the SAME author/year/PMID grammar sits directly in ordinary prose sentences, blockquotes, and
+bold/italic markdown spans instead, none of which this function's span-finding logic was built to
+locate. Reaching the SAME per-record crosscheck this file's own citation corpus already gets would
+need a genuinely new front end to find candidate spans in prose, even if some of the tail-end
+author/year/PMID regex logic could eventually be shared — which is, by the ruling's own stated test,
+**a new extractor. Priced, and per the ruling's own decision rule: not worth it. Stopping here** —
+no new extraction code was written for this. If reopened later, the cheaper starting point is not a
+generalized `extract_citations.py` but a small, disposable, one-off verification pass (fetch each of
+the 34 PMIDs directly, hand-read the surrounding sentence) rather than a new standing instrument —
+recorded as an option, not undertaken now.
 
 ## Source files
 `cancer-atlas.html` is now a thin shell (markup + CSS + the three.js import map,

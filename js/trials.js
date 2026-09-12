@@ -321,7 +321,13 @@ function keywordRegex(keywords){
 // both ends — its own keywords (conditionKeywords, titleRe) are real complete words/phrases,
 // where the same pointer_check.py-style collision risk this function's sibling comment names is
 // real and the trailing boundary is exactly what prevents it.
-function stemRegex(stems){
+//
+// Exported (2026-09-13, the positive-control ruling) so .claude/trials_mapping_check.mjs can
+// validate a requireAlso TERM directly — the same construction production filters with — rather
+// than reimplementing it and risking the exact class of drift this file's own header warns about
+// elsewhere (a copy that "corrects" the bug while the real one ships, or the reverse). A checker
+// that reasons about its own local regex is not a control on this function; one that imports it is.
+export function stemRegex(stems){
   const escaped = stems.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   return new RegExp('\\b(?:' + escaped.join('|') + ')', 'i');
 }
