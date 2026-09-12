@@ -414,11 +414,17 @@ findings are what generalize:
   consumer**: prostate's staged mucinous/signet-ring entry. Worth extracting into a shared
   primitive once this second consumer is real, on the same "don't extract until something needs
   it twice" discipline this pass already followed for frond/cribriform.
-- **Two cross-organ reuses were NOT anticipated going in and are worth flagging as the pilot's
-  own best evidence that this generalizes beyond the obvious cases**: GBM's pseudopalisading-rim
-  technique (nuclei stacked radially at a necrotic border) is architecturally close to skin's
-  staged basal cell carcinoma's own peripheral palisading — a real, non-obvious reuse across two
-  unrelated organs. And this atlas's own CLAUDE.md (data rule 19) already states that
+- **One cross-organ reuse was NOT anticipated going in, is UNVERIFIED (a pattern-matched
+  hypothesis, not a checked equivalence), and is worth flagging as exactly that**: GBM's
+  pseudopalisading-rim technique (nuclei stacked radially at a border) draws a shape — a radial
+  rim of elongated nuclei against a boundary — that sounds close to skin's staged basal cell
+  carcinoma's own textbook "peripheral palisading" description. Whether BCC's real, citable
+  palisading is drawn the same way (same radial elongation, same boundary type, same absence of
+  the necrotic corridor GBM's rim exists to line) needs a real source read at authoring time, not
+  an assumption from the two words sounding alike — the exact discipline the ovary contradiction
+  itself was a failure to apply. Recorded here as a candidate worth checking first, not as a
+  confirmed reuse. What IS already checked, separately: this atlas's own CLAUDE.md (data rule 19)
+  states that
   intestinal-type gastric adenocarcinoma is "similar to intestinal adenocarcinoma... a colon-
   slide repeat" — confirming, from a design decision made before this test existed, that the
   glandular/CRC-style family was already known to transplant across organs.
