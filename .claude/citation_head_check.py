@@ -172,6 +172,7 @@ WELL_FORMED = (
     'von der Maase',
     # genuinely two-word surnames — the second-word clause doing the job it exists for, and the
     # reason it cannot be removed to fix the eight entries above
+    'De Leo',
     'Di Carlo',
     'Mehrvarz Sarshekeh',
     'Myo Min',

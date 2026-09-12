@@ -217,6 +217,43 @@ PREREGISTERED = {
     # `basis_test` off 0 on a span this rule was FIT to, which is the one number here that is supposed
     # to be hard to move. An instrument cannot tell arrival from relocation, so the human does, and the
     # test is CONTENT: same bytes, one occurrence, re-address. Different bytes would be a real arrival.
+    # THREE NEW SPANS, ONE SHAPE, THE TRAVIS COUNTEREXAMPLE RECURRING (2026-09-11, ovary pilot).
+    # All three read "De Leo et al., Diagnostics (Basel), 2021 (WHO-classification review,
+    # PMC8070731, Section N)." — "(Basel)" is a parenthetical aside with NO year, sitting between
+    # the head and De Leo's real year, 2021. Structurally identical to Travis's own "(WHO)": a
+    # journal's home-city aside, not a second citation. basis TEST because these are genuinely
+    # NEW spans (added this commit, not a relocation of an existing key — no STALE SCORING problem
+    # names either of these heads), each independently checked rather than assumed identical
+    # because a corpus location can differ even when the surrounding text looks the same.
+    'De Leo|2021|js/organs/ovary.js:373': {
+        'side': 'KEPT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'ovary.js:373 reads "De Leo et al., Diagnostics (Basel), 2021 (WHO-classification '
+            'review, PMC8070731, Section 4)." — "(Basel)" carries no year, so the rule correctly '
+            'declines to refuse and the record stands on De Leo\'s real year, 2021. The Travis '
+            'counterexample recurring on a new citation rather than a new mechanism.',
+    },
+    'De Leo|2021|js/organs/ovary.js:433': {
+        'side': 'KEPT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'ovary.js:433 reads "De Leo et al., Diagnostics (Basel), 2021 (WHO-classification '
+            'review, PMC8070731, Section 6)." — the same Basel-aside shape as ovary.js:373, an '
+            'independent occurrence of the identical citation text at this cancer\'s own section.',
+    },
+    'De Leo|2021|js/organs/ovary.js:503': {
+        'side': 'KEPT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'ovary.js:503 reads "De Leo et al., Diagnostics (Basel), 2021 (WHO-classification '
+            'review, PMC8070731, Section 3)." — the same Basel-aside shape again, the third of '
+            'three independent occurrences of one citation repeated across this organ\'s three '
+            'new histology blocks.',
+    },
     'Travis|2011|js/organs/lungs.js:268': {
         'side': 'KEPT',
         'basis': 'FIT',

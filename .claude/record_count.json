@@ -1,14 +1,14 @@
 {
  "_note": "Ratchet state for .claude/battery.py assertion 4 \u2014 the corpus did not silently shrink. MACHINE-WRITTEN: battery.py is the only writer, and it only ever moves a count UP, except through an explicit --lower-ratchet with a --lower-reason, which is appended to 'lowers' below so every deliberate step over the gap stays on the record. Seeded empty by hand exactly once, because the declaration in NON_INSTRUMENTS has to exist before the file can and the battery refuses to run at all while its own selftest fails \u2014 so the file could not have been created by the tool that writes it. Counts start absent on purpose: the first run INITIALISES and says so, condition (8), and the SECOND run is the check. 'record_keys' (added 2026-09-06 by the same hand, same reason: the field has to be explained in the file a reader diffs) is the record SET beside its size \u2014 sorted (author|year|file:line) identities, one per line, so `git diff` on this file IS the composition audit. A count cannot see four records swapping identity under a flat total; the set can, and the battery prints added/removed/moved on every run. Sorted ordering is load-bearing. The count and the set are saved together and battery.py REFUSES this file if they ever disagree, so do not edit either by hand.",
  "counts": {
-  "records": 524,
-  "citation_crosscheck.records": 162,
-  "citation_paren_ledger.basis_test": 0,
+  "records": 527,
+  "citation_crosscheck.records": 165,
+  "citation_paren_ledger.basis_test": 3,
   "internal_quote_check.internal_quote.marked": 15,
   "pointer_check.pointer.identity_oracle": 272,
   "reserve_check.categories": 5,
   "reserve_check.growth_categories": 2,
-  "pointer_check.pointer.pointers_code": 454
+  "pointer_check.pointer.pointers_code": 461
  },
  "lowers": [
   {
@@ -45,6 +45,13 @@
    "to": 162,
    "count": 162,
    "reason": "same removal, one fewer identifier-carrying record"
+  },
+  {
+   "metric": "records",
+   "from": 530,
+   "to": 527,
+   "count": 527,
+   "reason": "removed the bare '2020' digit from 'WHO-2020-based' in three De Leo et al. 2021 citation fields to resolve a citation_paren_ledger paren-shadow ambiguity (reworded to 'WHO-classification'); no citation content was lost, only an accidental second year-shaped token"
   }
  ],
  "record_keys": [
@@ -129,20 +136,23 @@
   "Dankort|2009|js/organs/skin.js:400",
   "Davies|2011|js/organs/skin.js:318",
   "Davies|2011|js/organs/skin.js:391",
+  "De Leo|2021|js/organs/ovary.js:361",
+  "De Leo|2021|js/organs/ovary.js:373",
+  "De Leo|2021|js/organs/ovary.js:389",
+  "De Leo|2021|js/organs/ovary.js:423",
+  "De Leo|2021|js/organs/ovary.js:433",
+  "De Leo|2021|js/organs/ovary.js:447",
+  "De Leo|2021|js/organs/ovary.js:463",
+  "De Leo|2021|js/organs/ovary.js:490",
+  "De Leo|2021|js/organs/ovary.js:491",
+  "De Leo|2021|js/organs/ovary.js:497",
+  "De Leo|2021|js/organs/ovary.js:503",
   "DeLair|2011|js/organs/ovary.js:285",
   "DeLair|2011|js/organs/ovary.js:300",
   "Derakhshan|2009|js/organs/stomach.js:187",
   "Di Carlo|2022|js/organs/skin.js:47",
   "Di Carlo|2025|js/organs/skin.js:15",
   "Di Carlo|2025|js/organs/skin.js:255",
-  "Diagnostics|2021|js/organs/ovary.js:361",
-  "Diagnostics|2021|js/organs/ovary.js:389",
-  "Diagnostics|2021|js/organs/ovary.js:423",
-  "Diagnostics|2021|js/organs/ovary.js:447",
-  "Diagnostics|2021|js/organs/ovary.js:463",
-  "Diagnostics|2021|js/organs/ovary.js:490",
-  "Diagnostics|2021|js/organs/ovary.js:491",
-  "Diagnostics|2021|js/organs/ovary.js:497",
   "Ding|2016|js/organs/brain.js:32",
   "Domingo|2013|js/organs/colon.js:183",
   "Domingo|2013|js/organs/colon.js:206",

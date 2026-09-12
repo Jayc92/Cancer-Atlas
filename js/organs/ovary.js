@@ -358,7 +358,7 @@ const PRIVATE_POOL_ENDO = [
   { gene:'TTN passenger variant', class:'passenger', note:'A change with no effect on the protein it sits in — background noise, common because TTN is one of the largest genes in the genome, the same passenger convention this organ\'s other two cancers already use.' },
 ];
 
-// HISTOLOGY — Diagnostics 2021 (PMC8070731), Section 4 ("Endometrioid Carcinoma") and 4.1/4.2,
+// HISTOLOGY — De Leo 2021 (PMC8070731), Section 4 ("Endometrioid Carcinoma") and 4.1/4.2,
 // the same WHO-2020-based review already sourcing HGSOC's and OCCC's slides. Grading is by
 // architecture (FIGO/WHO system, shared with the uterine corpus's own endometrioid carcinoma):
 // "Mitotic count is approximately 5–10 mitoses per high power field"; grade set by solid-growth
@@ -370,7 +370,7 @@ const PRIVATE_POOL_ENDO = [
 const HISTOLOGY_ENDO = {
   intro: 'Endometrioid carcinoma grows as confluent glandular tissue — round-to-tubular glands packed closely enough that little stroma separates them, the "expansile" invasion pattern this cancer is graded partly by (a more destructive, single-file infiltrative pattern is the alternative). Grade is set by how much of the tumor has lost gland formation entirely: grade 1 is under 5% solid growth, grade 3 is over half. Mitotic activity is moderate — about 5 to 10 per 10 high-power fields, well under high-grade serous carcinoma\'s own threshold.',
   ariaSummary: 'Stylized microscopic field: densely packed round and tubular glands with minimal intervening stroma, lined by columnar cells with round, moderately atypical nuclei. In one corner a small solid sheet of tumor cells with no gland formation represents higher-grade area. A few scattered dividing cells are visible, fewer than in a high-grade serous field.',
-  citation: 'Diagnostics (Basel), 2021 (WHO-2020-based review, PMC8070731, Section 4).',
+  citation: 'De Leo et al., Diagnostics (Basel), 2021 (WHO-classification review, PMC8070731, Section 4).',
   features: [
     { key:'glands', label:'Confluent glands',
       text:'Round-to-tubular glands packed closely with little separating stroma — the "expansile" pattern of invasion, one of two the WHO-2020 review names for this cancer (the other, "destructive," shows glands infiltrating stroma more aggressively).' },
@@ -386,7 +386,7 @@ const HISTOLOGY_ENDO = {
 // ============================================================
 // ORIGIN — deliberately NOT overridden. The WHO-2020-based review states plainly: "The origin
 // of these tumors is unknown. Although a MC subgroup may derive from ovarian teratomas"
-// (Diagnostics 2021, PMC8070731, Section 6). This is a genuinely different epistemic status from
+// (De Leo 2021, PMC8070731, Section 6). This is a genuinely different epistemic status from
 // clear-cell/endometrioid's real, sourced endometriosis-continuity evidence — forcing a Cortex
 // override here would assert a mechanism the source explicitly says is unresolved. Defaults to
 // this organ's ORIGIN_HOTSPOT (Surface epithelium), which makes no origin claim this cancer's
@@ -420,7 +420,7 @@ const PRIVATE_POOL_MUC = [
   { gene:'TTN passenger variant', class:'passenger', note:'Background mutational noise, the same passenger convention this organ\'s other cancers use.' },
 ];
 
-// HISTOLOGY — Diagnostics 2021 (PMC8070731), Section 6 ("Mucinous Carcinoma") and 6.1/6.2. The
+// HISTOLOGY — De Leo 2021 (PMC8070731), Section 6 ("Mucinous Carcinoma") and 6.1/6.2. The
 // size/laterality criteria doubly serve as this organ's own real diagnostic-pitfall story:
 // "Features suggestive of primary ovarian MC include large size (>13 cm), unilaterality" —
 // stated because primary ovarian MC is genuinely, frequently confused with METASTATIC mucinous
@@ -430,7 +430,7 @@ const PRIVATE_POOL_MUC = [
 const HISTOLOGY_MUC = {
   intro: 'Mucinous carcinoma is usually a large tumor — 8 to 40 cm, averaging 15 to 20 cm — typically confined to one ovary and divided into many mucin-filled compartments (multilocular). That size and one-sidedness matter diagnostically: a small or two-sided mucinous tumor more often turns out to be cancer that has spread TO the ovary from elsewhere (usually the digestive tract) rather than one that started there. Invasion is graded as "expansile," glands crowding together with no obvious destruction of surrounding tissue, or "infiltrative," with clear stromal invasion and a desmoplastic (scar-like) reaction around it.',
   ariaSummary: 'Stylized microscopic field: irregular mucin-filled glands and cysts of varying size lined by tall columnar cells with basally-oriented nuclei and abundant pale, foamy (mucin-containing) cytoplasm. In one region the glands crowd together with minimal separating tissue (expansile pattern); in another, isolated glands sit within a denser, scarred-looking stroma (infiltrative pattern).',
-  citation: 'Diagnostics (Basel), 2021 (WHO-2020-based review, PMC8070731, Section 6).',
+  citation: 'De Leo et al., Diagnostics (Basel), 2021 (WHO-classification review, PMC8070731, Section 6).',
   features: [
     { key:'mucin', label:'Mucin-filled glands',
       text:'Tall columnar cells with abundant pale, mucin-laden cytoplasm and basally-pushed nuclei, forming glands and cysts of varying size — the defining feature this cancer is named for.' },
@@ -444,7 +444,7 @@ const HISTOLOGY_MUC = {
 // ============================================================
 // LOW-GRADE SEROUS CARCINOMA (LGSC) — fifth wired cancer
 // ============================================================
-// ORIGIN — deliberately NOT overridden. Diagnostics 2021 (PMC8070731, Section 2/3): "almost all
+// ORIGIN — deliberately NOT overridden. De Leo 2021 (PMC8070731, Section 2/3): "almost all
 // LGSCs arise within the ovary from benign and borderline serous tumors" — the same surface/
 // tubal-epithelium lineage this organ's own Surface-epithelium hotspot already covers for
 // HGSOC ("most ovarian cancers... are now thought to arise here or in the adjacent fallopian
@@ -460,7 +460,7 @@ const HISTOLOGY_MUC = {
 // evidence was found for LGSC). Stated here, in prose, rather than either suppressed or promoted
 // into an origin override the mechanistic evidence does not support — the same registry-versus-
 // origin discipline this pilot's trials-mapping work applied to js/trials.js.
-// TRUNK/BRANCH — Diagnostics 2021 for frequencies ("BRAF or KRAS mutations occur in LGSCs in 30%
+// TRUNK/BRANCH — De Leo 2021 for frequencies ("BRAF or KRAS mutations occur in LGSCs in 30%
 // and 35%, respectively"); Etemadmoghadam et al., Cancer Res, 2017 (PMID 28646021) for the
 // mechanism, confirmed directly via NCBI efetch abstract text: "recurrent mutations in the
 // protein translational regulator EIF1AX and in NF1, USP9X, KRAS, BRAF, and NRAS[.] RAS pathway
@@ -487,20 +487,20 @@ const REGIONS_LGSC = [
     branch:{ gene:'EIF1AX mutation', class:'driver', ccf:'recurrent in LGSC (Etemadmoghadam 2017)', note:'Same gene, same source, as the primary site.' } },
 ];
 const TRUNK_LGSC = [
-  { gene:'KRAS mutation', class:'driver', ccf:'~35% of LGSC (Diagnostics 2021, PMC8070731)', note:'A MAPK-pathway founder event and one of two common alternative routes into this cancer — mutually exclusive with BRAF mutation below, confirmed directly: "RAS pathway mutations were mutually exclusive" (Etemadmoghadam et al., Cancer Res, 2017). A third, less common route exists too — NRAS mutation, cooperating with a distinct gene, EIF1AX (the same paper\'s own major finding) — real and sourced, but not modeled at the cellular level here, since NRAS is itself excluded from co-occurring with the KRAS/BRAF tumor this entry represents.' },
-  { gene:'BRAF mutation', class:'driver', ccf:'~30% of LGSC (Diagnostics 2021, PMC8070731)', note:'The alternative to KRAS above — together the two account for roughly two-thirds of LGSC, virtually never found in the same tumor. The same contrast this atlas already draws for lung adenocarcinoma\'s own KRAS/EGFR exclusivity, playing out a second time in a different organ.' },
+  { gene:'KRAS mutation', class:'driver', ccf:'~35% of LGSC (De Leo 2021, PMC8070731)', note:'A MAPK-pathway founder event and one of two common alternative routes into this cancer — mutually exclusive with BRAF mutation below, confirmed directly: "RAS pathway mutations were mutually exclusive" (Etemadmoghadam et al., Cancer Res, 2017). A third, less common route exists too — NRAS mutation, cooperating with a distinct gene, EIF1AX (the same paper\'s own major finding) — real and sourced, but not modeled at the cellular level here, since NRAS is itself excluded from co-occurring with the KRAS/BRAF tumor this entry represents.' },
+  { gene:'BRAF mutation', class:'driver', ccf:'~30% of LGSC (De Leo 2021, PMC8070731)', note:'The alternative to KRAS above — together the two account for roughly two-thirds of LGSC, virtually never found in the same tumor. The same contrast this atlas already draws for lung adenocarcinoma\'s own KRAS/EGFR exclusivity, playing out a second time in a different organ.' },
 ];
 const PRIVATE_POOL_LGSC = [
   { gene:'TTN passenger variant', class:'passenger', note:'Background mutational noise, the same passenger convention this organ\'s other cancers use.' },
 ];
 
-// HISTOLOGY — Diagnostics 2021 (PMC8070731), Section 3 ("Low-grade Serous Carcinoma"), the same
+// HISTOLOGY — De Leo 2021 (PMC8070731), Section 3 ("Low-grade Serous Carcinoma"), the same
 // paper describing HGSOC in this file, making the mitotic/nuclear contrast below same-source and
 // direct rather than assembled across two different papers' own conventions.
 const HISTOLOGY_LGSC = {
   intro: 'Low-grade serous carcinoma is the quieter opposite of its high-grade namesake. Small papillae, uniform in size, are covered by a homogeneous population of small cells with scant cytoplasm — no hierarchical branching, no bizarre giant nuclei. Atypia is mild to moderate rather than marked, though nucleoli can be prominent; mitoses usually number under 12 per 10 high-power fields, the same threshold that, when exceeded, helps define this tumor\'s high-grade counterpart.',
   ariaSummary: 'Stylized microscopic field: numerous small, evenly-sized papillae covered by a single uniform layer of small cells with scant cytoplasm and mild-to-moderate nuclear atypia — no giant or bizarre nuclei anywhere in the field. A few nuclei show a small but distinct nucleolus. One dividing cell is visible.',
-  citation: 'Diagnostics (Basel), 2021 (WHO-2020-based review, PMC8070731, Section 3).',
+  citation: 'De Leo et al., Diagnostics (Basel), 2021 (WHO-classification review, PMC8070731, Section 3).',
   features: [
     { key:'papillae', label:'Small, uniform papillae',
       text:'Numerous small papillae of even size, without the hierarchical branching of high-grade serous carcinoma — the single clearest architectural contrast between this cancer and its high-grade namesake in the same organ.' },
