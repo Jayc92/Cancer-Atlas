@@ -158,3 +158,73 @@ later reader can see the ordering was followed, not skipped:
    discovered rather than budgeted for.
 
 Authoring can start on the 35.
+
+## 5. The ovary pilot — cost report (2026-09-11)
+
+Three entries authored end to end (endometrioid, mucinous, low-grade serous carcinoma), on one
+already-modelled organ. What follows is what it actually cost, broken down so the other thirteen
+organs are plannable rather than discovered the same way this one was.
+
+**Literature: fewer sources than entries, and that was not guaranteed going in.** Five primary
+papers covered all three entries' mutations, sites, and histology: Diagnostics 2021 (De Leo et
+al., PMC8070731 — a WHO-2020-based review that happened to cover endometrioid, mucinous, AND
+low-grade serous morphology and mutation frequencies in one paper, the same paper already backing
+this organ's HGSOC and OCCC entries), Hollis et al. 2020 (endometrioid trunk/branch), Gorringe &
+Bowtell 2020 (mucinous trunk/branch), Etemadmoghadam et al. 2017 (LGSC mechanism), and Pearce et
+al. 2012 (the same pooled endometriosis-risk analysis already cited for `clear`, re-read for its
+own endometrioid and LGSC numbers). **The comprehensive review paper is the reason this ran
+cheap** — a single modern review covering an organ's full histotype range is not something to
+assume exists for every organ; when it does, budget accordingly, and when a first search doesn't
+turn one up, budget for the higher, per-entry-paper cost instead rather than assuming this pilot's
+ratio generalizes.
+
+**Mechanistic-fit reasoning, not literature-finding, was where the real time went.** Two entries
+(endometrioid, mucinous) had their branch genes essentially handed over by their own source
+papers' own top-frequency lists, cross-checked once each for exclusivity against the trunk. The
+third (low-grade serous) needed real back-and-forth: KRAS, BRAF, and NRAS are mutually exclusive
+with each other in this cancer specifically, which ruled out the first, more obvious branch-gene
+design (NRAS + its cooperating partner EIF1AX, drawn onto a tumor whose trunk is KRAS-or-BRAF) as
+internally inconsistent, and the real, documented EIF1AX–NRAS finding ended up stated in prose
+rather than drawn into the cell ledger at all. **Budget one entry per organ, not evenly
+distributed, to need this kind of real reconsideration** — it is not predictable in advance which
+one, only that a real organ's biology will occasionally not fit the template cleanly, and forcing
+a fit rather than reasoning through it is exactly the failure mode this project's culture exists
+to catch.
+
+**The extent/staging axis was free, and this generalizes.** SEER Stat Facts is organ-level, not
+histotype-level, for every cancer site — the same live scraper run that reproduced this organ's
+already-hand-verified 22/18/54/6 shares served all three new entries at zero incremental cost,
+because they share the SAME page hgsoc/clear already cite. **Every future Phase C entry on an
+already-modelled organ gets its extent axis for free this same way** — this is the strongest,
+most transferable finding in this report, because it holds regardless of which organ.
+
+**Citation hygiene was the real, recurring tax, and it was larger than the content work's own
+error rate would suggest.** Zero of the actual scientific claims were wrong — every mutation
+frequency, mechanism, and citation resolved correctly on the first literature read. What cost
+real, repeated cycles was the corpus's own tooling catching FORM problems in how that correct
+content was phrased: an apostrophe inside a single-quoted JS string (the exact scar this project's
+CLAUDE.md already names as a standing hazard), two unscoped-absence-claim rewrites, one arithmetic
+slip in a fraction (82/185 for 82/184), and — the largest single cluster — a citation
+("Diagnostics (Basel), 2021") whose bare journal-name phrasing let the extractor mistake the
+journal for the author, which cost a real PubMed lookup (De Leo A is the true first author) and
+cascaded into two further, smaller fixes (a new multi-word-surname declaration, a repeat of this
+same round's own "WHO-2020-based" bare-digit ambiguity). **Seven distinct gate-driven fixes across
+two commits, on three entries.** None were false alarms — every one caught something real, even
+if minor — but this is the cost line most likely to recur at roughly this rate on the next thirteen
+organs, and it is the one this report most wants to flag: budget real time for it, not zero.
+
+**The one cost this pass did not anticipate going in: the histology view needs code, not just
+data.** `HISTOLOGY_ENDO`/`HISTOLOGY_MUC`/`HISTOLOGY_LGSC`'s `intro`/`features` text alone renders
+nothing — each cancer id needs its own hand-written procedural SVG generator function in
+`js/histology.js`'s `GENERATORS` dispatch, discovered only when `regress.js` reported
+`cancer {endo,muc,lgsc} histology []` (zero features) on the first full battery run. This is real,
+recurring, per-entry work — budget it explicitly for the next thirteen organs rather than assuming
+the data block is the whole cost, the same mistake this pass itself made.
+
+**Net reading for planning:** on an already-modelled organ with a strong review paper available,
+one entry costs roughly one paper (sometimes shared across several entries) plus one real
+mechanistic-fit check plus one histology generator plus a real, non-zero chance of one or two
+citation-hygiene round-trips — and the extent axis is free. The literature-finding cost this pass
+measured is an optimistic case (a comprehensive review existed); the mechanistic-fit and
+citation-hygiene costs are closer to a realistic baseline for what any of the remaining
+thirty-two entries should expect.
