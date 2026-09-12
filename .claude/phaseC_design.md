@@ -96,6 +96,10 @@ of `clear`: where does this specific subtype actually arise, checked against its
 existing hotspot prose (not assumed to match the organ's already-active sibling just because they
 share a mesh). Concretely, per entry:
 
+0. **First ask whether this entry's own origin question is spatial at all** — see §9 below,
+   added after the first entry (prostate's staged neuroendocrine carcinoma) turned out to answer
+   "no." If the honest answer is a timing/lineage event rather than a location, do NOT force a
+   spatial override at step 4; follow §9's procedure instead.
 1. Read the organ's existing hotspot list and its current `ORIGIN_HOTSPOT[organKey]` default.
 2. Find a source (the same standard organ-level hotspots are already held to) stating where this
    specific subtype's own histogenesis actually begins.
@@ -299,6 +303,66 @@ behave differently. This is reported as an open risk, not fixed here — checkin
 against their own literature is real, uncounted work, and is not part of this ovary-scoped
 correction.
 
+### §6a — the ten checked, screened by incidence share ascending, results (2026-09-11/12)
+
+**The screening method the user proposed and its arithmetic justification, stated once so the
+ordering below isn't read as arbitrary:** an organ's SEER Stat Facts aggregate is a
+share-weighted average of its subtypes. A subtype at ~90%+ of its organ is mathematically close
+to forced to match the aggregate; a subtype at ~10-20% is nearly unconstrained by it. Sorted by
+each entry's own cited incidence share, ascending (ordering used: `tnbc` ~10–20%, `ftc` ~11%,
+`gdiff` 39.0%, `luad` ~40%, `hcc` ~75%, `ccrcc` ~75%, `ptc` ~84%, `pdac` ~90%, `uc` ~92%, `acinar`
+99.68% — `hcc`/`ccrcc` sit in the middle of the pack by this measure, not at the bottom with
+`pdac`/`uc`/`acinar` as originally grouped; checked in precise share order regardless).
+
+**Every one of the ten was checked against real literature — via `js/organs/*.js`'s own existing
+citation trail first, then a live PubMed search where that trail didn't answer it — before any
+number changed.** Full findings, real-then-fixed:
+
+| id | share | verdict | modal flip? | fix shipped? |
+|---|---|---|---|---|
+| `tnbc` | ~10–20% | **REAL divergence, confirmed** — regional runs higher (~30–36% vs. 27%), localized lower (~55–63% vs. 64%), consistently across all four demographic strata in the one clean SEER-Summary-Stage source found | no | **NOT YET** — see below |
+| `ftc` | ~11% | **REAL divergence** — distant nearly doubles (6.2% vs. 3%) | no | yes |
+| `gdiff` | 39.0% | **REAL divergence** — localized nearly halves (18.5% vs. 32%), regional and distant both rise | no | yes (real scope caveat: signet-ring-specific, disclosed) |
+| `luad` | ~40% | **REAL divergence, opposite direction from the hypothesis** — runs MORE distant-heavy (57% vs. 51%), not less; a second real source (Japan) disagrees with the direction entirely, disclosed rather than picked | no | yes |
+| `hcc` | ~75% | **REAL divergence** — localized/regional run a few points higher, distant a few points lower | no | yes |
+| `ccrcc` | ~75% | **REAL divergence** — distant runs about a third lower in relative terms (10% vs. 15%), corroborated by two independent cohorts | no | yes |
+| `ptc` | ~84% | **Confirmed clean** — negligibly different from the aggregate, the arithmetic-dominance prediction holding exactly | — | no fix needed |
+| `pdac` | ~90% | **Confirmed clean** — no subtype-specific SEER-stage source exists, and the organ's own non-ductal minority is too small to plausibly move it | — | no fix needed |
+| `uc` | ~92% | **Confirmed clean** — non-urothelial variants present later, but are too small a share to move the aggregate; any bias runs conservative | — | no fix needed |
+| `acinar` | 99.68% | **Confirmed clean** — the aggregate's own denominator already IS acinar by construction | — | no fix needed |
+
+**Six of ten diverge in real, literature-confirmed ways; four are confirmed clean rather than
+merely assumed clean.** Unlike ovary, **zero of these six flip their modal category** — every
+aggregate here correctly identifies which stage is most common, it just over- or understates the
+magnitude. This is itself informative: ovary's severity (three of five modals flipping) reflects
+genuinely how heterogeneous its five histotypes are in real clinical behavior (indolent LGSC
+through aggressive HGSOC in one organ); the other ten organs' subtypes, where they diverge at
+all, diverge in degree rather than in kind. Five of the six real divergences (`ftc`, `gdiff`,
+`luad`, `hcc`, `ccrcc`) are now fixed in `js/morphology.js`'s `EXTENT_STATUS` and in the
+disclaimer, each with a real PMID/PMCID, following the exact citation-and-disclosure pattern the
+ovary fix established (subtype-specific site name where the figure is now genuinely
+subtype-specific; a disclosed scope caveat where it is a real but imperfect proxy, as with
+`gdiff`'s signet-ring-specific source).
+
+**`tnbc` is reported, confirmed real, and deliberately NOT shipped a new number this pass —
+stated plainly rather than silently deferred.** The one clean SEER-Summary-Stage source found
+(Kohler et al., *JNCI*, 2015, PMID 25825511, PMCID PMC4603551) reports TNBC's stage distribution
+as age-adjusted incidence RATES per 100,000 women, stratified by race/ethnicity, not as one
+national count-based percentage — the same shape of gap Peres 2019 did NOT have for ovary (Peres
+gave one national table with raw counts). Blending four race-stratified rates into one national
+percentage needs each stratum's own population denominator to weight correctly; doing this without
+that data, or by simply picking one stratum (the largest divergence, tellingly, is in the NH
+Black stratum specifically — 55.1/36.1/8.9 vs. the aggregate's 64/27/6 — and TNBC is
+well-documented to be disproportionately diagnosed in Black women, so picking the White stratum
+as "representative" would understate the true population-level divergence) would be exactly the
+kind of unforced, under-supported number this project's own standing discipline exists to refuse.
+**The direction and rough magnitude are real and confirmed** (regional runs consistently higher,
+localized consistently lower, across every stratum checked) — what's missing is a defensible way
+to collapse that into the single quadruple `EXTENT_STATUS.tnbc` needs. Left as `status: 'cited'`
+on the current aggregate for now, flagged here rather than fixed, pending either a
+population-weighted blend (needs US Census/ACS race-proportion data as a third source, which adds
+its own compounding-error risk) or a cleaner national-count source not yet found.
+
 ## 7. Item 2 — histology generators DO factor into families, proven by building a fourth
 ## (2026-09-11, user-directed test)
 
@@ -460,6 +524,42 @@ The histology cost report's own worst-case framing ("budget one generator per en
 revised: budget one PER FAMILY the first time a family is needed, and near-zero for every
 subsequent entry that family already serves.
 
+### §7a — the neuroendocrine/small-cell family, built next, same discipline (2026-09-11)
+
+The single best-leveraged new family named in §7 — small-cell/neuroendocrine morphology, which
+would serve five staged entries across four organs from one build — is now built. Two new shared
+primitives in `js/histology.js`: `drawSmallCellSheet` (a densely-packed field of small nuclei with
+NO cytoplasm ring — "naked nuclei" in 89% of cases — and a real per-cell NUCLEAR MOULDING
+computation: each nucleus checks its own nearest neighbour and, where one is close enough to
+plausibly be pressed against it, elongates and rotates to face it, rather than a uniform
+stylistic squash) is the family's own new primitive, since none of the nineteen existing
+generators draw this morphology and there was nothing to extract. Sourced directly: Ng & Li, *Ann
+Diagn Pathol*, 2024, PMID 39342665 (a 2024 cytomorphology study, n=37 small cell carcinomas) —
+"nuclear moulding (35/37, 95%)... the only specific feature for small cell carcinoma was the lack
+of prominent nucleoli (p=0.004)."
+
+**Proof: a real fourth-of-this-family generator, for a real staged entry, live-verified, then
+removed the same way ductal was.** `sclc` (small cell lung carcinoma) already exists as a real
+`active:false` stub in `lungs.js` — the same kind of pre-staged entry ovary's endo/muc/lgsc were
+before authoring. Built from `drawSmallCellSheet` + the pre-existing, unmodified `necrosisBlob` +
+one small new crush-artifact pass (elongated, roughly co-aligned nuclear streaks — a mechanical
+handling effect on the specimen, not cell-to-cell moulding, so it deliberately does not reuse
+`drawSmallCellSheet`'s neighbour-finding logic). Live-verified in the browser: a dense, dark,
+molded sheet, visually distinct at a glance from every other cell-field this atlas draws (every
+other generator's cells carry a visible cytoplasm ring; this family's don't, by citation). Then
+deliberately NOT kept shipped, on the identical reasoning as ductal — `sclc` has no mutations,
+origin, extent, or trials authored yet, so a working generator has nowhere real to be dispatched
+from. Removed from `js/histology.js`; the primitive stays.
+
+**Net for the family-coverage report:** three families now proven this way (frond, cribriform
+mass, small-cell sheet), each on a real staged entry, none left shipped ahead of its data. The
+remaining four staged consumers of this family — prostate neuroendocrine, bladder neuroendocrine,
+skin's Merkel cell carcinoma, colon neuroendocrine — get their own generator at near-zero
+additional drawing cost once they're each authored for real, per §7's own "budget one per family"
+revision. Each still needs its OWN citation check before authoring, though — Ng & Li 2024's cohort
+is pulmonary neuroendocrine tumors specifically; whether the same quantified 95%/89%/p=0.004
+figures hold, or need re-verifying, for a Merkel cell or colonic primary is not assumed here.
+
 ## 8. Item 3 — pre-authoring checklist, derived from the pilot's seven hygiene fixes
 ## (2026-09-11, user-directed)
 
@@ -508,3 +608,154 @@ trips thirty-two more entries would cost at this pilot's own measured rate (seve
 three entries) if nobody read it. If a future organ's own hygiene-fix rate turns out to still be
 high despite this list, that is the signal to mechanize one of these seven into an actual
 pre-commit check rather than to write a longer checklist.
+
+## 9. Item 3 — origin is not always a spatial claim, recorded before it recurs
+## (2026-09-11, user-directed)
+
+**The finding.** Checking prostate's staged neuroendocrine carcinoma against §2's origin-siting
+procedure (step 1: read the organ's hotspot list; step 2: find where this subtype's histogenesis
+begins) produced a real, structural surprise: the question doesn't have a spatial answer to find.
+Neuroendocrine prostate cancer is predominantly **treatment-emergent** — it arises through lineage
+plasticity, a phenotypic switch from an androgen-receptor-driven acinar adenocarcinoma to an
+androgen-receptor-independent neuroendocrine phenotype, typically under the selective pressure of
+androgen deprivation therapy (de Kouchkovsky et al., *The Prostate*, 2024, PMID 38173302: "a
+phenotypic switch from an AR-driven adenocarcinoma to an AR-independent NEPC"). Its real origin
+story is WHEN and HOW a cell already there transforms, not WHERE in the gland it began — the
+tumor's physical location is inherited from whichever pre-existing acinar tumor transdifferentiated,
+not sited independently at all.
+
+**This is the same shape as data rule 5's trunk-mutation split, one axis over.** Rule 5 already
+distinguishes a mutation that is truncal because it is present everywhere at one time (spatial
+ubiquity — TP53, VHL) from one that is truncal because it happened first (temporal earliness — HCC's
+TERT, PDAC's KRAS) from one that is truncal because it defines a diagnostic classifier rather than a
+frequency (GBM's IDH-wildtype status). One field name, `trunk`, covers three different KINDS of
+claim, and the fix was never a new schema — it was requiring the in-product note to say which kind
+applies, every time, rather than reusing the previous organ's language by default. The origin axis
+needs the identical discipline: `ORIGIN_HOTSPOT`/`ORIGIN_HOTSPOT_ENTRY` is a spatial mechanism (a
+hotspot anchor), and it will keep being asked to answer questions that aren't spatial the moment a
+second treatment-emergent, lineage-transformed, or reclassified-rather-than-sited entry is staged
+anywhere else — transdifferentiation is a real, general oncology mechanism, not a
+prostate-specific curiosity, and small-cell/neuroendocrine transformation under treatment pressure
+is documented in lung and other epithelial cancers too.
+
+**What the origin axis should do when the honest answer isn't a location — the procedural amendment
+this section exists to make (folded into §2's checklist above as its new step 0):**
+
+1. **Do not force a spatial override.** An entry whose real origin is a transformation event gets
+   NO `ORIGIN_HOTSPOT_ENTRY` override on that basis alone — its drawn anchor stays whatever its
+   organ default (or its own precursor's resolved anchor, if one is separately, spatially knowable)
+   already is. Inventing a distinct "where NEPC arises" site would fabricate a spatial claim the
+   biology doesn't make.
+2. **Say the real kind of claim explicitly, in the entry's own prose — never let the spatial dot
+   stand in for it silently.** The trunk-mutation note (or a dedicated origin note, if the entry's
+   trunk is a mutation this mechanism doesn't otherwise touch) states the transformation directly:
+   what it transforms FROM, what pressure typically drives it, and that this is a timing/lineage
+   claim rather than a site claim. A reader hovering the spatial anchor and reading only "arises
+   here" would walk away with a claim this atlas never verified.
+3. **Keep a running registry, here, of every origin-axis entry whose honest answer is not
+   spatial** — the same discipline data rule 5 already keeps for temporal trunks, so a future
+   organ's author checks this list before assuming their own new entry's origin question is a pure
+   siting problem the way ovary's turned out to be for two of three and prostate's ductal turned out
+   to be for one of one.
+
+   | entry | organ | mechanism | source |
+   |---|---|---|---|
+   | prostate neuroendocrine (staged, not yet authored) | prostate | treatment-emergent lineage plasticity from pre-existing acinar adenocarcinoma | de Kouchkovsky et al., *The Prostate*, 2024, PMID 38173302 |
+
+**What this does NOT resolve, stated so it isn't assumed closed:** whether prostate's neuroendocrine
+entry ALSO has a real, minority, genuinely-de-novo form with its own independent site preference is
+unchecked — the review this finding rests on is specifically about treatment-emergent NEPC, the
+dominant and best-studied form, not a claim that de novo NEPC doesn't exist. If prostate's
+neuroendocrine entry is authored, that distinction needs its own read before the entry's trunk note
+asserts transformation as the ONLY route, not merely the dominant one.
+
+## 10. Item 4 — a proposed incidence floor for build-out, with the resulting count
+## (2026-09-11/12, user-directed; RULING NEEDED, nothing decided here)
+
+**The question, restated precisely:** every entry costs roughly the same to author in full
+(mutations, origin, histology, extent, trials, gate-shipping) regardless of how rare it is — the
+ovary pilot's own cost report. So a subtype at 0.01% of its organ's cancers costs what HGSOC (~70%
+of ovarian cancer) costs, for a vanishingly small chance of ever being the specific diagnosis a
+reader arrived at this tool holding. **The app already has a working, shipped "named but not built"
+state** — every inactive `cancerEntries` row already renders in the cancer list with its real name
+and cited share text, with a disabled "Profile coming soon" call-to-action (`js/main.js`'s
+`renderCancerList`, confirmed by reading the code) — so this is not a NEW UI state to invent; it is
+a decision about which entries stay in that state on purpose rather than as a queue everything
+eventually graduates from.
+
+**Every staged entry's own cited share, gathered and sorted** (own organ's own denominator, the
+entry's own `cancerEntries.share` string — not the extent-source's cohort composition, which
+answers a different question; percentages are as cited, midpoints used where a range is given):
+
+| id | organ | share | note |
+|---|---|---|---|
+| psignet | prostate | 0.01% | Siech 2026, precise count (54/427,055) |
+| pneuro | prostate | 0.03% | Siech 2026, precise count (130/427,055) |
+| mcc | skin | ~0.04% (ESTIMATED) | file cites an absolute rate (~0.7/100,000 person-years), not a % share — converted here against Rogers et al. 2015's ~5.4M annual US keratinocyte carcinomas as a rough denominator; flagged as an estimate, not a cited figure |
+| pmuc | prostate | 0.08% | Siech 2026, precise count (324/427,055) |
+| pductal | prostate | 0.20% | Siech 2026, precise count (855/427,055) — **see the exception note below** |
+| atc | thyroid | ~1% | SEER-9 pooled, right at the line |
+| bladc | bladder | ~1.9% | Park 2023, of the four commonest types |
+| mtc | thyroid | ~2% | SEER-9 pooled |
+| blscc | bladder | ~3.1% | Park 2023 |
+| blnec | bladder | ~3.2% | Park 2023 |
+| chrcc | kidneys | ~5% | Li & Kaelin 2011 |
+| pacc, pcyst | pancreas | rare, **no individual figure cited** | StatPearls names them among a non-ductal minority with no split given — cannot be screened by this method without a dedicated lookup |
+| pnet | pancreas | separate endocrine category, **no % given** | same gap |
+| cnet, clymph | colon | part of a combined &lt;10% remainder, **no individual split cited** | same gap |
+| astro, odg | brain | part of a combined ~8.5% remainder, **no individual split cited** (CLAUDE.md data rule 14: a split was searched for and not found) | same gap — bounded above at 8.5% combined, so neither can be below a sub-1% floor even unsplit |
+| ichol | liver | ~10–15% | midpoint ~12.5% |
+| her2 | breast | ~10–15% | midpoint ~12.5% |
+| lcc | lungs | ~10% | NCI PDQ |
+| gmix | stomach | 10.9–21.1% | KGCA 2011 |
+| prcc | kidneys | ~15% | Li & Kaelin 2011 |
+| sclc | lungs | ~15% | NCI PDQ |
+| lumB | breast | ~15–20% | midpoint ~17.5% |
+| lusc | lungs | ~25% | NCI PDQ |
+| nsgct | testis | ~35.5% | precise (12,432/35,066) |
+| menin | brain | 42.6% | CBTRUS — the single most common of the three brain entries |
+| gint | stomach | 50.0–55% | KGCA 2011 / Dutch data |
+| lumA | breast | ~50–60% | midpoint ~55% |
+
+**Proposed threshold: 1% of the organ's own cancers.** Reasoning, not just a round number: the
+data itself clusters this way — five entries sit under 1% (psignet 0.01, pneuro 0.03, mcc ~0.04,
+pmuc 0.08, pductal 0.20), then nothing until atc lands almost exactly ON 1%, then bladc jumps to
+1.9%. Any threshold from roughly 0.25% to just under 1% draws the identical line in this dataset,
+which is itself evidence the line is real rather than chosen to hit a target count — the same kind
+of natural break the incidence-share cross-check itself relies on (a dominant subtype is
+mathematically constrained toward its organ's aggregate; these five are at the opposite,
+unconstrained extreme). A 1% floor is also a defensible ROUND number to state and defend later,
+rather than an oddly-specific one that looks reverse-engineered from this table.
+
+**Applying it: 5 of 35 fall below — four prostate entries plus skin's Merkel cell carcinoma.**
+(35, not 32, because this question is retrospective too — ovary's own three now-authored entries
+[endo ~10%, muc ~3%, lgsc &lt;5%] are all comfortably above any reasonable floor, so the floor
+would not have changed anything already shipped, which is worth knowing before ruling on it.)
+
+**One exception candidate, flagged rather than silently absorbed into the mechanical count:
+`pductal`.** It clears the proposed floor's own NUMBER (0.20% &lt; 1%) but not its own
+UNDERLYING LOGIC. The floor's premise is thin literature + low reader-relevance for a fixed
+per-entry cost; ductal fails that premise on literature strength specifically — Seipel et al.'s own
+N=1,051 single-institution cohort (PMID 23443941) and Au et al.'s independent cohort (PMID
+30772651) are large, real, and already fully resolved this pass: origin siting is done (a genuine
+periurethral override, 69.8% periurethral-only + 26.7% both vs. acinar's peripheral-zone default,
+§4/§9's own work), and its histology family is already built and live-verified (§7's frond+
+cribriform composite). Building it to completion is now mostly wiring, not research — a
+meaningfully different cost profile than mucinous/signet-ring/neuroendocrine, whose own dedicated
+literature searches (this pass, for the origin question) came back thin or absent. **A numeric
+floor is a screening heuristic, not a strict rule, and this is the clearest test of whether an
+exception should be allowed** — recorded here so the ruling is made on the real tradeoff (strong,
+mostly-finished literature vs. a share number that would mechanically exclude it) rather than on
+the number alone.
+
+**What this does not resolve:** `mcc`'s own figure is an estimate from a unit conversion, not a
+cited share — if it matters to the ruling, it should be re-derived from a real %-share source (skin
+cancer literature does report subtype shares as percentages elsewhere in this exact file's own
+citation trail) before being trusted at the same precision as prostate's four Siech-sourced
+figures. And `pacc`/`pcyst`/`pnet`/`cnet`/`clymph`/`astro`/`odg` cannot be screened by this method
+at all — each needs its own dedicated incidence lookup before the floor question can even be asked
+of it, a real, separate, uncounted piece of work this section does not do.
+
+**RULING NEEDED: whether to adopt a 1% floor, whether `pductal` is exempted from it on the
+literature-strength grounds above, and whether the un-screenable six above are worth a dedicated
+lookup pass before Phase C authoring resumes at scale.**

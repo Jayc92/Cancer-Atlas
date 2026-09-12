@@ -226,6 +226,51 @@ function drawFrond(g, rnd, f, opts){
   }
   return {rimCells};
 }
+// A small-cell/neuroendocrine field — item 2's third family, built the same way the first two
+// were: none of the nineteen shipped generators draw this morphology yet, so there was no
+// existing pattern to extract, only a real source to build from. Two cited, quantified features
+// drive the design: NUCLEAR MOULDING in 95% of small cell carcinomas (35/37) — adjacent nuclei
+// deform against each other rather than staying independently round — and the LACK OF PROMINENT
+// NUCLEOLI as the one feature specific to small cell carcinoma among neuroendocrine tumors
+// (p=0.004) — Ng & Li, Ann Diagn Pathol, 2024, PMID 39342665. Cells are drawn with NO cytoplasm
+// ring at all (naked nuclei, 89%, same source) — the one existing primitive this deliberately
+// does NOT reuse is `drawCell`, because drawCell always draws a cytoplasm ellipse first. Molding
+// is a real per-cell computation, not a fixed visual trick: each nucleus checks its own nearest
+// neighbour and, where one is close enough to plausibly be pressed against it, elongates and
+// rotates to face it — cells with no close neighbour stay rounder, so the molded look emerges
+// from local crowding the way it does in a real smear, not from a uniform stylistic squash.
+function drawSmallCellSheet(g, rnd, cx, cy, rx, ry, opts){
+  const o = opts || {};
+  const d = blobPath(cx, cy, rx, ry, o.wobble != null ? o.wobble : 0.1, 14, rnd, o.rot || 0);
+  g.appendChild(el('path', {d, fill:o.fill || HE.cytoLite, stroke:o.stroke || HE.cytoLn, 'stroke-width':o.strokeWidth || 1}));
+  const spacing = o.spacing || 9;
+  const cells = [];
+  for(let gx=-rx; gx<=rx; gx+=spacing){
+    for(let gy=-ry; gy<=ry; gy+=spacing){
+      if((gx/rx)**2 + (gy/ry)**2 > 0.92) continue;
+      cells.push({x:cx+gx+(rnd()*2-1)*2, y:cy+gy+(rnd()*2-1)*2, r:(o.nucMin||2.6)+rnd()*((o.nucMax||4)-(o.nucMin||2.6)), ry:0, ang:rnd()*180, molded:false});
+    }
+  }
+  cells.forEach((c, i)=>{
+    let nearest = null, nd = 1e9;
+    for(let j=0;j<cells.length;j++){
+      if(j===i) continue;
+      const dist = Math.hypot(cells[j].x-c.x, cells[j].y-c.y);
+      if(dist < nd){ nd = dist; nearest = cells[j]; }
+    }
+    if(nearest && nd < spacing*(o.moldingReach || 1.3)){
+      c.ang = Math.atan2(nearest.y-c.y, nearest.x-c.x)*180/Math.PI;
+      c.ry = c.r*(0.5+rnd()*0.15);
+      c.molded = true;
+    } else {
+      c.ry = c.r*(0.82+rnd()*0.15);
+    }
+  });
+  cells.forEach(c=>{
+    g.appendChild(el('ellipse', {cx:c.x, cy:c.y, rx:c.r, ry:c.ry, transform:`rotate(${c.ang.toFixed(0)} ${c.x} ${c.y})`, fill:o.nucFill || HE.nucDark, opacity:0.94}));
+  });
+  return {cx, cy, rx, ry, cells};
+}
 
 // ------------------------------------------------------------
 // Per-cancer generators. Each draws into <g> and returns label anchor points {key,x,y} in
