@@ -986,3 +986,163 @@ of that reading has happened yet.
 design is right before any content is written for it; and whether `psignet`/`pneuro`/`pmuc` should
 each get their own clinical-distinctiveness read before Phase C authoring resumes, the same way
 `pductal` just did.**
+
+## 13. Five rulings answered — the threshold is gap-driven not calibrated, `pductal`'s own count
+## gets a definitional caveat, `pneuro` joins it on a clean exception, `psignet`/`pmuc` do not
+## clear the bar, §9 is confirmed as resolving its own design question (2026-09-12, user ruling)
+
+**Ruling 1 — threshold accepted, recorded as GAP-DRIVEN rather than calibrated.** The four
+prostate entries (3–50/year) sit an order of magnitude below `mcc` (~2,345/year), so any cut
+between roughly 100 and 2,000 partitions the same way — that insensitivity is what makes
+<1,000/year defensible, not the number itself. **Consequence for the future, stated so it isn't
+lost:** a later entry landing near the threshold (a few hundred/year) gets its own fresh look
+rather than automatic exclusion by a number that was never calibrated against a case that close.
+
+**`pductal`'s own count needed the caveat the user asked for, and it is real, not a formality.**
+Fetched Siech et al. 2026 (PMID 41718902, PMCID PMC13179204) directly rather than trusting the
+already-cited abstract-level figure: **"ductal (ICD-O-3 codes 8201/3, 8260/3, 8380/3, 8500/3,
+8501/3, 8503/3, 8521/3, 8523/3, and 8552/3)"** is a fixed code list, not a dedicated histology
+recode, and the paper's own Limitations section says outright: **"we could not distinguish between
+pure versus mixed rare histological subtypes of PCa. In general, histological subtypes are coded
+only if they account for at least 50% of the tumor, which can underreport rare histological
+subtypes."** So the 855-count (~50/year) describes tumors where ductal histology was the
+*predominant* (≥50%) component — closer to "pure/predominant" than "any admixture," but explicitly
+not verified 100%-pure. **A real, much higher any-component figure exists, independently
+verified:** Seipel et al., *Virchows Arch*, 2013, PMID 23443941 — a systematic slide-by-slide
+re-review of 1,051 consecutive radical prostatectomies — found ductal histology (three variant
+forms combined) in ~8.2% of cases, "usually mixed with" acinar carcinoma at "10–100% (mean 40%) of
+the main tumor," roughly 13–40× Siech's rate; Amin & Epstein, *Am J Surg Pathol*, 2011, PMID
+21383610, PMCID PMC4425125, found a smaller but still real gap (93/18,552 ≈ 0.50%, ~2.5× Siech's
+rate) in routine (not systematically re-reviewed) reporting. **Consequence: the atlas's ~50/year
+figure must be labeled "predominantly-ductal, SEER-coded" — never "pure ductal adenocarcinoma
+incidence" — with the any-component literature cited as the reason the true prevalence of ductal
+*histology* (as opposed to ductal-*defined* tumors) is materially higher.** This does not change
+`pductal`'s own exception grant below — the clinical-distinctiveness evidence for that exception
+(Au 2019, Seipel 2013, Seipel 2016) is about behavior and management, independent of which count
+denominator is used — but the incidence figure itself needs the caveat wherever it is shown.
+
+**Ruling 3 — the same clinical-distinctiveness read run on `psignet`, `pneuro`, `pmuc`, to the
+same standard as `pductal`, three independent literature passes (PubMed/Europe PMC, primary
+sources read directly, hedges and disagreement reported rather than smoothed over).**
+
+- **`pneuro` (neuroendocrine) CLEARS THE BAR CLEARLY — an exception granted, joining `pductal`.**
+  Convergent, independent evidence from three separate groups on every dimension the test asks
+  for. **Metastatic pattern/survival:** Wang et al., *Prostate*, 2019, PMID 31376193 (SEER
+  2010–2015, 352 pure NEPC vs. 408,629 adenocarcinoma at diagnosis) — "Pure NEPC had higher rates
+  of visceral metastases (brain, lung, and liver: 4.58%, 26.72%, and 36.64%, respectively) but a
+  lower rate of bone metastasis (65.65%) compared with... prostate adenocarcinoma," median survival
+  "10 months" vs. "not reached" for adenocarcinoma. **Treatment divergence:** Aparicio et al.,
+  *Clin Cancer Res*, 2013, PMID 23649003 (120-patient phase II trial) enrolled on criteria
+  including "low prostate-specific antigen levels relative to tumor burden, or short response to
+  androgen deprivation therapy," finding "a high response rate of short duration to
+  platinum-containing chemotherapies, similar to SCPC" — the chemo-not-ADT divergence the origin-
+  axis write-up (§9) already flagged as this entity's defining treatment-emergent mechanism, now
+  independently confirmed as a real management difference, not just a mechanism difference.
+  **PSA pitfall:** Conteduca et al., *Eur J Cancer*, 2019, PMID 31525487, PMCID PMC6803064 (87
+  NEPC, multi-institutional) — "median prostate-specific antigen (PSA) was 1.20 ng/mL" despite
+  bone/visceral metastatic disease in most patients; Wang 2019 independently found PSA ≤4.0 ng/mL
+  carried its own adjusted HR 1.57 for worse survival within pure NEPC — low PSA both masks disease
+  and independently marks worse prognosis, a real diagnostic-pitfall fact on top of the treatment
+  divergence. **One honest caveat preserved rather than flattened:** Conteduca's cohort pools de
+  novo (54%) with treatment-emergent (46%) NEPC, and de novo had *shorter* survival from diagnosis
+  than treatment-emergent (16.8 vs. 53.5 months, P=.043) within that pooled cohort — but Wang
+  2019's SEER analysis is de-novo-specific and independently reproduces the same metastatic-pattern
+  and survival divergence, so the core distinctiveness claim holds even restricted to de novo
+  disease alone, which is the form this entry would need to scope itself to per §9's own open
+  question about whether a real, independently-siting de novo form exists alongside the
+  treatment-emergent one.
+
+- **`psignet` (signet ring cell) and `pmuc` (mucinous) DO NOT CLEAR THE BAR — both stay
+  below-floor, named-and-described, no exception.** Both reads found real historical claims of
+  aggressiveness that the largest, most recent, best-controlled studies do not support once stage
+  and grade are held constant — the honest "no" or "insufficient evidence" verdict the ruling's own
+  instructions explicitly allowed for, not a failure to find something.
+  - **`psignet`:** case-report literature (publication-biased, no denominator) reads uniformly
+    aggressive — Boot et al., *Clin Genitourin Cancer*, 2025, PMID 39729824 (89 published cases,
+    systematic review): "a 3-year survival rate of approximately 17%." But the best-powered
+    population evidence contradicts the magnitude: Siech et al., *Prostate Cancer Prostatic Dis*,
+    2025, PMID 38987307, PMC12399420 (95 SEER cases, competing-risk regression adjusted for
+    stage/age/treatment/other-cause mortality) found **"CSM rates of mucinous and signet ring cell
+    adenocarcinoma do not differ from those of acinar adenocarcinoma"** — localized HR 0.79
+    (p=0.6), locally advanced HR 2.08 (p=0.07), metastatic HR 0.84 (p=0.7), none significant. A
+    companion paper by the same group (PMID 39740082, PMC12008828) found one real, narrower signal
+    preserved rather than discarded — locally-advanced-stage signet ring specifically showed a
+    wider gap vs. age-matched controls (75% vs. 91% 5-yr survival) than ductal/mucinous at that
+    stage — but this did not reach significance in the CSM analysis above. Management: a small
+    series (Blas et al., 2019, PMID 31823856) concluded outright "Treatment is the same as
+    classical adenocarcinoma." The one genuine, well-documented difference is diagnostic (ruling
+    out metastatic gastric/GI signet-ring disease), not a prostate-management difference.
+  - **`pmuc`:** the SAME Siech et al. 2025 competing-risk paper (PMID 38987307) covers mucinous
+    jointly with signet ring and reaches the identical null result. Independently, older
+    single-institution literature disagreed with itself: Epstein et al., *Am J Surg Pathol*, 1985,
+    PMID 2409826 (the paper defining the entity) — "they have an aggressive biologic behavior" and
+    "do not respond well to hormonal therapy" — but larger, more recent, grade/stage-controlled
+    series contradict this directly: Osunkoya et al., *Am J Surg Pathol*, 2008, PMID 18300802
+    (n=47, radical prostatectomy) — "mucinous adenocarcinoma... is not more aggressive, and
+    possibly even less aggressive than nonmucinous prostatic adenocarcinoma"; Samaratunga et al.,
+    *Histopathology*, 2017, PMID 28590015 (n=143, the largest single series) — 5-yr biochemical
+    recurrence 12.5% vs. 17% in matched non-mucinous controls (p=0.15), "the prognosis appears to
+    be similar to non-mucinous cancers of similar GS"; Zhao et al., *Front Oncol*, 2020, PMID
+    31998638 (SEER, propensity-matched) — "not a more malignant tumor as previously suspected...
+    shows a similar prognosis to typical prostate acinar carcinoma." A real, separate diagnostic
+    fact exists (≥25% extracellular mucin required for the diagnosis, Epstein 1985, reaffirmed by
+    Osunkoya, *Mod Pathol*, 2018, PMID 29297488) but it is definitional, not behavioral.
+
+**Resulting authoring scope for "then prostate," revised from "all four below-floor entries" to
+a split: `pductal` and `pneuro` get full content (mutations/sites/histology/extent, per the
+exception); `psignet` and `pmuc` get the below-floor treatment (name, share, citation, `blurb`,
+and — per ruling 2 below — trials) and nothing more.**
+
+**Ruling 2 — the `blurb` schema is accepted with both additions, and the trials half needs a
+structural design decision this pass proposes but does not build.** Trials are cheap (a keyword
+mapping plus a runtime fetch, matching the exact mechanism already shipped for all sixteen active
+entries in `js/trials.js`) and disproportionately valuable exactly where standard treatment is
+least established — the ruling's own reasoning, and it's sharper for `psignet`/`pmuc` specifically
+than for an average active entry, since both just failed to show a distinctive standard-of-care in
+the literature read above, which is itself a reason a reader benefits from seeing what trials exist
+rather than assuming "same as acinar" settles the question for their own case.
+
+**The structural problem, confirmed against the real code before proposing a fix:**
+`renderCancerList()` (`js/main.js`) renders an inactive row as a single `makeActivatable` div whose
+activation today only shows a toast ("Profile coming soon for...") — there is no cancer screen, no
+site map, and therefore no existing surface to hang the site-map-level `#txTrialsToggle`/
+`#txTrialsLayer` mechanism active entries use. **Proposed, not built:** each below-floor row gains
+an inline trials toggle within the organ-screen list itself — expanding a small inline panel
+directly in place (same four-state LOADING/RESULTS/EMPTY-ANSWERED/EMPTY-UNANSWERED UI `trials.js`
+already implements, reusing its fetch-time-filter function directly rather than duplicating it) —
+so a below-floor entry never requires entering a screen that structurally doesn't exist for it.
+This is a real UI decision this document is proposing, not describing as already true, and it
+should be ruled on before being built, matching how the original Phase D trials mechanism itself
+was designed and ruled on before any fetch code was written.
+
+**A real, serious collision risk specific to these two entries, flagged before any keyword mapping
+is written:** every previously-wired `TRIALS_CONDITION_MAP` entry's subtype name is at least somewhat
+organ-distinguishing on its own (or was checked and widened deliberately — the fallopian/peritoneal
+extension, the seminoma bare-tag fix). `psignet` and `pmuc`'s own names are two of the most
+overloaded histologic terms in oncology *by organ*: "signet ring" is the textbook gastric-carcinoma
+association, and "mucinous" is extremely common in colorectal/ovarian/appendiceal disease — far
+more overloaded than the "adenocarcinoma"-collision problem §11 of the roadmap already flagged for
+`gdiff`/`luad`/`acinar`/`crc`. **Any condition-keyword set for these two must be conjunctive
+(subtype term AND an organ term — "prostat"), never the bare subtype term alone**, or the fetch
+would flood with wrong-organ trials at a rate this atlas has never had to handle before. Recorded
+here as the check to run before wiring, not run yet.
+
+**Citation resolvability, per the ruling's own instruction — "an identifier a reader can follow,
+not an author-year string."** Every citation surfaced in this round's research already carries a
+PMID and, where available, a PMCID (all quoted above) — the below-floor `blurb`/citation field for
+`psignet` and `pmuc`, when written, uses one of these identifiers directly rather than an
+author-year string, matching the atlas's own standing rule ("RECORD THE PERMANENT IDENTIFIER...
+IN THE CITATION ITSELF, always" — the epi-pass's primary rule, CLAUDE.md).
+
+**Ruling 4 — confirmed by direct re-reading, not assumed: §9 answers the design question, it does
+not only record the finding.** §9's three-item procedural amendment (never force a spatial
+override; state the real kind of claim explicitly in the entry's own prose; keep a running
+registry of every non-spatial origin-axis entry) is a concrete decision procedure for what the
+origin axis *does* when the honest answer isn't a location — not merely a note that the problem
+exists. **Accepted as written; no further work needed on §9 before `pneuro` is authored.**
+
+**Ruling 5 — "then prostate" unblocks, with the scope stated precisely rather than assumed.** Full
+authoring (mutations/trunk/branch, region ids, extent, histology, trials wiring) proceeds for
+`pductal` and `pneuro`. `psignet` and `pmuc` get the below-floor treatment — `blurb` field content
+plus (pending the structural-design ruling above) an inline trials mapping — and nothing beyond
+that. Standing gates, served-asset scoped, everything through `at_root.sh`, as always.
