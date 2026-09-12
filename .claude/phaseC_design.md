@@ -228,3 +228,73 @@ citation-hygiene round-trips — and the extent axis is free. The literature-fin
 measured is an optimistic case (a comprehensive review existed); the mechanistic-fit and
 citation-hygiene costs are closer to a realistic baseline for what any of the remaining
 thirty-two entries should expect.
+
+## 6. "Extent is free" was wrong — an organ-aggregate shown on a subtype entry can be a divergence,
+## not just a scope note (2026-09-11, user-directed correction, ovary's five checked and fixed)
+
+Item 5's own headline finding — that the extent/staging axis is free on any already-modelled
+organ because SEER Stat Facts is organ-level, not histotype-level — was **correct about the
+mechanism and wrong about the consequence.** All five ovary entries displayed the identical
+organ-wide SEER distribution (localized 22% / regional 18% / distant 54% / unknown 6%), each with
+a `siteNote` disclosing "not the X subtype alone." That note discloses **breadth** — it says
+nothing about **divergence**. Showing the same number on five different subtype entries tells a
+reader those five subtypes present alike, and four of the five do not.
+
+**Checked against Peres et al. (JNCI, 2019, PMID 29718305, PMCID PMC6335112) Table 2** — a paper
+already cited elsewhere in `ovary.js` and the disclaimer for OCCC's own stage/timing story, and
+which turns out to report stage at diagnosis BY HISTOTYPE from the same underlying SEER registry
+(SEER 18, 2004–2014, n=28,118 invasive EOC, 2014 WHO histotypes). Fetched live; every histotype's
+three counts sum exactly to its own N, so the underlying counts carry no typo (only the paper's own
+printed HGSOC-distant percentage does, already flagged elsewhere in this file's citation trail).
+Real per-histotype localized/regional/distant split, computed directly from the counts:
+
+| histotype | localized | regional | distant | old aggregate's modal | real modal |
+|---|---|---|---|---|---|
+| high-grade serous | 5% (882/17,837) | 17% (3,057) | **78%** (13,898) | distant | **distant (unchanged)** |
+| low-grade serous | 20% (144/708) | 26% (186) | 53% (378) | distant | **distant (unchanged)** |
+| endometrioid | **46%** (1,275/2,782) | 42% (1,177) | 12% (330) | distant | **localized (flipped)** |
+| clear-cell | 34% (929/2,695) | **38%** (1,021) | 28% (745) | distant | **regional (flipped)** |
+| mucinous | **48%** (1,274/2,641) | 25% (661) | 27% (706) | distant | **localized (flipped)** |
+
+Four of five diverge materially from the shared aggregate; three of five diverge enough to flip
+which stage is actually most common. Only low-grade serous is close to the aggregate it was
+sharing (53% distant vs. the aggregate's 54%) — and even that one gained real precision from the
+switch (its own regional share, 26%, differs from the aggregate's 18% by eight points).
+
+**The fix is NOT "mark uncharacterised."** `extentSentence()`'s uncharacterised branch renders a
+specific, hardcoded sentence: "the SEER page for {site} publishes no stage-at-diagnosis
+distribution, so extent is not characterised" — which would be **false** for every one of these
+five: a distribution exists, it's just organ-level. Marking a subtype uncharacterised when
+organ-level data exists but subtype-level data doesn't would trade one misleading state for
+another factually-wrong one. Since Peres 2019 supplies genuine, verified, subtype-specific data
+for all five ovary histotypes at once, all five were switched from the organ-aggregate SEER Stat
+Facts citation to Peres's own histotype-specific numbers — including low-grade serous, which
+didn't diverge enough to require the fix but gains real precision from it and avoids leaving one
+of five ovary entries on a different sourcing convention than its siblings. `js/morphology.js`'s
+`EXTENT_STATUS` and `cancer-atlas.html`'s disclaimer were both updated; `reserve_check.js`'s
+modal-matches-argmax guard was re-verified against the new numbers before shipping (three modals
+changed, the guard would have caught a mismatch).
+
+**The generalizable rule, for the remaining thirty-two entries and for every entry already
+shipped:** an organ-level SEER Stat Facts distribution is only safe to show on a subtype entry
+when that subtype's own real-world presentation tracks the aggregate. Before citing the organ
+aggregate on ANY subtype entry, check whether a histotype-stratified source exists (a
+population-based paper reporting stage/grade by subtype, the way Peres 2019 does for ovary) and
+prefer it if found — it is very often the SAME underlying registry, just read at the right
+granularity, not a harder-to-find source. Where no subtype-specific source can be found AND the
+aggregate is suspected or shown to diverge materially, the honest state is `uncharacterised` (and
+`extentSentence()`'s hardcoded sentence for that branch would need rewording to distinguish "no
+distribution published at all" from "published only at the wrong granularity" — not yet needed,
+since no entry has hit that exact case, but the wording gap is real and should be closed before
+one does).
+
+**This same organ-aggregate-as-subtype pattern is not unique to ovary — it is the standing
+convention for every cited `EXTENT_STATUS` entry in the atlas, and none of the other ten have been
+checked for divergence.** `pdac`, `tnbc`, `luad`, `hcc`, `ccrcc`, `acinar`, `gdiff`, `ptc`+`ftc`,
+and `uc` all cite their organ's own SEER Stat Facts page with a `siteNote` disclosing "not the X
+subtype/entry alone" — the identical shape ovary's five just failed on. `ptc`/`ftc` (papillary vs.
+follicular thyroid carcinoma) is the most obviously worth checking first: two DIFFERENT entries
+sharing one organ, exactly ovary's own shape, and the two histotypes are clinically understood to
+behave differently. This is reported as an open risk, not fixed here — checking ten more organs
+against their own literature is real, uncounted work, and is not part of this ovary-scoped
+correction.
