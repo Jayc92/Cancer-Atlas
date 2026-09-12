@@ -643,3 +643,62 @@ the seminoma catch's real miss from the surrounding noise:
 section reports what the signal found; whether to extend the shared ovary keyword set with
 `fallopian`/`peritoneal` is a decision for whoever rules on it next, not one this pass makes for
 itself.
+
+## 12a. The extension — ruled, applied, verified against real eligibility text (2026-09-11)
+
+**Ruled: extend both `hgsoc` and `clear` with `fallopian`/`peritoneal`/`peritoneum`, on two
+different grounds, recorded separately rather than conflated.** For `hgsoc`, the tubal-origin
+model means fallopian-tube and primary-peritoneal high-grade serous carcinoma are the same
+disease under current nomenclature — trials essentially universally enroll all three sites as one
+population. For `clear`, OCCC arises from endometriosis, not the tube; the extension rests on a
+trial-*eligibility* convention (these trials enroll ovarian/tubal/peritoneal clear-cell as one
+recruitment population), not a shared-origin claim. `js/trials.js`'s own per-entry `note` fields
+now state each justification in those terms, so a future reader sees the reasoning without
+re-deriving it. **The constraint honored throughout: none of this touched `js/organs/ovary.js`'s
+origin prose.** The registry groups trials by who may enroll; the atlas's hotspot text describes
+where disease begins. Conflating the two would have recreated the exact contradiction the
+2026-09-11 Cortex fix closed, on the same organ.
+
+**A real gap in the fix, caught by re-running rather than assumed closed: the noun/adjective
+split.** `"Clear Cell Adenocarcinoma of Peritoneum"` didn't word-match the keyword `peritoneal`
+(different word, shared root only) — the same dual-form shape this list's own `ovarian`/`ovary`
+pair already has. Fixed by adding `peritoneum` as its own keyword; re-run confirmed the miss
+closed (clear's corpus-vocabulary hits: 20 → 15 → 14, the last drop being exactly this string).
+
+**Verified against real eligibility text, not the tag alone, per instruction.** Pulled the live
+ovarian-cancer parent corpus (1033 studies) and found real studies carrying a fallopian/peritoneal
+tag with *zero* ovarian/ovary mention anywhere in their condition list — the exact population the
+extension exists to catch. Fetched each one's actual `eligibilityModule` text via the
+ClinicalTrials.gov API (not just its condition tags):
+- **NCT05538091** ("Vismodegib Combined With Atezolizumab in Platinum Resistant Ovarian,
+  Fallopian Tube, and Primary Peritoneal Cancer") — inclusion criteria state verbatim
+  "Histologically or cytologically confirmed epithelial **ovarian**, fallopian tube or primary
+  peritoneal cancer." Confirms real ovarian-patient enrollment under a condition-tag pair that
+  omits the word "ovarian" entirely (a registry tagging gap, not a different disease).
+- **NCT06061874** ("Ga68-FAPI-46 PET/CT for Preoperative Assessment of Peritoneal
+  Carcinomatosis") — eligibility states "Histologically proven **colorectal and ovarian** cancer."
+  Real ovarian-patient enrollment confirmed, but it's a genuine multi-condition basket trial
+  (colorectal *and* ovarian) — already the shape `js/trials.js`'s existing `multiCondition` UI
+  note exists to disclose, not a new problem this extension created.
+- **Within the `hgsoc` narrow query's own 71-result set**, checked directly for ovarian-tag
+  coverage before trusting the extension changed anything observable: only 4 of 71 lack an
+  ovarian/ovary tag, and none of those 4 carry a fallopian/peritoneal tag either — meaning, in
+  today's live snapshot, the extension's practical effect on `hgsoc`'s own narrow-query results is
+  defensive (protects against a future trial tagged *only* under tubal/peritoneal naming) rather
+  than a difference visible in today's numbers. Stated honestly rather than overclaimed.
+
+**New counts, post-extension:** `hgsoc` corpus-vocabulary hits 23 → 9 (all remaining hits are the
+already-classified noise — endometrial/uterine-serous entities, a TMB basket trial, a
+neuroendocrine tag, the STIC precursor lesion); `clear` 20 → 14 (remaining hits are wrong-organ
+clear-cell entities — endometrial/renal/vulvar/vaginal/cervical/uterine — none tubal/peritoneal).
+The over-broad signal (drop count) is unaffected for both: still 0/10 dropped.
+
+**One incidental find, fixed on the same pass but on unrelated grounds, scoped separately.**
+Checking the narrow query's full 71-result set for ovarian-tag coverage (the step above) surfaced
+a real, currently-recruiting trial, NCT07366242, tagged with the bare acronym `"HGSOC"` and
+nothing else — the exact seminoma-bug shape (the disease's own name/acronym missing from the
+keyword list), found by direct inspection rather than by the corpus-vocabulary signal itself
+(which tokenizes `query`'s full phrase, never an acronym form, so it structurally cannot see this
+class of miss). Added `'hgsoc'` to `hgsoc`'s own `conditionKeywords` only — verified it must never
+reach `clear`'s list, since a bare "HGSOC" tag names high-grade serous specifically. Re-run
+confirms `narrowKept` 67 → 68, the exact study now counted.

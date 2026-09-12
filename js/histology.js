@@ -1141,6 +1141,130 @@ function genFTC(g, rnd){
   ];
 }
 
+function genEndometrioid(g, rnd){
+  // Endometrioid carcinoma — the ovary pilot's third slide. vs genHGSOC: no branching
+  // papillae at all; this is CONFLUENT GLANDS, packed back-to-back with almost no
+  // intervening stroma (the "expansile" invasion pattern, Diagnostics 2021 Section 4.1).
+  // vs genOCCC (same organ): normal eosinophilic cytoplasm throughout, no clear cells, no
+  // hobnailing, no hyaline. Grade is drawn as a genuine architectural fact, not decoration:
+  // one corner loses gland formation entirely (a solid sheet), the >5%-solid grade-2/3
+  // criterion made visible. Mitotic count stays moderate (5-10/10HPF) — fewer scattered
+  // figures than HGSOC's slide, more than OCCC's lone one.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  g.appendChild(el('path', {d:blobPath(400, 250, 420, 275, 0.06, 14, rnd, 0), fill:HE.stroma, opacity:0.3}));
+  // confluent glands: packed hexagonal-ish lumens with almost no gap between rings
+  const glandSpots = [];
+  for(let row=0; row<6; row++){
+    for(let col=0; col<8; col++){
+      if(col>4 && row>3) continue; // leave the bottom-right quadrant for the solid sheet
+      const jitterX = (rnd()*2-1)*6, jitterY = (rnd()*2-1)*6;
+      glandSpots.push({ x:70 + col*72 + (row%2?36:0) + jitterX, y:60 + row*68 + jitterY, r:26+rnd()*6 });
+    }
+  }
+  glandSpots.forEach(s=>{ drawGlandRing(g, s.x, s.y, s.r*0.5, rnd, { cellR:9, nucMin:3.6, nucMax:5.0 }); });
+  // one region with total loss of gland formation: a solid sheet (the grade criterion)
+  const sheet = { cx:610, cy:390, rx:150, ry:98 };
+  g.appendChild(el('path', {d:blobPath(sheet.cx, sheet.cy, sheet.rx, sheet.ry, 0.1, 14, rnd, 0.1), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1.2}));
+  for(let i=-9;i<=9;i++){
+    for(let j=-5;j<=5;j++){
+      const x = sheet.cx + i*15 + (rnd()*2-1)*3, y = sheet.cy + j*14 + (rnd()*2-1)*3;
+      if(((x-sheet.cx)/(sheet.rx*0.85))**2 + ((y-sheet.cy)/(sheet.ry*0.82))**2 > 1) continue;
+      drawCell(g, x, y, 8.4+rnd()*1.6, 3.8+rnd()*1.1, rnd, {});
+    }
+  }
+  // moderate mitotic activity, scattered across the glandular field
+  [{x:230,y:180},{x:340,y:340},{x:150,y:410},{x:460,y:150}].forEach(m=>{
+    const rot = rnd()*180;
+    g.appendChild(el('rect', {x:m.x-1.5, y:m.y-6, width:3, height:12, fill:HE.nucDark, transform:`rotate(${rot.toFixed(0)} ${m.x} ${m.y})`}));
+    g.appendChild(el('rect', {x:m.x-1.5, y:m.y-6, width:3, height:12, fill:HE.nucDark, transform:`rotate(${(rot+70).toFixed(0)} ${m.x} ${m.y})`}));
+  });
+  return [
+    {key:'glands', x:210, y:230},
+    {key:'grade', x:610, y:390},
+    {key:'mitoses', x:340, y:340},
+  ];
+}
+
+function genMucinous(g, rnd){
+  // Mucinous carcinoma — deliberately the LARGEST, most cyst-dominated slide in this organ:
+  // real mucinous tumors are big (8-40cm), the one histologic fact this atlas can render at
+  // slide scale as "unusually large, mucin-swollen glands" rather than a number. Cytoplasm
+  // is drawn PALE and FOAMY (mucin-laden) with the nucleus pushed to the cell's OUTER edge —
+  // the opposite of OCCC's hobnail cells (nucleus bulging INTO the lumen) — because mucinous
+  // cells are loaded with mucin on the luminal side, pushing the nucleus basally. Two
+  // invasion zones drawn side by side per Diagnostics 2021 Section 6.1: expansile (glands
+  // crowd with minimal stroma) and infiltrative (isolated glands in dense, scarred stroma).
+  const MUCIN = '#f7ecd8'; // pale, faintly warm — distinct from every other fill in this palette
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  g.appendChild(el('path', {d:blobPath(400, 250, 420, 275, 0.06, 14, rnd, 0), fill:HE.stroma, opacity:0.3}));
+  const mucinousGland = (cx, cy, rx, ry, rot)=>{
+    const d = blobPath(cx, cy, rx, ry, 0.12, 14, rnd, rot);
+    g.appendChild(el('path', {d, fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1.3}));
+    g.appendChild(el('path', {d:blobPath(cx, cy, rx*0.8, ry*0.78, 0.12, 14, rnd, rot), fill:MUCIN}));
+    const per = Math.max(10, Math.round(2*Math.PI*Math.sqrt((rx*rx+ry*ry)/2) / 16));
+    for(let i=0;i<per;i++){
+      const a = i/per*Math.PI*2;
+      const px = Math.cos(a)*rx*0.94, py = Math.sin(a)*ry*0.94;
+      const x = cx + px*Math.cos(rot) - py*Math.sin(rot), y = cy + px*Math.sin(rot) + py*Math.cos(rot);
+      // basally-oriented nucleus: pushed OUT toward the gland's outer wall, away from the mucin lumen
+      g.appendChild(el('ellipse', {cx:x, cy:y, rx:4.6, ry:3.2, transform:`rotate(${(a*180/Math.PI).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})`, fill:HE.nuc, opacity:0.92}));
+    }
+  };
+  // expansile zone (left): large glands crowd together, almost no stroma between them
+  [{cx:150,cy:130,rx:105,ry:78,rot:-0.1},{cx:280,cy:220,rx:88,ry:68,rot:0.2},{cx:120,cy:330,rx:98,ry:74,rot:0.05}].forEach(c=>mucinousGland(c.cx,c.cy,c.rx,c.ry,c.rot));
+  // infiltrative zone (right): isolated smaller glands within denser, scarred stroma
+  g.appendChild(el('path', {d:blobPath(590, 300, 190, 165, 0.1, 16, rnd, 0), fill:HE.stromaLn, opacity:0.55}));
+  [{cx:520,cy:190,r:34},{cx:640,cy:230,r:28},{cx:560,cy:330,r:30},{cx:660,cy:370,r:26}].forEach(c=>mucinousGland(c.cx,c.cy,c.r,c.r*0.85,rnd()*0.4));
+  return [
+    {key:'mucin', x:150, y:130},
+    {key:'size', x:280, y:220},
+    {key:'invasion', x:590, y:300},
+  ];
+}
+
+function genLGSC(g, rnd){
+  // Low-grade serous carcinoma — the deliberate quiet counterpart to genHGSOC in the SAME
+  // organ. Small, evenly-sized papillae (no hierarchical branching, no hyaline cores unlike
+  // genOCCC's papillae), a single uniform cell layer with MILD atypia (narrow nucleus-size
+  // band, unlike HGSOC's >3x variation), the occasional PROMINENT NUCLEOLUS (a small dark
+  // dot inside a nucleus — Diagnostics 2021: "may have prominent nucleoli"), and exactly one
+  // mitotic figure — the same "loneliness is the point" idiom genOCCC uses, since this
+  // tumor's own defining contrast with HGSOC is how little is happening per field.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  g.appendChild(el('path', {d:blobPath(400, 250, 420, 275, 0.06, 14, rnd, 0), fill:HE.stroma, opacity:0.35}));
+  const uNuc = ()=>3.6 + rnd()*0.9; // narrow band — the anti-HGSOC discipline, same as OCCC's
+  const papillae = [];
+  for(let row=0; row<5; row++){
+    for(let col=0; col<7; col++){
+      papillae.push({ cx: 90 + col*100 + (row%2?40:0) + (rnd()*2-1)*10, cy: 70 + row*88 + (rnd()*2-1)*10, r: 34+rnd()*8 });
+    }
+  }
+  let nucleolusCount = 0;
+  papillae.forEach(p=>{
+    const d = blobPath(p.cx, p.cy, p.r, p.r*0.9, 0.08, 12, rnd, rnd()*0.5);
+    g.appendChild(el('path', {d, fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1.1}));
+    const per = Math.max(8, Math.round(p.r*0.4));
+    for(let i=0;i<per;i++){
+      const a = i/per*Math.PI*2 + rnd()*0.1;
+      const x = p.cx + Math.cos(a)*p.r*0.86, y = p.cy + Math.sin(a)*p.r*0.8;
+      g.appendChild(el('circle', {cx:x, cy:y, r:uNuc(), fill:HE.nuc, opacity:0.92}));
+      // a scattered minority carry a visibly prominent nucleolus
+      if(rnd() < 0.1 && nucleolusCount < 5){
+        nucleolusCount++;
+        g.appendChild(el('circle', {cx:x+(rnd()*2-1)*0.8, cy:y+(rnd()*2-1)*0.8, r:1.3, fill:HE.nucDark}));
+      }
+    }
+  });
+  // exactly one mitotic figure — the low-proliferation contrast with HGSOC's own slide
+  g.appendChild(el('rect', {x:497, y:381, width:3, height:11, fill:HE.nucDark, transform:'rotate(18 498 386)'}));
+  g.appendChild(el('rect', {x:504, y:381, width:3, height:11, fill:HE.nucDark, transform:'rotate(-20 505 386)'}));
+  return [
+    {key:'papillae', x:190, y:158},
+    {key:'atypia', x:390, y:246},
+    {key:'mitoses', x:498, y:386},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -1158,6 +1282,9 @@ const GENERATORS = {
   uc:     genBladderUC,
   ptc:    genPTC,
   ftc:    genFTC,
+  endo:   genEndometrioid,
+  muc:    genMucinous,
+  lgsc:   genLGSC,
 };
 
 // ------------------------------------------------------------

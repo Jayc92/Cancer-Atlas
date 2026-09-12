@@ -336,3 +336,123 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   NOT PUBLISHED: js/organs/ovary.js — bytes differ — HEAD b1e4fe20dafb (33758B) vs served 125214e4521e (32716B)
   | DONE deploy_check: 25/29 assets byte-matched to HEAD 24f4466, 31 hotspots live, 0 unexplained page errors (2 declared-benign), 4 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-12T00:49:34Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 44 lines, last 12 below
+  |       directly paralleling how every other organ in this atlas has its own "arises here" structure
+  |   universal needs a read: js/organs/ovary.js:481 [note] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       A translational-initiation-fidelity gene, not itself a RAS-pathway gene — documented specifically alongside NRAS mutation, with which it shows "the first exampl
+  |   universal needs a read: js/organs/skin.js:257 [desc] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       and the only one this atlas shows as a cut block rather than a whole shape
+  |   world-scoped universal needs a read: js/organs/stomach.js:148 [desc] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       Uniquely in the digestive tract
+  |   world-scoped universal needs a read: js/organs/stomach.js:177 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   absence_claim_check: 5 flag(s) — 2 dated for re-read, 2 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/ovary.js|note|A translational-initiation-fidelity gene': js/organs/ovary.js:481 [note] comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 1 unscoped claims (1 absence, 0 false corpus universal), 3 universals flagged for a read, 2 world-scoped, 19 cancers indexed (DEFECT 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 2, OK-SCOPED 4, OK-SEARCH 9, UNIVERSAL-UNRESOLVED 3, UNIVERSAL-WORLD-SCOPED 2), 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T00:49:34Z reason=exit=1 marker="DONE fraction_check:" tool=fraction_check.py
+     output 30 lines, last 12 below
+  |   ok   cross-half: a shared DENOMINATOR is not a shared figure — the declined anchor, pinned silent: clean
+  | SELFTEST PASS — fires on drift, passes real pairs within tolerance, and reports a cross-half fraction no literal pairs
+  | 
+  |   MISMATCH? ovary:409  stated 44.6% vs 82/185 = 44.32%
+  |   MISMATCH? pancreas:206  stated ~50% vs 25/84 = 29.76%
+  |   COMMENT MISMATCH? pancreas:149  stated ~50% vs 25/84 = 29.76%
+  | TWO-YEAR-RANGE strings (human confirms-deliberate): 1
+  |    thyroid:36  [('1974', '2013'), ('1994', '2013')]
+  | SIDECAR {"metrics": {"comment_blocks": 26, "comment_flags": 1, "cross_half_flags": 0, "cross_half_pairs": 8, "field_flags": 2, "field_strings": 55, "two_year_range": 1}, "name": "fraction_check", "ratchet": []}
+  |   fraction_check: 3 flag(s) — 0 dated for re-read, 2 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED fraction_check flag 'ovary|field|44.6%|82/185': ovary:409 stated 44.6% vs 82/185 = 44.32% — fix it, declare it with a reason, or date it for re-read
+  | DONE fraction_check: 55 field strings with fraction+percent, 2 mismatch flags; 26 comment blocks, 1 comment flags; 8 cross-half shared fractions, 0 unpaired; 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T00:50:05Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 20 lines, last 12 below
+  |   ok   RULE LEFT ITS SHAPE fires on a flag-False paren-shadow and not on a flag-True one RULE LEFT ITS SHAPE at Ghost|2029|js/organs/thyroid.js:7: closed_year_
+  |   ok   basis_fit + basis_test == scored spans, and scored == population when clean {"basis_fit": 4, "basis_test": 0, "kept": 1, "population": 4, "preregistered": 4, "problems": 0, "scored_confirms": 4, "scored_falsifies": 0, "spent": 3}
+  | DONE citation_paren_ledger_selftest: 10 arms run, 0 failures
+  | citation_paren_ledger: 15 files, 5 spans with a ')' between head and year
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   UNSCORED  SPENT  Hollis|2020|js/organs/ovary.js:354
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:268
+  |   PROBLEM: UNSCORED PAREN SPAN Hollis|2020|js/organs/ovary.js:354 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 0, "kept": 1, "population": 5, "preregistered": 4, "problems": 1, "scored_confirms": 4, "scored_falsifies": 0, "spent": 4}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 5 paren spans (4 spent, 1 kept), 4 scored (0 as TEST, 4 as FIT and worth no support), 0 falsifying, 1 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T00:53:40Z reason=exit=1 marker="==== DONE:" tool=regress.js
+     output 223 lines, last 12 below
+  | ==== DONE: 208 checks, 3 failures, 2 page errors (2 declared benign, 0 undeclared) ====
+  | REGRESS VERDICT: 3 undeclared failing check(s), 0 stale declaration(s), 0 undeclared page error(s), 0 stale benign declaration(s) — exit 1
+  | [
+  |  {
+  |   "type": "404",
+  |   "msg": "http://localhost:3057/favicon.ico"
+  |  },
+  |  {
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |  }
+  | ]
+==== END REFUSAL
+==== REFUSAL 2026-09-12T00:59:21Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 42 lines, last 12 below
+  |       directly paralleling how every other organ in this atlas has its own "arises here" structure
+  |   universal needs a read: js/organs/ovary.js:481 [note] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       Shown at every site here rather than paired region-by-region with a second gene, the same repeated-gene treatment used elsewhere in this atlas when one real, we
+  |   universal needs a read: js/organs/skin.js:257 [desc] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       and the only one this atlas shows as a cut block rather than a whole shape
+  |   world-scoped universal needs a read: js/organs/stomach.js:148 [desc] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       Uniquely in the digestive tract
+  |   world-scoped universal needs a read: js/organs/stomach.js:177 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   absence_claim_check: 5 flag(s) — 2 dated for re-read, 2 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/ovary.js|note|Shown at every site here rather than pai': js/organs/ovary.js:481 [note] comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 0 unscoped claims (0 absence, 0 false corpus universal), 3 universals flagged for a read, 2 world-scoped, 19 cancers indexed (EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 2, OK-SCOPED 4, OK-SEARCH 9, UNIVERSAL-UNRESOLVED 3, UNIVERSAL-WORLD-SCOPED 2), 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T00:59:45Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 20 lines, last 12 below
+  |   ok   RULE LEFT ITS SHAPE fires on a flag-False paren-shadow and not on a flag-True one RULE LEFT ITS SHAPE at Ghost|2029|js/organs/thyroid.js:7: closed_year_
+  |   ok   basis_fit + basis_test == scored spans, and scored == population when clean {"basis_fit": 4, "basis_test": 0, "kept": 1, "population": 4, "preregistered": 4, "problems": 0, "scored_confirms": 4, "scored_falsifies": 0, "spent": 3}
+  | DONE citation_paren_ledger_selftest: 10 arms run, 0 failures
+  | citation_paren_ledger: 15 files, 5 spans with a ')' between head and year
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   UNSCORED  SPENT  Hollis|2020|js/organs/ovary.js:354
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:268
+  |   PROBLEM: UNSCORED PAREN SPAN Hollis|2020|js/organs/ovary.js:354 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 0, "kept": 1, "population": 5, "preregistered": 4, "problems": 1, "scored_confirms": 4, "scored_falsifies": 0, "spent": 4}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 5 paren spans (4 spent, 1 kept), 4 scored (0 as TEST, 4 as FIT and worth no support), 0 falsifying, 1 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T01:06:38Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 42 lines, last 12 below
+  |       directly paralleling how every other organ in this atlas has its own "arises here" structure
+  |   universal needs a read: js/organs/ovary.js:481 [note] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       Shown at every site here rather than paired region-by-region with a second gene: this atlas\'s liver entry treats its own dominant driver (SMAD4 loss) the same 
+  |   universal needs a read: js/organs/skin.js:257 [desc] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       and the only one this atlas shows as a cut block rather than a whole shape
+  |   world-scoped universal needs a read: js/organs/stomach.js:148 [desc] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       Uniquely in the digestive tract
+  |   world-scoped universal needs a read: js/organs/stomach.js:177 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   absence_claim_check: 5 flag(s) — 2 dated for re-read, 2 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/ovary.js|note|Shown at every site here rather than pai': js/organs/ovary.js:481 [note] comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 0 unscoped claims (0 absence, 0 false corpus universal), 3 universals flagged for a read, 2 world-scoped, 19 cancers indexed (EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 2, OK-SCOPED 4, OK-SEARCH 9, UNIVERSAL-UNRESOLVED 3, UNIVERSAL-WORLD-SCOPED 2), 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T01:22:27Z reason=exit=4 marker="DONE citation_crosscheck:" tool=citation_crosscheck.py
+     output 16 lines, last 12 below
+  |   ok   fires[year]: Arends 2026 -> ['year: recorded 2026 vs id-pubdate 2025', "journal: recorded 'Histopathology' vs id-journal 'ISME J' ('The ISME journal')"]
+  |   ok   passes: Cooper 2015 -> clean
+  |   ok   passes: Wiegand 2010 -> clean
+  |   ok   refuses with no records artifact (exit 2, no DONE line) rather than scanning a smaller population
+  |   ok   accepts the artifact alongside flag-shaped args
+  |   ok   a FAILED fetch is fatal (the 142->141 shrink), not filed as an unmappable id
+  |   ok   a NEW unmappable id fails (undeclared change in reach)
+  |   ok   a DECLARED unmappable id is tolerated, so the gate is not permanently red on the one record that can never map
+  |   ok   every declared entry carries a reason (1 declared) — a bare id list would hide a coverage hole
+  | SELFTEST PASS — can fire on all three fields, can pass, refuses without input, and separates an unreached fetch from an unmappable id
+  | DECLARED-UNMAPPABLE (tolerated, coverage limit): doi:10.1002/prm2.12107 js/organs/breast.js:147
+  |     Gao et al., Precision Medical Sciences (Wiley), 2023 — js/organs/breast.js:147. The journal is not PubMed-indexed: esearch [doi] returns 0 hits (the unqualified search returns 6 unrelated tokenised hits, which is why the mapper requires exactly one), and Europe PMC has no record either, so NO PMID EXISTS for the metadata cross-check to run against. The CLAIM is not unchecked — ccf batch 1 (2026-09-06) read the paper at the publisher and verified its figures verbatim. THIS INSTRUMENT cannot reach it. Those are different statements and keeping them apart is why this list stores a reason rather than just an id.
+==== END REFUSAL

@@ -48,7 +48,7 @@ export const TRIALS_CONDITION_MAP = {
   // .claude/trials_mapping_check.mjs — full per-entry numbers in phaseD_trials_design.md §10.
   hgsoc: {
     query: 'high grade serous ovarian carcinoma', parent: 'ovarian cancer',
-    conditionKeywords: ['ovarian', 'ovary'],
+    conditionKeywords: ['ovarian', 'ovary', 'fallopian', 'peritoneal', 'peritoneum', 'hgsoc'],
     note: '10/10 sample kept, 0 dropped. Ovary has two wired entries (hgsoc, clear) sharing one '
       + 'organ-level keyword set; unlike gdiff, CT.gov DOES tag ovarian histology directly '
       + '("High Grade Serous Adenocarcinoma of Ovary" vs "Ovarian Clear Cell Carcinoma"), so a '
@@ -56,15 +56,40 @@ export const TRIALS_CONDITION_MAP = {
       + 'full) is correctly kept for both — the same named-broadening shape as ccrcc\'s CD70 '
       + 'case, occurring twice because this organ has two entries where kidney has one, not a '
       + 'defect. A bare "Ovarian Cancer" tag with no subtype is also kept, matching the same '
-      + 'acceptance rule ccrcc\'s bare "Renal Cell Carcinoma" tags already established.',
+      + 'acceptance rule ccrcc\'s bare "Renal Cell Carcinoma" tags already established. '
+      + '"fallopian"/"peritoneal"/"peritoneum" ADDED 2026-09-11 (corpus-vocabulary signal, '
+      + 'trials_mapping_check.mjs): the tubal-origin model makes fallopian-tube and primary-'
+      + 'peritoneal high-grade serous carcinoma the SAME disease under current nomenclature — '
+      + 'most HGSOC is now thought to begin in the tubal fimbria — so trials essentially '
+      + 'universally enroll all three sites as one eligible population; a bare "Fallopian Tube '
+      + 'High Grade Serous Adenocarcinoma" tag with no "ovarian" mention was being silently '
+      + 'dropped before this. Both noun and adjective forms of peritoneal are kept as separate '
+      + 'keywords — "Clear Cell Adenocarcinoma of Peritoneum" doesn\'t word-match "peritoneal" — '
+      + 'the same dual-form shape this list\'s own ovarian/ovary pair already has. '
+      + 'Eligibility-text spot-check (not just the tag) confirms real ovarian-patient enrollment '
+      + '— see phaseD_trials_design.md §12a. "hgsoc" ALSO added, an unrelated incidental find '
+      + 'from the same verification pass, NOT the tubal-origin justification above: the narrow '
+      + 'query\'s own 71-study result set includes a real recruiting trial (NCT07366242) tagged '
+      + 'with the bare acronym "HGSOC" and no other condition at all — the exact seminoma-bug '
+      + 'shape (disease\'s own name/acronym missing from the keyword list) — found by checking '
+      + 'the query\'s FULL result set for ovarian-tag coverage as part of verifying this '
+      + 'extension, not by the corpus-vocabulary signal itself (which only tokenizes `query`, '
+      + 'never an acronym form). Scoped to hgsoc only — "HGSOC" names high-grade serous '
+      + 'specifically and must never be added to clear\'s keyword list.',
   },
   clear: {
     query: 'ovarian clear cell carcinoma', parent: 'ovarian cancer',
-    conditionKeywords: ['ovarian', 'ovary'],
+    conditionKeywords: ['ovarian', 'ovary', 'fallopian', 'peritoneal', 'peritoneum'],
     note: '8/10 sample kept, 2 dropped (one pure-endometrial trial with no ovarian tag anywhere '
       + 'in its full condition list; one bare "Advanced or Metastatic Solid Tumor" with none '
       + 'either) — both genuinely off-topic on inspection, confirming the filter fires on real '
-      + 'data rather than only a fixture. See hgsoc\'s note on the shared-organ keyword shape.',
+      + 'data rather than only a fixture. See hgsoc\'s note on the shared-organ keyword shape. '
+      + '"fallopian"/"peritoneal"/"peritoneum" ADDED 2026-09-11, on DIFFERENT grounds than hgsoc\'s: OCCC '
+      + 'arises from endometriosis, not the tube, so this is a trial-ELIGIBILITY convention '
+      + '(these trials enroll ovarian/tubal/peritoneal clear-cell as one recruitment population) '
+      + 'rather than a shared-origin fact — the registry groups by who may enroll, not by where '
+      + 'disease begins, and that distinction is deliberately NOT carried into this organ\'s '
+      + 'origin prose (js/organs/ovary.js). See phaseD_trials_design.md §12a.',
   },
   tnbc: {
     query: 'triple negative breast cancer', parent: 'breast cancer',
@@ -148,6 +173,41 @@ export const TRIALS_CONDITION_MAP = {
     note: '9/9 sample kept, 0 dropped. Query/parent ratio 3% (9/293) — low, but consistent with '
       + 'real disease rarity (follicular is far less common than papillary thyroid carcinoma), '
       + 'not with a broken query — see phaseD_trials_design.md §10 for the full reasoning.',
+  },
+  // ---- ovary pilot, 2026-09-11 (phaseC_design.md) — endo/lgsc share hgsoc/clear's extended
+  // ovarian/fallopian/peritoneal keyword set (real basket trials confirmed for both: NCT07791732
+  // tags "Endometrioid Epithelial Ovarian" alongside "Fallopian Tube Cancer"/"Primary Peritoneal
+  // Cancer"; NCT04111978 tags "Low-grade Serous Ovarian Carcinoma (LGSOC)" alongside "Fallopian
+  // Tube Neoplasms"/"Peritoneal Neoplasms" — checked directly, not assumed from hgsoc's own
+  // justification carrying over). muc does NOT: no fallopian/peritoneal-tagged trial was found in
+  // its own (small, 7-total) query population, matching its real biology — mucinous carcinoma is
+  // not part of the tubal-origin/Müllerian-spectrum grouping the other four ovarian entries share.
+  endo: {
+    query: 'endometrioid ovarian carcinoma', parent: 'ovarian cancer',
+    conditionKeywords: ['ovarian', 'ovary', 'fallopian', 'peritoneal', 'peritoneum'],
+    note: '8/10 sample kept, 2 dropped (both pure-endometrial trials with no ovarian tag '
+      + 'anywhere in their full condition list) — the same shape as clear\'s own two drops. '
+      + 'Corpus-vocabulary signal: 7 hits, all wrong-organ endometrial/endometrioid entities '
+      + '(the token "endometrioid" collides with endometrial-CANCER\'s own name, not a mapping '
+      + 'defect).',
+  },
+  muc: {
+    query: 'mucinous ovarian carcinoma', parent: 'ovarian cancer',
+    conditionKeywords: ['ovarian', 'ovary'],
+    note: '4/7 kept, 3 dropped (endometrial mucinous adenocarcinoma, a gastric/pancreatic '
+      + 'basket, and a hernia-surgery-methodology study — all genuinely off-topic) — the '
+      + 'thinnest trial population in the atlas (7 total recruiting/not-yet trials worldwide '
+      + 'for this query), consistent with real disease rarity (~3% of ovarian carcinomas), not '
+      + 'a broken query. No fallopian/peritoneal extension: checked directly, not assumed — no '
+      + 'trial in this query\'s own result set carries a tubal/peritoneal tag without an '
+      + 'ovarian one.',
+  },
+  lgsc: {
+    query: 'low grade serous ovarian carcinoma', parent: 'ovarian cancer',
+    conditionKeywords: ['ovarian', 'ovary', 'fallopian', 'peritoneal', 'peritoneum'],
+    note: '10/10 sample kept, 0 dropped. Shares hgsoc\'s tubal/peritoneal extension: a real '
+      + 'trial (NCT04111978) tags "Low-grade Serous Ovarian Carcinoma (LGSOC)" alongside '
+      + '"Fallopian Tube Neoplasms"/"Peritoneal Neoplasms" as one eligible population.',
   },
 };
 

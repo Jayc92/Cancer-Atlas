@@ -240,6 +240,15 @@ export const MASS_RADIUS_FRACTION = 0.22;
 export const MARGIN_STATUS = Object.freeze({
   hgsoc:    { status: 'uncharacterised', ref: 'R13 — the source itself says the surface is variable' },
   clear:    { status: 'uncharacterised', ref: 'R15 — no margin-character category in the source' },
+  // Pilot organ, 2026-09-11 (endo/muc/lgsc): PMC8070731 (Diagnostics 2021) gives HISTOLOGIC
+  // invasion-pattern criteria for endo (expansile/destructive) and muc (expansile/infiltrative)
+  // — a real, WHO-2020 grading axis, but the register mismatch this file's own "THE REGISTER
+  // FINDING" entry already names: histologic invasion-front character is not the same claim as
+  // GROSS specimen circumscription, which is what this axis renders. No gross-register margin
+  // description was found for any of the three; uncharacterised rather than conflating the two.
+  endo: { status: 'uncharacterised', ref: 'PMC8070731 gives HISTOLOGIC invasion pattern (expansile/destructive), not gross circumscription — the register mismatch, not an unread gap' },
+  muc:  { status: 'uncharacterised', ref: 'PMC8070731 gives HISTOLOGIC invasion pattern (expansile/infiltrative), not gross circumscription — same register mismatch as endo' },
+  lgsc: { status: 'uncharacterised', ref: 'no margin-character description, gross or histologic, found in PMC8070731 or Etemadmoghadam 2017 (PMID 28646021)' },
   luad:     { status: 'uncharacterised', ref: 'R7 — pre-registered negative, fired' },
   crc:      { status: 'uncharacterised', ref: 'R5 — margin subsumed by the cited growth form' },
   ccrcc:    { status: 'unread',          ref: 'R3 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
@@ -351,6 +360,13 @@ export const GROWTH_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cite
 export const GROWTH_STATUS = Object.freeze({
   hgsoc:    { status: 'cited', label: 'bilateral', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'R14 PMC8070731 — bilateral: a COUNT category with a model precondition (one ovary modelled); not drawn' },
   clear:    { status: 'cited', label: 'unilateral, cystic and solid', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'R16 PMC8070731 — count 1 equals the default; composition unexpressed (design §10); not drawn' },
+  // Pilot organ, 2026-09-11: endo/muc composition facts from the SAME already-cited PMC8070731
+  // (Diagnostics 2021) hgsoc/clear already use for this axis — direct quotes, not paraphrase.
+  // lgsc left uncharacterised rather than forcing a weaker source: no bilaterality/composition
+  // statement was found in PMC8070731's LGSC section or in Etemadmoghadam 2017.
+  endo: { status: 'cited', label: 'bilateral in 20% of cases', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'PMC8070731, Section 4.1 — "The tumors are bilateral in 20% of cases"; composition unexpressed (design §10); not drawn' },
+  muc:  { status: 'cited', label: 'large, unilateral, multilocular', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'PMC8070731, Section 6.1 — "usually large (8-40 cm; mean 15-20 cm), unilateral, multilocular"; unilaterality and size >13cm are the paper\'s own stated criteria favoring a PRIMARY ovarian tumor over metastatic GI mucinous disease; composition unexpressed (design §10); not drawn' },
+  lgsc: { status: 'uncharacterised', ref: 'no bilaterality or composition statement found in PMC8070731 (Section 3) or Etemadmoghadam 2017 (PMID 28646021)' },
   luad:     { status: 'uncharacterised', ref: 'R8 — no gross growth category claimable' },
   crc:      { status: 'cited', label: 'ulcerating-annular (majority), polypoid (a quarter)', register: 'G', badgeSource: 'Int J Mol Sci 2018 (PMC6165083)', ref: 'R6 PMC6165083 — WALL (majority) and PLACEMENT (25%), a named divergence; not drawn' },
   ccrcc:    { status: 'unread', ref: 'R3/R4 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
@@ -389,6 +405,16 @@ export const EXTENT_STATUS = Object.freeze({
   luad: { status: 'cited', site: 'lung and bronchus', siteNote: 'lung and bronchus cancers as a whole, not adenocarcinoma alone', shares: { localized: 24, regional: 21, distant: 51, unknown: 4 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Lung and Bronchus Cancer', ref: 'https://seer.cancer.gov/statfacts/html/lungb.html — verified 2026-09-10' },
   hgsoc: { status: 'cited', site: 'ovary', siteNote: 'ovarian cancer as a whole, not the high-grade serous subtype alone', shares: { localized: 22, regional: 18, distant: 54, unknown: 6 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Ovarian Cancer', ref: 'https://seer.cancer.gov/statfacts/html/ovary.html — verified 2026-09-10' },
   clear: { status: 'cited', site: 'ovary', siteNote: 'ovarian cancer as a whole, not clear-cell carcinoma alone', shares: { localized: 22, regional: 18, distant: 54, unknown: 6 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Ovarian Cancer', ref: 'https://seer.cancer.gov/statfacts/html/ovary.html — verified 2026-09-10' },
+  // Pilot organ, 2026-09-11: the SAME page hgsoc/clear already cite — SEER Stat Facts does not
+  // break ovarian cancer out by histologic subtype, so all five active/staged ovary entries
+  // share one real distribution by construction, not by convenience. Re-verified LIVE via
+  // .claude/seer_statfacts_scraper.py's own fetch()/scrape_stage_table() (not hand-copied from
+  // hgsoc/clear's entries above) — exact match: {localized:22, regional:18, distant:54,
+  // unknown:6}, the first real end-to-end run of that scraper against a page it will need for
+  // Phase C, per the ovary-pilot ruling (phaseC_design.md; item 3 report is in that same commit).
+  endo: { status: 'cited', site: 'ovary', siteNote: 'ovarian cancer as a whole, not the endometrioid subtype alone', shares: { localized: 22, regional: 18, distant: 54, unknown: 6 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Ovarian Cancer', ref: 'https://seer.cancer.gov/statfacts/html/ovary.html — verified 2026-09-11 (live, via seer_statfacts_scraper.py, not hand-copied)' },
+  muc: { status: 'cited', site: 'ovary', siteNote: 'ovarian cancer as a whole, not the mucinous subtype alone', shares: { localized: 22, regional: 18, distant: 54, unknown: 6 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Ovarian Cancer', ref: 'https://seer.cancer.gov/statfacts/html/ovary.html — verified 2026-09-11 (live, via seer_statfacts_scraper.py, not hand-copied)' },
+  lgsc: { status: 'cited', site: 'ovary', siteNote: 'ovarian cancer as a whole, not the low-grade serous subtype alone', shares: { localized: 22, regional: 18, distant: 54, unknown: 6 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Ovarian Cancer', ref: 'https://seer.cancer.gov/statfacts/html/ovary.html — verified 2026-09-11 (live, via seer_statfacts_scraper.py, not hand-copied)' },
   acinar: { status: 'cited', site: 'prostate', siteNote: 'prostate cancer as a whole, of which acinar adenocarcinoma is the large majority', shares: { localized: 69, regional: 14, distant: 9, unknown: 8 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Prostate Cancer', ref: 'https://seer.cancer.gov/statfacts/html/prost.html — verified 2026-09-10' },
   gdiff: { status: 'cited', site: 'stomach', siteNote: 'stomach cancer as a whole, not the diffuse type alone', shares: { localized: 32, regional: 23, distant: 35, unknown: 9 }, modal: 'distant', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Stomach Cancer', ref: 'https://seer.cancer.gov/statfacts/html/stomach.html — verified 2026-09-10' },
   seminoma: { status: 'uncharacterised', site: 'testis', ref: 'https://seer.cancer.gov/statfacts/html/testis.html — the page publishes no stage-at-diagnosis distribution for this site (checked 2026-09-10)' },
@@ -528,6 +554,16 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   clear: 1, // Cortex — see js/organs/ovary.js's Cortex hotspot text and citations (Gordts 2003,
             // PMID 12758100; Scurry 2001, PMID 11293160): ovarian endometriotic cysts form by
             // cortical invagination, not from the surface epithelium hgsoc's mass anchors at.
+  // endo ADDED 2026-09-11 (Phase C ovary pilot) — the twelve-organ exemption's own expiry,
+  // arriving on schedule: endometrioid becoming active gives ovary a THIRD active entry, and
+  // the Cortex hotspot's own text has said "clear-cell AND endometrioid carcinomas arise" here
+  // since the original fix, unused until now because endo was inactive. Two independent sources,
+  // matching clear's own two-source standard: Diagnostics 2021 (PMC8070731, WHO-2020-based
+  // review) — "Most ECs are frequently associated with endometriosis or contain areas of
+  // endometrioid adenofibroma"; Pearce et al., Lancet Oncol, 2012 (PMID 22361336) — endometriosis
+  // OR 2.04 (1.67-2.48, p<0.0001) for endometrioid, a real, independent, elevated risk on the
+  // SAME pooled analysis clear's own OR 3.05 already comes from.
+  endo: 1,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never

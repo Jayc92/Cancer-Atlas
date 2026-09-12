@@ -16,7 +16,7 @@ export const markerSpec = { points:[{heightFrac:0.49, angle:-25}, {heightFrac:0.
 
 export const cancerEntries = [
   { id:'hgsoc', name:'High-grade serous carcinoma', share:'~70% of ovarian carcinomas', active:true,  organKey:'ovary' },
-  { id:'endo',  name:'Endometrioid carcinoma',       share:'~10% of ovarian carcinomas', active:false, organKey:'ovary' },
+  { id:'endo',  name:'Endometrioid carcinoma',       share:'~10% of ovarian carcinomas', active:true,  organKey:'ovary' },
   // Share verified: 9.6% (2,695 of 28,118, 2014-WHO histotypes — Peres et al., JNCI, 2019).
   // The Japan figure is the honest asymmetry stated where users see it (skin's nodular-share
   // precedent): 26.9% of Japanese EOC vs 8.4% US in the same four-subtype comparison (Machida
@@ -24,8 +24,8 @@ export const cancerEntries = [
   // four major subtypes, which slightly inflates each share; Peres's 9.6% has the complete
   // denominator, hence "~10%" as the headline number.
   { id:'clear', name:'Clear-cell carcinoma',         share:'~10% of ovarian carcinomas — ~27% in Japan', active:true, organKey:'ovary' },
-  { id:'muc',   name:'Mucinous carcinoma',           share:'~3% of ovarian carcinomas',  active:false, organKey:'ovary' },
-  { id:'lgsc',  name:'Low-grade serous carcinoma',   share:'<5% of ovarian carcinomas',  active:false, organKey:'ovary' },
+  { id:'muc',   name:'Mucinous carcinoma',           share:'~3% of ovarian carcinomas',  active:true,  organKey:'ovary' },
+  { id:'lgsc',  name:'Low-grade serous carcinoma',   share:'<5% of ovarian carcinomas',  active:true,  organKey:'ovary' },
 ];
 
 // MESH (real, the atlas's first MRI-derived organ; fourth real artist/scan Sketchfab-era
@@ -308,6 +308,209 @@ const HISTOLOGY_OCCC = {
   ],
 };
 
+// ============================================================
+// ENDOMETRIOID CARCINOMA (EC) — third wired cancer, the Phase C ovary pilot
+// ============================================================
+// ORIGIN — Cortex override wired in morphology.js's ORIGIN_HOTSPOT_ENTRY (endo:1), sourced
+// there. SITE MODEL — not re-derived from scratch: OCCC's own verification above already
+// established ordinary real anatomic spread as this organ's shared-route family (Kondo 2020,
+// Rose 1989), and endometrioid is the SAME endometriosis-associated lineage as OCCC, spread by
+// the same routes — reusing OV/PV/PT/RP's real anatomic sites, not their taken 2-letter ids.
+// TRUNK — Hollis et al., Nat Commun, 2020 (PMID 33020491, PMC7536188), 112-case whole-exome
+// cohort, its own molecular-stratification framework: "The most commonly mutated genes included
+// CTNNB1 (48 cases, 42.9%), PIK3CA (48 cases, 42.9%), ARID1A (40 cases, 35.7%), PTEN (33 cases,
+// 29.5%), KRAS (29 cases, 25.9%), and TP53 (29 cases, 25.9%)." CTNNB1 and TP53 are the two trunk
+// entries, matching OCCC's own second-trunk-entry precedent (a status contrast, not two
+// concurrent founders): "TP53m and CTNNB1m were largely mutually exclusive... significant
+// depletion of CTNNB1m in the TP53m group (P<0.001; co-occurrence in one case, 0.9%)" — a
+// real, precisely-quantified minimal exception, the HCC TP53/CTNNB1 "general rule with a
+// documented exception" shape (data rule 6), here with a number instead of a qualitative hedge.
+// Outcome contrast, real and stated: CTNNB1-mutant cases are "predominantly stage I/II at
+// diagnosis (89%) and completely resected (87%)" with "excellent clinical outcome"; TP53-mutant
+// cases are "commonly FIGO stage III/IV at diagnosis (48%)... frequently incompletely debulked
+// (44%) and demonstrate inferior survival."
+// BRANCH — PIK3CA, ARID1A, and PTEN all real and independently significant in the SAME cohort;
+// KRAS (25.9%) is a fourth real, distinct gene rather than a repeated one, checked for the
+// obvious mechanistic-fit risk before use: it activates the MAPK pathway, a DIFFERENT pathway
+// from CTNNB1(WNT)/PIK3CA-PTEN(PI3K)/ARID1A(chromatin), and no exclusivity constraint against
+// any of them was found in what was verified — unlike LGSC's KRAS, which competes with BRAF for
+// the SAME pathway (see REGIONS_LGSC below), this organ's OTHER KRAS-bearing entry plays by a
+// different rule, the identical cross-organ contrast this file's own OCCC KRAS note already
+// draws for lung adenocarcinoma. ARID1A+PTEN is the SAME cooperating pair already cited in this
+// file's own PRIVATE_POOL_OCCC exclusion note — Guan et al., JNCI, 2014: ARID1A loss + PTEN loss
+// in mice produced ENDOMETRIOID (not clear-cell) tumors — direct positive mechanistic evidence
+// for this cancer specifically, not borrowed from OCCC's rejection of it.
+const REGIONS_ENDO = [
+  { id:'EO', name:'Ovary (primary)', color:cssVar('--coral'), pos3d:{x:-1.1,y:-0.4,z:0.4},
+    branch:{ gene:'CTNNB1-pathway partner: PIK3CA mutation', class:'driver', ccf:'42.9% of EC (48/112, Hollis et al., Nat Commun, 2020, PMID 33020491)', note:'Activates the PI3K growth pathway. Tied with CTNNB1 for the single most frequently mutated gene in this cohort — endometrioid carcinoma accumulates several real cooperating hits rather than depending on one.' } },
+  { id:'EL', name:'Pelvis', color:cssVar('--azure'), pos3d:{x:0.35,y:1.1,z:-0.35},
+    branch:{ gene:'ARID1A loss', class:'driver', ccf:'35.7% of EC (40/112, Hollis 2020)', note:'The same chromatin-remodeling loss found in this organ\'s own clear-cell carcinoma — cooperates with PTEN loss specifically: in mice, ARID1A loss plus PTEN loss together produced endometrioid (not clear-cell) ovarian tumors (Guan et al., JNCI, 2014), the real mechanistic pairing this branch and the next one model together.' } },
+  { id:'EI', name:'Peritoneum', color:cssVar('--amber'), pos3d:{x:1.3,y:-0.1,z:0.45},
+    branch:{ gene:'PTEN loss', class:'driver', ccf:'29.5% of EC (33/112, Hollis 2020)', note:'ARID1A\'s documented cooperating partner (Guan 2014, above) — removes a brake on the same PI3K pathway PIK3CA activates directly, a second real route into it.' } },
+  { id:'ER', name:'Retroperitoneal lymph nodes', color:cssVar('--violet'), pos3d:{x:-0.6,y:0.95,z:-0.85},
+    branch:{ gene:'KRAS mutation', class:'driver', ccf:'25.9% of EC (29/112, Hollis 2020)', note:'A MAPK-pathway activating mutation, mechanistically distinct from the WNT/PI3K genes elsewhere in this tumor. Hollis et al. 2020 does not report an exclusivity constraint against them — the same gene competes head-to-head with BRAF in this atlas\'s own low-grade serous entry (below); here it simply adds to the mutational load.' } },
+];
+const TRUNK_ENDO = [
+  { gene:'CTNNB1 mutation', class:'driver', ccf:'42.9% of EC (48/112, Hollis et al., Nat Commun, 2020) — a similar 38–50% range appears across the wider WHO-classification literature', note:'Activates the WNT growth pathway and defines this cancer\'s favorable-prognosis molecular class: CTNNB1-mutant tumors are predominantly stage I/II at diagnosis (89%), completely resected (87%), and carry low genomic complexity — the opposite clinical picture from the TP53-mutant class below, with which it is almost never found together.' },
+  { gene:'TP53 mutation', class:'driver', ccf:'25.9% of EC (29/112, Hollis 2020)', note:'Largely mutually exclusive with CTNNB1 mutation (P<0.001; the two co-occurred in exactly one of 112 tumors, 0.9%) and defines the opposite, high-risk molecular class: greater genomic complexity, commonly stage III/IV at diagnosis (48%), frequently incompletely debulked (44%), and inferior survival. A minority of this cancer, but the minority that behaves the least like the CTNNB1-mutant majority.' },
+];
+const PRIVATE_POOL_ENDO = [
+  { gene:'TTN passenger variant', class:'passenger', note:'A change with no effect on the protein it sits in — background noise, common because TTN is one of the largest genes in the genome, the same passenger convention this organ\'s other two cancers already use.' },
+];
+
+// HISTOLOGY — Diagnostics 2021 (PMC8070731), Section 4 ("Endometrioid Carcinoma") and 4.1/4.2,
+// the same WHO-2020-based review already sourcing HGSOC's and OCCC's slides. Grading is by
+// architecture (FIGO/WHO system, shared with the uterine corpus's own endometrioid carcinoma):
+// "Mitotic count is approximately 5–10 mitoses per high power field"; grade set by solid-growth
+// percentage, "grade 1... less than 5% solid growth" through "grade 3... more than 50% solid
+// growth." Deliberately NOT drawn: squamous differentiation/morular metaplasia — a real,
+// commonly-cited endometrioid feature in general gynecologic-pathology teaching, but no specific
+// frequency or description for it was found in the source actually consulted, so it is left out
+// rather than asserted from memory of the broader literature.
+const HISTOLOGY_ENDO = {
+  intro: 'Endometrioid carcinoma grows as confluent glandular tissue — round-to-tubular glands packed closely enough that little stroma separates them, the "expansile" invasion pattern this cancer is graded partly by (a more destructive, single-file infiltrative pattern is the alternative). Grade is set by how much of the tumor has lost gland formation entirely: grade 1 is under 5% solid growth, grade 3 is over half. Mitotic activity is moderate — about 5 to 10 per 10 high-power fields, well under high-grade serous carcinoma\'s own threshold.',
+  ariaSummary: 'Stylized microscopic field: densely packed round and tubular glands with minimal intervening stroma, lined by columnar cells with round, moderately atypical nuclei. In one corner a small solid sheet of tumor cells with no gland formation represents higher-grade area. A few scattered dividing cells are visible, fewer than in a high-grade serous field.',
+  citation: 'Diagnostics (Basel), 2021 (WHO-2020-based review, PMC8070731, Section 4).',
+  features: [
+    { key:'glands', label:'Confluent glands',
+      text:'Round-to-tubular glands packed closely with little separating stroma — the "expansile" pattern of invasion, one of two the WHO-2020 review names for this cancer (the other, "destructive," shows glands infiltrating stroma more aggressively).' },
+    { key:'grade', label:'Architectural grading',
+      text:'Grade is assigned by the fraction of the tumor with solid (non-glandular) growth: under 5% is grade 1, over 50% is grade 3 — a purely architectural criterion, distinct from high-grade serous carcinoma\'s nuclear-pleomorphism-based grading.' },
+    { key:'mitoses', label:'Moderate mitotic activity',
+      text:'Roughly 5–10 mitoses per 10 high-power fields — active, but well under the >12 threshold that helps define high-grade serous carcinoma in this same organ.' },
+  ],
+};
+
+// ============================================================
+// MUCINOUS CARCINOMA (MC) — fourth wired cancer
+// ============================================================
+// ORIGIN — deliberately NOT overridden. The WHO-2020-based review states plainly: "The origin
+// of these tumors is unknown. Although a MC subgroup may derive from ovarian teratomas"
+// (Diagnostics 2021, PMC8070731, Section 6). This is a genuinely different epistemic status from
+// clear-cell/endometrioid's real, sourced endometriosis-continuity evidence — forcing a Cortex
+// override here would assert a mechanism the source explicitly says is unresolved. Defaults to
+// this organ's ORIGIN_HOTSPOT (Surface epithelium), which makes no origin claim this cancer's
+// own text contradicts; the genuine uncertainty is stated in its own trunk note instead of
+// smoothed into a confident anchor choice.
+// SITE MODEL — real anatomic spread, the same shared-route family as this organ's other three
+// cancers; no mucinous-specific metastatic-pattern study was sought given the pilot's time
+// budget, so the sites below use the organ's own established real routes rather than inventing
+// mucinous-specific ones.
+// TRUNK/BRANCH — Gorringe & Bowtell, Gynecol Oncol, 2020 (PMID 31902686, PMC7056511), a
+// comprehensive review of a pooled real cohort (n≈184–191 primary MOC): "KRAS... 118/184 MOC
+// (64%)"; TP53 missense mutations "90 (48.9%)"; CDKN2A inactivating events "82 (44.6%)"; ERBB2
+// amplification "51 cases (26.7%)." KRAS is trunk but deliberately NOT claimed near-universal —
+// worded at its real 64%, honestly leaving ~36% with no detected KRAS mutation, unlike this
+// atlas's genuinely-near-universal trunks (HGSOC's TP53 ~96%, PDAC's KRAS ~93%).
+const REGIONS_MUC = [
+  { id:'MC', name:'Ovary (primary)', color:cssVar('--coral'), pos3d:{x:-1.2,y:-0.3,z:-0.4},
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'48.9% of MOC (90/184, missense mutations only, Gorringe & Bowtell, Gynecol Oncol, 2020, PMID 31902686)', note:'Almost as common as the KRAS founder event itself — a real, near-coin-flip second hit rather than a rare late event, consistent with mucinous carcinoma\'s general reputation for accumulating several cooperating drivers.' } },
+  { id:'MP', name:'Pelvis', color:cssVar('--azure'), pos3d:{x:0.3,y:1.15,z:0.3},
+    branch:{ gene:'CDKN2A inactivation', class:'driver', ccf:'44.6% of MOC (82/184, Gorringe 2020)', note:'Loss of a cell-cycle checkpoint gene — recurrent enough to sit close behind TP53 in frequency, adding to the same growth-disinhibition picture.' } },
+  { id:'MT', name:'Peritoneum', color:cssVar('--amber'), pos3d:{x:1.25,y:-0.2,z:-0.35},
+    branch:{ gene:'ERBB2 (HER2) amplification', class:'driver', ccf:'26.7% of MOC (51 of 191, Gorringe 2020)', note:'Extra copies of a growth-signaling receptor — the least common of this tumor\'s four major drivers, but the one with the clearest existing targeted-therapy precedent from HER2-amplified cancers elsewhere in oncology.' } },
+  { id:'MR', name:'Retroperitoneal lymph nodes', color:cssVar('--violet'), pos3d:{x:-0.4,y:1.0,z:0.75},
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'48.9% of MOC (90/184, Gorringe 2020)', note:'The same near-coin-flip second hit shown at the primary site — repeated here rather than paired with a fourth distinct gene, since TP53 is this tumor\'s dominant cooperating event by frequency, the same repeated-gene treatment this atlas\'s seminoma entry already uses for its own two real driver genes.' } },
+];
+const TRUNK_MUC = [
+  { gene:'KRAS mutation', class:'driver', ccf:'64% of MOC (118/184, Gorringe & Bowtell, Gynecol Oncol, 2020)', note:'The single most frequently altered gene in mucinous ovarian carcinoma — but NOT near-universal the way this atlas\'s cleanest single-driver trunks are (HGSOC\'s TP53 ~96%, PDAC\'s KRAS ~93%): roughly a third of tumors have no KRAS mutation detected at all.' },
+];
+const PRIVATE_POOL_MUC = [
+  { gene:'BRAF mutation', class:'driver', ccf:'a small minority of MOC (Gorringe 2020 reports 7 of 184)', note:'Real, but rare — and, unlike this atlas\'s own low-grade serous entry (below), where BRAF and KRAS compete head-to-head for the same pathway, here they COOPERATE: four of the seven BRAF-mutant tumors in this cohort also carried a KRAS mutation. The same two genes, opposite rules, in two cancers of the same organ.' },
+  { gene:'TTN passenger variant', class:'passenger', note:'Background mutational noise, the same passenger convention this organ\'s other cancers use.' },
+];
+
+// HISTOLOGY — Diagnostics 2021 (PMC8070731), Section 6 ("Mucinous Carcinoma") and 6.1/6.2. The
+// size/laterality criteria doubly serve as this organ's own real diagnostic-pitfall story:
+// "Features suggestive of primary ovarian MC include large size (>13 cm), unilaterality" —
+// stated because primary ovarian MC is genuinely, frequently confused with METASTATIC mucinous
+// tumors (most often from the GI tract or appendix) reaching the ovary, which tend to be
+// smaller and bilateral. Deliberately not overclaimed as a formal diagnostic rule beyond what
+// the source states.
+const HISTOLOGY_MUC = {
+  intro: 'Mucinous carcinoma is usually a large tumor — 8 to 40 cm, averaging 15 to 20 cm — typically confined to one ovary and divided into many mucin-filled compartments (multilocular). That size and one-sidedness matter diagnostically: a small or two-sided mucinous tumor more often turns out to be cancer that has spread TO the ovary from elsewhere (usually the digestive tract) rather than one that started there. Invasion is graded as "expansile," glands crowding together with no obvious destruction of surrounding tissue, or "infiltrative," with clear stromal invasion and a desmoplastic (scar-like) reaction around it.',
+  ariaSummary: 'Stylized microscopic field: irregular mucin-filled glands and cysts of varying size lined by tall columnar cells with basally-oriented nuclei and abundant pale, foamy (mucin-containing) cytoplasm. In one region the glands crowd together with minimal separating tissue (expansile pattern); in another, isolated glands sit within a denser, scarred-looking stroma (infiltrative pattern).',
+  citation: 'Diagnostics (Basel), 2021 (WHO-2020-based review, PMC8070731, Section 6).',
+  features: [
+    { key:'mucin', label:'Mucin-filled glands',
+      text:'Tall columnar cells with abundant pale, mucin-laden cytoplasm and basally-pushed nuclei, forming glands and cysts of varying size — the defining feature this cancer is named for.' },
+    { key:'size', label:'Large size, one side',
+      text:'Usually 8–40 cm (mean 15–20 cm) and confined to one ovary. The WHO-2020 review names this combination — large size over 13 cm plus unilaterality — as a real feature favoring a primary ovarian origin over a mucinous tumor that has spread to the ovary from elsewhere, most often the digestive tract.' },
+    { key:'invasion', label:'Expansile vs infiltrative invasion',
+      text:'Two recognized invasion patterns: "expansile," confluent glandular growth with no obvious destruction of surrounding tissue, and "infiltrative," with clear stromal invasion and a scar-like (desmoplastic) reaction — a histologic, not gross, distinction.' },
+  ],
+};
+
+// ============================================================
+// LOW-GRADE SEROUS CARCINOMA (LGSC) — fifth wired cancer
+// ============================================================
+// ORIGIN — deliberately NOT overridden. Diagnostics 2021 (PMC8070731, Section 2/3): "almost all
+// LGSCs arise within the ovary from benign and borderline serous tumors" — the same surface/
+// tubal-epithelium lineage this organ's own Surface-epithelium hotspot already covers for
+// HGSOC ("most ovarian cancers... are now thought to arise here or in the adjacent fallopian
+// tube"). Defaults to ORIGIN_HOTSPOT (Surface epithelium) on that basis.
+// A REAL, SEPARATE FINDING DELIBERATELY NOT CONFLATED WITH ORIGIN: Pearce et al., Lancet Oncol,
+// 2012 (PMID 22361336) — the same pooled case-control analysis already backing clear\'s and
+// endo\'s own endometriosis odds ratios — reports "low-grade serous (31 [9.2%] of 336 cases,
+// 2.11, 1.39–3.20, p<0.0001)": a real, statistically significant elevated risk of LGSC associated
+// with a history of endometriosis, comparable in magnitude to endometrioid\'s own OR (2.04). This
+// is an epidemiological RISK-FACTOR finding, not a precursor-lesion finding — endometriosis is
+// associated with a higher subsequent risk of LGSC without being the tissue LGSC is shown to
+// arise from the way it is for clear-cell/endometrioid (no ARID1A-style direct clonal-continuity
+// evidence was found for LGSC). Stated here, in prose, rather than either suppressed or promoted
+// into an origin override the mechanistic evidence does not support — the same registry-versus-
+// origin discipline this pilot's trials-mapping work applied to js/trials.js.
+// TRUNK/BRANCH — Diagnostics 2021 for frequencies ("BRAF or KRAS mutations occur in LGSCs in 30%
+// and 35%, respectively"); Etemadmoghadam et al., Cancer Res, 2017 (PMID 28646021) for the
+// mechanism, confirmed directly via NCBI efetch abstract text: "recurrent mutations in the
+// protein translational regulator EIF1AX and in NF1, USP9X, KRAS, BRAF, and NRAS[.] RAS pathway
+// mutations were mutually exclusive; however, we found significant co-occurrence of mutations in
+// NRAS and EIF1AX" — "the first example of co-occurring, growth-promoting mutational events in
+// ovarian cancer." KRAS and BRAF are BOTH trunk, explicitly as ALTERNATIVES (RAS-pathway
+// mutations exclusive with each other), the same two-distinct-pathways shape as this atlas's
+// own FTC entry (RAS-vs-PAX8-PPARγ) — not as two founders present together. EIF1AX/NRAS are
+// documented real and interesting, but NOT drawn into branch or private-pool slots: NRAS is
+// itself one of the RAS-pathway genes the abstract states is mutually exclusive with KRAS/BRAF,
+// so a tumor modeled on a KRAS-or-BRAF trunk cannot also carry the NRAS-EIF1AX pairing without
+// asserting a cell that the source's own exclusivity rule forbids. Named here, in the trunk
+// note, rather than fabricating a cross-pathway compatibility this pass did not verify — the
+// same "recurrent, real, not yet fit-checked into the ledger" honesty this atlas already extends
+// to e.g. HCC's AXIN1 and PDAC's GATA6/MYC.
+const REGIONS_LGSC = [
+  { id:'SO', name:'Ovary (primary)', color:cssVar('--coral'), pos3d:{x:-1.15,y:-0.35,z:0.5},
+    branch:{ gene:'EIF1AX mutation', class:'driver', ccf:'recurrent in LGSC (Etemadmoghadam et al., Cancer Res, 2017, PMID 28646021)', note:'A translational-initiation-fidelity gene, not itself a RAS-pathway gene. Etemadmoghadam et al. 2017 document it cooperating with NRAS mutation specifically, calling their pairing a co-occurring, growth-promoting combination. Shown at every site here rather than paired region-by-region with a second gene, since EIF1AX is this tumor\'s persistent driver rather than a site-specific one.' } },
+  { id:'SP', name:'Pelvis', color:cssVar('--azure'), pos3d:{x:0.4,y:1.05,z:-0.4},
+    branch:{ gene:'EIF1AX mutation', class:'driver', ccf:'recurrent in LGSC (Etemadmoghadam 2017)', note:'Same gene, same source, as the primary site.' } },
+  { id:'ST', name:'Peritoneum', color:cssVar('--amber'), pos3d:{x:1.2,y:-0.15,z:-0.5},
+    branch:{ gene:'EIF1AX mutation', class:'driver', ccf:'recurrent in LGSC (Etemadmoghadam 2017)', note:'Same gene, same source, as the primary site.' } },
+  { id:'SN', name:'Retroperitoneal lymph nodes', color:cssVar('--violet'), pos3d:{x:-0.5,y:0.9,z:0.85},
+    branch:{ gene:'EIF1AX mutation', class:'driver', ccf:'recurrent in LGSC (Etemadmoghadam 2017)', note:'Same gene, same source, as the primary site.' } },
+];
+const TRUNK_LGSC = [
+  { gene:'KRAS mutation', class:'driver', ccf:'~35% of LGSC (Diagnostics 2021, PMC8070731)', note:'A MAPK-pathway founder event and one of two common alternative routes into this cancer — mutually exclusive with BRAF mutation below, confirmed directly: "RAS pathway mutations were mutually exclusive" (Etemadmoghadam et al., Cancer Res, 2017). A third, less common route exists too — NRAS mutation, cooperating with a distinct gene, EIF1AX (the same paper\'s own major finding) — real and sourced, but not modeled at the cellular level here, since NRAS is itself excluded from co-occurring with the KRAS/BRAF tumor this entry represents.' },
+  { gene:'BRAF mutation', class:'driver', ccf:'~30% of LGSC (Diagnostics 2021, PMC8070731)', note:'The alternative to KRAS above — together the two account for roughly two-thirds of LGSC, virtually never found in the same tumor. The same contrast this atlas already draws for lung adenocarcinoma\'s own KRAS/EGFR exclusivity, playing out a second time in a different organ.' },
+];
+const PRIVATE_POOL_LGSC = [
+  { gene:'TTN passenger variant', class:'passenger', note:'Background mutational noise, the same passenger convention this organ\'s other cancers use.' },
+];
+
+// HISTOLOGY — Diagnostics 2021 (PMC8070731), Section 3 ("Low-grade Serous Carcinoma"), the same
+// paper describing HGSOC in this file, making the mitotic/nuclear contrast below same-source and
+// direct rather than assembled across two different papers' own conventions.
+const HISTOLOGY_LGSC = {
+  intro: 'Low-grade serous carcinoma is the quieter opposite of its high-grade namesake. Small papillae, uniform in size, are covered by a homogeneous population of small cells with scant cytoplasm — no hierarchical branching, no bizarre giant nuclei. Atypia is mild to moderate rather than marked, though nucleoli can be prominent; mitoses usually number under 12 per 10 high-power fields, the same threshold that, when exceeded, helps define this tumor\'s high-grade counterpart.',
+  ariaSummary: 'Stylized microscopic field: numerous small, evenly-sized papillae covered by a single uniform layer of small cells with scant cytoplasm and mild-to-moderate nuclear atypia — no giant or bizarre nuclei anywhere in the field. A few nuclei show a small but distinct nucleolus. One dividing cell is visible.',
+  citation: 'Diagnostics (Basel), 2021 (WHO-2020-based review, PMC8070731, Section 3).',
+  features: [
+    { key:'papillae', label:'Small, uniform papillae',
+      text:'Numerous small papillae of even size, without the hierarchical branching of high-grade serous carcinoma — the single clearest architectural contrast between this cancer and its high-grade namesake in the same organ.' },
+    { key:'atypia', label:'Mild-to-moderate atypia',
+      text:'Nuclei show only mild to moderate atypia, in contrast to high-grade serous carcinoma\'s more-than-threefold size variation — though, unlike that tumor, nucleoli here can be prominent.' },
+    { key:'mitoses', label:'Low mitotic rate',
+      text:'Usually fewer than 12 mitoses per 10 high-power fields — the same numeric threshold high-grade serous carcinoma exceeds, applied here to show which side of it this cancer falls on.' },
+  ],
+};
+
 export const cancerDetails = {
   hgsoc: {
     title:'High-Grade Serous Carcinoma', screenLabel:'High-grade serous carcinoma — tumor explorer',
@@ -322,5 +525,23 @@ export const cancerDetails = {
     legendTitle:'Sites (same routes as serous — usually caught earlier)',
     regions:REGIONS_OCCC, trunk:TRUNK_OCCC, privatePool:PRIVATE_POOL_OCCC,
     histology: HISTOLOGY_OCCC,
+  },
+  endo: {
+    title:'Endometrioid Carcinoma', screenLabel:'Endometrioid carcinoma — tumor explorer',
+    legendTitle:'Sites (same real routes as this organ\'s other cancers)',
+    regions:REGIONS_ENDO, trunk:TRUNK_ENDO, privatePool:PRIVATE_POOL_ENDO,
+    histology: HISTOLOGY_ENDO,
+  },
+  muc: {
+    title:'Mucinous Carcinoma', screenLabel:'Mucinous carcinoma — tumor explorer',
+    legendTitle:'Sites (same real routes as this organ\'s other cancers)',
+    regions:REGIONS_MUC, trunk:TRUNK_MUC, privatePool:PRIVATE_POOL_MUC,
+    histology: HISTOLOGY_MUC,
+  },
+  lgsc: {
+    title:'Low-Grade Serous Carcinoma', screenLabel:'Low-grade serous carcinoma — tumor explorer',
+    legendTitle:'Sites (same real routes as this organ\'s other cancers)',
+    regions:REGIONS_LGSC, trunk:TRUNK_LGSC, privatePool:PRIVATE_POOL_LGSC,
+    histology: HISTOLOGY_LGSC,
   },
 };
