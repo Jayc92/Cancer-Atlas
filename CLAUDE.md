@@ -2617,6 +2617,24 @@ screen pair per organ:
       every organ file before use (`grep -oE "id:'[A-Za-z0-9]{1,3}'"` across all `js/organs/*.js`),
       per this project's own standing rule that region ids must be globally unique, not just
       unique within one organ.
+    - **`citation_crosscheck`'s five new flags, read — all five confirmed extractor artifacts, none
+      a real content error.** Every citation this pass added that involves more than one paper in
+      a dense, semicolon-separated field (REGIONS_PNEURO's own comment listing three uncorroborating
+      SEER studies; TRUNK_PNEURO's AR-pathway-attenuation entry listing Beltran 2016 alongside
+      Aggarwal 2018; that same entry's PSA note listing Conteduca 2019 alongside Rauf 2020) got
+      flagged, because `extract_citations.py`'s own known list-attribution limitation pairs a PMID
+      with the FIRST author/year on the line rather than the one it actually sits beside — the same
+      shape this project has found and fixed multiple times before (the testis.js journal-shuffle,
+      the Beltran/Aggarwal/Conteduca/Rauf class). Read directly against the source text in each
+      case: every PMID in this pass's own citations is correctly placed next to its real author and
+      year in the prose itself (`js/organs/prostate.js:298`, `:321` ×2) — the flags are the
+      extractor's own record-building artifact, not a defect in what was written, confirmed rather
+      than assumed. A fifth flag (Schweizer 2019, PMID 31123724, `prostate.js:385`) is a benign
+      abbreviation mismatch — this pass's "JCO Precis Oncol" is PubMed's own standard ISO
+      abbreviation for the same journal the crosscheck's id-lookup prints unabbreviated as "JCO
+      precision oncology." None of the five needed a text change; none is a change in the
+      extractor's own reach, which stays a separate, deliberately not-casually-widened decision per
+      this project's standing caution on exactly that kind of change.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
