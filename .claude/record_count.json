@@ -1,14 +1,14 @@
 {
  "_note": "Ratchet state for .claude/battery.py assertion 4 \u2014 the corpus did not silently shrink. MACHINE-WRITTEN: battery.py is the only writer, and it only ever moves a count UP, except through an explicit --lower-ratchet with a --lower-reason, which is appended to 'lowers' below so every deliberate step over the gap stays on the record. Seeded empty by hand exactly once, because the declaration in NON_INSTRUMENTS has to exist before the file can and the battery refuses to run at all while its own selftest fails \u2014 so the file could not have been created by the tool that writes it. Counts start absent on purpose: the first run INITIALISES and says so, condition (8), and the SECOND run is the check. 'record_keys' (added 2026-09-06 by the same hand, same reason: the field has to be explained in the file a reader diffs) is the record SET beside its size \u2014 sorted (author|year|file:line) identities, one per line, so `git diff` on this file IS the composition audit. A count cannot see four records swapping identity under a flat total; the set can, and the battery prints added/removed/moved on every run. Sorted ordering is load-bearing. The count and the set are saved together and battery.py REFUSES this file if they ever disagree, so do not edit either by hand.",
  "counts": {
-  "records": 614,
+  "records": 613,
   "citation_crosscheck.records": 211,
   "citation_paren_ledger.basis_test": 3,
   "internal_quote_check.internal_quote.marked": 15,
   "pointer_check.pointer.identity_oracle": 272,
   "reserve_check.categories": 5,
   "reserve_check.growth_categories": 2,
-  "pointer_check.pointer.pointers_code": 464
+  "pointer_check.pointer.pointers_code": 463
  },
  "lowers": [
   {
@@ -52,6 +52,20 @@
    "to": 527,
    "count": 527,
    "reason": "removed the bare '2020' digit from 'WHO-2020-based' in three De Leo et al. 2021 citation fields to resolve a citation_paren_ledger paren-shadow ambiguity (reworded to 'WHO-classification'); no citation content was lost, only an accidental second year-shaped token"
+  },
+  {
+   "metric": "records",
+   "from": 614,
+   "to": 613,
+   "count": 613,
+   "reason": "removed a spurious Sabbula|2015 citation record: lungs.js:348 misworded a WHO-classification aside so the extractor's nearest-forward-year search misattributed a bare 2015 to Sabbula's own undated StatPearls entry (citation_paren_ledger's own FALSIFIES verdict caught it); fixed at the source by dropping the stray year, restoring the correct zero-year Sabbula citation the same as every other undated StatPearls entry in this corpus"
+  },
+  {
+   "metric": "pointer_check.pointer.pointers_code",
+   "from": 464,
+   "to": 463,
+   "count": 463,
+   "reason": "removed a spurious Sabbula|2015 citation record: lungs.js:348 misworded a WHO-classification aside so the extractor's nearest-forward-year search misattributed a bare 2015 to Sabbula's own undated StatPearls entry (citation_paren_ledger's own FALSIFIES verdict caught it); fixed at the source by dropping the stray year, restoring the correct zero-year Sabbula citation the same as every other undated StatPearls entry in this corpus"
   }
  ],
  "record_keys": [
@@ -472,7 +486,6 @@
   "Rudin|2021|js/organs/lungs.js:389",
   "Rudin|2021|js/organs/lungs.js:405",
   "Rudin|2021|js/organs/lungs.js:411",
-  "Sabbula|2015|js/organs/lungs.js:347",
   "Safaee Ardekani|2012|js/organs/colon.js:192",
   "Salgado|2015|js/organs/breast.js:199",
   "Salgado|2015|js/organs/breast.js:206",
