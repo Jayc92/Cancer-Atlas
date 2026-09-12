@@ -298,3 +298,207 @@ sharing one organ, exactly ovary's own shape, and the two histotypes are clinica
 behave differently. This is reported as an open risk, not fixed here — checking ten more organs
 against their own literature is real, uncounted work, and is not part of this ovary-scoped
 correction.
+
+## 7. Item 2 — histology generators DO factor into families, proven by building a fourth
+## (2026-09-11, user-directed test)
+
+**The question:** the cost report flagged a hand-written SVG generator per entry as the largest
+unbudgeted line item. Before writing thirty-two more, test whether they factor into a small,
+parameterized set of architectural families instead.
+
+**Method: read all nineteen existing generators, not just the three from the pilot.** The three
+ovary generators alone are too small a sample to answer a question about thirty-two more entries
+across thirteen more organs — the other sixteen (hgsoc, tnbc, luad, ccrcc, hcc, gbm, prostate
+acinar, crc, pdac, gdiff, melanoma, occc, seminoma, bladder uc, ptc, ftc) are real, independent
+evidence for whatever pattern actually recurs. Two shapes were ALREADY independently invented
+more than once before this test started: a papillary frond (stroma body + optional core + a rim
+of nuclei) appears, with different parameters, in hgsoc, ptc, lgsc, and bladder uc; a punched
+cribriform mass (a blob + rejection-sampled non-overlapping lumens + cells filling the rest)
+appears, nearly verbatim, in both prostate acinar's pattern-4 zone and crc's cribriform gland.
+Extracted as two new shared functions in `js/histology.js` — `drawFrond` and
+`drawCribriformMass` — plus one trivial one, `drawPsammomaBody` (duplicated verbatim between
+hgsoc and ptc). **None of the five generators that already contained these patterns were
+touched** — the extraction adds functions, it does not retrofit already-shipped, gate-verified
+code, matching this pilot's own standing discipline about not editing frozen/verified work
+without a reason tied to it.
+
+**A third candidate family — solid sheets (a bounded blob + a grid of `drawCell` calls) —
+appears in five generators (tnbc, luad's zone 3, prostate acinar's pattern 5, occc's zone 3,
+endometrioid's grade corner) but was NOT extracted.** It is already this simple: a shape plus a
+loop. A dedicated helper would save a few lines per caller and add one more name to remember —
+not worth it at this size. This is itself a finding: not every recurring shape is worth
+factoring, only the ones complex enough that re-deriving them by hand is real cost.
+
+**Proof: a fourth generator, for a real Phase C entry, built from parameters alone.**
+Prostatic ductal adenocarcinoma (one of prostate's four staged entries — item 4) is real-cited as
+exactly this test needs: "composed of tall, columnar, pseudostratified epithelium with a
+papillary, cribriform, glandular or solid architecture... papillary architecture being the most
+helpful diagnostic feature" (Seipel et al., *Pathology*, 2016, PMID 27321992); "papillary and
+cribriform being the most common" pattern, with "the vast majority of PDA contain[ing] admixed
+acinar carcinoma, with a median percentage of the ductal component of 50%" (Au et al., *Ann Diagn
+Pathol*, 2019, PMID 30772651). Built as two papillary fronds (`drawFrond`, with a new `nucStyle:
+'columnar'` + `radialJitter` option added to depict pseudostratification — a real, distinct look
+none of the four existing frond generators needed) + one cribriform mass (`drawCribriformMass`) +
+five ordinary acinar glands (reusing the pre-existing, unmodified `drawGlandRing`) — a genuine
+three-family composite, matching the honest multi-pattern precedent luad/prostate-acinar/occc
+already set for their own real multi-pattern disease. **Zero bespoke per-cell drawing code was
+written for this entry — every pixel came from parameters passed to existing or newly-shared
+functions.** Live-verified in the browser (dynamically imported, rendered against a detached SVG
+element, screenshotted): three legible, architecturally distinct zones — elongated nuclei
+strung along a red vascular core, a sieve-like punched sheet, and small separate rings — reading
+correctly as papillary-with-cribriform-and-admixed-acinar, not as a recolored copy of any
+existing slide.
+
+**The generator was then deliberately NOT kept in the shipped file.** `ductal` is not yet a real
+`cancerEntries` stub in `prostate.js` — no mutations, no origin siting, no extent, no trials —
+and a histology generator with no entry to serve is dead code by this project's own standard
+(never mind that it renders correctly). The code is preserved here, verbatim, for when `ductal`
+becomes real:
+
+```js
+function genProstateDuctal(g, rnd){
+  // Prostatic ductal adenocarcinoma — papillary architecture is "the most helpful diagnostic
+  // feature" (Seipel et al., Pathology, 2016, PMID 27321992), built from tall, columnar,
+  // PSEUDOSTRATIFIED epithelium — nuclei at staggered heights within one true layer, not the
+  // disordered multi-layer pile-up bladderUC's own frond draws. Cribriform is the second most
+  // common pattern (Au et al., Ann Diagn Pathol, 2019, PMID 30772651). Real tumors are admixed:
+  // "the vast majority of PDA contained admixed acinar carcinoma, with a median percentage of
+  // the ductal component of 50%" (Au 2019) — drawn as a genuine third zone of ordinary discrete
+  // acinar glands, the same multi-pattern honesty framing LUAD/prostate-acinar/OCCC already use.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  g.appendChild(el('path', {d:blobPath(400, 250, 420, 275, 0.06, 14, rnd, 0), fill:HE.stroma, opacity:0.3}));
+  const fronds = [
+    {cx:190, cy:130, rx:150, ry:44, rot:-0.2},
+    {cx:150, cy:340, rx:135, ry:40, rot: 0.28},
+  ];
+  fronds.forEach(f=>drawFrond(g, rnd, f, {
+    core:{type:'fibrovascular', length:0.72},
+    rimSpacing:9, radialJitter:0.16, nucStyle:'columnar', nucSize:()=>5+rnd()*2,
+  }));
+  const crib = drawCribriformMass(g, rnd, 460, 180, 110, 92, {lumenCount:11, lumenRMin:10, lumenRMax:16});
+  const acinarSpots = [
+    {x:660, y:110, r:20}, {x:600, y:190, r:16}, {x:665, y:260, r:22},
+    {x:590, y:340, r:17}, {x:670, y:410, r:19},
+  ];
+  acinarSpots.forEach(s=>drawGlandRing(g, s.x, s.y, s.r, rnd, {nucMin:3, nucMax:4.2}));
+  return [
+    {key:'papillary',  x:190, y:130},
+    {key:'cribriform', x:crib.cx, y:crib.cy+crib.ry+18},
+    {key:'admixture',  x:660, y:110},
+  ];
+}
+```
+
+**Coverage across the remaining thirty-two — an ESTIMATE from standard pathology knowledge, not
+a citation-verified commitment; every entry still needs its own real source read at authoring
+time, the same as every entry so far.** Organized by finding rather than by organ, because the
+findings are what generalize:
+
+- **The papillary/frond family serves at least one more entry directly**: kidneys' staged
+  papillary RCC (needs one new accessory — foamy macrophage clusters in the papillary cores —
+  the same size of addition `radialJitter` was for ductal).
+- **A neuroendocrine/small-cell family would serve FIVE staged entries at once, across FOUR
+  different organs**: prostate neuroendocrine, bladder neuroendocrine, lungs' SCLC, skin's
+  Merkel cell carcinoma, and colon neuroendocrine — small-cell/neuroendocrine morphology
+  (nuclear molding, high nuclear:cytoplasmic ratio, "salt and pepper" chromatin) is substantially
+  organ-agnostic in real pathology, and this atlas has not yet built it once. This is the single
+  best-leveraged NEW family to build, if one more is built before the next batch of entries.
+  Thyroid medullary (also neuroendocrine-derived, C-cell) and pancreas' PanNET are RELATED but
+  need checking as their own variant — well-differentiated NETs classically show a more nested/
+  organoid pattern than small-cell carcinoma's sheet-like one; folding them into the same family
+  without checking would repeat this pilot's own "assumes-the-organ-default" mistake at the
+  family level instead of the origin-siting level.
+- **A squamous family would serve THREE staged entries**: bladder squamous, lungs' SCC, skin's
+  SCC — keratinization and intercellular bridges, also not yet built once.
+- **A signet-ring family already exists in one generator (gdiff) and would gain a second real
+  consumer**: prostate's staged mucinous/signet-ring entry. Worth extracting into a shared
+  primitive once this second consumer is real, on the same "don't extract until something needs
+  it twice" discipline this pass already followed for frond/cribriform.
+- **Two cross-organ reuses were NOT anticipated going in and are worth flagging as the pilot's
+  own best evidence that this generalizes beyond the obvious cases**: GBM's pseudopalisading-rim
+  technique (nuclei stacked radially at a necrotic border) is architecturally close to skin's
+  staged basal cell carcinoma's own peripheral palisading — a real, non-obvious reuse across two
+  unrelated organs. And this atlas's own CLAUDE.md (data rule 19) already states that
+  intestinal-type gastric adenocarcinoma is "similar to intestinal adenocarcinoma... a colon-
+  slide repeat" — confirming, from a design decision made before this test existed, that the
+  glandular/CRC-style family was already known to transplant across organs.
+- **Liver's staged intrahepatic cholangiocarcinoma is a strong PDAC reuse**: both are
+  desmoplastic-stroma-dominant ductal adenocarcinomas: PDAC's own haphazard-small-glands-in-
+  dominant-stroma technique likely needs only new siting, not new drawing code.
+- **A genuinely bespoke minority remains, and one of the six architectural words in the original
+  instruction — spindle — has ZERO existing representation in this atlas.** Thyroid's staged
+  anaplastic carcinoma is the first candidate: highly pleomorphic, often sarcomatoid/spindle-cell,
+  extensively necrotic — closer to GBM's own necrotic/high-grade character than to any glandular
+  or papillary family, but needs a genuinely new spindle-cell treatment neither GBM nor any other
+  existing generator provides. Testis's staged NSGCT (modeled as one combined entity) is the
+  second: a real mix of embryonal carcinoma, yolk sac tumor, and choriocarcinoma components,
+  needing its own multi-zone composite in the luad/prostate-acinar/occc tradition — though its
+  choriocarcinoma component reuses seminoma's own syncytiotrophoblast accessory directly, already
+  built. Breast's three staged molecular subtypes (Luminal A/B, HER2-enriched) raise a DESIGN
+  QUESTION rather than a drawing-cost one: these differ from TNBC and each other primarily by
+  receptor/IHC status, not necessarily by a distinctly different H&E architecture — the honest
+  slide for one or more of them may be "the diagnosis is immunohistochemistry, not morphology,"
+  the same register-mismatch shape FTC's own slide is already built around, rather than three
+  more visually-distinct family instances forced into existing where the truth is convergence.
+
+**Net answer: yes, and by more than expected.** Two families factor cleanly and generalized to a
+real new organ on the first try with zero bespoke drawing code; a third recurring shape (solid
+sheets) is too simple to be worth factoring; a fourth (signet-ring) already exists once and will
+factor the moment it is needed twice. At least one new family (neuroendocrine/small-cell) is
+worth building purely on leverage — it would serve five staged entries across four organs at
+once, more than any single family serves today. The bespoke residue is real but small: one
+genuinely new architectural mode (spindle/anaplastic) and one genuinely composite entity
+(NSGCT) — plus, separately, a real possibility that two or three of breast's staged entries
+should be drawn as deliberately similar to TNBC rather than forced into artificial distinctness.
+The histology cost report's own worst-case framing ("budget one generator per entry") should be
+revised: budget one PER FAMILY the first time a family is needed, and near-zero for every
+subsequent entry that family already serves.
+
+## 8. Item 3 — pre-authoring checklist, derived from the pilot's seven hygiene fixes
+## (2026-09-11, user-directed)
+
+The pilot's seven citation-hygiene fixes were all real and all caught by the gate chain, which
+is the system working — but every one of them is an AUTHORING-CONVENTION error, not a discovery
+about the literature, and every one is checkable BEFORE writing rather than only after. Run
+through this before writing a new citation, comment, or ccf string into any organ file — the
+goal is fewer gate round-trips per entry, not a new gate (none of this is mechanized; it is a
+list for the person about to type).
+
+1. **No apostrophe inside a single-quoted string.** Every citation edit writes English prose into
+   single-quoted JS literals — possessives, contractions ("it's," "author's"), and quoted titles
+   containing an apostrophe will terminate the string early. Reword around it, or use a
+   double-quoted string for that one line. A standing, named hazard (CLAUDE.md's own record of a
+   real production incident, 4b2c8c5) — this pilot hit it once more anyway.
+2. **No bare digit-shaped year inside a descriptive compound term, if a citation earlier in the
+   same string already closed with a `)`.** "WHO-2020-based," "post-2015 cohort" — a backward
+   paren-shadow scan can mistake the bare year for a second citation's own year once an earlier
+   head has already been spent. Reword to drop the embedded year ("WHO-classification" instead of
+   "WHO-2020-based") — the exact fix this pilot needed TWICE on the same phrase, once in a `ccf`
+   string and again after a later fix reintroduced it into three more.
+3. **Name the real first author before writing a bare `"Journal, Year"` citation.** A citation with
+   no author token (e.g. "Diagnostics (Basel), 2021") gets its journal name parsed as the author
+   surname. Look up the real first author (a PubMed esummary check costs one fetch) before writing
+   the citation the first time, not after the crosscheck gate flags it eleven mentions later.
+4. **A no-year parenthetical sitting between a citation's head and its real year needs
+   pre-registering in the SAME commit, not a follow-up.** "(Basel)," "(WHO)," a journal-city
+   qualifier — any NEW instance of this shape needs a `PREREGISTERED` entry in
+   `citation_paren_ledger.py` alongside the citation that introduces it.
+5. **State an absence or universal claim scoped to a named source, never as a bare assertion.**
+   "No X has been reported" or "unlike every other Y in this atlas" reads as a claim about the
+   whole world's literature or the whole corpus; name the specific source that didn't report it, or
+   the specific population being compared, in the sentence itself.
+6. **Compute every fraction from its own two numbers before writing the percentage beside it, and
+   write both.** Wherever a source gives a count and a percentage, carry both in the same
+   parenthetical (the standing rule from the thyroid NRAS incident, 80f74fc) — this lets
+   `fraction_check` catch an arithmetic slip immediately instead of a reformatted-and-still-wrong
+   figure surviving to the next read.
+7. **Check `citation_head_check.py`'s `WELL_FORMED` tuple before writing a multi-word surname for
+   the first time.** A genuine two-word surname ("De Leo," "van Beek," "Di Carlo") is flagged as an
+   undeclared head shape unless already declared — declare it in the SAME commit as its first use.
+
+**What this list is not:** a gate. It is unmechanized on purpose — these are authoring habits, not
+checkable invariants, and a checklist that has to be read is cheaper than the seventy-five round
+trips thirty-two more entries would cost at this pilot's own measured rate (seven fixes across
+three entries) if nobody read it. If a future organ's own hygiene-fix rate turns out to still be
+high despite this list, that is the signal to mechanize one of these seven into an actual
+pre-commit check rather than to write a longer checklist.

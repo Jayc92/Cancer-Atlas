@@ -119,6 +119,115 @@ function necrosisBlob(g, cx, cy, rx, ry, rnd, rot){
 }
 
 // ------------------------------------------------------------
+// FAMILY PRIMITIVES (2026-09-11) — tested by building a fourth generator from parameters rather
+// than by hand, per the pilot's own cost report flagging per-entry SVG authoring as the largest
+// unbudgeted item. The fourth generator (prostatic ductal adenocarcinoma — papillary and
+// cribriform architecture per Seipel et al., Pathology, 2016, PMID 27321992, and Au et al.,
+// Ann Diagn Pathol, 2019, PMID 30772651) was built with these primitives, live-verified in the
+// browser (real render, correct anchors, visually distinct from every existing frond/cribriform
+// slide), then DELIBERATELY NOT KEPT in this file — `ductal` is not yet a real `cancerEntries`
+// stub in prostate.js (no mutations/origin/extent/trials authored), and a generator with no
+// entry to serve is dead code by this project's own standard. Full record and code in
+// `.claude/phaseC_design.md`'s item-2 report; reinstate it verbatim once `ductal` is real.
+// Extracted from patterns that ALREADY recur, independently, across genHGSOC/genPTC/genLGSC/
+// genBladderUC (a frond: a stroma body, an optional core, a rim of nuclei) and genProstate's
+// pattern-4/genCRC's cribriform gland (a mass punched with rejection-sampled non-overlapping
+// lumens, cells filling the rest) — this does NOT retrofit those four already-shipped,
+// gate-verified generators to call the new functions; it only adds the functions and proves
+// them on a genuinely new entry. Two families
+// factor cleanly (frond/papilla, cribriform mass); a third (solid sheet — tnbc/luad-zone3/
+// prostate-p5/occc-zone3) is simple enough (a bounded blob + drawCell grid) that a dedicated
+// helper would save little; several generators (GBM's necrosis+pseudopalisading+microvascular
+// tufts, melanoma's epidermis+DEJ+pagetoid spread, HCC's trabecular cords, TNBC's necrosis+TILs,
+// seminoma's septal+lymphocytic dressing) are genuinely bespoke — see the item-2 report for the
+// full per-organ accounting.
+function drawPsammomaBody(g, x, y, r){
+  for(let rr=r; rr>2; rr-=r/3.4) g.appendChild(el('circle', {cx:x, cy:y, r:rr, fill:'none', stroke:'#8f76a8', 'stroke-width':2.2, opacity:0.9}));
+}
+// A punched sheet: one blob mass, N non-overlapping rejection-sampled lumens, cells filling the
+// remainder. Generalizes genProstate's pattern-4 mass and genCRC's cribriform gland — same
+// rejection-sampling shape in both, independently written; this is the one function they'd both
+// call if they were touched again, not a retrofit now.
+function drawCribriformMass(g, rnd, cx, cy, rx, ry, opts){
+  const o = opts || {};
+  const d = blobPath(cx, cy, rx, ry, o.wobble != null ? o.wobble : 0.12, 12, rnd, o.rot || 0);
+  g.appendChild(el('path', {d, fill:o.fill || HE.cyto, stroke:o.stroke || HE.cytoLn, 'stroke-width':o.strokeWidth || 1.2}));
+  const lumens = [];
+  let attempts = 0;
+  const want = o.lumenCount || 10, rMin = o.lumenRMin || 10, rMax = o.lumenRMax || 17;
+  while(lumens.length < want && attempts < 700){
+    attempts++;
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*(o.lumenSpread != null ? o.lumenSpread : 0.78);
+    const lx = cx+Math.cos(a)*rx*r, ly = cy+Math.sin(a)*ry*r, lr = rMin+rnd()*(rMax-rMin);
+    if(lumens.some(L=>Math.hypot(L.x-lx, L.y-ly) < L.r+lr+(o.lumenGap != null ? o.lumenGap : 4))) continue;
+    lumens.push({x:lx, y:ly, r:lr});
+  }
+  lumens.forEach(L=>{ g.appendChild(el('circle', {cx:L.x, cy:L.y, r:L.r, fill:o.lumenFill || HE.bg, stroke:o.stroke || HE.cytoLn, 'stroke-width':1})); });
+  const cellCount = o.cellCount || Math.round(rx*ry/900);
+  for(let i=0;i<cellCount;i++){
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*(o.cellSpread != null ? o.cellSpread : 0.9);
+    const x = cx+Math.cos(a)*rx*r, y = cy+Math.sin(a)*ry*r;
+    if(lumens.some(L=>Math.hypot(L.x-x, L.y-y) < L.r+3)) continue;
+    g.appendChild(el('circle', {cx:x, cy:y, r:(o.nucMin||3.1)+rnd()*((o.nucMax||4.2)-(o.nucMin||3.1)), fill:HE.nuc, opacity:0.9}));
+  }
+  return {cx, cy, rx, ry, lumens};
+}
+// One papillary frond/papilla: a stroma body, an optional core (fibrovascular line — PTC/
+// bladderUC; hyaline blob — OCCC's own inline version), and a rim of nuclei whose STYLE is the
+// per-cancer diagnostic variable: 'plain' (HGSOC's own right-skewed pleomorphism, LGSC's own
+// narrow-band uniformity — same code path, different nucSize function), 'cleared' (PTC's
+// Orphan-Annie clearing + optional groove), or 'columnar' (new: elongated, radially-aligned
+// nuclei for pseudostratified epithelium — no existing generator needed this specific look).
+// `disorder` (0 = one clean rim) stacks extra jittered layers, generalizing bladderUC's
+// three-layer piled-up disorder. `radialJitter` staggers each cell's radial position, which
+// combined with 'columnar' nuclei is what makes pseudostratification (nuclei at varying heights
+// within ONE true layer) read as different from a disordered multi-layer pile-up.
+function drawFrond(g, rnd, f, opts){
+  const o = opts || {};
+  const rot = f.rot || 0;
+  const d = blobPath(f.cx, f.cy, f.rx, f.ry, o.wobble != null ? o.wobble : 0.18, 16, rnd, rot);
+  g.appendChild(el('path', {d, fill:o.stromaFill || HE.stroma, stroke:o.stromaStroke || HE.stromaLn, 'stroke-width':o.strokeWidth || 1.4}));
+  if(o.core){
+    const cosR = Math.cos(rot), sinR = Math.sin(rot);
+    if(o.core.type === 'fibrovascular'){
+      const L = f.rx*(o.core.length || 0.74);
+      g.appendChild(el('line', {x1:f.cx-L*cosR, y1:f.cy-L*sinR, x2:f.cx+L*cosR, y2:f.cy+L*sinR, stroke:o.core.color || HE.vessel, 'stroke-width':o.core.width || 7, 'stroke-linecap':'round', opacity:0.85}));
+      g.appendChild(el('line', {x1:f.cx-L*cosR, y1:f.cy-L*sinR, x2:f.cx+L*cosR, y2:f.cy+L*sinR, stroke:o.core.colorDark || HE.vesselDk, 'stroke-width':(o.core.width || 7)*0.31, 'stroke-linecap':'round', opacity:0.7}));
+    } else if(o.core.type === 'hyaline'){
+      g.appendChild(el('path', {d:blobPath(f.cx, f.cy, f.rx*0.72, f.ry*0.66, 0.1, 10, rnd, rot), fill:o.core.color || '#e2a9bb', stroke:o.core.strokeColor || '#d093a8', 'stroke-width':1.4, opacity:0.95}));
+    }
+  }
+  const per = Math.round(2*Math.PI*Math.sqrt((f.rx*f.rx+f.ry*f.ry)/2) / (o.rimSpacing || 13));
+  const layers = 1 + (o.disorder || 0);
+  const nucSize = o.nucSize || (()=>3+rnd()*rnd()*7);
+  const rimCells = [];
+  for(let layer=0; layer<layers; layer++){
+    const layerCount = layers === 1 ? per : Math.max(4, per - layer*3);
+    for(let i=0;i<layerCount;i++){
+      const a = i/layerCount*Math.PI*2 + rnd()*(layers>1 ? 0.5 : 0);
+      const base = layers === 1 ? 1 : (0.55 + layer*0.16 + (rnd()*2-1)*0.06);
+      const rr = base * (1 + (rnd()*2-1)*(o.radialJitter || 0));
+      const px = Math.cos(a)*f.rx*1.05*rr, py = Math.sin(a)*f.ry*1.12*rr;
+      const x = f.cx + px*Math.cos(rot) - py*Math.sin(rot) + (layers>1 ? (rnd()*2-1)*6 : 0);
+      const y = f.cy + px*Math.sin(rot) + py*Math.cos(rot) + (layers>1 ? (rnd()*2-1)*6 : 0);
+      const nr = nucSize(rnd);
+      if(o.nucStyle === 'cleared'){
+        const rotDeg = rnd()*180;
+        g.appendChild(el('ellipse', {cx:x, cy:y, rx:nr, ry:nr*(0.62+rnd()*0.22), transform:`rotate(${rotDeg.toFixed(0)} ${x} ${y})`, fill:o.clearFill || HE.clear, stroke:o.nucStroke || HE.nuc, 'stroke-width':1.9, opacity:0.95}));
+        if(rnd() < (o.grooveProb || 0)) g.appendChild(el('line', {x1:x-nr*0.55, y1:y, x2:x+nr*0.55, y2:y, transform:`rotate(${rotDeg.toFixed(0)} ${x} ${y})`, stroke:o.nucStroke || HE.nuc, 'stroke-width':1.1, opacity:0.8}));
+      } else if(o.nucStyle === 'columnar'){
+        const alignDeg = a*180/Math.PI + 90;
+        g.appendChild(el('ellipse', {cx:x, cy:y, rx:nr*0.5, ry:nr*1.35, transform:`rotate(${alignDeg.toFixed(0)} ${x} ${y})`, fill:o.nucFill || HE.nuc, opacity:0.92}));
+      } else {
+        drawCell(g, x, y, 0, nr, rnd, {nucFill: layers>1 && rnd()<0.4 ? HE.nucDark : (o.nucFill || HE.nuc)});
+      }
+      rimCells.push({x, y});
+    }
+  }
+  return {rimCells};
+}
+
+// ------------------------------------------------------------
 // Per-cancer generators. Each draws into <g> and returns label anchor points {key,x,y} in
 // viewBox coordinates; keys must match the cancer's histology.features[].key.
 // ------------------------------------------------------------
