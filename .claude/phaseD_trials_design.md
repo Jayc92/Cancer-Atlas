@@ -567,15 +567,79 @@ arithmetic, not an independent signal, confirmed with real exhaustive fetches (p
 pagination, confirmed live to cap at pageSize 1000) against all sixteen entries, not asserted from
 the mechanism alone.
 
-**There is currently no working over-narrow signal.** The drop count remains the one live,
-working mapping-quality check (catches over-broad). A genuine over-narrow signal needs a
-SUBTYPE-discriminating check — e.g. searching the parent set's own conditions for each entry's
-distinguishing histologic term ("clear cell" for ccrcc/clear, "seminoma" for seminoma, "papillary"
-for ptc) rather than the organ-level filter. Deliberately NOT attempted under time pressure in this
-pass: several entries' own distinguishing term is the generic "adenocarcinoma" (gdiff, luad,
-acinar, crc), which is too broad within an organ where adenocarcinoma is already the dominant
-histology and would not discriminate there either — a real content task, per-entry, with the same
-failure shape the seminoma keyword bug already taught (an over-broad or over-narrow hand-picked
-term is a confident wrong answer, not a fix). `.claude/trials_mapping_check.mjs`'s exhaustive-fetch
-machinery is kept: the raw counts are genuinely useful data for whoever builds the corrected
-version, even though its derived `gap` must not be read as a verdict about any mapping's quality.
+**"There is currently no working over-narrow signal" was one step too strong — corrected the same
+day, §12.** No signal DERIVED FROM the entry's own keyword list can work, for the algebraic reason
+stated there. A signal drawn from a population the keyword list never touched can, and does.
+
+## 12. The corpus-vocabulary signal — built, run across all sixteen, findings reported (2026-09-11)
+
+**The algebraic root of both retirements above, stated plainly (user):** the filter cannot audit
+the keyword list, because the filter *is* the keyword list. Both retired signals ran
+`filterByCondition(_, entry.conditionKeywords)` against one population and compared the result to
+the same function with the same keywords against a different population. An over-narrow keyword
+list makes the query AND the filter miss the same studies, so any measurement built from both
+inherits the identical blind spot — comparing them can only ever report that they agree with
+themselves.
+
+**The working replacement reads the corpus's own vocabulary instead of the entry's.**
+`corpusVocabularySignal()` (`.claude/trials_mapping_check.mjs`) enumerates every DISTINCT condition
+string across the entry's full parent-organ corpus (a population the keyword list has no hand in
+generating), then reports every one the entry's CURRENT filter REJECTS that still contains one of
+the entry's own distinguishing name-tokens — drawn from `query`, the entry's own disease-name
+string, minus a small disclosed stopword list of organ-agnostic cancer vocabulary (`carcinoma`,
+`adenocarcinoma`, `cancer`, `tumor(-our)`, `cell(s)`, and a few connectors) that would otherwise
+flood every organ with noise for the exact reason the retired replacement's own header already
+named: several entries' own distinguishing word is the generic "adenocarcinoma". This is the
+project's "read the drops before trusting the count" discipline moved up one level — from a
+10-result narrow-query sample to the full parent corpus's own distinct tags — so it can see terms
+the narrow query never returned in the first place. A hit is a candidate for a human read, the same
+status a drop-count flag has always had; nothing here is auto-applied.
+
+**Run across all sixteen entries live (2026-09-11).** Six had zero candidate tokens at all — their
+query's only non-stopword word(s) were already covered by `conditionKeywords` (gdiff, luad, hcc,
+gbm, acinar, crc) — and four more produced tokens but zero hits (seminoma, uc, ftc, pdac's organ
+token; pdac still produced one hit on its second token, see below). Ten entries produced at least
+one hit; read individually rather than trusted as a block, per the same discipline that separated
+the seminoma catch's real miss from the surrounding noise:
+
+- **Real, substantive finding — HGSOC and `clear` both miss their own disease under
+  fallopian-tube/peritoneal nomenclature.** `hgsoc`'s corpus produced eight distinct condition
+  strings of the exact shape `[modifier] (Fallopian Tube|Primary Peritoneal) High Grade Serous
+  Adenocarcinoma` plus two bare `High(-grade) Serous Carcinoma` tags — none containing "ovarian"
+  or "ovary" at all. `clear` independently produced the parallel Müllerian-site family for
+  clear-cell histology (`Fallopian Tube Clear Cell Adenocarcinoma`, `Primary Peritoneal Clear Cell
+  Adenocarcinoma`, and variants). This is not noise: high-grade serous carcinoma of the ovary,
+  fallopian tube, and peritoneum are widely treated as one clinical disease spectrum (the
+  tubal-origin model for HGSOC), and trials for this disease commonly enroll and tag all three
+  sites separately. The current shared keyword set (`['ovarian', 'ovary']`, used by both hgsoc and
+  clear) would silently drop a trial tagged only under the tubal or peritoneal name. **Candidate
+  fix, reported and not applied:** add `'fallopian'` and `'peritoneal'` to the shared ovary
+  `conditionKeywords` — a corpus-vocabulary-grounded extension, not a hand-invented subtype term.
+- **A source-registry typo, reported for completeness, no fix recommended.** `pdac`'s `ductal`
+  token matched `"Pancratic Ductal Adenocarcinoma"` — a misspelling of "Pancreatic" in
+  ClinicalTrials.gov's own data. No keyword list can be expected to anticipate every possible
+  registry typo; chasing this specific one would be unbounded in kind. Noted, not acted on.
+- **Ambiguous, unresolved by this signal alone.** Several entries (`ccrcc`, `clear`, `ptc`, `tnbc`)
+  produced bare, organ-unspecified condition tags — `"Clear Cell Carcinoma"`, `"Adenocarcinoma,
+  Clear Cell"`, `"Carcinoma, Papillary"`, bare `"Triple Negative"` — that this signal cannot
+  resolve, because it sees only the condition TAG, never the study's own title or protocol. These
+  stay unresolved rather than guessed at either way.
+- **The rest — the large majority of the 60+ raw hits — is exactly the expected noise floor for a
+  single generic-but-not-stopworded adjective shared across many organs' histology:** `"clear"`
+  collides with endometrial/renal/vulvar/vaginal/cervical/uterine/bladder clear-cell entities
+  (wrong organ) and with `"Clear Cell Sarcoma"` (wrong histology class entirely, sarcoma not
+  carcinoma); `"cutaneous"` collides with squamous cell carcinoma, Merkel cell carcinoma, benign
+  nevi, and Spitz melanocytoma (real skin entities, none of them melanoma); `"negative"` collides
+  with biomarker-status tags (HER2/ER/PR/ALK/PD-L1-negative, negative lymph nodes) that describe a
+  tumor's receptor status on any cancer, not TNBC specifically; `"ductal"` collides mostly with
+  breast ductal carcinoma. None of this is a mapping defect — it is the same noise class the
+  NAME_STOPWORDS list already exists to reduce, arriving anyway because "clear"/"cutaneous"/
+  "negative"/"ductal" are real, specific-*sounding* words that are still shared across several
+  unrelated diseases. **`seminoma`'s own name-tokens (`testicular`, `seminoma`) both already sit in
+  its `conditionKeywords` and produced zero hits** — the worked example that motivated this signal
+  is confirmed closed and will not refire.
+
+**Nothing in `TRIALS_CONDITION_MAP` was changed by this pass.** Per the standing instruction, this
+section reports what the signal found; whether to extend the shared ovary keyword set with
+`fallopian`/`peritoneal` is a decision for whoever rules on it next, not one this pass makes for
+itself.

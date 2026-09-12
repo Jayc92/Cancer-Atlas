@@ -45,12 +45,29 @@
 #           accompanied by the `author` and `year` of the citation it points at, so the check is a
 #           comparison and not a judgement.
 #
-# THE BOUNDARY, DECLARED RATHER THAN LEFT TO BE INFERRED: prose pointers and `entries[].code_refs`
-# get FLOOR ONLY. `entries` carries a `claim`, a `quote` and a `url`, but the quote is the SOURCE's
-# text and appears nowhere in the code line, so there is nothing to compare; prose pointers carry no
-# referent at all. Treating a prose pointer's surrounding sentence as an oracle would be exactly the
-# judgement-not-evidence failure the declaration rules exist to refuse. So this instrument is TOTAL
-# on resolution and PARTIAL on identity, and the DONE line prints both denominators for that reason.
+# THE BOUNDARY, DECLARED RATHER THAN LEFT TO BE INFERRED: prose pointers get FLOOR ONLY — they carry
+# no referent at all, and treating a prose pointer's surrounding sentence as an oracle would be
+# exactly the judgement-not-evidence failure the declaration rules exist to refuse. So this
+# instrument is TOTAL on resolution and PARTIAL on identity, and the DONE line prints both
+# denominators for that reason.
+#
+# `entries[].code_refs` WAS FLOOR ONLY TOO, UNTIL THE GAP COST A REAL, SILENT MISS (user-directed,
+# 2026-09-11). The original reasoning still holds for MOST of the population — `entries` carries a
+# `claim`, a `quote` and a `url`, and for the `licence`/`colour`/`anatomical-source` classes the quote
+# is source text (a license string, a tissue-colour description) that appears nowhere in the code
+# line, so there is genuinely nothing to compare. But the `epidemiological` class is different: its
+# `id` already names an author and year (`epi-<surname>-<year>`), the code near its own code_refs
+# line routinely restates that same author+year in prose (`Peres et al., JNCI, 2019`), and this is
+# the EXACT oracle shape `backfill` already has. An eleventh stale pointer — `epi-peres-2019`'s own
+# `code_refs` entry, staled by the same ovary.js insertion that staled ten `backfill` refs the same
+# day — passed this check silently for exactly as long as this boundary excluded it, because FLOOR
+# ONLY cannot see a referent that moved to a different in-range line. `entry_identity()` below
+# supplies (author, year) for epidemiological entries[] items the same way backfill's own fields do,
+# so `check()` — already built to take an oracle from anywhere — applies unmodified. Two of the
+# seven needed a human decision rather than a mechanical derivation, and are recorded at
+# `entry_identity()` itself: one is exempted, one uses a hand-verified override. This instrument is
+# still PARTIAL on identity, but the partial boundary now runs along "does this citation's own id
+# encode a checkable author+year", not along "which JSON array is it stored in".
 #
 # WHAT THE PARTIAL HALF COSTS, MEASURED (2026-09-08). The floor-only residue is not a theoretical
 # gap: a hand audit of every prose pointer touched in that batch found fraction_check.py citing
@@ -286,7 +303,50 @@ REASON_BAR = 80
 #       'quote': '<verbatim text from that line, occurring exactly once in the file>',
 #       'why': '<why the pointer legitimately names a line that does not hold its referent, in '
 #              'enough words to be arguable>'}
-DECLARED_OFF_LINE = {}
+def pointer_key(author, year, path, line):
+    """The exemption key. Built here rather than typed at each site so the declaration and the check
+    cannot disagree about the format — and so no literal pointer appears in this file's source.
+    Defined ahead of DECLARED_OFF_LINE (moved up from its original position below) because that
+    dict now calls this function to build its own keys at module-load time, not just at check-time."""
+    return '%s|%s|%s:%d' % (author, year, path, line)
+
+
+#
+# NO LONGER EMPTY (2026-09-11) — the first three real firings, from wiring entries[] identity above.
+# All three share one shape, distinct from the wrapped-citation case this file already documents:
+# entries[].code_refs on a MULTI-line entry does not repeat the citation's author+year at every
+# line — each line supports a DIFFERENT CLAUSE of that entry's own `claim`, and the citation's
+# surname can legitimately sit one or more lines away from the specific figure a given code_ref
+# was chosen to point at. Read directly before declaring (nearest is not identity): both
+# epi-dicarlo-2022 refs point at the line carrying "N=1,578,482" — the exact figure in this
+# entry's claim — one line below where "Di Carlo... 2025"/"...2022" is itself written, because
+# the comment wraps there both times (same offset, both places, because the wrap convention is
+# the same, not because one edit moved them). epi-park-2023's second ref points at the line
+# clarifying that "53,142... [is] this atlas's computed sum... not a figure the paper prints" —
+# a different clause of the same entry's claim than its first ref (the raw counts, which do sit
+# beside "Park... 2023").
+DECLARED_OFF_LINE = {
+    pointer_key('Di Carlo', '2022', 'js/organs/skin.js', 16): {
+        'quote': '59 countries; corroborated in plain language by NCI PDQ',
+        'why': 'this code_ref points at the line carrying the entry\'s own claimed figure '
+               '("1,578,482 adults, 59 countries"), one line below where the Di Carlo/2025 '
+               'citation itself is written because the comment wraps there — not drift, the '
+               'same wrap offset recurs at this entry\'s other ref below',
+    },
+    pointer_key('Di Carlo', '2022', 'js/organs/skin.js', 48): {
+        'quote': 'N=1,578,482). Shares shown are COMPUTED from Bradford',
+        'why': 'the same wrap-offset shape as this entry\'s other declared ref above: the figure '
+               '"N=1,578,482" this entry\'s claim names sits one line below the Di Carlo/2022 '
+               'citation, which wraps onto the line before it — not drift, a repeated convention',
+    },
+    pointer_key('park', '2023', 'js/organs/bladder.js', 36): {
+        'quote': "53,142 is this atlas's computed sum of the four counts",
+        'why': 'this entry\'s claim has two clauses — the four raw counts (its other ref, beside '
+               'the Park/2023 citation itself) and the caveat that 53,142 is the atlas\'s own sum '
+               'rather than a number the paper prints — and this ref points at the second clause, '
+               'not at a drifted copy of the first',
+    },
+}
 
 
 def tracked_files():
@@ -319,10 +379,44 @@ def occurrences(lines, surname, year):
     return with_year, name_only
 
 
-def pointer_key(author, year, path, line):
-    """The exemption key. Built here rather than typed at each site so the declaration and the check
-    cannot disagree about the format — and so no literal pointer appears in this file's source."""
-    return '%s|%s|%s:%d' % (author, year, path, line)
+EPI_ID_RE = re.compile(r'^epi-([a-z]+)-(\d{4})$')
+
+# HAND-VERIFIED, NOT DERIVED, for the two entries[] ids the plain `epi-<surname>-<year>` split gets
+# wrong — read at the entry's own code_refs line before writing this table, same standard `backfill`
+# author/year fields are held to.
+#   epi-dicarlo-2022: every code comment near this entry's own refs writes the surname as two words,
+#     "Di Carlo" — `id` concatenates them to "dicarlo", which appears nowhere in the corpus as one
+#     token. check()'s own author.split()[-1] already reduces a multi-word author to its last token,
+#     so "Di Carlo" and "Carlo" resolve identically here; recorded as the full name anyway so the
+#     table reads like a citation, not an oracle hack.
+ENTRY_IDENTITY_OVERRIDE = {
+    'epi-dicarlo-2022': ('Di Carlo', '2022'),
+}
+# epi-kgca-2009 is exempted rather than derived: "KGCA" is an organisational name (Korean Gastric
+# Cancer Association), not a personal surname, and this exact corpus cites it under TWO different
+# year labels for the SAME source — "the Korean Gastric Cancer Association 2009 nationwide survey"
+# at this entry's own code_refs line (stomach.js:28, the survey year) versus "KGCA, 2011" forty lines
+# away (the publication year, js/organs/stomach.js:44) — a real, accepted convention in this specific
+# file, not a defect. A single-word, year-strict oracle built from "kgca"+"2009" would find "KGCA" at
+# line 44 with the WRONG year and report this entry OFF LINE, which would be a confident wrong
+# answer about a citation that is not broken. Declared rather than silently mis-derived.
+ENTRY_IDENTITY_EXEMPT = {'epi-kgca-2009'}
+
+
+def entry_identity(entry_id):
+    """(author, year) for an entries[] item, or (None, None) if it carries no checkable oracle.
+    Checked in the order: explicit exemption, explicit override, then the plain `epi-<name>-<year>`
+    derivation every other epidemiological id already satisfies (waddell/oweira/peres/johannsen/
+    park, verified against their own code_refs lines before this shipped). Non-epidemiological
+    classes (licence/colour/anatomical-source) fall through to (None, None) by construction — their
+    ids don't carry the `epi-` prefix, so the regex never matches, same FLOOR-ONLY treatment as
+    before for exactly the reason the header still gives: no author+year to compare against."""
+    if entry_id in ENTRY_IDENTITY_EXEMPT:
+        return None, None
+    if entry_id in ENTRY_IDENTITY_OVERRIDE:
+        return ENTRY_IDENTITY_OVERRIDE[entry_id]
+    m = EPI_ID_RE.match(entry_id)
+    return (m.group(1), m.group(2)) if m else (None, None)
 
 
 def check(pointers, files, tracked, declared):
@@ -448,18 +542,20 @@ def scope(tracked=None):
 def collect(manifest, prose):
     """Every hand-typed pointer, from the two closed populations.
 
-    STRUCTURED — the manifest's ref arrays. `backfill` refs carry author+year, so they are the only
-    ones with an oracle; `entries` code_refs get floor only.
+    STRUCTURED — the manifest's ref arrays. `backfill` refs always carry author+year; `entries`
+    code_refs carry one too where `entry_identity()` can derive it (epidemiological ids), floor only
+    otherwise.
     PROSE — the manifest's own `_`-prefixed narrative keys, plus each scanned file's text.
 
     Occurrences, not distinct pointers: every hand-typed instance is its own liability, and two
     sentences naming the same line can rot independently."""
     pointers = []
     for entry in manifest.get('entries', []):
+        author, year = entry_identity(entry.get('id'))
         for ref in entry.get('code_refs', []):
             for m in POINTER.finditer(ref):
                 pointers.append(('%s:code_refs[%s]' % (MANIFEST, entry.get('id')),
-                                 m.group(1), int(m.group(2)), None, None))
+                                 m.group(1), int(m.group(2)), author, year))
     for item in manifest.get('backfill', []):
         for ref in item.get('refs', []):
             for m in POINTER.finditer(ref):
@@ -620,6 +716,37 @@ def selftest():
         and '.claude/pointer_check.py' not in scope(['.claude/battery.py']),
         'and THIS FILE, which exists on disk, stays out of a tracked list that omits it — the glob '
         'this replaced would have taken it in, which is how an untracked draft moved a ratchet')
+
+    # entry_identity() arms (2026-09-11): the three real cases this repo's own entries[] population
+    # actually needs, each checked against real ids rather than invented ones, per condition (7).
+    arm(entry_identity('epi-peres-2019') == ('peres', '2019'),
+        "entry_identity(): plain epi-<surname>-<year> derivation for a real, clean id")
+    arm(entry_identity('epi-kgca-2009') == (None, None),
+        "entry_identity(): the declared exemption returns no oracle at all, rather than a "
+        "wrong one derived from an organisational name")
+    arm(entry_identity('epi-dicarlo-2022') == ('Di Carlo', '2022'),
+        "entry_identity(): the declared override, for the one id whose plain derivation ('dicarlo') "
+        "matches nothing — the corpus always writes this surname as two words")
+    arm(entry_identity('lic-lungs') == (None, None),
+        "entry_identity(): a non-epidemiological id (no 'epi-' prefix) derives no oracle, the same "
+        "FLOOR-ONLY treatment this class always had")
+    # AND THE DERIVED ORACLE MUST ACTUALLY CATCH A REAL DRIFT, condition (7) on the shape that
+    # motivated this — an entries[] pointer whose line moved, exactly like the eleventh stale
+    # pointer this closes. Built from real corpus bytes (js/organs/liver.js, already used above as
+    # the far-away-referent fixture) rather than a synthetic file, so the demonstration is on the
+    # same kind of population this check now actually scans.
+    if os.path.exists(os.path.join(REPO_ROOT, DRIFT_FILE)):
+        real = open(os.path.join(REPO_ROOT, DRIFT_FILE), encoding='utf-8').read().split('\n')
+        hits = [i for i, t in enumerate(real, 1) if re.search(r'\bKatyal\b', t)]
+        far = 1 if not hits else max(1, min(hits) // 2)
+        fires, _r, ident, _e = check(
+            [('%s:code_refs[epi-katyal-2000]' % MANIFEST, DRIFT_FILE, far, 'katyal', '2000')],
+            {DRIFT_FILE: real}, {DRIFT_FILE}, {})
+        arm(ident == 0 and len(fires) == 1 and fires[0][3] == OFF_LINE,
+            'an entries[]-shaped pointer with a derived oracle FIRES OFF LINE on a real drifted '
+            'line, the same way a backfill pointer always could — the gap this closes')
+    else:
+        arm(False, 'entries[] identity drift arm could not read its corpus file')
 
     # classify() arms (user ruling, 2026-09-10): the split is by ORIGIN STRING alone, so every one
     # of collect()'s four real shapes is exercised directly — a fixture here IS a positive control

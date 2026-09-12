@@ -5,10 +5,10 @@
   "citation_crosscheck.records": 148,
   "citation_paren_ledger.basis_test": 0,
   "internal_quote_check.internal_quote.marked": 15,
-  "pointer_check.pointer.identity_oracle": 266,
+  "pointer_check.pointer.identity_oracle": 272,
   "reserve_check.categories": 5,
   "reserve_check.growth_categories": 2,
-  "pointer_check.pointer.pointers_code": 452
+  "pointer_check.pointer.pointers_code": 454
  },
  "lowers": [
   {

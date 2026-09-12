@@ -867,8 +867,14 @@ NON_INSTRUMENTS = {
                         'depends on, opened 2026-09-10; asserts nothing, ratchets nothing, no code to touch until ruled on',
     'phaseD_trials_design.md': 'design document — clinical trials integration (condition mapping, the three '
                                'duty-of-care constraints, status/staleness, failure modes, location handling), '
-                               'opened 2026-09-10; asserts nothing, ratchets nothing, no fetch code or UI '
-                               'component touched until ruled on',
+                               'opened 2026-09-10, ruled and built 2026-09-11 (js/trials.js is live for ccrcc/'
+                               'gdiff; the remaining fourteen mappings built the same day, per-entry numbers '
+                               'in §10); asserts nothing, ratchets nothing — a design and results record, not '
+                               'a gate',
+    'phaseC_design.md': 'design document — breadth to ~120 (2026-09-11): the crowding decision (three costed '
+                        'options, B ruled and built), and per-entry origin siting counted as a Phase C cost '
+                        '(the twelve-organ origin-collapse exemption expires once the 35 staged entries '
+                        'activate and every organ gains siblings); asserts nothing, ratchets nothing',
     'capture_organs.js': 'evidence tool for the Phase A per-category visual read — regenerates the capture a '
                          'wiring commit describes (command + commit are the durable form of "the capture path"; '
                          'a /tmp path would be the scratch pointer this project stopped writing); asserts nothing, '
@@ -896,9 +902,12 @@ NON_INSTRUMENTS = {
                         'query\'s own sample) works; TWO attempted over-narrow signals — the query/'
                         'parent-total ratio, and its exhaustive-fetch replacement — are both RETIRED '
                         '(2026-09-11), measured to be the same organ-share confound in different '
-                        'arithmetic; no working over-narrow signal exists yet, per the file\'s own '
-                        'header. Makes real network calls, so it is run by hand, never part of a '
-                        'commit gate; asserts nothing and ratchets nothing',
+                        'arithmetic (the filter cannot audit the keyword list, because the filter IS '
+                        'the keyword list). REPLACED same day by the corpus-vocabulary signal — reads '
+                        'the parent corpus\'s own distinct condition strings rather than anything the '
+                        'keyword list produced, per the file\'s own header and phaseD_trials_design.md '
+                        '§12. Makes real network calls, so it is run by hand, never part of a commit '
+                        'gate; asserts nothing and ratchets nothing',
     'seer_statfacts_scraper.py': 'layout-guarded scraper reproducing morphology.js/EXTENT_STATUS '
                         'stage distributions from SEER Stat Facts pages (rescued from /tmp, '
                         '2026-09-11). Makes real network calls; run by hand only. NO FETCH '
