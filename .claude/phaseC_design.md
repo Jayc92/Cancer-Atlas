@@ -852,3 +852,137 @@ of it, a real, separate, uncounted piece of work this section does not do.
 **RULING NEEDED: whether to adopt a 1% floor, whether `pductal` is exempted from it on the
 literature-strength grounds above, and whether the un-screenable six above are worth a dedicated
 lookup pass before Phase C authoring resumes at scale.**
+
+**SUPERSEDED BELOW (§12): the floor's unit, the below-floor state, and the `pductal` exception
+criterion are all revised on user ruling. Left here, struck through in spirit rather than in text,
+because the reasoning that got to "share" and "literature strength" is still worth having on
+record — the correction is sharper for showing what it replaced.**
+
+## 11. The third extent failure mode — stage not meaningful for a SITE at all, now a real
+## instrument (2026-09-12, user-directed)
+
+**The gap, named precisely:** two failure modes were guarded — a subtype diverging from its organ
+aggregate (the share-arithmetic bound, §6b) and no per-subtype data existing (`uncharacterised`).
+A third was not: **stage-at-diagnosis not being a meaningful axis for a SITE at all**, independent
+of any entry's own share. GBM was found this way by a human reading a table, which is exactly the
+failure mode this project's own condition (7)/(8) discipline exists to close — a check that only
+ever fires when a person happens to look is not a check.
+
+**The mechanical tell: survival must be monotonically non-increasing as stage advances.** A real
+cancer, staged meaningfully, cannot have patients survive BETTER at a more advanced stage than a
+less advanced one — Localized ≥ Regional ≥ Distant in 5-year relative survival is not a tendency,
+it is close to definitional. GBM's own SEER page violates it: Regional 20.1% < Distant 28.0%. That
+inversion is independent of GBM's share, independent of whether a per-subtype source exists — it
+is a property of the PAGE, checkable without knowing anything about the specific entry drawing
+from it.
+
+**Built as `.claude/extent_monotonicity_check.py`, reusing rather than duplicating
+`seer_statfacts_scraper.py`** — imports its `fetch`/`scrape_stage_table`/`ENTRIES` directly (the
+scraper already parses `survivalByStage` as a byproduct of its own stage-share parse; this file
+adds exactly the monotonicity assertion on top). Declared a NON_INSTRUMENT in `battery.py`, same
+standing as the scraper itself (real network calls, run by hand, never a commit gate). Condition
+(7) at birth, with the GBM numbers as the literal known-positive fixture (not a synthetic
+stand-in) alongside five more arms (ordinary monotonic, exact ties, a page missing a stage bucket
+entirely, and inversions at each of the two boundaries individually) — all six pass.
+
+**Run live against every one of the fourteen distinct SEER pages this atlas currently cites: 13
+carry a stage/survival table, one inversion found — brain (GBM), exactly and only the one already
+found by hand.** Every other page — pancreas, melanoma, breast, colorectal, kidney, liver, lung,
+ovary, prostate, stomach, thyroid, bladder — is confirmed monotonic; testis correctly reports no
+table at all (matching `seminoma`'s existing `uncharacterised` status). **This is now a real,
+reusable check for every future organ Phase C touches**, not a one-off finding: run it against any
+new SEER page before trusting that page's stage-share numbers as a candidate for an entry's
+`EXTENT_STATUS`, independent of and prior to the share-bound question.
+
+**Recorded now, before it is rediscovered at the point of authoring: the blood-cancer wave
+inherits this problem wholesale, and worse.** Lymphoma is staged by the Ann Arbor system (nodal
+regions and organ involvement, not the localized/regional/distant anatomic-spread model this whole
+axis is built on); leukemia is not staged by extent in any comparable sense at all — it is a
+disseminated disease of the blood and marrow from the outset, for which "localized" has no
+meaning. Blood cancers are roughly a tenth of incidence and are already flagged elsewhere (this
+document's own registry-model discussion) as needing their own NAVIGATION model, since
+organ-centric drill-down doesn't fit a disease with no organ. **They will need their own EXTENT
+model too, or an explicit decision that this axis simply does not apply to that whole class** —
+decided once, before the first blood-cancer entry is authored, not rediscovered leukemia by
+leukemia the way GBM was rediscovered organ by organ.
+
+## 12. The floor, revised: absolute incidence, a named "not built" state, and clinical
+## distinctiveness — not literature strength — as the exception criterion (2026-09-12, user ruling)
+
+**§10's floor is accepted in principle and wrong in unit.** Share measures how a subtype competes
+for room inside its own organ's cancer burden; it says nothing about how many people are actually
+affected, which is what a build/don't-build decision should turn on. The same share means
+different things on different organs — a real reader-count consequence, not just an abstract
+unit-conversion point.
+
+**Absolute annual US incidence, computed for the five §10 flagged, before fixing anything:**
+
+| id | organ | count | source period | annual incidence |
+|---|---|---|---|---|
+| `psignet` | prostate | 54 | Siech et al. 2026, SEER 2004–2020 (17 yr) | **~3/year** |
+| `pneuro` | prostate | 130 | same | **~8/year** |
+| `pmuc` | prostate | 324 | same | **~19/year** |
+| `pductal` | prostate | 855 | same | **~50/year** |
+| `mcc` | skin | — | StatPearls, ~0.7/100,000 person-years, US | **~2,345/year** (0.7/100,000 × ~335M US population) |
+
+**This changes the resulting set, which is exactly why the unit mattered.** `mcc`'s SHARE looked
+just as small as the four prostate entries (a fraction of a percent either way), but its absolute
+reader population is two orders of magnitude larger — because it's a small slice of an enormous
+organ-wide burden (skin cancer overall, dominated by millions of BCC/SCC cases a year), not a
+small slice of a smaller one. Under share, all five looked equally rare. Under the unit that
+actually tracks reader count, they are not remotely equivalent: the four prostate entries are
+genuinely rare in absolute terms (single digits to a few dozen a year); `mcc` is not (thousands a
+year) — its rarity was an artifact of the denominator it was being compared against, not a fact
+about how many readers it could serve. **`mcc` is REMOVED from the below-floor set on this
+evidence.** (Siech's own counts are treated-patient counts — RP or RT specifically — which likely
+understates true annual incidence somewhat, since a minority of diagnosed patients get neither;
+noted as a real, disclosed conservative bias in the four prostate figures, not corrected for here
+without a dedicated incidence source.)
+
+**Threshold: <1,000 US cases/year.** A round, defensible number, chosen once the real distribution
+was in front of it rather than guessed first and checked after — same discipline the share-bound
+rule's own "~90%" used. All four remaining entries sit far under it (3 to 50); `mcc` sits far over
+it (~2,345). **Resulting count: 4 of 35, all four of prostate's own staged entries** —
+`psignet`/`pneuro`/`pmuc`/`pductal` — pending the exception below.
+
+**Below-floor is defined as NAMED AND DESCRIBED, not hidden — a real design decision, not a
+euphemism for "not started."** The counter-pressure the user named is real: a rare-cancer reader
+has MORE unmet need per person, precisely because so little exists for them elsewhere, which is
+the opposite of what a floor built purely on cost would imply. So below the floor, an entry keeps
+exactly what an inactive `cancerEntries` row already renders today (name, share, citation, a
+disabled CTA — confirmed live in `js/main.js`'s `renderCancerList`) and gains ONE new thing: a
+plain-language descriptive sentence, oriented and pointed onward, without mass, histology, trials,
+or extent. **Schema shape, proposed, not yet populated for any entry:** a new optional field on
+`cancerEntries`, `blurb: '<one sentence>'`, rendered in the row wherever a `share` string
+currently ends — cheap to add (one field, one render line), and it is close to what these entries
+already are today, just with the missing sentence supplied. **Not implemented for
+`psignet`/`pneuro`/`pmuc`/`pductal` in this pass** — writing a real, sourced one-line description
+for each is exactly the kind of small-but-real research this whole document holds every piece of
+content to, and belongs with "then prostate," not bundled into this design revision.
+
+**The `pductal` exception, re-grounded on clinical distinctiveness rather than literature
+strength — literature strength was never the reason, it was just the evidence that happened to be
+in hand when the exception was first written.** A good source is a means to establish a fact, not
+itself a reason to treat an entry specially — a rule that exempts "whatever is well-published"
+would quietly select against genuinely rare, genuinely under-studied entities, exactly backward
+from what a patient-education tool serving rare-disease readers should do. The real criterion:
+**does this entity behave and get managed differently enough from its organ's dominant subtype
+that a reader's understanding would be materially incomplete without it drawn out separately.**
+`pductal` clears that bar on real, multi-source evidence already gathered this pass, restated
+here under the right heading: Au et al. (2019) found cribriform-type ductal adenocarcinoma has
+significantly higher extraprostatic extension (84% vs. 33.3%), seminal vesicle invasion (36% vs.
+0%), and advanced pathologic stage compared to acinar disease without that architecture; Seipel et
+al. (2013) found DAC "more aggressive than average" acinar carcinoma; Seipel et al. (2016)
+confirms DAC "metastasises to sites that are less commonly seen for prostate cancer such as lung,
+brain, testis and penis," with real treatment implications from the distinction. That is a
+reader's understanding materially changing based on whether this entity is drawn separately — the
+real criterion, not the size of its own citation list. **`psignet`/`pneuro`/`pmuc` are NOT
+re-examined against this criterion in this pass** — each would need its own real literature check
+for clinical distinctiveness (matching the origin-siting discipline's own "budget the read, don't
+assume the answer" standard) before either granting or denying them the same exception, and none
+of that reading has happened yet.
+
+**RULING NEEDED: whether <1,000/year is the right absolute threshold; whether the `blurb` field
+design is right before any content is written for it; and whether `psignet`/`pneuro`/`pmuc` should
+each get their own clinical-distinctiveness read before Phase C authoring resumes, the same way
+`pductal` just did.**

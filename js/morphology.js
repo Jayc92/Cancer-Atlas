@@ -420,7 +420,30 @@ export const EXTENT_STATUS = Object.freeze({
   // because "Spread to Regional Lymph Nodes" (the category's own template label) is anatomically
   // nonsensical for an intracranial tumor. The concept, not just the number, doesn't fit.
   gbm: { status: 'uncharacterised', site: 'brain and other nervous system', uncharacterisedReason: 'the SEER page for brain and other nervous system cancers publishes a stage-at-diagnosis distribution, but CBTRUS and NCI PDQ both state directly that primary brain/CNS tumors are not staged the way other cancers are — WHO grade is used instead of SEER Summary Stage — and the page\'s own survival-by-stage figures are internally inconsistent for this site, so extent is not characterised.', ref: 'https://seer.cancer.gov/statfacts/html/brain.html and https://www.cancer.gov/types/brain/patient/adult-brain-treatment-pdq — checked 2026-09-12 (PMID 39371035 for the CBTRUS staging-methodology statement)' },
-  tnbc: { status: 'cited', site: 'female breast', siteNote: 'female breast cancer as a whole, not the triple-negative subtype', shares: { localized: 64, regional: 27, distant: 6, unknown: 2 }, modal: 'localized', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Female Breast Cancer', ref: 'https://seer.cancer.gov/statfacts/html/breast.html — verified 2026-09-10' },
+  // SHARE-BOUND RULE (phaseC_design.md §6b/§12): tnbc's ~10–20% share put it below the bound; the
+  // one clean SEER-Summary-Stage source found (Kohler et al., JNCI, 2015) reports the distribution
+  // as age-adjusted incidence RATES by race/ethnicity, not one national count, so there is no
+  // single number to substitute — and none is forced. Shown as four UNMERGED strata on user
+  // ruling: a blended national figure would conceal a real disparity and describe neither cohort
+  // it was blended from. NO causal clause — Kohler establishes the distributions, not why they
+  // differ, and that question is actively researched, not settled; the entry states what was
+  // measured, same as every other extent entry's 'found at diagnosis' framing, and adjudicates
+  // nothing about cause. Percentages are VERIFIED-DERIVED, computed here from the paper's own
+  // per-stratum rates (White 9.15/4.37/0.99, Black 14.99/9.82/2.41, Asian/PI 6.55/3.09/0.75,
+  // Hispanic 6.73/4.13/0.87, per 100,000 women) — the paper prints no single-percentage table for
+  // this subtype, only the rates. White and Asian/Pacific Islander round to the same three
+  // integers; that is this rounding's own coincidence, not a grouping the source made, so both
+  // are still listed as separate strata rather than merged into "White/Asian/PI."
+  tnbc: { status: 'cited', site: 'triple-negative breast cancer', modal: 'localized',
+    strata: [
+      { label: 'non-Hispanic White', shares: { localized: 63, regional: 30, distant: 7, unknown: 0 } },
+      { label: 'non-Hispanic Black', shares: { localized: 55, regional: 36, distant: 9, unknown: 0 } },
+      { label: 'non-Hispanic Asian/Pacific Islander', shares: { localized: 63, regional: 30, distant: 7, unknown: 0 } },
+      { label: 'Hispanic', shares: { localized: 57, regional: 35, distant: 7, unknown: 0 } },
+    ],
+    basis: 'Kohler et al., JNCI, 2015, Supplementary Table 3 — NAACCR registries, diagnosis year 2011, age-adjusted incidence rates by race/ethnicity; percentages VERIFIED-DERIVED here from the paper\'s own per-stratum rates (no single national count-based percentage exists in the source)',
+    source: 'Kohler et al., Journal of the National Cancer Institute, 2015',
+    ref: 'PMID 25825511, PMCID PMC4603551 — verified 2026-09-12 (live fetch of Supplementary Table 3, not hand-copied)' },
   // SHARE-BOUND RULE (phaseC_design.md §6b): `crc` was never checked in the original ten-entry
   // sweep — found only by re-deriving the full list of cited EXTENT_STATUS entries from the code
   // rather than trusting an earlier enumeration, which had silently missed it (and `gbm`).
@@ -505,7 +528,6 @@ export function extentSentence(entryName, ext){
   // that primary brain/CNS tumors aren't staged this way, WHO grade is used instead). The default
   // covers the first; `ext.uncharacterisedReason` overrides it for the second, entry by entry.
   if(ext.status !== 'cited') return ' Extent: drawn confined; ' + (ext.uncharacterisedReason || ((ext.site ? 'the SEER page for ' + ext.site : 'the source') + ' publishes no stage-at-diagnosis distribution, so extent is not characterised.'));
-  const s = ext.shares;
   // Three framings, one per modal stage — IN SITU IS ITS OWN CATEGORY, never folded into 'localized' (user, 2026-09-10:
   // bladder's in situ half is the best-outcome group, and a line that normalised it away would drop it from a
   // patient-facing figure). The drawing is a confined mass in every case; the sentence says what that stands for.
@@ -514,6 +536,16 @@ export function extentSentence(entryName, ext){
     : ext.modal === 'localized'
       ? 'The drawing shows the localized case, which is how most are found.'
       : 'The drawing shows the localized case \u2014 the least extensive; most are found already beyond it.';
+  // STRATA (tnbc, 2026-09-12): a real disparity shown as named, unmerged groups rather than one
+  // blended figure \u2014 no causal clause, by ruling; this states WHAT was measured, same as the
+  // single-shares path's own 'found at diagnosis' framing, and adjudicates nothing about WHY the
+  // strata differ.
+  if(ext.strata){
+    const stratLines = ext.strata.map(st => st.label + ' ' + st.shares.localized + '% localized, ' + st.shares.regional + '% regional, ' + st.shares.distant + '% distant').join('; ');
+    return ' Extent: drawn confined. Found at diagnosis \u2014 ' + ext.site + ', by race/ethnicity, shown separately rather than combined into one figure: ' + stratLines
+      + ' (' + ext.source + '; ' + ext.basis + '; ' + ext.ref.replace(/^https?:\/\/\S+ \u2014 /, '') + '). ' + framing;
+  }
+  const s = ext.shares;
   const inSitu = s.inSitu !== undefined ? s.inSitu + '% in situ, ' : '';   // SEER reports an in situ share for some sites (bladder: half of cases)
   return ' Extent: drawn confined. Found at diagnosis — ' + ext.site + (ext.siteNote && !/the entry itself/.test(ext.siteNote) ? ' (SEER reports ' + ext.siteNote + ')' : '')
     + ': ' + inSitu + s.localized + '% localized, ' + s.regional + '% regional, ' + s.distant + '% distant, ' + s.unknown + '% unknown'

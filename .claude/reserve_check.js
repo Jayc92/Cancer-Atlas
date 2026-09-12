@@ -216,10 +216,32 @@ function liveProblems(M){
     if(!xs) problems.push(`active entry ${e.id} has no extent status`);
     else if(!M.EXTENT_STATUSES.includes(xs.status)) problems.push(`entry ${e.id} carries an unknown extent status '${xs.status}'`);
     if(xs && xs.status === 'cited'){
+      // A YEAR VINTAGE MAY BE A SINGLE YEAR, NOT ONLY A RANGE (2026-09-12, widened for tnbc's own
+      // source, Kohler et al. 2015, whose subtype-by-stage table is one single diagnosis year,
+      // 2011 — a real vintage a reader can re-check for staleness, which is the guard's own stated
+      // purpose, even though it isn't a range). Every existing range-form basis (e.g. '2000–2017')
+      // still matches via the bare-year alternative, so this widens the check, it narrows nothing.
+      if(!/\d{4}[–-]\d{4}|\b\d{4}\b/.test(xs.basis || '')) problems.push(`entry ${e.id} extent basis carries no diagnosis year (range or single) — a share without its vintage can be re-checked but not re-verified`);
+      if(/spreads?\b/i.test(M.extentSentence(e.id, xs))) problems.push(`entry ${e.id} extent sentence says 'spread' — extent wording must stay detection-framed ('found at')`);
+      // STRATA (2026-09-12, tnbc's own shape: a real racial disparity in stage at diagnosis, shown
+      // unmerged rather than blended into one national figure). Same modal-argmax discipline as the
+      // single-shares case below, applied to EVERY stratum against the one shared `modal` — a
+      // stratified entry with even one stratum whose own true argmax disagrees with the shared
+      // `modal` would assert a false majority for that stratum specifically.
+      if(xs.strata){
+        if(!Array.isArray(xs.strata) || xs.strata.length < 2) problems.push(`entry ${e.id} declares 'strata' but it is not an array of at least two — a single stratum is just 'shares' with extra ceremony`);
+        else for(const st of xs.strata){
+          const sum = (st.shares.inSitu || 0) + st.shares.localized + st.shares.regional + st.shares.distant + (st.shares.unknown || 0);
+          if(!(sum >= 98 && sum <= 102)) problems.push(`entry ${e.id} stratum '${st.label}' shares sum to ${sum}, not ~100`);
+          const entries = Object.entries(st.shares);
+          const trueModalKey = entries.reduce((best, cur) => cur[1] > best[1] ? cur : best)[0];
+          const trueModal = trueModalKey === 'inSitu' ? 'in situ' : trueModalKey;
+          if(xs.modal !== trueModal) problems.push(`entry ${e.id} stratum '${st.label}' shares (${JSON.stringify(st.shares)}) make '${trueModal}' the largest, but the entry's shared modal is '${xs.modal}' — the framing sentence would assert a false majority for this stratum`);
+        }
+        continue;
+      }
       const sum = (xs.shares.inSitu || 0) + xs.shares.localized + xs.shares.regional + xs.shares.distant + xs.shares.unknown;   // in situ where SEER reports it (bladder)
       if(!(sum >= 98 && sum <= 102)) problems.push(`entry ${e.id} extent shares sum to ${sum}, not ~100`);
-      if(!/\d{4}[–-]\d{4}/.test(xs.basis || '')) problems.push(`entry ${e.id} extent basis carries no diagnosis-year range — a share without its vintage can be re-checked but not re-verified`);
-      if(!/\bspread/i.test('') && /spreads?\b/i.test(M.extentSentence(e.id, xs))) problems.push(`entry ${e.id} extent sentence says 'spread' — extent wording must stay detection-framed ('found at')`);
       // MODAL MUST BE THE ENTRY'S OWN TRUE ARGMAX (2026-09-10, user: the bladder caption was a templated claim that
       // could go stale exactly like this — a share can be corrected without anyone re-checking whether `modal` still
       // names the largest one, and `extentSentence`'s three-way framing trusts `modal` without recomputing it). This

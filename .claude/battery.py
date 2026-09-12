@@ -919,6 +919,15 @@ NON_INSTRUMENTS = {
                         '(six live instances this session) down to one absolute path to get right '
                         'instead of one per command. Asserts nothing and ratchets nothing itself; '
                         'not a gate',
+    'extent_monotonicity_check.py': 'the third extent failure mode (2026-09-12): stage-at-diagnosis '
+                        'not carrying real meaning for a SITE at all, regardless of any entry\'s own '
+                        'share — found by GBM\'s own degenerate survival table (Regional 20.1% < '
+                        'Distant 28.0%). Imports fetch/scrape_stage_table/ENTRIES from '
+                        'seer_statfacts_scraper.py rather than duplicating them; asserts localized '
+                        '>= regional >= distant on real 5-year-survival-by-stage data. Makes real '
+                        'network calls; run by hand only, never part of a commit gate. Has its own '
+                        'condition-(7) selftest (the real GBM numbers as the known positive) but '
+                        'ratchets nothing — its live output is a worklist, not a pass/fail gate',
 }
 
 
