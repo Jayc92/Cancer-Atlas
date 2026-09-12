@@ -61,7 +61,23 @@ fs.mkdirSync(OUT, { recursive: true });
 const report = { errors: [], checks: [] };
 // Failing checks tolerated BY NAME, each with a reason (see the verdict block at the end). Empty means every red check
 // fails the gate. Shape: { check: '<exact check name>', reason: '<why it is tolerated, and until when>' }.
-const KNOWN_FAILURES = [];
+const KNOWN_FAILURES = [
+  { check: 'cancer lusc histology', reason: 'LUSC draws exactly 2 histology features (Keratin pearl, ' +
+    'Intercellular bridges), one short of the >=3 floor this check was written against — a floor the ' +
+    'SMALL-POPULATION INVARIANTS note in CLAUDE.md already flags as "shaped to today\'s authoring, not ' +
+    'a rule." Checked directly against the primary source (Sabbula, Gasalberti & Mukkamalla, StatPearls, ' +
+    'NBK564510, "Squamous Cell Lung Cancer", last update 2024-02-14) before declaring rather than after: ' +
+    'its own Pathophysiology section names exactly these two features as what defines a transformed ' +
+    'squamous cell ("characterized by keratinization and intercellular bridges"), and its Histopathology ' +
+    'section\'s third WHO-2015 variant, basaloid, is defined by an ABSENCE of squamous differentiation ' +
+    '(">50% basaloid component with minimal areas of squamous differentiation") — a solid sheet with no ' +
+    'positive, separately-drawable architecture of its own, which is why it is named but not drawn, the ' +
+    'same treatment LUAD\'s own two undrawn growth patterns get. The source\'s only other histologic facts ' +
+    '(p63/p40 IHC positivity; the 10%-of-tumor-bulk diagnostic threshold) are not gross/H&E architecture ' +
+    'this atlas\'s histology views draw anywhere, for any cancer. Revisit only if a future pass finds a ' +
+    'real, separately-drawable third feature in a source not yet read — not by lowering the floor and not ' +
+    'by drawing basaloid as a plain sheet just to hit a count.' },
+];
 // PAGE ERRORS ARE A COUNT TOO (2026-09-10, user: 'an undeclared count is evidence of an unread count'). This harness
 // printed '2 page errors' on every run for as long as it has existed and nobody read them until a tolerated-count sweep
 // did: both are the browser's own favicon.ico request 404ing (no favicon is shipped). Same mechanism as KNOWN_FAILURES,

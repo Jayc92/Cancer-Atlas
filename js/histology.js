@@ -144,6 +144,24 @@ function necrosisBlob(g, cx, cy, rx, ry, rnd, rot){
 function drawPsammomaBody(g, x, y, r){
   for(let rr=r; rr>2; rr-=r/3.4) g.appendChild(el('circle', {cx:x, cy:y, r:rr, fill:'none', stroke:'#8f76a8', 'stroke-width':2.2, opacity:0.9}));
 }
+// Squamous cell carcinoma's own signature architecture — concentric whorled keratin lamellae
+// narrowing to a densely keratinized center (Sabbula et al., StatPearls, NBK564510: diagnosis
+// requires "keratinization or intercellular bridges" in >=10% of tumor bulk). A solid, FILLED
+// analog of drawPsammomaBody's unfilled concentric rings, reusing the same "shrink a ring by a
+// fixed fraction each pass" technique but with warm eosinophilic keratin tones (real keratin
+// stains intensely pink/orange with eosin) rather than psammoma's calcified purple-gray, and
+// organic (blobPath-wobbled) rather than perfectly circular — real keratin pearls are irregular
+// whorls, not lathe-turned rings.
+function drawKeratinPearl(g, x, y, r, rnd){
+  const rings = Math.max(4, Math.round(r/4));
+  for(let i=rings; i>0; i--){
+    const rr = r*(i/rings);
+    g.appendChild(el('path', {
+      d:blobPath(x, y, rr, rr*(0.9+rnd()*0.15), 0.1, 10, rnd, rnd()*0.5),
+      fill: i%2===0 ? '#eb9c66' : '#f4bd90', stroke:'#c97a42', 'stroke-width':0.8, opacity:0.95,
+    }));
+  }
+}
 // A punched sheet: one blob mass, N non-overlapping rejection-sampled lumens, cells filling the
 // remainder. Generalizes genProstate's pattern-4 mass and genCRC's cribriform gland — same
 // rejection-sampling shape in both, independently written; this is the one function they'd both
@@ -387,6 +405,53 @@ function genLUAD(g, rnd){
     {key:'acinar',  x:105, y:95},
     {key:'lepidic', x:415, y:210},
     {key:'solid',   x:672, y:300},
+  ];
+}
+
+// Lung squamous cell carcinoma (LUSC) — two zones, both real diagnostic architecture rather
+// than one compromise field: keratinizing (left, keratin pearls embedded in a solid sheet) and
+// non-keratinizing (right, intercellular bridges between tightly packed polygonal cells) — the
+// two of the WHO 2015 scheme's three variants (keratinizing/non-keratinizing/basaloid) that have
+// a real, drawable positive architecture; basaloid is named in the data block's own text but not
+// drawn, the same "name the other patterns, draw the clearest ones" treatment LUAD's own lepidic/
+// acinar/solid choice already established. Citations: see HISTOLOGY_LUSC in js/organs/lungs.js.
+function genLUSC(g, rnd){
+  // Zone 1: KERATINIZING — a solid sheet of squamous cells (angular, more cytoplasm than a
+  // typical adenocarcinoma cell) with three keratin pearls of varying size embedded in it.
+  const sheetA = {cx:210, cy:250, rx:190, ry:200};
+  g.appendChild(el('path', {d:blobPath(sheetA.cx, sheetA.cy, sheetA.rx, sheetA.ry, 0.12, 14, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  const pearls = [{x:150, y:170, r:38}, {x:255, y:290, r:46}, {x:150, y:355, r:30}];
+  for(let i=0;i<70;i++){
+    const x = sheetA.cx-sheetA.rx+rnd()*sheetA.rx*2, y = sheetA.cy-sheetA.ry+rnd()*sheetA.ry*2;
+    if(((x-sheetA.cx)/sheetA.rx)**2 + ((y-sheetA.cy)/sheetA.ry)**2 > 0.92) continue;
+    if(pearls.some(p=>Math.hypot(x-p.x, y-p.y) < p.r*1.15)) continue; // keep cells off the pearls themselves
+    drawCell(g, x, y, 6.5+rnd()*2, 4.5+rnd()*2.2, rnd, {nucOffset:2});
+  }
+  pearls.forEach(p=>drawKeratinPearl(g, p.x, p.y, p.r, rnd));
+
+  // Zone 2: NON-KERATINIZING — tightly packed polygonal cells with intercellular bridges: short
+  // connecting lines between adjacent cell membranes (the desmosomal "spiny" appearance real
+  // pathology text describes), drawn between any two cells close enough to plausibly touch.
+  const sheetB = {cx:600, cy:250, rx:165, ry:200};
+  g.appendChild(el('path', {d:blobPath(sheetB.cx, sheetB.cy, sheetB.rx, sheetB.ry, 0.12, 14, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  const bridgeCells = [];
+  for(let gx=-sheetB.rx; gx<=sheetB.rx; gx+=17){
+    for(let gy=-sheetB.ry; gy<=sheetB.ry; gy+=17){
+      if((gx/sheetB.rx)**2 + (gy/sheetB.ry)**2 > 0.88) continue;
+      bridgeCells.push({x:sheetB.cx+gx+(rnd()*2-1)*3, y:sheetB.cy+gy+(rnd()*2-1)*3});
+    }
+  }
+  bridgeCells.forEach((c, i)=>{
+    for(let j=i+1;j<bridgeCells.length;j++){
+      const d = Math.hypot(bridgeCells[j].x-c.x, bridgeCells[j].y-c.y);
+      if(d < 19) g.appendChild(el('line', {x1:c.x, y1:c.y, x2:bridgeCells[j].x, y2:bridgeCells[j].y, stroke:HE.cytoLn, 'stroke-width':1.1, opacity:0.75}));
+    }
+  });
+  bridgeCells.forEach(c=>drawCell(g, c.x, c.y, 7, 4.3+rnd()*1.8, rnd, {nucOffset:1.5}));
+
+  return [
+    {key:'pearl',    x:255, y:290},
+    {key:'bridges',  x:600, y:250},
   ];
 }
 
@@ -1469,10 +1534,37 @@ function genProstateNeuro(g, rnd){
   ];
 }
 
+// Small cell lung cancer (SCLC) — the neuroendocrine histology family's HOME-ORGAN consumer:
+// Ng & Li, Ann Diagn Pathol, 2024, PMID 39342665's own 37-case SCLC cohort is what prostate's
+// pneuro entry borrowed cross-organ (see genProstateNeuro above); here the same figures are this
+// entity's own, not an application. ZERO NEW DRAWING CODE — the exact same drawSmallCellSheet
+// (x2) + necrosisBlob dispatch as pneuro, proving the family's reuse the way genProstateDuctal's
+// papillary/cribriform reuse already did for a different family. "Marked nuclear irregularity"
+// (86%, the cohort's third-most-common feature) and crush artifact (real, cited, but the source
+// gives only a qualitative bronchoscopy-vs-effusion contrast, no overall rate) are named in the
+// intro/ariaSummary text rather than given their own drawn feature — the same "name more than is
+// drawn" treatment LUAD's own five-WHO-patterns-but-three-drawn intro already established — since
+// nuclear irregularity is already visually present in the molded cells' own elongated shape
+// (no new geometry needed) and crush artifact has no clean number to anchor a labeled claim on.
+// Citations: see HISTOLOGY_SCLC in js/organs/lungs.js.
+function genLungsSCLC(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const sheetA = drawSmallCellSheet(g, rnd, 220, 190, 175, 145, {spacing:8.5, moldingReach:1.35});
+  const sheetB = drawSmallCellSheet(g, rnd, 560, 340, 165, 130, {spacing:8.5, moldingReach:1.35, rot:0.3});
+  necrosisBlob(g, 430, 150, 90, 62, rnd, -0.1);
+  return [
+    {key:'molding', x:sheetA.cx, y:sheetA.cy},
+    {key:'naked',   x:sheetB.cx, y:sheetB.cy},
+    {key:'necrosis', x:430, y:150},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
   luad:   genLUAD,
+  lusc:   genLUSC,
+  sclc:   genLungsSCLC,
   ccrcc:  genCCRCC,
   hcc:    genHCC,
   gbm:    genGBM,

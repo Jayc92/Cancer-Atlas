@@ -194,15 +194,21 @@ function distinguishingTokens(query) {
 // running the entry's real, current filterByCondition against them — deduplicating first because
 // the parent corpus can hold the same condition tag on hundreds of studies, and re-testing it that
 // many times would report a "hit count" that is really a study count wearing a finding's clothes.
-// Deliberately called WITHOUT entry.requireAlso, unlike the three call sites in main() below —
-// this decomposes the parent corpus into single-condition wrappers, one string at a time, and
-// requireAlso's whole contract is SAME-STRING co-occurrence (design doc §1b): a basket trial's
-// unrelated "Small Cell Lung Cancer" tag, tested alone, would fail a requireAlso:['prostat'] gate
-// trivially even though it is correctly excluded for being a different disease entirely, not
-// because this entry's own conditionKeywords are too narrow — which is the one question this
-// signal exists to answer. Adding requireAlso here would flag every such unrelated tag as a
-// "rejected-but-relevant" hit, drowning the real signal in noise from a mechanism this function
-// was never built to test. considered and declined, not an oversight matching the three fixes above.
+// Deliberately called WITHOUT entry.requireAlso OR entry.excludeIf, unlike the three call sites
+// in main() below — this decomposes the parent corpus into single-condition wrappers, one string
+// at a time, and BOTH mechanisms' contracts are about a single declared condition string (design
+// doc §1b for requireAlso; SCLC's own note in js/trials.js for excludeIf), just in opposite
+// directions. requireAlso: a basket trial's unrelated "Small Cell Lung Cancer" tag, tested alone,
+// would fail a requireAlso:['prostat'] gate trivially even though it is correctly excluded for
+// being a different disease entirely, not because this entry's own conditionKeywords are too
+// narrow — which is the one question this signal exists to answer. excludeIf: SCLC's own
+// "Non-Small Cell Lung Cancer" tag, tested alone WITH excludeIf applied, would be correctly
+// DROPPED by production rules (it names a different disease) and would then register as a false
+// "rejected-but-relevant HIT" here, since "small"/"lung" are real SCLC name-tokens it happens to
+// share — the exact opposite direction of the requireAlso case, but the identical root cause: a
+// mechanism whose whole point is same-string disambiguation cannot be evaluated correctly by
+// decomposing the string it disambiguates within. Both omissions considered and declined
+// together, not an oversight matching the three threading-fixes above.
 function corpusVocabularySignal(entry, parentAll, filterByCondition) {
   const tokens = distinguishingTokens(entry.query);
   const distinct = new Map(); // condition string -> a one-condition study wrapper filterByCondition can test
@@ -249,6 +255,28 @@ function requireAlsoPositiveControl(entry, parentAll, stemRegexFn) {
   };
 }
 
+// EXCLUDE-IF POSITIVE CONTROL (2026-09-13, SCLC's own mapping) — the mirror-image check for the
+// mirror-image mechanism. requireAlso's failure mode was a term matching NOTHING when it should
+// match plenty; excludeIf's analogous failure mode is a typo'd or mis-escaped term that ALSO
+// matches nothing, in which case the exclusion silently does nothing and every contaminating
+// study (e.g. "Non-Small Cell Lung Cancer" for SCLC) sails through uncaught — functionally
+// identical to never having written excludeIf at all, and just as invisible from the entry's own
+// kept-count alone. Tested against the NARROW query's own corpus (not the parent's) — unlike
+// requireAlso's organ-anchor, which should be abundant in the whole organ, an excludeIf term is
+// expected to appear only within the entry's OWN near-miss population (a substring-contamination
+// term has no reason to show up broadly across the parent organ's unrelated studies).
+function excludeIfPositiveControl(entry, narrowAll, keywordRegexFn) {
+  if (!entry.excludeIf) return null;
+  const re = keywordRegexFn(entry.excludeIf);
+  const distinct = new Set();
+  narrowAll.studies.forEach((s) => s.protocolSection.conditionsModule.conditions.forEach((c) => distinct.add(c)));
+  const matches = [...distinct].filter((c) => re.test(c));
+  return {
+    term: entry.excludeIf, distinctConditions: distinct.size,
+    matchCount: matches.length, examples: matches.slice(0, 3),
+  };
+}
+
 // THE ZERO-KEPT CENSUS (2026-09-13, user ruling) — "zero is legitimate at 0.01% share and it's
 // also what a broken query looks like; a human makes that call once per entry rather than never."
 // Declared here, not inside js/trials.js: this file's own architecture note already establishes
@@ -268,7 +296,7 @@ const DECLARED_ZERO = {
 async function main() {
   installDomStub();
   const trialsPath = new URL('../js/trials.js', import.meta.url).href;
-  const { TRIALS_CONDITION_MAP, filterByCondition: importedFilter, stemRegex: importedStemRegex } = await import(trialsPath);
+  const { TRIALS_CONDITION_MAP, filterByCondition: importedFilter, stemRegex: importedStemRegex, keywordRegex: importedKeywordRegex } = await import(trialsPath);
 
   const requested = process.argv.slice(2);
   const ids = requested.length ? requested : Object.keys(TRIALS_CONDITION_MAP);
@@ -305,16 +333,17 @@ async function main() {
     // while the real, regex-bugged production code showed 0/10 live — which is consistent with
     // how that wrong number got written down and went unnoticed until the app itself was driven
     // end to end in a browser. Fixed at all three call sites.
-    const { kept, dropped } = importedFilter(studies, entry.conditionKeywords, entry.requireAlso);
+    const { kept, dropped } = importedFilter(studies, entry.conditionKeywords, entry.requireAlso, entry.excludeIf);
 
     const narrowComplete = narrowAll.studies.length === narrowAll.totalCount;
     const parentComplete = parentAll.studies.length === parentAll.totalCount;
-    const narrowKept = importedFilter(narrowAll.studies, entry.conditionKeywords, entry.requireAlso).kept.length;
-    const parentKept = importedFilter(parentAll.studies, entry.conditionKeywords, entry.requireAlso).kept.length;
+    const narrowKept = importedFilter(narrowAll.studies, entry.conditionKeywords, entry.requireAlso, entry.excludeIf).kept.length;
+    const parentKept = importedFilter(parentAll.studies, entry.conditionKeywords, entry.requireAlso, entry.excludeIf).kept.length;
     const gap = parentKept - narrowKept;
     const retiredRatio = parentAll.totalCount ? (narrowAll.totalCount / parentAll.totalCount * 100).toFixed(2) + '%' : 'n/a';
     const vocab = corpusVocabularySignal(entry, parentAll, importedFilter);
     const control = requireAlsoPositiveControl(entry, parentAll, importedStemRegex);
+    const excludeControl = excludeIfPositiveControl(entry, narrowAll, importedKeywordRegex);
 
     console.log(`\n=== ${id} ===`);
     console.log(`  query: "${entry.query}"  ->  totalCount ${narrowAll.totalCount}`);
@@ -325,6 +354,13 @@ async function main() {
         + `${control.matchCount}/${control.distinctConditions} distinct parent-corpus condition strings`
         + ` — ${pass ? 'PASS' : 'FAIL — this term matches NOTHING in its own parent corpus; it is structurally broken, independent of the entry\'s current kept count'}`);
       if (pass) console.log(`    example matches: ${JSON.stringify(control.examples)}`);
+    }
+    if (excludeControl) {
+      const pass = excludeControl.matchCount > 0;
+      console.log(`  EXCLUDEIF POSITIVE CONTROL: term ${JSON.stringify(entry.excludeIf)} matches `
+        + `${excludeControl.matchCount}/${excludeControl.distinctConditions} distinct narrow-query condition strings`
+        + ` — ${pass ? 'PASS (real contamination it must exclude)' : 'FAIL — this term matches NOTHING in the narrow-query corpus; the exclusion may be silently doing nothing'}`);
+      if (pass) console.log(`    example excluded strings: ${JSON.stringify(excludeControl.examples)}`);
     }
     console.log(`  ZERO-KEPT CENSUS: exhaustive narrowKept=${narrowKept}${narrowComplete ? '' : ' (INCOMPLETE PAGE)'}`
       + (narrowKept === 0
@@ -342,6 +378,7 @@ async function main() {
     summary.push({
       id,
       controlFail: control && control.matchCount === 0,
+      excludeControlFail: excludeControl && excludeControl.matchCount === 0,
       zeroKept: narrowKept === 0,
       undeclared: narrowKept === 0 && !DECLARED_ZERO[id],
     });
@@ -349,9 +386,11 @@ async function main() {
 
   console.log('\n=== SUMMARY (read this block; per-entry detail above is easy to lose in scrollback) ===');
   const controlFails = summary.filter((s) => s.controlFail);
+  const excludeControlFails = summary.filter((s) => s.excludeControlFail);
   const undeclaredZeros = summary.filter((s) => s.undeclared);
   const declaredZeros = summary.filter((s) => s.zeroKept && !s.undeclared);
   console.log(`  requireAlso positive control: ${controlFails.length ? 'FAIL — ' + JSON.stringify(controlFails.map((s) => s.id)) : 'no failures'}`);
+  console.log(`  excludeIf positive control: ${excludeControlFails.length ? 'FAIL — ' + JSON.stringify(excludeControlFails.map((s) => s.id)) : 'no failures'}`);
   console.log(`  zero-kept, UNDECLARED (read these): ${undeclaredZeros.length ? JSON.stringify(undeclaredZeros.map((s) => s.id)) : 'none'}`);
   console.log(`  zero-kept, declared and re-checked this run: ${declaredZeros.length ? JSON.stringify(declaredZeros.map((s) => s.id)) : 'none'}`);
 }

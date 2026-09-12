@@ -203,7 +203,12 @@ PREREGISTERED = {
             'closed_year_paren\'s docstring: the \'(\' opened before the head.',
     },
     # RE-ADDRESSED 236 -> 259 on 2026-09-07 when a 21-line comment block went into lungs.js above it,
-    # AND 259 -> 268 on 2026-09-08 when a nine-line one did the same thing.
+    # 259 -> 268 on 2026-09-08 when a nine-line one did the same thing, AND 268 -> 276 on 2026-09-13
+    # when the lusc/sclc authoring pass inserted a HISTOLOGY_LUSC/HISTOLOGY_SCLC block earlier in the
+    # same file — the fourth move of one span, checked the same way every prior one was: the OLD
+    # line's exact text ("citation: 'Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/
+    # ERS); Yoshizawa et al., Mod Pathol, 2011; PathologyOutlines.com, "Adenocarcinoma overview."'")
+    # found at exactly one place in the new file, byte-identical, not by adding an offset.
     # THE SPAN DID NOT CHANGE — it is byte-identical, and that was checked by matching the OLD line's
     # exact content against the working copy and finding ONE occurrence, not by adding an offset. So
     # BASIS STAYS FIT: an address is not an identity, and re-addressing a span is not new evidence.
@@ -254,12 +259,12 @@ PREREGISTERED = {
             'three independent occurrences of one citation repeated across this organ\'s three '
             'new histology blocks.',
     },
-    'Travis|2011|js/organs/lungs.js:268': {
+    'Travis|2011|js/organs/lungs.js:276': {
         'side': 'KEPT',
         'basis': 'FIT',
         'scored': 'CONFIRMS',
         'reason':
-            'lungs.js:268 reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)". '
+            'lungs.js:276 reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)". '
             'A \')\' does sit between head and 2011, so this span is in the population — but "(WHO)" '
             'carries no year, so the rule declines and the record stands. Travis et al. really did '
             'author both classifications. THIS IS THE COUNTEREXAMPLE THE "CARRYING A YEAR" NARROWING '
@@ -268,6 +273,20 @@ PREREGISTERED = {
             'that. It is the span to re-read first when this rule next comes up.',
     },
 }
+# A FOURTH SHAPE WAS FOUND AND FIXED AT THE SOURCE, NOT SCORED (2026-09-13, lungs lusc/sclc authoring
+# pass) — lungs.js:348 originally read "...(diagnostic threshold, IHC markers) and the WHO 2015
+# classification's own variant names", which put a bare, aside-shadowed "2015" after "Sabbula et al."
+# with no citation relationship between them: the year belongs to "the WHO classification" (properly
+# cited two clauses later, attached to Travis et al., J Thorac Oncol, 2015), not to Sabbula's own
+# undated StatPearls entry. Unlike the Travis "(WHO)" case, the resulting Sabbula|2015 pairing would
+# have been genuinely wrong, not a true dual-citation — so this was NOT scored as a FALSIFIES entry.
+# A FALSIFIES entry is "not a disposition the battery will carry" (see the problem message in
+# evaluate() below): it stands as a PERMANENT, un-silenceable failure until the rule is fixed,
+# narrowed, or the record is restored by hand. Restoring by hand was cheapest and most honest here —
+# removing the bare "2015" (the year is still stated, correctly attached to Travis et al., two
+# clauses later) makes the extractor stop deriving any year for Sabbula at all, which is the truth:
+# this StatPearls citation carries none in this text. The span no longer exists in the population;
+# nothing to score.
 
 
 def shape_problem(absence, key):
@@ -440,12 +459,12 @@ def selftest():
         'Fearon|1991|js/organs/colon.js:169',
         'Powell|1990|js/organs/colon.js:172',
         'Schulze|2017|js/organs/liver.js:280',
-        # Re-addressed 236 -> 259 -> 268, same span, byte-identical each time (see the entry's own
-        # note). "At birth" names the set of SPANS, not the set of addresses; if this arm were left
+        # Re-addressed 236 -> 259 -> 268 -> 276, same span, byte-identical each time (see the entry's
+        # own note). "At birth" names the set of SPANS, not the set of addresses; if this arm were left
         # pinned to a stale address it would fail for the one reason that says nothing about the rule's
-        # shape. Two re-addresses in two days: the arm's cost is one line per insertion above the span,
-        # and that is the price of pinning identity to something a comment block can move.
-        'Travis|2011|js/organs/lungs.js:268',
+        # shape. Three re-addresses across two sessions: the arm's cost is one line per insertion above
+        # the span, and that is the price of pinning identity to something a comment block can move.
+        'Travis|2011|js/organs/lungs.js:276',
     }
     fit_now = {key for key, entry in PREREGISTERED.items() if entry['basis'] == 'FIT'}
     arm('FIT is still exactly the four spans the rule was fit to', fit_now == fit_at_birth,
@@ -464,7 +483,7 @@ def selftest():
 
     # arm 5: STALE fires when a scored span leaves the population.
     dropped = dict(scored_clean)
-    dropped.pop('Travis|2011|js/organs/lungs.js:268')
+    dropped.pop('Travis|2011|js/organs/lungs.js:276')
     stale = [p for p in evaluate(dropped) if p.startswith('STALE SCORING')]
     arm('STALE fires when a scored span is gone', len(stale) == 1, str(stale[:1])[:90])
 
@@ -473,7 +492,7 @@ def selftest():
     # else in the chain — the population, the record total and the paren-shadow count are all
     # invariant under a KEPT/SPENT swap, so without this arm the event is completely silent.
     flipped = dict(scored_clean)
-    flipped['Travis|2011|js/organs/lungs.js:268'] = 'SPENT'
+    flipped['Travis|2011|js/organs/lungs.js:276'] = 'SPENT'
     moved = [p for p in evaluate(flipped) if p.startswith('SIDE MOVED')]
     arm('SIDE MOVED fires when the rule re-decides a scored span', len(moved) == 1,
         str(moved[:1])[:90])

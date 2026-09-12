@@ -290,6 +290,64 @@ export const TRIALS_CONDITION_MAP = {
       + 'above — irrelevant here either way, since the live sample\'s one fetched study is already '
       + 'dropped by the base "mucinous" keyword check before requireAlso is ever reached.',
   },
+  // ---- Lungs, 2026-09-13 ("then Lungs" authoring) — three entries, three different collision
+  // shapes, none of them the plain prostat-stem case: lusc needed BOTH a positive organ-anchor
+  // (requireAlso) AND a negative same-string exclusion (excludeIf, "non-squamous" is a real,
+  // live-caught false keep — "squamous" as a bare keyword matches inside "Non-Squamous" the same
+  // way "small cell" matches inside "non-small cell"); sclc needed excludeIf alone, PLUS its own
+  // acronym added to conditionKeywords after a live-caught miss ("SCLC, Limited Stage" has no
+  // spelled-out "small cell" or "lung" in that string at all — the exact seminoma-bug shape,
+  // caught live rather than assumed); lcc needed only a bare organ-anchor, and its own live
+  // sample independently corroborates the entity's own instability finding (every single kept
+  // result names large cell NEUROENDOCRINE carcinoma of the lung specifically — none is a
+  // "classic"/NOS large cell carcinoma trial, consistent with data rule 33's own reclassification
+  // finding that the classic entity has become vanishingly rare in modern practice).
+  lusc: {
+    query: 'lung squamous cell carcinoma', parent: 'lung cancer',
+    conditionKeywords: ['squamous'], requireAlso: ['lung', 'pulmonary', 'nsclc', 'non-small cell', 'non small cell'],
+    excludeIf: ['non-squamous', 'non squamous'],
+    note: 'Checked live 2026-09-13: organ-anchored query returns 10 results, 3/10 kept by '
+      + 'requireAlso alone — but ONE of those 3 ("Osimertinib With or Without Bevacizumab…", '
+      + 'conditions including "Lung Non-Squamous Non-Small Cell Carcinoma") was a real false '
+      + 'keep caught live: the bare keyword "squamous" matches the word "Squamous" inside '
+      + '"Non-Squamous" too, the exact same word-boundary shape as sclc\'s own "non-small" '
+      + 'problem below, just running the opposite direction (a subtype term matching its own '
+      + 'negation rather than a disease name matching its own negation). Fixed with excludeIf '
+      + '(same mechanism sclc uses); re-verified live: 2/10 kept, both genuine squamous NSCLC '
+      + '("Squamous Non-Small Cell Lung Cancer", "Glypican-3 (GPC3)-Positive Squamous '
+      + 'Non-small Cell Lung Cancer").',
+  },
+  sclc: {
+    query: 'small cell lung cancer', parent: 'lung cancer',
+    conditionKeywords: ['small cell', 'lung', 'sclc'], excludeIf: ['non-small', 'non small'],
+    note: 'Checked live 2026-09-13: the bare string "small cell lung cancer" is a literal '
+      + 'substring of "non-small cell lung cancer" — a same-ORGAN collision, not the cross-organ '
+      + 'vocabulary-sharing shape every prior requireAlso entry in this file handles. A first '
+      + 'live sample confirmed the contamination directly: 7 of 10 results were real NSCLC '
+      + 'trials kept by naive word-boundary matching alone. Fixed with excludeIf (["non-small", '
+      + '"non small"], keywordRegex-matched, not stemRegex — a complete two-word phrase, not a '
+      + 'stem). A SECOND live-caught gap in the same pass: "A Phase II Study of Tislelizumab '
+      + 'Plus Anlotinib…" (conditions: ["SCLC, Limited Stage"]) was WRONGLY dropped by the '
+      + 'original ["small cell","lung"] keyword list — the disease\'s own bare acronym, with '
+      + 'neither "small cell" nor "lung" spelled out in that string at all, the exact seminoma-'
+      + 'bug shape (data rule 22). Fixed by adding "sclc" to conditionKeywords. Re-verified live '
+      + 'with both fixes together: 4/10 kept, all four genuine ("Small Cell Lung Cancer" x2, '
+      + '"Small Cell Lung Cancer Extensive Stage", "SCLC, Limited Stage").',
+  },
+  lcc: {
+    query: 'large cell lung carcinoma', parent: 'lung cancer',
+    conditionKeywords: ['large cell'], requireAlso: ['lung', 'pulmonary', 'nsclc'],
+    note: 'Checked live 2026-09-13: 6/10 kept, all six correctly requiring "large cell" and an '
+      + 'organ anchor in the same condition string (e.g. "Large Cell Neuroendocrine Carcinoma of '
+      + 'the Lung"). A real, independent corroboration of this entry\'s own below-floor blurb '
+      + '(data rule 33): every one of the six kept results names large cell NEUROENDOCRINE '
+      + 'carcinoma specifically — none is a "classic"/NOS large cell carcinoma trial with no '
+      + 'neuroendocrine qualifier — consistent with modern clinical-trial activity having moved '
+      + 'to the better-defined LCNEC entity while classic LCC has become vanishingly rare, the '
+      + 'same finding Rekhtman et al. 2013 documents in surgical pathology practice. 4/10 '
+      + 'dropped, all real unrelated multi-tumour baskets naming "large cell" without an organ '
+      + 'anchor in the same string.',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------
@@ -299,7 +357,11 @@ export const TRIALS_CONDITION_MAP = {
 // zero NCT-id overlap with the set the mapping was checked against. What is checkable on every
 // fetch, against a corpus that keeps moving, is what each returned study's OWN declared
 // conditions say it is about — never what the query asked for or how the study surfaced.
-function keywordRegex(keywords){
+// Exported (2026-09-13, alongside stemRegex) for the same reason: .claude/trials_mapping_check.mjs
+// now validates excludeIf terms too, and excludeIf is matched through THIS function, not
+// stemRegex — a checker importing only stemRegex would be testing the wrong construction for an
+// excludeIf positive control.
+export function keywordRegex(keywords){
   // Word-boundaried, case-insensitive: the pointer_check.py scar applies here too — an
   // unboundaried short needle collides with ordinary English. These are real multi-character
   // medical terms, boundaried the same way regardless of length.
@@ -358,13 +420,33 @@ function studyConditions(study){
 // string ("Colon Mucinous Adenocarcinoma", "Rectal Signet Ring Cell Adenocarcinoma" — both seen
 // live in the same pass), so same-string co-occurrence is the stricter AND the anatomically
 // correct test, not merely a defensive tightening.
-export function filterByCondition(studies, keywords, requireAlso){
+// `excludeIf` (2026-09-13, SCLC's own mapping) — a DIFFERENT collision shape than requireAlso's,
+// not a copy of it. requireAlso is a cross-organ vocabulary problem (a subtype term shared with
+// an unrelated disease elsewhere in the body); this is same-organ SUBSTRING CONTAINMENT — the
+// literal string "small cell lung cancer" sits inside "non-small cell lung cancer" with every one
+// of "small"/"cell"/"lung"/"cancer" still individually whole-word-bounded, so no positive
+// organ-anchor can ever separate them (an NSCLC trial names "lung" too). Verified live 2026-09-13:
+// a bare 'small cell lung cancer' query returns real NSCLC trials as ~13 of 15 results (e.g.
+// "Non-small Cell Lung Cancer", "Non Small Cell Lung Cancer, Brain Metastasis") purely because
+// "small cell" and "lung" both survive word-boundary matching inside "non-small cell lung
+// cancer". Same-string logic, same as requireAlso, but INVERTED: a condition string that would
+// otherwise match `keywords` (+`requireAlso`) is instead REJECTED if that SAME string also
+// contains an excludeIf term — "non-small"/"non small" is a complete, well-formed two-word
+// phrase (not a stem needing prefix-only matching the way 'prostat' is), so this reuses
+// keywordRegex's own whole-word-bounded construction rather than stemRegex's. A study with a
+// SEPARATE condition string that matches cleanly (no exclude term in THAT string) is still kept
+// via that string — excludeIf disqualifies one condition string's own match, not the whole study.
+export function filterByCondition(studies, keywords, requireAlso, excludeIf){
   const re = keywordRegex(keywords);
   const re2 = requireAlso ? stemRegex(requireAlso) : null;
+  const re3 = excludeIf ? keywordRegex(excludeIf) : null;
   const kept = [], dropped = [];
   studies.forEach(s=>{
     const conds = studyConditions(s);
-    const matches = re2 ? conds.some(c=>re.test(c) && re2.test(c)) : conds.some(c=>re.test(c));
+    const matches = conds.some(c=>{
+      const base = re2 ? (re.test(c) && re2.test(c)) : re.test(c);
+      return base && !(re3 && re3.test(c));
+    });
     (matches ? kept : dropped).push(s);
   });
   return { kept, dropped };
@@ -392,7 +474,7 @@ export async function fetchTrialsForEntry(cancerId){
   }catch(err){
     return { state:'empty-unanswered', fetchedAt };
   }
-  const { kept, dropped } = filterByCondition(studies, entry.conditionKeywords, entry.requireAlso);
+  const { kept, dropped } = filterByCondition(studies, entry.conditionKeywords, entry.requireAlso, entry.excludeIf);
   // Defensive client-side sort even though the request already asks the API to sort
   // server-side (sort=LastUpdatePostDate:desc, verified live) — a guarantee this code owns
   // rather than trusts silently to an upstream default that could change.

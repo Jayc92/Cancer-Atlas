@@ -162,12 +162,20 @@
    1
   ],
   [
+   "lungs.js|data-span-year||2010",
+   1
+  ],
+  [
+   "lungs.js|data-span-year||2019",
+   1
+  ],
+  [
    "lungs.js|data-span-year||2026",
-   4
+   6
   ],
   [
    "lungs.js|etal-malformed-head|Riihim\u00e4ki|2014",
-   1
+   5
   ],
   [
    "lungs.js|journal-adjacent-year|Nature|2014",
@@ -175,6 +183,18 @@
   ],
   [
    "lungs.js|prose-year||2004",
+   1
+  ],
+  [
+   "lungs.js|prose-year||2012",
+   1
+  ],
+  [
+   "lungs.js|prose-year||2015",
+   2
+  ],
+  [
+   "lungs.js|semicolon-shadow|Sabbula|2012",
    1
   ],
   [

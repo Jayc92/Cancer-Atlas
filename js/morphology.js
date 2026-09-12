@@ -250,6 +250,11 @@ export const MARGIN_STATUS = Object.freeze({
   muc:  { status: 'uncharacterised', ref: 'PMC8070731 gives HISTOLOGIC invasion pattern (expansile/infiltrative), not gross circumscription — same register mismatch as endo' },
   lgsc: { status: 'uncharacterised', ref: 'no margin-character description, gross or histologic, found in PMC8070731 or Etemadmoghadam 2017 (PMID 28646021)' },
   luad:     { status: 'uncharacterised', ref: 'R7 — pre-registered negative, fired' },
+  // lusc/sclc, 2026-09-13: same check, same result — no gross-register margin/circumscription
+  // sentence found for either in this pass's own search (TCGA 2012, George 2015, StatPearls
+  // NBK564510/NBK482458 were all read for histology/genomics but none carries one).
+  lusc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register margin/circumscription sentence found in this pass\'s own search' },
+  sclc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register margin/circumscription sentence found in this pass\'s own search' },
   crc:      { status: 'uncharacterised', ref: 'R5 — margin subsumed by the cited growth form' },
   ccrcc:    { status: 'unread',          ref: 'R3 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
   gdiff:    { status: 'unread',          ref: 'second tier — stomach margin not yet read', until: '2026-10-01' },
@@ -380,6 +385,8 @@ export const GROWTH_STATUS = Object.freeze({
   muc:  { status: 'cited', label: 'large, unilateral, multilocular', register: 'G', badgeSource: 'Diagnostics 2021 (PMC8070731)', ref: 'PMC8070731, Section 6.1 — "usually large (8-40 cm; mean 15-20 cm), unilateral, multilocular"; unilaterality and size >13cm are the paper\'s own stated criteria favoring a PRIMARY ovarian tumor over metastatic GI mucinous disease; composition unexpressed (design §10); not drawn' },
   lgsc: { status: 'uncharacterised', ref: 'no bilaterality or composition statement found in PMC8070731 (Section 3) or Etemadmoghadam 2017 (PMID 28646021)' },
   luad:     { status: 'uncharacterised', ref: 'R8 — no gross growth category claimable' },
+  lusc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register growth-pattern sentence found in this pass\'s own search' },
+  sclc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register growth-pattern sentence found in this pass\'s own search' },
   crc:      { status: 'cited', label: 'ulcerating-annular (majority), polypoid (a quarter)', register: 'G', badgeSource: 'Int J Mol Sci 2018 (PMC6165083)', ref: 'R6 PMC6165083 — WALL (majority) and PLACEMENT (25%), a named divergence; not drawn' },
   ccrcc:    { status: 'unread', ref: 'R3/R4 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
   gdiff:    { status: 'cited', label: 'diffuse (linitis plastica)', register: 'G', badgeSource: 'NCI PDQ, Gastric Cancer Treatment (HP), updated February 21, 2025', ref: 'https://www.cancer.gov/types/stomach/hp/stomach-treatment-pdq — WALL; not drawn (page re-verified 2026-09-09: title, the ledger sentence and the update date match)' },
@@ -475,6 +482,17 @@ export const EXTENT_STATUS = Object.freeze({
   ccrcc: { status: 'cited', site: 'clear cell renal cell carcinoma', siteNote: 'clear cell renal cell carcinoma — the entry itself', shares: { localized: 72, regional: 17, distant: 10, unknown: 1 }, modal: 'localized', basis: 'Zou et al., J Cancer, 2025, Table 1 — SEER database, ccRCC-confirmed 2000–2017 (N=101,892 of 73,714/17,224/10,130/824); corroborated independently by Huang et al., Cancer Med, 2020 (SEER 18, 2004–2017, N=92,209, count-derived 72.3/16.6/10.3/0.8 against the paper\'s own true N after a 747-patient table-vs-total gap the paper itself never discloses)', source: 'Zou et al., Journal of Cancer, 2025', ref: 'PMID 39991582, PMCID PMC11843228 — verified 2026-09-12 (live fetch of Table 1, not hand-copied)' },
   hcc: { status: 'cited', site: 'hepatocellular carcinoma', siteNote: 'hepatocellular carcinoma — the entry itself', shares: { localized: 48, regional: 26, distant: 17, unknown: 8 }, modal: 'localized', basis: 'Flores et al., Cancer Epidemiol Biomarkers Prev, 2021, Table 2 — SEER 18, HCC-confirmed by ICD-O-3 morphology 8170–8175 (excludes cholangiocarcinoma), 2000–2015 (N=45,789 of 21,916/12,062/7,958/3,853); corroborated directionally by Altekruse et al., J Clin Oncol, 2009 (SEER 13, 2003–2004, N=3,169, 44/29/17%, ~10% unstaged)', source: 'Flores et al., Cancer Epidemiology, Biomarkers & Prevention, 2021', ref: 'PMID 33737301, PMCID PMC8172467 — verified 2026-09-12 (live fetch of Table 2, not hand-copied)' },
   luad: { status: 'cited', site: 'lung adenocarcinoma', siteNote: 'lung adenocarcinoma — the entry itself; runs MORE distant-heavy than the organ aggregate, not less — the opposite direction the low-share hypothesis predicted', shares: { localized: 22, regional: 20, distant: 57, unknown: 2 }, modal: 'distant', basis: 'Brainson et al., Clin Lung Cancer, 2021, Table 3 — SEER 21, adenocarcinoma-confirmed 2012–2016 (N=111,886 of 24,162/22,254/63,423/2,047); a real, unresolved cross-country disagreement is disclosed rather than picked: Nguyen et al., Int J Cancer, 2022 (PMID 35138642), a Japanese registry study, finds adenocarcinoma\'s own modal category flips to localized (~45/18/33/4) there, plausibly reflecting Japan\'s much higher rate of incidental CT detection rather than a US-applicable pattern — the US SEER figure is used here as population-matched to every other cited aggregate in this file', source: 'Brainson et al., Clinical Lung Cancer, 2021', ref: 'PMID 33958300, PMCID PMC8495887 — verified 2026-09-12 (live fetch of Table 3, not hand-copied)' },
+  // lusc/sclc, 2026-09-13: SAME paper/table as luad above (re-verified directly, not trusted from
+  // a restated percentage — a first agent pass restated Table 3's squamous row inconsistently
+  // with a direct recomputation, caught and re-fetched by hand before use). `shares` below are
+  // computed against each row's OWN full N (including "unknown"), matching this field's existing
+  // convention from luad's own entry — NOT the paper's own printed Table 3 percentages, which the
+  // table's footnote states exclude "unknown" from the denominator ("For χ2 test analysis and
+  // percentage, the group 'unknown' was censored"). The paper's own printed figures (used in the
+  // organ file's own citation comments, a different field) are: squamous 22.5/33.8/43.7% of
+  // 47,092 excluding unknown; small cell 4.1/20.5/75.4% of 28,620 excluding unknown.
+  lusc: { status: 'cited', site: 'lung squamous cell carcinoma', siteNote: 'lung squamous cell carcinoma — the entry itself; more distant-heavy than luad\'s own already distant-heavy figure', shares: { localized: 22, regional: 33, distant: 43, unknown: 2 }, modal: 'distant', basis: 'Brainson et al., Clin Lung Cancer, 2021, Table 3 — SEER 21, squamous-confirmed 2012–2016 (N=48,239 of 10,593/15,909/20,590/1,147); the paper reports no significant difference between this national SEER distribution and its own Kentucky cohort for squamous specifically (chi-square P=.1839), unlike several of its other histology/geography comparisons', source: 'Brainson et al., Clinical Lung Cancer, 2021', ref: 'PMID 33958300, PMCID PMC8495887 — verified 2026-09-13 (live fetch of Table 3, not hand-copied)' },
+  sclc: { status: 'cited', site: 'small cell lung cancer', siteNote: 'small cell lung cancer — the entry itself; the most distant-heavy stage-at-diagnosis distribution of any entry in this atlas, consistent with this disease\'s well-documented propensity for early, aggressive, widespread spread', shares: { localized: 4, regional: 20, distant: 74, unknown: 2 }, modal: 'distant', basis: 'Brainson et al., Clin Lung Cancer, 2021, Table 3 — SEER 21, small-cell-confirmed 2012–2016 (N=29,176 of 1,173/5,877/21,570/556); this disease\'s own real-world dominant staging convention is the two-tier Limited-stage/Extensive-stage (VALG) system, not SEER Summary Stage — recorded honestly as a vocabulary mismatch, not a data-availability gap, since real SCLC-inclusive SEER Summary Stage data does exist in this same paper', source: 'Brainson et al., Clinical Lung Cancer, 2021', ref: 'PMID 33958300, PMCID PMC8495887 — verified 2026-09-13 (live fetch of Table 3, not hand-copied)' },
   // DIVERGENCE CORRECTION (2026-09-11, user-directed): all five ovary entries used to share the
   // ONE organ-level SEER Stat Facts distribution above (localized:22/regional:18/distant:54/
   // unknown:6) — correctly SCOPED (siteNote disclosed "not the X subtype alone" on every one) but
@@ -715,6 +733,17 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   // is the Prostatic urethra hotspot, whose own text now carries this origin fact directly (the
   // reserve_check requirement this mechanism enforces).
   pductal: 3,
+  // lusc/sclc ADDED 2026-09-13 ("then Lungs" authoring) — the SAME exemption expiry as endo/
+  // pductal above, arriving a third time: Lungs goes from one active entry to three, and two of
+  // them (lusc, sclc) genuinely arise centrally/bronchially rather than at luad's own peripheral/
+  // alveolar Alveoli anchor (organ default, index 1). Index 0 is the Bronchi hotspot, whose own
+  // pre-existing text already names squamous cell carcinoma's central-airway origin directly
+  // (verified against Sabbula et al., StatPearls, NBK564510 before reuse, not assumed accurate)
+  // and was extended to name SCLC's own real cell of origin too (pulmonary neuroendocrine cells
+  // within the bronchial epithelium, Pincott & Kanchustambham, StatPearls, NBK482458) — the
+  // reserve_check requirement this mechanism enforces, same as pductal's own hotspot-text rewrite.
+  lusc: 0,
+  sclc: 0,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never

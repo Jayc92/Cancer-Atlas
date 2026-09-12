@@ -99,9 +99,14 @@ screen pair per organ:
   points are Bronchi / Alveoli / Pleura / Hilum — Alveoli
   is framed the same way as Ovary's Surface epithelium and Breast's Ducts
   ("adenocarcinoma... most commonly arises here — directly paralleling..."),
-  only Adenocarcinoma is wired, the other three (Squamous cell carcinoma,
-  Large cell carcinoma, Small Cell Lung Cancer — explicitly noted in its own
-  `share` text as a separate category from NSCLC entirely) show "profile
+  Adenocarcinoma, Squamous cell carcinoma, and Small Cell Lung Cancer are all
+  wired now (see data rule 33 for the full sourcing, the below-floor treatment
+  Large cell carcinoma got instead, and the two new trials-filtering
+  mechanisms — `requireAlso`/`excludeIf` — this organ's own live verification
+  found necessary) — Small Cell Lung Cancer is explicitly noted in its own
+  `share` text as a separate category from NSCLC entirely; only Large cell
+  carcinoma (no stable modern share, site model, or driver profile exists —
+  data rule 33) shows the below-floor blurb treatment rather than "profile
   coming soon." **Kidneys**: real anatomical scan (`assets/kidneys.glb`, left
   kidney only — see "Organ mesh source" in Architecture notes), points are
   Cortex / Medulla / Renal pelvis / Hilum — Cortex is framed the same "arises here" way as the
@@ -2635,6 +2640,190 @@ screen pair per organ:
       precision oncology." None of the five needed a text change; none is a change in the
       extractor's own reach, which stays a separate, deliberately not-casually-widened decision per
       this project's standing caution on exactly that kind of change.
+
+33. Lungs — squamous cell carcinoma and small cell lung cancer authored in full, large cell
+    carcinoma given the below-floor treatment for a NEW reason (definitional instability, not
+    incidence), and two real trials-filtering mechanisms added after live testing caught two real
+    bugs before they shipped (2026-09-13) — **every citation in this section was verified directly
+    at the source, several via three parallel research agents each independently checked before
+    use.** This organ goes from one active entry (adenocarcinoma) to three; a fourth (large cell)
+    stays inactive on real evidence rather than assumption.
+    - **Origin, verified before authoring, not assumed.** The organ's own pre-existing Bronchi
+      hotspot text ("Squamous cell lung carcinoma tends to arise in the larger, more central
+      airways here") was checked directly against Sabbula, Gasalberti & Mukkamalla, StatPearls,
+      NBK564510, and confirmed accurate verbatim — no correction needed. The same hotspot's text
+      was extended (a change to already-served prose, held to the register guard the same way
+      pductal's own urethra rewrite was) to also name small cell lung cancer's real origin —
+      pulmonary neuroendocrine cells within the same bronchial epithelium, also central — per
+      Pincott & Kanchustambham, StatPearls, NBK482458. `ORIGIN_HOTSPOT_ENTRY` gained `lusc: 0` and
+      `sclc: 0` (both pointing at Bronchi, index 0), overriding the organ default (Alveoli, index
+      1, LUAD's own anchor) — the per-entry override mechanism's third real use outside prostate/
+      ovary, now covering an organ with three active entries genuinely arising at two sites.
+    - **Squamous cell carcinoma (LUSC) — a genuinely different driver landscape from LUAD,
+      confirmed rather than assumed.** TCGA, *Nature*, 2012, PMID 22960745, PMCID PMC3466113 (178
+      tumors, whole-exome): TP53 mutation in 81% by automated calling, ~90% on manual re-review —
+      near-universal, unlike LUAD's KRAS (33%, "the most common of several"). The same paper
+      directly confirms KRAS and EGFR are essentially absent (1/178, 0/178) — neither belongs
+      anywhere in this cancer's own ledger, the standard mechanistic-fit check every organ runs.
+      Four branch genes, one per site: CDKN2A inactivation (72%, the source's own combined
+      mutation/deletion/methylation term, not separated into a per-mechanism figure the way
+      LUAD's own CDKN2A entry is); PI3K/Akt pathway alteration (47% pathway-level across
+      PIK3CA/PTEN/AKT3, confirmed mutually exclusive with EGFR alterations — moot here since EGFR
+      is already excluded); NFE2L2/KEAP1/CUL3 pathway alteration (34%); SOX2/FGFR1 amplification
+      (real 3q26/8p12 amplicon events, no cohort-wide percentage extractable — checked and not
+      found rather than estimated). Private pool deliberately thin (TTN only), matching this
+      atlas's own pneuro-family precedent for the same reason: the real biology is concentrated at
+      trunk/branch. **Sites, split sourcing stated honestly**: Riihimäki et al., *Lung Cancer*,
+      2014 (LUAD's own site-model source) does NOT give squamous-specific percentages, checked
+      directly twice — so Bone (33.26%, real and squamous-specific: Xie et al., *Scientific
+      Reports*, 2024, PMID 39341901, PMCID PMC11438988, SEER, n=11,923) is the one site with its
+      own figure, while Brain/Liver/Adrenal carry Riihimäki's organ-level top-5 sites with no
+      squamous-specific number, the same honesty precedent LUAD's own unclaimed adrenal-gland
+      figure already uses. **Histology** needed genuinely new drawing code — a `drawKeratinPearl`
+      primitive (concentric whorled lamellae, a filled/re-colored analog of `drawPsammomaBody`'s
+      unfilled rings) plus a tightly packed polygonal-cell field with intercellular-bridge tick
+      marks between near-neighbor cells — for the keratinizing and non-keratinizing WHO 2015
+      variants; the third (basaloid) is named but not drawn, the same "name more than is drawn"
+      treatment LUAD's own two undrawn growth patterns already get. **Share (~25%) confirmed
+      current and stable** at two independent sources (NCI PDQ; StatPearls' own ~30%-of-NSCLC
+      figure nets to the same number once NSCLC's own ~80–85%-of-all-lung-cancer share is
+      applied), with a real, cited historical-decline trend (Cheng et al., *J Thorac Oncol*, 2016,
+      PMID 27364315) stated in prose rather than silently omitted. **Predominance note**: below a
+      real ≥10%-of-tumor-bulk threshold, a minor squamous component inside a mostly-adenocarcinoma
+      tumor is not separately coded at all (data rule 31's logic, this organ's own worked
+      example) — only once BOTH components independently cross that same 10% threshold does a
+      tumor become the distinct, separately-coded entity "adenosquamous carcinoma" (Tochigi et
+      al., *Am J Clin Pathol*, 2011 — ~0.4–4% of NSCLC).
+    - **Small cell lung cancer (SCLC) — the neuroendocrine histology family's first HOME-ORGAN
+      consumer, and the direct test of whether the family's own reuse holds.** Ng & Li, *Ann Diagn
+      Pathol*, 2024, PMID 39342665's 37-case cohort is SCLC's own dedicated cytomorphology study —
+      not a cross-organ application the way prostate's `pneuro` entry used it. **Result: zero new
+      drawing code.** `genLungsSCLC` in `js/histology.js` dispatches the exact same
+      `drawSmallCellSheet` (×2) + `necrosisBlob` calls `genProstateNeuro` already uses, with the
+      SAME cited percentages now correctly attributed to their own home cohort (nuclear molding
+      95%, naked nuclei 89%, absence of prominent nucleoli as the one specifically distinguishing
+      feature). "Marked nuclear irregularity" (86%, the cohort's third-most-common feature) and
+      crush artifact (real, cited, but only a qualitative bronchoscopy-vs-effusion contrast with
+      no overall rate) are named in the intro text rather than given their own drawn feature —
+      nuclear irregularity is already visually present in the molded cells' own elongated shape,
+      needing no new geometry, and crush artifact has no clean number to anchor a labeled claim
+      on. **This confirms the family's reuse a second time** (after `pductal`'s own zero-new-code
+      cribriform/frond reuse from a different family), the leverage the family was built to test.
+      **Trunk** — even more extreme than prostate's own borrowed version of this mechanism: George
+      et al., *Nature*, 2015, PMID 26168399, PMCID PMC4861069 found 100% bi-allelic TP53 loss and
+      93% RB1 loss among 108 tumors without chromothripsis — since TP53 loss is universal in that
+      subset, RB1-loss tumors are necessarily also TP53-loss tumors, making 93% a real concurrent-
+      loss rate exceeding even Beltran et al. 2016's 53.3% figure for prostate's own treatment-
+      emergent neuroendocrine entry. Cross-checked against Rudin et al., *Nat Rev Dis Primers*,
+      2021 (TP53 89%, RB1 64%, with the paper's own footnote stating the lower RB1 figure is
+      likely underestimated by targeted sequencing) — the same real cross-cohort variability this
+      atlas already notes for HCC's TERT and LUAD's KRAS. Four branch genes, split by real
+      molecular-subtype association rather than treated as one interchangeable "MYC family" entry:
+      MYCL amplification (the classic, ASCL1-high subtype's own gene, at this cancer's single most
+      common real site — mediastinal lymph nodes, 75.3%) and MYC amplification (the distinct
+      "variant," non-neuroendocrine-low subtype's gene, Mollaoglu et al., *Cancer Cell*, 2017,
+      PMID 28089889, at Liver, 31.6%), plus NOTCH family inactivating mutation (25%, George 2015,
+      at Bone, 23.7%) and PTEN loss (7%, Rudin 2021, at Brain, 16.4%). **Sites are this cancer's
+      own real, dedicated distribution** (Cittolin-Santos et al., *Cancer*, 2024, PMID 38470453,
+      corroborated by StatPearls NBK482458) — the first entry in this organ whose single most
+      common site is neither bone nor a distant organ at all, but mediastinal lymph nodes, stated
+      as the real, distinctive fact it is rather than defaulted to bone/brain/liver/adrenal for
+      visual parity with LUAD/LUSC. A second, single-institution Japanese series (Nakazawa et al.,
+      *Oncology Letters*, 2012, PMID 23205072) gives a full four-site set including adrenal (6.0%)
+      but genuinely disagrees with Cittolin-Santos on the other three — the same class of honest
+      cross-cohort discrepancy this atlas already records for HCC's own Katyal-vs-Zhuang figures,
+      not resolved by picking a side. Private pool: TP73 (checked against George 2015's own
+      "largely mutually exclusive" set — CREBBP/EP300/TP73/RBL1/RBL2/NOTCH family — since only
+      TP73 itself is drawn in, not a second member of that same set, no exclusivity conflict
+      exists) plus the standard TTN passenger. **Share**: "~15%" is stable across secondary/
+      reference sources (NCI PDQ, StatPearls, Gazdar et al. 2017) but the single most recent
+      dedicated epidemiologic-trend paper (Cittolin-Santos et al., 2024) puts the current figure
+      closer to ~11% and still declining — both numbers stated, not silently picked.
+    - **Large cell carcinoma (LCC) — kept inactive on real, checked evidence, not assumption; the
+      below-floor blurb mechanism generalized to a genuinely NEW reason.** A dedicated research
+      pass confirmed the hypothesis directly: this entity's real share is UNSTABLE, not merely
+      imprecise. Modern IHC-based reclassification collapses most historically-diagnosed cases
+      into adenocarcinoma (~60%) or squamous cell carcinoma (~20%), leaving only a small marker-
+      null remainder — one review states plainly that with routine immunostaining, large cell
+      carcinoma "could become an 'endangered species'" (Rekhtman et al., *Mod Pathol*, 2013, PMID
+      23196793, PMCID PMC3594043, a 102-case reclassification study). Independently confirmed via
+      this atlas's own already-cited Brainson et al. 2021 (PMID 33958300): that paper's real,
+      SEER-scale, five-histotype classification carries **no separate "large cell carcinoma"
+      category at all** — it falls into a heterogeneous "Other" bucket alongside various complex/
+      ambiguous histologies, verified directly by this pass rather than taken from the research
+      agent's own restatement. A real, second source of denominator confusion is independently
+      documented: NCI PDQ nests LCNEC (large cell NEUROENDOCRINE carcinoma) inside "large cell
+      carcinoma," while Brainson 2021 and a dedicated review (Chen et al., *Front Oncol*, 2021,
+      PMID 35096557) keep the two fully separate, reporting non-overlapping mutation profiles
+      between them. No site model, no staging breakdown, and no stable driver profile exists in
+      modern literature for the classic entity — the genomic finding itself is a real, honest
+      negative worth stating rather than omitting: what mutations DO appear largely mirror the
+      adenocarcinoma spectrum at reduced frequency, not a distinct profile of its own (Rekhtman et
+      al., 2013). **Design decision, stated explicitly because it is new**: the below-floor
+      `blurb`+trials mechanism built for `psignet`/`pmuc` (incidence too low to author in full) is
+      reused here for a DIFFERENT real reason — definitional instability, not rarity — because the
+      mechanism itself (name/share/one line/citation/trials, nothing else) never depended on which
+      reason applied; only the stated reason in the blurb text differs. `cancerEntries.lcc.share`
+      states the real reclassification finding directly rather than repeating the stale NCI PDQ
+      figure as if it were still a stable fact. A live trials check independently corroborates the
+      same finding: every one of six live-kept results for a `large cell lung carcinoma` query
+      names LCNEC specifically — none is a "classic"/NOS large cell trial — consistent with
+      today's real clinical-trial activity having moved to the better-defined neuroendocrine
+      entity while the classic one has become vanishingly rare in practice.
+    - **Two real bugs caught live, before shipping, in this organ's own trials mappings — neither
+      is the `\bprostat\b` bug's own shape, and each forced a genuinely new capability.**
+      `requireAlso`'s existing same-string-co-occurrence mechanism (data rule 32) sufficed for
+      LUSC's positive organ-anchor, but a live 10-result sample caught a real false keep: the bare
+      keyword `'squamous'` matches the word "Squamous" inside "**Non**-Squamous Non-Small Cell
+      Lung Cancer" too, the identical word-boundary shape as substring containment, just running
+      in the opposite direction (a subtype term matching its own negation, rather than a disease
+      name matching its own negation). SCLC's own collision is structurally different again and
+      is not a cross-organ vocabulary problem at all: the literal string "small cell lung cancer"
+      is a substring of "**non-**small cell lung cancer," with every one of "small"/"cell"/
+      "lung"/"cancer" still individually whole-word-bounded inside the negated form — no positive
+      organ-anchor can ever separate them, since an NSCLC trial names "lung" too. Both fixed with
+      one new mechanism, `excludeIf` (`js/trials.js`'s `filterByCondition`, now a 4th parameter):
+      a condition string that matches `keywords`(+`requireAlso`) is instead rejected if that SAME
+      string also matches an exclude term — same-string logic, same as `requireAlso`, but
+      inverted. `excludeIf` reuses `keywordRegex` (now exported alongside `stemRegex`, for the
+      identical reason: a checker importing the real construction is a control, one reimplementing
+      it is not) rather than `stemRegex`, since "non-small"/"non square" are complete two-word
+      phrases, not stems needing prefix-only matching. Verified against a synthetic fixture before
+      shipping (a pure-NSCLC string dropped, a pure-SCLC string kept, and a real combined-trial
+      shape naming both as separate condition-array entries correctly kept via its own unexcluded
+      string) — condition (7), the same discipline `requireAlso`'s own positive control now
+      enforces. A THIRD live-caught gap, unrelated to either exclude case: the same 10-result SCLC
+      sample also caught a real false DROP — "SCLC, Limited Stage," the disease's own bare
+      acronym with neither "small cell" nor "lung" spelled out anywhere in that string — the exact
+      seminoma-bug shape (data rule 22) recurring a second time, fixed by adding `'sclc'` to
+      `conditionKeywords`. `.claude/trials_mapping_check.mjs` gained matching machinery for all of
+      this: `excludeIfPositiveControl` (the mirror of `requireAlsoPositiveControl`, tested against
+      the entry's own narrow-query corpus rather than the parent's, since a substring-contamination
+      term has no reason to appear broadly across the whole organ) and threaded `excludeIf`
+      through every `filterByCondition` call site the same way `requireAlso` was threaded through
+      in the prior pass.
+    - **The neuroendocrine histology family's own reuse projection, updated with a real second
+      data point.** SCLC's zero-new-drawing-code result is the family's second proof (after
+      `pductal`'s own, different-family, zero-new-code cribriform/frond reuse) — both confirm the
+      same leverage this atlas's histology-family architecture was built to test, now demonstrated
+      across two organs (prostate, lungs) and two distinct primitive families.
+    - **The extent-monotonicity check (`.claude/extent_monotonicity_check.py`) needed no new
+      entries for lusc/sclc, and running it live confirmed why rather than assuming it.** That
+      instrument validates a DIFFERENT statistic than `EXTENT_STATUS.shares` carries — 5-year
+      relative SURVIVAL-by-stage ordering from a live SEER Stat Facts page, not the stage-AT-
+      DIAGNOSIS distribution `lusc`/`sclc` cite to Brainson et al. 2021 — and it operates per PAGE,
+      not per histology: `luad`'s existing `ENTRIES` row already points at `lungb` (SEER's
+      combined "Lung and Bronchus Cancer" page — there is no subtype-specific SEER Stat Facts page
+      for squamous or small-cell lung cancer to point a new row at), and the checker's own
+      `seen_slugs` de-duplication means a `lusc`/`sclc` row pointing at that same URL would test
+      nothing a second time. Run live (2026-09-13) to confirm rather than trust from memory:
+      `lungb` reports `survival={'localized': 65.5, 'regional': 38.2, 'distant': 10.5}` —
+      monotonic, the only inversion anywhere in the 13-page run being the already-known,
+      already-`uncharacterised` GBM/brain one. Since lusc/sclc are ordinary solid-tumor lung
+      cancers staged by the same anatomic framework as adenocarcinoma — not a case like GBM's,
+      where CNS staging itself defeats the localized/regional/distant ordering — this is the
+      correct, sufficient confirmation that the extent axis carries real meaning for this site,
+      satisfying the check's own stated purpose (its Mode 3) without inventing a redundant entry.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward

@@ -681,3 +681,227 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   FAILED: absence_claim_check — exit 1
   | DONE battery: phase pre-commit — 15/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 576 citation records extracted (ratchet 576 held; set unchanged), 8/15 reporting members emitted a sidecar, 7 sidecar metrics ratcheted, 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-12T21:55:18Z reason=exit=1 marker="DONE duplicate_figure_check:" tool=duplicate_figure_check.py
+     output 41 lines, last 12 below
+  |      window: 49% of metastatic men 44% of
+  |      A=['49%', '44%']  B=['29%', '27%']
+  |   DRIFT? stomach:225 vs :229  (gene A='RHOA mutation' B='RHOA mutation')
+  |      window: other adenocarcinomas OR 0.3 same study
+  |      A=['0.3']  B=['0.4']
+  |   DRIFT? stomach:227 vs :231  (gene A='CLDN18–ARHGAP fusion' B='CLDN18–ARHGAP fusion')
+  |      window: 32% of metastatic gastric-cancer patients
+  |      A=['32%']  B=['12%']
+  |   duplicate_figure_check: 11 flag(s) — 0 dated for re-read, 10 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'lungs|None|95%, 35, 37|89%, 33, 37': lungs:437 vs :439 A=['95%', '35', '37'] B=['89%', '33', '37'] — fix it, declare it with a reason, or date it for re-read
+  | 
+  | DONE duplicate_figure_check: 2969 same-file string pairs compared, 11 drift flags, 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T21:55:19Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 44 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:198 — Frankell|2023 is at 206 (offset +8, name+year), 6 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:208 — Frankell|2023 is at 206 (offset -2, name+year), 6 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:201 — Discovery|2018 is at 209 (offset +8, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:248 — Awad|2021 is at 256 (offset +8, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:257 — Travis|2011 is at 265 (offset +8, name+year), 5 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:262 — Yoshizawa|2011 is at 270 (offset +8, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:268 — Yoshizawa|2011 is at 270 (offset +2, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:268 — Travis|2015 is at 276 (offset +8, name+year), 5 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/lungs.js: 9 off line, 3 distinct [-2, 2, 8]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 9, "pointer.identity_oracle": 272, "pointer.on_line": 260, "pointer.pointers_code": 461, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 606/606 hand-typed pointers resolve (file tracked, line in range), 461 code-and-instrument (floored) + 145 prose (reported, not floored) = 606 total, 260/272 with an author+year oracle land on their referent's line, 3 declared off-line, 9 flags, 41 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-12T21:55:41Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 60 lines, last 12 below
+  |   well-formed 'de Kouchkovsky'
+  |               js/organs/prostate.js:315
+  |   well-formed 'van Beek'
+  |               js/organs/stomach.js:237
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:100
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Cittolin-Santos' at js/organs/lungs.js:30, js/organs/lungs.js:391, js/organs/lungs.js:405, js/organs/lungs.js:407, js/organs/lungs.js:409, js/organs/lungs.js:411 (6 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'NCI PDQ' at js/organs/lungs.js:20 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 25, "heads_total": 27, "imprecise": 8, "problems": 2, "records": 49, "well_formed": 17}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 27 multi-token heads on 49/614 records, 8 declared imprecise, 17 declared well-formed, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T21:55:41Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 25 lines, last 12 below
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:433
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:503
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   UNSCORED  KEPT   Sabbula|2015|js/organs/lungs.js:347
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   UNSCORED  KEPT   Travis|2011|js/organs/lungs.js:276
+  |   PROBLEM: UNSCORED PAREN SPAN Sabbula|2015|js/organs/lungs.js:347 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: UNSCORED PAREN SPAN Travis|2011|js/organs/lungs.js:276 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: STALE SCORING Travis|2011|js/organs/lungs.js:268: scored CONFIRMS on the KEPT side, but no such span is in the population any more. If the sentence was rewritten or the record removed, delete the entry in the same commit — and if its basis was TEST, say so in the message, because deleting a TEST is deleting this rule's only real evidence.
+  | SIDECAR {"metrics": {"basis_fit": 3, "basis_test": 3, "kept": 5, "population": 8, "preregistered": 7, "problems": 3, "scored_confirms": 6, "scored_falsifies": 0, "spent": 3}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 8 paren spans (3 spent, 5 kept), 7 scored (3 as TEST, 3 as FIT and worth no support), 0 falsifying, 3 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T21:59:36Z reason=exit=1 marker="==== DONE:" tool=regress.js
+     output 251 lines, last 12 below
+  | ==== DONE: 236 checks, 1 failures, 2 page errors (2 declared benign, 0 undeclared) ====
+  | REGRESS VERDICT: 1 undeclared failing check(s), 0 stale declaration(s), 0 undeclared page error(s), 0 stale benign declaration(s) — exit 1
+  | [
+  |  {
+  |   "type": "404",
+  |   "msg": "http://localhost:3057/favicon.ico"
+  |  },
+  |  {
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |  }
+  | ]
+==== END REFUSAL
+==== REFUSAL 2026-09-12T21:59:36Z reason=exit=1 marker="DONE " tool=battery.py
+     output 892 lines, last 12 below
+  |      }
+  |     ]
+  |     RUN_CHECKED: command exited 1 — failure
+  |     RUN_CHECKED: refusal appended to $HOME/app/cancer-atlas/.claude/refusals.log
+  |     RATCHET RAISED: citation_crosscheck.records 192 -> 211 — growth moves it up with no ceremony; git add .claude/record_count.json in this commit
+  | 
+  |   FAILED: duplicate_figure_check — exit 1
+  |   FAILED: pointer_check — exit 1
+  |   FAILED: citation_head_check — exit 3
+  |   FAILED: citation_paren_ledger — exit 3
+  |   FAILED: regress — exit 1
+  | DONE battery: phase pre-commit — 11/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 614 citation records extracted (ratchet 576->614 raised; 38 added, 20 moved), 5/11 reporting members emitted a sidecar, 4 sidecar metrics ratcheted, 5 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:01:11Z reason=exit=1 marker="DONE duplicate_figure_check:" tool=duplicate_figure_check.py
+     output 41 lines, last 12 below
+  |      window: 49% of metastatic men 44% of
+  |      A=['49%', '44%']  B=['29%', '27%']
+  |   DRIFT? stomach:225 vs :229  (gene A='RHOA mutation' B='RHOA mutation')
+  |      window: other adenocarcinomas OR 0.3 same study
+  |      A=['0.3']  B=['0.4']
+  |   DRIFT? stomach:227 vs :231  (gene A='CLDN18–ARHGAP fusion' B='CLDN18–ARHGAP fusion')
+  |      window: 32% of metastatic gastric-cancer patients
+  |      A=['32%']  B=['12%']
+  |   duplicate_figure_check: 11 flag(s) — 0 dated for re-read, 10 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'lungs|None|95%, 35, 37|89%, 33, 37': lungs:437 vs :439 A=['95%', '35', '37'] B=['89%', '33', '37'] — fix it, declare it with a reason, or date it for re-read
+  | 
+  | DONE duplicate_figure_check: 2969 same-file string pairs compared, 11 drift flags, 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:01:12Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 44 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:198 — Frankell|2023 is at 206 (offset +8, name+year), 6 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:208 — Frankell|2023 is at 206 (offset -2, name+year), 6 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:201 — Discovery|2018 is at 209 (offset +8, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:248 — Awad|2021 is at 256 (offset +8, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:257 — Travis|2011 is at 265 (offset +8, name+year), 5 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:262 — Yoshizawa|2011 is at 270 (offset +8, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:268 — Yoshizawa|2011 is at 270 (offset +2, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/lungs.js:268 — Travis|2015 is at 276 (offset +8, name+year), 5 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/lungs.js: 9 off line, 3 distinct [-2, 2, 8]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 9, "pointer.identity_oracle": 272, "pointer.on_line": 260, "pointer.pointers_code": 461, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 606/606 hand-typed pointers resolve (file tracked, line in range), 461 code-and-instrument (floored) + 145 prose (reported, not floored) = 606 total, 260/272 with an author+year oracle land on their referent's line, 3 declared off-line, 9 flags, 41 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:01:34Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 60 lines, last 12 below
+  |   well-formed 'de Kouchkovsky'
+  |               js/organs/prostate.js:315
+  |   well-formed 'van Beek'
+  |               js/organs/stomach.js:237
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:100
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Cittolin-Santos' at js/organs/lungs.js:30, js/organs/lungs.js:391, js/organs/lungs.js:405, js/organs/lungs.js:407, js/organs/lungs.js:409, js/organs/lungs.js:411 (6 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'NCI PDQ' at js/organs/lungs.js:20 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 25, "heads_total": 27, "imprecise": 8, "problems": 2, "records": 49, "well_formed": 17}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 27 multi-token heads on 49/614 records, 8 declared imprecise, 17 declared well-formed, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:01:34Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 25 lines, last 12 below
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:433
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:503
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   UNSCORED  KEPT   Sabbula|2015|js/organs/lungs.js:347
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   UNSCORED  KEPT   Travis|2011|js/organs/lungs.js:276
+  |   PROBLEM: UNSCORED PAREN SPAN Sabbula|2015|js/organs/lungs.js:347 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: UNSCORED PAREN SPAN Travis|2011|js/organs/lungs.js:276 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: STALE SCORING Travis|2011|js/organs/lungs.js:268: scored CONFIRMS on the KEPT side, but no such span is in the population any more. If the sentence was rewritten or the record removed, delete the entry in the same commit — and if its basis was TEST, say so in the message, because deleting a TEST is deleting this rule's only real evidence.
+  | SIDECAR {"metrics": {"basis_fit": 3, "basis_test": 3, "kept": 5, "population": 8, "preregistered": 7, "problems": 3, "scored_confirms": 6, "scored_falsifies": 0, "spent": 3}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 8 paren spans (3 spent, 5 kept), 7 scored (3 as TEST, 3 as FIT and worth no support), 0 falsifying, 3 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:05:29Z reason=exit=1 marker="==== DONE:" tool=regress.js
+     output 251 lines, last 12 below
+  | ==== DONE: 236 checks, 1 failures, 2 page errors (2 declared benign, 0 undeclared) ====
+  | REGRESS VERDICT: 1 undeclared failing check(s), 0 stale declaration(s), 0 undeclared page error(s), 0 stale benign declaration(s) — exit 1
+  | [
+  |  {
+  |   "type": "404",
+  |   "msg": "http://localhost:3057/favicon.ico"
+  |  },
+  |  {
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |  }
+  | ]
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:05:29Z reason=exit=1 marker="DONE " tool=battery.py
+     output 846 lines, last 12 below
+  |       "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |      }
+  |     ]
+  |     RUN_CHECKED: command exited 1 — failure
+  |     RUN_CHECKED: refusal appended to $HOME/app/cancer-atlas/.claude/refusals.log
+  | 
+  |   FAILED: duplicate_figure_check — exit 1
+  |   FAILED: pointer_check — exit 1
+  |   FAILED: citation_head_check — exit 3
+  |   FAILED: citation_paren_ledger — exit 3
+  |   FAILED: regress — exit 1
+  | DONE battery: phase pre-commit — 11/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 614 citation records extracted (ratchet 614 held; set unchanged), 5/11 reporting members emitted a sidecar, 4 sidecar metrics ratcheted, 5 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:19:51Z reason=exit=1 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 11 lines, last 12 below
+  |   ok   every entry uses a declared side, basis and verdict []
+  |   ok   every reason clears the 80-char floor []
+  |   ok   FIT is still exactly the four spans the rule was fit to
+  |   FAIL UNSCORED fires on a new span, alone on a scored population ["UNSCORED PAREN SPAN Newcomer|2027|js/organs/thyroid.js:99 (rule says SPENT). A ')' sits
+  |   ok   STALE fires when a scored span is gone ["STALE SCORING Travis|2011|js/organs/lungs.js:276: scored CONFIRMS on the KEPT side, but
+  |   ok   SIDE MOVED fires when the rule re-decides a scored span ['SIDE MOVED Travis|2011|js/organs/lungs.js:276: scored as KEPT, the rule now says SPENT.
+  |   ok   FALSIFIED fires on an entry recording the claim failing ['FALSIFIED at Bad|2028|js/organs/thyroid.js:1: this entry records the pre-registered clai
+  |   FAIL a fully scored population is clean ['FALSIFIED at Sabbula|2015|js/organs/lungs.js:347: this entry records the pre-registered
+  |   ok   RULE LEFT ITS SHAPE fires on a flag-False paren-shadow and not on a flag-True one RULE LEFT ITS SHAPE at Ghost|2029|js/organs/thyroid.js:7: closed_year_
+  |   ok   basis_fit + basis_test == scored spans, and scored == population when clean {"basis_fit": 4, "basis_test": 4, "kept": 5, "population": 8, "preregistered": 8, "problems": 0, "scored_confirms": 7, "scored_falsifies": 1, "spent": 3}
+  | DONE citation_paren_ledger_selftest: 10 arms run, 2 failures
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:23:46Z reason=exit=1 marker="DONE " tool=battery.py
+     output 806 lines, last 12 below
+  |       "type": "404",
+  |       "msg": "http://localhost:3057/favicon.ico"
+  |      },
+  |      {
+  |       "type": "console",
+  |       "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |      }
+  |     ]
+  |     RATCHET RAISED: pointer_check.pointer.pointers_code 461 -> 464 — growth moves it up with no ceremony; git add .claude/record_count.json in this commit
+  | 
+  |   NO DONE LINE: citation_paren_ledger — ran without printing its marker (vacuous run; the 7-bis failure)
+  | DONE battery: phase pre-commit — 15/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 614 citation records extracted (ratchet 614 held; set unchanged), 7/15 reporting members emitted a sidecar, 6 sidecar metrics ratcheted, 1 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T22:31:23Z reason=exit=1 marker="DONE " tool=battery.py
+     output 818 lines, last 12 below
+  |      },
+  |      {
+  |       "type": "console",
+  |       "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |      }
+  |     ]
+  | 
+  |   RATCHET: records SHRANK 614 -> 613 (1 fewer). Either the producer silently lost records, or a real removal has not been declared. If the reduction is intended, step over the gap deliberately:
+  |       python3 .claude/battery.py pre-commit --lower-ratchet=613 --lower-reason="<why>"
+  |   RATCHET: pointer_check.pointer.pointers_code SHRANK 464 -> 463 (1 fewer). Either the producer silently lost records, or a real removal has not been declared. If the reduction is intended, step over the gap deliberately:
+  |       python3 .claude/battery.py pre-commit --lower-ratchet=463 --lower-reason="<why>"
+  | DONE battery: phase pre-commit — 16/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 613 citation records extracted (ratchet 614 BREACHED by 613; 1 removed), 8/16 reporting members emitted a sidecar, 7 sidecar metrics ratcheted, 2 problems
+==== END REFUSAL

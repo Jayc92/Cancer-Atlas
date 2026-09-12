@@ -160,6 +160,7 @@ IMPRECISE = {
 WELL_FORMED = (
     # hyphenated single-token surnames — the character class, working as intended
     'Barnholtz-Sloan',
+    'Cittolin-Santos',
     'Iacobuzio-Donahue',
     'Jamal-Hanjani',
     'Laurent-Puig',
@@ -183,6 +184,14 @@ WELL_FORMED = (
     # personal name IS the required attribution. Well-formed for what it is; flagged here because a
     # reader scanning for surnames would otherwise stop on it.
     'Heidi Schlehlein',
+    # NOT A PAPER, SAME TREATMENT: lungs.js:20 reads "~25% of all lung cancers, confirmed current
+    # (NCI PDQ, 2026; StatPearls' independent ~30% of NSCLC nets to the same figure)". "NCI PDQ" is
+    # this atlas's genuine, correct short name for the National Cancer Institute's Physician Data
+    # Query — an organizational source, not a personal surname, and inherently two tokens (an
+    # acronym pair) the same way "Heidi Schlehlein" is inherently two words. The "2026" the
+    # extractor reads as a year is this atlas's own page-access year for that PDQ page, not a
+    # publication year of a paper called "NCI PDQ" — well-formed for what it names, not a paper.
+    'NCI PDQ',
 )
 
 

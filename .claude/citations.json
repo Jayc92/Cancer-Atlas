@@ -3340,7 +3340,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:191"
+    "js/organs/lungs.js:199"
    ],
    "pmid": "28445112",
    "resolvedTitle": "Tracking the Evolution of Non-Small-Cell Lung Cancer.",
@@ -3363,9 +3363,9 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/lungs.js:198",
     "js/organs/lungs.js:206",
-    "js/organs/lungs.js:208"
+    "js/organs/lungs.js:214",
+    "js/organs/lungs.js:216"
    ],
    "pmid": "37046096",
    "resolvedTitle": "The evolution of lung cancer and impact of subclonal selection in TRACERx.",
@@ -3386,7 +3386,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:201"
+    "js/organs/lungs.js:209"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
@@ -3397,7 +3397,7 @@
    "status": "still-zero-pass",
    "userFacing": true,
    "refs": [
-    "js/organs/lungs.js:248"
+    "js/organs/lungs.js:256"
    ],
    "candidates": [
     {
@@ -3430,7 +3430,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:257"
+    "js/organs/lungs.js:265"
    ],
    "pmid": "21252716",
    "resolvedTitle": "International association for the study of lung cancer/american thoracic society/european respiratory society international multidisciplinar",
@@ -3450,8 +3450,8 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:262",
-    "js/organs/lungs.js:268"
+    "js/organs/lungs.js:270",
+    "js/organs/lungs.js:276"
    ],
    "pmid": "21252858",
    "resolvedTitle": "Impact of proposed IASLC/ATS/ERS classification of lung adenocarcinoma: prognostic subgroups and implications for further revision of stagin",
@@ -3472,7 +3472,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/lungs.js:268"
+    "js/organs/lungs.js:276"
    ],
    "pmid": "26291008",
    "resolvedTitle": "The 2015 World Health Organization Classification of Lung Tumors: Impact of Genetic, Clinical and Radiologic Advances Since the 2004 Classif",

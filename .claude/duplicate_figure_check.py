@@ -40,6 +40,12 @@ DECLARED = [
     {'key': 'prostate|Concurrent TP53 + RB1 loss|2016, 26855148, 4777652|2025, 40172755, 11963801', 'reason': 'false positive: two unrelated citations for two different entities — pneuro\'s own TP53+RB1 trunk note (Beltran et al., Nat Med, 2016) vs pductal\'s own SPOP-enrichment trunk note (Zhu et al., 2025) — same shared-boilerplate collision as the AR-pathway/AURKA pairs above', 'until': None},
     {'key': 'prostate|None|2025, 40172755, 11963801|2016, 27756888, 5347709', 'reason': 'false positive: two different real findings within pductal\'s own citations — Zhu et al. (2025)\'s SPOP-enrichment finding (TRUNK_PDUCTAL) vs Schweizer et al. (Oncotarget, 2016)\'s independent DDR-alteration cohort (PRIVATE_POOL_PDUCTAL) — neither has a gene: label nearby for the matcher to key on, and neither number is the other restated', 'until': None},
     {'key': 'prostate|TMPRSS2-ERG fusion (shared with acinar, |2019, 31123724, 6528668|2025, 40172755, 11963801', 'reason': 'false positive: two different citations inside pductal\'s own single TRUNK_PDUCTAL ccf/note string — Schweizer et al. (JCO Precis Oncol, 2019)\'s ERG-fusion-frequency-range figure and Zhu et al. (2025)\'s SPOP-enrichment figure are two separate claims in one dense multi-citation field, not one figure drifted', 'until': None},
+    # SEVENTH, READ 2026-09-13 (lungs sclc authoring pass). Two different drawn histology features
+    # from the SAME n=37 cytomorphology cohort (Ng & Li, Ann Diagn Pathol, 2024) share the "present
+    # in X% of cases (N/37 in the source cohort)" template — nuclear molding 95% (35/37) at one
+    # feature and naked nuclei 89% (33/37) at the other. Two real, independently-verified figures
+    # from one cited paper, not one figure restated with drifted numbers.
+    {'key': 'lungs|None|95%, 35, 37|89%, 33, 37', 'reason': 'false positive: two different SCLC histology features on the shared Ng & Li 2024 (n=37) cohort template — nuclear molding 95% (35/37) and naked nuclei 89% (33/37) — the same shared-citation-template class as the entries above, not a drifted duplicate', 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
