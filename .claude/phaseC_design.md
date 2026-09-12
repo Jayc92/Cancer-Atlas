@@ -363,6 +363,99 @@ on the current aggregate for now, flagged here rather than fixed, pending either
 population-weighted blend (needs US Census/ACS race-proportion data as a third source, which adds
 its own compounding-error risk) or a cleaner national-count source not yet found.
 
+### §6b — the aggregate-with-scope-note pattern is RETIRED; replaced with a stated arithmetic
+### bound (2026-09-12, user-directed correction to §6a's own method)
+
+**§6a's own framing was wrong, and the user caught it before it shipped as policy.** A
+"divergence check" presumes the aggregate is usually fine and occasionally isn't. Counting
+carefully: of the fifteen entries checked against real subtype-specific literature across this
+whole extent-axis arc (five ovary entries plus the ten from §6a), most turned out wrong, not a
+minority — this is the DEFAULT failure mode of showing one organ-wide number on a subtype entry,
+not an exception worth spot-checking for. The scope-note disclosure ("not the X subtype alone")
+was never a safeguard; it only ever disclosed the mechanism of a problem it did nothing to bound.
+
+**The replacement is a stated arithmetic bound, not a heuristic.** The organ aggregate is a
+share-weighted average of its subtypes: `aggregate = s·x + (1−s)·y`, where `x` is the subtype's own
+true value, `s` its own share, and `y` the weighted average of every other subtype sharing the
+organ. Rearranging: `aggregate − x = (1−s)·(y−x)`, and since both `x` and `y` are percentages in
+[0,100], `|y−x| ≤ 100`. So **`|aggregate − x| ≤ (1−s)×100`, a provable, not empirical, upper bound**
+on how far any single category's true figure can sit from the organ aggregate, for a subtype at
+share `s`. At `s=95%` the bound is 5 points; at `s=90%` it is 10 points; at `s=52%` (GBM's own
+share of malignant brain/CNS tumors, found while re-examining under this rule — see below) it is
+48 points, large enough to make the aggregate worthless as a stand-in with no way to know without
+checking.
+
+**The rule, replacing §6/§6a's whole framing: an organ-level distribution may be shown on a
+subtype entry ONLY where the subtype's own cited share bounds the per-category error under the
+display's own precision — roughly `s ≥ 90%` — AND the bound itself must be stated on the entry, in
+its own `basis` or a dedicated field, not left implicit. Below `s ≈ 90%`: the entry needs real
+per-subtype data (found by search, the way Peres 2019/Aschebrook-Kilfoy/Zou/Flores/Hu/Brainson
+were), or the honest state is `uncharacterised`.** This reproduces every finding in §6a without
+needing to have checked anything empirically first: every entry that diverged (`tnbc`, `ftc`,
+`gdiff`, `luad`, `hcc`, `ccrcc`) sits below 90% share; every entry confirmed clean (`pdac`, `uc`,
+`acinar`) sits at or above it — except `ptc` (~84%), which the rule correctly sends for a check it
+happens to pass. **That is the correct error direction for a served-figure guard: an
+over-flag costs one read; an under-flag ships a wrong number, which is what happened nine (or by
+this document's own precise count, up to eleven — see the count note below) times over before
+anyone applied a rule at all.**
+
+**Re-examined under the rule, as instructed — not left as "happened to match":**
+- **`ptc` (~84% share, below the bound) is RE-CLASSIFIED, not merely left alone because its
+  numbers were close.** Its `EXTENT_STATUS` entry is migrated fully onto Aschebrook-Kilfoy et al.
+  2011's own PTC-specific counts (63/32/3/2, from 15,665/7,802/856/418 of 24,741) as the PRIMARY
+  source, with the SEER Stat Facts aggregate demoted to a cross-check note — matching exactly the
+  treatment `ftc` already got, rather than leaving `ptc` on the aggregate with a mere
+  cross-reference comment. "Happened to match" is not a property a schema field should encode as
+  if it were "backed by a per-subtype source" — the two are different claims, and the entry now
+  makes the true one.
+- **`pdac` (~90%), `uc` (~92%), `acinar` (99.68%) all clear the bound and MAY stay on the aggregate
+  — but were not yet stating the bound, so they didn't yet comply with the rule's second
+  requirement.** Fixed: each entry's `basis` now states its own share and the resulting maximum
+  per-category error explicitly (pdac ≤10 points; uc ≤8 points; acinar ≤0.3 points), so a future
+  reader of the entry — not just of this design document — can see why the aggregate is trusted
+  here and not elsewhere, without needing to recompute it.
+- **Two entries this whole arc had NEVER CHECKED AT ALL — found only by re-deriving the full list
+  of `EXTENT_STATUS.status==='cited'` entries against their own `siteNote` wording, rather than
+  trusting §6's own enumeration, which silently missed them.** `crc` (colorectal adenocarcinoma,
+  cited share `>90% of colonic malignancies`, StatPearls) clears the bound and gets the same
+  bound-statement treatment as pdac/uc/acinar. **`gbm` (glioblastoma) does NOT clear it — its own
+  cited share is 52.2% of MALIGNANT brain/CNS tumors (CBTRUS), the lowest share of any cited entry
+  in the whole atlas, giving a 48-point bound.** Checked, and resolved as `uncharacterised` rather
+  than replaced with a per-subtype number, on a stronger finding than a missing source: a real
+  search found no GBM-specific stage distribution anywhere, AND three independent sources confirm
+  the CONCEPT doesn't apply to this disease — NCI PDQ states directly "There is no standard
+  staging system for adult brain and spinal cord tumors"; CBTRUS's own methodology (Price et al.,
+  Neuro-Oncology, 2024, PMID 39371035) states primary brain/CNS tumors are classified by WHO GRADE,
+  not AJCC stage; and the SEER page's own survival-by-stage table is internally degenerate for this
+  site (Regional's 20.1% five-year survival is WORSE than Distant's 28.0%; Unknown/Unstaged's
+  32.2% survives nearly as well as Localized's 35.3%) — the opposite of the clean gradient every
+  epithelial cancer in this atlas shows, because the category's own template label ("Spread to
+  Regional Lymph Nodes") is anatomically nonsensical for an intracranial tumor. `extentSentence()`'s
+  uncharacterised branch gained an `ext.uncharacterisedReason` override for exactly this shape — the
+  hardcoded default sentence ("publishes no stage-at-diagnosis distribution") would have been FALSE
+  for `gbm`, since a distribution is published, it's just clinically meaningless for this organ;
+  the same wording gap §6 itself had already flagged as real and unclosed. This is the sweep's most
+  serious near-miss: `gbm`'s share is the LOWEST of any entry that used this pattern, yet it was
+  the one entry never even added to the checklist, because §6's own enumeration was built by
+  memory/pattern-matching against a handful of examples rather than by deriving the full set from
+  the code. **The lesson generalizes past this one entry: any future re-derivation of "which
+  entries use pattern X" should be done by grep against the code's own field, never by
+  recollecting a list from an earlier pass.**
+- **A count correction, made honestly rather than argued past, and now complete rather than
+  fractional:** with `gbm` and `crc` added, EVERY ONE of the atlas's nineteen `EXTENT_STATUS`
+  entries has now been examined under this rule — not a sample, the whole population. Precisely
+  counted: `hgsoc`/`clear`/`endo`/`muc` (4, ovary, three with a modal flip) +
+  `ftc`/`gdiff`/`luad`/`hcc`/`ccrcc`/`tnbc` (6, §6a, none with a modal flip) + `gbm` (1, reclassified
+  `uncharacterised` — the concept itself doesn't apply, not just the number) = **11 of 19 needed a
+  real fix or reclassification**; `pdac`/`crc`/`acinar`/`uc` (4) cleared the share bound and now
+  state it explicitly; `ptc` (1) was migrated to its own per-subtype source despite its numbers
+  having been close, because "happened to match" isn't the same claim as "backed by a per-subtype
+  source"; `melanoma`/`seminoma` (2) were never on the aggregate pattern to begin with; `lgsc` (1)
+  was switched for consistency with its four ovary siblings rather than for failing a divergence
+  test on its own merits. 11+4+1+2+1 = 19. `tnbc` is the one entry still on the retired pattern,
+  deliberately, pending the wording ruling in the same message that produced this rule — the last
+  thing standing between this section and full compliance.
+
 ## 7. Item 2 — histology generators DO factor into families, proven by building a fourth
 ## (2026-09-11, user-directed test)
 
