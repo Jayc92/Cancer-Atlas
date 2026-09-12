@@ -167,6 +167,7 @@ WELL_FORMED = (
     'Perez-Sanchez',
     'Segura-Moreno',
     # lowercase particles — SURNAME's leading (van|von|de|der|...) clause
+    'de Kouchkovsky',
     'van Beek',
     'van der Kaaij',
     'von der Maase',

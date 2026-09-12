@@ -294,6 +294,18 @@ export const MARGIN_STATUS = Object.freeze({
   // not a gross citation; thirteen further OA full texts, no gross sentence. NEGATIVE on the register rule,
   // so: not characterised at gross level in the sources read. Draws the reserved placeholder beside PTC.
   ftc:      { status: 'uncharacterised', ref: 'read 2026-09-09 — encapsulation described only in the histopathologic register (PMC12012812), no gross sentence found; was a harvest seed' },
+  // pneuro/pductal, 2026-09-12 (phaseC_design.md §13's clinical-distinctiveness exceptions):
+  // checked directly, not assumed carried-over from acinar — no gross-register margin/
+  // circumscription sentence was found for either entity in this pass's own literature search
+  // (which was scoped to the mutation ledger, site model, and histology; a dedicated gross-
+  // pathology margin search was run but returned nothing citable for pneuro specifically, and
+  // none was found for pductal either). Both entities are frequently sampled by needle biopsy or
+  // TURP rather than always by a gross specimen large enough to characterise a margin at all —
+  // a real, plausible reason a clean sentence may not exist, matching this atlas's own
+  // "grossly inapparent" register-mismatch finding for acinar adenocarcinoma above, though NOT
+  // confirmed stated that way for either entity, so not claimed as the reason here.
+  pneuro:   { status: 'uncharacterised', ref: 'checked 2026-09-12 — no gross-register margin/circumscription sentence found for prostatic neuroendocrine/small cell carcinoma in this pass\'s own search' },
+  pductal:  { status: 'uncharacterised', ref: 'checked 2026-09-12 — no gross-register margin/circumscription sentence found for prostatic ductal adenocarcinoma in this pass\'s own search' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -381,6 +393,10 @@ export const GROWTH_STATUS = Object.freeze({
   seminoma: { status: 'unread', ref: 'growth source not read (listed for an external read; none made)', until: '2026-10-01' },
   ptc:      { status: 'cited', category: 'infiltrative', register: 'G', badgeSource: 'StatPearls, Papillary Thyroid Carcinoma (NBK536943)', badgeQuote: 'typically presents as an invasive neoplasm', ref: 'R18 NBK536943 PMID 30725628 — EDGE ("an invasive neoplasm"); the margin half of the same sentence is R17 — two words, two axes, declared; RENDERED' },
   ftc:      { status: 'unread', ref: 'growth source not read', until: '2026-10-01' },
+  // pneuro/pductal, 2026-09-12: same check, same result as the margin axis above — no
+  // gross-register growth-pattern sentence found for either entity in this pass's own search.
+  pneuro:   { status: 'uncharacterised', ref: 'checked 2026-09-12 — no gross-register growth-pattern sentence found for prostatic neuroendocrine/small cell carcinoma in this pass\'s own search' },
+  pductal:  { status: 'uncharacterised', ref: 'checked 2026-09-12 — no gross-register growth-pattern sentence found for prostatic ductal adenocarcinoma in this pass\'s own search' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -517,6 +533,19 @@ export const EXTENT_STATUS = Object.freeze({
   // 2019) confirm non-urothelial types present later, but any resulting bias runs conservative —
   // stripping them out would push urothelial's own in-situ/localized share HIGHER, not lower.
   uc: { status: 'cited', site: 'urinary bladder', siteNote: 'bladder cancer as a whole, of which urothelial carcinoma is ~92% (Park et al., 2023) — bounding any per-category error at ≤8 points', shares: { inSitu: 50, localized: 34, regional: 7, distant: 6, unknown: 3 }, modal: 'in situ', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Bladder Cancer', ref: 'https://seer.cancer.gov/statfacts/html/urinb.html — verified 2026-09-10; share-bound re-confirmed 2026-09-12' },
+  // pneuro/pductal, 2026-09-12 (phaseC_design.md §13's clinical-distinctiveness exceptions): the
+  // SHARE-BOUND RULE forbids the organ aggregate directly — pneuro's 0.03% share bounds any
+  // per-category error at ~99.97 points, pductal's 0.20% at ~99.8, neither remotely near the
+  // ≥90% safety threshold — and no dedicated SEER Stat Facts page exists for either histologic
+  // subtype specifically (checked, not assumed). Wang et al., Prostate, 2019, PMID 31376193 (the
+  // real, dedicated SEER cohort already cited for pneuro's own site model) reports real
+  // metastatic-SITE percentages for pure NEPC, a genuinely different statistic from the SEER
+  // Summary Stage Localized/Regional/Distant/Unknown categories this axis specifically renders —
+  // its abstract gives no clean breakdown in that format, and this pass did not fetch the full
+  // text to check for one. Recorded honestly as uncharacterised rather than forcing an
+  // ill-fitting derivation from a real but differently-shaped source.
+  pneuro: { status: 'uncharacterised', site: 'prostate', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at 0.03% share, and no dedicated SEER Stat Facts page exists for this histologic subtype; Wang et al. (2019, PMID 31376193) gives real metastatic-site percentages for pure NEPC but not a SEER-Summary-Stage-formatted breakdown, and this pass did not fetch its full text to check for one', ref: 'checked 2026-09-12 — no SEER Stat Facts page for this histologic subtype' },
+  pductal: { status: 'uncharacterised', site: 'prostate', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at 0.20% share, and no dedicated SEER Stat Facts page or per-subtype stage-at-diagnosis source was found for this histologic subtype in this pass\'s own search', ref: 'checked 2026-09-12 — no SEER Stat Facts page for this histologic subtype' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';
@@ -676,6 +705,16 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   // OR 2.04 (1.67-2.48, p<0.0001) for endometrioid, a real, independent, elevated risk on the
   // SAME pooled analysis clear's own OR 3.05 already comes from.
   endo: 1,
+  // pductal ADDED 2026-09-12 (phaseC_design.md §13's "then prostate" authoring) — the SAME
+  // exemption expiry as endo above, on prostate this time: pductal becoming active gives
+  // prostate a second active entry, and its real origin differs from acinar's peripheral-zone
+  // default. Seipel et al., Virchows Arch, 2013, PMID 23443941 (a systematic re-review of 1,051
+  // radical prostatectomies, the SAME paper already cited in this organ file for the 8.2%
+  // any-component admixture prevalence — this is its own zone-of-origin finding, not a second
+  // source): "Location was periurethral, peripheral, or both in 69.8, 3.5, and 26.7 %." Index 3
+  // is the Prostatic urethra hotspot, whose own text now carries this origin fact directly (the
+  // reserve_check requirement this mechanism enforces).
+  pductal: 3,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never

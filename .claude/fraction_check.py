@@ -138,6 +138,7 @@ from tolerated import resolve
 DECLARED = [
     {'key': 'pancreas|field|~50%|25/84', 'reason': 'false positive: ~50% is the pathway-level SMAD4 loss share, 25/84 the homozygous-deletion mechanism share within it (Hahn 1996); the matcher pairs nearest percent to nearest fraction', 'until': None},
     {'key': 'pancreas|comment|~50%|25/84', 'reason': 'the comment block mirrors the field string above: same false positive, same mechanism', 'until': None},
+    {'key': 'prostate|field|14%|25/51', 'reason': "false positive, same mechanism as pancreas above: 49% (=25/51, Schweizer et al., 2019) is the DDR-pathway-alteration cohort share pductal's PRIVATE_POOL_PDUCTAL cites; 14% mismatch-repair and 31% homologous-repair are two sub-breakdown shares within that same cohort, textually nearer to 25/51 than 49% is, so the matcher pairs the wrong percent to the fraction", 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

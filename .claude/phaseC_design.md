@@ -753,14 +753,21 @@ this section exists to make (folded into §2's checklist above as its new step 0
 
    | entry | organ | mechanism | source |
    |---|---|---|---|
-   | prostate neuroendocrine (staged, not yet authored) | prostate | treatment-emergent lineage plasticity from pre-existing acinar adenocarcinoma | de Kouchkovsky et al., *The Prostate*, 2024, PMID 38173302 |
+   | prostate neuroendocrine (`pneuro`, AUTHORED 2026-09-12) | prostate | treatment-emergent lineage plasticity from pre-existing acinar adenocarcinoma | de Kouchkovsky et al., *The Prostate*, 2024, PMID 38173302 |
 
-**What this does NOT resolve, stated so it isn't assumed closed:** whether prostate's neuroendocrine
-entry ALSO has a real, minority, genuinely-de-novo form with its own independent site preference is
-unchecked — the review this finding rests on is specifically about treatment-emergent NEPC, the
-dominant and best-studied form, not a claim that de novo NEPC doesn't exist. If prostate's
-neuroendocrine entry is authored, that distinction needs its own read before the entry's trunk note
-asserts transformation as the ONLY route, not merely the dominant one.
+**What this DID resolve, on authoring — the de-novo-vs-treatment-emergent distinction this row
+used to flag as unchecked.** `pneuro`'s trunk note (TP53+RB1 concurrent loss, `TRUNK_PNEURO` in
+`js/organs/prostate.js`) cites Beltran et al., *Nat Med*, 2016 for the transdifferentiation
+mechanism itself and states it as what drives the transformation FROM acinar disease, never as the
+only route by which neuroendocrine prostate cancer can exist — it does not claim de novo NEPC
+doesn't exist, and the entry does not need it to, since the mechanism claim and the population claim
+are kept separate. That separation is deliberate, not incidental: `REGIONS_PNEURO`'s own site model
+draws its metastatic-pattern figures from Wang et al., *Prostate*, 2019, PMID 31376193 — a cohort of
+352 **pure, de novo** NEPC cases (explicitly labeled as such in the source's own methodology and in
+this atlas's own code comment) — while the trunk mechanism draws from Beltran 2016's
+treatment-emergent cohort. Each claim is sourced from the population it actually describes rather
+than one cohort's figures standing in for both, which is the "own read" this row asked for before
+authoring.
 
 ## 10. Item 4 — a proposed incidence floor for build-out, with the resulting count
 ## (2026-09-11/12, user-directed; RULING NEEDED, nothing decided here)
@@ -1146,3 +1153,41 @@ authoring (mutations/trunk/branch, region ids, extent, histology, trials wiring)
 `pductal` and `pneuro`. `psignet` and `pmuc` get the below-floor treatment — `blurb` field content
 plus (pending the structural-design ruling above) an inline trials mapping — and nothing beyond
 that. Standing gates, served-asset scoped, everything through `at_root.sh`, as always.
+
+## 14. "Then prostate" executed — full authoring for `pductal`/`pneuro`, below-floor blurbs for
+`psignet`/`pmuc`, the atlas-wide share-predominance rule recorded once (2026-09-12)
+
+**Everything ruling 5 above scoped is now built.** The exhaustive citation record lives in
+CLAUDE.md's data rule 32 (this document stays the design/reasoning trail, not a second copy of the
+sourcing) — this section records what changed and closes the loop on the open items ruling 5 left
+outstanding.
+
+- **`share` means predominance, not presence — recorded once, atlas-wide, not per entry.**
+  CLAUDE.md's data rule 31, using `pductal` as the worked example: registry histology coding
+  assigns a subtype only at ≥50% of a tumor's own composition (Siech et al., 2026's own Limitations
+  section, quoted verbatim), so `pductal`'s ~0.20%/~50-per-year figure is a predominance share
+  against a real ~8.2% any-component prevalence (Seipel 2013) — thirteen to forty times apart. One
+  sentence in the disclaimer's methodology paragraph carries this to readers; the per-organ citation
+  list also gained new clauses for `pneuro` and `pductal`'s own sourcing.
+- **`pductal` authored in full**, including the periurethral origin override (69.8% periurethral-only
+  + 26.7% both, Seipel 2013 — verified independently before use, since the design-doc summary this
+  session inherited had misattributed the figure to two other papers) and the "Prostatic urethra"
+  hotspot prose rewrite, held to the register guard as a change to already-served content, not a
+  bare append.
+- **`pneuro` authored in full**, closing this section's own §9 registry row (above) and carrying the
+  two facts a reader cannot get from the site map or histology alone: PSA can read normal or low
+  (Conteduca 2019, Beltran 2016), and treatment diverges to chemotherapy rather than ADT (Beltran
+  2016) — both stated in prose, per data rule 2's standing "say what's illustrative, explicitly,
+  in-product" instruction.
+- **`psignet` and `pmuc` shipped as below-floor blurbs** — name, share, a resolvable PMID/PMCID
+  citation, one plain-stated sentence recording the negative clinical-distinctiveness finding
+  (Siech 2025: no cancer-specific-mortality difference from acinar), and an inline trials toggle —
+  nothing beyond that boundary, per the approved schema.
+- **Trials keyword conjunction shipped for all four entities**, `requireAlso: ['prostat']`, each
+  verified live against real ClinicalTrials.gov JSON before being written — the fetch-time filter
+  cannot catch this class of collision on its own because it shares the same keyword list the filter
+  is built from, the same reason seminoma's own keyword omission (data rule 22) survived unnoticed.
+- **The inline below-floor trials toggle UI itself** (`renderCancerList()` in `js/main.js`, reusing
+  `trials.js`'s `fetchTrialsForEntry` directly per the approved "cheapest rendering, no new screen"
+  design) is the one piece of this ruling's scope still open as of this section being written —
+  tracked in the session's own task list, not assumed done by this document's existence.

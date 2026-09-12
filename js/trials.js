@@ -122,6 +122,49 @@ export const TRIALS_CONDITION_MAP = {
     conditionKeywords: ['prostate'],
     note: '10/10 sample kept, 0 dropped.',
   },
+  pneuro: {
+    query: 'neuroendocrine prostate cancer', parent: 'prostate cancer',
+    conditionKeywords: ['neuroendocrine', 'small cell'], requireAlso: ['prostat'],
+    note: 'RE-VERIFIED LIVE 2026-09-12 against the fixed filterByCondition below (see stemRegex\'s '
+      + 'own comment): the prior "10/10 kept" record here was made against a requireAlso that '
+      + 'could never actually match — \\bprostat\\b demands "prostat" be a complete word, which it '
+      + 'never is inside "Prostate" — so every below-floor/pneuro/pductal mapping using it was '
+      + 'silently over-dropping. Corrected result, fetched fresh rather than assumed unchanged '
+      + 'from the broken run: 4/10 kept. Kept — each genuinely prostate NEPC, each combining the '
+      + 'subtype and the organ in ONE condition string: NCT07639086 ("Sacituzumab Tirumotecan in '
+      + 'Pts w/ NEPC After Progression on Prior Chemotherapy"; "Neuroendocrine Prostate Cancer '
+      + '(NEPC)"), NCT07006727 and NCT07488923 (both real multi-tumour DLL3-targeting baskets '
+      + 'naming "Neuroendocrine Prostate Cancer" as one of their own listed conditions), and '
+      + 'NCT03866382 (a rare-genitourinary-tumours basket naming "Metastatic Prostate Small Cell '
+      + 'Neuroendocrine Carcinoma" directly). Dropped — 3 with no neuroendocrine/small-cell '
+      + 'condition of any kind (prostate mentioned, but for an unrelated reason); 3 are the '
+      + 'requireAlso rule working as designed, not a miss: real baskets naming prostate cancer AND '
+      + 'a neuroendocrine/small-cell entity as two SEPARATE, unconnected conditions — NCT06242470 '
+      + 'lists "Castration Resistant Prostatic Cancer" alongside an unrelated "Small-cell Lung '
+      + 'Cancer", NCT07620574 lists "Prostate Cancer" alongside an unrelated "Pancreatic '
+      + 'Neuroendocrine Tumors (pNET)", NCT07124000 lists "Prostate Cancer" alongside an unrelated '
+      + '"Neuroendocrine, Gastrointestinal Cancer" — independent-array matching would have kept '
+      + 'all three as false "prostate NEC" results, the exact NCT03602079 shape pmuc\'s own note '
+      + 'documents, now confirmed live a second and third time on this entry\'s own corpus.',
+  },
+  pductal: {
+    query: 'prostatic ductal adenocarcinoma', parent: 'prostate cancer',
+    conditionKeywords: ['ductal'], requireAlso: ['prostat'],
+    note: 'A THIRD confirmed instance of the exact collision the ruling anticipated, checked '
+      + 'live 2026-09-12: the organ-anchored query itself returns 10 results, and WITHOUT '
+      + 'requireAlso every single one would be a false keep — the bare word "ductal" is '
+      + 'overwhelmingly associated with PANCREATIC ductal adenocarcinoma (PDAC) in this '
+      + 'registry, not prostate; several results ALSO separately tag "Prostate Cancer"/'
+      + '"Prostatic Neoplasms" alongside "Pancreatic Ductal Adenocarcinoma" as two unrelated '
+      + 'basket-trial entries (NCT07623642, NCT06999187, NCT06943521 among them) — the same '
+      + 'NCT03602079 shape, confirmed a second time on a different entry. With same-string '
+      + 'co-occurrence required: 0/10 kept, all 10 correctly dropped. Real disease rarity '
+      + '(~50 US cases/year), not a broken query; expect EMPTY-ANSWERED. RE-VERIFIED LIVE '
+      + '2026-09-12 against the requireAlso regex bug fixed on pneuro\'s entry above (stemRegex '
+      + 'now used in place of a wrongly-\\b-bounded keywordRegex) — outcome unchanged, 0/10 kept '
+      + 'on a fresh fetch: the bug always over-dropped, never over-kept, so this entry\'s already-'
+      + 'zero result was never a false negative masking a real match, and is not one now either.',
+  },
   crc: {
     query: 'colorectal adenocarcinoma', parent: 'colorectal cancer',
     conditionKeywords: ['colorectal', 'colon', 'rectal'],
@@ -209,6 +252,44 @@ export const TRIALS_CONDITION_MAP = {
       + 'trial (NCT04111978) tags "Low-grade Serous Ovarian Carcinoma (LGSOC)" alongside '
       + '"Fallopian Tube Neoplasms"/"Peritoneal Neoplasms" as one eligible population.',
   },
+  // ---- below-floor entries, 2026-09-12 (phaseC_design.md §13) — name/share/citation/blurb
+  // only, no mass/histology/extent; trials is the one thing they get beyond that. Both use
+  // `requireAlso` (see filterByCondition's own comment for why a bare OR-list is unsafe for
+  // these two specifically) and both currently resolve to EMPTY-ANSWERED under the live
+  // RECRUITING/etc. filter — checked directly, not assumed: real disease rarity (~3/yr, ~19/yr),
+  // not a broken query, matching the honest "no trials found" state the ruling explicitly
+  // accepted as useful information rather than a defect to work around.
+  psignet: {
+    query: 'prostatic signet ring cell adenocarcinoma', parent: 'prostate cancer',
+    conditionKeywords: ['signet ring'], requireAlso: ['prostat'],
+    note: 'Organ-anchored query returns 0 studies under the RECRUITING/NOT_YET_RECRUITING/'
+      + 'ENROLLING_BY_INVITATION filter and, at ANY status, only one unrelated 1990s '
+      + 'gene-therapy trial (condition: bare "Cancer") — checked live 2026-09-12. Real disease '
+      + 'rarity (~3 US cases/year, Siech et al. 2026), not a broken query; expect '
+      + 'EMPTY-ANSWERED. requireAlso is load-bearing here more than for any prior entry: a bare '
+      + '"signet ring cell carcinoma" query with NO organ anchor returns 15 real recruiting-or-'
+      + 'any-status studies, all gastric or colorectal, zero prostate. RE-VERIFIED LIVE 2026-09-12 '
+      + 'against the requireAlso regex bug fixed on pneuro\'s entry above — irrelevant here either '
+      + 'way, since the organ-anchored query itself already returns 0 studies before requireAlso '
+      + 'ever runs.',
+  },
+  pmuc: {
+    query: 'prostatic mucinous adenocarcinoma', parent: 'prostate cancer',
+    conditionKeywords: ['mucinous'], requireAlso: ['prostat'],
+    note: 'Organ-anchored query returns 1 study under the RECRUITING/etc. filter, and it is '
+      + 'itself a false match on inspection (conditions: "Motor Function", "Cognitive Function", '
+      + '"Contrast Media" — a gadolinium-contrast imaging study with no oncology content at all) '
+      + '— dropped correctly by the base keyword check alone. Checked live 2026-09-12; expect '
+      + 'EMPTY-ANSWERED. requireAlso is load-bearing: a bare "mucinous adenocarcinoma" query '
+      + 'with no organ anchor returns 10 real recruiting studies, all endometrial/appendiceal/'
+      + 'pancreatic/breast, zero prostate; and a real basket trial in the organ-anchored '
+      + 'ANY-status result (NCT03602079) lists "Mucinous Adenocarcinoma Gastric" and "Prostate '
+      + 'Cancer" as two separate, unrelated entries among 24+ tumour types — same-string '
+      + 'co-occurrence (not independent array matching) is what correctly excludes it. '
+      + 'RE-VERIFIED LIVE 2026-09-12 against the requireAlso regex bug fixed on pneuro\'s entry '
+      + 'above — irrelevant here either way, since the live sample\'s one fetched study is already '
+      + 'dropped by the base "mucinous" keyword check before requireAlso is ever reached.',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------
@@ -226,6 +307,25 @@ function keywordRegex(keywords){
   return new RegExp('\\b(?:' + escaped.join('|') + ')\\b', 'i');
 }
 
+// requireAlso stems (e.g. 'prostat') are deliberately NOT whole words — they exist to match
+// every inflected form sharing the stem (Prostate, Prostatic, Prostatectomy) in one regex rather
+// than enumerating each. A trailing \b breaks that on contact: \bprostat\b demands "prostat" be a
+// complete word, and it never is — the letter immediately after the stem's own final 't' in
+// "Prostate" is 'e', a word character, so \b finds no boundary there and the pattern can never
+// match. Found live 2026-09-12, after phaseC_design.md §13/14 shipped: every requireAlso-gated
+// entry (pneuro/pductal/psignet/pmuc) was silently dropping every real match, including ten
+// genuine prostate-NEPC trials for pneuro that should have been kept — the design doc's own
+// "verified live, 10/10 kept" record was made against a check that didn't exercise this exact
+// function (a parallel Python/manual read, not this regex), so the shipped defect went unseen
+// until the live app itself was driven end to end. keywordRegex above stays whole-word-bounded on
+// both ends — its own keywords (conditionKeywords, titleRe) are real complete words/phrases,
+// where the same pointer_check.py-style collision risk this function's sibling comment names is
+// real and the trailing boundary is exactly what prevents it.
+function stemRegex(stems){
+  const escaped = stems.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return new RegExp('\\b(?:' + escaped.join('|') + ')', 'i');
+}
+
 function studyConditions(study){
   const cm = study.protocolSection && study.protocolSection.conditionsModule;
   return (cm && cm.conditions) || [];
@@ -236,11 +336,30 @@ function studyConditions(study){
 // (Convention F — a plausible-but-wrong input, not only a broken one). Verified against two
 // fixtures before this shipped: a study whose conditions carry no gdiff keyword at all (dropped)
 // and the same study with 'Gastric Cancer' appended (kept) — see design doc §1b.
-export function filterByCondition(studies, keywords){
+//
+// `requireAlso` (2026-09-12, phaseC_design.md §13's below-floor trials ruling): psignet's
+// "signet ring" and pmuc's "mucinous" are overloaded ACROSS ORGANS far more than any prior
+// entry's own term — a bare, organ-anchor-free 'signet ring cell carcinoma' query returns 15
+// real recruiting-or-any-status studies with ZERO prostate primaries (all gastric/colorectal,
+// checked live 2026-09-12); a bare 'mucinous adenocarcinoma' query returns 10 real recruiting
+// studies, again zero prostate (endometrial/appendiceal/pancreatic/breast). When given,
+// `requireAlso` demands BOTH keyword lists match WITHIN THE SAME declared condition string, not
+// merely somewhere in the study's own conditions array — a real basket trial (NCT03602079,
+// checked live 2026-09-12) lists "Mucinous Adenocarcinoma Gastric" and "Prostate Cancer" as two
+// SEPARATE, unrelated entries among 24+ tumour types in one eligibility list; matching each
+// keyword list independently against the array would have kept it as a false "prostatic
+// mucinous" result. The registry's own tagging convention for a real combined entity IS one
+// string ("Colon Mucinous Adenocarcinoma", "Rectal Signet Ring Cell Adenocarcinoma" — both seen
+// live in the same pass), so same-string co-occurrence is the stricter AND the anatomically
+// correct test, not merely a defensive tightening.
+export function filterByCondition(studies, keywords, requireAlso){
   const re = keywordRegex(keywords);
+  const re2 = requireAlso ? stemRegex(requireAlso) : null;
   const kept = [], dropped = [];
   studies.forEach(s=>{
-    (studyConditions(s).some(c=>re.test(c)) ? kept : dropped).push(s);
+    const conds = studyConditions(s);
+    const matches = re2 ? conds.some(c=>re.test(c) && re2.test(c)) : conds.some(c=>re.test(c));
+    (matches ? kept : dropped).push(s);
   });
   return { kept, dropped };
 }
@@ -267,7 +386,7 @@ export async function fetchTrialsForEntry(cancerId){
   }catch(err){
     return { state:'empty-unanswered', fetchedAt };
   }
-  const { kept, dropped } = filterByCondition(studies, entry.conditionKeywords);
+  const { kept, dropped } = filterByCondition(studies, entry.conditionKeywords, entry.requireAlso);
   // Defensive client-side sort even though the request already asks the API to sort
   // server-side (sort=LastUpdatePostDate:desc, verified live) — a guarantee this code owns
   // rather than trusts silently to an upstream default that could change.
@@ -317,28 +436,35 @@ function renderLoading(){
   listEl.innerHTML = '';
 }
 
-function renderResult(cancerId, result){
+// Exported so the below-floor inline trials toggle (js/main.js's renderCancerList, phaseC_design.md
+// §13/§14) can reuse the exact same four-state rendering this screen-level panel uses, rather than
+// duplicating it — the ruling's "reuse trials.js's fetch-filter directly" approval covers this
+// rendering logic too, not just fetchTrialsForEntry itself. renderResult below is now a thin DOM
+// wrapper around this pure function.
+export function describeTrialsResult(cancerId, result){
   const entry = TRIALS_CONDITION_MAP[cancerId];
   const stamp = 'Trials shown as of ' + DATE_FMT.format(result.fetchedAt) + ' · fetched from ClinicalTrials.gov';
   if(result.state === 'empty-unanswered'){
-    statusLineEl.textContent = stamp.replace('Trials shown as of', 'Last attempted');
-    listEl.innerHTML = '<div class="trials-error">We couldn\'t reach ClinicalTrials.gov just now — '
-      + 'try again, or search directly at <a href="https://clinicaltrials.gov/" target="_blank" '
-      + 'rel="noopener">clinicaltrials.gov</a>.</div>';
-    return;
+    return {
+      statusLine: stamp.replace('Trials shown as of', 'Last attempted'),
+      bodyHtml: '<div class="trials-error">We couldn\'t reach ClinicalTrials.gov just now — '
+        + 'try again, or search directly at <a href="https://clinicaltrials.gov/" target="_blank" '
+        + 'rel="noopener">clinicaltrials.gov</a>.</div>',
+    };
   }
   if(result.state === 'empty-answered'){
-    statusLineEl.textContent = stamp;
-    listEl.innerHTML = '<div class="trials-empty">No open trials are currently listed for this condition.</div>';
-    return;
+    return {
+      statusLine: stamp,
+      bodyHtml: '<div class="trials-empty">No open trials are currently listed for this condition.</div>',
+    };
   }
   // RESULTS. dropCount is reported here too (design doc §1d) — not just to the console — since
   // it is honest information about why a raw fetch count and a shown count can differ.
-  statusLineEl.textContent = stamp + (result.dropCount > 0
+  const statusLine = stamp + (result.dropCount > 0
     ? ' · ' + result.dropCount + ' result' + (result.dropCount === 1 ? '' : 's') + ' omitted (didn\'t match this condition)'
     : '');
   const titleRe = keywordRegex(entry.conditionKeywords);
-  listEl.innerHTML = result.studies.map(s=>{
+  const bodyHtml = result.studies.map(s=>{
     const nctId = studyId(s), title = studyTitle(s), status = studyStatus(s), updated = lastUpdateDate(s);
     const multiCondition = title && !titleRe.test(title);
     return '<div class="trial-card">'
@@ -348,6 +474,13 @@ function renderResult(cancerId, result){
       + (multiCondition ? '<div class="trial-multinote">Multi-condition trial — lists this condition among several others it studies.</div>' : '')
       + '</div>';
   }).join('');
+  return { statusLine, bodyHtml };
+}
+
+function renderResult(cancerId, result){
+  const { statusLine, bodyHtml } = describeTrialsResult(cancerId, result);
+  statusLineEl.textContent = statusLine;
+  listEl.innerHTML = bodyHtml;
 }
 
 function loadTrials(cancerId){

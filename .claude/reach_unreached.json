@@ -234,6 +234,14 @@
    1
   ],
   [
+   "prostate.js|data-span-year||2010",
+   1
+  ],
+  [
+   "prostate.js|data-span-year||2015",
+   1
+  ],
+  [
    "prostate.js|data-span-year||2020",
    1
   ],
@@ -243,10 +251,14 @@
   ],
   [
    "prostate.js|data-span-year||2026",
-   2
+   5
   ],
   [
    "prostate.js|etal-malformed-head|Gundem G|2015",
+   1
+  ],
+  [
+   "prostate.js|prose-year||2010",
    1
   ],
   [

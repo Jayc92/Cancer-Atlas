@@ -14,7 +14,7 @@ import { initSearch } from './search.js';
 import { initBody, bodyTick } from './body.js';
 import { initSidebar, updateSidebarActive } from './sidebar.js';
 import { initHistology, resetHistologyMode, showHistologyToggle, hideHistologyToggle } from './histology.js';
-import { initTrials, showTrialsToggle, hideTrialsToggle, resetTrialsMode } from './trials.js';
+import { initTrials, showTrialsToggle, hideTrialsToggle, resetTrialsMode, fetchTrialsForEntry, describeTrialsResult } from './trials.js';
 import { RESERVED_MARGIN, MARGIN_CATEGORIES, MARGIN_STATUS, ORIGIN_HOTSPOT, ORIGIN_HOTSPOT_ENTRY, MASS_COLOUR, RESERVED_COLOUR, MASS_RADIUS_FRACTION, marginBadge, massBadge, GROWTH_STATUS, GROWTH_CATEGORIES, EXTENT_UNDERSTATED, EXTENT_STATUS, RESERVED_APEX, rimBlendWeight } from './morphology.js';
 
 // ============================================================
@@ -110,17 +110,77 @@ function marginDot(c){
   return `<span class="cr-dot ${cited?'cited':'reserved'}" title="${title}" aria-hidden="true"></span>`;
 }
 
+// Below-floor entries (phaseC_design.md §13/§14) carry a `blurb` field instead of a mutation
+// ledger/site map — name, share, a resolvable citation, one plain-stated sentence, and the inline
+// trials toggle below, never anything beyond that boundary. Cached per cancerId (module-level,
+// survives an organ-switch and back) so re-opening the toggle doesn't re-fetch — the same
+// within-session caching trials.js's own screen-level panel already does via `loadedForCancerId`.
+const belowFloorTrialsCache = new Map();
+
+// fetchTrialsForEntry returns null when cancerId has no TRIALS_CONDITION_MAP entry at all —
+// shouldn't happen for a wired below-floor entry, but guarded rather than assumed, since
+// describeTrialsResult has no null-result branch of its own.
+function belowFloorTrialsHtml(cancerId, result){
+  if(!result) return '<div class="trials-error">No trials mapping is configured for this entry yet.</div>';
+  const { statusLine, bodyHtml } = describeTrialsResult(cancerId, result);
+  return '<div class="trials-status-line">' + statusLine + '</div>' + bodyHtml;
+}
+
+function toggleBelowFloorTrials(btn){
+  const cancerId = btn.dataset.id;
+  const panel = document.getElementById('crTrials-' + cancerId);
+  const open = btn.getAttribute('aria-pressed') === 'true';
+  if(open){
+    btn.setAttribute('aria-pressed', 'false');
+    panel.hidden = true;
+    return;
+  }
+  btn.setAttribute('aria-pressed', 'true');
+  panel.hidden = false;
+  if(belowFloorTrialsCache.has(cancerId)){
+    panel.innerHTML = belowFloorTrialsCache.get(cancerId);
+    return;
+  }
+  panel.innerHTML = '<div class="trials-status-line">Fetching trials from ClinicalTrials.gov…</div>';
+  fetchTrialsForEntry(cancerId).then(result=>{
+    const html = belowFloorTrialsHtml(cancerId, result);
+    belowFloorTrialsCache.set(cancerId, html);
+    // The user may have closed the organ screen (re-rendering the list, which replaces this
+    // panel's DOM node via innerHTML) while the fetch was in flight — same stale-response guard
+    // every async loader in this app uses (initOrganViewer's GLB load, trials.js's own
+    // loadTrials); `panel` here is the closure's captured node, detached once the list re-renders.
+    if(document.body.contains(panel)) panel.innerHTML = html;
+  });
+}
+
 function renderCancerList(organKey){
   const list = CANCERS.filter(c=>c.organKey===organKey);
-  cancerListEl.innerHTML = list.map(c=>`
+  cancerListEl.innerHTML = list.map(c=>{
+    if(c.blurb){
+      return `
+      <div class="cancer-row blurb-row" data-id="${c.id}">
+        <div class="cr-left">
+          <div class="cr-name">${c.name}</div>
+          <div class="cr-share">${c.share}</div>
+          <div class="cr-blurb">${c.blurb}</div>
+        </div>
+        <button class="cr-trials-toggle" type="button" aria-pressed="false" aria-controls="crTrials-${c.id}" data-id="${c.id}">Trials</button>
+        <div class="cr-trials-panel" id="crTrials-${c.id}" aria-live="polite" hidden></div>
+      </div>`;
+    }
+    return `
     <div class="cancer-row ${c.active?'enabled':''}" data-id="${c.id}">
       <div class="cr-left">
         <div class="cr-name">${c.name}${marginDot(c)}</div>
         <div class="cr-share">${c.share}</div>
       </div>
       <div class="cr-cta ${c.active?'':'disabled'}">${c.active ? 'Explore this cancer →' : 'Profile coming soon'}</div>
-    </div>`).join('');
-  cancerListEl.querySelectorAll('.cancer-row').forEach(row=>{
+    </div>`;
+  }).join('');
+  // Below-floor rows host their own interactive toggle, so they're deliberately excluded from
+  // the makeActivatable pass below (a real <button> nested inside a whole-row activation target
+  // is a nested-interactive-elements trap, not a pattern to repeat here).
+  cancerListEl.querySelectorAll('.cancer-row:not(.blurb-row)').forEach(row=>{
     const c = list.find(x=>x.id===row.dataset.id);
     makeActivatable(row, ()=>{
       if(c && c.active){ enterCancerScreen(c.id); }
@@ -142,6 +202,9 @@ function renderCancerList(organKey){
       row.addEventListener('mouseleave', ()=>previewMass());
       row.addEventListener('blur', ()=>previewMass());
     }
+  });
+  cancerListEl.querySelectorAll('.cr-trials-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>toggleBelowFloorTrials(btn));
   });
 }
 

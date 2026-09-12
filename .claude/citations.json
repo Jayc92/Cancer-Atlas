@@ -894,7 +894,7 @@
    "refs": [
     "js/organs/prostate.js:23",
     "js/organs/prostate.js:24",
-    "js/organs/prostate.js:25"
+    "js/organs/prostate.js:33"
    ],
    "candidates": [
     {
@@ -921,7 +921,7 @@
    "status": "retracted-negated-mention",
    "userFacing": false,
    "refs": [
-    "js/organs/prostate.js:139"
+    "js/organs/prostate.js:159"
    ],
    "triage": "retracted 2026-09-04: the source line is an authorship-correction comment stating this citation does not exist as a first-author paper; the true citation (Cooper et al., 25730763) is entry-time on its own record. A+Y-only backfill had attached an unrelated methods paper.",
    "window": "corrective",
@@ -937,7 +937,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:218"
+    "js/organs/prostate.js:238"
    ],
    "candidates": [
     {
@@ -958,8 +958,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:220",
-    "js/organs/prostate.js:227"
+    "js/organs/prostate.js:240",
+    "js/organs/prostate.js:247"
    ],
    "candidates": [
     {
@@ -996,7 +996,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:227"
+    "js/organs/prostate.js:247"
    ],
    "pmid": "35050902",
    "resolvedTitle": "Collision tumors revealed by prospectively assessing subtype-defining molecular alterations in 904 individual prostate cancer foci.",
@@ -1023,7 +1023,7 @@
    "status": "parse-noise",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:227",
+    "js/organs/prostate.js:247",
     "js/organs/thyroid.js:121"
    ],
    "window": "caveated",
@@ -1038,7 +1038,7 @@
    "status": "parse-noise",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:227"
+    "js/organs/prostate.js:247"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record",
    "window": "caveated",
@@ -1053,7 +1053,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/prostate.js:227",
+    "js/organs/prostate.js:247",
     "js/organs/bladder.js:187"
    ],
    "pmid": "10836297",
@@ -1081,8 +1081,8 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/prostate.js:236",
-    "js/organs/prostate.js:253"
+    "js/organs/prostate.js:256",
+    "js/organs/prostate.js:273"
    ],
    "pmid": "26492179",
    "resolvedTitle": "The 2014 International Society of Urological Pathology (ISUP) Consensus Conference on Gleason Grading of Prostatic Carcinoma: Definition of ",
@@ -1103,7 +1103,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/prostate.js:239"
+    "js/organs/prostate.js:259"
    ]
   },
   {
@@ -1113,7 +1113,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/prostate.js:253"
+    "js/organs/prostate.js:273"
    ],
    "pmid": "26166626",
    "resolvedTitle": "A Contemporary Prostate Cancer Grading System: A Validated Alternative to the Gleason Score.",

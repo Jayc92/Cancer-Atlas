@@ -21,10 +21,20 @@ export const cancerEntries = [
   // signet ring cell, and 130 (0.03%) neuroendocrine carcinoma. ids prefixed to avoid collision
   // with Ovary's existing 'muc' (Mucinous carcinoma) id.
   { id:'acinar',   name:'Acinar adenocarcinoma',          share:'99.68% of prostate cancers treated with surgery or radiotherapy (SEER 2004–2020: 425,692/427,055, Siech et al., Annals of Surgical Oncology, 2026)', active:true,  organKey:'prostate' },
-  { id:'pductal',  name:'Ductal adenocarcinoma',          share:'0.20% of prostate cancers treated with surgery or radiotherapy (855/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
-  { id:'pmuc',     name:'Mucinous adenocarcinoma',        share:'0.08% of prostate cancers treated with surgery or radiotherapy (324/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
-  { id:'psignet',  name:'Signet ring cell adenocarcinoma', share:'0.01% of prostate cancers treated with surgery or radiotherapy (54/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
-  { id:'pneuro',   name:'Neuroendocrine carcinoma',       share:'0.03% of prostate cancers treated with surgery or radiotherapy (130/427,055, Siech et al., 2026)', active:false, organKey:'prostate' },
+  { id:'pductal',  name:'Ductal adenocarcinoma',          share:'0.20% of prostate cancers treated with surgery or radiotherapy (855/427,055, Siech et al., 2026)', active:true, organKey:'prostate' },
+  // pmuc/psignet stay below the incidence floor (phaseC_design.md §13): a targeted SEER
+  // competing-risk analysis found neither one's cancer-specific mortality differs from acinar
+  // adenocarcinoma at any stage — a real, well-powered "no" on clinical distinctiveness, not a
+  // gap in the research. `blurb` is the below-floor schema's one addition beyond what an
+  // inactive row already rendered (name/share/citation/disabled CTA) — one sourced sentence,
+  // resolvable by PMID/PMCID per the ruling's own citation-resolvability requirement, no mass/
+  // histology/extent. Both also get a trials mapping (js/trials.js) — the one thing a below-
+  // floor entry gets beyond the blurb.
+  { id:'pmuc',     name:'Mucinous adenocarcinoma',        share:'0.08% of prostate cancers treated with surgery or radiotherapy (324/427,055, Siech et al., 2026)', active:false, organKey:'prostate',
+    blurb:'A SEER competing-risk analysis found this subtype’s cancer-specific mortality does not differ from acinar adenocarcinoma at any stage (Siech et al., Prostate Cancer Prostatic Dis, 2025, PMID 38987307, PMC12399420).' },
+  { id:'psignet',  name:'Signet ring cell adenocarcinoma', share:'0.01% of prostate cancers treated with surgery or radiotherapy (54/427,055, Siech et al., 2026)', active:false, organKey:'prostate',
+    blurb:'The same SEER competing-risk analysis found this subtype’s cancer-specific mortality does not differ from acinar adenocarcinoma at any stage either (Siech et al., Prostate Cancer Prostatic Dis, 2025, PMID 38987307, PMC12399420).' },
+  { id:'pneuro',   name:'Neuroendocrine carcinoma',       share:'0.03% of prostate cancers treated with surgery or radiotherapy (130/427,055, Siech et al., 2026)', active:true, organKey:'prostate' },
 ];
 
 // Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
@@ -119,7 +129,17 @@ export const organDetail = {
     { key:'central', label:'Central zone', pos:[0.00257,0.00385,0.01285],
       text:'A cone-shaped zone surrounding the ejaculatory ducts as they pass through the gland toward the urethra. Cancer arises here least often of the three zones.' },
     { key:'urethra', label:'Prostatic urethra', pos:[-0.00055,-0.00218,-0.00055],
-      text:'The section of urethra that passes directly through the gland, surrounded by the transition zone. Enlargement or a tumor pressing on this segment can cause urinary symptoms — weak stream, frequency, difficulty starting — which are actually more typical of benign transition-zone enlargement than of peripheral-zone cancer, which often causes no urinary symptoms at all until advanced.' },
+      // ORIGIN clause added 2026-09-12 for pductal (js/morphology.js's ORIGIN_HOTSPOT_ENTRY):
+      // Seipel et al., Virchows Arch, 2013, PMID 23443941 — "Location was periurethral,
+      // peripheral, or both in 69.8, 3.5, and 26.7 %" — the same 1,051-specimen re-review
+      // already cited below for the 8.2% any-component admixture prevalence, a DIFFERENT
+      // finding from the same paper, not a second source. Two qualitative corroborations,
+      // checked directly, not restated on-screen: Epstein, Med Princ Pract, 2010, PMID
+      // 19996627 ("Prostatic ductal adenocarcinomas may arise either in large primary
+      // periurethral prostatic ducts or in the peripheral prostatic ducts"); Ranasinha et al.,
+      // BJUI Compass, 2021, PMID 35474657, PMCID PMC8988764 ("the periurethral location of DAC
+      // (compared to the more peripheral location of acinar adenocarcinoma)").
+      text:'The section of urethra that passes directly through the gland, surrounded by the transition zone. Enlargement or a tumor pressing on this segment can cause urinary symptoms — weak stream, frequency, difficulty starting — which are actually more typical of benign transition-zone enlargement than of peripheral-zone cancer, which often causes no urinary symptoms at all until advanced. This is also where ductal adenocarcinoma, one of the gland\'s rare variants, most often arises: in a review of 1,051 radical prostatectomies, ductal tumors were centered here alone in 69.8% of cases and here plus the peripheral zone in another 26.7% — a genuinely different site of origin from acinar adenocarcinoma\'s own peripheral-zone predominance (Seipel et al., Virchows Arch, 2013).' },
   ],
 };
 
@@ -261,6 +281,135 @@ const HISTOLOGY_PROSTATE = {
   ],
 };
 
+// ============================================================
+// NEUROENDOCRINE CARCINOMA (pneuro) — 2026-09-12, phaseC_design.md §13's clinical-
+// distinctiveness exception (granted; the below-floor treatment psignet/pmuc got instead).
+// SITE MODEL: real distant metastasis (family 1, the ordinary case) — checked against data rule
+// 15 explicitly, not defaulted from acinar's own multifocal-foci departure (which is specific to
+// ACINAR's own biology, a fact stated at data rule 15's own writing) or from any other organ's
+// departure. Wang et al., Prostate, 2019, PMID 31376193 (SEER 2010-2015, 352 PURE — de novo —
+// NEPC vs 408,629 adenocarcinoma at diagnosis): "Pure NEPC had higher rates of visceral
+// metastases (brain, lung, and liver: 4.58%, 26.72%, and 36.64%, respectively) but a lower rate
+// of bone metastasis (65.65%) compared with... prostate adenocarcinoma." Read precisely: bone
+// stays this cancer's single most common site in absolute terms — the real distinctiveness is
+// the ELEVATED share going to brain/lung/liver relative to acinar's own even-more bone-dominant
+// pattern (Bubendorf et al., 2000, 90% bone-dominant, already cited in TRUNK_PROSTATE above),
+// not an absence of bone spread. NOT independently corroborated by a second source — checked
+// directly: three other SEER-based NEPC studies exist (Yao 2021 PMID 34956090; Zhu 2021 PMID
+// 33847621; Zaffuto 2017 PMID 28506524) but each reports only an overall metastatic-disease
+// rate, a different statistic, not this same four-site breakdown — stated here rather than
+// presented as cross-checked when it wasn't.
+const REGIONS_PNEURO = [
+  { id:'NB', name:'Bone', color:cssVar('--coral'), pos3d:{x:-1.2,y:-1.6,z:0.35},
+    branch:{ gene:'AURKA amplification', class:'driver', ccf:'Aurora kinase A amplified/overexpressed in 40% of NEPC vs 5% of prostate adenocarcinoma (Beltran et al., Cancer Discov, 2011, PMID 22389870, PMCID PMC3290518)', note:'This cancer\'s single most common metastatic site in absolute terms — 65.65% of pure NEPC (Wang et al., 2019) — though a smaller share of this cancer\'s overall spread than acinar adenocarcinoma\'s own ~90% bone-dominant pattern. AURKA cooperates directly with the Lung/Brain sites\' MYCN amplification rather than competing with it: the source paper shows the two genes co-amplified and demonstrates in vitro/in vivo "that they cooperate to induce a neuroendocrine phenotype," including Aurora-kinase-inhibitor sensitivity — the site assignment below is illustrative (this atlas\'s standing disclaimer), the cooperation itself is the real, cited finding.' } },
+  { id:'NL', name:'Liver', color:cssVar('--azure'), pos3d:{x:0.85,y:-0.55,z:-0.5},
+    branch:{ gene:'AURKA amplification', class:'driver', ccf:'40% of NEPC vs 5% of prostate adenocarcinoma (Beltran et al., 2011)', note:'The same amplification as the Bone site. Liver is this cancer\'s second most common site (36.64%, Wang et al., 2019) — a real, elevated visceral-spread pattern relative to acinar adenocarcinoma, whose own hematogenous spread is overwhelmingly bone-first.' } },
+  { id:'NU', name:'Lung', color:cssVar('--amber'), pos3d:{x:1.55,y:1.35,z:0.55},
+    branch:{ gene:'MYCN amplification', class:'driver', ccf:'N-Myc amplified/overexpressed in 40% of NEPC vs 5% of prostate adenocarcinoma (Beltran et al., 2011) — the same cohort and figure as AURKA, since the two are co-amplified', note:'Cooperates with AURKA (Bone/Liver sites) rather than substituting for it — see the Bone site\'s own note for the cited mechanism. 26.72% of pure NEPC spreads here (Wang et al., 2019), well above what acinar adenocarcinoma\'s own bone-dominant pattern would predict for a site this far down its own list.' } },
+  { id:'NR', name:'Brain', color:cssVar('--violet'), pos3d:{x:-0.95,y:1.25,z:-0.3},
+    branch:{ gene:'MYCN amplification', class:'driver', ccf:'40% of NEPC vs 5% of prostate adenocarcinoma (Beltran et al., 2011)', note:'The same amplification as the Lung site. The least common of this cancer\'s four real sites (4.58%, Wang et al., 2019) but still real, cited spread this atlas\'s prostate acinar entry has no equivalent of at all — that cancer\'s own site map represents independent tumor foci, not distant organs.' } },
+];
+// TRUNK — a genuinely different KIND of truncal justification from every prior organ in this
+// atlas: not spatial ubiquity (TP53/VHL), not temporal earliness (HCC/PDAC's TERT/KRAS), not a
+// diagnostic classifier alone (GBM's IDH-wildtype status), but TRANSFORMATION-DEFINING — the
+// genomic change that enables the phenotypic switch §9 documents (de Kouchkovsky et al., The
+// Prostate, 2024, PMID 38173302), a fourth kind data rule 5 had not yet named. Both entries
+// below are the switch's own molecular basis, not a frequency measured in a static tumor the
+// way every prior trunk figure in this atlas is.
+const TRUNK_PNEURO = [
+  { gene:'Concurrent TP53 + RB1 loss', class:'driver', ccf:'53.3% of CRPC-NE carry BOTH losses together vs 13.7% of CRPC-Adeno (P<0.0004) — the individual rates are RB1 70% vs 32% (P=0.003) and TP53 66.7% vs 31.4% (P=0.0043) (Beltran et al., Nat Med, 2016, PMID 26855148, PMCID PMC4777652)', note:'The real "double-hit" this cancer is named for in the mouse-model literature that first demonstrated it: combined Rb1/Trp53 loss is what drives the transdifferentiation from an ordinary androgen-receptor-driven acinar tumor into this androgen-independent neuroendocrine one — the molecular event underneath the timing/lineage story §9 records, not a separate fact. RB1 and TP53 loss cooperate with each other here; neither substitutes for the other, which is why both are named as one combined trunk fact rather than two competing ones.' },
+  { gene:'AR pathway attenuation ("AR-indifferent" state)', class:'driver', ccf:'lower AR-signaling-score average with "significant overlap... a spectrum" across pathologic subtypes, plus a significantly decreased ARv7:AR-wildtype ratio (P=0.0025) — but AR gene amplification is still found in 67% and AR protein expression in 75% of treatment-emergent cases in an independent 202-patient cohort (Beltran et al., 2016; Aggarwal et al., J Clin Oncol, 2018, PMID 29985747, PMCID PMC6366813)', note:'Worded precisely because the two cited cohorts disagree on magnitude, not direction: this is a real drop in AR SIGNALING OUTPUT, not a simple absence of the AR gene or protein, which is frequently still present or even amplified. That output drop is mechanistically why this cancer resists androgen-deprivation therapy the way ordinary acinar disease does not — and, since PSA is itself a downstream AR target-gene product, why PSA readings become unreliable here specifically: this cancer often presents with LOW or normal PSA despite aggressive, already-metastatic disease (median PSA 1.20 ng/mL in a treatment-emergent cohort with bone/visceral metastases in most patients — Conteduca et al., Eur J Cancer, 2019, PMID 31525487, PMCID PMC6803064; independently, a case report notes plainly that "a low PSA reading may give false reassurance," Rauf et al., 2020, PMID 32582431) — the opposite diagnostic assumption a reader would carry from acinar adenocarcinoma, where PSA tracks disease burden.' },
+];
+// PRIVATE POOL — checked against the trunk and both branch-site genes before inclusion, same
+// standard as every prior organ. PTEN loss and PIK3CA pathway alterations were specifically
+// searched for (real, mechanistically plausible NEPC candidates from mouse-model literature) and
+// NOT found with a citable NEPC-specific human-cohort frequency in either of this entry's own
+// primary sources — recorded as checked-and-absent rather than silently omitted, the same
+// honesty precedent this atlas's own unclaimed-figure sites already use (LUAD's adrenal gland,
+// ccRCC's KDM5C/PTEN overall-cohort figures). A real, separate exclusion finding: DNA-damage-
+// repair (DDR) pathway gene alterations are "nearly mutually exclusive with t-SCNC
+// differentiation" (P=.035, Aggarwal et al., 2018) — this cancer is relatively DDR-alteration-
+// POOR, so no DDR gene (e.g. BRCA2, a common CRPC pool pick elsewhere) belongs in this pool.
+const PRIVATE_POOL_PNEURO = [
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome. This cancer\'s own pool stays this thin deliberately: its real, distinctive genomic story is concentrated in the trunk\'s TP53/RB1 double-hit and the AURKA/MYCN branch pair above, not spread across additional drivers that checked out uncitable when searched for directly.' },
+];
+// HISTOLOGY — reuses js/histology.js's drawSmallCellSheet primitive (built and proven on a
+// temporary lungs SCLC demo, then withheld pending a real entry to serve — phaseC_design.md
+// §7a), this atlas's first real dispatch of it. Sourced from Ng & Li, Ann Diagn Pathol, 2024,
+// PMID 39342665 — a PULMONARY neuroendocrine-tumor cytomorphology cohort (n=37 small cell
+// carcinomas), NOT a prostate-specific one, used here because "small cell carcinoma" is one
+// shared diagnostic entity across primary sites rather than a site-specific morphologic category
+// — Epstein et al., 2014 (PMID 24705311, PMC4112087, the Prostate Cancer Foundation's own
+// working-committee classification of NE differentiation in prostate cancer) names "Small cell
+// carcinoma" as one of its defined categories without redefining the morphology itself. Stated
+// as a cross-cohort application, not presented as if measured in a prostate-specific series.
+const HISTOLOGY_PNEURO = {
+  intro: 'Sheets of small tumor cells with scant to absent cytoplasm — "naked nuclei," reported in 89% of small cell carcinomas — packed densely enough that neighboring nuclei deform against each other rather than staying independently round: nuclear molding, present in 95% of cases and this tumor\'s single most recognizable feature. The one feature that specifically distinguishes small cell carcinoma from other neuroendocrine tumors is an absence of prominent nucleoli. Necrosis is common and often extensive.',
+  ariaSummary: 'Stylized microscopic field: a dense sheet of small, dark, closely packed nuclei with essentially no visible cytoplasm around them. Many adjacent nuclei are stretched and angled toward their nearest neighbor, deforming against each other rather than staying round — nuclear molding. An irregular pale region of necrotic debris sits within the sheet.',
+  citation: 'Ng & Li, Ann Diagn Pathol, 2024, PMID 39342665 (pulmonary neuroendocrine-tumor cytomorphology cohort, applied here per Epstein et al., 2014\'s shared small-cell-carcinoma classification).',
+  features: [
+    { key:'molding', label:'Nuclear molding',
+      text:'Adjacent nuclei deform against each other where they\'re pressed close — present in 95% of small cell carcinomas (35/37) and the single most consistent architectural feature across the literature.' },
+    { key:'naked', label:'Naked nuclei, no cytoplasm ring',
+      text:'Nuclei with scant to absent visible cytoplasm — "naked nuclei" — in 89% of cases, a bare-nucleus look distinct from acinar adenocarcinoma\'s own cells, which keep a visible cytoplasm ring around each nucleus.' },
+    { key:'necrosis', label:'Necrosis',
+      text:'Areas of necrotic debris within the tumor sheet — common and often extensive in this fast-growing, high-grade carcinoma.' },
+  ],
+};
+
+// ============================================================
+// DUCTAL ADENOCARCINOMA (pductal) — 2026-09-12, the OTHER clinical-distinctiveness exception
+// granted in phaseC_design.md §13. SITE MODEL: no dedicated DAC-specific metastatic-site
+// distribution study exists (checked directly, not assumed) — reuses Bubendorf et al., Human
+// Pathology, 2000, PMID 10836297 (the same 1,589-patient autopsy series already cited in
+// TRUNK_PROSTATE above), since DAC is fundamentally still prostate adenocarcinoma and no source
+// found documents a genuinely different hematogenous spread pattern for it specifically. Stated
+// as a reuse, not as if DAC had its own dedicated study the way pneuro's Wang et al. 2019 does.
+const REGIONS_PDUCTAL = [
+  { id:'DB', name:'Bone', color:cssVar('--coral'), pos3d:{x:-1.15,y:-1.55,z:0.3},
+    branch:{ gene:'PTEN alteration', class:'driver', ccf:'a real, mutually exclusive pair with CTNNB1 (below) found specifically enriched in the ductal component: 9 of 10 coincident ductal+acinar cases had a CTNNB1 hotspot mutation OR a PTEN alteration in the ductal focus, absent from the SAME patients\' acinar foci (Gillard et al., Eur Urol Focus, 2019, PMID 29229583, PMCID PMC6614018); corroborated independently (6/15 DA vs 0/15 AA, Lindh et al., Prostate, 2022, PMID 35049068, PMCID PMC9306900)', note:'This cancer\'s most common metastatic site, bone-dominant like acinar disease\'s own hematogenous spread — reused from the same Bubendorf et al. (2000) autopsy series that atlas\'s Acinar adenocarcinoma entry already cites (~90% of hematogenous prostate-cancer metastases), since no dedicated DAC-specific site study was found. PTEN and CTNNB1 mark two independent, alternative routes within the ductal component itself — a real, DAC-distinguishing branch pair, not shared with acinar\'s own trunk-level TMPRSS2-ERG/SPOP framework below.' } },
+  { id:'DG', name:'Lung', color:cssVar('--azure'), pos3d:{x:1.5,y:1.3,z:0.5},
+    branch:{ gene:'PTEN alteration', class:'driver', ccf:'same pairing as the Bone site', note:'The same PTEN/CTNNB1 pairing as the Bone site. Reused from Bubendorf et al. (2000): ~46% of hematogenous prostate-cancer metastases reach the lung — real, if not DAC-specific, distant spread.' } },
+  { id:'DV', name:'Liver', color:cssVar('--amber'), pos3d:{x:0.9,y:-0.5,z:-0.45},
+    branch:{ gene:'CTNNB1 hotspot mutation', class:'driver', ccf:'mutually exclusive with PTEN alteration (Bone/Lung sites) — see the Bone site\'s own citation', note:'Reused from Bubendorf et al. (2000): ~25% of hematogenous prostate-cancer metastases reach the liver. CTNNB1 activates WNT/β-catenin signaling — a different route into growth signaling than PTEN\'s PI3K/AKT pathway, real and alternative rather than additive within one tumor focus.' } },
+  { id:'DR', name:'Adrenal gland', color:cssVar('--violet'), pos3d:{x:-0.9,y:1.2,z:-0.28},
+    branch:{ gene:'CTNNB1 hotspot mutation', class:'driver', ccf:'mutually exclusive with PTEN alteration', note:'The same mutation as the Liver site. Reused from Bubendorf et al. (2000): ~13% of hematogenous prostate-cancer metastases reach the adrenal glands — this cancer\'s least common of the four real sites, same rank order as acinar adenocarcinoma\'s own spread pattern.' } },
+];
+// TRUNK — a real, checked absence, stated plainly rather than forced into false precision: DAC
+// has no single well-established near-universal founder of its own, unlike every other trunk in
+// this atlas. It substantially shares acinar's own TMPRSS2-ERG/SPOP molecular framework, but at
+// documented, genuinely variable rates across cohorts — stated as a range, not one number,
+// matching this atlas's own "note real variability, don't present one figure as universal"
+// standard (HCC's TERT, melanoma's BRAF).
+const TRUNK_PDUCTAL = [
+  { gene:'TMPRSS2-ERG fusion (shared with acinar, at a lower and more variable rate)', class:'driver', ccf:'3% (1/35, Cai et al., Mod Pathol, 2025, PMID 40015646) to 47% (7/15, Lindh et al., 2022) across real DAC cohorts, vs acinar adenocarcinoma\'s own more consistent ~50% (TCGA, Cell, 2015) — one cohort (Schweizer et al., JCO Precis Oncol, 2019, PMID 31123724, PMCID PMC6528668, n=51) reports the fusion "significantly less common" than in matched acinar cohorts without a clean standalone percentage', note:'The same structural gene fusion this atlas\'s Acinar adenocarcinoma entry uses as its own Peripheral zone A/B branch gene — real shared molecular ancestry, not a coincidence of two unrelated findings, but genuinely less frequent and far less consistent from cohort to cohort here than in acinar disease. SPOP mutation, acinar\'s other branch gene, tracks AT OR ABOVE acinar\'s own ~10-11% rate in DAC (11-27% across cohorts) and shows a real, statistically significant DAC-specific enrichment in metastatic disease specifically: 23.5% in DAC-positive metastases vs 5.4% in DAC-negative ones (P=0.047, Zhu et al., J Pathol Clin Res, 2025, PMID 40172755, PMCID PMC11963801) — real evidence this cancer is not simply "acinar disease with some ductal architecture," even where it shares acinar\'s own genes.' },
+];
+// PRIVATE POOL — checked against the trunk and both branch-site genes. CDH1 (E-cadherin), MYC
+// amplification, and PIK3R1 alterations were specifically searched for as real, plausible
+// candidates and found to have NO citable DAC-specific literature in either primary source
+// consulted — checked-and-absent, not silently omitted, the same honesty precedent this atlas's
+// other unclaimed-figure sites already use.
+const PRIVATE_POOL_PDUCTAL = [
+  { gene:'DNA-damage-repair (DDR) pathway alteration', class:'driver', ccf:'49% of a real DAC cohort (25/51 — 14% mismatch-repair, 31% homologous-repair, Schweizer et al., 2019); independently, 40% MMR-altered with 3 of those 4 hypermutated in a smaller cohort (Schweizer et al., Oncotarget, 2016, PMID 27756888, PMCID PMC5347709)', note:'A real, clinically significant finding beyond mutation frequency alone: DDR/mismatch-repair alterations at this rate carry real treatment implications (immunotherapy eligibility for mismatch-repair-deficient tumors), reported in both DAC-focused cohorts independently.' },
+  { gene:'FOXA1 alteration', class:'driver', ccf:'33% of a real DAC cohort (17/51, Schweizer et al., 2019), cross-corroborated as DAC-enriched by two further cohorts (Cai et al., 2025; Zhu et al., 2025)', note:'A transcription factor that cooperates with androgen-receptor signaling — no conflict was found against the trunk or either branch gene in any of the three cited cohorts.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
+];
+// HISTOLOGY — see the reinstated genProstateDuctal generator in js/histology.js for the drawing
+// itself; citations there.
+const HISTOLOGY_PDUCTAL = {
+  intro: 'Tall, columnar, pseudostratified epithelium — nuclei at staggered heights within one true cell layer, not a disordered pile-up — arranged into papillary fronds (the most helpful single diagnostic feature) and cribriform (sieve-like) masses, the two most common architectural patterns. The vast majority of these tumors contain an admixed acinar carcinoma component too, at a median 50% of the tumor by volume — drawn here as separate, ordinary acinar glands alongside the papillary and cribriform zones.',
+  ariaSummary: 'Stylized microscopic field: two elongated papillary fronds on the left, each with a red fibrovascular core and a rim of tall, columnar nuclei aligned radially outward — pseudostratified epithelium. A large sieve-like cribriform mass sits at center, punched through with multiple round lumens. Five smaller, separate acinar gland rings are scattered on the right, representing the tumor\'s admixed acinar component.',
+  citation: 'Seipel et al., Pathology, 2016, PMID 27321992; Au et al., Ann Diagn Pathol, 2019, PMID 30772651.',
+  features: [
+    { key:'papillary', label:'Papillary architecture',
+      text:'Tall, columnar, pseudostratified epithelium lining fibrovascular cores — "the most helpful diagnostic feature" for this cancer, and its most common architectural pattern.' },
+    { key:'cribriform', label:'Cribriform architecture',
+      text:'A confluent sheet of tumor cells punched through with multiple rounded lumens — this cancer\'s second most common pattern.' },
+    { key:'admixture', label:'Admixed acinar component',
+      text:'Ordinary, separate acinar glands alongside the papillary and cribriform zones — real tumors contain a median 50% acinar component by volume, not a pure ductal population.' },
+  ],
+};
+
 export const cancerDetails = {
   acinar: {
     title:'Acinar Adenocarcinoma', screenLabel:'Prostate acinar adenocarcinoma — tumor explorer',
@@ -268,5 +417,17 @@ export const cancerDetails = {
     regionWord:'focus',
     regions:REGIONS_PROSTATE, trunk:TRUNK_PROSTATE, privatePool:PRIVATE_POOL_PROSTATE,
     histology: HISTOLOGY_PROSTATE,
+  },
+  pneuro: {
+    title:'Neuroendocrine Carcinoma', screenLabel:'Prostate neuroendocrine carcinoma — tumor explorer',
+    legendTitle:'Sites (real distant metastases, visceral-elevated relative to acinar)',
+    regions:REGIONS_PNEURO, trunk:TRUNK_PNEURO, privatePool:PRIVATE_POOL_PNEURO,
+    histology: HISTOLOGY_PNEURO,
+  },
+  pductal: {
+    title:'Ductal Adenocarcinoma', screenLabel:'Prostate ductal adenocarcinoma — tumor explorer',
+    legendTitle:'Sites (real distant metastases, reused from acinar\'s own citation)',
+    regions:REGIONS_PDUCTAL, trunk:TRUNK_PDUCTAL, privatePool:PRIVATE_POOL_PDUCTAL,
+    histology: HISTOLOGY_PDUCTAL,
   },
 };

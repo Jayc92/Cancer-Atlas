@@ -1419,6 +1419,56 @@ function genLGSC(g, rnd){
   ];
 }
 
+// Prostatic ductal adenocarcinoma — reinstated verbatim from phaseC_design.md §7's withheld
+// proof-of-family generator (built, live-verified, then deliberately withheld pending a real
+// `cancerEntries` stub — now real, phaseC_design.md §13). Papillary architecture "the most
+// helpful diagnostic feature" (Seipel et al., Pathology, 2016, PMID 27321992); cribriform the
+// second most common pattern, real tumors admixed with acinar carcinoma at a median 50% ductal
+// component (Au et al., Ann Diagn Pathol, 2019, PMID 30772651) — drawn as a third zone of
+// ordinary discrete acinar glands, the honest multi-pattern framing LUAD/prostate-acinar/OCCC
+// already use.
+function genProstateDuctal(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  g.appendChild(el('path', {d:blobPath(400, 250, 420, 275, 0.06, 14, rnd, 0), fill:HE.stroma, opacity:0.3}));
+  const fronds = [
+    {cx:190, cy:130, rx:150, ry:44, rot:-0.2},
+    {cx:150, cy:340, rx:135, ry:40, rot: 0.28},
+  ];
+  fronds.forEach(f=>drawFrond(g, rnd, f, {
+    core:{type:'fibrovascular', length:0.72},
+    rimSpacing:9, radialJitter:0.16, nucStyle:'columnar', nucSize:()=>5+rnd()*2,
+  }));
+  const crib = drawCribriformMass(g, rnd, 460, 180, 110, 92, {lumenCount:11, lumenRMin:10, lumenRMax:16});
+  const acinarSpots = [
+    {x:660, y:110, r:20}, {x:600, y:190, r:16}, {x:665, y:260, r:22},
+    {x:590, y:340, r:17}, {x:670, y:410, r:19},
+  ];
+  acinarSpots.forEach(s=>drawGlandRing(g, s.x, s.y, s.r, rnd, {nucMin:3, nucMax:4.2}));
+  return [
+    {key:'papillary',  x:190, y:130},
+    {key:'cribriform', x:crib.cx, y:crib.cy+crib.ry+18},
+    {key:'admixture',  x:660, y:110},
+  ];
+}
+
+// Prostate neuroendocrine carcinoma — this atlas's first real dispatch of drawSmallCellSheet
+// (built and proven on a withheld lungs-SCLC demo, phaseC_design.md §7a; the primitive itself
+// was kept in this file specifically for the day a real consumer authored). Two sheet zones +
+// one necrosis patch (necrosisBlob, pre-existing and unmodified) — no crush-artifact pass, since
+// that effect is specific to lung specimens sampled by bronchoscopy, not this entry's own
+// biopsy/prostatectomy sampling. Citations: see HISTOLOGY_PNEURO in js/organs/prostate.js.
+function genProstateNeuro(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const sheetA = drawSmallCellSheet(g, rnd, 220, 190, 175, 145, {spacing:8.5, moldingReach:1.35});
+  const sheetB = drawSmallCellSheet(g, rnd, 560, 340, 165, 130, {spacing:8.5, moldingReach:1.35, rot:0.3});
+  necrosisBlob(g, 430, 150, 90, 62, rnd, -0.1);
+  return [
+    {key:'molding', x:sheetA.cx, y:sheetA.cy},
+    {key:'naked',   x:sheetB.cx, y:sheetB.cy},
+    {key:'necrosis', x:430, y:150},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -1439,6 +1489,8 @@ const GENERATORS = {
   endo:   genEndometrioid,
   muc:    genMucinous,
   lgsc:   genLGSC,
+  pneuro: genProstateNeuro,
+  pductal: genProstateDuctal,
 };
 
 // ------------------------------------------------------------

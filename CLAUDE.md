@@ -141,10 +141,16 @@ screen pair per organ:
   cases, StatPearls NBK540987), Transition zone is deliberately the opposite:
   a contrast point stating this is where BPH, not cancer, most often
   develops, the same not-arises-here contrast Liver's Bile ducts and Brain's
-  Cerebral cortex points already draw — only Acinar adenocarcinoma is wired,
-  the other four real-but-vanishingly-rare subtypes (Ductal, Mucinous,
-  Signet ring cell, Neuroendocrine — see data rule 16) show "profile coming
-  soon."
+  Cerebral cortex points already draw — Acinar adenocarcinoma, Ductal
+  adenocarcinoma, and Neuroendocrine carcinoma are all wired now (see data
+  rule 16 for acinar/ductal's own site-model departures and data rule 32 for
+  ductal's and neuroendocrine's full sourcing). Mucinous and Signet ring
+  cell stay below the atlas's incidence floor (<1,000 cases/year — data
+  rule 31) and ship as blurb-only rows instead of full profiles: name,
+  share, a resolvable citation, one plain-stated sentence recording that
+  their clinical-distinctiveness read came back negative (cancer-specific
+  mortality does not differ from acinar — Siech et al., 2025), and an
+  inline trials toggle, never a full site map or mutation ledger.
 - **Cancer screen** — likewise one screen for whichever cancer is currently
   selected (`enterCancerScreen(cancerId)` calls `initSiteViewer(cancerId)`,
   which rebuilds the canvas/blobs/legend from `CANCER_DETAILS[cancerId]` if a
@@ -2422,6 +2428,195 @@ screen pair per organ:
       already say the layer is within the wall. Export frame matches the
       app's mirror-view convention (duodenum image-right). No glow/precedent
       consequences: stomach was already pos-anchored (isRealMesh true).
+31. **Every `share` figure in this atlas is a PREDOMINANCE share, not a presence share — an
+    atlas-wide reading rule, recorded once rather than caveated per entry (2026-09-12, user
+    ruling).** Cancer registries (SEER's own coding practice, which every `share` figure in this
+    file ultimately traces to) assign a histologic subtype code only when that subtype accounts
+    for at least half of a tumor's own composition. Siech et al., *Ann Surg Oncol*, 2026, PMID
+    41718902, states this directly in its own Limitations: "we could not distinguish between pure
+    versus mixed rare histological subtypes of PCa. In general, histological subtypes are coded
+    only if they account for at least 50% of the tumor, which can underreport rare histological
+    subtypes." **So "X% of this organ's cancers" always means "X% were PREDOMINANTLY this
+    subtype," never "X% contained this subtype anywhere."** For most entries in this atlas the gap
+    between the two readings is nil or irrelevant — HGSOC is HGSOC, acinar prostate adenocarcinoma
+    is acinar — because the dominant subtype of an organ is, definitionally, usually dominant
+    throughout. **The gap becomes real and large precisely for the subtypes most likely to appear
+    as a MINOR admixed component of a more common one**, and prostatic ductal adenocarcinoma
+    (DAC) is the clean worked example, verified directly rather than assumed: Siech's own
+    855/427,055 count (~0.20% of prostate cancers, ~50/year) describes tumors where ductal
+    histology was the *predominant* pattern. A systematic slide-by-slide re-review of 1,051
+    consecutive radical prostatectomies (Seipel et al., *Virchows Arch*, 2013, PMID 23443941)
+    found ductal histology, admixed with acinar carcinoma at "10–100% (mean 40%) of the main
+    tumor," in ~8.2% of specimens — thirteen to forty times Siech's rate. Amin & Epstein, *Am J
+    Surg Pathol*, 2011, PMID 21383610, PMCID PMC4425125, found a smaller but still real gap in
+    routine (non-re-reviewed) reporting: 93/18,552 ≈ 0.50%, roughly 2.5×. **Consequence for how a
+    reader should encounter any small `share` figure in this atlas: read it as "rarely the
+    dominant pattern," never as "rarely present" — the two are different claims, and only the
+    first is what registry data can actually support.** This is the same register distinction
+    this project has hit repeatedly under other names — gross vs. histologic register (rule 20's
+    OCCC/testis histology reads), detection-framing vs. biological behavior (the extent axis's
+    "found at diagnosis" discipline, `phaseA_extent_design.md`), enrollment criteria vs. true
+    origin (Phase D's trials duty-of-care) — arriving this time inside the `share` figures
+    themselves, the single most load-bearing number on the organ screen. **Practical
+    consequence: this does NOT change any exception ruling already made on distinctiveness
+    grounds** (a rare-but-present subtype's behavior/management divergence from its organ's
+    dominant pattern is a real, separate question from how often registries code it as dominant)
+    — it changes only how a `share` number itself should be read, atlas-wide, and it is recorded
+    once here rather than as a per-entry caveat that would have to be repeated at every organ
+    where the gap is real.
+32. Prostate/ductal adenocarcinoma and Prostate/neuroendocrine carcinoma reference sources —
+    **the two "then prostate" exception entries ruled in from data rule 16's original four
+    below-floor subtypes, plus below-floor blurb-only treatment for the two that did not clear
+    the distinctiveness bar (mucinous, signet ring cell). Every citation verified directly at the
+    source. Both exceptions rest on distinctiveness, not on the incidence floor** — data rule 31
+    already establishes that the floor was never the real question for ductal, since its own
+    predominance share (~0.20%, ~50/year) undercounts how often the histology is present by
+    thirteen to forty times; the clinical-distinctiveness read is what actually admits both.
+    - **`pductal` — origin override and hotspot rewrite.** Seipel et al., *Virchows Arch*, 2013,
+      PMID 23443941 (the same paper data rule 31 uses as its worked example) also gives this
+      entity's real site of origin: periurethral ducts specifically, not the peripheral zone
+      acinar disease shares. Confirmed directly: 69.8% of ductal carcinomas arise from
+      periurethral ducts only, a further 26.7% from both periurethral and peripheral ducts
+      together — the figure this pass verified was NOT already sourced despite an earlier,
+      uncited-in-full design-doc summary attributing it to two different papers; the
+      misattribution was caught and corrected before use, per this project's own
+      "verify before trusting a secondhand summary" standard. `ORIGIN_HOTSPOT_ENTRY.pductal = 3`
+      (index 3 = Prostatic urethra) and the organ screen's Prostatic urethra hotspot text was
+      rewritten to append this fact, preserving the original urinary-symptom content rather than
+      replacing it — a change to already-served prose, held to the same register-guard standard
+      as any other content edit, not just an append.
+    - **`pductal` — sites.** No dedicated site-distribution study exists for ductal carcinoma
+      specifically, so `REGIONS_PDUCTAL` (Bone/Lung/Liver/Adrenal gland — ids `DB`/`DG`/`DV`/`DR`)
+      reuses Bubendorf et al., *Human Pathology*, 2000 (the same acinar-cited autopsy percentages
+      data rule 16 already established as this organ's real bone-dominant spread pattern) rather
+      than inventing a ductal-specific number the literature doesn't support — the same honesty
+      precedent every organ's unclaimed-site figures already use, applied here to an entire site
+      model rather than one site.
+    - **`pductal` — branch genes.** CTNNB1 and PTEN loss are this entity's mutually-exclusive
+      branch pair, split two sites each — Gillard et al., *Eur Urol Focus*, 2019, PMID 29229583,
+      and Lindh et al., *Prostate*, 2022, PMID 35049068, both confirmed directly as the source of
+      the exclusivity finding, the same architectural pattern as acinar's TMPRSS2-ERG/SPOP split
+      and HCC's TP53/CTNNB1 pair (data rules 6/16) rather than a new mutation-framing model.
+    - **`pductal` — trunk.** `TRUNK_PDUCTAL` states plainly that no single founder mutation
+      exists for this entity — a fact-statement trunk in the same sense as acinar's own
+      "76.5% multifocal, no shared founder" framing (data rule 15), not a truncal gene. Ductal
+      shares acinar's ERG fusion/SPOP mutation backbone at documented variable rates, per Seipel
+      2013's own framing of ductal as arising within the same TMPRSS2-ERG/SPOP-defined molecular
+      landscape as acinar disease. Zhu et al., *J Pathol Clin Res*, 2025, PMID 40172755, confirmed
+      directly, adds a real, ductal-specific finding on top of that shared backbone: SPOP mutation
+      is enriched in ductal disease specifically once it becomes metastatic.
+    - **`pductal` — private pool.** DDR (DNA-damage-repair) pathway alteration and FOXA1 —
+      Schweizer et al., *JCO Precision Oncology*, 2019, PMID 31123724 (plus a supporting
+      *Oncotarget*, 2016 finding on the same candidates), confirmed directly — plus the standard
+      TTN passenger. **Checked and honestly NOT found in this pass's own search:** CDH1, MYC, and
+      PIK3R1 — all three were checked as candidate pool members and none turned up ductal-specific
+      recurrence data supporting inclusion; recorded as a deliberate negative rather than silently
+      omitted, the same "checked and not found" discipline data rule 12 (ccRCC's KDM5C/PTEN) and
+      others already use.
+    - **`pductal` — histology.** `genProstateDuctal` in `js/histology.js` (two `drawFrond` calls
+      with columnar nuclear style, one `drawCribriformMass`, five `drawGlandRing` acinar-admixture
+      spots) reinstates verbatim a fully-built, previously-verified generator this project had
+      preserved without shipping — reuse of an existing, already-checked primitive rather than a
+      new drawing routine, matching this project's reuse-over-duplication standard.
+    - **`pneuro` — clinical-distinctiveness read.** Three independent, corroborating sources
+      established a clean exception on the same criterion data rule 15 uses for acinar: real
+      divergence in metastatic pattern, treatment approach, and a diagnostic pitfall a reader
+      cannot get from a picture. **PSA can read normal or low** despite disease presence — Beltran
+      et al., *Nat Med*, 2016, PMID 26855148, and Aggarwal et al., *J Clin Oncol*, 2018, PMID
+      29985747, both confirmed directly on AR-pathway attenuation as the mechanism; Conteduca et
+      al., *European Journal of Cancer*, 2019, PMID 31525487, confirmed directly on the clinical
+      PSA-normal-or-low finding itself, independently corroborated by a case report — Rauf et al.,
+      2020, PMID 32582431 — cited as corroboration, not as the primary source. **Treatment
+      diverges to chemotherapy rather than ADT** (androgen-deprivation therapy) — the same Beltran
+      2016 source, confirmed directly: this entity's treatment-emergent, AR-pathway-independent
+      lineage is why systemic therapy for it does not follow acinar disease's hormonal-therapy
+      pattern. Both facts are stated in-product exactly because a reader cannot get either from
+      the site map or histology alone — the same "say it in prose, not just in geometry" standard
+      data rule 2 established from the very first organ.
+    - **`pneuro` — trunk, a fourth kind of truncal justification.** TP53 and RB1 concurrent loss
+      is this entity's trunk fact, confirmed directly via Beltran et al., *Nat Med*, 2016. Truncal
+      here for neither the spatial reason (TP53/VHL), the temporal-earliest reason (HCC's TERT,
+      PDAC's KRAS), nor the diagnostic-classifier reason (GBM's IDH-wildtype status) — data rule 5
+      already lists those three — but for a **fourth, transformation-defining** reason: the
+      concurrent loss is truncal because it molecularly enables the lineage transformation from
+      acinar to neuroendocrine disease itself, not because of when or where it occurs within an
+      already-formed, static tumor. **Check which of these four justifications actually applies
+      to any future organ's trunk fact — do not assume a truncal event is always spatial by
+      default**, the same standing instruction data rule 5 already gives for the first three.
+    - **`pneuro` — sites and branch genes.** `REGIONS_PNEURO` (Bone `NB` 65.65%, Liver `NL`
+      36.64%, Lung `NU` 26.72%, Brain `NR` 4.58%) all cite Wang et al., *Prostate*, 2019, PMID
+      31376193, confirmed directly as this entity's own real metastatic-site distribution — not
+      borrowed from acinar's Bubendorf figures, unlike `pductal` above, because a dedicated
+      neuroendocrine-specific site study exists. AURKA is the branch gene at Bone+Liver, MYCN at
+      Lung+Brain — a cooperating (not competing) pair per Beltran et al., *Cancer Discov*, 2011,
+      PMID 22389870, confirmed directly.
+    - **`pneuro` — private pool.** TTN only. **Checked and honestly NOT found:** PTEN and PIK3CA
+      were both checked as candidate pool members for this entity's own pool and neither turned up
+      supporting recurrence data — recorded as a deliberate negative, same discipline as
+      `pductal`'s CDH1/MYC/PIK3R1 note above. A DDR-pathway-alteration exclusion finding was also
+      recorded: this entity's own literature runs against including a DDR candidate the way
+      `pductal`'s pool does, checked rather than copied across entities by analogy.
+    - **`pneuro` — histology.** `genProstateNeuro` in `js/histology.js` (two `drawSmallCellSheet`
+      zones plus one `necrosisBlob`, reusing pre-existing histology primitives rather than new
+      drawing code) depicts nuclear molding and naked-nuclei figures per Ng & Li, *Ann Diagn
+      Pathol*, 2024, PMID 39342665, confirmed directly, with a cross-cohort caveat carried via
+      Epstein et al., 2014's own classification of neuroendocrine differentiation in prostate
+      cancer as the source of the diagnostic category itself.
+    - **Both entities — extent/margin/growth axes.** `MARGIN_STATUS` and `GROWTH_STATUS` in
+      `js/morphology.js` carry `uncharacterised` for both, each with an honest
+      `checked 2026-09-12 — no gross-register margin/growth sentence found in this pass's own
+      search` note, rather than a silent omission. `EXTENT_STATUS` is also `uncharacterised` for
+      both: the share-bound rule (an organ aggregate is safe to use directly only if
+      `(1−share)×100 ≤ ~10` points) forbids using the acinar/prostate aggregate for either —
+      pneuro's 0.03% share and pductal's 0.20% share both fail this test by enormous margins — and
+      no clean per-subtype SEER-Summary-Stage source was found for either (Wang 2019 gives real
+      pneuro metastatic-site percentages but not this specific stage format).
+    - **`psignet` and `pmuc` — below-floor blurb-only, clinical-distinctiveness read negative.**
+      Both entities' distinctiveness reads came back negative on the same real-evidence criterion
+      that admitted `pductal` and `pneuro`: Siech et al., 2025, PMID 38987307, PMCID PMC12399420,
+      confirmed directly — a well-powered competing-risk-regression analysis finding no difference
+      in cancer-specific mortality between either subtype and acinar adenocarcinoma. Both entries
+      therefore carry only a `blurb` field (name, share, this resolvable citation, and one
+      plain-stated sentence recording the negative finding, per the approved below-floor schema)
+      rather than a full site map, mutation ledger, or histology view — an entry that needs more
+      gets promoted on distinctiveness, never accreted piecemeal below the floor.
+    - **Trials — organ-anchored conjunctive matching, all four entities.** "Signet ring" and
+      "mucinous" are overloaded across gastric, colorectal, and ovarian trials literature; "ductal"
+      is overloaded against pancreatic ductal adenocarcinoma specifically — confirmed as a real,
+      not theoretical, collision via live ClinicalTrials.gov API testing (a real 24-tumor basket
+      trial, NCT03602079, lists "Mucinous Adenocarcinoma Gastric" and "Prostate Cancer" as two
+      separate, unrelated condition entries in the same study). `filterByCondition` in
+      `js/trials.js` was extended with a same-string co-occurrence rule — an organ-anchor term
+      (`requireAlso: ['prostat']`) must appear in the SAME declared condition string as the subtype
+      term, not merely somewhere in the same study's conditions array, which is what the basket
+      trial's own structure would otherwise let slip through. All four `TRIALS_CONDITION_MAP`
+      entries (`pneuro`, `pductal`, `psignet`, `pmuc`) carry this `requireAlso`. **A real regex bug
+      in the same-string co-occurrence check itself was found and fixed live in the browser during
+      this pass's own verification, not caught by the earlier Python/manual checks against fetched
+      JSON that had been trusted as sufficient**: `requireAlso`'s stems (`'prostat'`) were run
+      through the same word-boundaried `keywordRegex` every whole-word `conditionKeywords` entry
+      uses, and `\bprostat\b` can never match inside "Prostate" — the letter immediately after the
+      stem's own final `t` is `e`, a word character, so no boundary exists there for `\b` to find.
+      Every `requireAlso`-gated entry was silently over-dropping from the moment this mechanism
+      shipped, including ten genuine prostate-NEPC trials for `pneuro`'s own live corpus. Fixed
+      with a dedicated `stemRegex` (leading `\b` only, no trailing one — deliberately asymmetric,
+      since a stem is supposed to match every inflected form sharing it, unlike a whole word).
+      Re-verified live, against the corrected code, immediately after the fix: `pneuro` 4/10 kept
+      (real prostate-NEPC trials — the corpus had also moved some since the original, broken check,
+      so 4/10 is not simply "10/10 minus the bug"), `pductal` 0/10 kept unchanged, `psignet`/`pmuc`
+      both unchanged (EMPTY-ANSWERED, and in both cases the bug was never reachable — their own
+      base `conditionKeywords` check already drops every candidate before `requireAlso` runs).
+      **The fetch-time filter alone cannot catch the underlying keyword-collision class this
+      mechanism exists for, because it shares the same keyword list the filter is built from** —
+      the same reason seminoma's own trials-keyword omission (data rule 22) survived unnoticed;
+      conjunctive
+      organ-anchoring is the standing fix for any future overloaded subtype term, not a one-off
+      patch for these four.
+    - **Region-id uniqueness, re-verified.** New region ids `NB`/`NL`/`NU`/`NR` (pneuro) and
+      `DB`/`DG`/`DV`/`DR` (pductal) were checked against every existing cancer's region ids across
+      every organ file before use (`grep -oE "id:'[A-Za-z0-9]{1,3}'"` across all `js/organs/*.js`),
+      per this project's own standing rule that region ids must be globally unique, not just
+      unique within one organ.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward

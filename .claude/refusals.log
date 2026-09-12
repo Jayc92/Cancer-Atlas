@@ -546,3 +546,138 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 0, "kept": 4, "population": 7, "preregistered": 4, "problems": 3, "scored_confirms": 4, "scored_falsifies": 0, "spent": 3}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
   | DONE citation_paren_ledger: 7 paren spans (3 spent, 4 kept), 4 scored (0 as TEST, 4 as FIT and worth no support), 0 falsifying, 3 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-12T19:39:00Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 44 lines, last 12 below
+  |       directly paralleling how every other organ in this atlas has its own "arises here" structure
+  |   universal needs a read: js/organs/prostate.js:354 [text] — quantifies over the atlas; record names no gene symbol
+  |       unlike every other cell field this atlas draws
+  |   universal needs a read: js/organs/skin.js:257 [desc] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       and the only one this atlas shows as a cut block rather than a whole shape
+  |   world-scoped universal needs a read: js/organs/stomach.js:148 [desc] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       Uniquely in the digestive tract
+  |   world-scoped universal needs a read: js/organs/stomach.js:177 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   absence_claim_check: 5 flag(s) — 2 dated for re-read, 2 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/prostate.js|text|unlike every other cell field this atlas': js/organs/prostate.js:354 [text] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 1 unscoped claims (1 absence, 0 false corpus universal), 3 universals flagged for a read, 2 world-scoped, 21 cancers indexed (DEFECT 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 2, OK-SCOPED 4, OK-SEARCH 11, UNIVERSAL-UNRESOLVED 3, UNIVERSAL-WORLD-SCOPED 2), 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T19:39:00Z reason=exit=1 marker="DONE fraction_check:" tool=fraction_check.py
+     output 30 lines, last 12 below
+  |   ok   cross-half: a shared DENOMINATOR is not a shared figure — the declined anchor, pinned silent: clean
+  | SELFTEST PASS — fires on drift, passes real pairs within tolerance, and reports a cross-half fraction no literal pairs
+  | 
+  |   MISMATCH? pancreas:206  stated ~50% vs 25/84 = 29.76%
+  |   COMMENT MISMATCH? pancreas:149  stated ~50% vs 25/84 = 29.76%
+  |   MISMATCH? prostate:393  stated 14% vs 25/51 = 49.02%
+  | TWO-YEAR-RANGE strings (human confirms-deliberate): 1
+  |    thyroid:36  [('1974', '2013'), ('1994', '2013')]
+  | SIDECAR {"metrics": {"comment_blocks": 26, "comment_flags": 1, "cross_half_flags": 0, "cross_half_pairs": 8, "field_flags": 2, "field_strings": 59, "two_year_range": 1}, "name": "fraction_check", "ratchet": []}
+  |   fraction_check: 3 flag(s) — 0 dated for re-read, 2 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED fraction_check flag 'prostate|field|14%|25/51': prostate:393 stated 14% vs 25/51 = 49.02% — fix it, declare it with a reason, or date it for re-read
+  | DONE fraction_check: 59 field strings with fraction+percent, 2 mismatch flags; 26 comment blocks, 1 comment flags; 8 cross-half shared fractions, 0 unpaired; 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T19:39:01Z reason=exit=1 marker="DONE duplicate_figure_check:" tool=duplicate_figure_check.py
+     output 43 lines, last 12 below
+  |   DRIFT? stomach:227 vs :231  (gene A='CLDN18–ARHGAP fusion' B='CLDN18–ARHGAP fusion')
+  |      window: 32% of metastatic gastric-cancer patients
+  |      A=['32%']  B=['12%']
+  |   duplicate_figure_check: 10 flag(s) — 0 dated for re-read, 4 permanent with reason, 6 problem(s)
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'prostate|AR pathway attenuation ("AR-indifferent"|2018, 29985747, 6366813|2025, 40172755, 11963801': prostate:321 vs :385 A=['2018', '29985747', '6366813'] B=['2025', '40172755', '11963801'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'prostate|AURKA amplification|2011, 22389870, 3290518|2025, 40172755, 11963801': prostate:304 vs :385 A=['2011', '22389870', '3290518'] B=['2025', '40172755', '11963801'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'prostate|CTNNB1 hotspot mutation|2000, 25%|2000, 13%': prostate:374 vs :376 A=['2000', '25%'] B=['2000', '13%'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'prostate|Concurrent TP53 + RB1 loss|2016, 26855148, 4777652|2025, 40172755, 11963801': prostate:320 vs :385 A=['2016', '26855148', '4777652'] B=['2025', '40172755', '11963801'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'prostate|None|2025, 40172755, 11963801|2016, 27756888, 5347709': prostate:385 vs :393 A=['2025', '40172755', '11963801'] B=['2016', '27756888', '5347709'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'prostate|TMPRSS2-ERG fusion (shared with acinar, |2019, 31123724, 6528668|2025, 40172755, 11963801': prostate:385 vs :385 A=['2019', '31123724', '6528668'] B=['2025', '40172755', '11963801'] — fix it, declare it with a reason, or date it for re-read
+  | 
+  | DONE duplicate_figure_check: 2705 same-file string pairs compared, 10 drift flags, 6 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T19:39:01Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 48 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/prostate.js:227 — Fontugne|2022 is at 224 (offset -3, name+year), 4 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/prostate.js:227 — Pathol|2022 is at 247 (offset +20, name+year), 8 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/prostate.js:227 — Reports|2023 is at 247 (offset +20, name+year), 4 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/prostate.js:227 — Bubendorf|2000 is at 247 (offset +20, name+year), 7 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/prostate.js:236 — Epstein|2016 is at 256 (offset +20, name+year), 6 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/prostate.js:253 — Epstein|2016 is at 256 (offset +3, name+year), 6 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/prostate.js:239 — Urol|2016 is at 259 (offset +20, name+year), 3 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/prostate.js:253 — Epstein|2016 is at 256 (offset +3, name+year), 6 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/prostate.js: 13 off line, 5 distinct [-3, -1, 3, 13, 20]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 13, "pointer.identity_oracle": 272, "pointer.on_line": 256, "pointer.pointers_code": 461, "pointer.pointers_prose": 143}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 604/604 hand-typed pointers resolve (file tracked, line in range), 461 code-and-instrument (floored) + 143 prose (reported, not floored) = 604 total, 256/272 with an author+year oracle land on their referent's line, 3 declared off-line, 13 flags, 41 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-12T19:39:02Z reason=exit=1 marker="DONE reserve_check:" tool=reserve_check.js
+     output 44 lines, last 12 below
+  |   ok   origin-word test fires/passes as intended
+  |   ok   fires on an entry id that names no active entry
+  |   ok   fires on an out-of-range index
+  |   ok   fires when the entry's own hotspot text is bland, even though the organ description is not
+  |   ok   silent when the entry's own hotspot text speaks of origin directly
+  |   ok   silent on the live ORIGIN_HOTSPOT_ENTRY against the live corpus
+  | SELFTEST PASS — fixture-form by design: no live population can carry a violation while the rule holds (condition (7-quater))
+  |   render coverage (rendered/cited per entry): uc:0/1 gbm:2/2 tnbc:0/0 crc:0/1 ccrcc:0/0 hcc:1/2 luad:0/0 hgsoc:0/1 endo:0/1 clear:0/1 muc:0/1 lgsc:0/0 pdac:2/2 acinar:0/1 pductal:0/0 pneuro:0/0 melanoma:1/2 gdiff:0/1 seminoma:1/1 ptc:2/2 ftc:0/0
+  |   PROBLEM: extent status pneuro is 'uncharacterised' without saying what was read
+  |   PROBLEM: extent status pductal is 'uncharacterised' without saying what was read
+  | SIDECAR {"name":"reserve_check","metrics":{"categories":5,"entries":21,"organs":14,"rendered_default":15,"rendered_cited":6,"tissue_albedos":26,"nearest_hue_deg":129,"same_appearance":1,"cited_backed":6,"cited_total":6,"ledger_records":29,"growth_categories":2,"growth_cited":13,"growth_drawn":3,"render_cited":19,"render_rendered":9,"render_text_only":10,"render_text_by_design":17,"problems":2},"ratchet":["categories","growth_categories"]}
+  | DONE reserve_check: reserved form on the freq band [1.6,2.4] unreachable from 5 cited categories (fixture-form (7) by design), 21/21 active entries carry a margin status (12 uncharacterised, 3 unread, 6 cited of which 6 rendered inside their ranges), 14/14 organs anchor their mass, reserved colour 129° of hue from the nearest of 26 tissue albedos (margin 90°), 1 cited category declared the same appearance as a sibling under arm 3 (declarations true), 6/6 cited statuses carry a resolvable identifier against 29 ledger records, reserved growth vector unreachable from 2 cited growth categories (growth census: 13 cited of which 3 drawn, 5 uncharacterised, 3 unread), reserved-margin dissolve cap 0 (no dissolve on a placeholder; floor 0.3 holds by construction), render coverage 9/19 cited margin/growth properties rendered (10 text-only pending a mechanism) plus 17 cited extent distributions text by design, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T19:39:24Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 55 lines, last 12 below
+  |               js/organs/colon.js:164
+  |   UNDECLARED  'de Kouchkovsky'
+  |               js/organs/prostate.js:315
+  |   well-formed 'van Beek'
+  |               js/organs/stomach.js:237
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:100
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'de Kouchkovsky' at js/organs/prostate.js:315 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 24, "heads_total": 25, "imprecise": 8, "problems": 1, "records": 42, "well_formed": 16}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 25 multi-token heads on 42/576 records, 8 declared imprecise, 16 declared well-formed, 1 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T19:43:04Z reason=exit=1 marker="DONE " tool=battery.py
+     output 875 lines, last 12 below
+  |       "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |      }
+  |     ]
+  |     RATCHET RAISED: citation_crosscheck.records 165 -> 192 — growth moves it up with no ceremony; git add .claude/record_count.json in this commit
+  | 
+  |   FAILED: absence_claim_check — exit 1
+  |   FAILED: fraction_check — exit 1
+  |   FAILED: duplicate_figure_check — exit 1
+  |   FAILED: pointer_check — exit 1
+  |   FAILED: reserve_check — exit 1
+  |   FAILED: citation_head_check — exit 3
+  | DONE battery: phase pre-commit — 10/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 576 citation records extracted (ratchet 527->576 raised; 49 added, 40 moved), 4/10 reporting members emitted a sidecar, 3 sidecar metrics ratcheted, 6 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T19:53:16Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 41 lines, last 12 below
+  |   UNSCOPED ABSENCE CLAIM: js/organs/prostate.js:394 [note] — existence verb 'no documented' with no search scope or dataset bound
+  |       A transcription factor that cooperates with androgen-receptor signaling — checked against the trunk and both branch genes above with no documented conflict in any of the three cohorts consulted.
+  |   universal needs a read: js/organs/brain.js:120 [text] — quantifies over the atlas; record names no gene symbol
+  |       directly paralleling how every other organ in this atlas has its own "arises here" structure
+  |   universal needs a read: js/organs/skin.js:257 [desc] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       and the only one this atlas shows as a cut block rather than a whole shape
+  |   world-scoped universal needs a read: js/organs/stomach.js:148 [desc] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       Uniquely in the digestive tract
+  |   world-scoped universal needs a read: js/organs/stomach.js:177 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   absence_claim_check: 4 flag(s) — 2 dated for re-read, 2 permanent with reason, 0 problem(s)
+  | DONE absence_claim_check: 1 unscoped claims (1 absence, 0 false corpus universal), 2 universals flagged for a read, 2 world-scoped, 21 cancers indexed (DEFECT 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 2, OK-SCOPED 4, OK-SEARCH 11, UNIVERSAL-UNRESOLVED 2, UNIVERSAL-WORLD-SCOPED 2), 0 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-12T19:57:19Z reason=exit=1 marker="DONE " tool=battery.py
+     output 792 lines, last 12 below
+  |      {
+  |       "type": "404",
+  |       "msg": "http://localhost:3057/favicon.ico"
+  |      },
+  |      {
+  |       "type": "console",
+  |       "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |      }
+  |     ]
+  | 
+  |   FAILED: absence_claim_check — exit 1
+  | DONE battery: phase pre-commit — 15/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 576 citation records extracted (ratchet 576 held; set unchanged), 8/15 reporting members emitted a sidecar, 7 sidecar metrics ratcheted, 1 problems
+==== END REFUSAL
