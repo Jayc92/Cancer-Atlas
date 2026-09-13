@@ -1430,3 +1430,93 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |  }
   | ]
 ==== END REFUSAL
+==== REFUSAL 2026-09-13T19:01:45Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 113 lines, last 12 below
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:291 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:157 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 36 flag(s) — 3 dated for re-read, 32 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag "js/organs/kidneys.js|comment|THE ATLAS'S FIRST COHORT-PREVALENCE-ONLY": js/organs/kidneys.js:309 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 1 unscoped claims (1 absence, 0 false corpus universal), 30 universals flagged for a read, 6 world-scoped, 32 cancers indexed (DEFECT 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 3, OK-SCOPED 7, OK-SEARCH 19, UNIVERSAL-UNRESOLVED 30, UNIVERSAL-WORLD-SCOPED 6), 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T19:01:46Z reason=exit=1 marker="DONE share_sum_check:" tool=share_sum_check.py
+     output 22 lines, last 12 below
+  |   liver     GAP sum=87.5 — transplant candidate, human reads the label
+  |   lungs     PARTIAL-FAMILY sum=75.0 (+1 exempt rows)
+  |   ovary     COHERENT sum=98.0
+  |   pancreas  PARTIAL-FAMILY sum=90.0 (+3 exempt rows)
+  |   prostate  COHERENT sum=100.0
+  |   skin      PARTIAL-FAMILY sum=2.0 (+3 exempt rows)
+  |   stomach   COHERENT sum=99.9
+  |   testis    COHERENT sum=100.0
+  |   thyroid   COHERENT sum=98.0
+  |   share_sum_check: 2 flag(s) — 1 dated for re-read, 0 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED share_sum_check flag 'kidneys': GAP sum=89.0 — transplant candidate, human reads the label — fix it, declare it with a reason, or date it for re-read
+  | DONE share_sum_check: 14 families checked, 2 gap flags, 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T19:01:46Z reason=exit=1 marker="DONE duplicate_figure_check:" tool=duplicate_figure_check.py
+     output 65 lines, last 12 below
+  |      window: P 0.0001 He et al
+  |      A=['0.0001']  B=['0.0103']
+  |   DRIFT? thyroid:350 vs :352  (gene A='RET mutation (somatic)' B='RET mutation (somatic)')
+  |      window: 52.2% of patients with distant metastasis Park et al
+  |      A=['52.2%']  B=['28.3%']
+  |   DRIFT? thyroid:441 vs :443  (gene A='RAS mutation (H/K/N-RAS)' B='RAS mutation (H/K/N-RAS)')
+  |      window: involvement 18% of cases Besic Gazic 2013
+  |      A=['18%', '2013']  B=['13%', '2013']
+  |   duplicate_figure_check: 16 flag(s) — 0 dated for re-read, 15 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'kidneys|MET pathway alteration / chromosome 7 ga|81.3%, 1|18.6%, 1': kidneys:258 vs :258 A=['81.3%', '1'] B=['18.6%', '1'] — fix it, declare it with a reason, or date it for re-read
+  | 
+  | DONE duplicate_figure_check: 4512 same-file string pairs compared, 19 drift flags, 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T19:01:47Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 41 lines, last 12 below
+  |   ok   the code/prose split of a synthetic 2-code/3-prose pointer list is 2/3, not a blend — removing one of the three prose entries would drop prose_n to 2 and leave code_n at 2 unchanged, which is the whole point: a documentation condensation cannot touch the floored metric
+  | SELFTEST PASS — fires on both dangling shapes, on a referent off its line, on one absent from the file, and on all five ways an exemption can be wrong; keeps floor-only pointers out of the identity count; refuses a substring match for a short surname and accepts a non-ASCII one; finds a far-away referent in real corpus bytes; classifies all four real origin shapes into CODE-OR-PROSE correctly, with a mixed-population fixture proving the split is real and not a blend; and takes its population from git rather than from the filesystem
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/kidneys.js:147 — NEJM|2012 is at 171 (offset +24, name+year), 14 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/kidneys.js:151 — NEJM|2012 is at 171 (offset +20, name+year), 14 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/kidneys.js:154 — NEJM|2012 is at 171 (offset +17, name+year), 14 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/kidneys.js:160 — Moore|2011 is at 184 (offset +24, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/kidneys.js:204 — Morphol|2020 is at 228 (offset +24, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/kidneys.js:210 — Morphol|2020 is at 228 (offset +18, name+year), 2 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/kidneys.js: 6 off line, 4 distinct [17, 18, 20, 24]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 6, "pointer.identity_oracle": 272, "pointer.on_line": 263, "pointer.pointers_code": 477, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 622/622 hand-typed pointers resolve (file tracked, line in range), 477 code-and-instrument (floored) + 145 prose (reported, not floored) = 622 total, 263/272 with an author+year oracle land on their referent's line, 3 declared off-line, 6 flags, 41 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-13T19:12:10Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 110 lines, last 12 below
+  |   world-scoped universal needs a read: js/organs/stomach.js:185 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/stomach.js:148 (shares ['found', 'inner', 'layer', 'oblique', 'tract'])
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:291 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:157 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 35 flag(s) — 3 dated for re-read, 32 permanent with reason, 0 problem(s)
+  | DONE absence_claim_check: 1 unscoped claims (1 absence, 0 false corpus universal), 29 universals flagged for a read, 6 world-scoped, 32 cancers indexed (DEFECT 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 3, OK-SCOPED 7, OK-SEARCH 19, UNIVERSAL-UNRESOLVED 29, UNIVERSAL-WORLD-SCOPED 6), 0 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T19:44:23Z reason=exit=1 marker="DONE fraction_check:" tool=fraction_check.py
+     output 36 lines, last 12 below
+  |   MISMATCH? prostate:395  stated 14% vs 25/51 = 49.02%
+  |   MISMATCH? thyroid:333  stated ~60% vs 43/100 = 43.0%
+  |   MISMATCH? thyroid:333  stated ~60% vs 34/43 = 79.07%
+  |   MISMATCH? thyroid:350  stated ~60% vs 43/100 = 43.0%
+  |   COMMENT MISMATCH? thyroid:307  stated 43-60% vs 34/43 = 79.07%
+  | TWO-YEAR-RANGE strings (human confirms-deliberate): 2
+  |    breast:37  [('1988', '2016'), ('2017', '2021')]
+  |    thyroid:36  [('1974', '2013'), ('1994', '2013')]
+  | SIDECAR {"metrics": {"comment_blocks": 35, "comment_flags": 2, "cross_half_flags": 0, "cross_half_pairs": 15, "field_flags": 6, "field_strings": 87, "two_year_range": 2}, "name": "fraction_check", "ratchet": []}
+  |   fraction_check: 7 flag(s) — 0 dated for re-read, 6 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED fraction_check flag 'kidneys|field|18.6%|13/75': kidneys:258 stated 18.6% vs 13/75 = 17.33% — fix it, declare it with a reason, or date it for re-read
+  | DONE fraction_check: 87 field strings with fraction+percent, 6 mismatch flags; 35 comment blocks, 2 comment flags; 15 cross-half shared fractions, 0 unpaired; 1 tolerated-count problems
+==== END REFUSAL

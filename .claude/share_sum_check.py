@@ -31,6 +31,18 @@ from tolerated import resolve
 # is the re-read owed by the date below — after it, the declaration expires and the gate goes red.
 DECLARED = [
     {'key': 'liver', 'reason': 'sum 87.5: the listed primaries leave ~12.5% of the family unaccounted; re-read the cited liver-cancer epidemiology source for the remainder, then either add the missing row or scope the label to the primaries listed', 'until': '2026-10-01'},
+    # KIDNEYS, PERMANENT WITH REASON (2026-09-13, ordinary-organ batch, papillary/chromophobe RCC
+    # going active): the three modeled entries (clear cell ~75%, papillary ~9-13%, chromophobe
+    # ~2-4%) are the field's own "big three" convention, not a claimed partition of every RCC —
+    # WHO 2016+ recognizes real, rarer RCC entities beyond them (unclassified RCC, collecting duct
+    # carcinoma, renal medullary carcinoma, MiT family translocation RCC, SDH-deficient RCC, and
+    # others), several confirmed as real, currently-trialed entities via this same commit's own
+    # live ClinicalTrials.gov sample (e.g. "Translocation Renal Cell Carcinoma," "Renal Medullary
+    # Carcinoma," "Succinate Dehydrogenase-Deficient Renal Cell Carcinoma" all appeared as real hits
+    # in the parent kidney-cancer corpus). The ~11-point gap is that real remainder, not a coverage
+    # hole in these three entries' own cited figures — no re-read is owed unless a fourth RCC
+    # subtype is ever added to this organ.
+    {'key': 'kidneys', 'reason': 'sum 89.0: clear cell + papillary + chromophobe are the field\'s "big three" RCC subtypes, not every RCC subtype WHO recognizes; the ~11-point remainder is real rarer entities (unclassified RCC, collecting duct carcinoma, renal medullary carcinoma, MiT family translocation RCC, SDH-deficient RCC) this organ does not model, not a gap in the three modeled entries\' own figures'},
     # breast is DELIBERATELY ABSENT here, on the STALE-declaration rule (tolerated.py; CLAUDE.md's
     # "AN UNDECLARED COUNT IS EVIDENCE OF AN UNREAD COUNT"): a declaration was written for breast at
     # authoring time (2026-09-13, phaseC_design.md §17) on the correct structural grounds — TNBC (a

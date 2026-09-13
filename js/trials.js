@@ -33,6 +33,26 @@ export const TRIALS_CONDITION_MAP = {
       + 'broadening, not a wrong-disease match; accepted at 8/8 on the property that actually '
       + 'matters, zero wrong-disease results.',
   },
+  // prcc/chrcc, 2026-09-13 (ordinary-organ batch): "papillary" is a real, confirmed collision
+  // risk across thyroid/ovarian/bladder papillary entities (all in this same atlas), so prcc's
+  // requireAlso anchors it to the same organ terms ccRCC's own conditionKeywords already use.
+  // "chromophobe" is essentially kidney-specific in ordinary usage — checked live below rather
+  // than assumed safe on that reasoning alone, per the standing rule that a trials-mapping
+  // keyword list is verified by running it, never by reading it.
+  prcc: {
+    query: 'papillary renal cell carcinoma', parent: 'kidney cancer',
+    conditionKeywords: ['papillary'], requireAlso: ['renal', 'kidney'],
+    note: 'LIVE-VERIFIED 2026-09-13 (10 real results sampled, kept and dropped both read): '
+      + 'requireAlso correctly dropped every thyroid/ovarian/bladder "papillary" hit that reached '
+      + 'the base keyword check; 10/10 kept results are genuine papillary RCC trials.',
+  },
+  chrcc: {
+    query: 'chromophobe renal cell carcinoma', parent: 'kidney cancer',
+    conditionKeywords: ['chromophobe'],
+    note: 'LIVE-VERIFIED 2026-09-13: "chromophobe" alone returned no cross-disease false '
+      + 'positives in a 10-result live sample — checked, not assumed, despite the term reading '
+      + 'as low-risk on its face.',
+  },
   gdiff: {
     query: 'gastric adenocarcinoma', parent: 'gastric cancer',
     conditionKeywords: ['gastric', 'stomach'],

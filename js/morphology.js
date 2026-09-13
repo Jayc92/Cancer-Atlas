@@ -257,6 +257,18 @@ export const MARGIN_STATUS = Object.freeze({
   sclc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register margin/circumscription sentence found in this pass\'s own search' },
   crc:      { status: 'uncharacterised', ref: 'R5 — margin subsumed by the cited growth form' },
   ccrcc:    { status: 'unread',          ref: 'R3 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
+  // prcc/chrcc, 2026-09-13 (ordinary-organ batch): both real, gross-register, directly verified.
+  // Shares seminoma's already-wired wellCircumscribed render category — the render axis is
+  // margin SHARPNESS, not capsule presence, so chrcc's genuinely different capsule story
+  // (below) is carried in its own badgeQuote's own words, not a new category.
+  // badgeQuote trimmed to the GROSS-register clause only (2026-09-13, citation-verification
+  // pass): the source's own sentence structure is "Grossly, most tumors were well
+  // circumscribed... Microscopically, papillary RCCs were... often with a thick fibrous
+  // capsule" — two separate sentences at two different registers. An earlier draft's ellipsis
+  // bridged them as if one continuous gross-appearance description; the capsule is a real,
+  // separately-cited MICROSCOPIC finding (not used on this gross-register axis).
+  prcc:     { status: 'cited', category: 'wellCircumscribed', badgeSource: 'Am J Surg Pathol 1997 (PMID 9199639)', badgeQuote: 'Grossly, most tumors were well circumscribed', ref: 'PMID 9199639 (Amin & Tickoo, n=62) — well circumscribed at gross; the paper\'s own separate microscopic-register sentence additionally notes a thick fibrous capsule, not cited on this gross-register axis; shares the seminoma-established wellCircumscribed render form' },
+  chrcc:    { status: 'cited', category: 'wellCircumscribed', badgeSource: 'Radiographics 2021 (PMC8415046)', badgeQuote: 'unencapsulated but well-circumscribed solid masses with lobulated surfaces', ref: 'PMID 34388049, PMCID PMC8415046 (Marko et al.) — well circumscribed at gross despite carrying no true fibrous capsule (the contrast with papillary RCC\'s own thick-capsule finding above is stated in the quote itself); shares the seminoma-established wellCircumscribed render form' },
   gdiff:    { status: 'unread',          ref: 'second tier — stomach margin not yet read', until: '2026-10-01' },
   uc:       { status: 'unread',          ref: 'second tier — bladder margin not yet read', until: '2026-10-01' },
   // TNBC: the harvest backing was Livasy CA et al., Mod Pathol 2006 (PMID 16341146, doi 10.1038/modpathol.3800528),
@@ -411,6 +423,12 @@ export const GROWTH_STATUS = Object.freeze({
   sclc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register growth-pattern sentence found in this pass\'s own search' },
   crc:      { status: 'cited', label: 'ulcerating-annular (majority), polypoid (a quarter)', register: 'G', badgeSource: 'Int J Mol Sci 2018 (PMC6165083)', ref: 'R6 PMC6165083 — WALL (majority) and PLACEMENT (25%), a named divergence; not drawn' },
   ccrcc:    { status: 'unread', ref: 'R3/R4 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
+  // prcc/chrcc, 2026-09-13: a real COUNT-axis fact fell out of the same margin-source read for
+  // prcc (Amin & Tickoo 1997, n=62: 24/62 multifocal, 3/62 also bilateral); no comparable
+  // gross-register growth-pattern sentence beyond the margin/circumscription description was
+  // found for chrcc in this pass's own search of Davis et al. 2014 or Marko et al. 2021.
+  prcc:     { status: 'cited', label: 'multifocal in a minority (24/62, 39%)', register: 'G', badgeSource: 'Am J Surg Pathol 1997 (PMID 9199639)', ref: 'PMID 9199639 (Amin & Tickoo, n=62) — COUNT; 3/62 also bilateral; not drawn' },
+  chrcc:    { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register growth-pattern sentence beyond the margin/circumscription description found in this pass\'s own search (Davis et al. 2014, Marko et al. 2021)' },
   gdiff:    { status: 'cited', label: 'diffuse (linitis plastica)', register: 'G', badgeSource: 'NCI PDQ, Gastric Cancer Treatment (HP), updated February 21, 2025', ref: 'https://www.cancer.gov/types/stomach/hp/stomach-treatment-pdq — WALL; not drawn (page re-verified 2026-09-09: title, the ledger sentence and the update date match)' },
   uc:       { status: 'cited', label: 'papillary, exophytic (majority)', register: 'G', badgeSource: 'Future Sci OA 2026 (PMC12893692); J Clin Invest 2026 (PMC12948436)', ref: 'R19 PMC12893692 — PLACEMENT (~75% non-muscle-invasive), invasive minority named; not drawn' },
   tnbc:     { status: 'uncharacterised', ref: 'R24 — read 2026-09-10: PMC7550871 (Front Oncol 2020, hereditary breast/ovarian pathology) carries pushing borders, necrosis and sheet-like growth in the HISTOLOGIC register only; the harvest seed (NST page, syncytial infiltrative) is H; PathologyOutlines probe 2026-09-10T16:38Z → HTTP 429, third window — no gross-register growth sentence reached' },
@@ -649,6 +667,15 @@ export const EXTENT_STATUS = Object.freeze({
   // per-histology SEER-Summary-Stage source was found for either in this pass's own search.
   idc: { status: 'uncharacterised', site: 'breast', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate: IDC-NST\'s own share (~73–80% of breast carcinomas) bounds any per-category error at roughly 20–27 points, well short of the ≥90% safety threshold, and no dedicated per-histology SEER-Summary-Stage source was found in this pass\'s own search', ref: 'checked 2026-09-13 — no SEER Stat Facts page or per-subtype stage-at-diagnosis source found for this histologic subtype' },
   ilc: { status: 'uncharacterised', site: 'breast', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate: ILC\'s own share (~10.6% of breast carcinomas) bounds any per-category error at roughly 89 points, far short of the ≥90% safety threshold, and no dedicated per-histology SEER-Summary-Stage source was found in this pass\'s own search', ref: 'checked 2026-09-13 — no SEER Stat Facts page or per-subtype stage-at-diagnosis source found for this histologic subtype' },
+  // prcc/chrcc, 2026-09-13 (ordinary-organ batch): SHARE-BOUND RULE forbids the ccRCC/organ
+  // aggregate for both — papillary's own ~9-13% share bounds any per-category error at
+  // ~87-91 points, chromophobe's ~2-4% at ~96-98 points, both far short of the ≥90% safety
+  // threshold. No dedicated SEER Stat Facts page or SEER-Summary-Stage-formatted source was
+  // found for either subtype — only AJCC T-stage-at-presentation proxies (Keegan et al., J
+  // Urol, 2012, PMID 22698625: T3+ papillary 17.6%, chromophobe 16.9%), which this atlas's own
+  // standing rule (SEER Summary Stage, never AJCC) does not admit as a substitute.
+  prcc: { status: 'uncharacterised', site: 'kidneys', uncharacterisedReason: 'the share-bound rule forbids the ccRCC/organ aggregate at ~9-13% share; no dedicated SEER Summary Stage breakdown specific to papillary RCC was found — only an AJCC T-stage-at-presentation proxy (Keegan et al., 2012, PMID 22698625: T3+ 17.6%), which this atlas\'s own standing rule (SEER Summary Stage, never AJCC) does not admit', ref: 'checked 2026-09-13 — no SEER Stat Facts page for this histologic subtype' },
+  chrcc: { status: 'uncharacterised', site: 'kidneys', uncharacterisedReason: 'the share-bound rule forbids the ccRCC/organ aggregate at ~2-4% share; no dedicated SEER Summary Stage breakdown specific to chromophobe RCC was found — only an AJCC T-stage-at-presentation proxy (Keegan et al., 2012, PMID 22698625: T3+ 16.9%) and a 5/10-year recurrence-free-survival figure (Marko et al., 2021: 89%/79%), neither a SEER Summary Stage distribution', ref: 'checked 2026-09-13 — no SEER Stat Facts page for this histologic subtype' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';
@@ -837,6 +864,19 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   // — the reserve_check requirement this mechanism enforces. IDC needs no entry here: it matches
   // the organ default (breast: 0, Ducts) exactly.
   ilc: 1,
+  // chrcc ADDED 2026-09-13 (ordinary-organ batch, kidneys) — the SAME exemption expiry as
+  // endo/pductal/lusc/sclc/ilc above: kidneys goes from one active entry (ccrcc, no override
+  // needed — arises from proximal-tubule epithelium, the organ default) to three, and
+  // chromophobe RCC genuinely arises from intercalated cells of the collecting duct, a
+  // different nephron segment. Prasad et al., Br J Radiol, 2007, PMID 17621606: "chromophobe RCC
+  // differentiate[s] towards... Type B intercalated cells of the cortical collecting duct."
+  // Index 1 is the Medulla hotspot, whose own pre-existing text already names collecting ducts
+  // directly ("each pyramid fed by a cluster of nephrons' collecting ducts") and was extended
+  // in this same pass to name chromophobe RCC's own origin there — the reserve_check
+  // requirement this mechanism enforces. prcc needs no entry here: Prasad et al. 2007 states
+  // papillary RCC shares clear cell RCC's own proximal-tubule lineage, matching the organ
+  // default (kidneys: 0, Cortex) exactly.
+  chrcc: 1,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never

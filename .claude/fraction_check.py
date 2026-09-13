@@ -150,6 +150,16 @@ DECLARED = [
     {'key': 'thyroid|comment|43-60%|34/43', 'reason': "false positive: 43-60% is the cross-cohort RET-positivity RANGE (Elisei 2008 + Gild 2023); 34/43 is M918T's dominance WITHIN Elisei's own RET-positive subset — two different real numbers, not a restatement", 'until': None},
     {'key': 'thyroid|field|~60%|34/43', 'reason': "false positive, same mechanism: ~60% is Gild et al. 2023's own cohort estimate; 34/43 is M918T's dominance within Elisei et al. 2008's RET-positive subset — different papers, different quantities", 'until': None},
     {'key': 'thyroid|field|~60%|43/100', 'reason': "false positive, same mechanism: ~60% is Gild et al. 2023's own cohort estimate; 43/100 is Elisei et al. 2008's own, separately-cited sporadic-cohort RET-positivity rate — two independent cohorts' figures sitting near each other, not one restated", 'until': None},
+    # NOT A FALSE POSITIVE — a genuine mismatch, disclosed rather than silently corrected
+    # (2026-09-13, kidneys prcc authoring pass, caught by an independent citation-verification
+    # pass and re-verified against the primary source before declaring). Linehan et al. (NEJM,
+    # 2016) themselves report "13/75, 18.6%" for Type 1 papillary RCC's MET point-mutation rate —
+    # 13/75 actually computes to 17.3%, a rounding error IN THE SOURCE, not introduced by this
+    # atlas. The note's own text quotes the source's stated 18.6% verbatim (matching this atlas's
+    # standing rule to quote a source's own figure rather than silently recompute it) and states
+    # the discrepancy explicitly in the same sentence, so a reader sees both numbers and the
+    # reason they differ.
+    {'key': 'kidneys|field|18.6%|13/75', 'reason': "genuine source-internal inconsistency, not a matcher false positive: Linehan et al. (NEJM, 2016) themselves print 13/75 as 18.6% (actual value 17.3%); quoted verbatim as the source's own stated figure, with the discrepancy disclosed in the note's own text rather than silently corrected or hidden", 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

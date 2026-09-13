@@ -657,6 +657,80 @@ function genCCRCC(g, rnd){
   ];
 }
 
+// Papillary RCC — true papillae with a real fibrovascular core (Delahunt & Eble, Mod Pathol,
+// 1997, PMID 9195569), foamy macrophages within the cores (frequent in the Type 1 form),
+// psammoma bodies. Reuses drawFrond's fibrovascular-core family primitive verbatim (zero new
+// frond-drawing code — small nucSize gives the Type 1 small-oval-nuclei look) and
+// drawPsammomaBody outright; the foamy-macrophage cluster is the one genuinely new visual this
+// entity needed — checked directly against every existing primitive first, nothing draws a
+// pale, bubbly-textured lipid-laden cell.
+function genPRCC(g, rnd){
+  const fronds = [
+    { cx:200, cy:160, rx:150, ry:40, rot:-0.18 },
+    { cx:520, cy:140, rx:160, ry:38, rot: 0.28 },
+    { cx:360, cy:370, rx:190, ry:44, rot:-0.05 },
+  ];
+  fronds.forEach(f=>{
+    drawFrond(g, rnd, f, {
+      core: { type:'fibrovascular', length:0.72, width:6 },
+      rimSpacing: 11,
+      nucSize: ()=>2.6+rnd()*1.6,
+    });
+  });
+  const foamyClusters = [ {x:200,y:160}, {x:520,y:140}, {x:360,y:370} ];
+  foamyClusters.forEach(c=>{
+    for(let i=0;i<6;i++){
+      const a = rnd()*Math.PI*2, r = 14+rnd()*20;
+      const x = c.x+Math.cos(a)*r, y = c.y+Math.sin(a)*r*0.5;
+      g.appendChild(el('circle', {cx:x, cy:y, r:6.5+rnd()*2, fill:'#e8d9ad', stroke:'#c9b276', 'stroke-width':1, opacity:0.9}));
+      for(let k=0;k<3;k++){
+        const ba = rnd()*Math.PI*2, br = rnd()*3.5;
+        g.appendChild(el('circle', {cx:x+Math.cos(ba)*br, cy:y+Math.sin(ba)*br, r:1.1+rnd()*0.8, fill:'#f7edc9', opacity:0.85}));
+      }
+      g.appendChild(el('circle', {cx:x+(rnd()*2-1)*2, cy:y+(rnd()*2-1)*2, r:2, fill:HE.nucDark, opacity:0.9}));
+    }
+  });
+  [{x:120,y:280,r:15},{x:600,y:300,r:12}].forEach(p=>drawPsammomaBody(g, p.x, p.y, p.r));
+  return [
+    {key:'papillae', x:360, y:370},
+    {key:'foamy',    x:200, y:170},
+    {key:'psammoma', x:600, y:300},
+  ];
+}
+
+// Chromophobe RCC — solid sheets of large, pale, finely textured cells with an unusually thick
+// membrane, small wrinkled ("raisinoid") nuclei inside a clear perinuclear halo (Marko et al.,
+// Radiographics, 2021, PMID 34388049; Davis et al., Cancer Cell, 2014, PMID 25155756). The
+// wrinkled nucleus reuses blobPath's own organic-wobble technique at a small radius (no new
+// shared primitive); the halo reuses the same clear-ring-around-a-nucleus idea melanoma's
+// pagetoid-spread cells already use.
+function genCHRCC(g, rnd){
+  const sheets = [ {cx:230, cy:200, rx:170, ry:140}, {cx:560, cy:300, rx:160, ry:130} ];
+  sheets.forEach(s=>{
+    g.appendChild(el('path', {d:blobPath(s.cx, s.cy, s.rx, s.ry, 0.12, 14, rnd, rnd()*0.5), fill:'#f2ecd8', stroke:'#cdbf98', 'stroke-width':1.4}));
+    const cols = Math.floor(s.rx/17), rows = Math.floor(s.ry/17);
+    for(let i=-cols;i<=cols;i++){
+      for(let j=-rows;j<=rows;j++){
+        const x = s.cx + i*17 + (rnd()*2-1)*3, y = s.cy + j*17 + (rnd()*2-1)*3;
+        if(((x-s.cx)/(s.rx*0.9))**2 + ((y-s.cy)/(s.ry*0.9))**2 > 1) continue;
+        g.appendChild(el('circle', {cx:x, cy:y, r:9.2, fill:'#e6ddc0', stroke:'#5a4c30', 'stroke-width':2.2, opacity:0.95}));
+        for(let k=0;k<4;k++){
+          const ba = rnd()*Math.PI*2, br = rnd()*6.5;
+          g.appendChild(el('circle', {cx:x+Math.cos(ba)*br, cy:y+Math.sin(ba)*br, r:0.7+rnd()*0.5, fill:'#d8cca0', opacity:0.55}));
+        }
+        const nx = x+(rnd()*2-1)*2.4, ny = y+(rnd()*2-1)*2.4;
+        g.appendChild(el('circle', {cx:nx, cy:ny, r:4.4, fill:HE.clear, stroke:HE.clearLn, 'stroke-width':0.8}));
+        g.appendChild(el('path', {d:blobPath(nx, ny, 2.6, 2.6, 0.35, 7, rnd, rnd()*Math.PI), fill:HE.nucDark, opacity:0.95}));
+      }
+    }
+  });
+  return [
+    {key:'reticulated', x:230, y:200},
+    {key:'membranes',   x:560, y:220},
+    {key:'raisinoid',   x:560, y:340},
+  ];
+}
+
 function genHCC(g, rnd){
   // Trabecular pattern: cords of polygonal tumor hepatocytes several cells thick,
   // separated by sinusoid-like spaces with sparse flat endothelial nuclei.
@@ -2010,6 +2084,8 @@ const GENERATORS = {
   lusc:   genLUSC,
   sclc:   genLungsSCLC,
   ccrcc:  genCCRCC,
+  prcc:   genPRCC,
+  chrcc:  genCHRCC,
   hcc:    genHCC,
   ichol:  genICHOL,
   gbm:    genGBM,

@@ -15,14 +15,28 @@ export const organEntry = { key:'kidneys', label:'Kidneys', system:'Urinary', ac
 
 export const markerSpec = { points:[{heightFrac:0.53, angle:-50}, {heightFrac:0.53, angle:50}] };
 
+// SHARE FIGURES CORRECTED 2026-09-13 (ordinary-organ batch, prcc/chrcc going active). The old
+// "~15%/~5% (Li & Kaelin, 2011)" pair was an unsourced "standard NCI/WHO-style" placeholder —
+// tolerable while inactive, not once these figures render on screen. Checked directly against
+// four independent, modern, population-based series, all reading BELOW the traditional figures:
+// papillary 9.2% (Runarsson et al., BMC Urology, 2024, PMID 38741053 — Iceland, 50-year
+// nationwide, n=1,725), 11.3% (Cheville et al., Am J Surg Pathol, 2003, PMID 12717246 — Mayo
+// Clinic, n=2,385), 13.3% (Odeh et al., Oncol Lett, 2023, PMID 37033104 — Netherlands, n=457);
+// chromophobe 2.1% (Runarsson 2024), 2.8% (Odeh 2023), 4.3% (Cheville 2003). The most likely
+// cause: WHO 2016+ has carved several new entities (TFE3/TFEB-rearranged RCC, papillary renal
+// neoplasm with reverse polarity, low-grade oncocytic tumor, eosinophilic vacuolated tumor, and
+// others) out of what used to be coded as papillary or chromophobe RCC — not a correction to
+// either figure's original measurement, a real shift in what the category now contains. Runarsson
+// 2024 is used as the anchor (the largest, most recent, purpose-built nationwide series) with the
+// other two cited as the corroborating range.
 export const cancerEntries = [
   // id 'ccrcc', not 'clear' — 'clear' is already taken by Ovary's Clear-cell carcinoma above.
   // Cancer names/ids are never searched (see the Kidneys ORGANS comment), so this wouldn't be
   // a functional collision either way, but a shared id would break regionCellCache/panel state
   // if a user ever had both cancer screens loaded in the same session's history.
-  { id:'ccrcc', name:'Clear cell renal cell carcinoma',  share:'~75% of renal cell carcinomas (Li &amp; Kaelin, Hematol Oncol Clin North Am, 2011)', active:true,  organKey:'kidneys' },
-  { id:'prcc',  name:'Papillary renal cell carcinoma',   share:'~15% of renal cell carcinomas (Li &amp; Kaelin, 2011)',    active:false, organKey:'kidneys' },
-  { id:'chrcc', name:'Chromophobe renal cell carcinoma', share:'~5% of renal cell carcinomas (Li &amp; Kaelin, 2011)',      active:false, organKey:'kidneys' },
+  { id:'ccrcc', name:'Clear cell renal cell carcinoma',  share:'~75% of renal cell carcinomas (Li &amp; Kaelin, Hematol Oncol Clin North Am, 2011)', active:true, organKey:'kidneys' },
+  { id:'prcc',  name:'Papillary renal cell carcinoma',   share:'~9-13% of renal cell carcinomas (Runarsson et al., BMC Urology, 2024; Cheville et al., Am J Surg Pathol, 2003; Odeh et al., Oncol Lett, 2023)', active:true, organKey:'kidneys' },
+  { id:'chrcc', name:'Chromophobe renal cell carcinoma', share:'~2-4% of renal cell carcinomas (Runarsson et al., BMC Urology, 2024; Odeh et al., Oncol Lett, 2023; Cheville et al., Am J Surg Pathol, 2003)',    active:true, organKey:'kidneys' },
 ];
 
 // Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
@@ -117,10 +131,20 @@ export const organDetail = {
   hotspots:[
     // Directly parallel to the ovary's surface-epithelium point, breast's ducts, and lungs'
     // alveoli: this is the "arises here" structure for this organ, framed the same way.
+    // EXTENDED 2026-09-13 for papillary RCC: Prasad et al., Br J Radiol, 2007, PMID 17621606,
+    // directly states "Clear cell and papillary renal cell carcinoma (RCC) recapitulate the
+    // epithelium of the proximal tubules" — the SAME lineage ccRCC's own sentence already
+    // names, not a distal-tubule story some secondary sources assume. No ORIGIN_HOTSPOT_ENTRY
+    // override needed for prcc: it uses this organ's existing default (Cortex, index 0).
     { key:'cortex', label:'Cortex', pos:[-0.0292,-0.0191,-0.0244],
-      text:'The outer layer of the kidney, containing the filtering unit (glomerulus) of each nephron. Clear cell renal cell carcinoma, the most common kidney cancer subtype, most commonly arises here — directly paralleling how ovarian cancer begins in the ovary\'s surface epithelium, breast cancer in the breast\'s ducts, and lung adenocarcinoma in the lung\'s alveoli.' },
+      text:'The outer layer of the kidney, containing the filtering unit (glomerulus) of each nephron. Clear cell renal cell carcinoma, the most common kidney cancer subtype, most commonly arises here — directly paralleling how ovarian cancer begins in the ovary\'s surface epithelium, breast cancer in the breast\'s ducts, and lung adenocarcinoma in the lung\'s alveoli. Papillary renal cell carcinoma is thought to recapitulate the same proximal-tubule epithelium (Prasad et al., Br J Radiol, 2007) — a shared lineage with clear cell RCC, not a separate one.' },
+    // EXTENDED 2026-09-13 for chromophobe RCC — a genuinely different origin from Cortex above,
+    // hence its own ORIGIN_HOTSPOT_ENTRY override (see morphology.js). Prasad et al. 2007, PMID
+    // 17621606: "chromophobe RCC differentiate[s] towards... Type B intercalated cells of the
+    // cortical collecting duct" — intercalated cells are a defining cell type of the collecting
+    // duct, which this hotspot's own pre-existing text already names as passing through here.
     { key:'medulla', label:'Medulla', pos:[-0.0212,-0.0010,0.0057],
-      text:'The inner layer, made up of cone-shaped renal pyramids whose tips (papillae) drain urine toward the renal pelvis — each pyramid fed by a cluster of nephrons\' collecting ducts.' },
+      text:'The inner layer, made up of cone-shaped renal pyramids whose tips (papillae) drain urine toward the renal pelvis — each pyramid fed by a cluster of nephrons\' collecting ducts. Chromophobe renal cell carcinoma is thought to arise from the intercalated cells lining these collecting ducts (Prasad et al., Br J Radiol, 2007) — a distinct lineage from clear cell and papillary RCC\'s own proximal-tubule origin.' },
     { key:'pelvis', label:'Renal pelvis', pos:[-0.0213,0.0157,0.0243],
       text:'The funnel-shaped chamber where urine collects from the renal pyramids before draining into the ureter and on to the bladder.' },
     { key:'hilum', label:'Hilum', pos:[-0.0193,0.0233,0.0213],
@@ -218,11 +242,162 @@ const HISTOLOGY_CCRCC = {
   ],
 };
 
+// ============================================================
+// PAPILLARY RENAL CELL CARCINOMA (prcc) — 2026-09-13, ordinary-organ batch. Every citation
+// verified directly at the source. Two trunk entries — a fact-statement (no single founder;
+// Linehan et al., NEJM, 2016, PMID 26536169, PMCID PMC4775252, TCGA's own papillary RCC paper,
+// directly: "Type 1 and Type 2 papillary renal cell carcinoma are distinctly different
+// diseases") plus a status entry scoped to the Type 1 majority — the same GBM/Bladder/FTC
+// architecture this atlas already uses for an entity whose trunk is itself a genotype/subtype
+// split rather than one mutation. Cases historically called "Type 2" are increasingly carved
+// out into separate WHO entities (TFE3-rearranged RCC, biphasic hyalinizing psammomatous RCC,
+// papillary renal neoplasm with reverse polarity) — one more reason not to model Type 1/Type 2
+// as two active cancer entries here.
+const TRUNK_PRCC = [
+  { gene:'No single founder mutation', class:'driver', note:'Type 1 and Type 2 papillary RCC are, in TCGA\'s own words, "distinctly different diseases" rather than one entity graded two ways — Type 2 itself further classifies into three molecular subgroups with no unifying driver (Linehan et al., NEJM, 2016). What follows below models the Type 1 majority\'s own status-level founding event and the two genes Type 2 tumors most often carry instead.' },
+  { gene:'MET pathway alteration / chromosome 7 gain (Type 1 status)', class:'driver', ccf:'81.3% of Type 1 tumors carry MET mutation, splice variant, or fusion, or increased chromosome 7 copy number — a combined figure, not one mutation type (Linehan et al., NEJM, 2016)', note:'MET point mutation alone is 18.6% of Type 1 tumors (13/75 per the source\'s own count — a source-internal rounding, since 13/75 itself computes to 17.3%, quoted here as the paper\'s own stated figure rather than recomputed), mostly in the kinase domain; the rest of the combined figure is chromosome-7 gain or a splice/fusion event. A plurality driver for the Type 1 majority, not a near-universal founder the way VHL is for clear cell RCC.' },
+];
+// Branch pair — both Type 2-associated and COOPERATING with each other, not competing: Linehan
+// et al. (NEJM, 2016), directly: "Type 2 tumors were associated with mutations in the chromatin
+// modifying genes, SETD2, BAP1 and PBRM1" — and, verbatim, "Mutations of BAP1 and PBRM1 were
+// mutually exclusive but PBRM1 mutations were frequently concurrent with SETD2 mutations" (note
+// the subject order in the source: PBRM1, not SETD2, is the sentence's grammatical subject — the
+// relationship itself is symmetric, but the rendered note below states it without quote marks for
+// that reason, rather than presenting a reordered paraphrase as a verbatim quote). BAP1 and PBRM1
+// are themselves reported mutually exclusive WITH EACH OTHER in this
+// same paper ("Mutations of BAP1 and PBRM1 were mutually exclusive"), so neither is used here to
+// avoid that conflict; CDKN2A and SETD2 are the two used instead, checked directly for no
+// documented exclusivity between them. Sites reuse ccRCC's own already-clean pos3d layout for
+// this same four-site combination (Lung/Bone/Liver/Brain) — verified live in the browser for
+// this entry specifically before commit, not assumed to transfer.
+const REGIONS_PRCC = [
+  { id:'PN', name:'Lung', color:cssVar('--coral'), pos3d:{x:-0.3,y:1.3,z:0.3},
+    branch:{ gene:'CDKN2A alteration', class:'driver', ccf:'25.0% of Type 2 papillary RCC (15/60) — mutation, focal deletion, and promoter hypermethylation combined (Linehan et al., NEJM, 2016)', note:'A Type 2-associated event, not Type 1\'s own MET-pathway story. Tumors carrying it have significantly worse overall survival than papillary RCC generally (p<1E-10) and than other Type 2 tumors specifically (p<0.0001) — the single strongest prognostic marker TCGA\'s papillary RCC paper reports.' } },
+  { id:'PB', name:'Bone', color:cssVar('--azure'), pos3d:{x:-1.3,y:-0.5,z:0.2},
+    branch:{ gene:'CDKN2A alteration', class:'driver', ccf:'25.0% of Type 2 papillary RCC (15/60) (Linehan et al., NEJM, 2016)', note:'Same event as at Lung — Type 2\'s worst-prognosis marker.' } },
+  { id:'PH', name:'Liver', color:cssVar('--amber'), pos3d:{x:1.2,y:-0.3,z:-0.5},
+    branch:{ gene:'SETD2 mutation', class:'driver', note:'Also Type 2-associated; Linehan et al. (NEJM, 2016) report PBRM1 mutations frequently concurrent with SETD2 mutations in the same tumors — cooperating with, not competing against, CDKN2A, the other branch gene here.' } },
+  { id:'PR', name:'Brain', color:cssVar('--violet'), pos3d:{x:0.2,y:-1.3,z:0.4},
+    branch:{ gene:'SETD2 mutation', class:'driver', note:'Same event as at Liver.' } },
+];
+// Private pool — NRF2-ARE pathway genes (NFE2L2, CUL3, KEAP1), Type 2-associated: Linehan et al.
+// (NEJM, 2016) directly: "increased activation of the NRF2-ARE pathway in Type 2 tumors and
+// mutations in NRF2-ARE pathway genes (NFE2L2, CUL3, KEAP1 and SIRT1)". CUL3 carries the
+// largest reported count of this group and has no documented exclusivity against MET, CDKN2A,
+// or SETD2 in this source.
+const PRIVATE_POOL_PRCC = [
+  { gene:'CUL3 mutation', class:'driver', note:'Part of the NRF2-ARE pathway, whose increased activation Linehan et al. (NEJM, 2016) associate specifically with Type 2 tumors — cooperating with, not competing against, the Type 2 branch genes CDKN2A and SETD2.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
+];
+// HISTOLOGY — Delahunt & Eble (Mod Pathol, 1997, PMID 9195569, the paper that established the
+// Type 1/Type 2 distinction) and Amin & Tickoo (Am J Surg Pathol, 1997, PMID 9199639), both
+// verified directly: papillae with a real fibrovascular core; foamy macrophages "frequent" in
+// Type 1 papillary cores, "uncommon" in Type 2; psammoma bodies present in both. CITATION-
+// VERIFICATION NOTE (2026-09-13): Delahunt & Eble's own list sentence is genuinely ambiguous on
+// whether the Type-1-vs-Type-2 differential applies to psammoma bodies specifically or only to
+// foamy macrophages — full text was unreachable to confirm either way, so this entry does NOT
+// claim a Type 1/Type 2 differential for psammoma bodies, only that they are a real, present
+// feature; the Type 1/Type 2 differential IS claimed for foamy macrophages, which the same
+// sentence supports unambiguously. Reuses
+// drawFrond's existing fibrovascular-core family primitive (zero new drawing code for the
+// papillae themselves) and drawPsammomaBody outright (already shared with thyroid's PTC); the
+// foamy-macrophage cluster is the one genuinely new visual this entity needed.
+const HISTOLOGY_PRCC = {
+  intro: 'Papillary renal cell carcinoma is built on true papillae — finger-like fronds, each with a real fibrovascular core, projecting into cystic spaces. Scattered within many of those cores are foamy macrophages, lipid-laden immune cells that gather where papillae have shed debris — a real, diagnostically useful feature rather than an incidental finding. Calcified, concentrically layered psammoma bodies are common enough to be part of the diagnostic picture, the same structure papillary thyroid carcinoma is also known for.',
+  ariaSummary: 'Stylized microscopic field: three finger-like papillary fronds, each with a red fibrovascular core running its length and a rim of small nuclei. Pale yellow-tan foamy macrophages cluster within and beside the cores. Two round, concentrically ringed purple-gray psammoma bodies sit near the fronds.',
+  citation: 'Delahunt & Eble, Mod Pathol, 1997, PMID 9195569; Amin & Tickoo, Am J Surg Pathol, 1997, PMID 9199639.',
+  features: [
+    { key:'papillae', label:'Papillary architecture',
+      text:'True papillae — fronds with a real fibrovascular core running their length, the defining architecture of this tumor.' },
+    { key:'foamy', label:'Foamy macrophages',
+      text:'Lipid-laden macrophages clustered within and beside the papillary cores — frequent in the Type 1 form of this cancer, less common in Type 2.' },
+    { key:'psammoma', label:'Psammoma bodies',
+      text:'Calcified, concentrically layered spherical bodies — the same structure papillary thyroid carcinoma is known for, present here too.' },
+  ],
+};
+
+// ============================================================
+// CHROMOPHOBE RENAL CELL CARCINOMA (chrcc) — 2026-09-13, ordinary-organ batch. Every citation
+// verified directly at the source. A COHORT-PREVALENCE-ONLY CHROMOSOMAL TRUNK, caveated
+// honestly rather than treated as architecturally equivalent to VHL: Davis et al.,
+// Cancer Cell, 2014 (PMID 25155756, PMCID PMC4160352, TCGA's chromophobe RCC paper), directly:
+// "loss of one copy of the entire chromosome, for most or all of chromosomes 1, 2, 6, 10, 13,
+// and 17, was seen in the majority of cases (86%...)" — a whole-chromosome copy-number event,
+// not a point mutation, the same precision VHL's own "inactivation via sequence alteration or
+// promoter hypermethylation" framing already carries. UNLIKE VHL, whose truncal status rests on
+// Gerlinger et al.'s direct multi-region sequencing (present in every sampled region of a tumor
+// at one time), no chromophobe-RCC multi-region-sequencing study or precursor-lesion-timing
+// study was found — this trunk's truncal status rests on cohort prevalence alone, stated as such
+// rather than assumed spatially or temporally confirmed.
+const TRUNK_CHRCC = [
+  { gene:'Combined loss of chromosomes 1, 2, 6, 10, 13, and 17', class:'driver', ccf:'86% of chromophobe RCC (Davis et al., Cancer Cell, 2014) — a whole-chromosome copy-number event, not a point mutation', note:'The single most defining genomic feature of this cancer, and unlike this atlas\'s other trunk events, its truncal status here rests on how common the pattern is across a cohort (86%), not on direct evidence it is present everywhere within one tumor at one time or that it is the earliest event — no multi-region-sequencing or precursor-lesion study of this specific pattern was found.' },
+];
+// Branch pair — TP53 and PTEN are the only two genes Davis et al. (Cancer Cell, 2014) report at
+// statistical significance in this cohort: "No other genes were found to be mutated at a
+// frequency higher than 5%." Their relationship is a real, checked, GENUINE NEGATIVE FINDING —
+// the source states no exclusivity or co-occurrence relationship between them at all, so they
+// are modeled at different sites rather than asserted to cooperate or compete; neither claim is
+// supported. Sites reuse the same already-clean Lung/Bone/Liver/Brain pos3d layout ccRCC and
+// prcc above use, verified live in the browser for this entry specifically before commit.
+const REGIONS_CHRCC = [
+  { id:'CH', name:'Lung', color:cssVar('--coral'), pos3d:{x:-0.3,y:1.3,z:0.3},
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'32% of chromophobe RCC (21/66) (Davis et al., Cancer Cell, 2014)', note:'One of only two genes mutated above 5% in this cancer\'s own defining sequencing study, which reports no relationship, cooperating or competing, between this gene and the PTEN branch gene modeled at a different site here.' } },
+  { id:'CI', name:'Bone', color:cssVar('--azure'), pos3d:{x:-1.3,y:-0.5,z:0.2},
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'32% of chromophobe RCC (21/66) (Davis et al., Cancer Cell, 2014)', note:'Same event as at Lung.' } },
+  { id:'CK', name:'Liver', color:cssVar('--amber'), pos3d:{x:1.2,y:-0.3,z:-0.5},
+    branch:{ gene:'PTEN mutation', class:'driver', ccf:'9% of chromophobe RCC — 6/66 nonsilent mutations plus 2 additional homozygous deletions (Davis et al., Cancer Cell, 2014)', note:'The second of the two genes this cancer\'s own defining sequencing study found mutated above 5%.' } },
+  { id:'CG', name:'Brain', color:cssVar('--violet'), pos3d:{x:0.2,y:-1.3,z:0.4},
+    branch:{ gene:'PTEN mutation', class:'driver', ccf:'9% of chromophobe RCC (Davis et al., Cancer Cell, 2014)', note:'Same event as at Liver.' } },
+];
+// Private pool — mTOR pathway genes, real and explicitly framed as COOPERATING (not competing)
+// by Davis et al. (Cancer Cell, 2014): "genomic targeting of the mTOR pathway occurred overall
+// in... ChRCC" via MTOR, NRAS, and TSC1/TSC2 mutations. MTOR itself (2 of 66 tumors) is used
+// here rather than the paper's own combined pathway-level count, to avoid restating a total the
+// paper's own text does not itself break down arithmetically against PTEN's own count in the
+// same bucket.
+const PRIVATE_POOL_CHRCC = [
+  { gene:'MTOR mutation', class:'driver', ccf:'2 of 66 chromophobe RCC tumors (Davis et al., Cancer Cell, 2014)', note:'Part of the same mTOR-pathway targeting Davis et al. describe alongside NRAS and TSC1/TSC2 mutations in this cancer — cooperating with, not competing against, the PTEN branch gene, which acts on the same pathway from a different node.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
+];
+// HISTOLOGY — Marko et al. (Radiographics, 2021, PMID 34388049, PMCID PMC8415046) and Davis et
+// al. (Cancer Cell, 2014), both verified directly: pale, finely textured ("reticulated")
+// cytoplasm; an unusually thick, sharply outlined cell membrane — the single feature separating
+// this tumor from clear cell RCC and from a benign oncocytoma at a glance; small, irregular
+// ("raisinoid") nuclei, often inside a clear perinuclear halo. The nucleus's wrinkled outline
+// reuses blobPath's existing organic-wobble technique at a small radius (no new shared
+// primitive); the perinuclear halo reuses the same clear-ring-around-a-nucleus technique
+// melanoma's pagetoid-spread cells already use.
+const HISTOLOGY_CHRCC = {
+  intro: 'Chromophobe renal cell carcinoma is named for how little its cells take up the usual stains: large, pale, finely textured ("reticulated") cytoplasm bounded by an unusually thick, sharply visible cell membrane — the single most distinctive feature separating it from every other kidney cancer under the microscope. The nuclei are small and irregular, wrinkled enough to be called "raisinoid," and often sit inside a clear halo where the cytoplasm pulls away from them.',
+  ariaSummary: 'Stylized microscopic field: two solid sheets of large, pale, finely stippled cells, each cell outlined with an unusually thick dark membrane. Small, irregularly wrinkled purple nuclei sit off-center within a pale clear halo inside each cell.',
+  citation: 'Marko et al., Radiographics, 2021, PMID 34388049; Davis et al., Cancer Cell, 2014, PMID 25155756.',
+  features: [
+    { key:'reticulated', label:'Pale, reticulated cytoplasm',
+      text:'Cytoplasm that is large in volume but takes up almost none of the usual stain — pale and finely textured rather than clear or eosinophilic.' },
+    { key:'membranes', label:'Prominent cell membranes',
+      text:'An unusually thick, sharply outlined cell border — the single feature pathologists use to tell this tumor apart from a clear cell carcinoma or a benign oncocytoma at a glance.' },
+    { key:'raisinoid', label:'Raisinoid nuclei with perinuclear halos',
+      text:'Small, irregularly wrinkled nuclei, often sitting inside a clear halo where the cytoplasm has pulled away from them.' },
+  ],
+};
+
 export const cancerDetails = {
   ccrcc: {
     title:'Clear Cell Renal Cell Carcinoma', screenLabel:'Clear cell renal cell carcinoma — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_CCRCC, trunk:TRUNK_CCRCC, privatePool:PRIVATE_POOL_CCRCC,
     histology: HISTOLOGY_CCRCC,
+  },
+  prcc: {
+    title:'Papillary Renal Cell Carcinoma', screenLabel:'Papillary renal cell carcinoma — tumor explorer',
+    legendTitle:'Sites (real distant-metastasis pattern, stage-IV-at-diagnosis cohort)',
+    regions:REGIONS_PRCC, trunk:TRUNK_PRCC, privatePool:PRIVATE_POOL_PRCC,
+    histology: HISTOLOGY_PRCC,
+  },
+  chrcc: {
+    title:'Chromophobe Renal Cell Carcinoma', screenLabel:'Chromophobe renal cell carcinoma — tumor explorer',
+    legendTitle:'Sites (real distant-metastasis pattern, stage-IV-at-diagnosis cohort)',
+    regions:REGIONS_CHRCC, trunk:TRUNK_CHRCC, privatePool:PRIVATE_POOL_CHRCC,
+    histology: HISTOLOGY_CHRCC,
   },
 };

@@ -60,6 +60,14 @@ DECLARED = [
     {'key': 'stomach|HER2 (ERBB2) positivity|0.0001|0.0103', 'reason': 'false positive: both p-values are real, from the same source (He et al., World J Gastroenterol, 2013) — 0.0103 is the Lauren-type (intestinal vs pooled diffuse/mixed) comparison, quoted at both the Liver and Peritoneum sites; 0.0001 is a SECOND, different comparison (well- vs poorly-differentiated tumors) that only the Liver site\'s own ccf additionally carries', 'until': None},
     {'key': 'thyroid|RET mutation (somatic)|52.2%|28.3%', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2021 (N=46) cohort template — medullary carcinoma\'s own Lung site (52.2%) and Bone site (28.3%)', 'until': None},
     {'key': 'thyroid|RAS mutation (H/K/N-RAS)|18%, 2013|13%, 2013', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Besic & Gazic 2013 (N=45) autopsy-series template — anaplastic carcinoma\'s own Brain site (18%) and Bone site (13%)', 'until': None},
+    # NINTH, READ 2026-09-13 (kidneys prcc/chrcc authoring pass). One field carrying two real,
+    # DIFFERENT measurements of the same entity's own trunk event, deliberately, the same class as
+    # the pancreas SMAD4/Hahn "~50%... 25/84" declaration this file's own header already treats as
+    # a false-positive shape: 81.3% (ccf) is the combined MET-mutation-or-splice-or-fusion-or-
+    # chromosome-7-gain figure; 18.6% (note) is the point-mutation-only component within it —
+    # explicitly stated as such in the note's own text ("the rest of the combined figure is
+    # chromosome-7 gain or a splice/fusion event"), not a drifted restatement.
+    {'key': 'kidneys|MET pathway alteration / chromosome 7 ga|81.3%, 1|18.6%, 1', 'reason': 'false positive: 81.3% is Linehan et al. (NEJM, 2016)\'s combined MET-mutation-or-splice-or-fusion-or-chromosome-7-gain figure for Type 1 papillary RCC; 18.6% is the point-mutation-only component within that same combined figure, stated as such in the note\'s own text — two real measurements of one event, not a drifted duplicate', 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
