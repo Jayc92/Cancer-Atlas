@@ -46,6 +46,14 @@ DECLARED = [
     # feature and naked nuclei 89% (33/37) at the other. Two real, independently-verified figures
     # from one cited paper, not one figure restated with drifted numbers.
     {'key': 'lungs|None|95%, 35, 37|89%, 33, 37', 'reason': 'false positive: two different SCLC histology features on the shared Ng & Li 2024 (n=37) cohort template — nuclear molding 95% (35/37) and naked nuclei 89% (33/37) — the same shared-citation-template class as the entries above, not a drifted duplicate', 'until': None},
+    # EIGHTH, READ 2026-09-13 (breast idc/ilc authoring pass). Two REAL, genuinely different PIK3CA
+    # mutation rates for two DIFFERENT histologic entities, both drawn from the SAME paper's own two
+    # subgroup analyses (Ciriello et al., Cell, 2015, PMID 26451490): IDC-NST 33% (164/490) and ILC
+    # 48% (61/127) — the deliberate contrast this pass's own branch-gene design is built on (data
+    # rule 1's mechanistic-fit discipline: PIK3CA is real and cited in both entities but genuinely
+    # more frequent in ILC, which is why it anchors ILC's branch pair and is modeled at a lower
+    # frequency for IDC-NST). Not a drifted duplicate — the same paper, read twice, correctly.
+    {'key': 'breast|PIK3CA mutation|164, 490, 2015, 26451490, 48%|61, 127, 2015, 26451490, 33%', 'reason': 'false positive: IDC-NST\'s own PIK3CA rate (33%, 164/490) vs ILC\'s own PIK3CA rate (48%, 61/127), both real, both from Ciriello et al. 2015\'s two separate histologic-subgroup analyses — the deliberate cross-entity contrast this pass\'s branch-gene design depends on, not a drifted duplicate', 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

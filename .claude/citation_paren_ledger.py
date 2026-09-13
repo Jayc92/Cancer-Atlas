@@ -259,12 +259,12 @@ PREREGISTERED = {
             'three independent occurrences of one citation repeated across this organ\'s three '
             'new histology blocks.',
     },
-    'Travis|2011|js/organs/lungs.js:276': {
+    'Travis|2011|js/organs/lungs.js:277': {
         'side': 'KEPT',
         'basis': 'FIT',
         'scored': 'CONFIRMS',
         'reason':
-            'lungs.js:276 reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)". '
+            'lungs.js:277 reads "Travis et al., J Thorac Oncol, 2015 (WHO) & 2011 (IASLC/ATS/ERS)". '
             'A \')\' does sit between head and 2011, so this span is in the population — but "(WHO)" '
             'carries no year, so the rule declines and the record stands. Travis et al. really did '
             'author both classifications. THIS IS THE COUNTEREXAMPLE THE "CARRYING A YEAR" NARROWING '
@@ -459,12 +459,13 @@ def selftest():
         'Fearon|1991|js/organs/colon.js:169',
         'Powell|1990|js/organs/colon.js:172',
         'Schulze|2017|js/organs/liver.js:280',
-        # Re-addressed 236 -> 259 -> 268 -> 276, same span, byte-identical each time (see the entry's
-        # own note). "At birth" names the set of SPANS, not the set of addresses; if this arm were left
-        # pinned to a stale address it would fail for the one reason that says nothing about the rule's
-        # shape. Three re-addresses across two sessions: the arm's cost is one line per insertion above
-        # the span, and that is the price of pinning identity to something a comment block can move.
-        'Travis|2011|js/organs/lungs.js:276',
+        # Re-addressed 236 -> 259 -> 268 -> 276 -> 277, same span, byte-identical each time (see the
+        # entry's own note). "At birth" names the set of SPANS, not the set of addresses; if this arm
+        # were left pinned to a stale address it would fail for the one reason that says nothing about
+        # the rule's shape. Four re-addresses across three sessions: the arm's cost is one line per
+        # insertion above the span, and that is the price of pinning identity to something a comment
+        # block can move.
+        'Travis|2011|js/organs/lungs.js:277',
     }
     fit_now = {key for key, entry in PREREGISTERED.items() if entry['basis'] == 'FIT'}
     arm('FIT is still exactly the four spans the rule was fit to', fit_now == fit_at_birth,
@@ -483,7 +484,7 @@ def selftest():
 
     # arm 5: STALE fires when a scored span leaves the population.
     dropped = dict(scored_clean)
-    dropped.pop('Travis|2011|js/organs/lungs.js:276')
+    dropped.pop('Travis|2011|js/organs/lungs.js:277')
     stale = [p for p in evaluate(dropped) if p.startswith('STALE SCORING')]
     arm('STALE fires when a scored span is gone', len(stale) == 1, str(stale[:1])[:90])
 
@@ -492,7 +493,7 @@ def selftest():
     # else in the chain — the population, the record total and the paren-shadow count are all
     # invariant under a KEPT/SPENT swap, so without this arm the event is completely silent.
     flipped = dict(scored_clean)
-    flipped['Travis|2011|js/organs/lungs.js:276'] = 'SPENT'
+    flipped['Travis|2011|js/organs/lungs.js:277'] = 'SPENT'
     moved = [p for p in evaluate(flipped) if p.startswith('SIDE MOVED')]
     arm('SIDE MOVED fires when the rule re-decides a scored span', len(moved) == 1,
         str(moved[:1])[:90])

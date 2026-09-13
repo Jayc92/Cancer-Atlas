@@ -98,11 +98,18 @@ export const TRIALS_CONDITION_MAP = {
   },
   luad: {
     query: 'lung adenocarcinoma', parent: 'lung cancer',
-    conditionKeywords: ['lung', 'pulmonary'],
+    conditionKeywords: ['lung', 'pulmonary'], excludeIf: ['non-lung'],
     note: '6/10 sample kept, 4 dropped — all four are generic basket-trial tags ("Advanced Solid '
       + 'Tumor", "MTAP-deleted Solid Tumors") naming no organ in their own structured '
       + 'conditions; the same policy-consistent drop as ccrcc\'s "Oncology"-only case (design '
-      + 'doc §1b), not a defect in the query.',
+      + 'doc §1b), not a defect in the query. '
+      + 'FOUND MECHANICALLY, NOT LIVE (2026-09-13, the negation-collision scan run across every '
+      + 'entry after the lung round\'s two live-caught excludeIf bugs — see .claude/'
+      + 'trials_mapping_check.mjs): "Small Cell Carcinomas of Non-lung Origin" — real '
+      + 'extrapulmonary small cell carcinoma, wrongly kept because "lung" is one of two OR-'
+      + 'matched keywords with no requireAlso forcing it. The same string SCLC\'s own excludeIf '
+      + 'was extended to cover the same day. Checked before excluding: "non-lung"/"non lung" '
+      + 'appears in exactly this one condition string across the full lung-cancer parent corpus.',
   },
   hcc: {
     query: 'hepatocellular carcinoma', parent: 'liver cancer',
@@ -119,8 +126,14 @@ export const TRIALS_CONDITION_MAP = {
   },
   acinar: {
     query: 'prostate adenocarcinoma', parent: 'prostate cancer',
-    conditionKeywords: ['prostate'],
-    note: '10/10 sample kept, 0 dropped.',
+    conditionKeywords: ['prostate'], excludeIf: ['non-prostate'],
+    note: '10/10 sample kept, 0 dropped. '
+      + 'FOUND MECHANICALLY, NOT LIVE (2026-09-13, negation-collision scan run across every entry '
+      + '— see .claude/trials_mapping_check.mjs): "Non-prostate Extrapulmonary Neuroendocrine '
+      + 'Carcinoma" — the negation attaches to the whole word "prostate" itself (this entry\'s own '
+      + 'plain conditionKeywords term, not a stem), so it is caught the same way "Non-Squamous" '
+      + 'was for lusc. Checked before excluding: "non-prostate"/"non prostate" appears in exactly '
+      + 'this one condition string across the full prostate-cancer parent corpus.',
   },
   pneuro: {
     query: 'neuroendocrine prostate cancer', parent: 'prostate cancer',
@@ -167,8 +180,23 @@ export const TRIALS_CONDITION_MAP = {
   },
   crc: {
     query: 'colorectal adenocarcinoma', parent: 'colorectal cancer',
-    conditionKeywords: ['colorectal', 'colon', 'rectal'],
-    note: '10/10 sample kept, 0 dropped.',
+    conditionKeywords: ['colorectal', 'colon', 'rectal'], excludeIf: ['non-colorectal'],
+    note: '10/10 sample kept, 0 dropped. '
+      + 'FOUND MECHANICALLY, NOT LIVE (2026-09-13, negation-collision scan run across every entry '
+      + '— see .claude/trials_mapping_check.mjs): "Advanced Non-Colorectal Gastrointestinal '
+      + 'Cancer" and a misspelled duplicate ("Gastointestinal") — both real basket-trial tags for '
+      + 'GI cancers OTHER than colorectal, wrongly kept via the "colorectal" keyword IF this '
+      + 'entry\'s query ever surfaced them. One excludeIf term ("non-colorectal") covers both, '
+      + 'since the misspelling is in "Gastro(i)ntestinal", not in the shared "Non-Colorectal" '
+      + 'prefix being matched. NOT (YET) A CONFIRMED LIVE EXPOSURE, UNLIKE ITS FOUR SIBLINGS '
+      + '(luad/acinar/melanoma/seminoma, same pass): this entry\'s own excludeIf positive control '
+      + 'FAILS — both strings were found only in the broader "colorectal cancer" PARENT corpus '
+      + '(2,216 studies), neither appears among this entry\'s own 356-study "colorectal '
+      + 'adenocarcinoma" NARROW query results (0/1296 distinct narrow-corpus condition strings '
+      + 'match). Kept anyway as a zero-cost prophylactic term rather than removed: the string is '
+      + 'real, the collision shape is real and already confirmed elsewhere in this same pass, and '
+      + 'a narrow query\'s own returned set can shift as the trial registry grows — but this is '
+      + 'disclosed as defensive, not as a fix for an observed defect, which the other four are.',
   },
   pdac: {
     query: 'pancreatic ductal adenocarcinoma', parent: 'pancreatic cancer',
@@ -178,14 +206,23 @@ export const TRIALS_CONDITION_MAP = {
   },
   melanoma: {
     query: 'cutaneous melanoma', parent: 'melanoma',
-    conditionKeywords: ['melanoma'],
+    conditionKeywords: ['melanoma'], excludeIf: ['non-melanoma'],
     note: '10/10 sample kept, 0 dropped. Query/parent ratio 98% (586/595) — cutaneous melanoma '
       + 'is nearly all of what "melanoma" means in this registry at this scale, so the two '
-      + 'queries nearly coincide; not a sign either query is wrong.',
+      + 'queries nearly coincide; not a sign either query is wrong. '
+      + 'FOUND MECHANICALLY, NOT LIVE (2026-09-13, negation-collision scan run across every entry '
+      + '— see .claude/trials_mapping_check.mjs): five spelling/formatting variants of "Non-'
+      + 'Melanoma Skin Cancer (NMSC)" — a real, extremely common oncology term of art naming '
+      + 'basal-cell and squamous-cell skin cancer, i.e. everything skin-cancer that is NOT '
+      + 'melanoma, the single most direct instance of this collision class the corpus produced. '
+      + 'Checked before excluding: "non-melanoma"/"non melanoma" appears in exactly these five '
+      + 'strings across the full (595-study) melanoma parent corpus, none of them a real '
+      + 'cutaneous-melanoma trial.',
   },
   seminoma: {
     query: 'testicular seminoma', parent: 'testicular cancer',
     conditionKeywords: ['testicular', 'testis', 'germ cell', 'seminoma'],
+    excludeIf: ['non-seminoma', 'non seminoma', 'non-seminomatous', 'non seminomatous'],
     note: 'FIRST DRAFT (keywords without "seminoma" itself) dropped 3 of 10 real results tagged '
       + 'bare "Seminoma" — the exact disease name, maximally on-topic — because the keyword '
       + 'list omitted the disease\'s own name. Caught by reading every drop\'s full conditions '
@@ -194,7 +231,21 @@ export const TRIALS_CONDITION_MAP = {
       + 'condition pediatric basket trial spanning ovarian AND testicular germ cell tumors) and '
       + 'found sound: its full condition list names "Stage I Testicular Seminoma" explicitly, so '
       + 'it is a genuine cross-organ basket inclusion, not a false match — "testicular"/"testis" '
-      + 'alone would have kept it regardless of "germ cell".',
+      + 'alone would have kept it regardless of "germ cell". '
+      + 'TWO MORE FOUND (2026-09-13, negation-collision scan run across every entry — see '
+      + '.claude/trials_mapping_check.mjs): "Non-Seminoma Testicular Cancer", caught mechanically '
+      + '(the negation attaches directly to the whole-word "seminoma" keyword). A SECOND, '
+      + 'DIFFERENT-SHAPED GAP THE SCAN CANNOT SEE, found by hand while verifying the first: '
+      + '"Metastatic Malignant Testicular Non-Seminomatous Germ Cell Tumor" — real, genuinely '
+      + 'non-seminomatous, but kept via the "germ cell" keyword, a DIFFERENT keyword than the '
+      + 'one the negation "Non-" actually attaches to ("Seminomatous", a morphological variant of '
+      + '"seminoma" the scan\'s literal-keyword-adjacency test does not recognize as the same '
+      + 'word). Disclosed as a real limitation of the mechanized check\'s own reach, not silently '
+      + 'patched over: the scan tests one keyword\'s own exact text against strings that carry a '
+      + 'positive match FOR THAT KEYWORD; it cannot yet catch a negation attached to a variant '
+      + 'form, nor one attached to a keyword other than the one actually responsible for the '
+      + 'keep. Both strings excluded here regardless, since a same-string excludeIf term needs '
+      + 'only to match somewhere, not to be the term the scan itself flagged.',
   },
   uc: {
     query: 'urothelial carcinoma of the bladder', parent: 'bladder cancer',
@@ -319,7 +370,8 @@ export const TRIALS_CONDITION_MAP = {
   },
   sclc: {
     query: 'small cell lung cancer', parent: 'lung cancer',
-    conditionKeywords: ['small cell', 'lung', 'sclc'], excludeIf: ['non-small', 'non small'],
+    conditionKeywords: ['small cell', 'lung', 'sclc'],
+    excludeIf: ['non-small', 'non small', 'non - small', 'non-lung'],
     note: 'Checked live 2026-09-13: the bare string "small cell lung cancer" is a literal '
       + 'substring of "non-small cell lung cancer" — a same-ORGAN collision, not the cross-organ '
       + 'vocabulary-sharing shape every prior requireAlso entry in this file handles. A first '
@@ -332,7 +384,17 @@ export const TRIALS_CONDITION_MAP = {
       + 'neither "small cell" nor "lung" spelled out in that string at all, the exact seminoma-'
       + 'bug shape (data rule 22). Fixed by adding "sclc" to conditionKeywords. Re-verified live '
       + 'with both fixes together: 4/10 kept, all four genuine ("Small Cell Lung Cancer" x2, '
-      + '"Small Cell Lung Cancer Extensive Stage", "SCLC, Limited Stage").',
+      + '"Small Cell Lung Cancer Extensive Stage", "SCLC, Limited Stage"). '
+      + 'TWO MORE FOUND MECHANICALLY, NOT LIVE (2026-09-13, the negation-collision scan — see '
+      + '.claude/trials_mapping_check.mjs): "Non - Small Cell Lung Cancer NSCLC" (a third real '
+      + 'spacing variant, space-hyphen-space, that neither prior excludeIf term covered — the '
+      + 'exact class the scan exists to close before a human has to find it live) and "Small Cell '
+      + 'Carcinomas of Non-lung Origin" (real extrapulmonary small cell carcinoma — arising outside '
+      + 'the lung entirely — wrongly kept because "small cell" alone satisfies this entry\'s OR-'
+      + 'matched conditionKeywords with no requireAlso anchor forcing "lung" too). Checked before '
+      + 'excluding: "non-lung"/"non lung" appears in exactly one condition string across the full '
+      + '3,180-study parent corpus, so this exclusion cannot drop a real SCLC trial that merely '
+      + 'mentions a non-lung metastatic site in passing.',
   },
   lcc: {
     query: 'large cell lung carcinoma', parent: 'lung cancer',
@@ -347,6 +409,67 @@ export const TRIALS_CONDITION_MAP = {
       + 'same finding Rekhtman et al. 2013 documents in surgical pathology practice. 4/10 '
       + 'dropped, all real unrelated multi-tumour baskets naming "large cell" without an organ '
       + 'anchor in the same string.',
+  },
+  // ---- Breast, 2026-09-13 ("then breast, histologic axis" authoring, phaseC_design.md §17) —
+  // negation scan run FIRST per the standing rule this organ's own lung round wrote: "no special
+  // type"/NST turned out NOT to be the collision this pass found (checked directly: no live
+  // condition string anywhere in the breast-cancer parent corpus reads "non-special type" or
+  // "non-NST" — the scan and a full-text search both came back empty). The real, live-caught
+  // collision here is a DIFFERENT, NEW shape neither the negation scan nor any prior organ's own
+  // bugs anticipated: idc and ilc are TWO SIBLING ENTRIES OF THE SAME ORGAN, and both entities'
+  // own registry names literally contain the word "Breast" — so a bare organ-anchor keyword
+  // (['breast'], this file's own established minimal form for a single-cancer organ like tnbc)
+  // cannot discriminate BETWEEN the two siblings the way it discriminates between organs. Found
+  // by hand, reading all 10 of idc's own live-sampled results: NCT07613151 ("Lobular Breast
+  // Carcinoma", the study's ONLY condition string) and NCT05919108 ("Neoadjuvant Neratinib in
+  // Stage I-III HER2-Mutated Lobular Breast Cancer") are both real, ILC-EXCLUSIVE trials that a
+  // bare ['breast'] keyword would keep for idc, since "Lobular Breast Carcinoma" and "Anatomic
+  // Stage I Breast Cancer" both independently contain "breast".
+  idc: {
+    query: 'invasive ductal carcinoma breast', parent: 'breast cancer',
+    conditionKeywords: ['breast'], excludeIf: ['lobular', 'in situ'],
+    note: 'Checked live 2026-09-13, all 10 results read by hand. Real, live-caught false keeps '
+      + 'fixed by excludeIf: NCT07613151 ("Lobular Breast Carcinoma", its only condition string) '
+      + 'and NCT06903468 ("Ductal Carcinoma in Situ" as one of two strings, correctly dropped on '
+      + 'that string — the sibling "Breast Cancer" string in the same study still independently '
+      + 'keeps it via broadening, matching this file\'s own established bare-organ-tag acceptance '
+      + '(tnbc/ccrcc/hgsoc precedent), since the study is a real surgical-technique trial not '
+      + 'obviously restricted to non-invasive disease). DISCLOSED, NOT SILENTLY PATCHED — a real '
+      + 'gap the excludeIf mechanism structurally cannot close: NCT05919108 is an ILC-EXCLUSIVE '
+      + 'trial (title: "...Lobular Breast Cancer") that stays wrongly kept, because its own '
+      + 'condition array carries THREE purely generic AJCC-stage strings ("Anatomic Stage I/II/III '
+      + 'Breast Cancer") alongside its one lobular-specific tag, and each of those generic strings '
+      + 'independently satisfies conditionKeywords with no "lobular" text for excludeIf to catch — '
+      + 'filterByCondition tests each condition string independently, by design, so a disqualifying '
+      + 'term on one string can never veto a different, independently-passing string in the same '
+      + 'study\'s array. Same limitation class as seminoma\'s own disclosed "germ cell" gap: real, '
+      + 'found by hand, not fixable by tuning this entry\'s own keyword lists further. Checked and '
+      + 'NOT found in the reverse direction (a pure-ductal trial leaking into ilc\'s own results) '
+      + 'in this same live sample — see ilc\'s note. '
+      + 'CORPUS-VOCABULARY SIGNAL read: "Invasive Mammary Carcinoma" (no "breast" substring) flagged as a '
+      + 'rejected name-token hit — checked against both of its real live occurrences in the full parent '
+      + 'corpus and found harmless both times, not a miss: each of the two studies carrying that tag '
+      + '(NCT05693766, NCT07555210) also carries an independent sibling condition string containing '
+      + '"breast" ("Metastatic Breast Cancer", "Breast Cancer (Triple Negative Breast Cancer (TNBC))"), '
+      + 'so both are already kept via that string regardless.',
+  },
+  ilc: {
+    query: 'invasive lobular carcinoma', parent: 'breast cancer',
+    conditionKeywords: ['breast', 'lobular'], excludeIf: ['in situ'],
+    note: 'Checked live 2026-09-13, all 10 results read by hand. "lobular" ADDED to '
+      + 'conditionKeywords after a real live-caught miss — the seminoma-bug shape recurring a '
+      + 'fourth time (data rules 22/32/33): NCT07229417\'s condition string, "Triple Negative '
+      + 'Invasive Lobular Carcinoma", contains no "breast" substring at all and would have been '
+      + 'wrongly dropped under a bare ["breast"] keyword list, despite being a real, on-topic ILC '
+      + 'trial (and a real instance of this atlas\'s own declared TNBC/histologic non-partition, '
+      + 'phaseC_design.md §17 — a tumor can be both). "in situ" added prophylactically (the LCIS '
+      + 'analog of idc\'s own "Ductal Carcinoma in Situ" collision) though NOT confirmed live in '
+      + 'this sample — no bare LCIS-only condition string was fetched to test against; kept as a '
+      + 'same-string guard against the risk rather than left unguarded on the strength of one '
+      + 'clean sample. Checked and NOT found: a ductal-exclusive trial leaking into this entry\'s '
+      + 'own live sample via a generic breast tag — none of the 10 fetched results was '
+      + 'ductal-only, so no excludeIf for "ductal" is added on unconfirmed suspicion alone, per '
+      + 'this file\'s own checked-not-assumed standard.',
   },
 };
 

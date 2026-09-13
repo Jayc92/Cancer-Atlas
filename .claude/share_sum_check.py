@@ -31,6 +31,16 @@ from tolerated import resolve
 # is the re-read owed by the date below — after it, the declaration expires and the gate goes red.
 DECLARED = [
     {'key': 'liver', 'reason': 'sum 87.5: the listed primaries leave ~12.5% of the family unaccounted; re-read the cited liver-cancer epidemiology source for the remainder, then either add the missing row or scope the label to the primaries listed', 'until': '2026-10-01'},
+    # breast is DELIBERATELY ABSENT here, on the STALE-declaration rule (tolerated.py; CLAUDE.md's
+    # "AN UNDECLARED COUNT IS EVIDENCE OF AN UNREAD COUNT"): a declaration was written for breast at
+    # authoring time (2026-09-13, phaseC_design.md §17) on the correct structural grounds — TNBC (a
+    # receptor-defined entry) and the organ's histologic entries (IDC-NST, ILC) OVERLAP rather than
+    # partition, so no coherent sum was ever guaranteed — but the check's own arithmetic (10-20% +
+    # 73-78% + 10.6-10.7%) lands COHERENT at ~101.2 by coincidence, not by any actual partition. The
+    # declaration was REMOVED because it no longer matches a live flag, per tolerated.py's own rule
+    # that a stale declaration must be removed, not kept "just in case" — but the structural fact it
+    # recorded is still true and still stated elsewhere: phaseC_design.md §17, the retirement
+    # comment above breast.js's own `cancerEntries`, and the organ's reader-facing description.
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

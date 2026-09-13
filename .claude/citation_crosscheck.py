@@ -102,7 +102,7 @@ os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # citation_reach_check.DECLARED_UNREACHED. The esearch hit counts below are why: they can be re-run.
 DECLARED_UNMAPPABLE = {
     'doi:10.1002/prm2.12107':
-        'Gao et al., Precision Medical Sciences (Wiley), 2023 — js/organs/breast.js:147. The journal '
+        'Gao et al., Precision Medical Sciences (Wiley), 2023 — js/organs/breast.js:168. The journal '
         'is not PubMed-indexed: esearch [doi] returns 0 hits (the unqualified search returns 6 '
         'unrelated tokenised hits, which is why the mapper requires exactly one), and Europe PMC has '
         'no record either, so NO PMID EXISTS for the metadata cross-check to run against. The CLAIM '

@@ -10,11 +10,32 @@ export const organEntry = { key:'breast', label:'Breast', system:'Reproductive',
 
 export const markerSpec = { points:[{heightFrac:0.70, angle:-35}, {heightFrac:0.70, angle:35}] };
 
+// BREAST RULED HISTOLOGIC-AXIS (2026-09-13, user ruling — phaseC_design.md §17). Luminal A,
+// Luminal B, and HER2-enriched carcinoma were staged here as molecular subtypes, colliding with
+// every other organ's histologic-axis convention (and with TNBC below, itself molecular) —
+// RETIRED, never to be authored as their own top-level rows, on the criterion §17 records: a
+// molecular/receptor-defined category earns a top-level entry only when it carries a distinctive,
+// drawable morphologic phenotype of its own, and none of the three does (their own literature
+// frames the diagnosis as immunohistochemistry, not architecture — §7's own design-question note,
+// before the criterion made the conclusion explicit). Invasive breast carcinoma of no special
+// type (IDC, the familiar alias — WHO's own current term leads) and invasive lobular carcinoma
+// (ILC) — real histologic types, IDC the currently-unrepresented ~70-80% majority — take their
+// place. TNBC is grandfathered: its own histology (genTNBC — solid sheets, geographic necrosis,
+// tumor-infiltrating lymphocytes) and branch mutations (EGFR amplification/RB1 loss, data rule 1)
+// are real drawable/cited facts, not merely an IHC readout restated as a row, which is exactly
+// what the criterion requires.
+// THIS LIST IS NOT A PARTITION: TNBC and IDC overlap (a real tumor can be both), so the shares
+// below do not sum toward one denominator the way a histologic list ordinarily would. Checked
+// directly rather than left to a standing declaration: share_sum_check.py's own arithmetic on
+// these three ranges lands COHERENT (~101.2) by coincidence, not because they partition, so no
+// DECLARED entry is carried for 'breast' there (a stale declaration must be removed, not kept
+// "just in case" — see that file's own comment at the site). The structural, non-partition fact
+// itself is still stated in two places a reader can find: this comment, and the organ's own
+// reader-facing description (see organDetail below).
 export const cancerEntries = [
-  { id:'lumA',  name:'Luminal A carcinoma',          share:'~50–60% of breast carcinomas', active:false, organKey:'breast' },
-  { id:'lumB',  name:'Luminal B carcinoma',          share:'~15–20% of breast carcinomas', active:false, organKey:'breast' },
-  { id:'her2',  name:'HER2-enriched carcinoma',      share:'~10–15% of breast carcinomas', active:false, organKey:'breast' },
   { id:'tnbc',  name:'Triple-negative (basal-like) carcinoma', share:'~10–20% of breast carcinomas', active:true, organKey:'breast' },
+  { id:'idc',   name:'Invasive breast carcinoma of no special type (IDC)', share:'~73–78% of breast carcinomas (73.3%, Probert et al., 2025, N=838,776, England 1988–2016; 78.0%, Giaquinto et al., 2025, US SEER 2017–2021) — this organ\'s predominant histologic pattern', active:true, organKey:'breast' },
+  { id:'ilc',   name:'Invasive lobular carcinoma', share:'~10.6–10.7% of breast carcinomas (10.6%, Giaquinto et al., 2025; 10.7%, Probert et al., 2025) — a further ~4% show mixed ductal-lobular features, reported as its own category by Giaquinto and folded into whichever pattern predominates under Probert\'s own classification method (data rule 31)', active:true, organKey:'breast' },
 ];
 
 // Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
@@ -87,7 +108,7 @@ export const organDetail = {
     {label:'Function', val:'Milk production via lobules and ducts'},
     {label:'Blood supply', val:'Internal thoracic &amp; lateral thoracic arteries'},
   ],
-  desc:'The breast sits on the chest wall over pectoralis major, made up of milk-producing lobules connected by a branching network of ducts to the nipple, all embedded in stromal and fatty tissue that gives the organ most of its bulk and shape.',
+  desc:'The breast sits on the chest wall over pectoralis major, made up of milk-producing lobules connected by a branching network of ducts to the nipple, all embedded in stromal and fatty tissue that gives the organ most of its bulk and shape. The cancers listed below are not alternatives to one another: triple-negative is defined by receptor status, while invasive ductal and invasive lobular carcinoma are defined by histologic architecture, and a real tumor can be both — so their shares overlap rather than add up to one whole.',
   buildMesh: buildBreastMesh,
   // Real-world-meter GLB (bbox ~12.8x11.2x18.2cm, including the real axillary tail — see
   // lungs.js for why minRadius/maxRadius are rescaled here rather than left at the old ~1-unit
@@ -105,9 +126,9 @@ export const organDetail = {
     // Directly parallel to the ovary's surface-epithelium point: this is the "arises here"
     // structure for this organ, framed the same way for the same pedagogical reason.
     { key:'ducts', label:'Ducts', pos:[0.0219,0.0444,0.0631],
-      text:'The branching channels that carry milk from the lobules toward the nipple. About 85% of invasive breast cancers arise from duct cells (hence "ductal carcinoma") — directly paralleling how most ovarian cancers begin in the ovary\'s own surface epithelium rather than deeper inside the organ.' },
+      text:'The branching channels that carry milk from the lobules toward the nipple. Most invasive breast cancers — about 73–78% — show this duct-like growth pattern, the organ\'s default histologic type (Probert et al., 2025; Giaquinto et al., 2025). That name describes the tumor\'s architecture, not literally where it started: both this pattern and the lobular one below actually arise from the terminal duct-lobular unit, the junction between duct and lobule — the ductal/lobular naming reflects growth pattern, not literal site of origin, and stays in common use even though it "does not reflect the histogenesis of these tumor types" (Rakha & Tozbikian, PathologyOutlines.com, "Invasive breast cancer of no special type (NST)").' },
     { key:'lobules', label:'Lobules', pos:[0.0216,0.0016,0.0891],
-      text:'Clusters of small glands that produce milk during lactation, feeding into the duct network. A smaller share of invasive cancers ("lobular carcinoma") arise here instead of in the ducts.' },
+      text:'Clusters of small glands that produce milk during lactation, feeding into the duct network at that same terminal duct-lobular unit. A smaller share of invasive cancers — about 10.6–10.7% ("lobular carcinoma") — arise from this junction but grow as loose, single-file cords rather than solid masses, the architectural signature of losing E-cadherin, the cell-adhesion protein that would otherwise hold these cells together (Giaquinto et al., 2025; Probert et al., 2025).' },
     { key:'stroma', label:'Stromal / fatty tissue', pos:[0.0515,-0.0246,-0.0450],
       text:'The fatty and connective tissue that fills the spaces between lobules and ducts — most of what actually gives the breast its size and shape, and where a lump is often first felt even when the cancer itself originated in nearby glandular tissue.' },
     { key:'nipple', label:'Nipple-areola complex', pos:[0.0289,0.0508,0.0513],
@@ -214,11 +235,160 @@ const HISTOLOGY_TNBC = {
   ],
 };
 
+// IDC-NST and ILC (2026-09-13, phaseC_design.md §17) — every citation below verified directly at
+// the source by two parallel research passes before being written in, cross-checked against each
+// other where both covered the same paper (Ciriello et al. 2015 is the single source behind most
+// of both entries' mutation contrasts, read directly by both passes independently and agreeing).
+//
+// SITES, ONE SOURCE, ONE REAL CONTRAST — Mathew et al., Geburtshilfe Frauenheilkd, 2017,
+// PMID 28757653, PMCID PMC5489406 (Magee-Womens Hospital/UPMC, N=761 metastatic breast cancer
+// patients, 88 ILC/673 IDC, "over the entire course of metastatic disease"). IDC's own four sites
+// below are this paper's raw IDC-arm figures, needing no adjustment. ILC's are NOT the raw ILC-arm
+// figures — the paper's own bone finding (77.3% raw) did NOT survive restricting to HR+/HER2-
+// tumors only (the composition both arms are mostly made of): "controlling for tumor subtype
+// eliminated the association between ILC and bone metastases... the increased tendency... may be
+// a factor of their hormone status and less a characteristic of the histologic type" (verbatim).
+// Liver/lung/ovary/GI-tract differences DID survive that same adjustment, so ILC's site model
+// below uses the adjusted (HR+/HER2- only, n=414) figures specifically — the genuinely
+// lobular-specific pattern, not a hormone-receptor artifact riding along as if it were one.
+const REGIONS_IDC = [
+  { id:'ZB', name:'Bone', color:cssVar('--coral'), pos3d:{x:-1.3,y:-0.9,z:0.3},
+    branch:{ gene:'PIK3CA mutation', class:'driver', ccf:'~33% of IDC-NST (164/490, Ciriello et al., Cell, 2015, PMID 26451490) — against 48% in ILC', note:'Activates the PI3K growth pathway; real in both this organ\'s histologic types, but genuinely less frequent here than in the lobular entry modeled alongside it.' } },
+  { id:'ZL', name:'Lung', color:cssVar('--amber'), pos3d:{x:1.6,y:1.4,z:0.6},
+    branch:{ gene:'PIK3CA mutation', class:'driver', ccf:'~33% of IDC-NST (164/490, Ciriello et al., Cell, 2015, PMID 26451490) — against 48% in ILC', note:'Activates the PI3K growth pathway; real in both this organ\'s histologic types, but genuinely less frequent here than in the lobular entry modeled alongside it.' } },
+  { id:'ZV', name:'Liver', color:cssVar('--azure'), pos3d:{x:0.9,y:-0.6,z:-0.5},
+    branch:{ gene:'GATA3 mutation', class:'driver', ccf:'~13% of IDC-NST (66/490) against 5% in ILC (Ciriello et al., Cell, 2015, PMID 26451490)', note:'A transcription factor supporting luminal differentiation — real and more common in this organ\'s ductal entry than in its lobular one, the mirror image of how PIK3CA and FOXA1 skew the other way.' } },
+  { id:'ZR', name:'Brain', color:cssVar('--violet'), pos3d:{x:-1.0,y:1.3,z:-0.3},
+    branch:{ gene:'GATA3 mutation', class:'driver', ccf:'~13% of IDC-NST (66/490) against 5% in ILC (Ciriello et al., Cell, 2015, PMID 26451490)', note:'A transcription factor supporting luminal differentiation — real and more common in this organ\'s ductal entry than in its lobular one, the mirror image of how PIK3CA and FOXA1 skew the other way.' } },
+];
+const TRUNK_IDC = [
+  { gene:'TP53 mutation', class:'driver', ccf:'~44% of IDC-NST (215/490, Ciriello et al., Cell, 2015, PMID 26451490) — the single most commonly mutated gene here, not a near-universal founder', note:'The most common of several recurrent drivers in this histologic type, similar in shape to this atlas\'s own LUAD entry (KRAS, 33%) rather than to a near-universal founder like HGSOC\'s TP53 (~96%) — this cancer\'s own genomic behavior is reported as driven mainly by which of breast cancer\'s four intrinsic molecular subtypes — Luminal A, Luminal B, HER2-enriched, and Basal-like (the group this organ\'s own triple-negative entry above overwhelmingly falls into) — a given tumor belongs to, not by histology itself (Thennavan et al., Cell Genomics, 2021, PMID 35465400; TCGA, Nature, 2012). Luminal A, Luminal B, and HER2-enriched are real, clinically load-bearing categories, but none carries a distinctive H&E architecture the way this entry\'s own irregular-glands-and-cords pattern or triple-negative\'s own solid-sheets-and-necrosis pattern does — so they live here, as molecular context on the histologic entries that do have one, rather than as drawn entries of their own (phaseC_design.md §17).' },
+];
+const PRIVATE_POOL_IDC = [
+  { gene:'HER2/ERBB2 amplification', class:'driver', ccf:'~15% clinically HER2-positive (population data, Giaquinto et al., Cancer, 2025, PMID 41055508) — against ~5% in ILC', note:'Extra copies of a growth-factor receptor gene — this organ\'s own "usual" HER2 mechanism, gene-dosage amplification, in real contrast to the lobular entry modeled alongside it, where HER2 involvement is instead a point mutation in the same gene, not extra copies of it (see that entry\'s own branch note).' },
+  { gene:'TTN mutation', class:'passenger', note:'One of the largest genes in the human genome — mutated often simply because of its size, not because it drives this cancer. Included as this ledger\'s standard passenger, the same role it plays across this atlas\'s other pools.' },
+];
+
+// HISTOLOGY — see js/histology.js's genIDC for the drawing itself and its own header comment for
+// the full reasoning (deliberately the opposite grading-spectrum end from this organ's own TNBC
+// slide). WHO 6th ed. (Quinn et al., Histopathology, 2026, PMID 42011085, PMCID PMC13341065):
+// "an invasive carcinoma of no special type (NST) comprising irregular neoplastic glands and
+// trabeculae that infiltrate the breast parenchyma." Grading axis: Elston & Ellis, Histopathology,
+// 1991, PMID 1757079 (tubule/gland formation, nuclear pleomorphism, mitotic count) — restated for
+// NST directly by Rakha, Tse & Quinn, Histopathology, 2023, PMID 36482272, PMCID PMC10108289.
+const HISTOLOGY_IDC = {
+  intro: 'Invasive breast carcinoma of no special type (IDC) is this organ\'s residual, majority category — everything left once the WHO\'s named special types are excluded — so its own architecture is deliberately heterogeneous rather than one fixed pattern. What is drawn here sits at moderate grade: irregular, variably formed glands and solid trabecular cords infiltrating the stroma, with real nucleus-to-nucleus variation in size and shape (nuclear pleomorphism) — the Nottingham grading system\'s own three-part axis (tubule formation, pleomorphism, mitotic count) made visible. No necrosis, no dense lymphocyte band: this is the honest visual contrast with this organ\'s own basal-like/triple-negative entry, drawn separately, which sits at the opposite, high-grade end of the same real spectrum.',
+  ariaSummary: 'Stylized microscopic field: irregular pink gland-like structures of varying size and shape, some forming clean rings around a central lumen and others distorted or incomplete, connected by solid multi-cell-wide cords of tumor cells infiltrating between them. Nuclei vary noticeably in size and shape from cell to cell. No necrotic zones and no dense lymphocyte clusters are present.',
+  citation: 'WHO Classification of Tumours of the Breast, 6th ed. (Quinn et al., Histopathology, 2026, PMID 42011085); Elston & Ellis, Histopathology, 1991 (PMID 1757079); Rakha, Tse & Quinn, Histopathology, 2023 (PMID 36482272).',
+  features: [
+    { key:'glands', label:'Irregular glands',
+      text:'Variably formed tubules and lumens — some rounded, some distorted or incomplete — reflecting the real, graded "tubule/gland formation" axis of the Nottingham system rather than the uniform rings of a purely well-differentiated pattern.' },
+    { key:'trabeculae', label:'Trabecular cords',
+      text:'Solid, multi-cell-wide strands of tumor cells infiltrating the stroma between glands — a real, named architectural pattern the WHO\'s own description of this entity states directly, distinct from the single-file cords this organ\'s lobular entry shows instead.' },
+    { key:'pleomorphism', label:'Nuclear pleomorphism',
+      text:'Real, visible cell-to-cell variation in nucleus size and shape — the second of the Nottingham grading system\'s three scored features, alongside gland formation and mitotic count.' },
+  ],
+};
+
+// TRUNK_ILC's own counting-rule split (data rule 11's own discipline, applied here): E-cadherin
+// (CDH1) LOSS BY ANY MECHANISM — DNA mutation, copy-number loss, or mRNA/protein loss together —
+// is measured at 95% (120/127 by DNA+RNA; 100% of the 79 cases with DNA+RNA+protein all three,
+// Ciriello et al., Cell, 2015, PMID 26451490) and independently corroborated at ~90% by protein
+// loss alone across four citations this atlas's own research pass traced to Moll et al., Am J
+// Pathol, 1993 (PMID 8256857) as the founding source. CDH1 MUTATION SPECIFICALLY (DNA sequencing
+// only) is a separate, lower, real number: 63% (80/127, Ciriello 2015) and 65% (an independent
+// 413-tumor cohort, Desmedt et al., J Clin Oncol, 2016, PMID 26926684) — two different real
+// counts of two different things, not one figure restated. A real, direct contradiction in the
+// literature is disclosed rather than smoothed over: Ciriello 2015 directly tested for CDH1
+// promoter hypermethylation as a "second hit" (the mechanism this atlas's own gastric diffuse-
+// type entry already documents for its own CDH1 trunk) and found none — "we did not detect
+// significant DNA hyper-methylation... our results... do not support the reported occurrence of
+// CDH1 epigenetic silencing in invasive breast cancer" — directly contradicting older, smaller
+// studies PathologyOutlines still cites. Not resolved here; stated as the real, open disagreement
+// it is, the same honesty standard this atlas's other cross-cohort discrepancies already hold to.
+const TRUNK_ILC = [
+  { gene:'CDH1 (E-cadherin) loss', class:'driver', ccf:'~90–95% by protein loss or any mechanism combined (Ciriello et al., Cell, 2015, PMID 26451490; corroborated to Moll et al., 1993) — near-universal, comparable to this atlas\'s own HGSOC entry (TP53, ~96%); ~63–65% by DNA mutation specifically (Ciriello 2015, 80/127; Desmedt et al., J Clin Oncol, 2016, PMID 26926684, independent 413-tumor cohort)', note:'Loss of the cell-adhesion protein E-cadherin is the mechanistic basis of this cancer\'s own defining architecture: without it, tumor cells cannot form the cohesive sheets or glands this organ\'s own ductal and triple-negative entries both show instead, and infiltrate singly or in single-file cords in their place — this atlas\'s gastric diffuse-type adenocarcinoma entry documents the identical mechanism independently, in a different organ.' },
+];
+// BRANCH PAIR, MUTUALLY EXCLUSIVE (Ciriello et al., 2015, PMID 26451490's own MEMo pathway
+// analysis: "multiple mutually exclusive alterations in ILC converging on Akt signaling" across
+// PIK3CA/PTEN/ERBB2) — split two sites each, the same architectural pattern this atlas already
+// uses for GBM's EGFR/PDGFRA and prostate's TMPRSS2-ERG/SPOP pairs, not a new mutation-framing
+// model. ERBB2 here is a POINT MUTATION in the kinase domain, not the amplification this organ's
+// OWN ductal entry uses for the same gene — a real, striking, opposite-direction contrast
+// confirmed across four independent sources spanning 2012–2025 (TCGA, Nature, 2012, PMID
+// 23000897, the paper this atlas's own TNBC entry already cites, itself reporting 4/8 somatic
+// ERBB2 variants in the lobular subtype, most kinase-domain; Desmedt et al., 2016; Davis et al.,
+// EBioMedicine, 2022, PMID 36332363, OR 3.6 for ERBB2 mutation even in HR+/HER2-negative ILC;
+// Davis et al., Clin Cancer Res, 2025, PMID 40810627).
+const REGIONS_ILC = [
+  { id:'YV', name:'Liver', color:cssVar('--azure'), pos3d:{x:0.9,y:-0.6,z:-0.5},
+    branch:{ gene:'PIK3CA mutation', class:'driver', ccf:'~48% of ILC (61/127, Ciriello et al., Cell, 2015, PMID 26451490) — against 33% in IDC-NST', note:'Activates the PI3K growth pathway — real in both this organ\'s histologic types, genuinely more frequent here than in the ductal entry modeled alongside it, and largely mutually exclusive with the ERBB2 mutation modeled at this cancer\'s other two sites (both converge on the same Akt-signaling pathway).' } },
+  { id:'YL', name:'Lung', color:cssVar('--amber'), pos3d:{x:1.6,y:1.4,z:0.6},
+    branch:{ gene:'PIK3CA mutation', class:'driver', ccf:'~48% of ILC (61/127, Ciriello et al., Cell, 2015, PMID 26451490) — against 33% in IDC-NST', note:'Activates the PI3K growth pathway — real in both this organ\'s histologic types, genuinely more frequent here than in the ductal entry modeled alongside it, and largely mutually exclusive with the ERBB2 mutation modeled at this cancer\'s other two sites (both converge on the same Akt-signaling pathway).' } },
+  { id:'YO', name:'Ovary', color:cssVar('--coral'), pos3d:{x:-1.3,y:-0.9,z:0.3},
+    branch:{ gene:'ERBB2 (HER2) kinase-domain mutation', class:'driver', ccf:'a real, recurrent point mutation (not amplification) confirmed across four cohorts spanning 2012–2025, more frequent in ILC than IDC-NST', note:'A point mutation in the same growth-factor receptor gene this organ\'s own ductal entry amplifies instead — the opposite mechanism for the same gene, and largely mutually exclusive with the PIK3CA mutation modeled at this cancer\'s other two sites.' } },
+  { id:'YG', name:'GI tract', color:cssVar('--violet'), pos3d:{x:-1.0,y:1.3,z:-0.3},
+    branch:{ gene:'ERBB2 (HER2) kinase-domain mutation', class:'driver', ccf:'a real, recurrent point mutation (not amplification) confirmed across four cohorts spanning 2012–2025, more frequent in ILC than IDC-NST', note:'A point mutation in the same growth-factor receptor gene this organ\'s own ductal entry amplifies instead — the opposite mechanism for the same gene, and largely mutually exclusive with the PIK3CA mutation modeled at this cancer\'s other two sites.' } },
+];
+const PRIVATE_POOL_ILC = [
+  { gene:'TBX3 mutation', class:'driver', ccf:'~9% of ILC (12/127) against 2% in IDC-NST (Ciriello et al., Cell, 2015, PMID 26451490)', note:'A transcription factor recurrently mutated across breast cancer broadly (TCGA, Nature, 2012) and, specifically, enriched in this organ\'s lobular entry, at a real, cited frequency distinct from its own rate in this organ\'s ductal entry.' },
+  { gene:'FOXA1 mutation', class:'driver', ccf:'~7% of ILC (9/127) against 2% in IDC-NST (Ciriello et al., Cell, 2015, PMID 26451490)', note:'A transcription factor supporting estrogen-receptor signaling, with mutations clustering in its DNA-binding domain here — mutually exclusive with GATA3 (this organ\'s own ductal entry uses GATA3 instead, at the opposite frequency), so the two never compete for the same cell in this atlas\'s model.' },
+  { gene:'TTN mutation', class:'passenger', note:'One of the largest genes in the human genome — mutated often simply because of its size, not because it drives this cancer. Included as this ledger\'s standard passenger, the same role it plays across this atlas\'s other pools.' },
+];
+// CHECKED AND HONESTLY NOT INCLUDED, per this atlas\'s own "declare a negative, don\'t just omit
+// it" discipline: ESR1 point mutation (the classic acquired-endocrine-resistance mechanism) has
+// no clean, ILC-specific mutation-rate primary source this pass could locate — a co-mutation
+// signal exists (Davis et al., EBioMedicine, 2022) but that analysis stratifies by CDH1-mutation
+// status across ALL metastatic breast cancer, not by an ILC-restricted population, so it supports
+// cooperation in principle without supplying an ILC-specific figure to cite. GATA3 was checked and
+// excluded for the opposite reason a below-floor entry would be — not absent, but WRONG DIRECTION:
+// it is real and recurrent, but LOWER in ILC (5%) than in IDC-NST (13%, Ciriello 2015), so it is
+// modeled at this organ's ductal entry instead, not here.
+
+// HISTOLOGY — see js/histology.js's genILC and drawSingleFileCord for the drawing itself and its
+// own header comment for the honest family-reuse accounting (partial, not zero-new-code: the
+// single-file cord is a direct reuse of gastric diffuse-type's own primitive, extracted into a
+// shared function the moment this became its second real consumer; the targetoid arrangement
+// around a residual duct is genuinely new). StatPearls (Handelsman & Tomlinson-Hansen, 2026,
+// PMID 32119465, NBK554578): "characteristic histologic pattern of small, noncohesive cells
+// arranged in single-file strands... The infiltrating cords often present a concentric pattern
+// around normal ducts." PathologyOutlines.com, "Invasive lobular carcinoma classic" (Li & Tse,
+// last update 2026-04): "Can be arranged concentrically around normal ducts, giving a targetoid
+// appearance... Desmoplastic reaction and necrosis uncommon." Classic variant confirmed dominant
+// (55.8% of 981 ILC, Iorfida et al., Breast Cancer Res Treat, 2012, PMID 22399188) — the one
+// drawn; solid/pleomorphic/alveolar/tubulolobular variants are real WHO-recognized forms, named
+// but not drawn, this atlas's standard treatment for a minority variant landscape.
+const HISTOLOGY_ILC = {
+  intro: 'Invasive lobular carcinoma\'s defining feature is what it lacks: without E-cadherin, tumor cells cannot adhere to each other or form glands, so they infiltrate instead as small, discohesive cells — singly, or in single-file cords just one cell wide. Around a residual normal duct, these cords often wrap in a distinctive concentric ring, a "targetoid" pattern that is itself a recognized diagnostic feature. The cells themselves are small and strikingly uniform, with little nuclear atypia and low mitotic activity, and — in real contrast to this organ\'s own ductal entry — provoke almost no surrounding stromal reaction and essentially no necrosis.',
+  ariaSummary: 'Stylized microscopic field: a central duct-like ring structure with short single-file cords of small, dark, evenly-spaced nuclei radiating outward from it in a wheel-like, concentric pattern. Additional short single-file cords and loosely scattered individual small cells are dispersed elsewhere in the field, all with minimal surrounding tissue reaction.',
+  citation: 'StatPearls, "Invasive Lobular Carcinoma" (Handelsman & Tomlinson-Hansen, 2026, PMID 32119465, NBK554578); PathologyOutlines.com, "Invasive lobular carcinoma classic" (Li & Tse, 2026); Iorfida et al., Breast Cancer Res Treat, 2012 (PMID 22399188).',
+  features: [
+    { key:'targetoid', label:'Targetoid pattern',
+      text:'Single-file cords of tumor cells wrapping concentrically around a residual normal duct — a real, named diagnostic feature, distinct from any random infiltration.' },
+    { key:'singlefile', label:'Single-file cords',
+      text:'Small, discohesive tumor cells arranged in thin, linear strands just one cell wide — the direct architectural consequence of losing E-cadherin, the cell-adhesion protein that would otherwise let them form glands or sheets.' },
+    { key:'discohesion', label:'Discohesive cells',
+      text:'Individual tumor cells dispersed loosely through the stroma rather than clustered — small, uniform, with little nuclear atypia and minimal surrounding tissue reaction, unlike the pleomorphism and infiltrative cords this organ\'s ductal entry shows instead.' },
+  ],
+};
+
 export const cancerDetails = {
   tnbc: {
     title:'Triple-Negative Breast Cancer', screenLabel:'Triple-negative breast cancer — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_TNBC, trunk:TRUNK_TNBC, privatePool:PRIVATE_POOL_TNBC,
     histology: HISTOLOGY_TNBC,
+  },
+  idc: {
+    title:'Invasive Breast Carcinoma of No Special Type (IDC)', screenLabel:'Invasive breast carcinoma, no special type — tumor explorer',
+    legendTitle:'Sites (real distant-metastasis pattern)',
+    regions:REGIONS_IDC, trunk:TRUNK_IDC, privatePool:PRIVATE_POOL_IDC,
+    histology: HISTOLOGY_IDC,
+  },
+  ilc: {
+    title:'Invasive Lobular Carcinoma', screenLabel:'Invasive lobular carcinoma — tumor explorer',
+    legendTitle:'Sites (real distant-metastasis pattern, hormone-receptor-adjusted)',
+    regions:REGIONS_ILC, trunk:TRUNK_ILC, privatePool:PRIVATE_POOL_ILC,
+    histology: HISTOLOGY_ILC,
   },
 };

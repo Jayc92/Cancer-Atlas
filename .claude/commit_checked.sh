@@ -197,17 +197,40 @@ do_commit() {
   # aggregate marker "DONE " does not appear in regress's "==== DONE:" line, so gating a
   # regress-only run with it would refuse for no reason. Redundant checks are not free when one of
   # them can fire wrongly.
-  # THE REFUSAL LOG RIDES ALONG (2026-09-07). run_checked.sh appends a refusing run to
-  # .claude/refusals.log, and a refusing run makes no commit — so the entry can only reach git in the
-  # diff of the next SUCCESSFUL commit. Staging it here is what makes "the next commit picks it up"
-  # true by construction instead of by anyone remembering; an unstaged refusal is one `git checkout`
-  # away from being the thing the log exists to prevent. Guarded on existence because the selftest
-  # commits inside a scratch repo that has no .claude/ at all.
   #
-  # THE ONLY FILE THIS SCRIPT STAGES, and it stages nothing else on purpose: a commit tool that
-  # decides what belongs in a commit is a different and much worse tool. This one file is
-  # machine-written, declared in battery.py's NON_INSTRUMENTS, and exists solely to be archived.
-  [ -f .claude/refusals.log ] && git add .claude/refusals.log
+  # A THIRD RECURRENCE OF "GATE THE TREE YOU'RE COMMITTING", AND THE FIRST SINCE A GUARD WAS BUILT
+  # FOR THE CLASS (2026-09-13, user finding). The TOP check above runs exactly ONCE, before the gate.
+  # But `battery.py --lower-ratchet` WRITES `.claude/record_count.json` (and `citation_reach_check.py`
+  # writes `.claude/reach_unreached.json`) mid-gate, on the SAME machine-written-state files
+  # `refusals.log`'s own exemption already knew needed re-staging — just not generalised past the one
+  # instance that motivated it. Result on `175c104`: the top check passed against the STALE staged
+  # blob, the gate then legitimately lowered the ratchet and wrote the NEW value to the working tree,
+  # and this function committed straight from the (now stale) index without ever looking again —
+  # landing a commit whose own quoted DONE line said "614->613 LOWERED" while its `record_count.json`
+  # still read 614. Not a missed check; a check that only ever ran on one side of the gate.
+  # KNOWN_MACHINE_STATE names every NON_INSTRUMENTS file battery.py's own header calls
+  # "machine-written state, not a tool" that some gate path is EXPECTED to mutate mid-run — the exact
+  # set `refusals.log` was quietly speaking for alone. Re-staged unconditionally after a successful
+  # gate: each is machine-written, declared, and exists solely to be archived, the same standing this
+  # comment used to grant only `refusals.log`. `git add` on a file with nothing to stage is a no-op,
+  # so listing all three costs nothing on the (common) run where only one or none actually moved.
+  KNOWN_MACHINE_STATE=".claude/record_count.json .claude/reach_unreached.json .claude/refusals.log"
+  for f in $KNOWN_MACHINE_STATE; do
+    [ -f "$f" ] && git add "$f"
+  done
+  # THE BACKSTOP, and the second half of the actual fix — not a repeat of the top check. The top
+  # check defends against a CALLER who forgot to stage a real edit; this one defends against the GATE
+  # writing somewhere the known set above does not name. Both are needed: re-staging alone would
+  # silently fold in a genuinely unexpected mid-gate write the same way the original bug folded in an
+  # expected one. Everything expected is already staged by the loop above, so a clean run reports
+  # nothing here.
+  still_unstaged="$(git diff --name-only -- .)"
+  if [ -n "$still_unstaged" ]; then
+    echo "COMMIT_CHECKED: the gate wrote to tracked file(s) outside the known machine-written-state" >&2
+    echo "set mid-run — an unexplained mutation, not one already accounted for. REFUSING TO COMMIT:" >&2
+    echo "$still_unstaged" | sed 's/^/    /' >&2
+    rm -f "$out"; return 3
+  fi
   msg="$(mktemp)"
   printf '%s\n\n%s\n' "$subject" "$done_lines" > "$msg"
   git commit -F "$msg" >/dev/null 2>&1
@@ -332,12 +355,19 @@ if [ "${1:-}" = "--selftest" ]; then
 
   # arm 8: a tracked file with unstaged changes refuses BEFORE the gate even runs — proven by a
   # sentinel the gate command would create, absent after the refusal, not just by the commit count.
+  # SENTINEL PATH IS ABSOLUTE, SAME REASON AS ARMS 10/11's OWN NOTE BELOW (found while building
+  # those two, then checked for and found here too): run_checked.sh cd's to the REAL repo before
+  # running the wrapped command, so a relative sentinel would land there, not in $scratch, on
+  # whichever future regression this arm exists to catch actually makes the gate run. Currently
+  # masked rather than wrong, because the assertion is ABSENCE and the file is absent from both
+  # places when the gate correctly never runs — but that coincidence is exactly the kind this
+  # project's own "a check validated by what it happens not to exercise" class warns about.
   base8="$(git rev-list --count HEAD)"
   echo change8 >> f.txt   # tracked (seeded at repo init), left unstaged on purpose
-  rm -f gate_ran.marker
+  rm -f "$scratch/gate_ran.marker"
   do_commit "should not land, unstaged tracked file" "DONE test:" \
-    sh -c 'touch gate_ran.marker; echo "DONE test: 1 checked"' >/dev/null 2>&1
-  if [ "$(git rev-list --count HEAD)" = "$base8" ] && [ ! -f gate_ran.marker ]; then
+    sh -c "touch '$scratch/gate_ran.marker'; echo 'DONE test: 1 checked'" >/dev/null 2>&1
+  if [ "$(git rev-list --count HEAD)" = "$base8" ] && [ ! -f "$scratch/gate_ran.marker" ]; then
     echo "  ok   refuses on an unstaged tracked file, before running the gate (no commit, gate never ran)"
   else
     echo "  FAIL committed with an unstaged tracked file present, or ran the gate anyway"; ok=0
@@ -359,12 +389,52 @@ if [ "${1:-}" = "--selftest" ]; then
     echo "  FAIL the refusals.log exemption regressed — a legitimate commit was blocked"; ok=0
   fi
 
+  # arm 10: THE ACTUAL 175c104 BUG, REPRODUCED AND FIXED (2026-09-13). A tracked, already-staged
+  # machine-written-state file that the GATE ITSELF mutates mid-run — exactly what
+  # `battery.py --lower-ratchet` does to record_count.json — must land in the commit at its NEW
+  # value, not the value staged going in. First seed the file as tracked (its OWN commit, so this
+  # arm starts from a clean baseline rather than piggybacking on arm 9's f.txt state), then run a
+  # gate whose command overwrites it, the same shape a real ratchet lower has.
+  # NOTE ON PATHS IN THIS ARM AND THE NEXT: run_checked.sh's own $DIR resolves to ITS absolute
+  # location (the real repo, by design — the explicit-form-over-ambient-state rule this whole
+  # chain follows) and `cd`s there before running the wrapped gate command. A gate command using a
+  # RELATIVE path therefore writes into the REAL repo, not this scratch one, however deep inside a
+  # scratch-repo selftest it is invoked from — caught live while building this exact arm, which
+  # first clobbered the real .claude/record_count.json before being rewritten to use $scratch's
+  # own absolute path below. Every path the gate command touches here is absolute for that reason.
+  echo 'seed-value-1' > .claude/record_count.json
+  git add .claude/record_count.json; git commit -qm seed-record-count
+  do_commit "gate mutates record_count.json mid-run" "DONE test:" sh -c \
+    "echo 'mutated-value-2' > '$scratch/.claude/record_count.json'; echo 'DONE test: 1 checked'" \
+    >/dev/null 2>&1
+  if git show HEAD:.claude/record_count.json 2>/dev/null | grep -q 'mutated-value-2'; then
+    echo "  ok   a mid-gate mutation to a known machine-written-state file lands in the commit at its new value"
+  else
+    echo "  FAIL committed the STALE pre-gate record_count.json — the 175c104 bug, unfixed"; ok=0
+  fi
+
+  # arm 11: THE BACKSTOP. A gate that mutates some OTHER tracked file — one NOT in
+  # KNOWN_MACHINE_STATE — must still refuse, proving the fix does not silently swallow an
+  # unexplained mutation the same way it deliberately folds in an expected one. Reuses f.txt,
+  # already tracked since repo init. Absolute path, same reason as arm 10 above.
+  base11="$(git rev-list --count HEAD)"
+  do_commit "gate mutates an unrelated tracked file" "DONE test:" sh -c \
+    "echo 'unexpected' >> '$scratch/f.txt'; echo 'DONE test: 1 checked'" >/dev/null 2>&1
+  if [ "$(git rev-list --count HEAD)" = "$base11" ]; then
+    echo "  ok   refuses when the gate mutates a tracked file outside the known machine-written-state set"
+  else
+    echo "  FAIL committed despite an unexplained mid-gate mutation to f.txt"; ok=0
+  fi
+  git checkout -q -- f.txt   # discard arm 11's mutation so it cannot bleed into a rerun
+
   cd "$DIR" || exit 2
   rm -rf "$scratch" "$RUN_CHECKED_REFUSAL_LOG"
   if [ $ok -eq 1 ]; then
     echo "SELFTEST PASS — refuses on no-marker, non-zero exit and prose-only output; quotes both "\
 "DONE forms verbatim and no prose; carries the refusal log; refuses an unstaged tracked file before "\
-"the gate runs, exempting refusals.log's own designed staleness"
+"the gate runs, exempting refusals.log's own designed staleness; re-stages any known "\
+"machine-written-state file the gate itself mutated mid-run so it lands at its new value, and "\
+"still refuses on a mutation outside that known set"
     exit 0
   fi
   echo "SELFTEST FAIL — do not trust commits made through this script"

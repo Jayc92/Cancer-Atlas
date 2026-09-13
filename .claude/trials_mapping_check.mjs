@@ -229,6 +229,87 @@ function corpusVocabularySignal(entry, parentAll, filterByCondition) {
   return { tokens, distinctConditions: distinct.size, rejectedDistinct: dropped.length, hits };
 }
 
+// THE NEGATION-COLLISION SIGNAL (2026-09-13, user-directed) — mechanizes the exact class that
+// produced BOTH of this round's live excludeIf bugs: LUSC's "Non-Squamous Non-Small Cell Lung
+// Cancer" and SCLC's "Non-Small Cell Lung Cancer", each caught only by reading a live 10-result
+// sample by hand, never by inspecting the keyword list. "Four keyword bugs, four found by running
+// the query, zero found by reading the list" is the user's own tally across this and the seminoma/
+// prostat incidents — this signal exists to convert two of the four into a mechanical scan run
+// BEFORE a browser is opened, over the SAME parent-corpus population corpusVocabularySignal above
+// already fetches (no second live pull).
+//
+// THE QUESTION IS NOT corpusVocabularySignal's ("does the filter reject something it shouldn't") —
+// it is the mirror: "does the entry's POSITIVE filter (conditionKeywords + requireAlso, BEFORE
+// excludeIf) accept a distinct corpus condition string that is a NEGATED form of the very thing
+// it's matching on." A hit that the entry's CURRENT excludeIf already drops is a covered, closed
+// case (recorded, not a problem); a hit that survives is a live gap, structurally identical to the
+// two that shipped this round undetected.
+//
+// "NON-" MUST SIT LITERALLY, IMMEDIATELY ADJACENT TO THE SPECIFIC KEYWORD TEXT — not merely
+// present anywhere in the string alongside a keyword match found some other way. THE FIRST DRAFT
+// OF THIS FUNCTION GOT THAT WRONG, AND THE FIX IS RECORDED HERE RATHER THAN SILENTLY REWRITTEN
+// (2026-09-13): it tested "does this string contain 'non-' ANYWHERE, and separately, does it match
+// the positive filter ANYWHERE" — two independent tests, ANDed. On LUSC alone that produced 22
+// "hits", every one the identical false-positive shape: "Squamous Non-Small Cell Lung Cancer" —
+// genuinely, correctly kept (squamous NSCLC is exactly what this entry targets) — flagged only
+// because "Non-" happens to prefix "Small" elsewhere in the same string, a legitimate, POSITIVE use
+// of "non-" this entry's own `requireAlso` list relies on ('non-small cell' is one of its anchors),
+// utterly unrelated to whether "squamous" itself is being negated. Caught by manually re-deriving
+// the expected regex result for one reported hit and finding it disagreed with the tool — the same
+// "an instrument's first run is calibration" discipline this project applies everywhere else,
+// applied to this check on the day it was born. FIXED by requiring the literal adjacency the two
+// real incidents both actually had: for each of the entry's OWN `conditionKeywords` (not
+// `requireAlso` — a requireAlso term being negated elsewhere doesn't by itself create a false
+// keep, since requireAlso only ever narrows an already-positive conditionKeywords match), build
+// `\bnon[-\s]+<that keyword's own literal text>\b` and test it directly — matching only when "non-"
+// or "non " sits immediately before that SPECIFIC keyword, the exact shape "Non-Squamous" and
+// "Non-Small Cell" both are for their own entries' own keywords.
+//
+// GENERALISES PAST LUNG BY CONSTRUCTION, NOT BY NAMING MORE CASES: the pattern is built from each
+// entry's OWN keyword list, not a lung-specific wordlist, so it fires identically on any future
+// entry whose own `conditionKeywords` collide with a "non-<keyword>" oncology term — "non-Hodgkin",
+// "non-seminomatous", "non-muscle-invasive" among them, per the user's own examples — the moment
+// such an entry exists, without this function itself needing to change.
+//
+// A REAL LIMITATION, FOUND AND DISCLOSED RATHER THAN QUIETLY PATCHED (2026-09-13, the whole-corpus
+// run against seminoma). "Metastatic Malignant Testicular Non-Seminomatous Germ Cell Tumor" is
+// real, genuinely off-topic, and kept in production — but this scan does NOT catch it, for two
+// compounding reasons: (1) "Seminomatous" is a morphological variant of the keyword "seminoma", not
+// its exact literal text, so `\bnon[-\s]+seminoma\b` cannot see it (the same class as "prostat" vs
+// "Prostate" needing a stem, not a whole word); (2) the string is actually kept via a DIFFERENT
+// keyword, "germ cell" — which carries no "non-" anywhere near it — so even a variant-aware match
+// on "seminoma" would still be checking the wrong term. This scan tests one keyword's own literal
+// text against strings that are positive matches FOR THAT SAME KEYWORD; it does not (yet) reason
+// about morphological variants or about a negation landing on a keyword other than the one
+// responsible for the keep. Found by a human reading the corpus data behind one flagged hit, not by
+// widening this function — recorded here so the next reader does not assume a clean run over an
+// entry means every possible negation shape was checked.
+function negationCollisionSignal(entry, parentAll, filterByCondition) {
+  const distinct = new Set();
+  parentAll.studies.forEach((s) => s.protocolSection.conditionsModule.conditions.forEach((c) => distinct.add(c)));
+  const keywords = entry.conditionKeywords || [];
+  const negationPatterns = keywords.map((kw) => ({
+    kw, re: new RegExp('\\bnon[-\\s]+' + kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i'),
+  }));
+  const hits = [];
+  for (const cond of distinct) {
+    const matched = negationPatterns.find(({ re }) => re.test(cond));
+    if (!matched) continue;
+    const wrapper = [{ protocolSection: { conditionsModule: { conditions: [cond] } } }];
+    // Even with the literal-adjacency match above, requireAlso might independently drop this
+    // string for an unrelated reason — check the FULL positive test (conditionKeywords +
+    // requireAlso, still no excludeIf) before calling it a live collision at all.
+    const { kept: positiveKept } = filterByCondition(wrapper, entry.conditionKeywords, entry.requireAlso);
+    if (positiveKept.length === 0) continue;
+    // Then the REAL question: does the entry's CURRENT excludeIf (if any) already drop it in
+    // production? undefined excludeIf behaves as "no exclusion", so an entry with none correctly
+    // reports every positive-matching negated string as an uncovered gap.
+    const { kept: realKept } = filterByCondition(wrapper, entry.conditionKeywords, entry.requireAlso, entry.excludeIf);
+    hits.push({ condition: cond, matchedKeyword: matched.kw, alreadyExcluded: realKept.length === 0 });
+  }
+  return { distinctConditions: distinct.size, hits };
+}
+
 // THE POSITIVE CONTROL (2026-09-13, user ruling) — a stem that matches nothing produces zero
 // kept trials, which is INDISTINGUISHABLE from a genuinely trial-less rare cancer at the output
 // this file already prints. That is exactly how `requireAlso: ['prostat']` shipped broken and
@@ -342,6 +423,7 @@ async function main() {
     const gap = parentKept - narrowKept;
     const retiredRatio = parentAll.totalCount ? (narrowAll.totalCount / parentAll.totalCount * 100).toFixed(2) + '%' : 'n/a';
     const vocab = corpusVocabularySignal(entry, parentAll, importedFilter);
+    const negation = negationCollisionSignal(entry, parentAll, importedFilter);
     const control = requireAlsoPositiveControl(entry, parentAll, importedStemRegex);
     const excludeControl = excludeIfPositiveControl(entry, narrowAll, importedKeywordRegex);
 
@@ -374,6 +456,9 @@ async function main() {
     console.log(`  [RETIRED — gap tracks the ratio above almost exactly, see this file's header] exhaustive: narrow ${narrowAll.studies.length}/${narrowAll.totalCount}${narrowComplete ? '' : ' — INCOMPLETE'}, parent ${parentAll.studies.length}/${parentAll.totalCount}${parentComplete ? '' : ' — INCOMPLETE'}: narrowKept=${narrowKept}  parentKept=${parentKept}  gap=${gap} (raw counts only — NOT a narrowness verdict)`);
     console.log(`  CORPUS-VOCABULARY SIGNAL: name-tokens ${JSON.stringify(vocab.tokens)}, ${vocab.distinctConditions} distinct condition strings in the parent corpus, ${vocab.rejectedDistinct} rejected by the current filter, ${vocab.hits.length} of those share a name-token`);
     vocab.hits.forEach((h) => console.log(`    HIT: "${h.condition}" — matched token(s): ${JSON.stringify(h.matchedTokens)}`));
+    const negationGaps = negation.hits.filter((h) => !h.alreadyExcluded);
+    console.log(`  NEGATION-COLLISION SIGNAL: ${negation.hits.length} negated-form string(s) matched the positive filter, ${negationGaps.length} not covered by any current excludeIf`);
+    negation.hits.forEach((h) => console.log(`    ${h.alreadyExcluded ? 'COVERED (excludeIf drops it)' : 'LIVE GAP'}: "${h.condition}" — non-${h.matchedKeyword}`));
 
     summary.push({
       id,
@@ -381,6 +466,7 @@ async function main() {
       excludeControlFail: excludeControl && excludeControl.matchCount === 0,
       zeroKept: narrowKept === 0,
       undeclared: narrowKept === 0 && !DECLARED_ZERO[id],
+      negationGapCount: negationGaps.length,
     });
   }
 
@@ -389,10 +475,12 @@ async function main() {
   const excludeControlFails = summary.filter((s) => s.excludeControlFail);
   const undeclaredZeros = summary.filter((s) => s.undeclared);
   const declaredZeros = summary.filter((s) => s.zeroKept && !s.undeclared);
+  const negationGaps = summary.filter((s) => s.negationGapCount > 0);
   console.log(`  requireAlso positive control: ${controlFails.length ? 'FAIL — ' + JSON.stringify(controlFails.map((s) => s.id)) : 'no failures'}`);
   console.log(`  excludeIf positive control: ${excludeControlFails.length ? 'FAIL — ' + JSON.stringify(excludeControlFails.map((s) => s.id)) : 'no failures'}`);
   console.log(`  zero-kept, UNDECLARED (read these): ${undeclaredZeros.length ? JSON.stringify(undeclaredZeros.map((s) => s.id)) : 'none'}`);
   console.log(`  zero-kept, declared and re-checked this run: ${declaredZeros.length ? JSON.stringify(declaredZeros.map((s) => s.id)) : 'none'}`);
+  console.log(`  negation-collision LIVE GAPS (read these before the next browser session finds them for you): ${negationGaps.length ? JSON.stringify(negationGaps.map((s) => ({ id: s.id, gaps: s.negationGapCount }))) : 'none'}`);
 }
 
 main().catch((e) => { console.error('trials_mapping_check crashed:', e); process.exit(1); });

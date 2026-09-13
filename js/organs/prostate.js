@@ -31,8 +31,10 @@ export const cancerEntries = [
   // histology/extent. Both also get a trials mapping (js/trials.js) — the one thing a below-
   // floor entry gets beyond the blurb.
   { id:'pmuc',     name:'Mucinous adenocarcinoma',        share:'0.08% of prostate cancers treated with surgery or radiotherapy (324/427,055, Siech et al., 2026)', active:false, organKey:'prostate',
+    belowFloorReason:'rarity',
     blurb:'A SEER competing-risk analysis found this subtype’s cancer-specific mortality does not differ from acinar adenocarcinoma at any stage (Siech et al., Prostate Cancer Prostatic Dis, 2025, PMID 38987307, PMC12399420).' },
   { id:'psignet',  name:'Signet ring cell adenocarcinoma', share:'0.01% of prostate cancers treated with surgery or radiotherapy (54/427,055, Siech et al., 2026)', active:false, organKey:'prostate',
+    belowFloorReason:'rarity',
     blurb:'The same SEER competing-risk analysis found this subtype’s cancer-specific mortality does not differ from acinar adenocarcinoma at any stage either (Siech et al., Prostate Cancer Prostatic Dis, 2025, PMID 38987307, PMC12399420).' },
   { id:'pneuro',   name:'Neuroendocrine carcinoma',       share:'0.03% of prostate cancers treated with surgery or radiotherapy (130/427,055, Siech et al., 2026)', active:true, organKey:'prostate' },
 ];

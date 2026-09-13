@@ -117,6 +117,23 @@ function marginDot(c){
 // within-session caching trials.js's own screen-level panel already does via `loadedForCancerId`.
 const belowFloorTrialsCache = new Map();
 
+// BELOW-FLOOR HAS TWO REAL REASONS NOW, NAMED SEPARATELY (2026-09-13, user-directed; phaseC_design.md
+// §15). The mechanism (blurb + trials, nothing else) was built for RARITY (psignet/pmuc — a real
+// disease, just too few US cases/year for a population-level picture) and reused unchanged for LCC's
+// DEFINITIONAL INSTABILITY (large cell carcinoma has no stable modern share, site model, or driver
+// profile because routine IHC reclassifies most historically-diagnosed cases into adenocarcinoma or
+// squamous cell carcinoma — a diagnosis dissolving under modern testing, not a rare-but-stable one).
+// Both share the SAME mechanism because the mechanism never depended on which reason applied — but a
+// reader holding either diagnosis is asking a different question, and conflating "rare" with "no
+// longer a stable diagnosis" would answer the wrong one. `belowFloorReason` is an entry-level field
+// (rarity | definitional-instability); an entry with no reason set renders no chip at all rather than
+// defaulting to either label, since a below-floor entry with an unset reason is a gap to notice, not
+// a rarity claim to assume.
+const BELOW_FLOOR_REASON_LABEL = {
+  rarity: 'Below this atlas’s incidence floor — real, just too rare here for a full profile.',
+  'definitional-instability': 'A diagnosis in flux — modern testing reclassifies most cases once given this name.',
+};
+
 // fetchTrialsForEntry returns null when cancerId has no TRIALS_CONDITION_MAP entry at all —
 // shouldn't happen for a wired below-floor entry, but guarded rather than assumed, since
 // describeTrialsResult has no null-result branch of its own.
@@ -161,6 +178,7 @@ function renderCancerList(organKey){
       <div class="cancer-row blurb-row" data-id="${c.id}">
         <div class="cr-left">
           <div class="cr-name">${c.name}</div>
+          ${c.belowFloorReason && BELOW_FLOOR_REASON_LABEL[c.belowFloorReason] ? `<div class="cr-floor-reason">${BELOW_FLOOR_REASON_LABEL[c.belowFloorReason]}</div>` : ''}
           <div class="cr-share">${c.share}</div>
           <div class="cr-blurb">${c.blurb}</div>
         </div>

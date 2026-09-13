@@ -1256,3 +1256,122 @@ the fourteen organs still ahead. **Re-estimate again if a single round's pointer
 outside the 11–49 range these three data points span — that is the threshold at which the original
 6-hour build estimate would start looking cheap by comparison, not any fixed organ count on its
 own.**
+
+## 16. The below-floor mechanism now carries TWO real reasons, named separately rather than left
+## implicit in blurb prose (2026-09-13, user-directed)
+
+**The mechanism (name/share/one citation/one line/trials, nothing beyond that boundary) was built
+for RARITY** — `psignet`/`pmuc`, real diseases with too few US cases/year for a population-level
+picture — **and reused unchanged for `lcc`'s DEFINITIONAL INSTABILITY** (data rule 33: large cell
+carcinoma has no stable modern share, site model, or driver profile because routine IHC
+reclassifies most historically-diagnosed cases into adenocarcinoma or squamous cell carcinoma — a
+diagnosis dissolving under modern testing, not a rare-but-stable one). The reuse was correct: the
+mechanism never depended on WHY an entry doesn't clear full authoring, only on the fact that it
+doesn't. But leaving the distinction implicit in blurb prose is not correct — **a reader holding
+either diagnosis is asking a different question, and "just rare" is the wrong answer to give
+someone reading about a diagnosis that is being reclassified out of existence, the same way "the
+diagnosis is unstable" would be the wrong answer for someone reading about a genuinely rare-but-
+settled entity.**
+
+**Named explicitly, not left to blurb prose alone.** `belowFloorReason` (`'rarity'` |
+`'definitional-instability'`) is a new entry-level field (`psignet`/`pmuc`/`lcc`, `js/organs/
+prostate.js` + `js/organs/lungs.js`), rendered as a small chip in `renderCancerList()`
+(`js/main.js`) ABOVE the share line — the reader sees which state applies before reading why. Two
+fixed labels (`BELOW_FLOOR_REASON_LABEL`), chosen for accuracy over drama: rarity reads "Below this
+atlas's incidence floor — real, just too rare here for a full profile"; definitional-instability
+reads "A diagnosis in flux — modern testing reclassifies most cases once given this name." An entry
+with `belowFloorReason` unset renders no chip at all rather than defaulting to either label — the
+absence is a gap to notice on the next below-floor entry authored, not a silent rarity assumption.
+
+**This will recur, by the same two real mechanisms already named while ruling on this: the 2021
+WHO CNS reclassification (grade/entity boundaries redrawn under molecular criteria — a live
+candidate for a future `definitional-instability` entry) and the MDS/MPN boundary (overlap
+syndromes whose classification has shifted across successive WHO revisions) are both real,
+citable instances of the SAME shape LCC is the first of here, not a one-off.** Whichever organ
+reaches either of those next inherits this field and this convention rather than re-deriving it.
+
+Verified live in the browser: both chips render with the correct label and correct visual
+distinction (rarity chip on `pmuc`/`psignet`, definitional-instability chip on `lcc`), zero console
+errors, `bash .claude/syntax_check.sh` clean.
+
+## 17. Breast ruled histologic-axis; the criterion for when a molecular category still earns an
+## entry, written down so the next organ's version of this question answers itself (2026-09-13,
+## user ruling)
+
+**The question this closes:** breast's three staged entries (Luminal A/B, HER2-enriched) are
+molecular subtypes, and TNBC — already active, fully authored, data rule 10 — is too, so today's
+list is accidentally all-molecular against every other organ's histologic-axis convention (§3's own
+note flagged invasive lobular carcinoma as a real histologic-axis candidate for this same organ,
+never staged, precisely because it would collide with that). **Ruled: breast is histologic-axis
+going forward.** Luminal A/B and HER2-enriched are retired from the staged list — never authored as
+their own top-level rows — and invasive ductal carcinoma of no special type (IDC-NST, the real,
+currently-unrepresented ~70–80% majority histologic type) and invasive lobular carcinoma (ILC) are
+staged in their place. TNBC is grandfathered: it stays exactly as shipped.
+
+**THE CRITERION, NOT JUST THE EXCEPTION (user's own framing) — a molecular/receptor-defined category
+earns a top-level entry only when it carries a DISTINCTIVE MORPHOLOGIC PHENOTYPE the schema's own
+slots can render, independent of whatever axis the rest of the organ's list uses.** TNBC passes:
+its own histology (`js/histology.js`, `genTNBC` — solid sheets, geographic necrosis, tumor-
+infiltrating lymphocytes) and its own real, cited branch-mutation profile (EGFR amplification/RB1
+loss, data rule 1) are gross/architectural facts a reader can see drawn, not merely an IHC panel
+result restated as a row. Luminal A, Luminal B, and HER2-enriched all FAIL it: nothing in the
+literature this atlas has read describes a distinct H&E architecture for any of the three that
+differs from ordinary IDC/ILC morphology (§7's own note called this out at the design-question stage
+— "the honest slide for one or more of them may be 'the diagnosis is immunohistochemistry, not
+morphology'" — without yet drawing the conclusion the criterion now makes explicit) — their real
+distinguishing feature is entirely a receptor/gene-expression readout, which this schema's
+`site`/`histology`/`extent` slots have nothing morphologic to fill.
+
+**THE STRUCTURAL REASON UNDERNEATH THE CRITERION, so a future organ's version of this question is
+mechanical rather than re-litigated by feel:** every field this atlas's entry schema actually renders
+— site map (real anatomic spread), histology (real drawable H&E architecture), extent (real
+stage-at-diagnosis distribution), origin (a real anatomic point of arising) — is ANATOMIC or
+MORPHOLOGIC by construction. A category defined purely by a molecular/IHC readout has nothing of its
+own to put in any of those slots UNLESS it also happens to carry a real, cited, distinct
+morphologic correlate (TNBC's own histology being exactly that correlate) — in which case the
+category earns its entry on the morphology, with the molecular framing riding along as the trunk-
+mutation note that made the entry worth having in the first place, not as a separate justification.
+**Apply this test before staging or authoring any future molecular/receptor-defined category as its
+own top-level entry, on any organ**: does it have a real, cited, DRAWABLE architecture distinct from
+its organ's ordinary histologic types, or does its own literature say the diagnosis is IHC, not
+morphology? The second answer means the category belongs as prose inside a histologic entry's own
+mutation ledger — thyroid's PTC/FTC entries already carry BRAF-like/RAS-like molecular framing this
+exact way (data rule 27), a working precedent for the retired route, not a new one being invented
+here.
+
+**BREAST'S LIST IS NOT A PARTITION, AND THAT IS DECLARED RATHER THAN SILENCED.** TNBC and IDC-NST
+overlap — a real tumor can be BOTH histologically IDC-NST AND receptor-negative (i.e. also TNBC) —
+so their `share` figures do not sum toward one denominator the way every other organ's histologic
+list does, and the check that would otherwise read a non-100 sum as a denominator-transplant
+candidate needs to be told why, not left to report a bare, unexplained gap forever. `share_sum_check.py`'s
+`DECLARED` list carries a permanent entry for `breast` (no `until` — this is a stated structural
+fact about the family, not a gap awaiting a re-read) stating plainly that the family mixes one
+receptor-defined entry (TNBC) with histologic ones (IDC-NST, ILC, and whatever rarer real histologic
+types are added later) and is not expected to sum to 100 on any single reading. The same fact is
+stated in the organ's own reader-facing description text, not only in the check's declaration —
+a reader looking at four percentages that don't add up deserves the same explanation the code
+carries, not just an internal note nobody outside this file ever sees.
+
+**Authoring IDC-NST and ILC is IN SCOPE for this pass, with everything standing applied**: share
+bound and extent-monotonicity on each entry, origin siting checked directly against breast's own
+Ducts hotspot text before authoring (the organ's existing "arises here" point — data rule 2's
+register-guard standard applies to any edit to that already-served prose), trials keywords live-
+verified with the negation-collision scan (CLAUDE.md's new standing rule) run FIRST, before any
+browser sampling — not after, the way lung's own two negation bugs were found. **"Invasive ductal
+carcinoma, no special type" contains "no special type" — itself a negation-shaped string — which
+makes this entry the first live test of whether `negationCollisionSignal()` handles a case where the
+disease's OWN correct name contains a negation, rather than a collision to exclude.** Checked before
+authoring: the scan's pattern is `\bnon[-\s]+<keyword>\b` (or, for whatever the entry's actual
+`conditionKeywords` turn out to be), matched against corpus condition strings, not against the
+entry's own query/name string — "no special type" is neither "non-" nor "no-" shaped in the pattern
+the scan tests for, so it is not expected to collide with the scan's own mechanism on inspection
+alone; still worth confirming directly once the entry's real keywords are chosen, rather than
+assumed clean from this reasoning.
+
+**ILC's histology is the open research question, to be answered before any drawing, not assumed**:
+its real, cited architecture (single-file/cord-like infiltration, small discohesive cells, E-cadherin
+loss — the mechanistic opposite of IDC's cohesive ductal/glandular pattern) does not obviously match
+any of this atlas's existing histology families (frond/cribriform, small-cell sheet, solid sheet,
+signet-ring, clear-cell nests) on a first read, and whether it factors into an existing primitive or
+needs a new one is to be reported before drawing anything, per the standing "report family fit before
+building" discipline §7 already established for every other family decision.

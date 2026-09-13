@@ -290,6 +290,27 @@ function drawSmallCellSheet(g, rnd, cx, cy, rx, ry, opts){
   return {cx, cy, rx, ry, cells};
 }
 
+// A short, roughly-linear row of small discohesive cells — "single-file"/"indian-file"
+// infiltration, the real, cited architecture of any CDH1/E-cadherin-loss-driven discohesive
+// carcinoma (gastric diffuse-type; invasive lobular breast carcinoma — both cite the same
+// mechanism independently, checked directly at each organ's own source rather than assumed to
+// transfer). EXTRACTED (2026-09-13, breast ILC pass) from what was previously inline,
+// single-consumer code in genGDiffuse — the discohesion/single-file family's second real
+// consumer, following this project's own "extract a shared primitive the moment a second real
+// consumer appears" discipline (the same one that produced drawSmallCellSheet for the
+// neuroendocrine family). genGDiffuse's own call site is unchanged in output: same five cells,
+// same 17px spacing, same nucOffset — this is a pure refactor, not a redesign.
+function drawSingleFileCord(g, x0, y0, angle, rnd, opts){
+  const o = opts || {};
+  const count = o.count || 5, spacing = o.spacing || 17;
+  const cosA = Math.cos(angle), sinA = Math.sin(angle);
+  for(let k=0;k<count;k++){
+    const x = x0 + cosA*k*spacing, y = y0 + sinA*k*spacing;
+    if(o.skipIf && o.skipIf(x, y)) continue;
+    drawCell(g, x, y, o.cytoR||6, o.nucR||3.4+rnd()*(o.nucRJitter!=null?o.nucRJitter:1), rnd, {nucOffset:o.nucOffset!=null?o.nucOffset:1.5});
+  }
+}
+
 // ------------------------------------------------------------
 // Per-cancer generators. Each draws into <g> and returns label anchor points {key,x,y} in
 // viewBox coordinates; keys must match the cancer's histology.features[].key.
@@ -363,6 +384,119 @@ function genTNBC(g, rnd){
     {key:'sheets',   x:300, y:120},
     {key:'necrosis', x:590, y:140},
     {key:'tils',     x:200, y:390},
+  ];
+}
+
+function genIDC(g, rnd){
+  // Invasive ductal carcinoma, no special type — deliberately the OPPOSITE end of the grading
+  // spectrum from this organ's own TNBC slide (solid sheets, geographic necrosis, high TIL
+  // density — the basal-like, grade-3 end). IDC-NST's real architecture is heterogeneous by
+  // definition (it is the residual category once every named special type is excluded — WHO
+  // 6th ed., 2026, PMID 42011085, describes it plainly as "irregular neoplastic glands and
+  // trabeculae that infiltrate the breast parenchyma"), graded on the Nottingham axis — tubule/
+  // gland formation, nuclear pleomorphism, mitotic count (Elston & Ellis, Histopathology, 1991,
+  // PMID 1757079) — so the drawn field sits at moderate grade, WITH real (if irregular, variably
+  // formed) gland structures, no necrosis, no TIL band: the honest visual contrast is "structured
+  // but irregular" against TNBC's "solid and necrotic," not a second version of the same look.
+  const glands = [];
+  let attempts = 0;
+  while(glands.length < 9 && attempts < 700){
+    attempts++;
+    const x = 60+rnd()*(VB.w-120), y = 55+rnd()*(VB.h-110), r = 16+rnd()*20;
+    if(glands.some(gl=>Math.hypot(gl.x-x, gl.y-y) < gl.r+r+24)) continue;
+    glands.push({x, y, r});
+  }
+  // irregular gland formation: real, variably-formed lumens — some round, some distorted/
+  // angulated — never the clean, evenly-spaced rings a well-differentiated gland-forming
+  // cancer (e.g. this organ's own future well-formed-gland entries) would show.
+  glands.forEach(gl=>{
+    const irregular = rnd() < 0.4;
+    if(irregular){
+      g.appendChild(el('path', {d:blobPath(gl.x, gl.y, gl.r+9, gl.r*0.7+7, 0.32, 9, rnd, rnd()*Math.PI), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1}));
+      g.appendChild(el('path', {d:blobPath(gl.x, gl.y, gl.r*0.55, gl.r*0.4, 0.3, 8, rnd, rnd()*Math.PI), fill:HE.bg}));
+      const n = Math.max(6, Math.round(gl.r*0.5));
+      for(let i=0;i<n;i++){
+        const a = i/n*Math.PI*2 + rnd()*0.25, rr = gl.r*0.62+rnd()*4;
+        g.appendChild(el('circle', {cx:gl.x+Math.cos(a)*rr, cy:gl.y+Math.sin(a)*rr*0.75, r:3.4+rnd()*1.4, fill:HE.nuc, opacity:0.9}));
+      }
+    } else {
+      drawGlandRing(g, gl.x, gl.y, gl.r*0.6, rnd, {cellR:gl.r*0.42, nucMin:3.6, nucMax:5.2});
+    }
+  });
+  // trabecular cords: solid, multi-cell-wide strands infiltrating BETWEEN the glands — wider
+  // and less strictly linear than a true single-file cord (that architecture is this atlas's
+  // discohesion/single-file family, reserved for CDH1-loss-driven carcinomas — see genILC below
+  // and js/organs/breast.js's own trunk notes for why IDC-NST, which retains CDH1, does not
+  // draw that pattern).
+  for(let t=0;t<7;t++){
+    const x0 = 40+rnd()*(VB.w-80), y0 = 40+rnd()*(VB.h-80), ang = rnd()*Math.PI*2, len = 60+rnd()*70;
+    const perp = ang+Math.PI/2;
+    for(let k=0;k<Math.round(len/16);k++){
+      const cx = x0+Math.cos(ang)*k*16, cy = y0+Math.sin(ang)*k*16;
+      if(glands.some(gl=>Math.hypot(gl.x-cx, gl.y-cy) < gl.r+14)) continue;
+      // two-to-three cells wide across the cord, not single-file
+      const width = 2+Math.round(rnd());
+      for(let w=0; w<width; w++){
+        const off = (w-(width-1)/2)*7;
+        const px = cx+Math.cos(perp)*off, py = cy+Math.sin(perp)*off;
+        // real nuclear pleomorphism: size/shape vary tumor-cell to tumor-cell, not uniform
+        drawCell(g, px, py, 6.5, 3.2+rnd()*3.4, rnd, {nucOffset:2});
+      }
+    }
+  }
+  return [
+    {key:'glands',      x:glands[0] ? glands[0].x : 200, y:glands[0] ? glands[0].y : 150},
+    {key:'trabeculae',  x:120, y:420},
+    {key:'pleomorphism',x:600, y:380},
+  ];
+}
+
+function genILC(g, rnd){
+  // Invasive lobular carcinoma — the discohesion/single-file family's SECOND real consumer
+  // (after gastric diffuse-type adenocarcinoma), both citing the identical mechanism
+  // independently: CDH1/E-cadherin loss removes cell-cell adhesion, so tumor cells cannot form
+  // glands and instead infiltrate as single files or loose sheets of discohesive cells
+  // (Ciriello et al., Cell, 2015, PMID 26451490 — CDH1 alterations in 95% of ILC by DNA+RNA;
+  // StatPearls, Handelsman & Tomlinson-Hansen, NBK554578). PARTIAL REUSE, STATED HONESTLY: the
+  // single-file cord itself (drawSingleFileCord, above) is a direct, zero-new-code reuse of the
+  // primitive genGDiffuse's own field already needed — but ILC's own classically-described
+  // TARGETOID pattern (single-file cords wrapping CONCENTRICALLY around a residual normal duct,
+  // PathologyOutlines' own sample-report language: "Targetoid pattern is noted") has no analogue
+  // in gastric diffuse-type's field, which infiltrates loose stroma with no duct to wrap around.
+  // That one element — a residual duct plus cords radiating from it — is genuinely new drawing
+  // code; report this as PARTIAL family reuse, not the zero-new-code result SCLC's own pass
+  // confirmed for the neuroendocrine family, and not "entirely new" either.
+  const duct = { x: VB.w*0.42, y: VB.h*0.46, r: 46 };
+  drawGlandRing(g, duct.x, duct.y, duct.r, rnd, {cellR:11, nucMin:4, nucMax:5.4});
+  // targetoid cords: short single-file strands radiating outward from the duct at varying
+  // angles, each starting just outside the duct's own cell ring
+  const targetoidCount = 10;
+  for(let i=0;i<targetoidCount;i++){
+    const a = i/targetoidCount*Math.PI*2 + rnd()*0.15;
+    const x0 = duct.x+Math.cos(a)*(duct.r+16), y0 = duct.y+Math.sin(a)*(duct.r+16);
+    drawSingleFileCord(g, x0, y0, a, rnd, {count:3+Math.round(rnd()*2), spacing:15, cytoR:5.5, nucRJitter:0.8, nucOffset:1.2});
+  }
+  // free-field single-file cords, well away from the duct — the ordinary infiltrative pattern,
+  // not the targetoid special case
+  for(let f=0;f<5;f++){
+    let x0, y0, tries=0;
+    do{ x0 = 40+rnd()*(VB.w-80); y0 = 40+rnd()*(VB.h-80); tries++; }
+    while(Math.hypot(x0-duct.x, y0-duct.y) < duct.r+90 && tries<20);
+    drawSingleFileCord(g, x0, y0, rnd()*Math.PI*2, rnd, {count:4+Math.round(rnd()*2), spacing:16, cytoR:6, nucRJitter:1, nucOffset:1.4});
+  }
+  // loosely dispersed individual discohesive cells — "small cells that lack cohesion and are
+  // often dispersed individually within fibrous connective tissue" (StatPearls) — small, round-
+  // to-oval, minimal pleomorphism (real, cited feature: "little to no nuclear atypia and low
+  // proliferation activity"), unlike IDC-NST's own varied-nucleus field above.
+  for(let i=0;i<55;i++){
+    const x = 20+rnd()*(VB.w-40), y = 20+rnd()*(VB.h-40);
+    if(Math.hypot(x-duct.x, y-duct.y) < duct.r+14) continue;
+    drawCell(g, x, y, 5.4, 3.1+rnd()*0.6, rnd, {nucOffset:0.8});
+  }
+  return [
+    {key:'targetoid',    x:duct.x, y:duct.y},
+    {key:'singlefile',   x:80, y:60},
+    {key:'discohesion',  x:650, y:430},
   ];
 }
 
@@ -876,11 +1010,7 @@ function genGDiffuse(g, rnd){
   for(let f=0; f<4; f++){
     const x0 = 60+rnd()*(VB.w-260), y0 = 60+rnd()*(VB.h-140);
     const ang = (rnd()*2-1)*0.5;
-    for(let k2=0;k2<5;k2++){
-      const x = x0 + Math.cos(ang)*k2*17, y = y0 + Math.sin(ang)*k2*17;
-      if(signets.some(s=>Math.hypot(s.x-x,s.y-y) < s.r+13)) continue;
-      drawCell(g, x, y, 6, 3.4+rnd()*1, rnd, {nucOffset:1.5});
-    }
+    drawSingleFileCord(g, x0, y0, ang, rnd, {cytoR:6, nucRJitter:1, skipIf:(x,y)=>signets.some(s=>Math.hypot(s.x-x,s.y-y) < s.r+13)});
   }
   // pick label anchors off actual drawn objects: nearest signet to the upper-left third
   let best = signets[0], bd = 1e9;
@@ -1562,6 +1692,8 @@ function genLungsSCLC(g, rnd){
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
+  idc:    genIDC,
+  ilc:    genILC,
   luad:   genLUAD,
   lusc:   genLUSC,
   sclc:   genLungsSCLC,

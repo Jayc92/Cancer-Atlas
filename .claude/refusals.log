@@ -905,3 +905,123 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |       python3 .claude/battery.py pre-commit --lower-ratchet=463 --lower-reason="<why>"
   | DONE battery: phase pre-commit — 16/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 613 citation records extracted (ratchet 614 BREACHED by 613; 1 removed), 8/16 reporting members emitted a sidecar, 7 sidecar metrics ratcheted, 2 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-13T03:51:25Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 44 lines, last 12 below
+  |       directly paralleling how every other organ in this atlas has its own "arises here" structure
+  |   universal needs a read: js/organs/breast.js:305 [note] — quantifies over the atlas but not about CDH1
+  |       Loss of the cell-adhesion protein E-cadherin is the mechanistic basis of this cancer\'s own defining architecture: without it, tumor cells cannot form the cohes
+  |   universal needs a read: js/organs/skin.js:257 [desc] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       and the only one this atlas shows as a cut block rather than a whole shape
+  |   world-scoped universal needs a read: js/organs/stomach.js:148 [desc] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       Uniquely in the digestive tract
+  |   world-scoped universal needs a read: js/organs/stomach.js:177 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   absence_claim_check: 5 flag(s) — 2 dated for re-read, 2 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/breast.js|note|Loss of the cell-adhesion protein E-cadh': js/organs/breast.js:305 [note] quantifies over the atlas but not about CDH1 — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 1 unscoped claims (1 absence, 0 false corpus universal), 3 universals flagged for a read, 2 world-scoped, 25 cancers indexed (DEFECT 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 3, OK-SCOPED 4, OK-SEARCH 14, UNIVERSAL-UNRESOLVED 3, UNIVERSAL-WORLD-SCOPED 2), 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T03:51:26Z reason=exit=1 marker="DONE share_sum_check:" tool=share_sum_check.py
+     output 22 lines, last 12 below
+  |   liver     GAP sum=87.5 — transplant candidate, human reads the label
+  |   lungs     PARTIAL-FAMILY sum=75.0 (+1 exempt rows)
+  |   ovary     COHERENT sum=98.0
+  |   pancreas  PARTIAL-FAMILY sum=90.0 (+3 exempt rows)
+  |   prostate  COHERENT sum=100.0
+  |   skin      PARTIAL-FAMILY sum=2.0 (+3 exempt rows)
+  |   stomach   COHERENT sum=99.9
+  |   testis    COHERENT sum=100.0
+  |   thyroid   COHERENT sum=98.0
+  |   share_sum_check: 1 flag(s) — 1 dated for re-read, 0 permanent with reason, 1 problem(s)
+  |   PROBLEM: STALE declaration for share_sum_check flag 'breast': no longer flagged — remove the declaration
+  | DONE share_sum_check: 14 families checked, 1 gap flags, 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T03:51:26Z reason=exit=1 marker="DONE duplicate_figure_check:" tool=duplicate_figure_check.py
+     output 53 lines, last 12 below
+  |      window: 49% of metastatic men 44% of
+  |      A=['49%', '44%']  B=['29%', '27%']
+  |   DRIFT? stomach:225 vs :229  (gene A='RHOA mutation' B='RHOA mutation')
+  |      window: other adenocarcinomas OR 0.3 same study
+  |      A=['0.3']  B=['0.4']
+  |   DRIFT? stomach:227 vs :231  (gene A='CLDN18–ARHGAP fusion' B='CLDN18–ARHGAP fusion')
+  |      window: 32% of metastatic gastric-cancer patients
+  |      A=['32%']  B=['12%']
+  |   duplicate_figure_check: 12 flag(s) — 0 dated for re-read, 11 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'breast|PIK3CA mutation|164, 490, 2015, 26451490, 48%|61, 127, 2015, 26451490, 33%': breast:253 vs :322 A=['164', '490', '2015', '26451490', '48%'] B=['61', '127', '2015', '26451490', '33%'] — fix it, declare it with a reason, or date it for re-read
+  | 
+  | DONE duplicate_figure_check: 3143 same-file string pairs compared, 15 drift flags, 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T03:51:27Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 68 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:141 — NEJM|2010 is at 157 (offset +16, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:193 — Livasy|2006 is at 209 (offset +16, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:206 — Livasy|2006 is at 209 (offset +3, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:199 — Oncol|2015 is at 215 (offset +16, name+year), 5 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:206 — Salgado|2015 is at 215 (offset +9, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:213 — Group|2015 is at 229 (offset +16, name+year), 2 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/prostate.js: 12 off line, SAME OFFSET [2]
+  |     js/organs/lungs.js: 10 off line, 2 distinct [-1, 1]
+  |     js/organs/breast.js: 9 off line, 4 distinct [3, 9, 14, 16]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 31, "pointer.identity_oracle": 272, "pointer.on_line": 238, "pointer.pointers_code": 463, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 608/608 hand-typed pointers resolve (file tracked, line in range), 463 code-and-instrument (floored) + 145 prose (reported, not floored) = 608 total, 238/272 with an author+year oracle land on their referent's line, 3 declared off-line, 31 flags, 41 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-13T03:51:50Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 23 lines, last 12 below
+  | citation_paren_ledger: 15 files, 7 spans with a ')' between head and year
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:373
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:433
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:503
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   UNSCORED  KEPT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Travis|2011|js/organs/lungs.js:277 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: STALE SCORING Travis|2011|js/organs/lungs.js:276: scored CONFIRMS on the KEPT side, but no such span is in the population any more. If the sentence was rewritten or the record removed, delete the entry in the same commit — and if its basis was TEST, say so in the message, because deleting a TEST is deleting this rule's only real evidence.
+  | SIDECAR {"metrics": {"basis_fit": 3, "basis_test": 3, "kept": 4, "population": 7, "preregistered": 7, "problems": 2, "scored_confirms": 6, "scored_falsifies": 0, "spent": 3}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 7 paren spans (3 spent, 4 kept), 7 scored (3 as TEST, 3 as FIT and worth no support), 0 falsifying, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T03:55:56Z reason=exit=1 marker="DONE " tool=battery.py
+     output 961 lines, last 12 below
+  |       "type": "console",
+  |       "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |      }
+  |     ]
+  |     RATCHET RAISED: citation_crosscheck.records 211 -> 246 — growth moves it up with no ceremony; git add .claude/record_count.json in this commit
+  | 
+  |   FAILED: absence_claim_check — exit 1
+  |   FAILED: share_sum_check — exit 1
+  |   FAILED: duplicate_figure_check — exit 1
+  |   FAILED: pointer_check — exit 1
+  |   FAILED: citation_paren_ledger — exit 3
+  | DONE battery: phase pre-commit — 11/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 662 citation records extracted (ratchet 613->662 raised; 49 added, 150 moved), 6/11 reporting members emitted a sidecar, 4 sidecar metrics ratcheted, 5 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T04:21:13Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 41 lines, last 12 below
+  |   UNSCOPED ABSENCE CLAIM: js/organs/breast.js:334 [note] — existence verb 'no documented' with no search scope or dataset bound
+  |       A transcription factor recurrently mutated across breast cancer broadly (TCGA, Nature, 2012) and, specifically, enriched in this organ\'s lobular entry — no documented conflict with this cancer\'s own trunk or branch gen
+  |   universal needs a read: js/organs/brain.js:120 [text] — quantifies over the atlas; record names no gene symbol
+  |       directly paralleling how every other organ in this atlas has its own "arises here" structure
+  |   universal needs a read: js/organs/skin.js:257 [desc] — comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it
+  |       and the only one this atlas shows as a cut block rather than a whole shape
+  |   world-scoped universal needs a read: js/organs/stomach.js:148 [desc] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       Uniquely in the digestive tract
+  |   world-scoped universal needs a read: js/organs/stomach.js:177 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   absence_claim_check: 4 flag(s) — 2 dated for re-read, 2 permanent with reason, 0 problem(s)
+  | DONE absence_claim_check: 1 unscoped claims (1 absence, 0 false corpus universal), 2 universals flagged for a read, 2 world-scoped, 25 cancers indexed (DEFECT 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 3, OK-SCOPED 4, OK-SEARCH 14, UNIVERSAL-UNRESOLVED 2, UNIVERSAL-WORLD-SCOPED 2), 0 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T04:25:44Z reason=exit=1 marker="DONE " tool=battery.py
+     output 873 lines, last 12 below
+  |       "msg": "http://localhost:3057/favicon.ico"
+  |      },
+  |      {
+  |       "type": "console",
+  |       "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |      }
+  |     ]
+  | 
+  |   FAILED: absence_claim_check — exit 1
+  |   RATCHET: citation_crosscheck.records SHRANK 246 -> 245 (1 fewer). Either the producer silently lost records, or a real removal has not been declared. If the reduction is intended, step over the gap deliberately:
+  |       python3 .claude/battery.py pre-commit --lower-ratchet=245 --lower-reason="<why>"
+  | DONE battery: phase pre-commit — 15/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 662 citation records extracted (ratchet 662 held; 66 moved), 8/15 reporting members emitted a sidecar, 7 sidecar metrics ratcheted, 2 problems
+==== END REFUSAL

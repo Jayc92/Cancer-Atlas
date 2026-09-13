@@ -58,16 +58,40 @@
    1
   ],
   [
+   "breast.js|data-span-year||1988",
+   1
+  ],
+  [
    "breast.js|data-span-year||2010",
    1
+  ],
+  [
+   "breast.js|data-span-year||2012",
+   3
   ],
   [
    "breast.js|data-span-year||2015",
    1
   ],
   [
-   "breast.js|data-span-year||2026",
+   "breast.js|data-span-year||2016",
    1
+  ],
+  [
+   "breast.js|data-span-year||2017",
+   1
+  ],
+  [
+   "breast.js|data-span-year||2021",
+   1
+  ],
+  [
+   "breast.js|data-span-year||2025",
+   3
+  ],
+  [
+   "breast.js|data-span-year||2026",
+   3
   ],
   [
    "breast.js|journal-adjacent-year|Nature|2012",
@@ -75,6 +99,10 @@
   ],
   [
    "breast.js|prose-year||1991",
+   1
+  ],
+  [
+   "breast.js|semicolon-shadow|Thennavan|2012",
    1
   ],
   [

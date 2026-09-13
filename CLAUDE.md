@@ -9569,6 +9569,59 @@ generalized `extract_citations.py` but a small, disposable, one-off verification
 the 34 PMIDs directly, hand-read the surrounding sentence) rather than a new standing instrument —
 recorded as an option, not undertaken now.
 
+## A TRIALS-MAPPING KEYWORD LIST IS VERIFIED BY RUNNING IT, NEVER BY READING IT — REQUIRED, NOT PRACTICED (2026-09-13, user ruling)
+
+**The record, stated as the user gave it: four keyword bugs, four found by running the query,
+zero found by reading the list. Reasoning about these lists has a perfect failure record.** The
+seminoma bug (data rule 22 — the disease's own bare acronym, missing from `conditionKeywords`,
+silently dropping genuine on-topic trials); the `\bprostat\b` dead-stem bug (data rule 32 —
+`requireAlso: ['prostat']` run through a whole-word-boundaried regex that can never match inside
+"Prostate" at all, over-dropping on every `requireAlso`-gated mapping from the moment it shipped);
+LUSC's "squamous" matching inside "Non-Squamous" (data rule 33); SCLC's "small cell lung cancer"
+as a literal substring of "non-small cell lung cancer" (data rule 33). **Every one of these four
+was authored, read back, and judged correct by a human before it shipped — the list looked right
+each time. Every one was found only once a live ClinicalTrials.gov query was actually run and its
+real results actually read**, kept and dropped alike, the same "read the drops before trusting the
+count" discipline this project already holds itself to for the corpus's own citations, now stated
+for runtime content specifically because it has an equally strong, and until now unstated, claim
+to the same discipline.
+
+**Consequence: live verification is now a REQUIRED step in authoring or editing any
+`TRIALS_CONDITION_MAP` entry, not a practice this project happens to follow.** Before any such
+entry is considered done:
+1. Run `.claude/trials_mapping_check.mjs <id>` — the `requireAlso`/`excludeIf` positive controls,
+   the corpus-vocabulary signal, and the negation-collision signal (below) all run against real,
+   live-fetched data, not a reimplementation.
+2. Separately, live-sample at least 10 real results in the browser (the screen-level or below-
+   floor trials toggle, whichever the entry uses) and read every KEPT and every DROPPED result's
+   actual condition strings by hand. Step 1 does not replace this: it is a different population
+   (the full parent corpus's distinct condition strings, decomposed one at a time) answering a
+   different question (does this specific mechanism's contract hold) than a live sample answers
+   (does the real, composed pipeline — fetch, filter, render — actually produce the right list a
+   reader will see).
+
+**A MECHANIZED SCAN FOR ONE SHAPE OF THIS CLASS NOW EXISTS AND SHOULD BE RUN, BUT IT DOES NOT
+DISCHARGE THIS RULE.** `negationCollisionSignal()` in `.claude/trials_mapping_check.mjs`
+(2026-09-13) scans every entry's own parent corpus for a distinct condition string where "non-" or
+"non " sits literally, immediately adjacent to one of that entry's own `conditionKeywords` — the
+exact shape LUSC's and SCLC's own bugs were. Run across all 26 entries wired at the time it was
+built, it found the same shape live in FIVE MORE entries nobody had re-sampled since their own
+original authoring (`luad`, `acinar`, `crc`, `melanoma`, `seminoma` — see each entry's own `note`
+in `js/trials.js` for what was found and fixed). **It has real, disclosed limits, found the same
+day it was built**: it missed "Metastatic Malignant Testicular Non-Seminomatous Germ Cell Tumor"
+for `seminoma` — a real collision, kept via the `germ cell` keyword — because the negation there
+attaches to "Seminomatous," a morphological variant of the keyword "seminoma," not its exact
+literal text, and because the keyword actually responsible for the keep (`germ cell`) carries no
+"non-" near it at all. That gap was found by a human reading the corpus data behind one flagged
+hit, not by the scan itself — which is the whole point being generalized here: **a scan that
+closes one shape of this failure class is not evidence the class is closed, and is never a
+substitute for the live sample this rule requires.**
+
+**Applies retroactively as a standing check, not only to new entries.** Any organ authored before
+2026-09-13 has NOT had `negationCollisionSignal()` run against it as a matter of course beyond the
+26 entries wired at the time this rule was written — running it against a not-yet-checked entry
+before assuming its trials mapping is clean is cheap, live, and exactly what this rule is for.
+
 ## Source files
 `cancer-atlas.html` is now a thin shell (markup + CSS + the three.js import map,
 ~365 lines) that loads `js/main.js` as an ES module — it is no longer the single

@@ -311,6 +311,12 @@ export const MARGIN_STATUS = Object.freeze({
   // confirmed stated that way for either entity, so not claimed as the reason here.
   pneuro:   { status: 'uncharacterised', ref: 'checked 2026-09-12 — no gross-register margin/circumscription sentence found for prostatic neuroendocrine/small cell carcinoma in this pass\'s own search' },
   pductal:  { status: 'uncharacterised', ref: 'checked 2026-09-12 — no gross-register margin/circumscription sentence found for prostatic ductal adenocarcinoma in this pass\'s own search' },
+  // idc/ilc, 2026-09-13 ("then breast, histologic axis" authoring, phaseC_design.md §17): NOT
+  // checked against gross-pathology literature this pass — margin/growth research for these two
+  // entries was not run (only site/trunk/branch/histology sourcing was). Honestly 'unread' rather
+  // than a false 'uncharacterised' negative, since no search was actually made.
+  idc: { status: 'unread', ref: 'gross-register margin character not yet read for invasive ductal carcinoma (no special type) specifically', until: '2026-09-20' },
+  ilc: { status: 'unread', ref: 'gross-register margin character not yet read for invasive lobular carcinoma specifically', until: '2026-09-20' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -404,6 +410,10 @@ export const GROWTH_STATUS = Object.freeze({
   // gross-register growth-pattern sentence found for either entity in this pass's own search.
   pneuro:   { status: 'uncharacterised', ref: 'checked 2026-09-12 — no gross-register growth-pattern sentence found for prostatic neuroendocrine/small cell carcinoma in this pass\'s own search' },
   pductal:  { status: 'uncharacterised', ref: 'checked 2026-09-12 — no gross-register growth-pattern sentence found for prostatic ductal adenocarcinoma in this pass\'s own search' },
+  // idc/ilc, 2026-09-13: same honesty distinction as the margin axis above — not checked this
+  // pass, so 'unread' rather than a false negative.
+  idc: { status: 'unread', ref: 'gross-register growth-pattern character not yet read for invasive ductal carcinoma (no special type) specifically', until: '2026-09-20' },
+  ilc: { status: 'unread', ref: 'gross-register growth-pattern character not yet read for invasive lobular carcinoma specifically', until: '2026-09-20' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -564,6 +574,12 @@ export const EXTENT_STATUS = Object.freeze({
   // ill-fitting derivation from a real but differently-shaped source.
   pneuro: { status: 'uncharacterised', site: 'prostate', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at 0.03% share, and no dedicated SEER Stat Facts page exists for this histologic subtype; Wang et al. (2019, PMID 31376193) gives real metastatic-site percentages for pure NEPC but not a SEER-Summary-Stage-formatted breakdown, and this pass did not fetch its full text to check for one', ref: 'checked 2026-09-12 — no SEER Stat Facts page for this histologic subtype' },
   pductal: { status: 'uncharacterised', site: 'prostate', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at 0.20% share, and no dedicated SEER Stat Facts page or per-subtype stage-at-diagnosis source was found for this histologic subtype in this pass\'s own search', ref: 'checked 2026-09-12 — no SEER Stat Facts page for this histologic subtype' },
+  // idc/ilc, 2026-09-13 ("then breast" authoring): SHARE-BOUND RULE forbids the organ aggregate for
+  // both — IDC-NST's own ~73–80% share bounds any per-category error at ~20–27 points and ILC's
+  // ~10.6% share at ~89 points, both far short of the ≥90% safety threshold — and no dedicated
+  // per-histology SEER-Summary-Stage source was found for either in this pass's own search.
+  idc: { status: 'uncharacterised', site: 'breast', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate: IDC-NST\'s own share (~73–80% of breast carcinomas) bounds any per-category error at roughly 20–27 points, well short of the ≥90% safety threshold, and no dedicated per-histology SEER-Summary-Stage source was found in this pass\'s own search', ref: 'checked 2026-09-13 — no SEER Stat Facts page or per-subtype stage-at-diagnosis source found for this histologic subtype' },
+  ilc: { status: 'uncharacterised', site: 'breast', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate: ILC\'s own share (~10.6% of breast carcinomas) bounds any per-category error at roughly 89 points, far short of the ≥90% safety threshold, and no dedicated per-histology SEER-Summary-Stage source was found in this pass\'s own search', ref: 'checked 2026-09-13 — no SEER Stat Facts page or per-subtype stage-at-diagnosis source found for this histologic subtype' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';
@@ -744,6 +760,14 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   // reserve_check requirement this mechanism enforces, same as pductal's own hotspot-text rewrite.
   lusc: 0,
   sclc: 0,
+  // ilc ADDED 2026-09-13 ("then breast, histologic axis" authoring) — the SAME exemption expiry
+  // as endo/pductal/lusc/sclc above: breast goes from one active entry (tnbc, no override needed —
+  // TNBC arises from ductal epithelium, matching the organ default) to three, and ILC genuinely
+  // arises from lobules, not ducts. Index 1 is the Lobules hotspot, whose own text (extended in
+  // this same pass) names the CDH1/E-cadherin mechanism underlying this entry's histology directly
+  // — the reserve_check requirement this mechanism enforces. IDC needs no entry here: it matches
+  // the organ default (breast: 0, Ducts) exactly.
+  ilc: 1,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never
