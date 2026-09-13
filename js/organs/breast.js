@@ -39,10 +39,18 @@ export const cancerEntries = [
 ];
 
 // Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
-// (account "HRA"), entry 3DPX-020977 — CC BY 4.0. Unlike the other five real-mesh organs, this
-// one is NOT traced from the Visible Human Dataset — it's a custom hand-sculpted model, expert-
-// reviewed against two anatomy textbooks (Krstić, "Human Microscopic Anatomy," 1991; Gilroy,
-// MacPherson & Ross, "Atlas of Anatomy," 2008) rather than derived from cadaver scan data.
+// (account "HRA"), entry 3DPX-020977 — CC BY 4.0. STALE UNIQUENESS CLAIM, CAUGHT AND CORRECTED
+// (2026-09-13, absence_claim_check's own comment-scanning extension): this line used to read
+// "unlike the other five real-mesh organs, this one is NOT traced from the Visible Human
+// Dataset" — true when breast was added (Lungs/Kidneys/Liver/Brain/Prostate, the only five real-
+// mesh organs that existed then, were all VHD-traced) and false now that Lungs (2026-09-01),
+// Colon, and Stomach (both 2026-09-02) have each independently moved to non-VHD Sketchfab
+// sources, and Thyroid's UJAT asset was never VHD either. The corpus grew around the claim, not
+// the claim's own subject. What remains true and stated instead: this is a custom hand-sculpted
+// model, expert-reviewed against two anatomy textbooks (Krstić, "Human Microscopic Anatomy,"
+// 1991; Gilroy, MacPherson & Ross, "Atlas of Anatomy," 2008) rather than derived from cadaver
+// scan data — a fact about breast's own asset, true independent of how many siblings still share
+// or no longer share the VHD lineage.
 // Attribution (quoted from the entry page, required under CC BY 4.0): "Heidi Schlehlein 2022.
 // 3D Reference Organ for Breast (mammary gland), Female left, v1.0,
 // https://doi.org/10.48539/HBM378.VWZG.633." Full sourcing/topology history in CLAUDE.md.

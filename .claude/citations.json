@@ -798,7 +798,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:261",
+    "js/organs/stomach.js:267",
     "js/organs/colon.js:122"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record",
@@ -814,7 +814,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:261"
+    "js/organs/stomach.js:267"
    ],
    "pmid": "32512697",
    "resolvedTitle": "Gastric Cancer: Epidemiology, Risk Factors, Classification, Genomic Characteristics and Treatment Strategies.",
@@ -838,7 +838,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:268"
+    "js/organs/stomach.js:274"
    ],
    "candidates": [
     {
@@ -871,7 +871,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:268"
+    "js/organs/stomach.js:274"
    ],
    "pmid": "40904880",
    "resolvedTitle": "Prognostic value of signet-ring cell carcinoma proportion in undifferentiated gastric cancer: Implications for endoscopic treatment decision",
@@ -4112,9 +4112,9 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/breast.js:139",
-    "js/organs/breast.js:198",
-    "js/organs/breast.js:200"
+    "js/organs/breast.js:147",
+    "js/organs/breast.js:206",
+    "js/organs/breast.js:208"
    ],
    "candidates": [
     {
@@ -4150,7 +4150,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/breast.js:162"
+    "js/organs/breast.js:170"
    ],
    "window": "caveated",
    "windowMarkers": [
@@ -4164,8 +4164,8 @@
    "status": "entry-time-identifier",
    "userFacing": false,
    "refs": [
-    "js/organs/breast.js:214",
-    "js/organs/breast.js:227"
+    "js/organs/breast.js:222",
+    "js/organs/breast.js:235"
    ],
    "pmid": "16341146",
    "resolvedTitle": "Phenotypic evaluation of the basal-like subtype of invasive breast carcinoma.",
@@ -4179,7 +4179,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/breast.js:220"
+    "js/organs/breast.js:228"
    ]
   },
   {
@@ -4189,7 +4189,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/breast.js:227"
+    "js/organs/breast.js:235"
    ],
    "candidates": [
     {
@@ -4233,7 +4233,7 @@
    "status": "no-v2-match",
    "userFacing": true,
    "refs": [
-    "js/organs/breast.js:234"
+    "js/organs/breast.js:242"
    ],
    "pubmedCount": 7
   },

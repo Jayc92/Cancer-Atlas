@@ -1310,3 +1310,33 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |       python3 .claude/battery.py pre-commit --lower-ratchet=714 --lower-reason="<why>"
   | DONE battery: phase pre-commit — 16/16 declared instruments ran and reported (marker printed, exit 0), 17 declared in total, 46 .claude/ files all declared, 23/23 .gitignore comments are prose not bare paths, 105/105 tracked files hold no machine-specific path, 714 citation records extracted (ratchet 715 BREACHED by 714; 1 removed), 8/16 reporting members emitted a sidecar, 7 sidecar metrics ratcheted, 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-13T15:18:28Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 49 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:200 — Yates|2017 is at 206 (offset +6, name+year), 4 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:162 — NEJM|2010 is at 170 (offset +8, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:214 — Livasy|2006 is at 222 (offset +8, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:227 — Livasy|2006 is at 222 (offset -5, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:220 — Oncol|2015 is at 228 (offset +8, name+year), 5 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:227 — Salgado|2015 is at 228 (offset +1, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/breast.js:234 — Group|2015 is at 242 (offset +8, name+year), 3 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/breast.js: 9 off line, 4 distinct [-5, 1, 6, 8]
+  |     js/organs/stomach.js: 4 off line, SAME OFFSET [6]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 13, "pointer.identity_oracle": 272, "pointer.on_line": 256, "pointer.pointers_code": 476, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 621/621 hand-typed pointers resolve (file tracked, line in range), 476 code-and-instrument (floored) + 145 prose (reported, not floored) = 621 total, 256/272 with an author+year oracle land on their referent's line, 3 declared off-line, 13 flags, 41 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-13T15:27:39Z reason=exit=4 marker="DONE citation_crosscheck:" tool=citation_crosscheck.py
+     output 16 lines, last 12 below
+  |   ok   fires[year]: Arends 2026 -> ['year: recorded 2026 vs id-pubdate 2025', "journal: recorded 'Histopathology' vs id-journal 'ISME J' ('The ISME journal')"]
+  |   ok   passes: Cooper 2015 -> clean
+  |   ok   passes: Wiegand 2010 -> clean
+  |   ok   refuses with no records artifact (exit 2, no DONE line) rather than scanning a smaller population
+  |   ok   accepts the artifact alongside flag-shaped args
+  |   ok   a FAILED fetch is fatal (the 142->141 shrink), not filed as an unmappable id
+  |   ok   a NEW unmappable id fails (undeclared change in reach)
+  |   ok   a DECLARED unmappable id is tolerated, so the gate is not permanently red on the one record that can never map
+  |   ok   every declared entry carries a reason (1 declared) — a bare id list would hide a coverage hole
+  | SELFTEST PASS — can fire on all three fields, can pass, refuses without input, and separates an unreached fetch from an unmappable id
+  | DECLARED-UNMAPPABLE (tolerated, coverage limit): doi:10.1002/prm2.12107 js/organs/breast.js:176
+  |     Gao et al., Precision Medical Sciences (Wiley), 2023 — js/organs/breast.js:168. The journal is not PubMed-indexed: esearch [doi] returns 0 hits (the unqualified search returns 6 unrelated tokenised hits, which is why the mapper requires exactly one), and Europe PMC has no record either, so NO PMID EXISTS for the metadata cross-check to run against. The CLAIM is not unchecked — ccf batch 1 (2026-09-06) read the paper at the publisher and verified its figures verbatim. THIS INSTRUMENT cannot reach it. Those are different statements and keeping them apart is why this list stores a reason rather than just an id.
+==== END REFUSAL

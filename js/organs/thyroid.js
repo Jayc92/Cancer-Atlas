@@ -384,12 +384,17 @@ const HISTOLOGY_MTC = {
 // HISTOLOGY-FAMILY-FIT FINDING (2026-09-13, reported per the user's own explicit test): this
 // entity requires GENUINELY NEW drawing code — it does NOT factor from existing primitives the
 // way ILC's targetoid pattern did. Checked directly against every existing generator in
-// js/histology.js before writing this one: every prior "spindle" shape in this file (genCRC's
-// own desmoplastic stroma) is a REACTIVE STROMAL FIBROBLAST decoration in the background, never
-// the tumor-cell population itself, and none represents an elongated tumor-cell population
-// arranged in organized fascicles. This is the atlas's first tumor-cell spindle architecture —
-// confirmed as a genuine third-tier ("bespoke") case, not the full/partial reuse ILC's and
-// MTC's own entries turned out to be.
+// js/histology.js before writing this one — a check that itself needed a correction, caught
+// only by re-verifying the claim directly rather than trusting the first pass: genGBM's own
+// pseudopalisading rim already draws elongated, genuinely spindle-shaped tumor-cell NUCLEI
+// (rx:5.4/ry:2 ellipses), just with no matching spindle-shaped cytoplasm/cell body around them,
+// so "no prior tumor-cell spindle shape at all" is false. The precise, correct claim is about
+// spindle-shaped CELL BODIES specifically: genCRC's own desmoplastic stroma draws true
+// spindle-shaped cell bodies, but only as a REACTIVE STROMAL FIBROBLAST decoration in the
+// background, never the tumor-cell population itself, and no prior generator draws an elongated
+// tumor-cell BODY arranged in organized fascicles. This is the atlas's first tumor built from
+// spindle-shaped cell bodies — confirmed as a genuine third-tier ("bespoke") case, not the
+// full/partial reuse ILC's and MTC's own entries turned out to be.
 //
 // ORIGIN — real, quantified minority WITHOUT a precursor: about 45.8% of tumors arise by
 // dedifferentiation from an identifiable pre-existing papillary or follicular carcinoma (Suster
@@ -441,8 +446,9 @@ const PRIVATE_POOL_ATC = [
   { gene:'PIK3CA mutation', class:'driver', ccf:'18% by deep-panel sequencing vs 9% by whole-exome sequencing in two independent ATC cohorts (Landa et al., 2016) — the same paper explains the gap directly: this tumor’s own low median tumor purity dilutes the mutant signal at lower sequencing depth, the identical mechanism already stated for this entry’s own TP53 range above', note:'A real, recurrent PI3K-pathway event layered onto the BRAF/RAS-defined driver landscape above — present in a real minority, not this tumor’s own founding lesion.' },
   { gene:'TTN synonymous variant', class:'passenger', note:'Background mutational noise, present simply because TTN is one of the largest genes in the genome.' },
 ];
-// HISTOLOGY — the atlas's first tumor-cell spindle/fascicular architecture, confirmed genuinely
-// new against every existing primitive (see the file-level comment above). WHO 2022 names three
+// HISTOLOGY — the atlas's first tumor built from spindle-shaped cell bodies, confirmed genuinely
+// new against every existing primitive (see the file-level comment above, and its own correction
+// of a real near-miss against genGBM's own spindle-shaped tumor-cell nuclei). WHO 2022 names three
 // patterns that "can occur alone or in any combination" — sarcomatoid (spindle), giant cell, and
 // epithelioid/squamoid — confirmed against a 144-case series (Suster et al., Virchows Arch,
 // 2026, PMID 41748947) to genuinely co-occur within one tumor; squamoid areas specifically were

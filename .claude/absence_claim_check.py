@@ -58,7 +58,53 @@ DECLARED = [
     {'key': 'js/organs/stomach.js|desc|Uniquely in the digestive tract', 'reason': 'world-scoped anatomical claim (three muscle layers unique to the stomach wall); textbook read owed — OpenStax Anatomy & Physiology is CC BY and quotable', 'until': '2026-10-01'},
     {'key': 'js/organs/stomach.js|text|and an inner oblique layer found nowhere', 'reason': 'the same anatomical claim as the desc field, stated at the wall site; the same textbook read settles both', 'until': '2026-10-01'},
     {'key': 'js/organs/thyroid.js|ccf|the same illustrative convention as ever', 'reason': 'TRUE by this project\'s own standing rule (CLAUDE.md data rule 2: "Site→gene pairing is illustrative for every cancer, stated from the start") — restates an already-established, atlas-wide convention rather than asserting a new fact about the corpus', 'until': None},
-    {'key': 'js/organs/thyroid.js|text|the only true spindle-shaped cell body e', 'reason': 'TRUE, verified directly against every generator in js/histology.js before writing it: genGBM\'s pseudopalisading rim draws elongated tumor-cell NUCLEI but no matching spindle-shaped cytoplasm, and genCRC\'s desmoplastic stroma draws the only other true spindle-shaped CELL BODY, as a reactive stromal fibroblast, never a tumor cell', 'until': None},
+    # THE STALE DECLARATION ABOVE THIS BLOCK WAS REMOVED, NOT LEFT (2026-09-13): its key was a
+    # 40-char prefix of thyroid.js's own HISTOLOGY_ATC spindle text, and that text was rewritten
+    # (this same triage round) to name genGBM's pseudopalisading rim explicitly rather than
+    # leaving it implicit — the fix that closed the fourth "claim about the atlas's own state was
+    # wrong" instance the user cited when ordering this whole extension. A rewritten claim earns a
+    # fresh key below (thyroid.js|text|This is the atlas's first tumor built fr) rather than
+    # reusing the old one — reusing it would validate today's text against yesterday's read.
+    #
+    # THE FULL FIRST TRIAGE ROUND (2026-09-13): every flag the comment-scanning extension surfaced
+    # on its first live run, read and resolved in one pass, per the user's own instruction to
+    # report existing violations before fixing. Two real, substantive defects were FOUND AND
+    # FIXED as part of this triage, not merely declared: (1) the two remaining uncorrected copies
+    # of the spindle-cell overclaim (thyroid.js's own file-level and HISTOLOGY-preceding comments
+    # — the third and fourth of four total copies, the first two having been caught and fixed
+    # earlier in this same round before this mechanism existed); (2) breast.js:41's "unlike the
+    # other five real-mesh organs" — true when breast was added, false since Lungs/Colon/Stomach
+    # each independently left VHD sourcing. Everything else below was read against CLAUDE.md's
+    # own record or the corpus directly and confirmed true.
+    {'key': 'js/histology.js|comment|this atlas\'s FIRST tumor built from spin', 'reason': 'TRUE — genATC\'s own header comment, verified directly against every existing generator before this entity was written: genGBM\'s pseudopalisading rim draws elongated tumor-cell NUCLEI (no matching cytoplasm) and genCRC\'s desmoplastic stroma draws true spindle-shaped cell BODIES only as reactive stromal fibroblasts, never as the tumor population itself — the precise distinction this comment states', 'until': None},
+    {'key': 'js/histology.js|comment|this atlas\'s first real dispatch of draw', 'reason': 'TRUE, confirmed against CLAUDE.md data rule 33: genProstateNeuro\'s use of drawSmallCellSheet predates genLungsSCLC\'s own reuse of the identical primitive ("genLungsSCLC... dispatches the exact same drawSmallCellSheet... calls genProstateNeuro already uses") — the chronology this comment states is exactly what rule 33 independently records', 'until': None},
+    {'key': 'js/organs/bladder.js|comment|the same cross-site safety check this at', 'reason': 'TRUE — this exclusivity-before-inclusion check on every private-pool candidate is a real, repeated, documented atlas convention (CLAUDE.md data rules 4, 6, 12, 13, 15, 16, 21, 22, 24 each independently show it), not a fabricated uniqueness claim', 'until': None},
+    {'key': 'js/organs/breast.js|comment|BRANCH PAIR, MUTUALLY EXCLUSIVE (Ciriell', 'reason': 'TRUE — GBM\'s EGFR/PDGFRA split-by-region (data rule 14) and Prostate\'s TMPRSS2-ERG/SPOP split (data rule 16) are both real, already-documented two-sites-each precedents; ILC\'s PIK3CA/PTEN/ERBB2 pair follows the same, not a new, architectural pattern', 'until': None},
+    {'key': 'js/organs/breast.js|comment|The source mesh is 52 separate connected', 'reason': 'TRUE — this is a factual description of the asset\'s own topology (52 components, individually-tagged real anatomical sub-structures per the entry\'s own ontology metadata), stated as this organ\'s own finding, not a claim about any other organ', 'until': None},
+    {'key': 'js/organs/kidneys.js|comment|\'occc\'/\'ovarian clear cell\' uniquely to ', 'reason': 'TRUE, mechanically checkable and already checked: the app\'s own regression suite asserts search("occc") resolves to Ovaries alone and search("ccrcc") resolves to Kidneys alone', 'until': None},
+    {'key': 'js/organs/kidneys.js|comment|It read "unlike every prior organ in thi', 'reason': 'TRUE and safe — this comment is a self-documented correction record (explicitly narrating that a prior false uniqueness claim was found and removed from the served desc field, which now asserts no comparison at all), not a live claim about the corpus', 'until': None},
+    {'key': 'js/organs/lungs.js|comment|The desc used to open "Uniquely among or', 'reason': 'TRUE and safe — the same self-documented correction shape as kidneys.js:89: the served desc now correctly says "Like the liver, the lungs have two separate blood supplies" rather than claiming uniqueness; this comment narrates the fix, it does not repeat the defect', 'until': None},
+    {'key': 'js/organs/lungs.js|comment|the same standing check every organ in t', 'reason': 'TRUE — restates CLAUDE.md data rule 1\'s own standing practice ("check mechanistic fit with the specific cancer being modeled") verbatim in substance, an established atlas-wide convention rather than a new corpus fact', 'until': None},
+    {'key': 'js/organs/ovary.js|comment|\'ccrcc\' and \'renal cell carcinoma\' keep ', 'reason': 'TRUE, the mirror of kidneys.js:6 — the same regression-tested search-alias behavior, checked in the same suite', 'until': None},
+    {'key': 'js/organs/ovary.js|comment|KRAS and BRAF are BOTH trunk, explicitly', 'reason': 'TRUE, and now correctly anchored after the clauses() sentence-boundary fix in this same commit — this sentence genuinely contains both "each other" (describing RAS/BRAF\'s own mutual exclusivity) and "this atlas\'s own FTC entry" (a real, correct comparison to data rule 27\'s RAS-vs-PAX8-PPARγ split), coincidentally co-occurring but neither one false', 'until': None},
+    {'key': 'js/organs/ovary.js|comment|a first for the atlas.', 'reason': 'TRUE, confirmed against CLAUDE.md data rule 21 verbatim: "TWO passengers, ZERO drivers — the first driverless pool in the atlas"', 'until': None},
+    {'key': 'js/organs/ovary.js|comment|the atlas\'s first MRI-derived organ', 'reason': 'TRUE, confirmed against CLAUDE.md data rule 29 and by census: no other organ asset in js/organs/*.js is MRI-derived (the rest are VHD/CT scans, Sketchfab artist scans, a UJAT asset, or procedural)', 'until': None},
+    {'key': 'js/organs/pancreas.js|comment|this is the atlas\'s first organ that is ', 'reason': 'TRUE and structurally unique — pancreas is the only organ in the corpus with a genuine dual exocrine/endocrine gland identity; no other organ file describes itself this way', 'until': None},
+    {'key': 'js/organs/prostate.js|comment|a genuinely different KIND of truncal ju', 'reason': 'TRUE, confirmed against CLAUDE.md data rule 32 verbatim: pneuro\'s TP53/RB1 double-hit is truncal for a "fourth, transformation-defining reason", distinct from the three data rule 5 had already named', 'until': None},
+    {'key': 'js/organs/prostate.js|comment|the same "coauthor named as if first aut', 'reason': 'TRUE, confirmed against CLAUDE.md data rule 12: ccRCC\'s Nickerson-vs-Moore correction is a real, documented first instance of exactly this pattern (a coauthor named as if first author), and this Boutros-vs-Cooper correction is a real second instance', 'until': None},
+    {'key': 'js/organs/prostate.js|comment|this atlas\'s first real dispatch of it.', 'reason': 'TRUE, the same chronology as histology.js:1829 and confirmed by CLAUDE.md data rule 33 — genProstateNeuro\'s dispatch of drawSmallCellSheet predates genLungsSCLC\'s later reuse of the same primitive', 'until': None},
+    {'key': 'js/organs/skin.js|comment|a second reason it lives in the trunk-no', 'reason': 'benign scope mismatch, not a live claim: "nowhere else" here is scoped to melanoma\'s OWN gene ledger (NF1 is not drawn as a branch/private-pool entry anywhere else in THIS cancer\'s own data), never to the atlas or the world — the WORLD_UNIVERSAL trigger phrase is a false positive on scope, not a false claim on substance', 'until': None},
+    {'key': 'js/organs/stomach.js|comment|This was the atlas\'s first non-gland-for', 'reason': 'TRUE and now self-corrected in this same commit: the comment used to claim every other adenocarcinoma panel drew gland-forming architecture, which became false the moment breast\'s ILC entry (added later in this session, and reusing this entry\'s own drawSingleFileCord primitive) shared the identical non-gland-forming, E-cadherin-loss shape — fixed to state the correction explicitly rather than repeat the now-false comparison', 'until': None},
+    {'key': 'js/organs/stomach.js|comment|is a mechanism class no other cancer in ', 'reason': 'TRUE, confirmed against CLAUDE.md data rule 19 verbatim: "its driving lesion — E-cadherin/cell-adhesion loss — is a mechanism class no other atlas cancer has"', 'until': None},
+    {'key': 'js/organs/testis.js|comment|Because this atlas\'s private pool is dra', 'reason': 'TRUE — a mechanical description of js/panel.js\'s own actual private-pool drawing behavior (draws independently into cells at every site regardless of that site\'s branch gene), independently corroborated by CLAUDE.md data rule 22\'s identical framing of the same mechanism for this same exclusion', 'until': None},
+    {'key': 'js/organs/testis.js|comment|This field used to close with "unlike th', 'reason': 'TRUE and safe — explicitly a self-documented "do not re-add" record: commit 6e3c310 already removed this false frequency claim from the served field, and CLAUDE.md\'s own record confirms it ("6e3c310 had already dropped it from the served field, and the phrase survives only in the comment recording that removal")', 'until': None},
+    {'key': 'js/organs/testis.js|comment|a deliberately different KIND of genomic', 'reason': 'TRUE, confirmed against CLAUDE.md data rule 22 verbatim: i(12p)/12p gain is "framed explicitly as a different KIND of genomic event — a whole-arm chromosomal gain, not a point mutation"', 'until': None},
+    {'key': 'js/organs/testis.js|comment|for every other cancer in this atlas', 'reason': 'TRUE — 88-95% five-year survival for METASTATIC disease is a genuinely exceptional outcome against every other cancer\'s own documented distant/metastatic-stage figures in this atlas (PDAC, HCC, GBM, LUAD and others all report far lower distant-stage survival in their own EXTENT_STATUS/citation records)', 'until': None},
+    {'key': 'js/organs/thyroid.js|comment|This is the atlas\'s first tumor built fr', 'reason': 'TRUE — the ATC file-level comment, already corrected in this same round to name genGBM\'s pseudopalisading rim explicitly as the near-miss and distinguish spindle-shaped cell BODIES from spindle-shaped NUCLEI; verified directly against every generator in js/histology.js', 'until': None},
+    {'key': 'js/organs/thyroid.js|comment|the atlas\'s first tumor built from spind', 'reason': 'TRUE — the HISTOLOGY_ATC-preceding comment, already corrected in this same round to cross-reference the file-level comment\'s own correction of the genGBM near-miss rather than restating the original overclaim', 'until': None},
+    {'key': 'js/organs/thyroid.js|comment|this is the atlas\'s first endocrine-syst', 'reason': 'TRUE, confirmed by census: grep across every js/organs/*.js organEntry shows thyroid is the only one carrying system:\'Endocrine\' — every other organ is Urinary/Reproductive/Nervous/Digestive/Respiratory/Integumentary', 'until': None},
+    {'key': 'js/organs/thyroid.js|text|This is the atlas’s first tumor built fr', 'reason': 'TRUE — the served HISTOLOGY_ATC feature text, corrected earlier in this same round (before this mechanism existed) to name genGBM\'s pseudopalisading rim explicitly rather than leaving "the only true spindle-shaped cell body elsewhere" unattributed; this is the fresh key for that same, now-accurate claim, replacing the stale declaration removed above', 'until': None},
+    {'key': 'js/organs/prostate.js|comment|unlike every other trunk in this atlas.', 'reason': 'genuinely ambiguous, not a clean read either way: DAC\'s trunk names a real gene (TMPRSS2-ERG) whose reported rate is extremely cohort-variable (3-47%), a different shape from acinar\'s own fact-statement trunk (no gene at all, data rule 15) or FTC\'s competing-status trunk (a clean either/or split, data rule 27) — plausible that this is a genuinely distinct fourth shape, but not confirmable without deeper comparison across every other trunk entry\'s own citation record', 'until': '2026-10-01'},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
@@ -101,9 +147,25 @@ QUOTED = re.compile(r'"[^"]{20,}"')
 
 def clauses(value):
     """Sentence split, protecting 'et al.' — an unprotected split fragments every citation and
-    silently destroys the self-evidencing exemption, which depends on counting them."""
+    silently destroys the self-evidencing exemption, which depends on counting them.
+
+    THE CLOSING-QUOTE GAP (2026-09-13, found live against a real corpus defect, not fixture-
+    first): '(?<=[.;])\\s+' alone never splits '...ovarian cancer." KRAS and BRAF...' — the
+    whitespace is preceded by the closing '"', not by the period one character earlier, so the
+    lookbehind never fires and two real sentences merge into one. That merge is exactly how
+    ovary.js's LGSC comment produced a false DEFECT: 'first' (inside the quoted source's own
+    "first example... in ovarian cancer") and 'this atlas' (in the FOLLOWING sentence's FTC
+    comparison) landed in one merged pseudo-sentence, and the unrelated quantifier 'each' (from
+    an unrelated parenthetical in between) satisfied QUANTIFIER_FALLBACK against a CORPUS_REF
+    that was never in the same real sentence at all. Measured before fixing, not assumed narrow:
+    a grep across js/organs/*.js + js/histology.js finds 22 real '<lower>."  <Upper>' boundaries
+    this gap has been silently merging since comment-block scanning shipped, not a one-off.
+    Fixed by ALSO splitting on whitespace preceded by a sentence-ending mark followed by one
+    closing-quote character (straight or curly) — two fixed-width lookbehinds in one
+    alternation, since Python's re requires each lookbehind fixed-width, not the pattern as a
+    whole."""
     protected = value.replace('et al.', 'et al')
-    for sentence in re.split(r'(?<=[.;])\s+', protected):
+    for sentence in re.split(r'(?<=[.;])\s+|(?<=[.;]["\'\u2019\u201d])\s+', protected):
         yield sentence.replace('et al', 'et al.')
 
 def fine_clauses(sentence):
@@ -277,7 +339,28 @@ GENE_FIELD = re.compile(r"gene:'((?:[^'\\]|\\.)*)'")
 SYMBOL = re.compile(r"^([A-Z][A-Z0-9]+(?:-[A-Z0-9]+)?)\b")
 # A universal needs BOTH a quantifier and a reference to the corpus. 'every'/'all'/'only' are
 # common words and 'this atlas' is not, so the corpus reference carries the precision here.
-QUANTIFIER = r"\bevery\b|\ball (?:other )?(?:cancers?|tumors?|tumours?|organs?|sites?)\b|\beach\b|\bthe only\b|\bno other\b|\bany other\b"
+# 'first' ADDED 2026-09-13 (user ruling — self-referential novelty claims are the positive
+# mirror of "no other entry" and deserve the same governance). NOT the same widening as the
+# already-measured-and-declined WORLD_UNIVERSAL candidate below ("the first" was tested THERE
+# unscoped and was ordinal in 6/6 live hits — "the first branch of the external carotid
+# artery"). Gated here by the SAME CORPUS_REF co-occurrence every other QUANTIFIER token already
+# requires. The literal phrase matters too: the real live claims this token exists to catch read
+# "the atlas's first..." / "this atlas's first...", not literally "the first", so the pattern is
+# bare \bfirst\b (a first draft used \bthe first\b and its own selftest fixture caught the miss
+# — "the atlas's first" does not contain the substring "the first"). MEASURED, not assumed
+# clean, at that width: 7 live "first"+"atlas" co-occurrences in one sentence — 5 real
+# self-referential atlas claims (the ovary/prostate/thyroid instances this ruling exists for)
+# and 2 that read as false positives at first (lungs.js:390, skin.js:401 — "the literature was
+# first to describe/characterize X", sharing a SENTENCE with an unrelated "this atlas" mention
+# via em-dash, not a claim about the atlas itself). Those two are NOT accepted as a cost: see
+# QUANTIFIER_FALLBACK and universal_clause's own comment for the precise, measured fix — 'first'
+# is excluded from the whole-sentence fallback the other tokens keep, because every one of the 5
+# true positives sits in ONE fine clause with 'first' and the corpus reference adjacent, while
+# both false positives only co-occur at the whole-sentence grain.
+QUANTIFIER = r"\bevery\b|\ball (?:other )?(?:cancers?|tumors?|tumours?|organs?|sites?)\b|\beach\b|\bthe only\b|\bno other\b|\bany other\b|\bfirst\b"
+# The subset that MAY fall back to whole-sentence co-occurrence when no fine clause carries
+# both tokens — 'first' deliberately excluded; see universal_clause's own docstring for why.
+QUANTIFIER_FALLBACK = r"\bevery\b|\ball (?:other )?(?:cancers?|tumors?|tumours?|organs?|sites?)\b|\beach\b|\bthe only\b|\bno other\b|\bany other\b"
 CORPUS_REF = r"\bthis atlas\b|\bthe atlas\b|\bmodel(?:l)?ed in this\b|\bmodel(?:l)?ed here\b|\belsewhere in this\b"
 # A COMPARATIVE or SUPERLATIVE quantification over the corpus is NOT a presence claim, and
 # resolving gene presence against it would answer a question it never asked. FOUND BY THE FIRST
@@ -331,11 +414,23 @@ def universal_clause(text):
     """The narrowest clause carrying both a quantifier and a corpus reference, or None.
     Fine clauses are tried FIRST so the reported span is the claim and not its whole sentence;
     the sentence is the fallback because a list comma severs quantifier from referent exactly as
-    it severs negation from predicate (see GRANULARITIES)."""
+    it severs negation from predicate (see GRANULARITIES).
+
+    'first' is EXCLUDED from the whole-sentence fallback (2026-09-13) — measured, not assumed:
+    every real self-referential "atlas's first X" claim found live sits in one fine clause with
+    no separator between 'first' and the corpus reference, while both measured false positives
+    (lungs.js:390, skin.js:401) are a "the literature was first to describe X" clause joined by
+    an em-dash to an UNRELATED "this atlas" mention elsewhere in the same sentence — real
+    co-occurrence only at the whole-sentence grain, never within one fine clause. Restricting
+    'first' to fine-clause-only turns both from a flag into a correct silence, and does not
+    touch the other quantifier tokens' own established fallback (independently tested already)."""
     for sentence in clauses(text):
-        for cl in fine_clauses(sentence) + [sentence]:
+        fine = fine_clauses(sentence)
+        for cl in fine:
             if re.search(QUANTIFIER, cl, re.I) and re.search(CORPUS_REF, cl, re.I):
                 return ' '.join(cl.split())
+        if re.search(QUANTIFIER_FALLBACK, sentence, re.I) and re.search(CORPUS_REF, sentence, re.I):
+            return ' '.join(sentence.split())
     return None
 
 def world_clause(text):
@@ -413,6 +508,102 @@ def corpus_scan(paths):
                 if s:
                     presence[cancer].add(s)
     return presence, owner
+
+# ---------------------------------------------------------------------------
+# SELF-REFERENTIAL CLAIMS GET A SCAN TOO (2026-09-13, user ruling). "Claims about the literature
+# get citations.json, crosscheck, reach checks, and a verification pass. Claims about the corpus
+# get nothing... 'no other entry does this' is an absence claim, which this file already governs
+# when it's scoped to a source, but apparently not when it's scoped to the atlas itself." The
+# concrete case: a code comment claimed ATC was "the atlas's first tumor-cell spindle
+# architecture" — the SAME claim, near-verbatim, sat in THREE places (js/organs/thyroid.js twice,
+# js/histology.js once); the false half was caught and fixed in one copy, and the other two
+# shipped uncorrected in the same commit, invisible because this instrument had never read a
+# comment in its life — READ_FIELDS covers quoted string literals only.
+#
+# TWO EXTENSIONS, each closing a specific, measured gap:
+#   (1) COMMENTS ARE NOW SCANNED, not just fields — reusing fraction_check.py's own comment_blocks
+#       (import, not a second copy — this project's own standing rule after citation_paren_ledger
+#       stopped keeping its own copy of citation_reach_check's glob). Both js/organs/*.js AND
+#       js/histology.js are scanned this way, since a claim about "every existing generator" is
+#       precisely a claim about histology.js's own contents, which the field-only scan could never
+#       reach even in principle.
+#   (2) A REAL, IF DELIBERATELY BOUNDED, MECHANICAL CROSS-CHECK: "grep for the property being
+#       claimed unique" (user's own words), made concrete as significant-word overlap between the
+#       flagged clause and every OTHER clause/comment-block in the corpus. THIS IS NOT A GENERAL
+#       ABSENCE-CLAIM ADJUDICATOR, and claiming otherwise would repeat this file's own declined
+#       "third shape"/"fourth shape" mistake one level up: recognizing that GBM's pseudopalisading
+#       rim ("elongated nuclei stacked 2-3 deep") contradicts a claim about "spindle-shaped tumor
+#       cells" needs the actual domain link (elongated-nucleus ellipse geometry, rx:ry ratio) that
+#       no keyword overlap would find — that comment shares exactly ONE significant word
+#       ("elongated") with the claim it falsifies, well under any usable threshold. What this DOES
+#       reliably find is the shape that actually caused the bug: THE SAME CLAIM RESTATED IN
+#       MULTIPLE PLACES, where fixing one copy and missing the others is the realistic failure
+#       mode once a human is no longer reading every file (which is exactly what "batch mode"
+#       removes). Measured against the real incident before trusting it: the three "atlas's first
+#       tumor-cell spindle architecture" comments share {spindle, architecture, confirmed} — three
+#       exact-word overlaps — well above the threshold below.
+try:
+    from fraction_check import comment_blocks
+except ImportError:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from fraction_check import comment_blocks
+
+HISTOLOGY_PATH = 'js/histology.js'
+
+# Excludes the vocabulary this file's OWN quantifier/corpus-ref/negation patterns already use
+# (atlas, first, only, every, other, entry...) plus a short list of generic domain words this
+# corpus uses constantly (tumor, cancer, organ...) — without this, EVERY flagged claim would
+# spuriously "overlap" every other one on vocabulary the whole corpus shares, which would make
+# the cross-check noise rather than signal.
+STOPWORDS = frozenset((
+    'atlas', 'first', 'other', 'others', 'every', 'entry', 'entries', 'model', 'models',
+    'modeled', 'modelled', 'elsewhere', 'never', 'which', 'their', 'being', 'genuine',
+    'genuinely', 'directly', 'already', 'really', 'actually', 'simply', 'exactly', 'entirely',
+    'itself', 'through', 'within', 'without', 'around', 'across', 'under', 'above', 'below',
+    'tumor', 'tumour', 'tumors', 'tumours', 'cancer', 'cancers', 'organ', 'organs', 'still',
+    'again', 'while', 'since', 'because', 'these', 'those', 'where', 'there', 'before', 'after',
+))
+WORD = re.compile(r"[a-zA-Z]{5,}")
+
+def significant_words(text):
+    """The clause's own distinctive vocabulary — lowercased words of 5+ letters, minus the
+    stopword list above. A SET, not a sequence: order doesn't matter for an overlap count."""
+    return {w for w in WORD.findall(text.lower()) if w not in STOPWORDS}
+
+def corpus_texts(paths):
+    """-> [(loc, text)] for every scannable unit in the corpus: one entry per READ_FIELDS string
+    (keyed by its own (path, lineno)) and one per comment block (keyed by the block's first
+    line). This is the population phrase_overlap_candidate searches for a match IN — it is
+    deliberately not restricted to already-flagged universal claims, because the counterexample
+    that falsifies one is usually ordinary descriptive prose, not another universal claim."""
+    out = []
+    for p in paths:
+        src = open(p, encoding='utf-8').read()
+        for i, line in enumerate(src.splitlines(), 1):
+            if line.lstrip().startswith('//'):
+                continue
+            for _, val in FIELD.findall(line):
+                out.append(((p, i), val))
+        for start, block in comment_blocks(src):
+            out.append(((p, start), block))
+    return out
+
+def phrase_overlap_candidate(clause, self_loc, texts, threshold=3):
+    """The best OTHER location sharing >=threshold significant words with `clause`, or None.
+    Returns (loc, shared_words) so the report can show a human exactly what matched, rather than
+    asserting a verdict — this proposes a place to look, the same discipline pointer_check's own
+    'nearest candidate' proposal already holds to (it names a candidate, it never applies one)."""
+    target = significant_words(clause)
+    if len(target) < threshold:
+        return None
+    best = None
+    for loc, text in texts:
+        if loc == self_loc:
+            continue
+        shared = target & significant_words(text)
+        if len(shared) >= threshold and (best is None or len(shared) > len(best[1])):
+            best = (loc, shared)
+    return best
 
 # A synthetic index, so the resolver is tested on known answers rather than on the live corpus it
 # is meant to judge. TTN present in two of three cancers is the brain.js:215 shape exactly.
@@ -514,10 +705,83 @@ def selftest():
         good = got == want
         ok &= good
         print(f"  {'ok  ' if good else 'FAIL'} want {want:24s} got {got:24s} {text[:58]!r}")
+    # condition (7) for the new "the first" quantifier and the phrase-overlap cross-check:
+    # prove each fires on a real positive and stays silent on a real negative, on the SAME
+    # shape as the live incident (three near-duplicate comments, one already fixed).
+    first_positive = ('this is the atlas\'s first tumor-cell spindle architecture', None, 'ZZ',
+                       'UNIVERSAL-UNRESOLVED')
+    got, why = classify_universal(*first_positive[:3], UNIVERSAL_INDEX)
+    good = got == first_positive[3]
+    ok &= good
+    print(f"  {'ok  ' if good else 'FAIL'} 'the first' + corpus-ref now flags (was NONE before "
+          f"this ruling): {got}")
+    first_negative = ('the first branch of the external carotid artery descends here', None,
+                       'ZZ', 'NONE')
+    got, why = classify_universal(*first_negative[:3], UNIVERSAL_INDEX)
+    good = got == first_negative[3]
+    ok &= good
+    print(f"  {'ok  ' if good else 'FAIL'} 'the first' with no corpus-ref stays silent (the "
+          f"already-measured ordinal exclusion is not reopened): {got}")
+    # THE TWO MEASURED FALSE POSITIVES THIS FIX CLOSES (lungs.js:390, skin.js:401, abridged) —
+    # pinned so the fix cannot silently regress. Both are real "the literature was first to
+    # describe X" claims sharing a SENTENCE with an unrelated "this atlas" mention via em-dash,
+    # never a fine clause — QUANTIFIER_FALLBACK excluding 'first' is what turns this correctly
+    # silent, and the live run before this fix landed produced exactly this shape as a
+    # DEFECT-FALSE-UNIVERSAL on skin.js's own TERT note (the gene symbol happened to be
+    # mentioned elsewhere in the same field, escalating a should-be-NONE into a false defect).
+    lit_first_fp = ('The same double-hit this atlas already models for X — but here at higher '
+                     'frequency, in the disease this mechanism was first characterized in.',
+                     None, 'ZZ', 'NONE')
+    got, why = classify_universal(*lit_first_fp[:3], UNIVERSAL_INDEX)
+    good = got == lit_first_fp[3]
+    ok &= good
+    print(f"  {'ok  ' if good else 'FAIL'} literature-first (not atlas-first) sharing a "
+          f"sentence with an unrelated atlas mention now correctly stays silent: {got}")
+    # THE CLOSING-QUOTE SENTENCE-BOUNDARY FIX (2026-09-13, ovary.js:444 live incident, abridged
+    # to its essential shape) — pinned so clauses()'s new alternation cannot silently regress.
+    # 'here."  This' has NO comma/colon/semicolon/em-dash anywhere near the boundary, so if
+    # clauses() failed to split it, "first" and "this atlas" would land in ONE fine clause (no
+    # separator to sever them) and match directly — not merely via the fallback the lit_first_fp
+    # fixture above guards. A correct split leaves 'first' in a sentence with no corpus reference
+    # and 'this atlas' in a sentence with no quantifier at all, so neither half can match alone.
+    quote_boundary_fp = ('Confirmed directly: "the first tumor of its kind here." This atlas '
+                         'separately documents Y elsewhere in its own way.', None, 'ZZ', 'NONE')
+    got, why = classify_universal(*quote_boundary_fp[:3], UNIVERSAL_INDEX)
+    good = got == quote_boundary_fp[3]
+    ok &= good
+    print(f"  {'ok  ' if good else 'FAIL'} a quantifier before a closing-quote sentence boundary "
+          f"no longer merges with a corpus reference in the sentence after it: {got}")
+    texts = [
+        (('a.js', 10), "this is the atlas's first tumor-cell spindle architecture, confirmed"),
+        (('b.js', 20), "the atlas's first tumor-cell spindle/fascicular architecture, confirmed"),
+        (('c.js', 30), "an entirely unrelated sentence about calcitonin and amyloid deposits"),
+    ]
+    hit = phrase_overlap_candidate(texts[0][1], texts[0][0], texts)
+    ok &= hit is not None and hit[0] == ('b.js', 20)
+    print(f"  {'ok  ' if hit and hit[0] == ('b.js', 20) else 'FAIL'} phrase overlap FINDS the "
+          f"near-duplicate comment (the real 3-copy incident, abridged to 2): {hit}")
+    miss = phrase_overlap_candidate(texts[2][1], texts[2][0], texts)
+    ok &= miss is None
+    print(f"  {'ok  ' if miss is None else 'FAIL'} and STAYS SILENT on unrelated prose "
+          f"sharing no distinctive vocabulary: {miss}")
+    # the honest negative this mechanism does NOT claim to solve: a real counterexample using
+    # different vocabulary entirely (the actual GBM-pseudopalisading case) shares only one word
+    # ("elongated") with the claim it falsifies — below threshold, correctly returns None, and
+    # this is recorded as the mechanism's own documented limit, not a bug to chase.
+    gbm_case = phrase_overlap_candidate(
+        "none represents an elongated tumor-cell population arranged in organized fascicles",
+        ('x.js', 1),
+        [(('y.js', 2), "pseudopalisading rim: elongated nuclei stacked 2-3 deep, oriented across the border")])
+    ok &= gbm_case is None
+    print(f"  {'ok  ' if gbm_case is None else 'FAIL'} honest limit: a same-domain but "
+          f"differently-worded counterexample (the real GBM case) is NOT found by keyword "
+          f"overlap — this mechanism finds restated duplicates, not domain reasoning: {gbm_case}")
     print('SELFTEST', 'PASS — fires on the existence form, passes the search/scoped forms, '
-          'honours all three exemptions, is not laundered by a short quotation, and resolves a '
-          'corpus universal against a synthetic index in all three directions, and flags a '
-          'world-scoped exclusivity claim without letting tier one double-count it'
+          'honours all three exemptions, is not laundered by a short quotation, resolves a '
+          'corpus universal against a synthetic index in all three directions, flags a '
+          'world-scoped exclusivity claim without letting tier one double-count it, flags '
+          "'the first' only when corpus-scoped, and finds a near-duplicate comment while "
+          'honestly missing a differently-worded one'
           if ok else 'FAIL — do not trust this scan')
     return ok
 
@@ -530,6 +794,11 @@ if __name__ == '__main__':
     if not paths:   # a glob that resolved to nothing is a VACUOUS PASS — the dangerous form (sweep, 2026-09-09)
         print('absence_claim_check: REFUSING TO REPORT — the corpus glob resolved to nothing'); sys.exit(3)
     presence, owner = corpus_scan(paths)
+    # Comment scan runs over paths PLUS histology.js — a claim about "every existing generator"
+    # is a claim about histology.js's own contents, which the field-only scan (js/organs/*.js's
+    # REGIONS/TRUNK/PRIVATE_POOL string literals) could never reach even in principle.
+    comment_paths = paths + ([HISTOLOGY_PATH] if os.path.exists(HISTOLOGY_PATH) else [])
+    texts = corpus_texts(comment_paths)
     counts = {}
     defects = []
     universals = []
@@ -562,20 +831,44 @@ if __name__ == '__main__':
                         unresolved.append((f, i, fld, span, uwhy))
                     elif uverdict == 'UNIVERSAL-WORLD-SCOPED':
                         world.append((f, i, fld, span, uwhy))
+    # COMMENT SCAN (2026-09-13 widening): the same universal/world detection, applied to
+    # contiguous `//` blocks rather than quoted field strings, over comment_paths (which
+    # includes histology.js). No gene-symbol resolution is attempted here — a comment is prose
+    # ABOUT the code, not a REGIONS/TRUNK/PRIVATE_POOL record, so `symbol=None` always, and every
+    # comment-sourced universal correctly lands in UNRESOLVED rather than being force-resolved
+    # against the wrong subject.
+    for f in comment_paths:
+        for start, block in comment_blocks(open(f, encoding='utf-8').read()):
+            uverdict, uwhy = classify_universal(block, None, None, presence)
+            if uverdict == 'NONE':
+                continue
+            counts[uverdict] = counts.get(uverdict, 0) + 1
+            span = universal_clause(block) or world_clause(block) or ''
+            if uverdict == 'UNIVERSAL-UNRESOLVED':
+                unresolved.append((f, start, 'comment', span, uwhy))
+            elif uverdict == 'UNIVERSAL-WORLD-SCOPED':
+                world.append((f, start, 'comment', span, uwhy))
+            # DEFECT-FALSE-UNIVERSAL cannot fire here (symbol is always None), by construction.
     for f, i, fld, cl, why in defects:
         print(f'  UNSCOPED ABSENCE CLAIM: {f}:{i} [{fld}] — {why}')
         print(f'      {cl[:220]}')
     for f, i, fld, cl, why in universals:
         print(f'  FALSE CORPUS UNIVERSAL: {f}:{i} [{fld}] — {why}')
         print(f'      {cl[:220]}')
-    # Printed, not failed, under the declared two-tier boundary above.
+    # Printed, not failed, under the declared two-tier boundary above. Each now also carries a
+    # phrase-overlap candidate when one exists — "grep for the property being claimed unique"
+    # (user, 2026-09-13), a proposal for where to look next, never an auto-verdict.
     for f, i, fld, cl, why in unresolved:
-        print(f'  universal needs a read: {f}:{i} [{fld}] — {why}')
+        cand = phrase_overlap_candidate(cl, (f, i), texts)
+        hint = f' — possible restatement at {cand[0][0]}:{cand[0][1]} (shares {sorted(cand[1])})' if cand else ''
+        print(f'  universal needs a read: {f}:{i} [{fld}] — {why}{hint}')
         print(f'      {cl[:160]}')
     # Same tier, wider population: exclusivity over the body rather than over the corpus. Separate
     # label because the READ is different — this one is answered from a textbook, not from the atlas.
     for f, i, fld, cl, why in world:
-        print(f'  world-scoped universal needs a read: {f}:{i} [{fld}] — {why}')
+        cand = phrase_overlap_candidate(cl, (f, i), texts)
+        hint = f' — possible restatement at {cand[0][0]}:{cand[0][1]} (shares {sorted(cand[1])})' if cand else ''
+        print(f'  world-scoped universal needs a read: {f}:{i} [{fld}] — {why}{hint}')
         print(f'      {cl[:160]}')
     # Tolerated-count resolution (2026-09-10): every 'needs a read' universal is a flag keyed by file|field|span head
     # (content, not line numbers); undeclared, expired or stale → problem → exit 1.

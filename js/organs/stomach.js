@@ -250,10 +250,16 @@ const PRIVATE_POOL_GDIFF = [
 
 // HISTOLOGY (microscopic-view data — every claim verified directly; the PathologyOutlines
 // quotes were read off the live pages via the browser pane after direct fetches hit HTTP 429).
-// This is the atlas's first NON-gland-forming adenocarcinoma slide — the diffuse type is
-// defined by the ABSENCE of the architecture every other adenocarcinoma panel here draws
-// ("little or no gland formation"; "does not typically have gland formation") — and its
-// signature object, the signet-ring cell, exists in no other generator: "a central, optically
+// This was the atlas's first non-gland-forming adenocarcinoma slide — the diffuse type is
+// defined by the ABSENCE of the architecture every other adenocarcinoma panel drew AT THE TIME
+// ("little or no gland formation"; "does not typically have gland formation"). THAT SECOND HALF
+// IS NOW STALE, the same "true when written" shape this atlas's own self-referential-claim
+// guard exists to catch: breast's invasive lobular carcinoma entry, added later in this same
+// session, shares the identical E-cadherin-loss/non-gland-forming architecture — its own
+// histology generator (genILC, js/histology.js) directly reuses THIS entry's drawSingleFileCord
+// primitive (see breast.js's own HISTOLOGY_ILC comment for the reuse accounting). What survives
+// as still-distinguishing: its signature object, the signet-ring cell, exists in no other
+// generator: "a central, optically
 // clear, globoid droplet of cytoplasmic mucin with an eccentrically placed nucleus" (Kaur &
 // Vyas, PathologyOutlines, "Diffuse type"). Terminology: "Official WHO term is poorly cohesive
 // carcinoma" (same source); the ≥50%-signet-ring threshold for calling a tumor signet-ring
