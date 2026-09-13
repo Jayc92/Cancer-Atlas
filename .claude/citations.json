@@ -1054,7 +1054,7 @@
    "userFacing": true,
    "refs": [
     "js/organs/prostate.js:249",
-    "js/organs/bladder.js:187"
+    "js/organs/bladder.js:198"
    ],
    "pmid": "10836297",
    "resolvedTitle": "Metastatic patterns of prostate cancer: an autopsy study of 1,589 patients.",
@@ -1933,7 +1933,7 @@
    "refs": [
     "js/organs/bladder.js:27",
     "js/organs/bladder.js:44",
-    "js/organs/bladder.js:118"
+    "js/organs/bladder.js:129"
    ],
    "candidates": [
     "37887556",
@@ -1947,7 +1947,7 @@
    "status": "still-zero-pass",
    "userFacing": true,
    "refs": [
-    "js/organs/bladder.js:212"
+    "js/organs/bladder.js:223"
    ],
    "candidates": [
     {
@@ -1968,7 +1968,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/bladder.js:226"
+    "js/organs/bladder.js:237"
    ]
   },
   {
@@ -1978,8 +1978,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/bladder.js:239",
-    "js/organs/bladder.js:239"
+    "js/organs/bladder.js:235",
+    "js/organs/bladder.js:250"
    ],
    "pmid": "24101484",
    "resolvedTitle": "TERT promoter mutations in bladder cancer affect patient survival and disease recurrence through modification by a common polymorphism.",
@@ -2001,8 +2001,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/bladder.js:239",
-    "js/organs/bladder.js:239"
+    "js/organs/bladder.js:236",
+    "js/organs/bladder.js:250"
    ],
    "pmid": "24018021",
    "resolvedTitle": "Telomerase reverse transcriptase promoter mutations in bladder cancer: high frequency across stages, detection in urine, and lack of associa",

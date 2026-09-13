@@ -40,11 +40,22 @@ export const markerSpec = { points:[{heightFrac:0.475, angle:0}] };
 // neuroendocrine carcinoma very slightly ahead of squamous cell carcinoma in this specific
 // cohort, the opposite of the usual "SCC then ADC then small-cell" teaching order, so the real
 // order is what's shown rather than the assumed one.
+// blnec's SHARE FIGURE CARRIES A REAL, DISCLOSED DENOMINATOR GAP (2026-09-13, ordinary-organ
+// batch): Park et al. 2023's own "NEC" bucket pools THREE ICD-O-3 codes together (8013/3 large
+// cell neuroendocrine carcinoma, 8041/3 small cell carcinoma NOS, 8246/3 neuroendocrine
+// carcinoma NOS), confirmed directly from the paper's own Methods. Independent, dedicated
+// sources checking a narrower "pure small cell carcinoma" definition read well below 1% (Koay
+// et al., SEER 1991-2005, PMID 21567387: 0.7%; WHO's own figure as cited by two 2025-2026
+// reviews: "under 1%"). Kept at Park's 3.2% for internal consistency with this organ's own
+// uc/blscc/bladc share figures (same cohort, same denominator), with the gap disclosed rather
+// than silently resolved in either direction — the two figures are answering slightly different
+// questions (a three-code registry bucket vs. a strict single-entity definition), not
+// contradicting each other.
 export const cancerEntries = [
   { id:'uc',      name:'Urothelial carcinoma',        share:'~92% of the four commonest bladder-primary carcinoma types (48,789/53,142, Park, Curr Oncol, 2023, SEER)', active:true,  organKey:'bladder' },
-  { id:'blnec',   name:'Neuroendocrine carcinoma',     share:'~3.2% of the four commonest bladder-primary carcinoma types (1,683/53,142) — rare and aggressive', active:false, organKey:'bladder' },
-  { id:'blscc',   name:'Squamous cell carcinoma',      share:'~3.1% of the four commonest bladder-primary carcinoma types (1,667/53,142)', active:false, organKey:'bladder' },
-  { id:'bladc',   name:'Adenocarcinoma',               share:'~1.9% of the four commonest bladder-primary carcinoma types (1,003/53,142)', active:false, organKey:'bladder' },
+  { id:'blnec',   name:'Neuroendocrine carcinoma',     share:'~3.2% of the four commonest bladder-primary carcinoma types (1,683/53,142, Park, Curr Oncol, 2023) — a pooled 3-code registry bucket; dedicated series restricted to pure small cell carcinoma read well under 1% (Koay et al., 2011)', active:true, organKey:'bladder' },
+  { id:'blscc',   name:'Squamous cell carcinoma',      share:'~3.1% of the four commonest bladder-primary carcinoma types (1,667/53,142, Park, Curr Oncol, 2023) — a US figure; up to ~75% of bladder cancers in schistosomiasis-endemic regions', active:true, organKey:'bladder' },
+  { id:'bladc',   name:'Adenocarcinoma',               share:'~1.9% of the four commonest bladder-primary carcinoma types (1,003/53,142, Park, Curr Oncol, 2023) — non-urachal (vesical) adenocarcinoma specifically; urachal adenocarcinoma is a separate, rarer entity (well under 1% of all bladder cancers)', active:true, organKey:'bladder' },
 ];
 
 // REAL ANATOMY, not procedural — Human Reference Atlas 3D Reference Object Library, entry
@@ -144,7 +155,7 @@ export const organDetail = {
     { key:'wall', label:'Bladder wall (dome)', pos:[-0.0048,0.04357,0.01832],
       text:'The dome, the bladder\'s uppermost, most distensible surface — lined, like the rest of the organ, by urothelium. Urothelial carcinoma can start anywhere along this lining, and real registry data shows the single most common site of origin is actually the lateral walls (8,056 of a ~19,000-tumor breakdown), ahead of the trigone shown alongside this point.' },
     { key:'trigone', label:'Trigone', pos:[-0.00156,0.0279,-0.01205],
-      text:'A smooth, fixed triangular patch of wall, bounded above by the two ureteral openings and below by the internal urethral opening — the one part of the bladder that does not stretch as the organ fills. Developmentally distinct from the rest of the bladder: the ureteric buds and mesonephric ducts contribute directly to it during formation.' },
+      text:'A smooth, fixed triangular patch of wall, bounded above by the two ureteral openings and below by the internal urethral opening — the one part of the bladder that does not stretch as the organ fills. Developmentally distinct from the rest of the bladder: the ureteric buds and mesonephric ducts contribute directly to it during formation. Non-urachal bladder adenocarcinoma most often arises here, in glandular metaplasia (cystitis glandularis) at the bladder neck and trigone, a genuinely different route from urothelial carcinoma\'s own lateral-wall predominance.' },
     { key:'ureteric', label:'Ureteral orifices', pos:[-0.00266,0.04598,-0.01456],
       text:'The paired slit-like openings where the left and right ureters deliver urine from the kidneys — the bladder\'s entry points, sitting at the trigone\'s upper corners.' },
     { key:'neck', label:'Bladder neck', pos:[0.00021,0.01072,-0.0053],
@@ -282,11 +293,252 @@ const HISTOLOGY_UC = {
   ],
 };
 
+// ============================================================
+// BLADDER NEUROENDOCRINE CARCINOMA (blnec) — 2026-09-13, ordinary-organ batch. Every citation
+// verified directly at the source. Modeled as small cell carcinoma specifically (the dominant
+// real form — Akbulut et al., Adv Anat Pathol, 2024, PMID 38523484, PMCID PMC11006587,
+// verbatim: "The most common neuroendocrine tumor in the urinary bladder is small cell
+// carcinoma"), not carcinoid or paraganglioma. Two trunk entries, the same GBM-classifier/UC-
+// TERT architecture this organ already uses: TP53+RB1 concurrent loss (transformation-defining
+// — the event demonstrated to drive lineage switching, not merely correlated with it) plus
+// TERT promoter mutation, the SAME event this organ's own UC trunk already carries, real and
+// near-universal here too — Chang et al., Clin Cancer Res, 2018, PMID 29180607, directly
+// concludes bladder small cell carcinoma shares "a cell of origin" with urothelial carcinoma,
+// which is exactly why one trunk event (TERT) is inherited from that shared lineage while a
+// second, distinct event (TP53+RB1) marks the divergence into neuroendocrine differentiation.
+const TRUNK_BLNEC = [
+  { gene:'TP53 mutation with concurrent RB1 loss', class:'driver', ccf:'TP53 87%, RB1 70%, with RB1 co-mutation in 77% of TP53-mutant tumors (Jaime-Casas et al., JCO Precis Oncol, 2025 — n=149, the largest bladder small cell carcinoma cohort among the sources checked in this pass)', note:'Shen et al. (Oncogene, 2018) reported experimental evidence that combined TP53+RB1 depletion "favored lineage switching from oncogene-addicted urothelial cancer cells to neuroendocrine-like tumor cells" — the paper\'s own words, presented there as preliminary rather than settled, but still a functional demonstration rather than a purely statistical association, the same fourth kind of truncal justification this atlas\'s Prostate neuroendocrine carcinoma entry already uses. Cheng et al. (Am J Pathol, 2005) found 90% concordant allelic-loss patterns between the neuroendocrine and urothelial components of tumors containing both, direct molecular proof this cancer arises from a shared urothelial-lineage precursor rather than independently.' },
+  { gene:'TERT promoter mutation (C228T / C250T)', class:'driver', ccf:'~75% (Jaime-Casas et al., 2025); 100% (11/11) in a smaller series specifically comparing bladder-origin small cell carcinoma against other organs\' own small cell carcinomas (Zheng et al., J Hematol Oncol, 2014)', note:'The same trunk event this organ\'s own urothelial carcinoma entry carries — real evidence this cancer inherits it from the shared urothelial precursor lineage rather than acquiring it independently. Zheng et al. found this exact mutation in 0 of 20 lung, 2 prostate, 5 Merkel cell, and 6 other-site small cell carcinomas tested, suggesting it could distinguish bladder-origin small cell carcinoma from small cell carcinoma arising elsewhere.' },
+];
+// Branch pair — a real, directly documented mutually-exclusive molecular subtyping system
+// (Akbulut et al., Mod Pathol, 2024, PMID 38964503, PMCID PMC11490389, verbatim: "POU2F3+ tumors
+// were mutually exclusive with those expressing ASCL1 and NEUROD1"), the same lineage-
+// transcription-factor architecture lung SCLC's own ASCL1/NEUROD1/POU2F3/YAP1 subtyping uses.
+// AN INDEPENDENT CITATION-VERIFICATION PASS (2026-09-13) CORRECTED THE DENOMINATOR: the paper's
+// full cohort is 103 small cell carcinoma (SMC) + 19 large cell neuroendocrine carcinoma (LCNEC)
+// = 122 total, but the specific co-expression percentages below are computed on a pooled
+// 116-tumor subset with data for all three markers (both SMC and LCNEC cases), not on the
+// 103-tumor SMC-only cohort this file previously said — the paper's own stated reason for pooling
+// is "we did not observe a significant difference in the expression of ASCL1, NEUROD1 and POU2F3
+// between SMC and LCNEC groups," disclosed here rather than smoothed into an SMC-only framing.
+// THREE HONEST FRAMING CAVEATS, disclosed rather than smoothed over: (1) these are IHC
+// PROTEIN-EXPRESSION markers, not DNA mutations — a different measurement type than most branch
+// pairs in this atlas, closer to this organ's own ERBB2 "mutation or amplification" precision
+// than to a point-mutation branch gene; (2) the sources checked in this pass classify status at
+// the WHOLE-TUMOR level (one label per patient), not as two spatially-distinct regions within one
+// tumor — this atlas's usual branch-gene model of literal intratumoral heterogeneity is not
+// directly demonstrated here, only a real, checked, population-level mutual exclusivity; (3) the
+// cohort mixes SMC with LCNEC, a related but distinct entity this atlas does not otherwise model
+// here, on the paper's own no-significant-difference finding above.
+const REGIONS_BLNEC = [
+  { id:'VL', name:'Liver', color:cssVar('--coral'), pos3d:{x:-0.3,y:1.3,z:0.3},
+    branch:{ gene:'ASCL1/NEUROD1 expression', class:'driver', ccf:'ASCL1+/NEUROD1- 34%, ASCL1+/NEUROD1+ 16%, ASCL1-/NEUROD1+ 23% (73% combined, 85/116) of a pooled 116-tumor IHC cohort (Akbulut et al., Mod Pathol, 2024)', note:'A lineage-transcription-factor status, not a DNA mutation — directly, statistically mutually exclusive with the POU2F3+ status modeled at a different site here. Liver is this cancer\'s single most common metastatic site (52.1% of metastatic patients) — more than double urothelial carcinoma\'s own rate (22.6%) in the same cohort (p<0.001, Park et al., Curr Oncol, 2023), a real, striking departure from this organ\'s own bone-dominant urothelial-carcinoma pattern.' } },
+  { id:'VB', name:'Bone', color:cssVar('--azure'), pos3d:{x:-1.3,y:-0.5,z:0.2},
+    branch:{ gene:'ASCL1/NEUROD1 expression', class:'driver', ccf:'73% combined (85/116) of the same pooled 116-tumor IHC cohort (Akbulut et al., Mod Pathol, 2024)', note:'Same status as at Liver. Bone is this cancer\'s second most common metastatic site (42.3% of metastatic patients, Park et al., 2023).' } },
+  { id:'VM', name:'Lymph nodes', color:cssVar('--amber'), pos3d:{x:1.2,y:-0.3,z:-0.5},
+    branch:{ gene:'POU2F3 expression', class:'driver', ccf:'21% (24/116) of the same pooled IHC cohort (Akbulut et al., Mod Pathol, 2024)', note:'A tuft-cell-lineage transcription-factor status, mutually exclusive with the ASCL1/NEUROD1 status modeled at a different site here — the same real, checked exclusivity Akbulut et al. state directly. Lymph nodes are this cancer\'s third most common metastatic site (35.5% of metastatic patients, Park et al., 2023).' } },
+  { id:'VU', name:'Lung', color:cssVar('--violet'), pos3d:{x:0.2,y:-1.3,z:0.4},
+    branch:{ gene:'POU2F3 expression', class:'driver', ccf:'21% (24/116) of the same pooled IHC cohort (Akbulut et al., Mod Pathol, 2024)', note:'Same status as at Lymph nodes; POU2F3+ tumors also carry a significantly shorter recurrence-free and overall survival (p<0.05, same source). Lung is this cancer\'s fourth real metastatic site (25.7% of metastatic patients, Park et al., 2023) — notably its LOWEST-ranked site, the opposite of urothelial carcinoma\'s own pattern, where lung sits third.' } },
+];
+// Private pool — ARID1A, cross-validated in two independent cohorts: significantly enriched
+// versus lung small cell carcinoma at P<.05 in the same n=149 cohort TRUNK_BLNEC's own TERT
+// entry already cites above, and independently measured at 48% (Urologic Oncology, 2022, PMID
+// 35662501, n=31). Checked against both trunk
+// genes and both branch statuses for a same-tumor conflict: none reported in either source.
+const PRIVATE_POOL_BLNEC = [
+  { gene:'ARID1A mutation', class:'driver', ccf:'48% (Urologic Oncology, 2022, n=31); independently confirmed significantly enriched vs. lung small cell carcinoma (Jaime-Casas et al., 2025)', note:'A SWI/SNF chromatin-remodeling gene, recurrently disrupted — the same broad chromatin-remodeling vulnerability this atlas has already found in several other cancers (Liver, Ovary, Skin, Bladder\'s own urothelial carcinoma entry\'s KMT2C), here in its own bladder-neuroendocrine-specific cohort.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
+];
+// HISTOLOGY — reuses this atlas's own neuroendocrine histology family verbatim (zero new
+// drawing code, the family's THIRD real consumer after Prostate's pneuro and Lungs' sclc):
+// small round blue cells, nuclear molding, naked nuclei, necrosis — all real, cited, bladder-
+// specific features (Akbulut et al., Adv Anat Pathol, 2024; a dedicated bladder small cell
+// carcinoma cytology series, Cancer, 1997, PMID 9010109).
+const HISTOLOGY_BLNEC = {
+  intro: 'Bladder neuroendocrine carcinoma looks the way small cell carcinoma looks everywhere it arises: sheets of small, round, "blue" cells — named for how densely their crowded, dark nuclei stain — with almost no visible cytoplasm around them. Where two of these naked nuclei press against each other, they mold and deform against one another rather than staying independently round, a real diagnostic feature rather than a processing artifact. Geographic necrosis and a high mitotic rate round out the picture.',
+  ariaSummary: 'Stylized microscopic field: a dense sheet of small, dark, crowded nuclei with almost no visible cytoplasm around them, many pressed against their neighbors and deformed by the contact (nuclear molding). An irregular pale necrotic zone with scattered debris sits at one edge of the field.',
+  citation: 'Akbulut et al., Adv Anat Pathol, 2024, PMID 38523484; cytology cohort, Cancer, 1997, PMID 9010109.',
+  features: [
+    { key:'molding', label:'Nuclear molding',
+      text:'Adjacent nuclei deform against each other rather than staying independently round — real crowding, not a fixed stylistic squash, since cells with no close neighbor stay rounder.' },
+    { key:'naked', label:'Naked nuclei',
+      text:'Almost no visible cytoplasm surrounds each nucleus — a real, high nuclear-to-cytoplasmic-ratio feature of this cancer, not an artifact of thin sectioning.' },
+    { key:'necrosis', label:'Geographic necrosis',
+      text:'Irregular zones of dead tissue and karyorrhectic debris — common in this fast-growing, high-mitotic-rate cancer.' },
+  ],
+};
+
+// ============================================================
+// BLADDER SQUAMOUS CELL CARCINOMA (blscc) — 2026-09-13, ordinary-organ batch. Every citation
+// verified directly at the source. Modeled as PURE squamous cell carcinoma specifically — the
+// same inclusion criterion Ehdaie et al. (J Urol, 2011, PMID 22088332) use for their own study
+// cohort, verbatim: "no urothelial component in the radical cystectomy specimen" — that paper's
+// own Methods text, not a direct WHO quotation (an independent citation-verification pass,
+// 2026-09-13, found the paper's Discussion separately paraphrases WHO's actual recommendation to
+// "classify SqD as a urothelial carcinoma and reserv[e] the diagnosis of SCC for tumors composed
+// of pure squamous cell carcinoma" — the general principle this specific inclusion criterion
+// implements, not the same sentence) — not urothelial carcinoma with squamous differentiation, a
+// different, more common entity this organ's own uc entry already covers.
+// Modeled on the NON-BILHARZIAL (Western) form specifically, since Park et al. 2023 is a US
+// SEER cohort; the bilharzial (schistosomiasis-associated) form is a real, globally important,
+// genuinely different disease (different gross growth pattern, different age of onset,
+// different grade distribution) noted in prose rather than folded in silently.
+// TRUNK — a genuine, disclosed three-way ambiguity, not resolved by picking one: no single gene
+// cleanly fits this atlas's usual trunk-justification types for THIS specific entity. Modeled as
+// a fact-statement trunk naming the three real candidates, the same honest architecture this
+// atlas already uses for Prostate ductal adenocarcinoma's own "no single founder" entry.
+const TRUNK_BLSCC = [
+  { gene:'No single confirmed founder mutation', class:'driver', note:'Three real candidates were found, and none was definitively established as truncal for this specific entity in this pass\'s own reading: TP53 mutation (64%, 7/11, the most-replicated candidate — Hurst et al., J Pathol Clin Res, 2022, PMID 35289095 — but far short of squamous carcinomas\' usual near-universal TP53 rate elsewhere in this atlas); FAT1 mutation or deletion (>90% combined in the same small cohort, a single-study finding); TERT promoter mutation (80%, 12/15, "comparable to the rate previously demonstrated in conventional urothelial carcinoma" — Cowan, Springer et al., Mod Pathol, 2016, PMID 26965579 — raising the real possibility this is the same organ-wide trunk event this organ\'s own urothelial carcinoma entry already carries, though this rests on one small study). No multi-region-sequencing or precursor-lesion study was found to confirm any of the three as spatially or temporally truncal.' },
+];
+// Branch pair — EGFR (real, but a PROTEIN/mRNA-EXPRESSION finding with a real minority
+// copy-number contribution, not primarily a mutation — Ramchurren et al., 1995, PMID 7628866:
+// 67% IHC-positive, though an independent citation-verification pass (2026-09-13) found this
+// entire 21-tumor cohort is bilharzial (Schistosoma-associated) SCC specifically, not the
+// non-bilharzial (Western) form modeled here — disclosed rather than imported silently, the same
+// treatment this file's own Benjamin/PIK3CA finding already gets for a urachal-cohort figure;
+// Hurst et al., 2022 (a genuinely Western cohort): mRNA upregulated, ~10% focal amplicon;
+// explicitly ZERO activating mutations found (0/71, Rose et al., Oncogene, 2020, PMID 32978523 —
+// corrected from a mistyped PMID that pointed at an unrelated ecology paper; that same pass also
+// found the paper does not specify how many of the 71 EGFR-screened samples were pure SCC versus
+// urothelial carcinoma with squamous differentiation, so the 0/71 figure's applicability
+// specifically to pure SCC, while plausible, is not independently confirmable from the source)
+// and FAT1 (mutated by point mutation alone in 45% of the same cohort — Hurst et al., 2022 — the
+// cleaner single-mechanism figure, used here in preference to the combined >90% figure the trunk
+// note already carries, to avoid double-counting one number two ways). Checked for a same-tumor
+// conflict: neither source reports EGFR and FAT1 as exclusive or competing.
+const REGIONS_BLSCC = [
+  { id:'WU', name:'Lung', color:cssVar('--coral'), pos3d:{x:-0.3,y:1.3,z:0.3},
+    branch:{ gene:'EGFR overexpression', class:'driver', ccf:'67% IHC-positive in a bilharzial-associated cohort (Ramchurren et al., 1995); mRNA upregulated in a genuinely Western cohort, with a real minority copy-number contribution — focal amplification in ~10%, broader 7p gain in 38% (Hurst et al., J Pathol Clin Res, 2022) — but ZERO activating mutations found (0/71, Rose et al., Oncogene, 2020)', note:'A real, protein/mRNA-level finding, precisely NOT a mutation — the same "mutation or amplification" precision this organ\'s own urothelial carcinoma entry already applies to ERBB2. The 67% IHC figure comes from a bilharzial-associated cohort specifically, not the non-bilharzial (Western) form this entity models — disclosed rather than imported silently. Lung is this cancer\'s single most common metastatic site (37.2% of metastatic patients, Park et al., Curr Oncol, 2023).' } },
+  { id:'WM', name:'Lymph nodes', color:cssVar('--azure'), pos3d:{x:-1.3,y:-0.5,z:0.2},
+    branch:{ gene:'EGFR overexpression', class:'driver', ccf:'67% IHC-positive in a bilharzial-associated cohort (Ramchurren et al., 1995)', note:'Same finding as at Lung, with the same bilharzial-cohort caveat. Lymph nodes are this cancer\'s second most common metastatic site (31.8% of metastatic patients, Park et al., 2023).' } },
+  { id:'WB', name:'Bone', color:cssVar('--amber'), pos3d:{x:1.2,y:-0.3,z:-0.5},
+    branch:{ gene:'FAT1 mutation', class:'driver', ccf:'45% (5/11) by point mutation alone (Hurst et al., J Pathol Clin Res, 2022) — higher than FAT1\'s own rate in urothelial carcinoma with or without squamous differentiation in the same paper\'s TCGA comparison', note:'The paper\'s own authors argue FAT1 loss "may be a prerequisite for the development of pure squamous tumours." Bone is this cancer\'s third most common metastatic site (27.2% of metastatic patients, Park et al., 2023).' } },
+  { id:'WL', name:'Liver', color:cssVar('--violet'), pos3d:{x:0.2,y:-1.3,z:0.4},
+    branch:{ gene:'FAT1 mutation', class:'driver', ccf:'45% (5/11) by point mutation alone (Hurst et al., 2022)', note:'Same finding as at Bone. Liver is this cancer\'s fourth real metastatic site (18.4% of metastatic patients, Park et al., 2023) — and this cancer shows a real, notable ZERO-brain-metastasis finding in the same cohort (0/251), stated in prose rather than modeled as a fifth site this schema has no room for.' } },
+];
+// Private pool — CDKN2A loss, real and recurrent, mostly by focal 9p deletion (a copy-number
+// event, not primarily point mutation — the same precision this atlas already applies to LUAD's
+// own CDKN2A entry). Checked against both branch genes: no exclusivity reported.
+const PRIVATE_POOL_BLSCC = [
+  { gene:'CDKN2A loss', class:'driver', ccf:'33% (7/21) by copy-number loss, mostly focal 9p deletion, in the paper\'s separate copy-number cohort (n=21, distinct from its own n=11 whole-exome cohort — Hurst et al., J Pathol Clin Res, 2022)', note:'A cell-cycle checkpoint gene, most often lost by deletion rather than point mutation. Recurrent and real in this entity\'s own dedicated sequencing cohort; the same source reports no conflict against EGFR or FAT1.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
+];
+// HISTOLOGY — reuses this atlas's own squamous-carcinoma histology family verbatim (zero new
+// drawing code, the family's SECOND real consumer after Lungs' own lusc entry): keratin pearls
+// and intercellular bridges, the field's own defining diagnostic features for genuine squamous
+// differentiation in bladder tumors (Guo et al., Front Oncol, 2026, PMID 42482763, verbatim:
+// "definitive morphological features, including keratin pearl formation and/or intercellular
+// bridges").
+const HISTOLOGY_BLSCC = {
+  intro: 'Bladder squamous cell carcinoma is diagnosed by the same two features squamous carcinomas anywhere in the body show: keratin pearls — whorled, concentrically layered nests of keratinizing cells — and intercellular bridges, the fine strands connecting neighboring cells that give the tissue a cobblestone look. This entity is diagnosed only when squamous differentiation is complete, with no residual urothelial component anywhere in the specimen.',
+  ariaSummary: 'Stylized microscopic field: several whorled, concentrically layered keratin pearls in warm orange-pink tones, surrounded by a tightly packed field of polygonal cells with fine connecting bridges visible between close neighbors.',
+  citation: 'Guo et al., Front Oncol, 2026, PMID 42482763.',
+  features: [
+    { key:'pearls', label:'Keratin pearls',
+      text:'Whorled, concentrically layered nests of keratinizing cells — one of the two features that define genuine squamous differentiation here, the same structure this atlas\'s own lung squamous cell carcinoma entry draws.' },
+    { key:'bridges', label:'Intercellular bridges',
+      text:'Fine strands connecting neighboring polygonal cells, giving the tissue a cobblestone look — the second defining feature, present alongside or independent of keratin pearls.' },
+  ],
+};
+
+// ============================================================
+// BLADDER ADENOCARCINOMA (bladc) — 2026-09-13, ordinary-organ batch. Every citation verified
+// directly at the source. Modeled as NON-URACHAL (vesical) adenocarcinoma specifically — a real,
+// deliberate entity choice, not an oversight of urachal adenocarcinoma. Park et al. 2023's own
+// 1,003-count "adenocarcinoma" bucket uses a single ICD-O-3 code (8140/3, "adenocarcinoma,
+// NOS") and SEER's own site-recode scheme (seer.cancer.gov/siterecode: "Urinary Bladder" recode
+// 29010 = C67.0-C67.9; "Other Urinary Organs" recode 29040 = C68.0 Urachus — a SEER-taxonomy fact,
+// not one Park et al.'s own Methods text states) excludes urachus (C68.0) from "Urinary Bladder"
+// (C67.0-C67.9) — and 8140/3 would separately exclude any tumor
+// specifically coded mucinous (8480/3) or signet ring (8490/3), which comprise the MAJORITY
+// pattern of urachal adenocarcinoma specifically (mucinous alone = 78% of a 46-case urachal
+// series, Dhillon et al., Hum Pathol, 2015, PMID 26364859). Independently corroborated: the
+// dedicated urachal literature reports a PERITONEAL-dominant metastatic pattern (54% of
+// metastatic cases, Guerin et al., Front Oncol, 2023, PMID 36741023) while Park\'s own site data
+// for this bucket (below) shows a UC-like HEMATOGENOUS pattern with no peritoneum category at
+// all — real, converging evidence this bucket is predominantly non-urachal disease.
+const TRUNK_BLADC = [
+  { gene:'TP53 mutation', class:'driver', ccf:'81.1% of non-urachal bladder adenocarcinoma (Cigliola et al., JCO Precis Oncol, 2024, PMID 39151108, n=328 — the largest dedicated cohort, independently corroborated at 56–100% across four smaller cohorts spanning both urachal and non-urachal disease)', note:'The single most consistent, near-dominant event across every cohort checked. A real caveat, stated rather than overclaimed: TP53 is a generic tumor-suppressor gene mutated across most solid tumors broadly, so it is truncal here on frequency grounds, not on the same kind of diagnostic-specificity grounds this organ\'s own urothelial carcinoma entry\'s TERT trunk carries.' },
+];
+// Branch pair — KRAS and PIK3CA, both non-urachal-specific figures from the same Cigliola et al.
+// 2024 cohort above, checked for a same-tumor conflict against TP53 and each other: Benjamin et
+// al. (NPJ Precis Oncol, 2025, PMID 39799194, n=42) found PIK3CA non-significantly enriched in
+// (not competing against) MAPK-pathway-altered (KRAS-driven) tumors — real, directional, stated
+// as a trend rather than a proven cooperation, and measured in a urachal cohort, so the
+// direction is noted without importing the exact statistic onto this non-urachal entity.
+const REGIONS_BLADC = [
+  { id:'UU', name:'Lung', color:cssVar('--coral'), pos3d:{x:-0.3,y:1.3,z:0.3},
+    branch:{ gene:'KRAS mutation', class:'driver', ccf:'27.7% of non-urachal bladder adenocarcinoma (Cigliola et al., 2024)', note:'Lung is this cancer\'s single most common metastatic site (38.3% of metastatic patients, Park et al., Curr Oncol, 2023).' } },
+  { id:'UB', name:'Bone', color:cssVar('--azure'), pos3d:{x:-1.3,y:-0.5,z:0.2},
+    branch:{ gene:'KRAS mutation', class:'driver', ccf:'27.7% of non-urachal bladder adenocarcinoma (Cigliola et al., 2024)', note:'Same finding as at Lung. Bone is this cancer\'s second most common metastatic site (36.1% of metastatic patients, Park et al., 2023).' } },
+  { id:'UM', name:'Lymph nodes', color:cssVar('--amber'), pos3d:{x:1.2,y:-0.3,z:-0.5},
+    branch:{ gene:'PIK3CA mutation', class:'driver', ccf:'7.9% of non-urachal bladder adenocarcinoma — nearly identical to the urachal rate (7.5%) in the same cohort, a real, non-discriminating pattern (Cigliola et al., 2024)', note:'A lower-frequency finding than KRAS, checked against it for a same-tumor conflict: Benjamin et al. (2025) found PIK3CA trending toward, not away from, co-occurrence with MAPK/KRAS-pathway alteration — cooperating rather than competing, though that specific statistic was measured in a urachal cohort. Lymph nodes are this cancer\'s third most common metastatic site (30.6% of metastatic patients, Park et al., 2023).' } },
+  { id:'UL', name:'Liver', color:cssVar('--violet'), pos3d:{x:0.2,y:-1.3,z:0.4},
+    branch:{ gene:'PIK3CA mutation', class:'driver', ccf:'7.9% of non-urachal bladder adenocarcinoma (Cigliola et al., 2024)', note:'Same finding as at Lymph nodes. Liver is this cancer\'s fourth real metastatic site (20.9% of metastatic patients, Park et al., 2023).' } },
+];
+// Private pool — deliberately thin, the same "driverless except for a passenger" shape OCCC's
+// own private pool already uses in this same codebase, for the same reason: a candidate beyond
+// TP53/KRAS/PIK3CA (SMAD4, reported at 24% in urachal disease by a secondary review citing an
+// inaccessible primary source) was not independently verified for THIS entity in this pass's
+// own search — checked and not found, a real negative recorded as such rather than filled with
+// an unverifiable figure.
+const PRIVATE_POOL_BLADC = [
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
+];
+// HISTOLOGY — an independent citation-verification pass (2026-09-13) found Gopalan et al.'s own
+// cohort is entirely urachal (title: "Urachal Carcinoma: A Clinicopathologic Analysis of 24
+// Cases" — not the non-urachal disease this entity models), so its NOS/enteric/signet-ring
+// percentages are that paper's own measured urachal rates, not a non-urachal finding, and are
+// used here on that corrected basis. Grignon et al. (Cancer, 1991, PMID 1706216) independently
+// confirms the real, load-bearing fact this section actually needs: a dedicated 72-case series
+// analyzing 24 urachal AND 48 nonurachal bladder adenocarcinomas "according to their... histologic
+// type" for both groups, i.e. WHO's enteric/mucinous/NOS/signet-ring subtype framework is real and
+// applied to non-urachal disease too, not a urachal-only classification scheme — but that paper is
+// paywalled with no accessible full text, so its own non-urachal-specific percentages could not be
+// confirmed in this pass's own search (checked and not found, rather than assumed). The specific
+// proportions drawn here are therefore Gopalan's real, correctly-attributed urachal figures,
+// illustrating the shared subtype architecture rather than claimed as a non-urachal measurement.
+// Reuses drawGlandRing verbatim (zero new drawing code — the same primitive this atlas's own
+// colorectal adenocarcinoma entry already uses for its own gland-forming architecture), plus mucin
+// production named in text as a real, cited feature without a dedicated drawn structure (the "name
+// more than is drawn" treatment this atlas already gives LUAD's own undrawn growth patterns).
+const HISTOLOGY_BLADC = {
+  intro: 'Primary bladder adenocarcinoma — urachal and non-urachal alike — is subtyped under one shared WHO framework: an enteric pattern, gland-forming architecture that looks, under the microscope, much like ordinary colorectal adenocarcinoma; a mucin-producing pattern; and, less often, a signet-ring pattern, where the cytoplasm is entirely filled with a single mucin droplet, crushing the nucleus to one edge. The specific proportions shown here — roughly half NOS, over a third enteric, and a small minority signet-ring — are a dedicated case series\' own measured rates for the urachal form of this cancer; a clean, independently-verifiable breakdown specific to the non-urachal disease modeled here was checked for and not found in this pass\'s own search, so these figures illustrate the shared subtype spectrum rather than this entity\'s own measured rate.',
+  ariaSummary: 'Stylized microscopic field: several rounded glands with clear central lumens, each rimmed by a ring of columnar epithelial cell nuclei — the same gland-forming architecture as ordinary colorectal adenocarcinoma. Pale blue-gray mucin pools sit near some of the glands, and two round, clear signet-ring cells with an eccentric crescent nucleus appear off to one side.',
+  citation: 'Gopalan et al., Am J Surg Pathol, 2009, PMID 19252435 (urachal cohort; shared subtype framework independently confirmed for non-urachal disease by Grignon et al., Cancer, 1991, PMID 1706216).',
+  features: [
+    { key:'glands', label:'Enteric gland formation',
+      text:'Rounded glands with clear central lumens, rimmed by columnar epithelium — the same gland-forming architecture that gives this shared subtype spectrum its real molecular resemblance to colorectal adenocarcinoma.' },
+    { key:'mucin', label:'Mucin production',
+      text:'Pools of extracellular mucin within and around the glands — a real, recurrent feature across this shared subtype spectrum, present at varying degrees in both the urachal and non-urachal forms of this cancer.' },
+    { key:'signet', label:'Focal signet-ring cells',
+      text:'A minority finding — present focally in about 8% of a dedicated urachal case series — where the cytoplasm is entirely filled with a single mucin droplet, crushing the nucleus into a thin crescent against the cell membrane. Occasional here, not the defining feature it is in gastric diffuse-type adenocarcinoma.' },
+  ],
+};
+
 export const cancerDetails = {
   uc: {
     title:'Urothelial Carcinoma', screenLabel:'Urothelial carcinoma — tumor explorer',
     legendTitle:'Sites (real metastatic pattern, bone-dominant)',
     regions:REGIONS_UC, trunk:TRUNK_UC, privatePool:PRIVATE_POOL_UC,
     histology: HISTOLOGY_UC,
+  },
+  blnec: {
+    title:'Bladder Neuroendocrine Carcinoma', screenLabel:'Bladder neuroendocrine carcinoma — tumor explorer',
+    legendTitle:'Sites (real metastatic pattern, liver-dominant)',
+    regions:REGIONS_BLNEC, trunk:TRUNK_BLNEC, privatePool:PRIVATE_POOL_BLNEC,
+    histology: HISTOLOGY_BLNEC,
+  },
+  blscc: {
+    title:'Bladder Squamous Cell Carcinoma', screenLabel:'Bladder squamous cell carcinoma — tumor explorer',
+    legendTitle:'Sites (real metastatic pattern, lung-dominant)',
+    regions:REGIONS_BLSCC, trunk:TRUNK_BLSCC, privatePool:PRIVATE_POOL_BLSCC,
+    histology: HISTOLOGY_BLSCC,
+  },
+  bladc: {
+    title:'Bladder Adenocarcinoma', screenLabel:'Bladder adenocarcinoma (non-urachal) — tumor explorer',
+    legendTitle:'Sites (real metastatic pattern, lung-dominant)',
+    regions:REGIONS_BLADC, trunk:TRUNK_BLADC, privatePool:PRIVATE_POOL_BLADC,
+    histology: HISTOLOGY_BLADC,
   },
 };

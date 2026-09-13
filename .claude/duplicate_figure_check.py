@@ -68,6 +68,18 @@ DECLARED = [
     # explicitly stated as such in the note's own text ("the rest of the combined figure is
     # chromosome-7 gain or a splice/fusion event"), not a drifted restatement.
     {'key': 'kidneys|MET pathway alteration / chromosome 7 ga|81.3%, 1|18.6%, 1', 'reason': 'false positive: 81.3% is Linehan et al. (NEJM, 2016)\'s combined MET-mutation-or-splice-or-fusion-or-chromosome-7-gain figure for Type 1 papillary RCC; 18.6% is the point-mutation-only component within that same combined figure, stated as such in the note\'s own text — two real measurements of one event, not a drifted duplicate', 'until': None},
+    # SIX MORE, READ 2026-09-13 (bladder blnec/blscc/bladc authoring pass). All six are the same
+    # per-site-figures-on-one-citation-template class as the stomach RHOA/CLDN18 and thyroid
+    # RET/RAS pairs already declared above, plus one new sub-shape: two DIFFERENT citations for
+    # the SAME gene name (TERT promoter mutation), one belonging to this organ's own pre-existing
+    # uc entry and one to the new blnec entry, sharing this file's own standard citation
+    # phrasing near each other.
+    {'key': 'bladder|ASCL1/NEUROD1 expression|52.1%|42.3%', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2023 (Curr Oncol) cohort template — blnec\'s own Liver site (52.1%) and Bone site (42.3%)', 'until': None},
+    {'key': 'bladder|FAT1 mutation|27.2%, 2023|18.4%, 2023', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2023 cohort template — blscc\'s own Bone site (27.2%) and Liver site (18.4%)', 'until': None},
+    {'key': 'bladder|KRAS mutation|38.3%|36.1%', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2023 cohort template — bladc\'s own Lung site (38.3%) and Bone site (36.1%)', 'until': None},
+    {'key': 'bladder|PIK3CA mutation|30.6%, 2023|20.9%, 2023', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2023 cohort template — bladc\'s own Lymph nodes site (30.6%) and Liver site (20.9%)', 'until': None},
+    {'key': 'bladder|POU2F3 expression|35.5%, 2023|25.7%, 2023', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2023 cohort template — blnec\'s own Lymph nodes site (35.5%) and Lung site (25.7%)', 'until': None},
+    {'key': 'bladder|TERT promoter mutation (C228T / C250T)|2013, 70, 79%|2025, 100%, 11', 'reason': 'false positive: two unrelated citations for two different entities sharing one gene name — uc\'s own trunk note (Rachakonda 2013/Allory 2014, 70-79% across cohorts) vs blnec\'s own trunk note (Jaime-Casas 2025 ~75%, cross-referenced against Zheng et al. 2014\'s 100%/11-of-11 finding) — real, independently-verified figures for two different cancers, not one restated', 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

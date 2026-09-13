@@ -2075,6 +2075,99 @@ function genLungsSCLC(g, rnd){
   ];
 }
 
+// Bladder neuroendocrine carcinoma — the neuroendocrine histology family's FOURTH real
+// consumer (after Prostate's pneuro, Lungs' sclc, and this same family's own drawSmallCellSheet
+// primitive design). Zero new drawing code: same two drawSmallCellSheet calls + necrosisBlob as
+// genLungsSCLC, this entity's own real cited features (nuclear molding, naked nuclei,
+// geographic necrosis — Akbulut et al., 2024; Cancer, 1997, PMID 9010109).
+function genBlNEC(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const sheetA = drawSmallCellSheet(g, rnd, 220, 190, 175, 145, {spacing:8.5, moldingReach:1.35});
+  const sheetB = drawSmallCellSheet(g, rnd, 560, 340, 165, 130, {spacing:8.5, moldingReach:1.35, rot:0.3});
+  necrosisBlob(g, 430, 150, 90, 62, rnd, -0.1);
+  return [
+    {key:'molding', x:sheetA.cx, y:sheetA.cy},
+    {key:'naked',   x:sheetB.cx, y:sheetB.cy},
+    {key:'necrosis', x:430, y:150},
+  ];
+}
+
+// Bladder squamous cell carcinoma — one sheet showing both defining features together (unlike
+// Lungs' own genLUSC, which draws two SEPARATE zones for two different WHO histologic variants,
+// this entity's two features — keratin pearls and intercellular bridges — coexist within one
+// pure squamous carcinoma, not two variants). Reuses drawKeratinPearl verbatim and the same
+// bridge-line technique genLUSC's own non-keratinizing zone uses.
+function genBlSCC(g, rnd){
+  const sheet = {cx:400, cy:250, rx:320, ry:200};
+  g.appendChild(el('path', {d:blobPath(sheet.cx, sheet.cy, sheet.rx, sheet.ry, 0.1, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  const pearls = [{x:230, y:170, r:36}, {x:520, y:300, r:44}, {x:260, y:360, r:28}];
+  const cells = [];
+  for(let gx=-sheet.rx; gx<=sheet.rx; gx+=17){
+    for(let gy=-sheet.ry; gy<=sheet.ry; gy+=17){
+      if((gx/sheet.rx)**2 + (gy/sheet.ry)**2 > 0.9) continue;
+      const x = sheet.cx+gx+(rnd()*2-1)*3, y = sheet.cy+gy+(rnd()*2-1)*3;
+      if(pearls.some(p=>Math.hypot(x-p.x, y-p.y) < p.r*1.15)) continue;
+      cells.push({x, y});
+    }
+  }
+  cells.forEach((c, i)=>{
+    for(let j=i+1;j<cells.length;j++){
+      const d = Math.hypot(cells[j].x-c.x, cells[j].y-c.y);
+      if(d < 19) g.appendChild(el('line', {x1:c.x, y1:c.y, x2:cells[j].x, y2:cells[j].y, stroke:HE.cytoLn, 'stroke-width':1.1, opacity:0.75}));
+    }
+  });
+  cells.forEach(c=>drawCell(g, c.x, c.y, 7, 4.3+rnd()*1.8, rnd, {nucOffset:1.5}));
+  pearls.forEach(p=>drawKeratinPearl(g, p.x, p.y, p.r, rnd));
+  return [
+    {key:'pearls',  x:520, y:300},
+    {key:'bridges', x:sheet.cx, y:sheet.cy},
+  ];
+}
+
+// Bladder adenocarcinoma (non-urachal) — the enteric, gland-forming pattern. Reuses
+// drawGlandRing verbatim (zero new drawing code, the same primitive genPDAC/genLUAD already
+// use), scattered at random orientations the way genPDAC's own haphazard-arrangement gland
+// field is drawn.
+function genBlADC(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.cytoLite, opacity:0.5}));
+  const glands = [
+    {x:150, y:120, r:34}, {x:400, y:90,  r:28}, {x:640, y:160, r:32},
+    {x:230, y:300, r:30}, {x:480, y:340, r:36}, {x:150, y:420, r:26},
+    {x:660, y:400, r:30},
+  ];
+  glands.forEach(s=>{
+    const gg = el('g', {transform:`rotate(${(rnd()*90-45).toFixed(0)} ${s.x} ${s.y})`});
+    g.appendChild(gg);
+    drawGlandRing(gg, s.x, s.y, s.r, rnd, {nucMin:3.4, nucMax:4.8, cellR:11});
+  });
+  // mucin pools: small pale blue-gray extracellular mucin deposits near a couple of the
+  // glands — real, cited, present within and around enteric-pattern glands (Gopalan et al.,
+  // 2009), though heavy mucin production is chiefly a urachal, not non-urachal, feature (the
+  // intro text's own honesty distinction).
+  const mucinPools = [{x:310, y:190, rx:34, ry:24}, {x:560, y:250, rx:30, ry:22}];
+  mucinPools.forEach(p=>{
+    g.appendChild(el('path', {d:blobPath(p.x, p.y, p.rx, p.ry, 0.22, 10, rnd, rnd()*Math.PI), fill:'#dce8e6', stroke:'#b9cfcb', 'stroke-width':1, opacity:0.85}));
+  });
+  // focal signet-ring cells: reuses genGDiffuse's own signet-ring drawing verbatim (the
+  // family's second real consumer), drawn SPARINGLY — a minority, focal finding in non-urachal
+  // disease (Gopalan et al., 2009: present focally in 8% of a 24-tumor series), not this
+  // entity's own defining architecture the way it is for gastric diffuse-type adenocarcinoma.
+  const signets = [{x:585, y:130, r:16}, {x:610, y:160, r:13}];
+  signets.forEach(s=>{
+    const a = rnd()*Math.PI*2;
+    g.appendChild(el('circle', {cx:s.x, cy:s.y, r:s.r, fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1.4}));
+    g.appendChild(el('circle', {cx:s.x-s.r*0.22, cy:s.y-s.r*0.22, r:s.r*0.5, fill:'#ffffff', opacity:0.5}));
+    const nx = s.x+Math.cos(a)*s.r*0.68, ny = s.y+Math.sin(a)*s.r*0.68;
+    const ang = a*180/Math.PI + 90;
+    g.appendChild(el('ellipse', {cx:nx, cy:ny, rx:s.r*0.52, ry:s.r*0.20, transform:`rotate(${ang.toFixed(0)} ${nx} ${ny})`, fill:HE.nucDark, opacity:0.95}));
+  });
+  return [
+    {key:'glands', x:480, y:340},
+    {key:'mucin',  x:310, y:190},
+    {key:'signet', x:597, y:145},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -2099,6 +2192,9 @@ const GENERATORS = {
   seminoma: genSeminoma,
   nsgct: genNSGCT,
   uc:     genBladderUC,
+  blnec:  genBlNEC,
+  blscc:  genBlSCC,
+  bladc:  genBlADC,
   ptc:    genPTC,
   ftc:    genFTC,
   mtc:    genMTC,

@@ -77,6 +77,16 @@ const KNOWN_FAILURES = [
     'this atlas\'s histology views draw anywhere, for any cancer. Revisit only if a future pass finds a ' +
     'real, separately-drawable third feature in a source not yet read — not by lowering the floor and not ' +
     'by drawing basaloid as a plain sheet just to hit a count.' },
+  { check: 'cancer blscc histology', reason: 'The SAME exception class as LUSC above, on an equally strong ' +
+    'primary-source justification, not a weaker one — checked against that bar before declaring, per the ' +
+    'standing note that a second exception here needs its own real justification, not a copy of the first\'s. ' +
+    'Guo et al., Front Oncol, 2026, PMID 42482763, states the WHO-sourced diagnostic threshold verbatim: ' +
+    '"definitive morphological features, including keratin pearl formation and/or intercellular bridges" — ' +
+    'exactly these two, named as jointly sufficient ("and/or"), with nothing else offered as a defining ' +
+    'architectural feature. The other real findings this entity\'s own research turned up (diffuse CK14/' +
+    'desmoglein-3 expression, absence of GATA3/uroplakin III) are IHC marker facts, not gross/H&E ' +
+    'architecture this atlas\'s histology views draw for any cancer. Revisit only if a future pass finds a ' +
+    'real, separately-drawable third feature in a source not yet read.' },
 ];
 // PAGE ERRORS ARE A COUNT TOO (2026-09-10, user: 'an undeclared count is evidence of an unread count'). This harness
 // printed '2 page errors' on every run for as long as it has existed and nobody read them until a tolerated-count sweep

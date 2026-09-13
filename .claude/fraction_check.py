@@ -160,6 +160,13 @@ DECLARED = [
     # the discrepancy explicitly in the same sentence, so a reader sees both numbers and the
     # reason they differ.
     {'key': 'kidneys|field|18.6%|13/75', 'reason': "genuine source-internal inconsistency, not a matcher false positive: Linehan et al. (NEJM, 2016) themselves print 13/75 as 18.6% (actual value 17.3%); quoted verbatim as the source's own stated figure, with the discrepancy disclosed in the note's own text rather than silently corrected or hidden", 'until': None},
+    # 2026-09-13, bladder blscc citation-verification pass: a false positive pairing two
+    # UNRELATED figures that sit near each other in one provenance comment — EGFR's own ~10%
+    # focal-amplification rate (Hurst et al., J Pathol Clin Res, 2022, a real, separate finding)
+    # and Rose et al.'s (Oncogene, 2020) 0/71 activating-mutation count, corrected in the same
+    # edit that fixed that citation's own mistyped PMID. Fires twice because the comment block
+    # AND the ccf field both carry the same two nearby figures.
+    {'key': 'bladder|comment|~10%|0/71', 'reason': 'false positive: two unrelated figures on one EGFR branch-gene comment — Hurst et al. 2022\'s own ~10% focal-amplification rate and Rose et al. 2020\'s own 0/71 activating-mutation count — not one figure misstated as the other', 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

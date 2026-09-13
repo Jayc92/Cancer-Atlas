@@ -585,6 +585,52 @@ export const TRIALS_CONDITION_MAP = {
       + 'ductal-only, so no excludeIf for "ductal" is added on unconfirmed suspicion alone, per '
       + 'this file\'s own checked-not-assumed standard.',
   },
+  // blnec/blscc/bladc, 2026-09-13 (ordinary-organ batch, bladder): all three share the SAME
+  // collision shape UC's own "urothelial" keyword never had to guard against — "small cell",
+  // "squamous", and "adenocarcinoma" are each real, overloaded terms used across many other
+  // organs already active in this atlas. requireAlso:['bladder'] anchors each to the SAME
+  // declared condition string, the mechanism already proven for pneuro/pductal/psignet/pmuc.
+  blnec: {
+    query: 'small cell carcinoma of the bladder', parent: 'bladder cancer',
+    conditionKeywords: ['small cell', 'neuroendocrine', 'nec'], requireAlso: ['bladder'],
+    note: 'CORPUS-VOCABULARY SIGNAL live-caught a real gap before shipping (2026-09-13): a bare '
+      + '["small cell"] keyword missed real, on-topic parent-corpus condition strings that use '
+      + 'this entity\'s OWN display name instead — "Bladder Neuroendocrine Carcinoma", '
+      + '"Neuroendocrine Carcinoma of the Bladder", "NEC of the Bladder", "Metastatic Bladder '
+      + 'Large Cell Neuroendocrine Carcinoma" — the same seminoma/sclc-class miss (data rules '
+      + '22/33), caught by the signal rather than a hand read this time. "neuroendocrine" and '
+      + 'the bare acronym "nec" both added; requireAlso:[\'bladder\'] is what makes the bare '
+      + '3-letter acronym safe (same-string co-occurrence, not a bare substring scan).',
+  },
+  blscc: {
+    query: 'squamous cell carcinoma of the bladder', parent: 'bladder cancer',
+    conditionKeywords: ['squamous'], requireAlso: ['bladder'],
+    note: 'LIVE-VERIFIED 2026-09-13, exhaustive fetch (28 total) read via the real production '
+      + 'filter, not a page-limited approximation: 5/28 genuinely kept, 23/28 correctly dropped '
+      + '— every dropped string is a multi-condition basket trial listing "squamous cell '
+      + 'carcinoma" (lung/head-neck/cervical/skin/esophageal) and "bladder cancer" as SEPARATE '
+      + 'declared conditions, never as one string, so requireAlso correctly excludes them. One '
+      + 'kept result independently hand-verified (NCT06041503: "Adenocarcinoma of the Bladder", '
+      + '"Squamous Cell Carcinoma of the Bladder", "Testicular Germ Cell Tumors" — a real '
+      + 'multi-histology trial genuinely studying both this organ\'s SCC and ADC entries at '
+      + 'once); no mixed urothelial-carcinoma-with-squamous-differentiation string reached the '
+      + 'kept set (this entity\'s own WHO-pure-SCC criterion holds in the sample read).',
+  },
+  bladc: {
+    query: 'bladder adenocarcinoma', parent: 'bladder cancer',
+    conditionKeywords: ['adenocarcinoma'], requireAlso: ['bladder'],
+    note: 'LIVE-VERIFIED 2026-09-13, exhaustive fetch (61 total) read via the real production '
+      + 'filter. "adenocarcinoma" is this atlas\'s single most overloaded bare keyword (already '
+      + 'active for colon/lungs/pancreas/stomach/prostate); requireAlso correctly dropped every '
+      + 'unrelated-organ adenocarcinoma hit, including basket-trial condition arrays listing '
+      + 'several organs\' own adenocarcinomas as separate strings, and a 42-condition population-'
+      + 'screening trial (NCT05334069) whose sheer breadth made it the sharpest test of the '
+      + 'same-string requirement in this whole batch. 4/61 genuinely kept; the one independently '
+      + 'hand-verified (NCT06041503, shared with blscc above) is not urachal-specific, '
+      + 'consistent with this entity modeling non-urachal disease (see the organ file\'s own '
+      + 'entity-choice note) — no same-string "urachal" excludeIf was needed since no kept '
+      + 'string names urachus at all in this sample.',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------

@@ -1520,3 +1520,182 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   PROBLEM: UNDECLARED fraction_check flag 'kidneys|field|18.6%|13/75': kidneys:258 stated 18.6% vs 13/75 = 17.33% — fix it, declare it with a reason, or date it for re-read
   | DONE fraction_check: 87 field strings with fraction+percent, 6 mismatch flags; 35 comment blocks, 2 comment flags; 15 cross-half shared fractions, 0 unpaired; 1 tolerated-count problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-13T20:19:55Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 120 lines, last 12 below
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:291 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:157 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 37 flag(s) — 3 dated for re-read, 32 permanent with reason, 2 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/bladder.js|comment|(2) every source classifies status at th': js/organs/bladder.js:313 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag "js/organs/bladder.js|comment|matching this atlas's own OCCC precedent": js/organs/bladder.js:454 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 3 unscoped claims (3 absence, 0 false corpus universal), 31 universals flagged for a read, 6 world-scoped, 35 cancers indexed (DEFECT 3, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 3, OK-SCOPED 7, OK-SEARCH 19, UNIVERSAL-UNRESOLVED 31, UNIVERSAL-WORLD-SCOPED 6), 2 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:19:55Z reason=exit=1 marker="DONE fraction_check:" tool=fraction_check.py
+     output 38 lines, last 12 below
+  |   MISMATCH? prostate:395  stated 14% vs 25/51 = 49.02%
+  |   MISMATCH? thyroid:333  stated ~60% vs 43/100 = 43.0%
+  |   MISMATCH? thyroid:333  stated ~60% vs 34/43 = 79.07%
+  |   MISMATCH? thyroid:350  stated ~60% vs 43/100 = 43.0%
+  |   COMMENT MISMATCH? thyroid:307  stated 43-60% vs 34/43 = 79.07%
+  | TWO-YEAR-RANGE strings (human confirms-deliberate): 2
+  |    breast:37  [('1988', '2016'), ('2017', '2021')]
+  |    thyroid:36  [('1974', '2013'), ('1994', '2013')]
+  | SIDECAR {"metrics": {"comment_blocks": 37, "comment_flags": 2, "cross_half_flags": 0, "cross_half_pairs": 15, "field_flags": 8, "field_strings": 96, "two_year_range": 2}, "name": "fraction_check", "ratchet": []}
+  |   fraction_check: 8 flag(s) — 0 dated for re-read, 7 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED fraction_check flag 'bladder|field|22%|22/103': bladder:332 stated 22% vs 22/103 = 21.36% — fix it, declare it with a reason, or date it for re-read
+  | DONE fraction_check: 96 field strings with fraction+percent, 8 mismatch flags; 37 comment blocks, 2 comment flags; 15 cross-half shared fractions, 0 unpaired; 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:19:56Z reason=exit=1 marker="DONE duplicate_figure_check:" tool=duplicate_figure_check.py
+     output 88 lines, last 12 below
+  |   DRIFT? thyroid:441 vs :443  (gene A='RAS mutation (H/K/N-RAS)' B='RAS mutation (H/K/N-RAS)')
+  |      window: involvement 18% of cases Besic Gazic 2013
+  |      A=['18%', '2013']  B=['13%', '2013']
+  |   duplicate_figure_check: 22 flag(s) — 0 dated for re-read, 16 permanent with reason, 6 problem(s)
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'bladder|ASCL1/NEUROD1 expression|52.1%|42.3%': bladder:326 vs :328 A=['52.1%'] B=['42.3%'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'bladder|FAT1 mutation|27.2%, 2023|18.4%, 2023': bladder:392 vs :394 A=['27.2%', '2023'] B=['18.4%', '2023'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'bladder|KRAS mutation|38.3%|36.1%': bladder:446 vs :448 A=['38.3%'] B=['36.1%'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'bladder|PIK3CA mutation|30.6%, 2023|20.9%, 2023': bladder:450 vs :452 A=['30.6%', '2023'] B=['20.9%', '2023'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'bladder|POU2F3 expression|35.5%, 2023|25.7%, 2023': bladder:330 vs :332 A=['35.5%', '2023'] B=['25.7%', '2023'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'bladder|TERT promoter mutation (C228T / C250T)|2013, 70, 79%|2025, 100%, 11': bladder:250 vs :311 A=['2013', '70', '79%'] B=['2025', '100%', '11'] — fix it, declare it with a reason, or date it for re-read
+  | 
+  | DONE duplicate_figure_check: 5442 same-file string pairs compared, 25 drift flags, 6 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:19:57Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 43 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/bladder.js:187 — Bubendorf|2000 is at 198 (offset +11, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/bladder.js:118 — Park|2023 is at 129 (offset +11, name+year), 24 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/bladder.js:212 — Alessandrino|2020 is at 223 (offset +11, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/bladder.js:226 — Urol|2014 is at 237 (offset +11, name+year), 3 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/bladder.js:239 — Rachakonda|2013 is at 235 (offset -4, name+year), 3 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/bladder.js:239 — Rachakonda|2013 is at 235 (offset -4, name+year), 3 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/bladder.js:239 — Allory|2014 is at 250 (offset +11, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/bladder.js:239 — Allory|2014 is at 250 (offset +11, name+year), 2 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/bladder.js: 8 off line, 2 distinct [-4, 11]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 8, "pointer.identity_oracle": 272, "pointer.on_line": 261, "pointer.pointers_code": 477, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 622/622 hand-typed pointers resolve (file tracked, line in range), 477 code-and-instrument (floored) + 145 prose (reported, not floored) = 622 total, 261/272 with an author+year oracle land on their referent's line, 3 declared off-line, 8 flags, 41 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:20:23Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 70 lines, last 12 below
+  |   well-formed 'de Kouchkovsky'
+  |               js/organs/prostate.js:317
+  |   well-formed 'van Beek'
+  |               js/organs/stomach.js:245
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:107
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Collazo-Lorduy' at js/organs/bladder.js:446 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Jaime-Casas' at js/organs/bladder.js:310, js/organs/bladder.js:311, js/organs/bladder.js:335, js/organs/bladder.js:339 (4 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 30, "heads_total": 32, "imprecise": 8, "problems": 2, "records": 58, "well_formed": 22}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 32 multi-token heads on 58/870 records, 8 declared imprecise, 22 declared well-formed, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:20:23Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 24 lines, last 12 below
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:373
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:433
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:503
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   UNSCORED  SPENT  Jaime-Casas|2022|js/organs/bladder.js:336
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Jaime-Casas|2022|js/organs/bladder.js:336 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 4, "kept": 5, "population": 9, "preregistered": 8, "problems": 1, "scored_confirms": 8, "scored_falsifies": 0, "spent": 4}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 9 paren spans (4 spent, 5 kept), 8 scored (4 as TEST, 4 as FIT and worth no support), 0 falsifying, 1 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:26:02Z reason=exit=1 marker="==== DONE:" tool=regress.js
+     output 329 lines, last 12 below
+  | ==== DONE: 314 checks, 3 failures, 2 page errors (2 declared benign, 0 undeclared) ====
+  | REGRESS VERDICT: 2 undeclared failing check(s), 0 stale declaration(s), 0 undeclared page error(s), 0 stale benign declaration(s) — exit 1
+  | [
+  |  {
+  |   "type": "404",
+  |   "msg": "http://localhost:3057/favicon.ico"
+  |  },
+  |  {
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |  }
+  | ]
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:35:20Z reason=exit=1 marker="DONE internal_quote_check:" tool=internal_quote_check.py
+     output 19 lines, last 12 below
+  |   ok   IGNORES the two live mid-line uses of the word (position anchor, not a substring)
+  |   ok   and still finds a real marker in the same file as those two lines
+  |   ok   resolves a span rewrapped differently on each side, across two comment styles
+  |   ok   resolves a span whose target is a markdown blockquote
+  |   ok   FIRES on a copy differing from its target by TWO characters (real bytes, found live)
+  |   ok   and passes that same span once the two characters are corrected
+  |   ok   scope() takes .claude/ prose sources from the TRACKED list, skipping other extensions, nested paths and corpus files
+  |   ok   and a file that EXISTS ON DISK but is not in the tracked list stays OUT — the glob this replaced took it in, which is how an untracked draft moved a ratcheted metric
+  | SELFTEST PASS — fires on a drifted quote (real bytes), a two-character drift (real bytes), a non-unique span, a missing target, a self-target, an unmarked marker, an empty gutter and a malformed marker; ignores the word used as English; passes repaired and rewrapped quotes; and takes its population from git rather than from the filesystem
+  |   NOT AN ANCHOR: .claude/battery.py:814 -> .claude/citation_paren_ledger.py — quoted span occurs more than once in the target, 2 occurrences in the target
+  | SIDECAR {"metrics": {"internal_quote.flags": 1, "internal_quote.marked": 15, "internal_quote.verified": 14}, "name": "internal_quote_check", "ratchet": ["internal_quote.marked"]}
+  | DONE internal_quote_check: 14/15 marked internal quotes match their target under a span occurring exactly once, 1 flags, 41 files scanned for markers
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:35:46Z reason=exit=1 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 11 lines, last 12 below
+  |   ok   every entry uses a declared side, basis and verdict []
+  |   ok   every reason clears the 80-char floor []
+  |   ok   FIT is still exactly the four spans the rule was fit to
+  |   FAIL UNSCORED fires on a new span, alone on a scored population ["UNSCORED PAREN SPAN Newcomer|2027|js/organs/thyroid.js:99 (rule says SPENT). A ')' sits
+  |   ok   STALE fires when a scored span is gone ["STALE SCORING Travis|2011|js/organs/lungs.js:277: scored CONFIRMS on the KEPT side, but
+  |   ok   SIDE MOVED fires when the rule re-decides a scored span ['SIDE MOVED Travis|2011|js/organs/lungs.js:277: scored as KEPT, the rule now says SPENT.
+  |   ok   FALSIFIED fires on an entry recording the claim failing ['FALSIFIED at Bad|2028|js/organs/thyroid.js:1: this entry records the pre-registered clai
+  |   FAIL a fully scored population is clean ['FALSIFIED at Jaime-Casas|2022|js/organs/bladder.js:336: this entry records the pre-regis
+  |   ok   RULE LEFT ITS SHAPE fires on a flag-False paren-shadow and not on a flag-True one RULE LEFT ITS SHAPE at Ghost|2029|js/organs/thyroid.js:7: closed_year_
+  |   ok   basis_fit + basis_test == scored spans, and scored == population when clean {"basis_fit": 4, "basis_test": 5, "kept": 5, "population": 9, "preregistered": 9, "problems": 0, "scored_confirms": 8, "scored_falsifies": 1, "spent": 4}
+  | DONE citation_paren_ledger_selftest: 10 arms run, 2 failures
+==== END REFUSAL
+==== REFUSAL 2026-09-13T20:43:55Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 24 lines, last 12 below
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:373
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:433
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:503
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   UNSCORED  SPENT  Jaime-Casas|2022|js/organs/bladder.js:336
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Jaime-Casas|2022|js/organs/bladder.js:336 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 4, "kept": 5, "population": 9, "preregistered": 8, "problems": 1, "scored_confirms": 8, "scored_falsifies": 0, "spent": 4}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 9 paren spans (4 spent, 5 kept), 8 scored (4 as TEST, 4 as FIT and worth no support), 0 falsifying, 1 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T21:33:51Z reason=exit=1 marker="DONE fraction_check:" tool=fraction_check.py
+     output 39 lines, last 12 below
+  |   MISMATCH? thyroid:333  stated ~60% vs 43/100 = 43.0%
+  |   MISMATCH? thyroid:333  stated ~60% vs 34/43 = 79.07%
+  |   MISMATCH? thyroid:350  stated ~60% vs 43/100 = 43.0%
+  |   COMMENT MISMATCH? thyroid:307  stated 43-60% vs 34/43 = 79.07%
+  | TWO-YEAR-RANGE strings (human confirms-deliberate): 2
+  |    breast:37  [('1988', '2016'), ('2017', '2021')]
+  |    thyroid:36  [('1974', '2013'), ('1994', '2013')]
+  | SIDECAR {"metrics": {"comment_blocks": 38, "comment_flags": 4, "cross_half_flags": 0, "cross_half_pairs": 16, "field_flags": 6, "field_strings": 98, "two_year_range": 2}, "name": "fraction_check", "ratchet": []}
+  |   fraction_check: 8 flag(s) — 0 dated for re-read, 7 permanent with reason, 2 problem(s)
+  |   PROBLEM: UNDECLARED fraction_check flag 'bladder|comment|~10%|0/71': bladder:393 stated ~10% vs 0/71 = 0.0% — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: STALE declaration for fraction_check flag 'bladder|field|22%|22/103': no longer flagged — remove the declaration
+  | DONE fraction_check: 98 field strings with fraction+percent, 6 mismatch flags; 38 comment blocks, 4 comment flags; 16 cross-half shared fractions, 0 unpaired; 2 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T21:34:17Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 67 lines, last 12 below
+  |               js/organs/colon.js:164
+  |   well-formed 'de Kouchkovsky'
+  |               js/organs/prostate.js:317
+  |   well-formed 'van Beek'
+  |               js/organs/stomach.js:245
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:107
+  |   PROBLEM: STALE DECLARATION 'Collazo-Lorduy': declared, but no record carries that author any more. If it was fixed or the span was edited, delete the declaration in the same commit — a declaration for a head that is gone hides the next one.
+  | SIDECAR {"metrics": {"declared": 32, "heads_total": 31, "imprecise": 8, "problems": 1, "records": 56, "well_formed": 23}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 31 multi-token heads on 56/869 records, 8 declared imprecise, 23 declared well-formed, 1 problems
+==== END REFUSAL

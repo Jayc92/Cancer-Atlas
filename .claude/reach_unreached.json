@@ -6,15 +6,31 @@
    1
   ],
   [
+   "bladder.js|data-span-year||1991",
+   1
+  ],
+  [
+   "bladder.js|data-span-year||2005",
+   1
+  ],
+  [
    "bladder.js|data-span-year||2010",
    2
   ],
   [
+   "bladder.js|data-span-year||2025",
+   1
+  ],
+  [
    "bladder.js|data-span-year||2026",
-   3
+   12
   ],
   [
    "bladder.js|journal-adjacent-year|Curr Oncol|2023",
+   5
+  ],
+  [
+   "bladder.js|journal-adjacent-year|Urologic Oncology|2022",
    2
   ],
   [
@@ -27,6 +43,10 @@
   ],
   [
    "bladder.js|prose-year||2026",
+   2
+  ],
+  [
+   "bladder.js|semicolon-shadow|Akbulut|1997",
    2
   ],
   [

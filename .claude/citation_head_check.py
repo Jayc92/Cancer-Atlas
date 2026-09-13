@@ -164,6 +164,7 @@ WELL_FORMED = (
     'Barnholtz-Sloan',
     'Cittolin-Santos',
     'Iacobuzio-Donahue',
+    'Jaime-Casas',
     'Jamal-Hanjani',
     'Laurent-Puig',
     'Parra-Herran',

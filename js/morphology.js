@@ -345,6 +345,16 @@ export const MARGIN_STATUS = Object.freeze({
   // own entry already established, rather than declaring a new one for one more real quote of
   // the identical shape.
   mtc: { status: 'cited', category: 'wellCircumscribed', register: 'G', badgeSource: 'StatPearls, Medullary Thyroid Cancer (NBK459354)', badgeQuote: 'a single, unifocal, well-circumscribed mass', ref: 'NBK459354 PMID 29083765 — well circumscribed (sporadic form); familial MTC is "often bilateral and multifocal", carried on the growth axis instead' },
+  // blnec/blscc/bladc, 2026-09-13 (ordinary-organ batch, bladder): blnec's one real gross-
+  // register candidate rests on a single modest (n=17), non-English-language series with no
+  // second corroborating source found in this pass — 'unread' rather than forcing a category
+  // fit on thin evidence. blscc and bladc: checked and not found — the real "ulcerative"/
+  // "nodular" finding for blscc is a GROWTH-pattern statement (carried on that axis below), not
+  // a gross-circumscription one; bladc's own gross-register information exists only for
+  // metastatic (pseudomyxoma peritonei) disease, not the primary tumor.
+  blnec: { status: 'unread', ref: 'one candidate source found (Chinese J Pathol, 2014, PMID 25582251, n=17: "polypoid, lobulated, fungating or ulcerous structures") — single small non-English series, not corroborated by a second source in this pass', until: '2026-10-01' },
+  blscc: { status: 'uncharacterised', ref: 'checked 2026-09-13 — the real gross finding (Shokeir et al., BJU Int, 2004, PMID 14690486) is a GROWTH-pattern statement, not gross circumscription; no separate margin/circumscription sentence found' },
+  bladc: { status: 'uncharacterised', ref: 'checked 2026-09-13 — gross-register description exists only for metastatic (pseudomyxoma peritonei) disease, not the primary tumor, in what was accessible this pass' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -469,6 +479,16 @@ export const GROWTH_STATUS = Object.freeze({
   // citations already are, mapped onto the SAME existing 'infiltrative' category ptc/pdac use
   // rather than a new one.
   atc: { status: 'cited', category: 'infiltrative', register: 'H', badgeSource: 'StatPearls, Anaplastic Thyroid Cancer (NBK538179)', badgeQuote: 'an infiltrative growth pattern', ref: 'NBK538179 PMID 30844206 — EDGE, histologic (H disclosed): "Necrosis, an elevated mitotic rate, and an infiltrative growth pattern are common in all 3 [microscopic] forms"; RENDERED, reusing the existing infiltrative category' },
+  // blnec/blscc/bladc, 2026-09-13 (ordinary-organ batch, bladder). blnec's own real candidate
+  // (the same single small non-English series the margin axis already flags) describes gross
+  // shape, not a named growth-pattern category, so it stays with the margin axis's own
+  // caveat rather than being split across both. blscc has a real, GROSS-register, cited growth
+  // finding (Shokeir 2004) — label-only, no wired category, since "ulcerative" has no existing
+  // render form and this is a real but modest single-review source. bladc: checked and not
+  // found for the primary tumor specifically.
+  blnec: { status: 'unread', ref: 'same single candidate source as the margin axis (PMID 25582251, n=17) — describes gross shape only, not a named growth-pattern category', until: '2026-10-01' },
+  blscc: { status: 'cited', label: 'ulcerative (non-bilharzial form)', register: 'G', badgeSource: 'Shokeir, BJU Int, 2004 (PMID 14690486)', badgeQuote: 'At cystoscopy tumours are predominantly ulcerative', ref: 'PMID 14690486 — scoped to the non-bilharzial (Western) form this entity models; the bilharzial form is real but genuinely different ("predominantly nodular," same source) and not modeled; not drawn (no wired category)' },
+  bladc: { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register growth-pattern sentence found for the primary tumor specifically in this pass\'s own search' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -676,6 +696,17 @@ export const EXTENT_STATUS = Object.freeze({
   // standing rule (SEER Summary Stage, never AJCC) does not admit as a substitute.
   prcc: { status: 'uncharacterised', site: 'kidneys', uncharacterisedReason: 'the share-bound rule forbids the ccRCC/organ aggregate at ~9-13% share; no dedicated SEER Summary Stage breakdown specific to papillary RCC was found — only an AJCC T-stage-at-presentation proxy (Keegan et al., 2012, PMID 22698625: T3+ 17.6%), which this atlas\'s own standing rule (SEER Summary Stage, never AJCC) does not admit', ref: 'checked 2026-09-13 — no SEER Stat Facts page for this histologic subtype' },
   chrcc: { status: 'uncharacterised', site: 'kidneys', uncharacterisedReason: 'the share-bound rule forbids the ccRCC/organ aggregate at ~2-4% share; no dedicated SEER Summary Stage breakdown specific to chromophobe RCC was found — only an AJCC T-stage-at-presentation proxy (Keegan et al., 2012, PMID 22698625: T3+ 16.9%) and a 5/10-year recurrence-free-survival figure (Marko et al., 2021: 89%/79%), neither a SEER Summary Stage distribution', ref: 'checked 2026-09-13 — no SEER Stat Facts page for this histologic subtype' },
+  // blnec/blscc/bladc, 2026-09-13 (ordinary-organ batch, bladder): all three subtypes' own
+  // shares (~3.2%/~3.1%/~1.9%) fail the share-bound rule against the bladder-organ aggregate
+  // (uc's own ~92% share is what lets uc itself use that aggregate directly) by wide margins,
+  // and no dedicated SEER Summary Stage breakdown specific to any of the three was found. blnec
+  // has a real, if not SEER-Summary-Stage-formatted, staging-adjacent source (Sci Rep, 2023,
+  // PMID 37253772, n=975: M0 75.7%/M1 23.6%) — a real M-stage split, not the localized/
+  // regional/distant/unknown categories this axis specifically renders, so it stays
+  // uncharacterised rather than being forced into that shape.
+  blnec: { status: 'uncharacterised', site: 'bladder', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at ~3.2% share; the one dedicated staging source found (Sci Rep, 2023, PMID 37253772, n=975) gives M-stage (M0 75.7%/M1 23.6%), not the SEER Summary Stage localized/regional/distant/unknown format this axis renders', ref: 'checked 2026-09-13 — no SEER Stat Facts page or SEER-Summary-Stage-formatted source found for this histologic subtype' },
+  blscc: { status: 'uncharacterised', site: 'bladder', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at ~3.1% share; no dedicated SEER Summary Stage breakdown specific to bladder squamous cell carcinoma was found — only pathologic-TNM and organ-confined/non-organ-confined splits (Abdollah et al., 2012, PMID 21810161; Guo et al., 2026, PMID 42482763), neither the SEER Summary Stage format', ref: 'checked 2026-09-13 — no SEER Stat Facts page for this histologic subtype' },
+  bladc: { status: 'uncharacterised', site: 'bladder', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at ~1.9% share; no clean SEER Summary Stage breakdown specific to non-urachal bladder adenocarcinoma was found (the one dedicated SEER cohort located, Natale et al., 2019, PMID 31395362, pools all adenocarcinoma subtypes and its full text was paywalled)', ref: 'checked 2026-09-13 — no SEER Stat Facts page or per-subtype stage-at-diagnosis source found for this histologic subtype' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';
@@ -877,6 +908,19 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   // papillary RCC shares clear cell RCC's own proximal-tubule lineage, matching the organ
   // default (kidneys: 0, Cortex) exactly.
   chrcc: 1,
+  // bladc ADDED 2026-09-13 (ordinary-organ batch, bladder) — the SAME exemption expiry as
+  // endo/pductal/lusc/sclc/ilc/chrcc above: bladder goes from one active entry (uc, no override
+  // needed — arises anywhere along the urothelium, matching the organ default) to four, and
+  // non-urachal adenocarcinoma genuinely arises from glandular metaplasia (cystitis glandularis)
+  // at the trigone/bladder-neck region, not from ordinary urothelium along the lateral walls.
+  // Front Surg, 2023, PMID 36911607: cystitis glandularis (intestinal type) "is more common in
+  // the bladder neck and trigone." Index 1 is the Trigone hotspot, whose own text was extended
+  // in this same pass to name this origin directly — the reserve_check requirement this
+  // mechanism enforces. blnec and blscc need no entry here: Park et al. 2023 gives no
+  // within-bladder subsite breakdown for either (a genuine negative finding, not an omission),
+  // so both fall back to the organ default rather than asserting an origin this pass could not
+  // independently confirm.
+  bladc: 1,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never
