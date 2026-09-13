@@ -11,7 +11,7 @@ export const markerSpec = { points:[{heightFrac:0.60, angle:40}] };
 
 export const cancerEntries = [
   { id:'hcc',   name:'Hepatocellular carcinoma',         share:'~75% of primary liver cancers (McGlynn et al., Hepatology, 2021)', active:true,  organKey:'liver' },
-  { id:'ichol', name:'Intrahepatic cholangiocarcinoma',  share:'~10–15% of primary liver cancers', active:false, organKey:'liver' },
+  { id:'ichol', name:'Intrahepatic cholangiocarcinoma',  share:'~10–15% of primary liver cancers', active:true, organKey:'liver' },
 ];
 
 // Real anatomy, not procedural: NIH 3D, "Human Reference Atlas 3D Reference Object Library"
@@ -140,7 +140,7 @@ export const organDetail = {
     // soon") starts here instead of in hepatocytes, the same way this atlas already contrasts
     // ductal vs lobular breast cancer origin at the breast's own hotspots.
     { key:'bileducts', label:'Bile ducts', pos:[0.0393,0.0144,0.0174],
-      text:'The channels carrying bile, made by hepatocytes, out of the liver toward the gallbladder and intestine. Intrahepatic cholangiocarcinoma — the other real primary liver cancer this atlas lists, not yet wired up — arises from the cells lining these ducts instead of from hepatocytes.' },
+      text:'The channels carrying bile, made by hepatocytes, out of the liver toward the gallbladder and intestine. Intrahepatic cholangiocarcinoma — the other real primary liver cancer this atlas lists — arises from the cholangiocytes lining these ducts instead of from hepatocytes (Banales et al., Nat Rev Gastroenterol Hepatol, 2020).' },
     { key:'capsule', label:'Hepatic capsule', pos:[-0.0009,0.0768,0.0276],
       text:'Glisson\'s capsule — the thin fibrous membrane covering the liver\'s outer surface, richly supplied with pain-sensing nerves that a healthy liver\'s own tissue lacks, which is why liver disease is often painless until the capsule itself is stretched or irritated.' },
   ],
@@ -338,6 +338,98 @@ const HISTOLOGY_HCC = {
   ],
 };
 
+// ============================================================
+// INTRAHEPATIC CHOLANGIOCARCINOMA (iCCA) — 2026-09-13, the batch's own liver entry.
+// ============================================================
+// TRUNK — the same STATUS-TRUNK shape thyroid's FTC entry already established (no single
+// founder gene; the gene field is a descriptive phrase, not a real symbol), because iCCA
+// genuinely has no near-universal driver: no gene in any cohort checked exceeds ~30%.
+// Farshidfar et al. (Cell Reports, 2017, PMID 28297679, PMCID PMC5493145) found unsupervised
+// clustering splits iCCA into molecularly distinct groups with ZERO shared membership between
+// an IDH1/2-mutant cluster and an FGFR2-fusion cluster ("cluster 1 included all seven cases
+// with an IDH1 or IDH2 hotspot mutation, while... cluster 3 contained all five FGFR2 fusion
+// cases"). Lowery et al. (Clin Cancer Res, 2018, PMID 29848569, PMCID PMC6642361, N=195,
+// intrahepatic-specific subset N=158) directly tested this and found IDH1 mutation and FGFR2
+// fusion mutually exclusive (OR 0.144, p=0.030, 1/195 co-mutant) — independently corroborated by
+// Farshidfar's own non-overlapping clusters. A third real group exists too: TP53 mutation
+// (20-24%, Lowery et al., 2018) is itself exclusive with IDH1 (OR 0.162, p=0.001, same source),
+// and KRAS mutation (~20%, Farshidfar et al., 2017) recurs separately — CORRECTED after an
+// independent verification pass found no source actually shows these two genes co-occurring or
+// clustering together; the two are stated as separate, uncorrelated findings, not a joint "road."
+// Neither is modeled at branch/private-pool level here, the same "third road, not modeled in
+// this tumor" treatment thyroid's own DICER1 gets in its FTC trunk note.
+const TRUNK_ICHOL = [
+  { gene:'One of several founding roads — IDH1/2 mutation, FGFR2 fusion, or (less well-characterized) TP53 or KRAS alteration, rarely more than one', class:'driver', ccf:'IDH1/2 mutation ~15.5–31.6% across independent cohorts — Jiao et al., Nat Genet, 2013, PMID 24185509: 19-20% (IDH1+IDH2 combined); Jusakul et al., Cancer Discov, 2017, PMID 28667006: 31.6% within its own IDH-enriched cluster (IDH1+IDH2 combined); Zhu et al., Ann Surg Oncol, 2014, PMID 24889489: 15.5% (IDH1 only, IDH2 not combined in); Lowery et al., 2018: 30% (IDH1 only, as reported) · FGFR2 fusion ~10–15% (Lowery 2018: 14%; Vogel, Annu Rev Med, 2023, PMID 36170665: 10-15%) · both together in only 1 of 195 tumors (Lowery 2018)', note:'Unlike this organ\'s own HCC entry, whose TERT promoter mutation is truncal because it comes first in TIME, iCCA has no single founding event at all — real cross-cohort variability this wide is itself the finding, the same "note real variability, don\'t present one figure as universal" treatment this file\'s own TERT note already uses. Both IDH1/2 mutation and FGFR2 fusion are clinically actionable: ivosidenib is approved for IDH1-mutant cholangiocarcinoma, and pemigatinib/futibatinib/infigratinib are each approved specifically for FGFR2-fusion-positive disease — real, separate biomarker-defined patient populations, not a lab curiosity.' },
+];
+// SITES — no single dedicated all-sites study exists for iCCA the way Katyal et al. anchors
+// this organ\'s own HCC entry; two real, differently-scoped SEER studies disagree on magnitude
+// (a disclosed discrepancy, same honesty precedent as HCC\'s own Katyal-vs-Zhuang note above),
+// and the genuinely distinguishing fact — a real predilection for regional lymph nodes and
+// peritoneal spread relative to HCC — comes from a THIRD, dedicated surgical-series source.
+//
+// BRANCH — IDH1/2 mutation (the modeled tumor\'s own founding road, at 2 sites) and FGFR2
+// fusion (the other road, not modeled in this tumor, at 2 sites) — the same "taken road / other
+// road, split two sites each" architecture as thyroid FTC\'s NRAS/PAX8-PPARγ pair, not a new
+// mutation-framing model. Checked against this organ\'s own HCC ledger (TERT/TP53/CTNNB1/ARID1A/
+// ARID2/NFE2L2): TERT promoter mutations are reported ABSENT in cholangiocarcinoma (Huang et
+// al., Eur J Cancer, 2015, PMID 25843513, the same multi-tumor-type screen this file\'s own TERT
+// note already draws on) and CTNNB1 mutation is real but negligible here (0.6% of 200 resected
+// iCCA, Zhu et al. 2014) — neither reused. TP53 is real (20-24%) but excluded for the mutual-
+// exclusivity reason stated in the trunk note above, the same class of check that kept AXIN1 out
+// of this organ\'s own private pool.
+const REGIONS_ICHOL = [
+  { id:'IH', name:'Lymph nodes', color:cssVar('--coral'), pos3d:{x:1.2,y:0.5,z:-0.4},
+    branch:{ gene:'IDH1/2 mutation', class:'driver', ccf:'~15.5–31.6% of iCCA across independent cohorts (see trunk note); most intrahepatic-specific — 30% ICC vs. 5.4% extrahepatic CCA in the same cohort (Lowery et al., 2018)', note:'A metabolic-enzyme mutation that produces an oncometabolite (2-hydroxyglutarate) rather than disabling a classic tumor suppressor. Regional lymph-node involvement is a genuinely distinguishing feature of this cancer relative to this organ\'s own HCC entry: 38.8% of resected iCCA patients who underwent lymphadenectomy had metastatic nodes (200/515, Bagante et al., J Gastrointest Surg, 2018, PMID 28424987) — real surgical-staging data, distinct from the smaller distant-metastasis lymph-node share below, which is why lymphadenectomy is now routine in iCCA resection in a way it is not for HCC.' } },
+  { id:'IP', name:'Peritoneum', color:cssVar('--azure'), pos3d:{x:-1.5,y:0.8,z:0.35},
+    branch:{ gene:'IDH1/2 mutation', class:'driver', ccf:'same as the Lymph nodes site', note:'The same metabolic-enzyme mutation shown at a second site. Peritoneal spread is a real, documented feature of this cancer — "lymph node metastasis and peritoneal carcinomatosis, which are common in iCCA" (Affò et al., Am J Pathol, 2025, PMID 39117110) — but no population-level percentage for peritoneal spread specifically was found after an extensive search, the same honesty precedent this atlas\'s own unclaimed-figure sites already use (LUAD\'s adrenal gland, ccRCC\'s liver/brain, HCC\'s adrenal gland above).' } },
+  { id:'IU', name:'Lung', color:cssVar('--amber'), pos3d:{x:-0.2,y:1.3,z:0.25},
+    branch:{ gene:'FGFR2 fusion', class:'driver', ccf:'~10–15% of iCCA (Vogel, 2023; Lowery 2018: 14%); essentially intrahepatic-specific — 14% ICC vs. 0% extrahepatic CCA in the same 195-tumor cohort (Lowery et al., 2018)', note:'A gene-fusion event, not a point mutation — a real structural/mechanistic contrast to the IDH1/2 mutation shown at this cancer\'s other two sites, and mutually exclusive with it (1 of 195 tumors carried both, Lowery et al., 2018). Distant-site metastasis figures for this organ carry a real, disclosed cross-study discrepancy the same way HCC\'s own Lung/Bone sites do: 9.0% of metastatic iCCA reach lung in one SEER cohort (Wang et al., Cancer Medicine, 2020, PMID 31876990) versus 27.6% in a second, differently-denominated SEER cohort comparing iCCA against HCC directly (Wu et al., Journal of Cancer, 2017, PMID 28819435) — a real discrepancy, not a rounding difference, likely reflecting the two studies\' different metastatic-site classification conventions.' } },
+  { id:'IB', name:'Bone', color:cssVar('--violet'), pos3d:{x:0.3,y:-1.3,z:0.3},
+    branch:{ gene:'FGFR2 fusion', class:'driver', ccf:'same as the Lung site', note:'The same gene-fusion event shown at a second site. Bone metastasis frequency shows the identical cross-study pattern as Lung: 6.2% (Wang et al., 2020) versus 18.9% (Wu et al., 2017) — both real, dedicated iCCA-specific SEER analyses, disclosed rather than silently resolved to one number.' } },
+];
+const PRIVATE_POOL_ICHOL = [
+  { gene:'BAP1 mutation', class:'driver', ccf:'~20% of iCCA (13/64 combined cohorts, Jiao et al., Nat Genet, 2013; 19% independently in Lowery et al., 2018, 30/158) — two independent cohorts converging closely', note:'Disrupts a chromatin-remodeling and DNA-repair tumor suppressor. Shares molecular-cluster membership with this cancer\'s own IDH1/2- and FGFR2-fusion-defined subgroups (Jusakul et al., 2017) and is directly tested exclusive with the TP53/KRAS axis this cancer\'s trunk note names as a third, unmodeled road (Lowery et al., 2018: BAP1×TP53 OR 0.093 p=0.004; BAP1×KRAS OR 0.000 p=0.017) — cooperating with, not competing against, the two branch genes above.' },
+  { gene:'ARID1A mutation', class:'driver', ccf:'~14–23% of iCCA (9/64, Jiao et al., 2013; 23% intrahepatic-specific, Lowery et al., 2018)', note:'Another SWI/SNF chromatin-remodeling gene. Jiao et al. (2013), verbatim, of the three chromatin-remodeling genes it profiles (ARID1A, BAP1, and PBRM1) collectively: "these mutations were not mutually exclusive: three tumors contained mutations in multiple chromatin-remodeling genes" — the paper does not isolate which specific pair co-occurred in those three tumors, so this is real, checked evidence AGAINST a hard exclusivity across the group rather than a direct confirmation of the ARID1A/BAP1 pair specifically. Either way, unlike this organ\'s own ARID1A/ARID2 pair in HCC\'s pool above, which Guichard et al. found genuinely exclusive and which needed the EXCLUSIVE_PAIRS_HCC constraint, nothing found here shows ARID1A and BAP1 exclusive, so no comparable constraint is needed.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'Background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
+];
+// HISTOLOGY — a real, gland-forming (tubular/acinar) adenocarcinoma with a dense desmoplastic
+// stroma, genuinely different from this organ\'s own HCC entry (trabecular/pseudoglandular/
+// solid/macrotrabecular, no gland lumens at all). Verified directly: "Small bile duct iCCA
+// presents as a small-sized tubular or acinar adenocarcinoma with nodular growth invading the
+// liver parenchyma, and with no or minimal mucin production. [Large bile duct iCCA] comprises
+// mucin-producing columnar tumour cells arranged in a large duct or papillary architecture"
+// (Banales et al., Nat Rev Gastroenterol Hepatol, 2020, PMID 32606456, PMCID PMC7447603) — a
+// real small-duct/large-duct dichotomy, drawn as two zones rather than picking one. The
+// desmoplastic stroma is independently confirmed as a defining contrast with HCC specifically —
+// CORRECTED to the source's own word order and wording after an independent verification pass
+// caught a misquote (the original draft reordered the sentence and substituted "distinguishes"
+// for the source's own "differentiates"): "a prominent desmoplastic reaction" is what
+// "differentiates the most common macroscopic subtype (eg, mass-forming type) of this hepatic
+// tumor from conventional hepatocellular carcinoma" (Affò et al., Am J Pathol, 2025, PMID
+// 39117110), with cancer-associated fibroblasts named as the dominant stromal population — directly
+// corroborated by Ilyas & Gores, Gastroenterology, 2013, PMID 24140396: "CCAs are surrounded by
+// a dense stroma that contains many cancer-associated fibroblasts." Origin confirmed directly
+// against the existing Bile ducts hotspot text above (cholangiocytes/hepatic progenitor cells;
+// Banales et al., 2020) — no correction needed. ZERO NEW DRAWING CODE: js/histology.js's
+// drawGlandRing (already reused by genCRC/genPDAC/genLUAD/genProstate) directly matches the
+// small-duct tubular/acinar pattern, and drawFrond with a fibrovascular core (already reused by
+// genHGSOC/genPTC/genLGSC/genBladderUC) directly matches the large-duct papillary pattern — the
+// third instance of this atlas\'s zero-new-code histology-family reuse, after pductal\'s
+// cribriform/frond reuse and lungs\' SCLC reuse of drawSmallCellSheet.
+const HISTOLOGY_ICHOL = {
+  intro: 'Intrahepatic cholangiocarcinoma arises from the cholangiocytes lining the bile ducts, and unlike this organ\'s own hepatocellular carcinoma entry, it is a true gland-forming adenocarcinoma. Small-duct tumors form small tubular or acinar glands with little mucin, invading directly into the liver; large-duct tumors instead form mucin-producing papillary architecture. Both are set within a dense, fibroblast-rich desmoplastic stroma — a defining contrast with this organ\'s own hepatocellular carcinoma, which has no stroma reaction like it at all.',
+  ariaSummary: 'Stylized microscopic field: a dense pink fibrous stroma dominates the field, with scattered small, well-formed glandular rings of columnar tumor cells scattered haphazardly through it — the small-duct pattern. In one region, a larger papillary frond with a fibrovascular core projects into an open space, its surface lined by mucin-producing columnar cells — the large-duct pattern.',
+  citation: 'Banales et al., Nat Rev Gastroenterol Hepatol, 2020, PMID 32606456, PMCID PMC7447603; Affò et al., Am J Pathol, 2025, PMID 39117110; Ilyas & Gores, Gastroenterology, 2013, PMID 24140396.',
+  features: [
+    { key:'stroma', label:'Desmoplastic stroma',
+      text:'A dense, fibrous, fibroblast-rich background dominating the field — the defining contrast with this organ\'s own hepatocellular carcinoma, which shows no comparable stroma reaction. Cancer-associated fibroblasts within it actively promote this tumor\'s progression.' },
+    { key:'smallduct', label:'Small-duct glands',
+      text:'Small, well-formed tubular or acinar glands with little to no mucin, invading haphazardly through the stroma — the more common of this cancer\'s two real architectural patterns.' },
+    { key:'largeduct', label:'Large-duct papillary frond',
+      text:'A papillary projection with a fibrovascular core, its surface lined by mucin-producing columnar tumor cells — the second real pattern, arising from the larger bile ducts rather than the small peripheral ones.' },
+  ],
+};
+
 export const cancerDetails = {
   hcc: {
     title:'Hepatocellular Carcinoma', screenLabel:'Hepatocellular carcinoma — tumor explorer',
@@ -345,5 +437,11 @@ export const cancerDetails = {
     regions:REGIONS_HCC, trunk:TRUNK_HCC, privatePool:PRIVATE_POOL_HCC,
     exclusivePairs:EXCLUSIVE_PAIRS_HCC,
     histology: HISTOLOGY_HCC,
+  },
+  ichol: {
+    title:'Intrahepatic Cholangiocarcinoma', screenLabel:'Intrahepatic cholangiocarcinoma — tumor explorer',
+    legendTitle:'Sites (real distant-metastasis & nodal pattern)',
+    regions:REGIONS_ICHOL, trunk:TRUNK_ICHOL, privatePool:PRIVATE_POOL_ICHOL,
+    histology: HISTOLOGY_ICHOL,
   },
 };

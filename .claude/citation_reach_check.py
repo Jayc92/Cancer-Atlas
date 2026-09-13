@@ -223,6 +223,12 @@ DECLARED_UNREACHED = {
         'Respiratory Archives; zero records corpus-wide, so the corroborating source the comment '
         'exists to name reaches no instrument. Counted separately from Riihimäki rather than '
         'folded into it because the two are different papers and a merged count would hide one.',
+    'etal-malformed-head:Affò':
+        'NON-ASCII SURNAME, same cause and same held fix (widen SURNAME) as Riihimäki/Conejero '
+        'Merchán above. Two spans, liver.js:384 and :408, both Affò et al., Am J Pathol, 2025, '
+        'PMID 39117110, the iCCA histology/desmoplastic-stroma source cited for that entry\'s own '
+        'REGIONS_ICHOL and HISTOLOGY_ICHOL content; zero records corpus-wide for this author. '
+        'Counted separately, same reasoning: a merged count would hide which paper is unreached.',
     'etal-malformed-head:Li D':
         'INITIAL IN HEAD, PubMed style — the exact shape that started this whole check ("Li Z et '
         'al." in liver.js). One span, colon.js:225, Front Oncol 2021; zero records for that '

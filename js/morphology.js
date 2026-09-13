@@ -268,6 +268,11 @@ export const MARGIN_STATUS = Object.freeze({
   // is not entry-specific. NEGATIVE → not characterised at gross level in the sources read.
   tnbc:     { status: 'uncharacterised', ref: 'R23 — read 2026-09-09: no gross-register TNBC/basal-like margin sentence found; Livasy PMID 16341146 is histologic; IBC vocabulary PMC7920867 is not entry-specific' },
   hcc:      { status: 'cited', category: 'nodular', ref: 'R11 — named divergence with counts (nodular 348/400 vs infiltrative 52/400), RENDERED third, 2026-09-09' },
+  // ichol, 2026-09-13 batch: Banales et al. 2020 (PMID 32606456) describes small-duct iCCA as
+  // showing "nodular growth invading the liver parenchyma" — a growth-pattern statement, not a
+  // gross margin/circumscription description; checked and not found at the register this axis
+  // needs.
+  ichol:    { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register margin/circumscription sentence found in Banales et al., Nat Rev Gastroenterol Hepatol, 2020 (PMID 32606456), Affò et al., 2025 (PMID 39117110), or Ilyas & Gores, 2013 (PMID 24140396)' },
   // GBM: re-read 2026-09-09 on the user's biology-first distrust (the seed was a growth fact borrowed as a margin).
   // R21, Iacob & Dinca, J Med Life 2009 (PMC3019011, PMID 20108752, CC BY), Pathology: "Grossly, it appears
   // topographically diffuse, a poorly delineated mass with no capsula". RULED (user, 2026-09-09): the margin
@@ -409,6 +414,14 @@ export const GROWTH_STATUS = Object.freeze({
   uc:       { status: 'cited', label: 'papillary, exophytic (majority)', register: 'G', badgeSource: 'Future Sci OA 2026 (PMC12893692); J Clin Invest 2026 (PMC12948436)', ref: 'R19 PMC12893692 — PLACEMENT (~75% non-muscle-invasive), invasive minority named; not drawn' },
   tnbc:     { status: 'uncharacterised', ref: 'R24 — read 2026-09-10: PMC7550871 (Front Oncol 2020, hereditary breast/ovarian pathology) carries pushing borders, necrosis and sheet-like growth in the HISTOLOGIC register only; the harvest seed (NST page, syncytial infiltrative) is H; PathologyOutlines probe 2026-09-10T16:38Z → HTTP 429, third window — no gross-register growth sentence reached' },
   hcc:      { status: 'cited', label: 'single nodular (majority)', register: 'G', badgeSource: 'J Hepatocell Carcinoma 2024 (PMC11007400); Gut 2023 (PMC10579519)', ref: 'R12 PMC11007400 — COUNT: the majority (types I+II, 247/400 by R11) is single, which is the default; confluent multinodular minority named; not drawn' },
+  // ichol, 2026-09-13 batch: Banales et al. 2020 (PMID 32606456), read directly, verbatim —
+  // "Small bile duct iCCA presents as a small-sized tubular or acinar adenocarcinoma with
+  // NODULAR GROWTH invading the liver parenchyma". Scoped to the small-duct subtype specifically
+  // (the quote's own subject), not to "the majority" of iCCA overall — no quantified small-duct-
+  // vs-large-duct proportion split was found anywhere in this pass's own search, unlike HCC's own
+  // counted single/multinodular majority above. The large-duct subtype's own growth character
+  // (papillary/mucin-producing) is a different architecture, not addressed by this citation.
+  ichol:    { status: 'cited', label: 'nodular (small-duct subtype)', register: 'G', badgeSource: 'Banales et al., Nat Rev Gastroenterol Hepatol, 2020 (PMID 32606456)', badgeQuote: 'presents as a small-sized tubular or acinar adenocarcinoma with nodular growth invading the liver parenchyma', ref: 'PMID 32606456, PMCID PMC7447603 — verified 2026-09-13 (live fetch, not hand-copied); scoped to small-duct subtype only, not drawn' },
   gbm:      { status: 'cited', category: 'diffuselyInfiltrative', register: 'G', badgeSource: 'J Med Life 2009 (PMC3019011)', badgeQuote: 'Grossly, it appears topographically diffuse, a poorly delineated mass with no capsula', ref: 'R21 PMC3019011 PMID 20108752 — EDGE at the wide extent (design §3(b), ruled 2026-09-09); RENDERED' },
   acinar:   { status: 'cited', label: 'multifocal', register: 'H', badgeSource: 'Fontugne et al., JCI Insight 2022 (PMC8876549)', ref: 'PMC8876549 PMID 35050902 — COUNT from whole-mount histology (H disclosed); not renderable at gross register; not drawn' },
   pdac:     { status: 'cited', category: 'infiltrative', register: 'H', badgeSource: 'Int J Mol Sci 2021 (PMC8268881)', badgeQuote: 'neoplastic cells arranged in small tubular glands that infiltrate a desmoplastic stroma', ref: 'R2 PMC8268881 PMID 34201897 — EDGE, histologic (H disclosed), corroborated at gross by R1; RENDERED' },
@@ -513,6 +526,20 @@ export const EXTENT_STATUS = Object.freeze({
   // the right dominant stage but overstates or understates it, not the wrong stage entirely.
   ccrcc: { status: 'cited', site: 'clear cell renal cell carcinoma', siteNote: 'clear cell renal cell carcinoma — the entry itself', shares: { localized: 72, regional: 17, distant: 10, unknown: 1 }, modal: 'localized', basis: 'Zou et al., J Cancer, 2025, Table 1 — SEER database, ccRCC-confirmed 2000–2017 (N=101,892 of 73,714/17,224/10,130/824); corroborated independently by Huang et al., Cancer Med, 2020 (SEER 18, 2004–2017, N=92,209, count-derived 72.3/16.6/10.3/0.8 against the paper\'s own true N after a 747-patient table-vs-total gap the paper itself never discloses)', source: 'Zou et al., Journal of Cancer, 2025', ref: 'PMID 39991582, PMCID PMC11843228 — verified 2026-09-12 (live fetch of Table 1, not hand-copied)' },
   hcc: { status: 'cited', site: 'hepatocellular carcinoma', siteNote: 'hepatocellular carcinoma — the entry itself', shares: { localized: 48, regional: 26, distant: 17, unknown: 8 }, modal: 'localized', basis: 'Flores et al., Cancer Epidemiol Biomarkers Prev, 2021, Table 2 — SEER 18, HCC-confirmed by ICD-O-3 morphology 8170–8175 (excludes cholangiocarcinoma), 2000–2015 (N=45,789 of 21,916/12,062/7,958/3,853); corroborated directionally by Altekruse et al., J Clin Oncol, 2009 (SEER 13, 2003–2004, N=3,169, 44/29/17%, ~10% unstaged)', source: 'Flores et al., Cancer Epidemiology, Biomarkers & Prevention, 2021', ref: 'PMID 33737301, PMCID PMC8172467 — verified 2026-09-12 (live fetch of Table 2, not hand-copied)' },
+  // SHARE-BOUND RULE (phaseC_design.md §6b): checked and NOT cleared. SEER's own Cancer Stat
+  // Facts page combines "Liver and Intrahepatic Bile Duct Cancer" into ONE page with no iCCA-
+  // specific stage-at-diagnosis breakdown (verified live 2026-09-13,
+  // https://seer.cancer.gov/statfacts/html/livibd.html) — HCC's own aggregate above explicitly
+  // EXCLUDES cholangiocarcinoma by ICD-O-3 morphology code, so it cannot stand in for iCCA
+  // either. iCCA's own share of primary liver cancers (~10-15%) fails the ≤10-point bound by a
+  // wide margin (85-90 points of potential error), so no organ-level aggregate may be used
+  // directly. A dedicated SEER-based iCCA paper was checked (Wang et al., J Gastrointest Oncol,
+  // 2024, PMID 39279977, PMCID PMC11399825, N=28,918) and gives real survival-BY-stage figures
+  // (mOS 24.3/12.1/5.4 months for local/regional/distant, 2015-2020 — a clean, monotonic
+  // decline) but no stage-DISTRIBUTION (share-at-diagnosis) figure anywhere in its accessible
+  // text — a different statistic than this axis needs, the same distinction data rule 31 already
+  // draws elsewhere in this atlas. Uncharacterised rather than forced.
+  ichol: { status: 'uncharacterised', site: 'intrahepatic cholangiocarcinoma', uncharacterisedReason: 'no iCCA-specific SEER Summary Stage distribution exists — the combined SEER "Liver and Intrahepatic Bile Duct Cancer" page has no iCCA-specific breakdown, HCC\'s own aggregate explicitly excludes cholangiocarcinoma, and iCCA\'s ~10-15% share of primary liver cancers fails the share-bound test for using either aggregate directly; a dedicated SEER-based iCCA paper found (Wang et al., 2024, PMID 39279977) gives survival-by-stage, not stage-distribution', ref: 'https://seer.cancer.gov/statfacts/html/livibd.html — checked 2026-09-13; PMID 39279977, PMCID PMC11399825 — checked 2026-09-13' },
   luad: { status: 'cited', site: 'lung adenocarcinoma', siteNote: 'lung adenocarcinoma — the entry itself; runs MORE distant-heavy than the organ aggregate, not less — the opposite direction the low-share hypothesis predicted', shares: { localized: 22, regional: 20, distant: 57, unknown: 2 }, modal: 'distant', basis: 'Brainson et al., Clin Lung Cancer, 2021, Table 3 — SEER 21, adenocarcinoma-confirmed 2012–2016 (N=111,886 of 24,162/22,254/63,423/2,047); a real, unresolved cross-country disagreement is disclosed rather than picked: Nguyen et al., Int J Cancer, 2022 (PMID 35138642), a Japanese registry study, finds adenocarcinoma\'s own modal category flips to localized (~45/18/33/4) there, plausibly reflecting Japan\'s much higher rate of incidental CT detection rather than a US-applicable pattern — the US SEER figure is used here as population-matched to every other cited aggregate in this file', source: 'Brainson et al., Clinical Lung Cancer, 2021', ref: 'PMID 33958300, PMCID PMC8495887 — verified 2026-09-12 (live fetch of Table 3, not hand-copied)' },
   // lusc/sclc, 2026-09-13: SAME paper/table as luad above (re-verified directly, not trusted from
   // a restated percentage — a first agent pass restated Table 3's squamous row inconsistently

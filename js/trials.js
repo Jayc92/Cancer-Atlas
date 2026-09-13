@@ -143,6 +143,18 @@ export const TRIALS_CONDITION_MAP = {
       + 'just the 10-result sample) — expected, since HCC is the large majority of primary '
       + 'liver cancer (this app\'s own liver.js citation).',
   },
+  ichol: {
+    query: 'intrahepatic cholangiocarcinoma', parent: 'liver cancer',
+    conditionKeywords: ['cholangiocarcinoma', 'cholangiocellular', 'bile duct', 'biliary tract', 'biliary'],
+    note: '15/15 live sample kept, 0 dropped, 0 false positives (negation-scan clean: the corpus-vocabulary '
+      + 'signal surfaced "Intrahepatic Cholangiocellular Carcinoma" as a real missed synonym before the '
+      + 'live sample ran — cholangiocellular carcinoma is the same disease under an older name — fixed by '
+      + 'adding "cholangiocellular" to conditionKeywords; the other three corpus-vocabulary hits sharing the '
+      + '"intrahepatic" token, Progressive Familial Intrahepatic Cholestasis ×2 and Intrahepatic Cholestasis, '
+      + 'are unrelated benign bile-flow disorders and correctly stay excluded). Live sample includes one real '
+      + 'multi-basket trial (NCT05286814, mCRC/iCCA/adrenocortical carcinoma) where iCCA is a genuinely named '
+      + 'condition, not a false collision.',
+  },
   gbm: {
     query: 'glioblastoma', parent: 'brain cancer',
     conditionKeywords: ['glioblastoma', 'glioma', 'brain', 'cns', 'central nervous system'],

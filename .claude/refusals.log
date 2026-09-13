@@ -1340,3 +1340,48 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   | DECLARED-UNMAPPABLE (tolerated, coverage limit): doi:10.1002/prm2.12107 js/organs/breast.js:176
   |     Gao et al., Precision Medical Sciences (Wiley), 2023 — js/organs/breast.js:168. The journal is not PubMed-indexed: esearch [doi] returns 0 hits (the unqualified search returns 6 unrelated tokenised hits, which is why the mapper requires exactly one), and Europe PMC has no record either, so NO PMID EXISTS for the metadata cross-check to run against. The CLAIM is not unchecked — ccf batch 1 (2026-09-06) read the paper at the publisher and verified its figures verbatim. THIS INSTRUMENT cannot reach it. Those are different statements and keeping them apart is why this list stores a reason rather than just an id.
 ==== END REFUSAL
+==== REFUSAL 2026-09-13T17:00:29Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 109 lines, last 12 below
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:291 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:157 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 35 flag(s) — 3 dated for re-read, 31 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/liver.js|comment|BRANCH — IDH1/2 mutation (the modeled tu': js/organs/liver.js:364 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 0 unscoped claims (0 absence, 0 false corpus universal), 29 universals flagged for a read, 6 world-scoped, 29 cancers indexed (EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 3, OK-SCOPED 5, OK-SEARCH 16, UNIVERSAL-UNRESOLVED 29, UNIVERSAL-WORLD-SCOPED 6), 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T17:00:29Z reason=exit=1 marker="DONE fraction_check:" tool=fraction_check.py
+     output 36 lines, last 12 below
+  |   MISMATCH? prostate:395  stated 14% vs 25/51 = 49.02%
+  |   MISMATCH? thyroid:333  stated ~60% vs 43/100 = 43.0%
+  |   MISMATCH? thyroid:333  stated ~60% vs 34/43 = 79.07%
+  |   MISMATCH? thyroid:350  stated ~60% vs 43/100 = 43.0%
+  |   COMMENT MISMATCH? thyroid:307  stated 43-60% vs 34/43 = 79.07%
+  | TWO-YEAR-RANGE strings (human confirms-deliberate): 2
+  |    breast:37  [('1988', '2016'), ('2017', '2021')]
+  |    thyroid:36  [('1974', '2013'), ('1994', '2013')]
+  | SIDECAR {"metrics": {"comment_blocks": 33, "comment_flags": 2, "cross_half_flags": 0, "cross_half_pairs": 13, "field_flags": 6, "field_strings": 79, "two_year_range": 2}, "name": "fraction_check", "ratchet": []}
+  |   fraction_check: 7 flag(s) — 0 dated for re-read, 6 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED fraction_check flag 'liver|field|20%|30/158': liver:391 stated 20% vs 30/158 = 18.99% — fix it, declare it with a reason, or date it for re-read
+  | DONE fraction_check: 79 field strings with fraction+percent, 6 mismatch flags; 33 comment blocks, 2 comment flags; 13 cross-half shared fractions, 0 unpaired; 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T17:00:53Z reason=exit=3 marker="DONE citation_reach_check:" tool=citation_reach_check.py
+     output 29 lines, last 12 below
+  |   reported paren-shadow              3 spans
+  |     declared 'etal-malformed-head:Affò' x2: liver.js:384, liver.js:408
+  |     declared 'etal-malformed-head:Conejero Merchán' x1: brain.js:136
+  |     declared 'etal-malformed-head:Gundem G' x1: prostate.js:163
+  |     declared 'etal-malformed-head:Li D' x1: colon.js:225
+  |     declared 'etal-malformed-head:Riihimäki' x18: colon.js:199, colon.js:206, colon.js:208, colon.js:210, colon.js:212, lungs.js:188, lungs.js:313, lungs.js:330
+  |     declared 'etal-malformed-head:Wang K' x1: stomach.js:214
+  |   bare-name-comma-year heads (3 distinct, NOT gated — held): KGCA, TCGA, Working Group
+  |   journal-adjacent-year heads (11 distinct, NOT gated — held): Acad Pathol, CRSLS, Cancer, Cell, Clin Cases, Comput Biol, Cureus, Curr Oncol, Gastric Cancer, Nature, WHO-
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:Affò' at liver.js:384, liver.js:408 (2 spans). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  | SIDECAR {"metrics": {"declared": 5, "gated_total": 24, "kind_bare_name_comma_year": 7, "kind_bare_name_year": 0, "kind_data_span_year": 90, "kind_etal_malformed_head": 24, "kind_etal_out_of_range": 0, "kind_etal_shadow": 1, "kind_journal_adjacent_year": 20, "kind_paren_shadow": 3, "kind_prose_year": 51, "kind_semicolon_shadow": 7, "kind_unlisted": 0, "problems": 1, "unreached_total": 203}, "name": "citation_reach_check", "ratchet": []}
+  | DONE citation_reach_check: 203 unreached spans (5 added, 0 removed vs the tracked set), 24 gated (5 declared), 1 problems
+==== END REFUSAL

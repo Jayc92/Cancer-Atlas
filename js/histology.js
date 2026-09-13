@@ -671,6 +671,51 @@ function genHCC(g, rnd){
   ];
 }
 
+// Intrahepatic cholangiocarcinoma — a real gland-forming adenocarcinoma with a dense
+// desmoplastic stroma, genuinely different from genHCC above (no gland lumens there at all).
+// ZERO NEW DRAWING CODE: this dispatches drawGlandRing (small-duct tubular/acinar pattern,
+// little mucin — Banales et al., 2020) for the more common architecture, plus ONE drawFrond
+// call with a fibrovascular core and columnar nuclei (large-duct, mucin-producing papillary
+// pattern, same source) — the identical two-primitive combination genGInt already uses for its
+// own tubular-glands-plus-one-papillary-frond composition, reused here rather than invented.
+// The desmoplastic stroma background (sweeping collagen bands + spindle fibroblast nuclei) is
+// the same recipe genPDAC and genCRC already use for their own cancer-associated-fibroblast-rich
+// backgrounds (Affò et al., 2025; Ilyas & Gores, 2013).
+function genICHOL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.7}));
+  for(let i=0;i<13;i++){
+    const y = 10+rnd()*480;
+    g.appendChild(el('path', {d:`M0 ${y} Q ${140+rnd()*200} ${y+(rnd()*2-1)*40} ${420+rnd()*80} ${y+(rnd()*2-1)*30} T ${VB.w} ${y+(rnd()*2-1)*46}`, fill:'none', stroke:HE.stromaLn, 'stroke-width':2+rnd()*3, opacity:0.5}));
+  }
+  // cancer-associated fibroblasts: spindle-shaped nuclei scattered through the stroma
+  for(let i=0;i<90;i++){
+    const x = rnd()*VB.w, y = rnd()*VB.h;
+    const ang = Math.sin(x/150)*20 + (rnd()*2-1)*24;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:6, ry:1.5, transform:`rotate(${ang.toFixed(0)} ${x} ${y})`, fill:HE.nucDark, opacity:0.5}));
+  }
+  // small-duct pattern: small, well-formed tubular/acinar glands, little mucin, scattered
+  // haphazardly through the stroma — the more common of iCCA's two real architectures
+  const glands = [
+    {x:110, y:110, r:12}, {x:290, y:80,  r:10}, {x:150, y:280, r:13},
+    {x:340, y:230, r:11}, {x:90,  y:410, r:12}, {x:280, y:400, r:10},
+  ];
+  glands.forEach(s=>{
+    const gg = el('g', {transform:`rotate(${(rnd()*90-45).toFixed(0)} ${s.x} ${s.y})`});
+    g.appendChild(gg);
+    drawGlandRing(gg, s.x, s.y, s.r, rnd, {nucMin:2.8, nucMax:3.8});
+  });
+  // large-duct pattern: ONE mucin-producing papillary frond with a fibrovascular core —
+  // the second real architecture (Banales et al., 2020's own small-duct/large-duct dichotomy),
+  // sited apart from the small-duct cluster so both read as distinct zones
+  const frond = {cx:610, cy:280, rx:88, ry:110, rot:-0.2};
+  drawFrond(g, rnd, frond, {wobble:0.16, core:{type:'fibrovascular', length:0.72, width:7}, nucStyle:'columnar'});
+  return [
+    {key:'stroma',    x:400, y:80},
+    {key:'smallduct', x:glands[2].x, y:glands[2].y - 34},
+    {key:'largeduct', x:frond.cx, y:frond.cy - frond.ry - 20},
+  ];
+}
+
 function genGBM(g, rnd){
   // Hypercellular tumor; a serpentine necrotic corridor whose borders are rimmed by
   // densely packed, radially oriented nuclei (pseudopalisading); glomeruloid
@@ -1879,6 +1924,7 @@ const GENERATORS = {
   sclc:   genLungsSCLC,
   ccrcc:  genCCRCC,
   hcc:    genHCC,
+  ichol:  genICHOL,
   gbm:    genGBM,
   acinar: genProstate,
   crc:    genCRC,
