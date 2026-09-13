@@ -259,6 +259,19 @@ PREREGISTERED = {
             'three independent occurrences of one citation repeated across this organ\'s three '
             'new histology blocks.',
     },
+    'Park|2021|js/organs/thyroid.js:335': {
+        'side': 'KEPT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'thyroid.js:335 reads "Park et al., Cancers (Basel), 2021, PMID 34572897". A \')\' does '
+            'sit between head and 2021, so this span is in the population — but "(Basel)" carries no '
+            'year, so the rule declines and the record stands: exactly the Travis|2011 counterexample '
+            'shape (a journal disambiguator in parens, not a second reference), arriving for real on a '
+            'genuinely new span rather than the four the rule was fit to. "Cancers (Basel)" is the '
+            'journal\'s own real title (distinguishing it from other journals also named Cancers), not '
+            'this atlas\'s invention. TEST, not FIT: this span postdates the rule.',
+    },
     'Travis|2011|js/organs/lungs.js:277': {
         'side': 'KEPT',
         'basis': 'FIT',

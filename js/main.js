@@ -117,21 +117,30 @@ function marginDot(c){
 // within-session caching trials.js's own screen-level panel already does via `loadedForCancerId`.
 const belowFloorTrialsCache = new Map();
 
-// BELOW-FLOOR HAS TWO REAL REASONS NOW, NAMED SEPARATELY (2026-09-13, user-directed; phaseC_design.md
-// §15). The mechanism (blurb + trials, nothing else) was built for RARITY (psignet/pmuc — a real
-// disease, just too few US cases/year for a population-level picture) and reused unchanged for LCC's
-// DEFINITIONAL INSTABILITY (large cell carcinoma has no stable modern share, site model, or driver
-// profile because routine IHC reclassifies most historically-diagnosed cases into adenocarcinoma or
-// squamous cell carcinoma — a diagnosis dissolving under modern testing, not a rare-but-stable one).
-// Both share the SAME mechanism because the mechanism never depended on which reason applied — but a
-// reader holding either diagnosis is asking a different question, and conflating "rare" with "no
-// longer a stable diagnosis" would answer the wrong one. `belowFloorReason` is an entry-level field
-// (rarity | definitional-instability); an entry with no reason set renders no chip at all rather than
-// defaulting to either label, since a below-floor entry with an unset reason is a gap to notice, not
+// BELOW-FLOOR HAS THREE REAL REASONS NOW, NAMED SEPARATELY (2026-09-13, user-directed; phaseC_design.md
+// §15, extended the same day by the stomach/thyroid round). The mechanism (blurb + trials, nothing
+// else) was built for RARITY (psignet/pmuc — a real disease, just too few US cases/year for a
+// population-level picture) and reused unchanged for LCC's DEFINITIONAL INSTABILITY (large cell
+// carcinoma has no stable modern share, site model, or driver profile because routine IHC reclassifies
+// most historically-diagnosed cases into adenocarcinoma or squamous cell carcinoma — a diagnosis
+// dissolving under modern testing, not a rare-but-stable one). Gastric mixed-type (Lauren) is a third,
+// genuinely different shape: COMPOSITIONAL. It is neither rare (10.9% of gastric cancers, KGCA 2011)
+// nor unstable (a real, WHO-recognized third Lauren category that isn't dissolving under modern
+// testing) — it fails to clear full authoring because its own defining fact is being a hybrid of the
+// other two named categories, so a single unified molecular/histologic profile does not exist FOR IT
+// as its own category; the closest thing to characterizing it is describing how its two components
+// diverge from each other, which is itself the demonstrated finding (Drebin et al., 2025 — see
+// stomach.js's `gmix` entry). All three share the SAME mechanism because the mechanism never depended
+// on which reason applied — but a reader holding any of the three diagnoses is asking a different
+// question, and conflating "rare," "no longer a stable diagnosis," and "a real hybrid with no unified
+// profile of its own" would answer the wrong one. `belowFloorReason` is an entry-level field (rarity |
+// definitional-instability | compositional); an entry with no reason set renders no chip at all rather
+// than defaulting to any label, since a below-floor entry with an unset reason is a gap to notice, not
 // a rarity claim to assume.
 const BELOW_FLOOR_REASON_LABEL = {
   rarity: 'Below this atlas’s incidence floor — real, just too rare here for a full profile.',
   'definitional-instability': 'A diagnosis in flux — modern testing reclassifies most cases once given this name.',
+  compositional: 'A real hybrid, not a gap — its own defining biology is two patterns in one tumor, demonstrated directly rather than modeled as one.',
 };
 
 // fetchTrialsForEntry returns null when cancerId has no TRIALS_CONDITION_MAP entry at all —

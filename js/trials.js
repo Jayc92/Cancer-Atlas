@@ -40,6 +40,31 @@ export const TRIALS_CONDITION_MAP = {
       + 'basket trial via keyword match; the registry does not tag by Lauren classification at '
       + 'the condition level, so subtype specificity is deliberately not in the keyword set.',
   },
+  // gint/gmix, 2026-09-13 (stomach round): LIVE-TESTED before committing to this shape, per the
+  // now-required trials-verification rule — a narrower query ("intestinal type gastric
+  // adenocarcinoma", "gastric mixed type adenocarcinoma") was tried FIRST and returns almost
+  // entirely off-topic basket/screening trials with no meaningful overlap to the real disease,
+  // confirming gdiff's own note above rather than being assumed from it: this registry does not
+  // tag by Lauren type at all, so a Lauren-specific query degrades rather than sharpens the
+  // result set. Both entries therefore reuse gdiff's own query and keyword set VERBATIM — all
+  // three Lauren-type entries in this organ necessarily draw from the identical underlying
+  // trials corpus, which is a real, disclosed limitation, not an oversight.
+  gint: {
+    query: 'gastric adenocarcinoma', parent: 'gastric cancer',
+    conditionKeywords: ['gastric', 'stomach'],
+    note: '8/10 live sample kept, 2 dropped (both generic "Advanced/Metastatic Solid Tumor" '
+      + 'basket tags naming no organ — the same policy-consistent drop as gdiff\'s own). Same '
+      + 'query and keyword set as gdiff and gmix: this registry does not tag by Lauren '
+      + 'classification, so all three entries in this organ draw the same underlying corpus.',
+  },
+  gmix: {
+    query: 'gastric adenocarcinoma', parent: 'gastric cancer',
+    conditionKeywords: ['gastric', 'stomach'],
+    note: 'Same query and keyword set as gdiff and gint, for the identical reason stated on '
+      + 'gint\'s own entry. Below-floor entries still surface a Trials toggle (js/main.js\'s '
+      + '`belowFloorTrialsHtml`), so this mapping is required even though the entry itself '
+      + 'carries no mutation ledger or site map.',
+  },
   // ---- the remaining fourteen, built 2026-09-11 once the scope was opened. Same method as
   // ccrcc/gdiff: query from organ+histology biology (not the entry's display string), a live
   // sample read back by hand against its own full (never truncated) condition list, keyword set
@@ -267,6 +292,47 @@ export const TRIALS_CONDITION_MAP = {
     note: '9/9 sample kept, 0 dropped. Query/parent ratio 3% (9/293) — low, but consistent with '
       + 'real disease rarity (follicular is far less common than papillary thyroid carcinoma), '
       + 'not with a broken query — see phaseD_trials_design.md §10 for the full reasoning.',
+  },
+  // mtc, 2026-09-13 (thyroid round): a REAL negation collision, live-caught before shipping, the
+  // exact "Non-X" shape the lung round's excludeIf mechanism was built for (data rule 33) —
+  // "Non-Medullary Thyroid Cancer" is a real, correctly-tagged condition string (naming ptc/ftc/
+  // atc's own population, this organ's OTHER three entries), and it contains the word "thyroid"
+  // just as validly as "Medullary Thyroid Carcinoma" does, so a bare conditionKeywords:['thyroid']
+  // check alone would keep it. Caught on a live 10-result sample, not assumed from the query's
+  // name: excludeIf fired on exactly this one string in this sample. "Kidney Medullary
+  // Carcinoma"/"Renal Medullary Carcinoma" — a real, different-organ cancer entity sharing the
+  // word "medullary" — were also checked directly: both appear ONLY in condition arrays that
+  // never mention "thyroid" at all, so conditionKeywords:['thyroid'] alone already excludes them
+  // without needing a same-string exclusion of its own.
+  mtc: {
+    query: 'medullary thyroid carcinoma', parent: 'thyroid cancer',
+    conditionKeywords: ['thyroid'], excludeIf: ['non-medullary', 'non medullary'],
+    note: '7/10 live sample kept, 3 dropped — 2 genuinely off-topic genitourinary baskets '
+      + '("Kidney Medullary Carcinoma", "Renal Medullary Carcinoma", neither mentioning thyroid '
+      + 'anywhere in the same study) and 1 real, live-caught collision: "Non-Medullary Thyroid '
+      + 'Cancer" contains "thyroid" and would be a false keep without excludeIf — that string '
+      + 'names this organ\'s OTHER three entries\' population, explicitly excluding this one.',
+  },
+  // atc, 2026-09-13: same live-sample discipline as mtc above; no negation-collision string
+  // found for "anaplastic"/"thyroid" in this sample or in trials_mapping_check.mjs's own scan —
+  // "Non-Melanoma Skin Cancer" appears once, in a basket trial whose SAME condition array also
+  // separately lists "Thyroid Carcinoma, Anaplastic", so that study is kept via its own real
+  // condition string, not via the unrelated skin-cancer one.
+  atc: {
+    query: 'anaplastic thyroid carcinoma', parent: 'thyroid cancer',
+    conditionKeywords: ['thyroid'],
+    note: '8/9 live sample kept, 1 dropped (a generic "Cancer Harboring BRAF Alterations"/glioma '
+      + 'basket naming no thyroid condition anywhere). Several kept results are broad "Thyroid '
+      + 'Cancer" or rare-cancer basket tags rather than anaplastic-specific ones — the same '
+      + '"thyroid" keyword breadth this organ\'s own ptc/ftc entries already accept, not a defect. '
+      + 'Corpus-vocabulary signal found one real, disclosed completeness gap and confirmed one '
+      + 'near-miss stays safely excluded: the parent corpus contains a registry-side TYPO, '
+      + '"Anaplastic Throid Carcinoma" (missing the "y"), which this filter currently drops since '
+      + 'it lacks the literal substring "thyroid" — a minor, accepted gap in one mistyped '
+      + 'condition string, not chased with a new keyword. "Breast Implant-Associated Anaplastic '
+      + 'Large Cell Lymphoma" — a real, unrelated lymphoma sharing only the word "anaplastic" — '
+      + 'is correctly excluded already, confirming conditionKeywords:[\'thyroid\'] rather than '
+      + '[\'anaplastic\',\'thyroid\'] was the right choice.',
   },
   // ---- ovary pilot, 2026-09-11 (phaseC_design.md) — endo/lgsc share hgsoc/clear's extended
   // ovarian/fallopian/peritoneal keyword set (real basket trials confirmed for both: NCT07791732

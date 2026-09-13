@@ -139,6 +139,17 @@ DECLARED = [
     {'key': 'pancreas|field|~50%|25/84', 'reason': 'false positive: ~50% is the pathway-level SMAD4 loss share, 25/84 the homozygous-deletion mechanism share within it (Hahn 1996); the matcher pairs nearest percent to nearest fraction', 'until': None},
     {'key': 'pancreas|comment|~50%|25/84', 'reason': 'the comment block mirrors the field string above: same false positive, same mechanism', 'until': None},
     {'key': 'prostate|field|14%|25/51', 'reason': "false positive, same mechanism as pancreas above: 49% (=25/51, Schweizer et al., 2019) is the DDR-pathway-alteration cohort share pductal's PRIVATE_POOL_PDUCTAL cites; 14% mismatch-repair and 31% homologous-repair are two sub-breakdown shares within that same cohort, textually nearer to 25/51 than 49% is, so the matcher pairs the wrong percent to the fraction", 'until': None},
+    # THREE MORE, READ 2026-09-13 (thyroid mtc authoring pass). Same mechanism as pancreas/prostate
+    # above: this entry's own trunk note packs THREE distinct real numbers from two papers into one
+    # dense field/comment — the overall cross-cohort RET-positivity range (43-60%), Elisei et al.
+    # 2008's own sporadic-cohort rate (43/100), and M918T's dominance WITHIN Elisei's RET-positive
+    # subset (34/43) — and the matcher pairs whichever percent sits textually nearest to whichever
+    # fraction, not the one it actually restates. Re-verified against the primary source (Elisei et
+    # al., JCEM, 2008, PMID 18073307) before declaring: 43/100=43% and 34/43=79% are both real,
+    # correctly quoted, and neither is a restatement of the other or of Gild et al. 2023's ~60%.
+    {'key': 'thyroid|comment|43-60%|34/43', 'reason': "false positive: 43-60% is the cross-cohort RET-positivity RANGE (Elisei 2008 + Gild 2023); 34/43 is M918T's dominance WITHIN Elisei's own RET-positive subset — two different real numbers, not a restatement", 'until': None},
+    {'key': 'thyroid|field|~60%|34/43', 'reason': "false positive, same mechanism: ~60% is Gild et al. 2023's own cohort estimate; 34/43 is M918T's dominance within Elisei et al. 2008's RET-positive subset — different papers, different quantities", 'until': None},
+    {'key': 'thyroid|field|~60%|43/100', 'reason': "false positive, same mechanism: ~60% is Gild et al. 2023's own cohort estimate; 43/100 is Elisei et al. 2008's own, separately-cited sporadic-cohort RET-positivity rate — two independent cohorts' figures sitting near each other, not one restated", 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

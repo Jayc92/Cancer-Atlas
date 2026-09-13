@@ -54,6 +54,12 @@ DECLARED = [
     # more frequent in ILC, which is why it anchors ILC's branch pair and is modeled at a lower
     # frequency for IDC-NST). Not a drifted duplicate — the same paper, read twice, correctly.
     {'key': 'breast|PIK3CA mutation|164, 490, 2015, 26451490, 48%|61, 127, 2015, 26451490, 33%', 'reason': 'false positive: IDC-NST\'s own PIK3CA rate (33%, 164/490) vs ILC\'s own PIK3CA rate (48%, 61/127), both real, both from Ciriello et al. 2015\'s two separate histologic-subgroup analyses — the deliberate cross-entity contrast this pass\'s branch-gene design depends on, not a drifted duplicate', 'until': None},
+    # THREE MORE, READ 2026-09-13 (stomach gint/gmix + thyroid mtc/atc authoring pass). All three
+    # are the same per-site-figures-on-one-citation-template class as the stomach RHOA/CLDN18 pair
+    # above, not a drifted duplicate.
+    {'key': 'stomach|HER2 (ERBB2) positivity|0.0001|0.0103', 'reason': 'false positive: both p-values are real, from the same source (He et al., World J Gastroenterol, 2013) — 0.0103 is the Lauren-type (intestinal vs pooled diffuse/mixed) comparison, quoted at both the Liver and Peritoneum sites; 0.0001 is a SECOND, different comparison (well- vs poorly-differentiated tumors) that only the Liver site\'s own ccf additionally carries', 'until': None},
+    {'key': 'thyroid|RET mutation (somatic)|52.2%|28.3%', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2021 (N=46) cohort template — medullary carcinoma\'s own Lung site (52.2%) and Bone site (28.3%)', 'until': None},
+    {'key': 'thyroid|RAS mutation (H/K/N-RAS)|18%, 2013|13%, 2013', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Besic & Gazic 2013 (N=45) autopsy-series template — anaplastic carcinoma\'s own Brain site (18%) and Bone site (13%)', 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

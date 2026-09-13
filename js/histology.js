@@ -1023,6 +1023,55 @@ function genGDiffuse(g, rnd){
   ];
 }
 
+function genGInt(g, rnd){
+  // Intestinal-type gastric adenocarcinoma: WHO/Lauren define this type BY its resemblance to
+  // colonic adenocarcinoma — well-to-moderately differentiated glands arising in a background of
+  // gastric intestinal metaplasia (the Correa-cascade precursor step this organ's own diffuse-type
+  // generator two entries up is drawn without, since that cascade is intestinal-specific). This
+  // field deliberately reuses drawGlandRing, the SAME primitive genCRC/genPDAC already draw with
+  // (full reuse, not new drawing code — the honest consequence of sharing one real architecture),
+  // composed simply (round, evenly-spaced, single-layer glands) rather than CRC's own complex/
+  // cribriform/dirty-necrosis set-pieces, which are that cancer's own distinguishing features, not
+  // this one's. The one genuinely stomach-specific addition is the scattered goblet cell: a small,
+  // polarized clear-mucin cap at one pole of an otherwise ordinary cell, not the whole-cell vacuole
+  // genGDiffuse's own signet ring uses immediately above.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.5}));
+  for(let i=0;i<7;i++){
+    const y = 20+rnd()*460;
+    g.appendChild(el('path', {d:`M0 ${y} Q ${180+rnd()*160} ${y+(rnd()*2-1)*30} ${VB.w} ${y+(rnd()*2-1)*36}`, fill:'none', stroke:HE.stromaLn, 'stroke-width':2+rnd()*3, opacity:0.4}));
+  }
+  // well-formed round-to-oval glands, evenly spaced across the field — rejection-sampled so none
+  // overlap, the classic "resembles colonic adenocarcinoma" architecture.
+  const glands = [];
+  let att = 0;
+  while(glands.length < 13 && att < 900){
+    att++;
+    const x = 55+rnd()*(VB.w-110), y = 45+rnd()*(VB.h-90);
+    const r = 20+rnd()*14;
+    if(glands.some(gl=>Math.hypot(gl.x-x,gl.y-y) < gl.r+r+18)) continue;
+    glands.push({x,y,r});
+  }
+  glands.forEach(gl=>{ drawGlandRing(g, gl.x, gl.y, gl.r, rnd, {cellR:11, nucMin:3.4, nucMax:5.0}); });
+  // goblet cells: intestinal metaplasia's own signature, scattered through the background stroma
+  // between glands, never inside a gland's own cell ring drawn above.
+  for(let i=0;i<26;i++){
+    const x = 25+rnd()*(VB.w-50), y = 25+rnd()*(VB.h-50);
+    if(glands.some(gl=>Math.hypot(gl.x-x,gl.y-y) < gl.r+18)) continue;
+    const a = rnd()*Math.PI*2;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:5.5, ry:4, fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':0.9}));
+    g.appendChild(el('circle', {cx:x+Math.cos(a)*2.6, cy:y+Math.sin(a)*2.6, r:2.6, fill:HE.clear, stroke:HE.clearLn, 'stroke-width':0.8}));
+    g.appendChild(el('ellipse', {cx:x-Math.cos(a)*2.2, cy:y-Math.sin(a)*2.2, rx:1.6, ry:1.1, fill:HE.nucDark, opacity:0.9}));
+  }
+  // one papillary frond — the second real architecture named for this type alongside the tubular gland
+  const frond = {cx:610, cy:130, rx:78, ry:100, rot:0.15};
+  drawFrond(g, rnd, frond, {wobble:0.16, core:{type:'fibrovascular', length:0.7, width:6}});
+  return [
+    {key:'glands',    x:glands[0] ? glands[0].x : 140, y:(glands[0] ? glands[0].y : 140) - 40},
+    {key:'goblet',    x:610, y:330},
+    {key:'papillary', x:frond.cx, y:frond.cy - frond.ry - 20},
+  ];
+}
+
 function genMelanoma(g, rnd){
   // Cutaneous melanoma, superficial spreading type — the first slide in this file with a
   // skin surface on it: an epidermis band across the top, an undulating dermal-epidermal
@@ -1490,6 +1539,137 @@ function genFTC(g, rnd){
   ];
 }
 
+function genMTC(g, rnd){
+  // Medullary thyroid carcinoma: nests of polygonal-to-plasmacytoid tumor cells with abundant
+  // eosinophilic cytoplasm and coarsely granular ("salt-and-pepper") chromatin, separated by
+  // thin fibrovascular septae — and, distinctively, real AMYLOID: amorphous, homogeneous, pink
+  // extracellular material filling those same septae, derived from the calcitonin this tumor
+  // itself secretes. No shared "nested/organoid" primitive exists yet in this file (genCCRCC's
+  // own clear-cell nests are an inline, non-reusable concept), so the nest architecture below is
+  // built directly — new composition, though from the same blobPath/cell vocabulary every
+  // generator in this file already uses. The amyloid fill reuses the hyaline-pink pairing
+  // (#e2a9bb/#d093a8) drawFrond's own hyaline core option already established for another
+  // cancer's amorphous eosinophilic material in this same file — amyloid and hyaline are both
+  // amorphous eosinophilic extracellular deposits, so the reuse is a real one, not arbitrary.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.4}));
+  const nests = [
+    {cx:180, cy:140, r:76}, {cx:430, cy:110, r:64}, {cx:600, cy:250, r:70},
+    {cx:220, cy:340, r:68}, {cx:470, cy:400, r:60},
+  ];
+  nests.forEach(n=>{
+    g.appendChild(el('path', {d:blobPath(n.cx, n.cy, n.r, n.r*0.9, 0.12, 14, rnd, rnd()*Math.PI), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1.3}));
+    const cellN = Math.round(n.r*n.r/220);
+    for(let i=0;i<cellN;i++){
+      const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.86;
+      const x = n.cx+Math.cos(a)*n.r*r, y = n.cy+Math.sin(a)*n.r*0.9*r;
+      // coarse, irregular "salt-and-pepper" chromatin — larger and less uniform than the fine
+      // chromatin every follicular-cell generator in this file uses.
+      g.appendChild(el('ellipse', {cx:x, cy:y, rx:4.4+rnd()*1.3, ry:3.6+rnd()*1.1, transform:`rotate(${(rnd()*360).toFixed(0)} ${x} ${y})`, fill:HE.nuc, opacity:0.9}));
+      for(let s=0;s<2;s++){
+        g.appendChild(el('circle', {cx:x+(rnd()*2-1)*3, cy:y+(rnd()*2-1)*3, r:0.7+rnd()*0.5, fill:HE.nucDark, opacity:0.7}));
+      }
+    }
+  });
+  for(let i=0;i<nests.length;i++){
+    for(let j=i+1;j<nests.length;j++){
+      const a = nests[i], b = nests[j];
+      const d = Math.hypot(a.cx-b.cx, a.cy-b.cy);
+      if(d > (a.r+b.r)*1.6) continue;
+      const mx = (a.cx+b.cx)/2, my = (a.cy+b.cy)/2;
+      const ang = Math.atan2(b.cy-a.cy, b.cx-a.cx)*180/Math.PI;
+      g.appendChild(el('ellipse', {cx:mx, cy:my, rx:d*0.28, ry:18+rnd()*6, transform:`rotate(${ang.toFixed(0)} ${mx} ${my})`, fill:'#e2a9bb', stroke:'#d093a8', 'stroke-width':1.2, opacity:0.85}));
+    }
+  }
+  return [
+    {key:'nests',      x:nests[0].cx, y:nests[0].cy - nests[0].r - 18},
+    {key:'amyloid',    x:(nests[0].cx+nests[3].cx)/2, y:(nests[0].cy+nests[3].cy)/2},
+    {key:'chromatin',  x:nests[2].cx, y:nests[2].cy},
+  ];
+}
+
+function genATC(g, rnd){
+  // Anaplastic thyroid carcinoma — this atlas's FIRST tumor built from spindle-shaped CELL
+  // BODIES, not merely elongated nuclei — a precise distinction, checked directly rather than
+  // assumed: genGBM's own pseudopalisading rim (this file, two organs over) already draws
+  // elongated tumor-cell NUCLEI (rx:5.4/ry:2 ellipses), but with no matching spindle-shaped
+  // cytoplasm around them, and genCRC's desmoplastic stroma draws true spindle-shaped cell
+  // bodies, but only as REACTIVE STROMAL FIBROBLASTS in the background, never the tumor
+  // population itself. Checked directly against every existing generator before writing this
+  // one: none represents an elongated TUMOR-cell BODY arranged in organized fascicles, so this is
+  // genuinely new drawing code, not a reuse (matching ILC's own targetoid pattern precedent one
+  // family, one tier up: full reuse / partial reuse / bespoke — this is the third tier). WHO 2022
+  // names three patterns that "can occur alone or in any combination" — sarcomatoid (spindle),
+  // giant cell, and epithelioid/squamoid — confirmed against a 144-case series (Suster et al.,
+  // Virchows Arch, 2026, PMID 41748947) to genuinely co-occur within one tumor rather than exist
+  // as separate pure forms; squamoid areas specifically were found admixed with the other two
+  // patterns "in all cases". All three are drawn admixed in one field below; the giant cells and
+  // the small epithelioid nest are simple enough to build from the same ellipse/nucleus
+  // vocabulary every other generator already uses — it is specifically the spindle fascicles that
+  // needed new geometry.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.45}));
+  necrosisBlob(g, 150, 420, 70, 46, rnd, 0.3);
+  // FASCICLES: bundles of elongated spindle cells running at different angles, some crossing
+  // near right angles — echoing the "alternating fascicles... cut at right angles" description
+  // of this pattern's lower-grade sub-form; the field overall reads high-grade (larger,
+  // hyperchromatic spindle cells, admixed giant cells below), the more common sub-form.
+  const bands = [
+    {x0:40, y0:120, ang:0.15, len:520, n:34},
+    {x0:60, y0:260, ang:1.35, len:260, n:20},
+    {x0:330, y0:60, ang:0.95, len:300, n:22},
+  ];
+  bands.forEach(b=>{
+    const dx = Math.cos(b.ang), dy = Math.sin(b.ang);
+    const px = -dy, py = dx;
+    for(let i=0;i<b.n;i++){
+      const t = i/b.n*b.len + rnd()*14;
+      const off = (rnd()*2-1)*16;
+      const cx = b.x0 + dx*t + px*off, cy = b.y0 + dy*t + py*off;
+      const ang = b.ang*180/Math.PI + (rnd()*2-1)*10;
+      const rx = 13+rnd()*5, ry = 3.2+rnd()*1.3;
+      g.appendChild(el('ellipse', {cx, cy, rx, ry, transform:`rotate(${ang.toFixed(0)} ${cx} ${cy})`, fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':0.9, opacity:0.92}));
+      g.appendChild(el('ellipse', {cx, cy, rx:rx*0.42, ry:ry*0.72, transform:`rotate(${ang.toFixed(0)} ${cx} ${cy})`, fill:HE.nucDark, opacity:0.95}));
+    }
+  });
+  // a storiform whorl — spindle cells radiating around a hub, the same high-grade sub-pattern's
+  // own named architecture.
+  const hub = {cx:560, cy:340, r:76};
+  const nw = 26;
+  for(let i=0;i<nw;i++){
+    const a = i/nw*Math.PI*2 + rnd()*0.1;
+    const r = hub.r*(0.35+rnd()*0.6);
+    const cx = hub.cx+Math.cos(a)*r, cy = hub.cy+Math.sin(a)*r;
+    const ang = a*180/Math.PI + 90;
+    const rx = 12+rnd()*4, ry = 3+rnd()*1.2;
+    g.appendChild(el('ellipse', {cx, cy, rx, ry, transform:`rotate(${ang.toFixed(0)} ${cx} ${cy})`, fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':0.9}));
+    g.appendChild(el('ellipse', {cx, cy, rx:rx*0.4, ry:ry*0.75, transform:`rotate(${ang.toFixed(0)} ${cx} ${cy})`, fill:HE.nucDark, opacity:0.95}));
+  }
+  // multinucleated giant cells, admixed among the spindle population
+  const giants = [[210,90],[470,470],[130,260]];
+  giants.forEach(([x,y])=>{
+    g.appendChild(el('path', {d:blobPath(x, y, 26, 20, 0.3, 12, rnd, rnd()*Math.PI), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1.3}));
+    const nn = 3+Math.floor(rnd()*2);
+    for(let i=0;i<nn;i++){
+      const a = i/nn*Math.PI*2 + rnd()*0.4;
+      const nx = x+Math.cos(a)*10, ny = y+Math.sin(a)*8;
+      g.appendChild(el('ellipse', {cx:nx, cy:ny, rx:6.5, ry:5, transform:`rotate(${(rnd()*40-20).toFixed(0)} ${nx} ${ny})`, fill:HE.nucDark, opacity:0.92}));
+    }
+  });
+  // a small epithelioid/squamoid nest, admixed at the field's edge rather than pure/isolated —
+  // "squamous or squamoid features were associated in all cases with other areas" (Suster 2026)
+  const nest = {cx:660, cy:150, rx:60, ry:50};
+  g.appendChild(el('path', {d:blobPath(nest.cx, nest.cy, nest.rx, nest.ry, 0.14, 12, rnd, 0), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1.2}));
+  for(let i=0;i<22;i++){
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.82;
+    const x = nest.cx+Math.cos(a)*nest.rx*r, y = nest.cy+Math.sin(a)*nest.ry*r;
+    g.appendChild(el('circle', {cx:x, cy:y, r:3.4+rnd()*1.1, fill:HE.nuc, opacity:0.9}));
+  }
+  return [
+    {key:'spindle',  x:bands[0].x0+120, y:bands[0].y0-24},
+    {key:'giant',    x:giants[1][0],    y:giants[1][1]+30},
+    {key:'squamoid', x:nest.cx,         y:nest.cy-nest.ry-16},
+  ];
+}
+
 function genEndometrioid(g, rnd){
   // Endometrioid carcinoma — the ovary pilot's third slide. vs genHGSOC: no branching
   // papillae at all; this is CONFLUENT GLANDS, packed back-to-back with almost no
@@ -1704,12 +1884,15 @@ const GENERATORS = {
   crc:    genCRC,
   pdac:   genPDAC,
   gdiff:  genGDiffuse,
+  gint:   genGInt,
   melanoma: genMelanoma,
   clear:  genOCCC,
   seminoma: genSeminoma,
   uc:     genBladderUC,
   ptc:    genPTC,
   ftc:    genFTC,
+  mtc:    genMTC,
+  atc:    genATC,
   endo:   genEndometrioid,
   muc:    genMucinous,
   lgsc:   genLGSC,

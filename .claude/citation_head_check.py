@@ -176,6 +176,7 @@ WELL_FORMED = (
     # reason it cannot be removed to fix the eight entries above
     'De Leo',
     'Di Carlo',
+    'Lott Limbach',
     'Mehrvarz Sarshekeh',
     'Myo Min',
     'Safaee Ardekani',

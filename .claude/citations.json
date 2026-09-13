@@ -457,7 +457,7 @@
    "status": "ambiguous",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:146"
+    "js/organs/stomach.js:154"
    ],
    "candidates": [
     "31093211",
@@ -478,7 +478,7 @@
    "status": "ambiguous",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:146"
+    "js/organs/stomach.js:154"
    ],
    "candidates": [
     "25558831",
@@ -497,7 +497,7 @@
    "status": "still-ambiguous",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:187"
+    "js/organs/stomach.js:195"
    ],
    "candidates": [
     {
@@ -525,7 +525,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:190"
+    "js/organs/stomach.js:198"
    ],
    "window": "caveated",
    "windowMarkers": [
@@ -539,7 +539,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:206"
+    "js/organs/stomach.js:214"
    ]
   },
   {
@@ -549,7 +549,7 @@
    "status": "parse-noise",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:225"
+    "js/organs/stomach.js:222"
    ]
   },
   {
@@ -559,7 +559,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:227"
+    "js/organs/stomach.js:235"
    ],
    "candidates": [
     {
@@ -580,7 +580,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:227"
+    "js/organs/stomach.js:235"
    ],
    "pmid": "23832847",
    "resolvedTitle": "Peritoneal carcinomatosis of gastric origin: a population-based study on incidence, survival and risk factors.",
@@ -601,7 +601,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:231"
+    "js/organs/stomach.js:239"
    ],
    "pmid": "16538048",
    "resolvedTitle": "Krukenberg tumors of the ovary: a clinicopathologic analysis of 120 cases with emphasis on their variable pathologic manifestations.",
@@ -622,7 +622,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:231"
+    "js/organs/stomach.js:239"
    ],
    "candidates": [
     {
@@ -651,8 +651,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:234",
-    "js/organs/stomach.js:234"
+    "js/organs/stomach.js:242",
+    "js/organs/stomach.js:242"
    ],
    "candidates": [
     {
@@ -697,7 +697,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:234"
+    "js/organs/stomach.js:242"
    ],
    "pmid": "10973239",
    "resolvedTitle": "Methylation of the CDH1 promoter as the second genetic hit in hereditary diffuse gastric cancer.",
@@ -718,7 +718,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:234"
+    "js/organs/stomach.js:242"
    ],
    "pmid": "9537325",
    "resolvedTitle": "E-cadherin germline mutations in familial gastric cancer.",
@@ -739,7 +739,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:234"
+    "js/organs/stomach.js:242"
    ],
    "candidates": [
     {
@@ -775,8 +775,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/stomach.js:237",
-    "js/organs/stomach.js:237"
+    "js/organs/stomach.js:245",
+    "js/organs/stomach.js:245"
    ],
    "pubmedCount": 246,
    "pmid": "29725898",
@@ -798,7 +798,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:253",
+    "js/organs/stomach.js:261",
     "js/organs/colon.js:122"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record",
@@ -814,7 +814,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:253"
+    "js/organs/stomach.js:261"
    ],
    "pmid": "32512697",
    "resolvedTitle": "Gastric Cancer: Epidemiology, Risk Factors, Classification, Genomic Characteristics and Treatment Strategies.",
@@ -838,7 +838,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:260"
+    "js/organs/stomach.js:268"
    ],
    "candidates": [
     {
@@ -871,7 +871,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/stomach.js:260"
+    "js/organs/stomach.js:268"
    ],
    "pmid": "40904880",
    "resolvedTitle": "Prognostic value of signet-ring cell carcinoma proportion in undifferentiated gastric cancer: Implications for endoscopic treatment decision",

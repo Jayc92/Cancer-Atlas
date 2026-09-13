@@ -9622,6 +9622,45 @@ substitute for the live sample this rule requires.**
 26 entries wired at the time this rule was written — running it against a not-yet-checked entry
 before assuming its trials mapping is clean is cheap, live, and exactly what this rule is for.
 
+## A CITATION-VERIFICATION PASS OVER NEW CONTENT IS REQUIRED, NOT PRACTICED — THE SAME RULING, APPLIED TO CITATIONS RATHER THAN TRIALS KEYWORDS (2026-09-13, user ruling)
+
+**The record: run once, on breast's IDC-NST/ILC round, it found two real defects immediately —
+a share figure misattributed to the wrong paper (ILC's 10.6% belongs to Giaquinto et al. 2025, not
+Probert et al. 2025, whose own ILC figure is a different 10.7%), and a claim attributed to a paper
+that does not actually make it (the terminal-duct-lobular-unit common-origin sentence was credited
+to "Unuofin et al., 2026," a real paper that never states the specific comparative claim written
+against it — the real source, found by the same pass, is PathologyOutlines/Rakha & Tozbikian).**
+Two defects on the first outing, in content that had already been written, read back, and judged
+correct by a human — the identical shape as the trials-mapping rule above: reading a citation is
+not how a wrong one gets caught, and every citation-authoring round so far that has been checked
+this way has found something.
+
+**Consequence: an independent citation-verification pass is now a REQUIRED step before any new
+organ/cancer content is considered done, not a precaution reached for only when a citation already
+feels provisional.** The pass that caught both defects above was run specifically because two
+citations were inherited from an earlier, unverified research report — but nothing about the
+method depends on that trigger, and the trials-mapping precedent already proved that "looks fine on
+a read" is not a signal that predicts which citations are clean. Run it over every genuinely NEW
+citation introduced in a round (not the whole corpus each time — that is `citation_crosscheck.py`'s
+job, and it runs every commit already), before the gate chain, as follows:
+1. For each new citation, independently re-derive it from the primary source (PubMed/journal),
+   never starting from "does this paper exist" alone — confirm the SPECIFIC figure, claim, or
+   quoted sentence attributed to it is actually what that source says, not merely that the source
+   is real and topically adjacent.
+2. Where a claim is attributed to one paper among several plausible candidates (as the TDLU
+   sentence was), check whether a DIFFERENT, correctly-supporting source exists rather than
+   loosening the claim to fit the wrong citation.
+3. Report every mismatch found, with the correct citation or figure, before writing the fix —
+   the same discipline this project already holds for every other verification pass.
+
+**What this does not replace.** `citation_crosscheck.py`'s identifier/metadata cross-check
+(author/journal/year against the identifier's own resolved metadata) and `citation_paren_ledger.py`
+(paren-shadowed years) both already run on every commit and catch a different, narrower defect
+class — a citation whose OWN recorded metadata disagrees with itself. Neither one can catch a
+citation whose metadata is perfectly self-consistent but whose CLAIM the source doesn't actually
+support, which is exactly the shape both of this round's defects were. This pass is what catches
+that shape, and nothing else in the gate chain currently does.
+
 ## Source files
 `cancer-atlas.html` is now a thin shell (markup + CSS + the three.js import map,
 ~365 lines) that loads `js/main.js` as an ES module — it is no longer the single

@@ -317,6 +317,16 @@ export const MARGIN_STATUS = Object.freeze({
   // than a false 'uncharacterised' negative, since no search was actually made.
   idc: { status: 'unread', ref: 'gross-register margin character not yet read for invasive ductal carcinoma (no special type) specifically', until: '2026-09-20' },
   ilc: { status: 'unread', ref: 'gross-register margin character not yet read for invasive lobular carcinoma specifically', until: '2026-09-20' },
+  // gint/atc, 2026-09-13 (stomach+thyroid round): not read this pass — the research for both
+  // was scoped to trunk/branch/site/histology, not gross pathology. Honestly 'unread' rather
+  // than a false 'uncharacterised' negative, since no search was actually made.
+  gint: { status: 'unread', ref: 'gross-register margin character not yet read for intestinal-type gastric adenocarcinoma specifically', until: '2026-09-20' },
+  atc:  { status: 'unread', ref: 'gross-register margin character not yet read for anaplastic thyroid carcinoma specifically', until: '2026-09-20' },
+  // mtc, 2026-09-13: a real gross-register citation fell directly out of this round's own
+  // research (StatPearls NBK459354) — reuses the SAME 'wellCircumscribed' category seminoma's
+  // own entry already established, rather than declaring a new one for one more real quote of
+  // the identical shape.
+  mtc: { status: 'cited', category: 'wellCircumscribed', register: 'G', badgeSource: 'StatPearls, Medullary Thyroid Cancer (NBK459354)', badgeQuote: 'a single, unifocal, well-circumscribed mass', ref: 'NBK459354 PMID 29083765 — well circumscribed (sporadic form); familial MTC is "often bilateral and multifocal", carried on the growth axis instead' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -414,6 +424,18 @@ export const GROWTH_STATUS = Object.freeze({
   // pass, so 'unread' rather than a false negative.
   idc: { status: 'unread', ref: 'gross-register growth-pattern character not yet read for invasive ductal carcinoma (no special type) specifically', until: '2026-09-20' },
   ilc: { status: 'unread', ref: 'gross-register growth-pattern character not yet read for invasive lobular carcinoma specifically', until: '2026-09-20' },
+  // gint, 2026-09-13: same honesty distinction as the margin axis above — not checked this pass.
+  gint: { status: 'unread', ref: 'gross-register growth-pattern character not yet read for intestinal-type gastric adenocarcinoma specifically', until: '2026-09-20' },
+  // mtc, 2026-09-13: a real COUNT-axis fact fell directly out of this round's research — the
+  // same source as the margin entry above, same model precondition as hgsoc/clear (one organ
+  // modelled), so a label only, not drawn.
+  mtc: { status: 'cited', label: 'unifocal (sporadic); bilateral and multifocal (hereditary)', register: 'G', badgeSource: 'StatPearls, Medullary Thyroid Cancer (NBK459354)', ref: 'NBK459354 PMID 29083765 — COUNT, verbatim ("familial MTC is often bilateral and multifocal"); model precondition (one organ modelled); not drawn' },
+  // atc, 2026-09-13: real, but HISTOLOGIC register — the source's own sentence sits inside its
+  // description of the three MICROSCOPIC patterns, not a gross-specimen appearance, so it is
+  // disclosed as register:'H' the same way acinar's and pdac's own histologic-register growth
+  // citations already are, mapped onto the SAME existing 'infiltrative' category ptc/pdac use
+  // rather than a new one.
+  atc: { status: 'cited', category: 'infiltrative', register: 'H', badgeSource: 'StatPearls, Anaplastic Thyroid Cancer (NBK538179)', badgeQuote: 'an infiltrative growth pattern', ref: 'NBK538179 PMID 30844206 — EDGE, histologic (H disclosed): "Necrosis, an elevated mitotic rate, and an infiltrative growth pattern are common in all 3 [microscopic] forms"; RENDERED, reusing the existing infiltrative category' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -555,6 +577,19 @@ export const EXTENT_STATUS = Object.freeze({
   // ftc got, even though ptc's own numbers happened to be close.
   ptc: { status: 'cited', site: 'papillary thyroid carcinoma', siteNote: 'papillary thyroid carcinoma — the entry itself; migrated off the organ aggregate per the share-bound rule (~84% share, just under the ~90% threshold) even though its numbers were close', shares: { localized: 63, regional: 32, distant: 3, unknown: 2 }, modal: 'localized', basis: 'Aschebrook-Kilfoy et al., Thyroid, 2011, Table 3 — SEER 13, non-Hispanic white patients, 1992–2006, papillary-histotype-confirmed (N=24,741 of 15,665/7,802/856/418); confirms the SEER 21 (2016–2022) organ aggregate (63/31/3/3) is negligibly different for this dominant subtype, cross-checked rather than assumed', source: 'Aschebrook-Kilfoy et al., Thyroid, 2011', ref: 'PMID 21186939, PMCID PMC3025182 — verified 2026-09-12 (live fetch of Table 3, not hand-copied)' },
   ftc: { status: 'cited', site: 'follicular thyroid carcinoma', siteNote: 'follicular thyroid carcinoma — the entry itself; ptc is migrated to its own per-subtype source above, per the share-bound rule', shares: { localized: 53, regional: 37, distant: 6, unknown: 3 }, modal: 'localized', basis: 'Aschebrook-Kilfoy et al., Thyroid, 2011, Table 3 — SEER 13, non-Hispanic white patients, 1992–2006, follicular-histotype-confirmed (N=3,129 of 1,672/1,173/195/89); distant share nearly doubles versus the shared aggregate (6.2% vs 3%), though localized stays modal rather than flipping; corroborated directionally on the distant-rate direction by Oyer et al., Ann Otol Rhinol Laryngol, 2014 (PMID 24574464), though that paper\'s own regional-metastasis figure runs the other way and could not be reconciled from its paywalled full text', source: 'Aschebrook-Kilfoy et al., Thyroid, 2011', ref: 'PMID 21186939, PMCID PMC3025182 — verified 2026-09-12 (live fetch of Table 3, not hand-copied)' },
+  // mtc/atc, 2026-09-13: the SAME Table 3 already cited above for ptc/ftc turns out to carry
+  // medullary and anaplastic rows too — checked directly this round rather than assumed absent,
+  // per this file's own standing note that Table 3 was "per-histotype and worth checking
+  // directly for medullary/anaplastic rows too". No share-bound workaround needed for either —
+  // real per-histotype counts exist for both.
+  mtc: { status: 'cited', site: 'medullary thyroid carcinoma', siteNote: 'medullary thyroid carcinoma — the entry itself; the same Table 3 this organ\'s own ptc/ftc entries already cite', shares: { localized: 55, regional: 32, distant: 11, unknown: 2 }, modal: 'localized', basis: 'Aschebrook-Kilfoy et al., Thyroid, 2011, Table 3 — SEER 13, non-Hispanic white patients, 1992–2006, medullary-histotype-confirmed (N=400 of 220/130/43/7)', source: 'Aschebrook-Kilfoy et al., Thyroid, 2011', ref: 'PMID 21186939, PMCID PMC3025182 — verified 2026-09-13 (live fetch of Table 3, not hand-copied)' },
+  atc: { status: 'cited', site: 'anaplastic thyroid carcinoma', siteNote: 'anaplastic thyroid carcinoma — the entry itself; the same Table 3', shares: { localized: 7, regional: 42, distant: 43, unknown: 8 }, modal: 'distant', basis: 'Aschebrook-Kilfoy et al., Thyroid, 2011, Table 3 — SEER 13, non-Hispanic white patients, 1992–2006, anaplastic-histotype-confirmed (N=225 of 16/95/96/18) — unlike papillary and follicular, where localized disease predominates, this entity is overwhelmingly found beyond confinement, with distant and regional nearly tied', source: 'Aschebrook-Kilfoy et al., Thyroid, 2011', ref: 'PMID 21186939, PMCID PMC3025182 — verified 2026-09-13 (live fetch of Table 3, not hand-copied)' },
+  // gint, 2026-09-13: checked and NOT used — the organ aggregate fails the share-bound rule at
+  // this entry's own 50.0% share ((1−0.500)×100 = 50 points of possible error, far over the
+  // ~10-point bound pdac's own ~90% share clears), and no Lauren-intestinal-specific SEER-stage
+  // source was found this pass — Riihimäki's own site-frequency paper (already cited for this
+  // entry's own site model) does not carry stage-at-diagnosis data at all.
+  gint: { status: 'uncharacterised', ref: 'checked 2026-09-13 — no Lauren-intestinal-specific SEER-stage source found; the organ aggregate fails the share-bound rule at this entry\'s own 50.0% share' },
   // SHARE-BOUND RULE (phaseC_design.md §6b): urothelial carcinoma's ~92% share (Park et al., 2023,
   // of the four commonest bladder-primary types) bounds any per-category error at ≤8 points.
   // Checked, not just bounded: real variant-histology cohorts (Deuker et al. 2021, Matulay et al.

@@ -351,11 +351,11 @@
   ],
   [
    "stomach.js|data-span-year||2026",
-   3
+   5
   ],
   [
    "stomach.js|etal-malformed-head|Riihim\u00e4ki|2016",
-   5
+   8
   ],
   [
    "stomach.js|etal-malformed-head|Wang K|2011",
@@ -376,6 +376,10 @@
   [
    "stomach.js|journal-adjacent-year|Nature|2014",
    3
+  ],
+  [
+   "stomach.js|prose-year||1965",
+   1
   ],
   [
    "stomach.js|prose-year||2009",
@@ -427,7 +431,7 @@
   ],
   [
    "thyroid.js|data-span-year||2026",
-   2
+   4
   ],
   [
    "thyroid.js|journal-adjacent-year|Cell|2014",
@@ -439,7 +443,7 @@
   ],
   [
    "thyroid.js|prose-year||2022",
-   3
+   4
   ],
   [
    "thyroid.js|prose-year||2048",

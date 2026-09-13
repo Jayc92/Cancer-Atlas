@@ -41,9 +41,17 @@ export const markerSpec = { points:[{heightFrac:0.585, angle:-32}] };
 // slide); (4) the intestinal type is falling in incidence while diffuse holds or rises. The
 // more common intestinal type stays listed with its real share, per the app's usual pattern.
 export const cancerEntries = [
-  { id:'gint',  name:'Gastric adenocarcinoma — intestinal type (Lauren)', share:'50.0% of gastric cancers in the largest series typing all three Lauren categories (Korean nationwide surgical survey, N=14,658, KGCA, 2011); 55% in Dutch population data — gland-forming, TP53/chromosomal-instability-associated', active:false, organKey:'stomach' },
+  { id:'gint',  name:'Gastric adenocarcinoma — intestinal type (Lauren)', share:'50.0% of gastric cancers in the largest series typing all three Lauren categories (Korean nationwide surgical survey, N=14,658, KGCA, 2011); 55% in Dutch population data — gland-forming, TP53/chromosomal-instability-associated', active:true, organKey:'stomach' },
   { id:'gdiff', name:'Gastric adenocarcinoma — diffuse type (Lauren)',    share:'39.0% of gastric cancers (KGCA, 2011, N=14,658); 44% in Dutch population data — the WHO now calls this poorly cohesive carcinoma', active:true,  organKey:'stomach' },
-  { id:'gmix',  name:'Gastric adenocarcinoma — mixed/indeterminate type', share:'10.9% of gastric cancers (KGCA, 2011); 10.9–21.1% across real series — whether it behaves like intestinal or diffuse type is genuinely disputed', active:false, organKey:'stomach' },
+  // BELOW-FLOOR, COMPOSITIONAL (2026-09-13) — the mechanism's third reason (js/main.js's
+  // BELOW_FLOOR_REASON_LABEL), neither rarity nor definitional instability: this is a real,
+  // WHO-recognized, 10.9%-of-gastric-cancers category that fails to clear full authoring
+  // because its own defining fact — being a hybrid of the other two Lauren types — means no
+  // single unified molecular/histologic profile exists FOR IT as its own category. See the
+  // blurb below for what a dedicated multi-region-sampling study actually found instead.
+  { id:'gmix',  name:'Gastric adenocarcinoma — mixed/indeterminate type', share:'10.9% of gastric cancers (KGCA, 2011); 10.9–21.1% across real series', active:false, organKey:'stomach',
+    belowFloorReason:'compositional',
+    blurb:'When researchers sampled a mixed tumor’s intestinal-leaning and diffuse-leaning components separately, the two areas shared some genomic alterations but not all — real, demonstrated heterogeneity within one tumor, not a blended average or a third uniform profile (Drebin et al., Am J Surg Pathol, 2025, PMID 40512601). Its prognosis is a genuine, unresolved tension in the literature rather than a settled answer: a Western cohort found its survival and recurrence pattern resembles intestinal-type more than diffuse-type (Moore et al., Ann Surg Oncol, 2022, PMID 35041098), while in early-stage disease specifically, Korean cohorts found its lymph-node and lymphovascular invasion rates exceed BOTH pure types (Choi et al., J Gastroenterol Hepatol, 2020, PMID 31445508; corroborated by Pyo et al., J Gastroenterol, 2017, PMID 27590416) — different populations and different outcomes measured, which plausibly explains the divergence rather than a flat contradiction.' },
 ];
 
 // PROCEDURAL, deliberately — the one new organ of this pass without a real scan, following the
@@ -268,7 +276,95 @@ const HISTOLOGY_GDIFF = {
   ],
 };
 
+// GINT (intestinal-type Lauren) — every citation independently re-derived from its primary
+// source before being written in (2026-09-13 citation-verification pass, the newly-standing
+// rule): He et al.'s exact figures verified verbatim, but "HER2 positive" in that paper means
+// IHC3+ overexpression OR FISH amplification, not amplification alone — worded that way below,
+// not "ERBB2 amplification". TCGA's own printed CCNE1/CCND1/CDK6 figures live only in a
+// supplementary figure inaccessible to this pass; independently re-derived from the paper's own
+// deposited dataset instead (cBioPortal, stad_tcga_pub, the same cohort TCGA 2014 reports),
+// cross-validated by reproducing TCGA's own printed 17% ERBB2-amplification figure exactly
+// before trusting the rest. That re-derivation found CCNE1's real amplification rate closer to
+// 11-12% than the ~15% first reported, CDK6's closer to 7-9% than an initially-reported ~1% (an
+// eightfold miss, caught before shipping), and — the load-bearing finding — that only CCNE1
+// shows a statistically significant co-occurrence with ERBB2 (Log2 OR 2.22, q<0.001); CDK6
+// trends positive but is not significant (q=0.785) and CCND1 trends toward EXCLUSIVITY (q=1.00,
+// the wrong direction entirely). Modeling all three as one uniform "cooperates with ERBB2" block
+// would have overstated the evidence for two of them — CDK6 and CCND1 are excluded from this
+// cancer's ledger entirely for that reason, the same "real gene, real frequency, wrong fit for
+// THIS specific pairing" class data rule 1 already warns against.
+//
+// TCGA's own text states the diffuse-side molecular association directly (genomically-stable
+// subtype enriched for diffuse histology, 73%, P=7.5×10⁻¹⁷ — already this organ's own gdiff
+// entry's trunk citation) but does not, in the same words, state an intestinal-side association
+// for the CIN subtype; the CIN/intestinal link below is an inference from that same fact by
+// contrast, not a separately-quoted TCGA sentence, and is worded as such.
+//
+// EXCLUDED, for the same verified molecular-subtype reasons gdiff's own exclusion block already
+// states (these are wrong-subtype genes for either Lauren type, not just one): ARID1A (MSI
+// 83%/EBV 73%, not CIN), PIK3CA (EBV-defining, 80%), RNF43 (MSI-associated). gdiff's own comment
+// already anticipated where ERBB2/HER2 and the CCNE1-class amplifications belong ("the
+// intestinal-side biology, not this tumor's") — they are used here for exactly that reason.
+const TRUNK_GINT = [
+  { gene:'Chromosomal instability (CIN) status', class:'driver', ccf:'~50% of TCGA’s overall gastric-cancer cohort falls into the chromosomal-instability molecular subtype (TCGA, Nature, 2014, PMID 25079317) — a classifier-level status, not a single gene, the same GBM-IDH-wildtype/FTC-RAS-vs-PAX8 architecture used elsewhere in this atlas', note:'CIN tumors carry widespread aneuploidy and copy-number alteration rather than one recurrent point mutation — a genome-instability route distinct from the diffuse type’s adhesion-loss story two entries up. TCGA’s own genomically-stable subtype is directly stated to be enriched for diffuse-type Lauren histology (73% of that subtype — this organ’s own diffuse-type entry cites the identical figure); by the same contrast, CIN status skews toward this tumor’s own intestinal/mixed side of the classification, though that is this pass’s own inference from the diffuse-side fact, not a separately-quoted TCGA sentence about the intestinal side.' },
+  { gene:'TP53 mutation', class:'driver', ccf:'71% of CIN-subtype gastric cancers (TCGA, Nature, 2014) — this organ’s own diffuse-type entry already notes TP53 concentrates in "the INTESTINAL side of gastric cancer’s molecular split, not this tumor’s"; here, it is', note:'The genome’s damage-response checkpoint, and the CIN subtype’s dominant recurrent driver — where diffuse-type gastric cancer loses cell adhesion first, this tumor loses genome-integrity control first, then accumulates chromosome-scale rearrangement on top of it.' },
+];
+// Site frequencies reuse the SAME source and the SAME overall-population rates this organ's own
+// diffuse-type entry already cites (Riihimäki et al., Oncotarget, 2016, N=7,559: liver 48%,
+// peritoneum 32%, lung 15%, bone 12% among metastatic patients) — a DISCLOSED PROXY: that paper
+// does not stratify by Lauren classification at all, only by histologic code (signet-ring vs
+// "other adenocarcinoma"), so no intestinal-specific site distribution has ever been published;
+// these are the same organ-wide rates gdiff's own entry already uses as its "overall" baseline,
+// not a measurement of this subtype specifically. Liver and Peritoneum additionally carry the
+// same paper's own "other adenocarcinoma" (non-signet-ring) comparator rate — a closer, though
+// still imperfect, proxy since intestinal-type is the single largest component of that
+// comparator group (50.0% of all gastric cancers, KGCA 2011).
+const REGIONS_GINT = [
+  { id:'GV', name:'Liver', color:cssVar('--coral'), pos3d:{x:1.45,y:1.0,z:0.3},
+    branch:{ gene:'HER2 (ERBB2) positivity', class:'driver', ccf:'28.57% of intestinal-type gastric cancers vs 13.43% of pooled diffuse/mixed-type (P=0.0103); 37.25% of well-differentiated vs 11.64% of poorly-differentiated tumors (P<0.0001) — He et al., World J Gastroenterol, 2013, PMID 23599643. "Positive" means IHC3+ protein overexpression or FISH gene amplification, not amplification alone.', note:'A real, Lauren-tied enrichment — most gastric driver genes recur at similar rates regardless of Lauren type; this receptor tyrosine kinase does not. Liver is this organ’s most common metastatic site overall — 48% of metastatic patients (Riihimäki et al., Oncotarget, 2016) — and the same paper’s "other adenocarcinoma" comparator (the group this tumor and mixed-type fall into, since neither is signet-ring) reaches it in 53% of cases, vs only 16% for signet-ring histology (OR 0.3) — real, if imperfect, corroboration that this tumor favors this route more than the diffuse type does.' } },
+  { id:'GT', name:'Peritoneum', color:cssVar('--azure'), pos3d:{x:-1.5,y:0.8,z:0.35},
+    branch:{ gene:'HER2 (ERBB2) positivity', class:'driver', ccf:'28.57% of intestinal-type gastric cancers vs 13.43% of pooled diffuse/mixed-type (P=0.0103) — He et al., 2013, PMID 23599643; the same finding as the Liver site', note:'Shown at a second site because a branch event can seed more than one subclone, the same convention this organ’s own gdiff entry already uses for its RHOA/CLDN18 pair. The peritoneum is comparatively LESS favored here than in the diffuse type: 32% of metastatic patients overall, but the "other adenocarcinoma" comparator (dominated by this tumor and mixed-type) reaches it in only 28% of cases vs 58% for signet-ring histology (OR 2.3) — the mirror image of the diffuse type’s own signature spread pattern.' } },
+  { id:'GN', name:'Lung', color:cssVar('--amber'), pos3d:{x:0.9,y:-1.5,z:-0.25},
+    branch:{ gene:'CCNE1 amplification', class:'driver', ccf:'~11-12% of gastric cancers overall (TCGA, Nature, 2014, deposited dataset; not itself broken out by Lauren type) — significantly co-occurs with HER2 positivity in the same cohort (Log2 OR 2.22, q<0.001, independently re-derived from TCGA’s own deposited data, cross-validated by first reproducing TCGA’s own printed 17% ERBB2-amplification figure exactly)', note:'A second, COOPERATING CIN-associated amplification event — not itself Lauren-specific the way HER2 is, but real, independently-checked evidence that it co-occurs with HER2 rather than competing for the same tumors rules out modeling the two as a strict either/or the way gdiff’s own RHOA/CLDN18 pair is modeled. Two other candidate cell-cycle genes named alongside CCNE1 in the same TCGA analysis — CCND1 and CDK6 — were checked directly and excluded: neither shows a statistically significant co-occurrence with HER2 in the same dataset (CDK6 trends positive but q=0.785; CCND1 trends toward exclusivity, q=1.00), so only CCNE1 is used.' } },
+  { id:'GO', name:'Bone', color:cssVar('--violet'), pos3d:{x:-0.95,y:-1.15,z:0.55},
+    branch:{ gene:'CCNE1 amplification', class:'driver', ccf:'~11-12% of gastric cancers overall (TCGA, Nature, 2014); the same finding as the Lung site', note:'Shown at a second site, the same convention as HER2 above. Bone involvement: 12% of metastatic gastric-cancer patients overall (Riihimäki et al., 2016) — no signet-ring-vs-other comparator figure is recorded for this site in this organ’s own diffuse-type entry, so none is claimed here either.' } },
+];
+const PRIVATE_POOL_GINT = [
+  { gene:'APC mutation', class:'driver', ccf:'7.2% of gastric cancers (meta-analysis, Ghojazadeh et al., Middle East J Dig Dis, 2022, PMID 36619267)', note:'The colon’s famous gatekeeper, recurrently mutated here too — this organ’s own diffuse-type entry already carries the same gene without a clean subtype-specific percentage; here, one exists.' },
+  { gene:'KRAS mutation', class:'driver', ccf:'7.8% of gastric cancers (same meta-analysis, Ghojazadeh et al., 2022)', note:'A real, recurrent RAS-pathway driver in a minority of gastric cancers — present, but well short of pancreatic cancer’s near-ubiquitous KRAS or this organ’s own CIN-defining TP53/chromosomal-instability story above.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'Background mutational noise, common simply because TTN is one of the largest genes in the genome — the same passenger this organ’s diffuse-type entry carries.' },
+];
+
+// HISTOLOGY_GINT — WHO/Lauren define this type BY its resemblance to colonic adenocarcinoma, so
+// the drawing below deliberately reuses drawGlandRing, the SAME gland primitive genCRC/genPDAC
+// already use (full reuse, not new drawing code — the honest consequence of two cancers sharing
+// one real architecture), composed simply (round, evenly-spaced, single-layer glands) rather
+// than CRC's own complex/cribriform/dirty-necrosis set-pieces, which are that cancer's
+// distinguishing features, not this one's. The one genuinely stomach-specific addition is the
+// scattered goblet cell — a small, polarized clear-mucin cap at one pole of an otherwise
+// ordinary columnar cell, the microscopic signature of intestinal metaplasia itself, distinct
+// from the diffuse-type generator's own whole-cell signet-ring vacuole three entries up.
+const HISTOLOGY_GINT = {
+  intro: 'Intestinal-type gastric adenocarcinoma is defined, in Lauren’s own original terminology, by what it resembles: ordinary colonic adenocarcinoma. Well-to-moderately differentiated tubular or papillary glands, lined by tall columnar cells, arise against a background of gastric intestinal metaplasia — the same Correa-cascade precursor step this organ’s diffuse-type entry notes is specific to this side of the classification. Scattered among the glandular field are goblet cells, the small mucin-capped cells that mark the mucosa’s own transformation toward an intestinal phenotype, well before any tumor forms.',
+  ariaSummary: 'Stylized microscopic field: pale pink stroma crossed by loose fibrous bands, with well-formed round-to-oval glands scattered evenly across it, each a ring of tall columnar cells around a central lumen. Small goblet cells with a single clear mucin cap sit loosely between the glands. In the upper right, one finger-like papillary frond projects into open space, its core a thin blood vessel.',
+  citation: 'Lauren, Acta Pathol Microbiol Scand, 1965 — the classification’s own foundational definition of this type as resembling colonic adenocarcinoma; general architectural description per standard gastrointestinal pathology teaching.',
+  features: [
+    { key:'glands', label:'Tubular/papillary glands',
+      text:'Well-to-moderately differentiated glands lined by tall columnar cells — the architecture this type is named for, deliberately drawn to resemble ordinary colonic adenocarcinoma, since Lauren’s own classification defines this type by that resemblance directly.' },
+    { key:'papillary', label:'Papillary projection',
+      text:'A finger-like frond of tumor epithelium projecting into open space around a thin fibrovascular core — the second architecture named for this type, alongside the tubular gland.' },
+    { key:'goblet', label:'Goblet cell',
+      text:'A small cell with a single clear mucin cap at one pole — the signature of intestinal metaplasia, the mucosal transformation this tumor type arises against, distinct from the diffuse type’s own whole-cell signet-ring vacuole.' },
+  ],
+};
+
 export const cancerDetails = {
+  gint: {
+    title:'Intestinal-Type Gastric Adenocarcinoma', screenLabel:'Intestinal-type gastric adenocarcinoma — tumor explorer',
+    legendTitle:'Sites (real distant-metastasis pattern)',
+    regions:REGIONS_GINT, trunk:TRUNK_GINT, privatePool:PRIVATE_POOL_GINT,
+    histology: HISTOLOGY_GINT,
+  },
   gdiff: {
     title:'Diffuse-Type Gastric Adenocarcinoma', screenLabel:'Diffuse-type gastric adenocarcinoma — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
