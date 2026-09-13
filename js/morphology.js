@@ -295,6 +295,7 @@ export const MARGIN_STATUS = Object.freeze({
   pdac:     { status: 'cited', category: 'poorlyDelineated', ref: 'R1 — blurred macroscopic delineation, RENDERED fourth (2026-09-09) with the same form as poorlyDefined under arm 3' },
   melanoma: { status: 'cited', category: 'irregularBorder', ref: 'R9 — irregular border (clinical surface = gross for skin; PMC12427887), RENDERED fifth (2026-09-09) as coarse spike-free undulation, separate from the indistinct-edge form on the citation\'s own word' },
   seminoma: { status: 'cited', category: 'wellCircumscribed', ref: 'harvest — well circumscribed (PMC6906820 general statement; PMC13218944 typically; PMC9162935), RENDERED second, 2026-09-09' },
+  nsgct: { status: 'unread', ref: 'no gross-register margin/circumscription sentence found in this pass\'s own search (Shen et al. 2018, Bagrodia et al. 2016, Wood et al. 1996, Bahrami et al. 2007 were all read for other purposes; none addresses gross margin character)', until: '2026-10-01' },
   ptc:      { status: 'cited', category: 'poorlyDefined', ref: 'R17 — poorly defined margins, RENDERED (first category wired, 2026-09-09)' },
   // FTC: stood at 'cited' for a day on a harvest SEED whose sentence was about encapsulated FVPTC, a different
   // entity. READ 2026-09-09 (pre-registered ladder): StatPearls Follicular Thyroid Cancer (NBK539775) has no
@@ -427,6 +428,7 @@ export const GROWTH_STATUS = Object.freeze({
   pdac:     { status: 'cited', category: 'infiltrative', register: 'H', badgeSource: 'Int J Mol Sci 2021 (PMC8268881)', badgeQuote: 'neoplastic cells arranged in small tubular glands that infiltrate a desmoplastic stroma', ref: 'R2 PMC8268881 PMID 34201897 — EDGE, histologic (H disclosed), corroborated at gross by R1; RENDERED' },
   melanoma: { status: 'cited', label: 'radial then vertical growth phase', register: 'G', badgeSource: 'Cancers 2025 (PMC12427887)', ref: 'R10 PMC12427887 — PLACEMENT (radial phase) and EXTENT breach (vertical phase); not drawn' },
   seminoma: { status: 'unread', ref: 'growth source not read (listed for an external read; none made)', until: '2026-10-01' },
+  nsgct: { status: 'unread', ref: 'no gross-register growth-pattern sentence found in this pass\'s own search', until: '2026-10-01' },
   ptc:      { status: 'cited', category: 'infiltrative', register: 'G', badgeSource: 'StatPearls, Papillary Thyroid Carcinoma (NBK536943)', badgeQuote: 'typically presents as an invasive neoplasm', ref: 'R18 NBK536943 PMID 30725628 — EDGE ("an invasive neoplasm"); the margin half of the same sentence is R17 — two words, two axes, declared; RENDERED' },
   ftc:      { status: 'unread', ref: 'growth source not read', until: '2026-10-01' },
   // pneuro/pductal, 2026-09-12: same check, same result as the margin axis above — no
@@ -591,6 +593,11 @@ export const EXTENT_STATUS = Object.freeze({
   // REGIONS_GDIFF metastatic-site figures already use, not a new departure.
   gdiff: { status: 'cited', site: 'stomach', siteNote: 'gastric signet ring cell carcinoma (ICD-O-3 8490/3) specifically — a real subset of the broader diffuse-type/poorly-cohesive category this entry models, not an exact match', shares: { localized: 19, regional: 32, distant: 42, unknown: 8 }, modal: 'distant', basis: 'Hu et al., World J Surg Oncol, 2022, Table 1 — SEER, gastric signet ring cell carcinoma 2000–2018 (N=12,483 of 2,313/3,935/5,267/968; the paper\'s own Results prose states "12,484", a one-patient typo against the table\'s self-consistent 12,483)', source: 'Hu et al., World Journal of Surgical Oncology, 2022', ref: 'PMID 35296343, PMCID PMC8925095 — verified 2026-09-12 (live fetch of Table 1, not hand-copied)' },
   seminoma: { status: 'uncharacterised', site: 'testis', ref: 'https://seer.cancer.gov/statfacts/html/testis.html — the page publishes no stage-at-diagnosis distribution for this site (checked 2026-09-10)' },
+  // nsgct, 2026-09-13 batch: same organ, same source limitation as seminoma above — re-checked
+  // live rather than assumed still true. SHARE-BOUND RULE also fails independently even if a
+  // distribution existed: NSGCT's ~35.5% share of testicular GCTs is far below the ≤10-point
+  // bound, so an organ-level aggregate could not be used directly regardless.
+  nsgct: { status: 'uncharacterised', site: 'testis', ref: 'https://seer.cancer.gov/statfacts/html/testis.html — re-checked live 2026-09-13, still publishes no stage-at-diagnosis distribution for this site; share-bound also fails independently (~35.5% of testicular GCTs)' },
   // DIVERGENCE SWEEP (2026-09-11/12): ptc CHECKED, stays on the aggregate — a real, histotype-
   // specific source (Aschebrook-Kilfoy et al., below) confirms ptc's own distribution (63.3/31.5/
   // 3.5/1.7) is negligibly different from the shared 63/31/3/3, exactly the arithmetic-dominance

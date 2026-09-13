@@ -1385,3 +1385,48 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   | SIDECAR {"metrics": {"declared": 5, "gated_total": 24, "kind_bare_name_comma_year": 7, "kind_bare_name_year": 0, "kind_data_span_year": 90, "kind_etal_malformed_head": 24, "kind_etal_out_of_range": 0, "kind_etal_shadow": 1, "kind_journal_adjacent_year": 20, "kind_paren_shadow": 3, "kind_prose_year": 51, "kind_semicolon_shadow": 7, "kind_unlisted": 0, "problems": 1, "unreached_total": 203}, "name": "citation_reach_check", "ratchet": []}
   | DONE citation_reach_check: 203 unreached spans (5 added, 0 removed vs the tracked set), 24 gated (5 declared), 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-13T17:42:08Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 41 lines, last 12 below
+  |   ok   the code/prose split of a synthetic 2-code/3-prose pointer list is 2/3, not a blend — removing one of the three prose entries would drop prose_n to 2 and leave code_n at 2 unchanged, which is the whole point: a documentation condensation cannot touch the floored metric
+  | SELFTEST PASS — fires on both dangling shapes, on a referent off its line, on one absent from the file, and on all five ways an exemption can be wrong; keeps floor-only pointers out of the identity count; refuses a substring match for a short surname and accepts a non-ASCII one; finds a far-away referent in real corpus bytes; classifies all four real origin shapes into CODE-OR-PROSE correctly, with a mixed-population fixture proving the split is real and not a blend; and takes its population from git rather than from the filesystem
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:101 — Androl|1986 is at 108 (offset +7, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:177 — Coffey|2008 is at 184 (offset +7, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:177 — Shen|2018 is at 184 (offset +7, name+year), 14 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:177 — Paly|2013 is at 184 (offset +7, name+year), 3 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:179 — Wood|1996 is at 172 (offset -7, name+year), 8 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/testis.js:183 — Wood|1996 is at 186 (offset +3, name+year), 8 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/testis.js: 6 off line, 3 distinct [-7, 3, 7]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 6, "pointer.identity_oracle": 272, "pointer.on_line": 263, "pointer.pointers_code": 477, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 622/622 hand-typed pointers resolve (file tracked, line in range), 477 code-and-instrument (floored) + 145 prose (reported, not floored) = 622 total, 263/272 with an author+year oracle land on their referent's line, 3 declared off-line, 6 flags, 41 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-13T17:42:33Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 66 lines, last 12 below
+  |   well-formed 'de Kouchkovsky'
+  |               js/organs/prostate.js:317
+  |   well-formed 'van Beek'
+  |               js/organs/stomach.js:245
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:107
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Al-Masri' at js/organs/testis.js:365, js/organs/testis.js:379 (2 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Alvarado-Cabrero' at js/organs/testis.js:372 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 28, "heads_total": 30, "imprecise": 8, "problems": 2, "records": 53, "well_formed": 20}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 30 multi-token heads on 53/766 records, 8 declared imprecise, 20 declared well-formed, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T17:47:29Z reason=exit=1 marker="==== DONE:" tool=regress.js
+     output 297 lines, last 12 below
+  | ==== DONE: 282 checks, 2 failures, 2 page errors (2 declared benign, 0 undeclared) ====
+  | REGRESS VERDICT: 1 undeclared failing check(s), 0 stale declaration(s), 0 undeclared page error(s), 0 stale benign declaration(s) — exit 1
+  | [
+  |  {
+  |   "type": "404",
+  |   "msg": "http://localhost:3057/favicon.ico"
+  |  },
+  |  {
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |  }
+  | ]
+==== END REFUSAL

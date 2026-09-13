@@ -159,6 +159,8 @@ IMPRECISE = {
 # that is the only structure here a reader needs.
 WELL_FORMED = (
     # hyphenated single-token surnames — the character class, working as intended
+    'Al-Masri',
+    'Alvarado-Cabrero',
     'Barnholtz-Sloan',
     'Cittolin-Santos',
     'Iacobuzio-Donahue',

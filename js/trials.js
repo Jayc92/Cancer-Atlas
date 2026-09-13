@@ -256,6 +256,22 @@ export const TRIALS_CONDITION_MAP = {
       + 'strings across the full (595-study) melanoma parent corpus, none of them a real '
       + 'cutaneous-melanoma trial.',
   },
+  nsgct: {
+    query: 'nonseminomatous germ cell tumor', parent: 'testicular cancer',
+    conditionKeywords: ['non-seminomatous', 'nonseminomatous', 'non seminomatous', 'nsgct'],
+    note: '10/12 live sample kept, 2 correctly dropped (one bare "Germ Cell Tumor" with no site '
+      + 'qualifier, too ambiguous; one real cross-organ false positive caught before it shipped — '
+      + 'see below). The first-draft keyword list included "nongerminomatous germ cell", added on '
+      + 'the (wrong) assumption it was a testicular synonym; a live sample instead caught it '
+      + 'matching NCT04684368, a CNS/pineal-region trial ("Central Nervous System '
+      + 'Nongerminomatous Germ Cell Tumor," aka NGGCT, the standard PEDIATRIC-BRAIN-TUMOR term '
+      + 'for this shape, not a testicular one) with zero testicular component. Removed the term '
+      + 'entirely — every genuine testicular NSGCT trial in the live sample was already caught via '
+      + '"non-seminomatous"/"nonseminomatous" anyway, so nothing was lost. Also checked and NOT '
+      + 'used: bare "embryonal carcinoma"/"yolk sac"/"choriocarcinoma" — the same live sample '
+      + 'showed these occurring as CNS/pineal histologic subtypes in that same trial, unrelated to '
+      + 'testis.',
+  },
   seminoma: {
     query: 'testicular seminoma', parent: 'testicular cancer',
     conditionKeywords: ['testicular', 'testis', 'germ cell', 'seminoma'],

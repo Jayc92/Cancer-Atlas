@@ -109,6 +109,43 @@ function drawGlandRing(g, cx, cy, lumenR, rnd, opts){
   }
 }
 
+// Yolk sac tumor's Schiller-Duval body — a glomerulus-like structure, genuinely new (checked
+// directly against every existing primitive: nothing here draws a central-vessel-core wrapped by
+// a cell layer, projecting into an open cystic space). Verified directly at two sources:
+// "bilayered festoons of cells surrounding a fibrovascular core, reminiscent of primitive
+// glomeruli" (Al-Masri et al., Ann Saudi Med, 2011, PMID 21293065) and "a central vessel
+// surrounded by fibrous tissue... surrounded by layers of the tumoral cells... resemble primitive
+// glomerulus" (Fischerova et al., Diagnostics, 2022, PMID 35204394). Structure, in drawing order:
+// a pale cystic space first (the body projects INTO this, so it sits off-center within it), then
+// the fibrovascular core (a small vessel, same color pair drawFrond's own core uses), then a
+// wrapping ring of cuboidal (squashed, radially-aligned) tumor cells around the core — a
+// DIFFERENT technique from drawGlandRing's outward-facing nuclei-only ring, since the source
+// specifically describes CELLS (with cytoplasm), not bare nuclei, forming the wrapping layer.
+function drawSchillerDuvalBody(g, cx, cy, cystR, rnd, opts){
+  const o = opts || {};
+  const bodyCx = cx + (o.offsetX||0), bodyCy = cy + (o.offsetY||0);
+  const coreR = o.coreR || cystR*0.22;
+  const cellR = o.cellR || cystR*0.16;
+  // the cystic space the body projects into — pale, open
+  g.appendChild(el('path', {d:blobPath(cx, cy, cystR, cystR*0.92, 0.14, 16, rnd, 0), fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1.4, opacity:0.85}));
+  // the fibrovascular core
+  g.appendChild(el('circle', {cx:bodyCx, cy:bodyCy, r:coreR, fill:o.coreColor||HE.vessel, stroke:o.coreColorDark||HE.vesselDk, 'stroke-width':1.6, opacity:0.9}));
+  // the wrapping layer of cuboidal tumor cells, radially aligned around the core
+  const n = o.cellCount || 12;
+  for(let i=0;i<n;i++){
+    const a = i/n*Math.PI*2 + rnd()*0.12;
+    const rr = coreR + cellR*0.85;
+    const x = bodyCx + Math.cos(a)*rr, y = bodyCy + Math.sin(a)*rr;
+    const alignDeg = a*180/Math.PI + 90;
+    g.appendChild(el('rect', {
+      x:x-cellR*0.55, y:y-cellR*0.85, width:cellR*1.1, height:cellR*1.7,
+      transform:`rotate(${alignDeg.toFixed(0)} ${x} ${y})`,
+      fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':0.9, opacity:0.95, rx:cellR*0.2,
+    }));
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:cellR*0.32, ry:cellR*0.42, transform:`rotate(${alignDeg.toFixed(0)} ${x} ${y})`, fill:HE.nuc, opacity:0.9}));
+  }
+}
+
 function necrosisBlob(g, cx, cy, rx, ry, rnd, rot){
   g.appendChild(el('path', {d:blobPath(cx, cy, rx, ry, 0.28, 12, rnd, rot||0), fill:HE.necro, stroke:HE.debris, 'stroke-width':1}));
   // karyorrhectic debris — the dust of broken nuclei real necrosis is full of
@@ -1392,6 +1429,56 @@ function genSeminoma(g, rnd){
   ];
 }
 
+// Non-seminomatous germ cell tumor — embryonal carcinoma's irregular glandular/solid sheets
+// (drawGlandRing reuse, zero new drawing code, the same primitive genCRC/genPDAC/genLUAD/
+// genProstate already use) as the field's dominant tumor population, plus ONE Schiller-Duval
+// body (the new primitive above) as the headline yolk-sac-tumor feature. Deliberately NOT drawn:
+// choriocarcinoma's biphasic pattern, teratoma's multi-germ-layer tissue — both real and named
+// in the intro text only, the same "name more than is drawn" restraint ATC's own three (not five)
+// patterns already establish for this atlas.
+function genNSGCT(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.55}));
+  // embryonal carcinoma: irregular, haphazardly-oriented glandular/solid sheets — deliberately
+  // more disorderly than genPDAC's own well-formed, evenly-spaced glands, since embryonal
+  // carcinoma is described as PRIMITIVE and disorderly rather than deceptively well-differentiated
+  const glands = [
+    {x:120, y:100, r:26}, {x:310, y:70,  r:20}, {x:180, y:230, r:30},
+    {x:95,  y:400, r:22}, {x:270, y:410, r:26}, {x:150, y:330, r:16},
+  ];
+  glands.forEach(s=>{
+    const gg = el('g', {transform:`rotate(${(rnd()*180-90).toFixed(0)} ${s.x} ${s.y})`});
+    g.appendChild(gg);
+    drawGlandRing(gg, s.x, s.y, s.r, rnd, {nucMin:3.5, nucMax:5.5, cellR:11});
+  });
+  // solid sheets of primitive cells filling the space between glands
+  for(let i=0;i<70;i++){
+    const x = 20+rnd()*440, y = 20+rnd()*460;
+    if(glands.some(gl=>Math.hypot(gl.x-x, gl.y-y) < gl.r+16)) continue;
+    drawCell(g, x, y, 9+rnd()*2, 4+rnd()*1.6, rnd, {cytoFill:HE.cytoLite, cytoOpacity:0.85});
+  }
+  // ONE Schiller-Duval body, sited apart from the embryonal-carcinoma cluster
+  drawSchillerDuvalBody(g, 610, 260, 130, rnd, {offsetX:-18, offsetY:12, cellCount:13});
+  // Teratoma's real, cited multi-germ-layer heterogeneity (Salzillo et al., Cancers, 2024,
+  // PMCID PMC11240729) — drawn as one mature-cartilage nodule, a real, visually distinctive
+  // mesodermal component: pale blue-gray matrix with chondrocytes sitting in clear lacunar
+  // spaces, genuinely new (no existing primitive draws a cartilage matrix), sited in its own
+  // corner apart from both the embryonal-carcinoma cluster and the Schiller-Duval body so all
+  // three read as distinct zones of one heterogeneous tumor.
+  const cart = {x:660, y:440, r:70};
+  g.appendChild(el('path', {d:blobPath(cart.x, cart.y, cart.r, cart.r*0.82, 0.13, 14, rnd, 0.2), fill:'#c9d4dc', stroke:'#9fb0bc', 'stroke-width':1.6, opacity:0.95}));
+  for(let i=0;i<22;i++){
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.75;
+    const x = cart.x+Math.cos(a)*cart.r*r, y = cart.y+Math.sin(a)*cart.r*0.82*r;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:6.5, ry:5, fill:HE.clear, stroke:'#9fb0bc', 'stroke-width':1, opacity:0.9}));
+    g.appendChild(el('circle', {cx:x+(rnd()*2-1)*1.5, cy:y+(rnd()*2-1)*1.5, r:2.6, fill:HE.nucDark, opacity:0.9}));
+  }
+  return [
+    {key:'embryonal',     x:180, y:230},
+    {key:'schillerduval', x:610, y:120},
+    {key:'teratoma',      x:cart.x, y:cart.y - cart.r - 14},
+  ];
+}
+
 function genBladderUC(g, rnd){
   // High-grade invasive urothelial carcinoma — a papillary frond with a real fibrovascular
   // core, covered by DISORDERED, piled-up cells (no clean single rim — the loss-of-polarity
@@ -1934,6 +2021,7 @@ const GENERATORS = {
   melanoma: genMelanoma,
   clear:  genOCCC,
   seminoma: genSeminoma,
+  nsgct: genNSGCT,
   uc:     genBladderUC,
   ptc:    genPTC,
   ftc:    genFTC,

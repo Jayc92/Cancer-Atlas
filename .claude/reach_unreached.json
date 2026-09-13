@@ -407,7 +407,19 @@
   ],
   [
    "testis.js|data-span-year||2026",
-   4
+   5
+  ],
+  [
+   "testis.js|journal-adjacent-year|Clin Oncol|1997",
+   1
+  ],
+  [
+   "testis.js|journal-adjacent-year|WHO|2022",
+   1
+  ],
+  [
+   "testis.js|prose-year||1997",
+   1
   ],
   [
    "testis.js|prose-year||2019",

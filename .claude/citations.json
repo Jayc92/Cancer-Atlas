@@ -1820,7 +1820,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/testis.js:101"
+    "js/organs/testis.js:108"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record"
   },
@@ -1831,7 +1831,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/testis.js:177"
+    "js/organs/testis.js:184"
    ],
    "pmid": "17943970",
    "resolvedTitle": "Somatic KIT mutations occur predominantly in seminoma germ cell tumors and are not predictive of bilateral disease: report of 220 tumors and",
@@ -1853,7 +1853,7 @@
    "status": "still-saturated",
    "userFacing": true,
    "refs": [
-    "js/organs/testis.js:177"
+    "js/organs/testis.js:184"
    ],
    "candidates": [
     {
@@ -1886,7 +1886,7 @@
    "status": "still-zero-pass",
    "userFacing": true,
    "refs": [
-    "js/organs/testis.js:177"
+    "js/organs/testis.js:184"
    ],
    "pubmedCount": 9
   },
@@ -1897,8 +1897,8 @@
    "status": "still-saturated",
    "userFacing": true,
    "refs": [
-    "js/organs/testis.js:179",
-    "js/organs/testis.js:183"
+    "js/organs/testis.js:172",
+    "js/organs/testis.js:186"
    ],
    "candidates": [
     {

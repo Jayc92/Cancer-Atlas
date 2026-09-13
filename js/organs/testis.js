@@ -38,7 +38,14 @@ export const cancerEntries = [
   // "poor prognosis" category the IGCCCG system defines for other germ cell tumors simply has no
   // seminoma members: every seminoma patient starts in good or intermediate risk.
   { id:'seminoma', name:'Seminoma', share:'~64.5% of testicular germ cell tumors (22,634/35,066 in a German 2003–2014 registry, PMID 31310057) — and even once metastatic, there is no poor-prognosis risk category for it at all: 5-year survival is 95% (good-risk) or 88% (intermediate-risk) under the IGCCCG system (Beyer et al., 2021 update, n=2,451)', active:true, organKey:'testis' },
-  { id:'nsgct',     name:'Non-seminomatous germ cell tumor', share:'~35.5% of testicular germ cell tumors (12,432/35,066) — embryonal carcinoma, yolk sac tumor, choriocarcinoma, teratoma, or a mixture of these with seminoma', active:false, organKey:'testis' },
+  // The IGCCCG risk-category contrast with seminoma above is the mirror-image distinguishing
+  // fact for this entry: seminoma has NO poor-prognosis tier at all; NSGCT is the ONLY histology
+  // that IGCCCG's poor-prognosis category ever applies to (International Germ Cell Cancer
+  // Collaborative Group, J Clin Oncol, 1997, PMID 9053482, verbatim: "poor prognosis, comprising
+  // 14% of GCT (all with NSGCT)"), a real 5-year survival gap that has narrowed sharply since —
+  // 48% in the 1997 cohort to 67% in the modern IGCCCG-Update cohort (Gillessen et al., J Clin
+  // Oncol, 2021, PMID 33822655, PMCID PMC8099402, n=4,955) — real improvement, not a contradiction.
+  { id:'nsgct',     name:'Non-seminomatous germ cell tumor', share:'~35.5% of testicular germ cell tumors (12,432/35,066) — embryonal carcinoma, yolk sac tumor, choriocarcinoma, teratoma, or a mixture of these with seminoma — and unlike seminoma, this IS the histology IGCCCG\'s poor-prognosis risk category applies to: 5-year survival 96% (good-risk), 89% (intermediate), 67% (poor-risk) under the modern IGCCCG-Update system (Gillessen et al., 2021, n=4,955)', active:true, organKey:'testis' },
 ];
 
 // PROCEDURAL — no HRA/NIH 3D reference-organ entry exists for testis (all 81 entries in the
@@ -277,11 +284,122 @@ const HISTOLOGY_SEMINOMA = {
   ],
 };
 
+// ============================================================
+// NON-SEMINOMATOUS GERM CELL TUMOR (NSGCT) — 2026-09-13, the batch's own testis entry.
+// ============================================================
+// TRUNK — SHARED with seminoma, not competing, and per the same TCGA cohort's own head-to-head
+// comparison, i(12p) is if anything MORE universal in NSGCT than in seminoma: Shen et al. (Cell
+// Reports, 2018, PMID 29898407, PMCID PMC6075738), the same paper already anchoring seminoma's
+// own trunk, breaks its 131-tumor i(12p) count out by subtype and finds embryonal carcinoma
+// 27/27 (100%), teratoma 16/16 (100%), yolk sac tumor 13/13 (100%), and mixed NSGCT 9/9 (100%) —
+// against seminoma's own 60-80% depending on KIT-mutation status. Verbatim, Shen et al.'s own
+// Discussion: "All of the subtypes of NSGCTs shared genomic characteristics, including lower
+// ploidy and higher purity than seminoma, and universal i(12)p." This is the SAME whole-arm
+// chromosomal-gain trunk event this organ's own seminoma entry already models, cross-referenced
+// rather than duplicated as an independent finding.
+const TRUNK_NSGCT = [
+  { gene:'Isochromosome 12p [i(12p)] / 12p gain — shared with this organ\'s own Seminoma entry', class:'driver', ccf:'100% of NSGCT subtypes by i(12p) specifically (embryonal carcinoma 27/27, teratoma 16/16, yolk sac tumor 13/13, mixed NSGCT 9/9 — Shen et al., Cell Reports, 2018, PMID 29898407, PMCID PMC6075738) — cleaner than seminoma\'s own 60&ndash;80% (KIT-mutation-status-dependent, per that same paper\'s own by-subtype breakdown)', note:'The identical whole-arm chromosomal gain this organ\'s own Seminoma entry carries as its trunk event — not a second, independent finding, but the same invasion-defining lesion, shared across the whole invasive-germ-cell-tumor class rather than being seminoma-specific. Shen et al.\'s own words: "universal i(12)p" across every NSGCT subtype tested. The two histologies diverge sharply on almost every other genomic axis (see the branch genes below), which makes this shared trunk the one thing that unites them as members of one disease family rather than two unrelated cancers sharing an organ.' },
+];
+// SITES — no single dedicated all-sites study exists for NSGCT with the same rigor as seminoma's
+// own Paly et al. 2013 (which is explicitly seminoma-only — verified directly, its own text
+// restricts to "seminoma patients with infradiaphragmatic adenopathy"). Wood et al. (Clin Radiol,
+// 1996, PMID 8617040 — already cited for seminoma's own Lung site) gives real, dedicated NSGCT
+// figures from the SAME 20-patient NSGCT arm: mediastinal lymphadenopathy 9/20 (45%), neck
+// lymphadenopathy 13/20 (65%), and lung metastasis 8/20 (40%) — all real, though the cohort was
+// pre-selected for existing supradiaphragmatic (chest/neck) spread, a scoping caveat stated in
+// each site's own note rather than smoothed over. Retroperitoneal/para-aortic nodes are the real,
+// anatomically-expected first echelon (the same first landing zone this organ's own Seminoma
+// entry models) but no NSGCT-specific percentage was found in this pass\'s own search — stated
+// honestly rather than borrowing seminoma's own 84%/99% figures, which are seminoma-specific.
+// SPREAD PATTERN — deliberately NOT given the same caudal-to-cranial pos3d ordering seminoma's
+// own regions use: Wood et al.\'s own conclusion states NSGCT spread "is more random" than
+// seminoma's, so an ordered height-cascade would misrepresent this entity's real, disorderly
+// spread pattern.
+//
+// BRANCH — TP53/MDM2 pathway alteration (real, but disproportionately a feature of aggressive/
+// treatment-resistant disease rather than a baseline majority event) and BRCA1 promoter
+// methylation (a real, quantified, NSGCT-EXCLUSIVE epigenetic-silencing event — a genuinely
+// different KIND of event from a point mutation, the same structural-lesion class as this
+// organ's own i(12p) trunk and Prostate's TMPRSS2-ERG fusion). Bagrodia et al. (J Clin Oncol,
+// 2016, PMID 27646943, PMCID PMC5477828): TP53 mutations 17/104 (16.3%) in cisplatin-resistant
+// germ cell tumors vs. 0/76 (0%) in cisplatin-sensitive ones (P<.001); TP53/MDM2 combined 25/104
+// (24.0%) vs. 2/76 (2.6%); within primary MEDIASTINAL NONSEMINOMA specifically, TP53 ALONE (not
+// the combined figure) rises further — "the alteration rate was even more pronounced (13 of 18
+// [72.2%]) because none of the four primary mediastinal seminomas harbored a TP53 mutation" — the
+// ellipsis in an earlier draft was spurious (the source's own sentence is contiguous, no words
+// omitted), corrected here to quote it exactly. A clean, explicit seminoma-vs-NSGCT split at that
+// one site. Checked directly against seminoma's own KIT/KRAS ledger in this file: TP53 has never
+// been reported as a seminoma-associated event anywhere in this pass's own search, and MDM2
+// focal amplification is reported by Shen et al. 2018 as occurring "with similar frequency in
+// seminomas and NSGCTs" — a real, disclosed tension with the resistance-cohort finding above,
+// plausibly explained by cohort selection (Shen = unselected primary tumors; Bagrodia = a
+// resistance-enriched cohort) rather than a contradiction. BRCA1 promoter methylation: Shen et
+// al. 2018, verbatim, "epigenetic silencing of important tumor suppressors, including BRCA1,
+// MGMT, and RASSF1A... exclusively in NSGCTs" — by subtype, embryonal carcinoma 7.4%, teratoma
+// 31.2%, yolk sac tumor 53.8%, mixed 22.2%.
+const REGIONS_NSGCT = [
+  { id:'NP', name:'Retroperitoneal lymph nodes', color:cssVar('--coral'), pos3d:{x:-1.2,y:-1.4,z:0.35},
+    branch:{ gene:'BRCA1 promoter methylation', class:'driver', ccf:'7.4–53.8% depending on subtype (embryonal carcinoma 7.4%, mixed 22.2%, teratoma 31.2%, yolk sac tumor 53.8% — Shen et al., 2018); exclusively in NSGCT, never seminoma', note:'An epigenetic silencing event, not a point mutation — the tumor-suppressor gene is intact but switched off. The real, anatomically-expected first landing zone for testicular lymphatic drainage, the same first echelon this organ\'s own Seminoma entry models at its own Para-aortic site — but no NSGCT-specific percentage for this site was found in this pass\'s own search, stated honestly rather than borrowed from seminoma\'s own figures.' } },
+  { id:'NM', name:'Mediastinal lymph nodes', color:cssVar('--azure'), pos3d:{x:1.1,y:0.5,z:-0.3},
+    branch:{ gene:'TP53/MDM2 pathway alteration', class:'driver', ccf:'TP53/MDM2 combined 24.0% overall (25/104) in a cisplatin-resistant cohort; TP53 alone rises to 72.2% (13/18) within that cohort\'s primary mediastinal NONSEMINOMA specifically, vs. 0/4 in primary mediastinal SEMINOMA in the same cohort (Bagrodia et al., J Clin Oncol, 2016, PMID 27646943, PMCID PMC5477828) — two different metrics (combined vs. TP53-only) on two different stratifications, stated separately rather than as one continuously-narrowing figure', note:'A real, sharp seminoma-vs-NSGCT split at exactly this site — none of four primary mediastinal seminomas in this cohort carried a TP53 mutation, while the large majority of mediastinal nonseminomas did. Real evidence this alteration marks aggressive, often treatment-resistant disease rather than a uniform baseline event across every NSGCT case; a real, disclosed tension exists with Shen et al. (2018)\'s finding that MDM2 amplification alone occurs at similar rates in seminoma and NSGCT, plausibly a cohort-selection difference (unselected primary tumors vs. a resistance-enriched cohort) rather than a contradiction.' } },
+  { id:'NK', name:'Neck lymph nodes', color:cssVar('--amber'), pos3d:{x:-1.15,y:1.2,z:0.3},
+    branch:{ gene:'BRCA1 promoter methylation', class:'driver', ccf:'same range as the Retroperitoneal lymph nodes site', note:'The same epigenetic-silencing event shown at a second site. A real, dedicated NSGCT figure exists for this exact site: neck lymphadenopathy was found in 13 of 20 (65%) NSGCT patients in a cohort pre-selected for existing chest/neck spread (Wood et al., Clin Radiol, 1996, PMID 8617040) — a scoping caveat worth stating plainly, since it means 65% describes this pre-selected subset, not all NSGCT patients.' } },
+  { id:'NW', name:'Lung', color:cssVar('--violet'), pos3d:{x:0.9,y:1.5,z:-0.35},
+    branch:{ gene:'TP53/MDM2 pathway alteration', class:'driver', ccf:'same range as the Mediastinal lymph nodes site', note:'The same TP53/MDM2 alteration shown at a second site — real hematogenous, not nodal, spread. A real, sharp seminoma-vs-NSGCT contrast this organ\'s own entries draw: lung metastasis reached 8 of 20 (40%) NSGCT patients in the same pre-selected cohort where seminoma\'s own rate was 9% (Wood et al., 1996) — a real, roughly four-fold difference, though the source itself does not rank its several comparisons by size; its own single statistically-tested contrast is a different one (neck-plus-mediastinal co-involvement, 55% seminoma vs. 10% NSGCT, P=0.012). Wood et al.\'s own conclusion states NSGCT spread overall "is more random" than seminoma\'s own ordered, contiguous pattern — stated here rather than implied by a matching site layout.' } },
+];
+const PRIVATE_POOL_NSGCT = [
+  { gene:'TTN synonymous variant', class:'passenger', note:'Background mutational noise, common simply because TTN is one of the largest genes in the genome. This organ\'s own Seminoma entry pool is deliberately kept just as thin — checked directly, no additional recurrent driver gene survived fit-checking here either: KIT, KRAS, and NRAS are all reported essentially absent from pure NSGCT (Shen et al., 2018, verbatim: these three genes were "exclusive to seminomas except for one KRAS mutation in an NSGCT with 30% seminoma" — itself a mixed tumor, not a pure NSGCT case), a cleaner, stronger exclusion than the near-mutual-exclusivity reasoning that already keeps NRAS out of Seminoma\'s own pool in this file — these genes belong to the OTHER entity this cancer\'s own trunk note distinguishes itself from, the same class of exclusion GBM\'s ATRX exclusion already established for this atlas.' },
+];
+
+// HISTOLOGY — a genuinely mixed-morphology entity by definition (WHO 2022 pools five real,
+// morphologically distinct components), drawn as three named zones rather than an attempted
+// admixture of all five. Embryonal carcinoma is real evidence-confirmed as the most common
+// single component in mixed tumors — Bahrami, Ro & Ayala, Arch Pathol Lab Med, 2007, PMID
+// 17683189, verbatim: "Embryonal carcinoma is the most common component in mixed GCTs" — drawn
+// via this atlas's existing drawGlandRing primitive (zero new drawing code, the third instance
+// of this atlas's own histology-family reuse pattern, after pductal's and lungs SCLC's own
+// zero-new-code reuses). Yolk sac tumor's Schiller-Duval body is drawn as the headline, genuinely
+// bespoke feature — the single most diagnostically iconic NSGCT structure, confirmed directly at
+// two independent sources: "bilayered festoons of cells surrounding a fibrovascular core,
+// reminiscent of primitive glomeruli" (Al-Masri et al., Ann Saudi Med, 2011, PMID 21293065,
+// PMCID PMC3119973) and "a central vessel surrounded by fibrous tissue... surrounded by layers of
+// the tumoral cells... resemble primitive glomerulus" (Fischerova et al., Diagnostics, 2022, PMID
+// 35204394, PMCID PMC8871053) — checked directly against every existing primitive in
+// js/histology.js before writing new code: nothing currently draws a central-vessel-plus-
+// surrounding-cell-layer glomeruloid body, so this is genuinely new, not a reuse. Teratoma's real
+// multi-germ-layer heterogeneity (Salzillo et al., Cancers, 2024, PMCID PMC11240729) is drawn as
+// one mature-cartilage nodule — a real mesodermal tissue type that source names directly, and
+// also genuinely new drawing code (no existing primitive draws a cartilage matrix with lacunar
+// chondrocytes). Deliberately NOT drawn: choriocarcinoma's biphasic syncytiotrophoblast/
+// cytotrophoblast pattern, real (Alvarado-Cabrero et al., Am J Surg Pathol, 2014, PMID 24145647)
+// and named in the intro text only — a fourth zone in one field would start reading as visual
+// noise rather than teaching anything, the same restraint this atlas already shows with ATC's
+// three (not five) named patterns.
+const HISTOLOGY_NSGCT = {
+  intro: 'Non-seminomatous germ cell tumor pools several real, morphologically distinct entities that WHO groups together for staging: embryonal carcinoma, yolk sac tumor, choriocarcinoma, and teratoma, alone or mixed. Embryonal carcinoma — the single most common component in mixed tumors — grows as glandular and solid sheets of primitive, disorderly epithelial cells. Yolk sac tumor\'s signature structure, the Schiller-Duval body, is a glomerulus-like formation: a central fibrovascular core wrapped by a layer of tumor cells, projecting into a cystic space. Teratoma contributes real tissue from multiple germ layers — shown here as a nodule of mature cartilage. Choriocarcinoma (biphasic syncytiotrophoblast/cytotrophoblast sheets) is a real component of this entity but is not drawn here.',
+  ariaSummary: 'Stylized microscopic field: irregular glandular and solid sheets of primitive, disorderly epithelial cells occupy most of the field — embryonal carcinoma. In one region, a distinct glomerulus-like structure projects into an open space: a central pink fibrovascular core wrapped by a single layer of cuboidal tumor cells — a Schiller-Duval body, the signature structure of yolk sac tumor. In a third region, a pale blue-gray nodule of cartilage sits apart, dotted with rounded cells in clear lacunar spaces — a fragment of teratoma.',
+  citation: 'Bahrami, Ro & Ayala, Arch Pathol Lab Med, 2007, PMID 17683189; Al-Masri et al., Ann Saudi Med, 2011, PMID 21293065, PMCID PMC3119973; Fischerova et al., Diagnostics, 2022, PMID 35204394, PMCID PMC8871053; Salzillo et al., Cancers, 2024, PMCID PMC11240729.',
+  features: [
+    { key:'embryonal', label:'Embryonal carcinoma glands',
+      text:'Irregular glandular and solid sheets of primitive, disorderly epithelial cells — the single most common component found in mixed non-seminomatous tumors.' },
+    { key:'schillerduval', label:'Schiller-Duval body',
+      text:'Yolk sac tumor\'s signature, diagnostically iconic structure: a central fibrovascular core wrapped by a single layer of tumor cells, projecting into a cystic space — described directly as resembling a primitive glomerulus.' },
+    { key:'teratoma', label:'Cartilage nodule',
+      text:'A nodule of mature cartilage — real tissue from the mesodermal germ layer, one of the multiple real tissue types teratoma can contain within a germ cell tumor otherwise built from primitive, undifferentiated cells.' },
+  ],
+};
+
 export const cancerDetails = {
   seminoma: {
     title:'Seminoma', screenLabel:'Seminoma — tumor explorer',
     legendTitle:'Sites (real, ordered nodal-then-hematogenous spread)',
     regions:REGIONS_SEMINOMA, trunk:TRUNK_SEMINOMA, privatePool:PRIVATE_POOL_SEMINOMA,
     histology: HISTOLOGY_SEMINOMA,
+  },
+  nsgct: {
+    title:'Non-Seminomatous Germ Cell Tumor', screenLabel:'Non-seminomatous germ cell tumor — tumor explorer',
+    legendTitle:'Sites (real, disorderly nodal & hematogenous spread)',
+    regions:REGIONS_NSGCT, trunk:TRUNK_NSGCT, privatePool:PRIVATE_POOL_NSGCT,
+    histology: HISTOLOGY_NSGCT,
   },
 };
