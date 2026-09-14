@@ -159,14 +159,17 @@ IMPRECISE = {
 # that is the only structure here a reader needs.
 WELL_FORMED = (
     # hyphenated single-token surnames — the character class, working as intended
+    'Al-Hader',
     'Al-Masri',
     'Alvarado-Cabrero',
     'Barnholtz-Sloan',
+    'Calimano-Ramirez',
     'Cittolin-Santos',
     'Iacobuzio-Donahue',
     'Jaime-Casas',
     'Jamal-Hanjani',
     'Laurent-Puig',
+    'Mino-Kenudson',
     'Parra-Herran',
     'Perez-Sanchez',
     'Segura-Moreno',
@@ -177,8 +180,10 @@ WELL_FORMED = (
     'von der Maase',
     # genuinely two-word surnames — the second-word clause doing the job it exists for, and the
     # reason it cannot be removed to fix the eight entries above
+    'Balachandran Pillai',
     'De Leo',
     'Di Carlo',
+    'La Rosa',
     'Lott Limbach',
     'Mehrvarz Sarshekeh',
     'Myo Min',

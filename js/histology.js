@@ -2168,6 +2168,142 @@ function genBlADC(g, rnd){
   ];
 }
 
+function genPACC(g, rnd){
+  // Acinar cell carcinoma: solid sheets and small rounded acinar (gland-like) clusters of cells
+  // with abundant granular eosinophilic cytoplasm and basally-oriented nuclei carrying a single
+  // prominent nucleolus. Reuses drawCell verbatim for the base cell (the same cytoplasm+nucleus
+  // primitive this file's own generators are built from) and drawGlandRing for the acinar
+  // clusters (the same primitive this atlas's own colorectal/LUAD/bladc entries already use for
+  // gland-forming architecture) — the one genuinely new touch is a small granule-dot overlay
+  // inside each cell's cytoplasm; this pass's own search of this file found no existing primitive
+  // depicting granular cytoplasm before this one.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.cytoLite, opacity:0.5}));
+  function granularCell(x, y, r, rnd, opts){
+    const o = opts || {};
+    drawCell(g, x, y, r, r*0.42, rnd, {nucOffset:r*0.32, ...o});
+    const gN = Math.round(r*0.9);
+    for(let i=0;i<gN;i++){
+      const a = rnd()*Math.PI*2, rr = Math.sqrt(rnd())*r*0.82;
+      g.appendChild(el('circle', {cx:x+Math.cos(a)*rr, cy:y+Math.sin(a)*rr, r:0.7+rnd()*0.6, fill:HE.vessel, opacity:0.45}));
+    }
+  }
+  // Solid sheet, upper-left third of the field.
+  const sheetCells = [];
+  for(let row=0; row<5; row++){
+    for(let col=0; col<7; col++){
+      sheetCells.push({x:70+col*36+(rnd()*10-5), y:70+row*34+(rnd()*10-5), r:13+rnd()*3});
+    }
+  }
+  sheetCells.forEach(c=>granularCell(c.x, c.y, c.r, rnd));
+  // Acinar clusters, lower-right two-thirds — small rounded gland-like groups reusing drawGlandRing,
+  // then a granule-dot overlay per ring so the acinar cells still read as granular, not smooth.
+  const acini = [
+    {x:430, y:150, r:46}, {x:600, y:120, r:38}, {x:520, y:280, r:44},
+    {x:660, y:320, r:40}, {x:410, y:400, r:42}, {x:590, y:430, r:36},
+  ];
+  acini.forEach(a=>{
+    drawGlandRing(g, a.x, a.y, a.r*0.42, rnd, {nucMin:a.r*0.16, nucMax:a.r*0.22, cellR:a.r*0.5});
+    const gN = Math.round(a.r*1.1);
+    for(let i=0;i<gN;i++){
+      const ang = rnd()*Math.PI*2, rr = a.r*0.55 + rnd()*a.r*0.35;
+      g.appendChild(el('circle', {cx:a.x+Math.cos(ang)*rr, cy:a.y+Math.sin(ang)*rr, r:0.6+rnd()*0.5, fill:HE.vessel, opacity:0.4}));
+    }
+  });
+  return [
+    {key:'granules', x:sheetCells[10].x, y:sheetCells[10].y - 22},
+    {key:'nuclei',   x:sheetCells[24].x, y:sheetCells[24].y},
+    {key:'acinar',   x:acini[2].x, y:acini[2].y - acini[2].r - 14},
+  ];
+}
+
+function genPNET(g, rnd){
+  // Pancreatic neuroendocrine tumor: elongated trabecular ribbons of cells with coarse
+  // "salt-and-pepper" chromatin, separated by thin fibrovascular septae — reuses genMTC's own
+  // blobPath cell-cluster + coarse two-tone chromatin loop (the same technique, cited in that
+  // generator's own comment as new composition from shared primitives), recomposed into
+  // ELONGATED ribbons rather than round nests, and WITHOUT the amyloid fill MTC's own generator
+  // draws, since PanNET has no real amyloid counterpart found in this pass's own search — thin
+  // plain septae instead.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.4}));
+  const ribbons = [
+    {x0:80, y0:130, x1:320, y1:100, w:46}, {x0:360, y0:90,  x1:600, y1:160, w:40},
+    {x0:120, y0:280, x1:400, y1:250, w:50}, {x0:440, y0:230, x1:690, y1:300, w:42},
+    {x0:180, y0:400, x1:460, y1:420, w:44},
+  ];
+  ribbons.forEach(rb=>{
+    const mx=(rb.x0+rb.x1)/2, my=(rb.y0+rb.y1)/2;
+    const ang = Math.atan2(rb.y1-rb.y0, rb.x1-rb.x0)*180/Math.PI;
+    const len = Math.hypot(rb.x1-rb.x0, rb.y1-rb.y0);
+    const gg = el('g', {transform:`rotate(${ang.toFixed(1)} ${mx} ${my})`});
+    g.appendChild(gg);
+    gg.appendChild(el('path', {d:blobPath(mx, my, len/2+14, rb.w/2, 0.14, 16, rnd, 0), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1.3}));
+    const cellN = Math.round(len*rb.w/900);
+    for(let i=0;i<cellN;i++){
+      const lx = (rnd()*2-1)*(len/2-6), ly = (rnd()*2-1)*(rb.w/2-6);
+      const x = mx + lx*Math.cos(ang*Math.PI/180) - ly*Math.sin(ang*Math.PI/180);
+      const y = my + lx*Math.sin(ang*Math.PI/180) + ly*Math.cos(ang*Math.PI/180);
+      g.appendChild(el('ellipse', {cx:x, cy:y, rx:4.2+rnd()*1.2, ry:3.5+rnd()*1.0, transform:`rotate(${(rnd()*360).toFixed(0)} ${x} ${y})`, fill:HE.nuc, opacity:0.9}));
+      for(let s=0;s<2;s++){
+        g.appendChild(el('circle', {cx:x+(rnd()*2-1)*3, cy:y+(rnd()*2-1)*3, r:0.7+rnd()*0.5, fill:HE.nucDark, opacity:0.7}));
+      }
+    }
+  });
+  // Thin fibrovascular septae between neighboring ribbons — plain pale strands, no amyloid.
+  for(let i=0;i<ribbons.length;i++){
+    for(let j=i+1;j<ribbons.length;j++){
+      const a=ribbons[i], b=ribbons[j];
+      const amx=(a.x0+a.x1)/2, amy=(a.y0+a.y1)/2, bmx=(b.x0+b.x1)/2, bmy=(b.y0+b.y1)/2;
+      const d = Math.hypot(amx-bmx, amy-bmy);
+      if(d > 190) continue;
+      const mx=(amx+bmx)/2, my=(amy+bmy)/2;
+      const ang = Math.atan2(bmy-amy, bmx-amx)*180/Math.PI;
+      g.appendChild(el('ellipse', {cx:mx, cy:my, rx:d*0.3, ry:9+rnd()*3, transform:`rotate(${ang.toFixed(0)} ${mx} ${my})`, fill:HE.stroma, stroke:HE.stromaLn, 'stroke-width':1, opacity:0.7}));
+    }
+  }
+  return [
+    {key:'trabecular', x:ribbons[0].x0+40, y:ribbons[0].y0-24},
+    {key:'septae',     x:(ribbons[0].x1+ribbons[1].x0)/2, y:(ribbons[0].y1+ribbons[1].y0)/2},
+    {key:'chromatin',  x:ribbons[2].x0+80, y:ribbons[2].y0},
+  ];
+}
+
+function genPCYST(g, rnd){
+  // Invasive carcinoma arising in IPMN, colloid pattern: large, dominant pools of pale acellular
+  // mucin (reusing blobPath, the same primitive Bladder/adenocarcinoma's own small mucin pools
+  // already use — but scaled up to be the field's dominant element, colloid carcinoma's own
+  // defining architecture) with small clusters of malignant epithelial cells floating freely
+  // inside them (reusing drawCell), plus a rim of the same cells lining one pool's edge.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.cytoLite, opacity:0.4}));
+  const pools = [
+    {x:230, y:170, rx:150, ry:100}, {x:560, y:150, rx:120, ry:90}, {x:420, y:360, rx:170, ry:105},
+  ];
+  pools.forEach((p,i)=>{
+    g.appendChild(el('path', {d:blobPath(p.x, p.y, p.rx, p.ry, 0.16, 14, rnd, rnd()*Math.PI), fill:'#dce8e6', stroke:'#b9cfcb', 'stroke-width':1.4, opacity:0.9}));
+  });
+  // Floating epithelial clusters inside the first two pools.
+  const floaters = [
+    {x:200, y:150}, {x:270, y:200}, {x:540, y:130}, {x:580, y:175}, {x:400, y:340}, {x:460, y:390},
+  ];
+  floaters.forEach(f=>{
+    const n = 2+Math.floor(rnd()*2);
+    for(let i=0;i<n;i++){
+      drawCell(g, f.x+(rnd()*2-1)*10, f.y+(rnd()*2-1)*10, 8+rnd()*2, 4.2+rnd()*1, rnd, {nucOffset:2});
+    }
+  });
+  // A lining rim of cells along the third pool's own edge, the other real configuration this
+  // pattern's diagnostic definition allows.
+  const rimPool = pools[2];
+  for(let a=0; a<Math.PI*2; a+=0.28){
+    const x = rimPool.x + Math.cos(a)*rimPool.rx*0.94, y = rimPool.y + Math.sin(a)*rimPool.ry*0.94;
+    drawCell(g, x, y, 7+rnd()*1.5, 3.8+rnd()*0.8, rnd, {nucOffset:1.5});
+  }
+  return [
+    {key:'mucinpools', x:pools[0].x, y:pools[0].y - pools[0].ry - 16},
+    {key:'floating',   x:floaters[2].x, y:floaters[2].y - 20},
+    {key:'lining',     x:rimPool.x + rimPool.rx*0.7, y:rimPool.y - rimPool.ry*0.7},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -2204,6 +2340,9 @@ const GENERATORS = {
   lgsc:   genLGSC,
   pneuro: genProstateNeuro,
   pductal: genProstateDuctal,
+  pacc:   genPACC,
+  pnet:   genPNET,
+  pcyst:  genPCYST,
 };
 
 // ------------------------------------------------------------

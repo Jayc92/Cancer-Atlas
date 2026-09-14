@@ -1699,3 +1699,123 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   | SIDECAR {"metrics": {"declared": 32, "heads_total": 31, "imprecise": 8, "problems": 1, "records": 56, "well_formed": 23}, "name": "citation_head_check", "ratchet": []}
   | DONE citation_head_check: 31 multi-token heads on 56/869 records, 8 declared imprecise, 23 declared well-formed, 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-13T22:48:47Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 120 lines, last 12 below
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:291 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:157 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 37 flag(s) — 3 dated for re-read, 32 permanent with reason, 2 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/histology.js|comment|Reuses drawCell verbatim for the base ce': js/histology.js:2172 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/pancreas.js|comment|HISTOLOGY — organoid architecture (trabe': js/organs/pancreas.js:323 [comment] comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 3 unscoped claims (2 absence, 1 false corpus universal), 31 universals flagged for a read, 6 world-scoped, 38 cancers indexed (DEFECT 2, DEFECT-FALSE-UNIVERSAL 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 8, OK-SEARCH 24, UNIVERSAL-UNRESOLVED 31, UNIVERSAL-WORLD-SCOPED 6), 2 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T22:48:48Z reason=exit=1 marker="DONE duplicate_figure_check:" tool=duplicate_figure_check.py
+     output 94 lines, last 12 below
+  |   DRIFT? thyroid:350 vs :352  (gene A='RET mutation (somatic)' B='RET mutation (somatic)')
+  |      window: 52.2% of patients with distant metastasis Park et al
+  |      A=['52.2%']  B=['28.3%']
+  |   DRIFT? thyroid:441 vs :443  (gene A='RAS mutation (H/K/N-RAS)' B='RAS mutation (H/K/N-RAS)')
+  |      window: involvement 18% of cases Besic Gazic 2013
+  |      A=['18%', '2013']  B=['13%', '2013']
+  |   duplicate_figure_check: 25 flag(s) — 0 dated for re-read, 22 permanent with reason, 3 problem(s)
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'pancreas|ATRX mutation/loss|1.8%, 21, 1,187, 2019|0.4%, 5, 1,187, 2019': pancreas:304 vs :306 A=['1.8%', '21', '1,187', '2019'] B=['0.4%', '5', '1,187', '2019'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'pancreas|DAXX mutation/loss|1,133, 1,187, 2019|28, 1,187, 2019': pancreas:300 vs :302 A=['1,133', '1,187', '2019'] B=['28', '1,187', '2019'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'pancreas|TP53 mutation|2024, 28.6%|2024, 38.5%': pancreas:493 vs :495 A=['2024', '28.6%'] B=['2024', '38.5%'] — fix it, declare it with a reason, or date it for re-read
+  | 
+  | DONE duplicate_figure_check: 7148 same-file string pairs compared, 28 drift flags, 3 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T22:48:49Z reason=exit=2 marker="DONE reserve_check:" tool=reserve_check.js
+     output 40 lines, last 12 below
+  |   ok   growth: silent when a cited count range starts above the reserved count
+  |   ok   growth: fires on a knob the reserved vector does not carry
+  |   ok   fires when a same-appearance declaration is backed by a copy, not the shared object
+  |   ok   silent when the declaration is true by reference
+  |   ok   origin-word test fires/passes as intended
+  |   ok   fires on an entry id that names no active entry
+  |   ok   fires on an out-of-range index
+  |   ok   fires when the entry's own hotspot text is bland, even though the organ description is not
+  |   ok   silent when the entry's own hotspot text speaks of origin directly
+  |   FAIL silent on the live ORIGIN_HOTSPOT_ENTRY against the live corpus
+  | SELFTEST FAIL
+  | reserve_check (née margin_reserve_check): REFUSING to check — selftest failed
+==== END REFUSAL
+==== REFUSAL 2026-09-13T22:49:14Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 81 lines, last 12 below
+  |               js/organs/stomach.js:245
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:107
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Al-Hader' at js/organs/pancreas.js:29, js/organs/pancreas.js:361 (2 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Balachandran Pillai' at js/organs/pancreas.js:364, js/organs/pancreas.js:404 (2 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Calimano-Ramirez' at js/organs/pancreas.js:391, js/organs/pancreas.js:393, js/organs/pancreas.js:410 (3 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'La Rosa' at js/organs/pancreas.js:418, js/organs/pancreas.js:432 (2 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Mino-Kenudson' at js/organs/pancreas.js:499, js/organs/pancreas.js:529, js/organs/pancreas.js:542 (3 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 31, "heads_total": 36, "imprecise": 8, "problems": 5, "records": 68, "well_formed": 23}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 36 multi-token heads on 68/977 records, 8 declared imprecise, 23 declared well-formed, 5 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T22:49:15Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 26 lines, last 12 below
+  |   CONFIRMS  KEPT   basis TEST  De Leo|2021|js/organs/ovary.js:503
+  |   CONFIRMS  SPENT  basis FIT   Fearon|1991|js/organs/colon.js:169
+  |   UNSCORED  SPENT  Lei|2000|js/organs/pancreas.js:31
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:172
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   UNSCORED  KEPT   Wang|2019|js/organs/pancreas.js:291
+  |   PROBLEM: UNSCORED PAREN SPAN Lei|2000|js/organs/pancreas.js:31 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: UNSCORED PAREN SPAN Wang|2019|js/organs/pancreas.js:291 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 4, "kept": 6, "population": 10, "preregistered": 8, "problems": 2, "scored_confirms": 8, "scored_falsifies": 0, "spent": 4}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 10 paren spans (4 spent, 6 kept), 8 scored (4 as TEST, 4 as FIT and worth no support), 0 falsifying, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T23:00:14Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 120 lines, last 12 below
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:291 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:157 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 37 flag(s) — 3 dated for re-read, 32 permanent with reason, 2 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/histology.js|comment|Reuses drawCell verbatim for the base ce': js/histology.js:2172 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/pancreas.js|comment|HISTOLOGY — organoid architecture (trabe': js/organs/pancreas.js:323 [comment] comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 3 unscoped claims (2 absence, 1 false corpus universal), 31 universals flagged for a read, 6 world-scoped, 38 cancers indexed (DEFECT 2, DEFECT-FALSE-UNIVERSAL 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 8, OK-SEARCH 24, UNIVERSAL-UNRESOLVED 31, UNIVERSAL-WORLD-SCOPED 6), 2 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T23:08:51Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 118 lines, last 12 below
+  |   world-scoped universal needs a read: js/organs/stomach.js:185 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/stomach.js:148 (shares ['found', 'inner', 'layer', 'oblique', 'tract'])
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:291 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:157 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 37 flag(s) — 3 dated for re-read, 34 permanent with reason, 0 problem(s)
+  | DONE absence_claim_check: 3 unscoped claims (2 absence, 1 false corpus universal), 31 universals flagged for a read, 6 world-scoped, 38 cancers indexed (DEFECT 2, DEFECT-FALSE-UNIVERSAL 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 8, OK-SEARCH 24, UNIVERSAL-UNRESOLVED 31, UNIVERSAL-WORLD-SCOPED 6), 0 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-13T23:15:55Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 118 lines, last 12 below
+  |   world-scoped universal needs a read: js/organs/stomach.js:185 [text] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/stomach.js:148 (shares ['found', 'inner', 'layer', 'oblique', 'tract'])
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:291 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:157 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 37 flag(s) — 3 dated for re-read, 34 permanent with reason, 0 problem(s)
+  | DONE absence_claim_check: 3 unscoped claims (2 absence, 1 false corpus universal), 31 universals flagged for a read, 6 world-scoped, 38 cancers indexed (DEFECT 2, DEFECT-FALSE-UNIVERSAL 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 8, OK-SEARCH 24, UNIVERSAL-UNRESOLVED 31, UNIVERSAL-WORLD-SCOPED 6), 0 tolerated-count problems
+==== END REFUSAL

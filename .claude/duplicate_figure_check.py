@@ -80,6 +80,11 @@ DECLARED = [
     {'key': 'bladder|PIK3CA mutation|30.6%, 2023|20.9%, 2023', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2023 cohort template — bladc\'s own Lymph nodes site (30.6%) and Liver site (20.9%)', 'until': None},
     {'key': 'bladder|POU2F3 expression|35.5%, 2023|25.7%, 2023', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Park et al. 2023 cohort template — blnec\'s own Lymph nodes site (35.5%) and Lung site (25.7%)', 'until': None},
     {'key': 'bladder|TERT promoter mutation (C228T / C250T)|2013, 70, 79%|2025, 100%, 11', 'reason': 'false positive: two unrelated citations for two different entities sharing one gene name — uc\'s own trunk note (Rachakonda 2013/Allory 2014, 70-79% across cohorts) vs blnec\'s own trunk note (Jaime-Casas 2025 ~75%, cross-referenced against Zheng et al. 2014\'s 100%/11-of-11 finding) — real, independently-verified figures for two different cancers, not one restated', 'until': None},
+    # THREE MORE, READ 2026-09-13 (pancreas pnet/pcyst authoring pass, batch close). All three are
+    # the same per-site-figures-on-one-citation-template class already declared above.
+    {'key': 'pancreas|DAXX mutation/loss|1,133, 1,187, 2019|28, 1,187, 2019', 'reason': 'false positive: per-site single-organ-metastasis counts on the shared Wang et al. 2019 (N=1,187) cohort template — pnet\'s own Liver site (1,133/1,187) and Lung site (28/1,187)', 'until': None},
+    {'key': 'pancreas|ATRX mutation/loss|1.8%, 21, 1,187, 2019|0.4%, 5, 1,187, 2019', 'reason': 'false positive: per-site single-organ-metastasis counts on the same Wang et al. 2019 (N=1,187) cohort template — pnet\'s own Bone site (21/1,187, 1.8%) and Brain site (5/1,187, 0.4%)', 'until': None},
+    {'key': 'pancreas|TP53 mutation|2024, 28.6%|2024, 38.5%', 'reason': 'false positive: two real per-site recurrence percentages on the shared Capretti et al. 2022 template (both notes also cite Abdalla et al. 2024, the source of the matched "2024" token) — pcyst\'s own Liver site (28.6%) and Lung site (38.5%)', 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

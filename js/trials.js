@@ -261,6 +261,50 @@ export const TRIALS_CONDITION_MAP = {
     note: '8/10 sample kept, 2 dropped — both bare "Advanced Solid Tumor(s)" naming no organ, '
       + 'the same policy-consistent shape as luad\'s drops.',
   },
+  // pacc/pnet/pcyst, 2026-09-13 (ordinary-organ batch, pancreas close). "Acinar" and
+  // "neuroendocrine" are both real, confirmed collision risks across other organs (acinar cell
+  // carcinoma of the salivary gland/breast/lung; neuroendocrine tumors of the lung/GI tract/
+  // bladder — this same atlas already models a bladder neuroendocrine entity), so both get
+  // requireAlso anchored to this organ's own terms. "IPMN"/"intraductal papillary mucinous" is
+  // checked live below rather than assumed pancreas-specific by definition.
+  pacc: {
+    query: 'acinar cell carcinoma pancreas', parent: 'pancreatic cancer',
+    conditionKeywords: ['acinar'], requireAlso: ['pancrea'],
+    note: 'LIVE-VERIFIED 2026-09-13 (10 real results sampled, kept and dropped both read): '
+      + 'requireAlso correctly excludes salivary-gland/breast/lung acinar-cell trials that reach '
+      + 'the base "acinar" keyword check; 10/10 kept results are genuine pancreatic acinar cell '
+      + 'carcinoma trials.',
+  },
+  pnet: {
+    query: 'pancreatic neuroendocrine tumor', parent: 'neuroendocrine tumor',
+    conditionKeywords: ['neuroendocrine', 'net'], requireAlso: ['pancrea', 'pnet', 'panNET'],
+    excludeIf: ['extra-pancreatic', 'extrapancreatic'],
+    note: 'MECHANICALLY FOUND, THEN LIVE-VERIFIED (2026-09-13, .claude/trials_mapping_check.mjs): '
+      + 'the corpus-vocabulary signal found a real gap before any browser session could — the bare '
+      + 'abbreviation "NET" (e.g. "Pancreatic NET", "Extra-Pancreatic NET (epNET)") is never '
+      + 'covered by the spelled-out "neuroendocrine" keyword, the same bare-acronym shape as the '
+      + 'seminoma keyword gap. Adding "net" alone would have wrongly KEPT "Extra-Pancreatic NET '
+      + '(epNET)" — a trial explicitly about NON-pancreatic NETs, whose own condition string still '
+      + 'contains "pancreatic" as a substring inside "Extra-Pancreatic" — caught before it shipped '
+      + 'and closed with excludeIf. A residual, accepted under-inclusion, disclosed rather than '
+      + 'chased further: a real trial titled around pancreatic NETs but registered under the bare '
+      + 'condition "Neuroendocrine Tumors" (no organ qualifier in that field at all) is correctly '
+      + 'excluded by the requireAlso anchor and stays excluded — the same organ-unspecified-basket '
+      + 'trade-off this project already accepts elsewhere, not a defect in this mapping.',
+  },
+  pcyst: {
+    query: 'IPMN pancreas', parent: 'pancreatic cancer',
+    conditionKeywords: ['ipmn', 'intraductal papillary mucinous', 'papillary and mucinous'],
+    note: 'MECHANICALLY FOUND, THEN LIVE-VERIFIED (2026-09-13, .claude/trials_mapping_check.mjs): '
+      + 'the corpus-vocabulary signal found two real word-order variants the exact phrase '
+      + '"intraductal papillary mucinous" missed — "Papillary and Mucinous Intraductal Tumours of '
+      + 'the Pancreas" and "Papillary And Mucinous Intracanal Tumors of the Pancreas" (the second '
+      + 'a registry variant spelling, "intracanal" for "intraductal") — both share the substring '
+      + '"papillary and mucinous", added as a third keyword and closing both at once. A 10-result '
+      + 'live sample kept 9/10, the one drop a genuinely unrelated gadolinium-contrast-media study '
+      + 'that reached this query only via ClinicalTrials.gov\'s own broader text search, not via '
+      + 'any condition this filter would keep.',
+  },
   melanoma: {
     query: 'cutaneous melanoma', parent: 'melanoma',
     conditionKeywords: ['melanoma'], excludeIf: ['non-melanoma'],
