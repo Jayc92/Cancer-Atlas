@@ -709,6 +709,45 @@ export const TRIALS_CONDITION_MAP = {
       'requireAlso needed. Corpus-vocabulary signal: 0 of 4,271 rejected strings share the ' +
       '"merkel" name-token. Negation-collision signal: zero matches.',
   },
+  astro: {
+    query: 'astrocytoma IDH-mutant', parent: 'brain cancer',
+    conditionKeywords: ['astrocytoma'], requireAlso: ['idh'],
+    note: 'LIVE-VERIFIED 2026-09-14 (.claude/trials_mapping_check.mjs astro): 25 total, 18 kept. ' +
+      '10-result sample 8/10 kept, 2 correctly dropped — both real IDH-WILDTYPE glioblastoma ' +
+      'trials whose OWN declared condition strings either never mention "astrocytoma" at all ' +
+      '(NCT07708961) or, where a separate "Astrocytoma, Grade III" condition string does appear ' +
+      'alongside an IDH-wildtype-glioblastoma one in the same trial (NCT05765812), that specific ' +
+      'string carries no IDH designation of its own — requireAlso correctly declines to guess ' +
+      'which of two SEPARATE declared conditions the astrocytoma one belongs with. Corpus-' +
+      'vocabulary scan surfaced two real near-misses ("Glioblastoma, IDH-mutant"/"IDH-mutant ' +
+      'Gliomas") already correctly excluded — neither contains the literal word "astrocytoma". ' +
+      'Negation-collision signal: zero matches.',
+  },
+  odg: {
+    query: 'oligodendroglioma', parent: 'brain cancer',
+    conditionKeywords: ['oligodendroglioma'],
+    note: 'LIVE-VERIFIED 2026-09-14 (.claude/trials_mapping_check.mjs odg): 29 total, 24 kept. ' +
+      '10-result sample 8/10 kept, 2 correctly dropped — both real trials the search surfaced by ' +
+      'free-text relevance despite neither one\'s own DECLARED condition strings containing the ' +
+      'word "oligodendroglioma" anywhere (a low-grade-glioma trial and a pediatric cerebellar-' +
+      'tumor trial listing "Astrocytoma"/"Astrocytoma, Cerebellar" among many other conditions, ' +
+      'never oligodendroglioma) — confirming the filter checks declared conditions specifically, ' +
+      'not whatever text the search engine matched elsewhere. Corpus-vocabulary signal: 0 of ' +
+      '2,218 rejected strings share the "oligodendroglioma" name-token. Negation-collision ' +
+      'signal: zero matches.',
+  },
+  menin: {
+    query: 'meningioma', parent: 'brain cancer',
+    conditionKeywords: ['meningioma'],
+    note: 'LIVE-VERIFIED 2026-09-14 (.claude/trials_mapping_check.mjs menin): 82 total, 76 kept. ' +
+      '10-result sample 9/10 kept, 1 correctly dropped — a Neurofibromatosis Type 2 natural-' +
+      'history study (NCT00598351) whose own declared condition is "Neurofibromatosis" alone, ' +
+      'not meningioma, even though NF2-syndrome patients commonly develop meningiomas (this ' +
+      'entity\'s own real, cited, ~1% germline-NF2-syndrome association — see this entry\'s own ' +
+      'trunk note) — the study itself is not evidently about meningioma as a condition. ' +
+      '"Meningioma" carries no cross-organ overload risk this atlas has hit elsewhere. ' +
+      'Negation-collision signal: zero matches.',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------

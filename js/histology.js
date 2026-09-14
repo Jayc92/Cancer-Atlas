@@ -181,6 +181,28 @@ function necrosisBlob(g, cx, cy, rx, ry, rnd, rot){
 function drawPsammomaBody(g, x, y, r){
   for(let rr=r; rr>2; rr-=r/3.4) g.appendChild(el('circle', {cx:x, cy:y, r:rr, fill:'none', stroke:'#8f76a8', 'stroke-width':2.2, opacity:0.9}));
 }
+// Meningioma's own signature architecture — concentric whorls of meningothelial cells wound
+// around a central point (StatPearls, "Meningioma," NBK560538: "whorls and syncytia of
+// meningothelial cells"). Genuinely new: no existing primitive draws a SOLID (no central lumen)
+// concentric ring of CELLS the way drawGlandRing's open-lumen technique does — closest in spirit
+// to drawPsammomaBody's own concentric-ring technique, but built from real nuclei winding inward
+// at successive radii rather than a bare stroked ring. Reuses drawPsammomaBody verbatim for the
+// real calcification that forms within many whorls as the meningothelial cells mineralize.
+function drawWhorl(g, cx, cy, r, rnd, opts){
+  const o = opts || {};
+  const rings = Math.max(3, Math.round(r/9));
+  for(let ring=rings; ring>0; ring--){
+    const rr = r*(ring/rings);
+    const n = Math.max(6, Math.round(rr*0.5));
+    for(let i=0;i<n;i++){
+      const a = i/n*Math.PI*2 + ring*0.35 + rnd()*0.15;
+      const x = cx + Math.cos(a)*rr, y = cy + Math.sin(a)*rr;
+      const alignDeg = a*180/Math.PI + 90;
+      g.appendChild(el('ellipse', {cx:x, cy:y, rx:3.6, ry:1.8, transform:`rotate(${alignDeg.toFixed(0)} ${x} ${y})`, fill:HE.nuc, opacity:0.9}));
+    }
+  }
+  if(o.psammoma) drawPsammomaBody(g, cx, cy, r*0.22);
+}
 // Squamous cell carcinoma's own signature architecture — concentric whorled keratin lamellae
 // narrowing to a densely keratinized center (Sabbula et al., StatPearls, NBK564510: diagnosis
 // requires "keratinization or intercellular bridges" in >=10% of tumor bulk). A solid, FILLED
@@ -891,6 +913,97 @@ function genGBM(g, rnd){
     // structure it names (caught by screenshot, not assumed)
     {key:'mvp',        x:130, y:138},
     {key:'hypercell',  x:640, y:100},
+  ];
+}
+
+// Astrocytoma, IDH-mutant — grade 3 depicted (real, WHO CNS5 middle ground of this entity's own
+// grade 2-4 span, per StatPearls NBK559042): diffuse hypercellularity with real nuclear atypia,
+// a focal zone of denser anaplasia, and scattered mitotic figures — deliberately NO necrosis and
+// NO microvascular proliferation (this organ's own genGBM already draws those real grade-4
+// criteria; this entity's own grade-4 route is disclosed in prose, including its real molecular-
+// only route via CDKN2A/B deletion, rather than duplicated as a second slide).
+function genASTRO(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.cytoLite, opacity:0.4}));
+  // diffusely hypercellular background — pleomorphic nuclei, real varying size/shape (atypia)
+  for(let i=0;i<260;i++){
+    const x = rnd()*VB.w, y = rnd()*VB.h;
+    const big = rnd()<0.3;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:(big?4.2:2.4)+rnd()*2.2, ry:(big?3.2:1.8)+rnd()*2,
+      transform:`rotate(${(rnd()*180).toFixed(0)} ${x} ${y})`,
+      fill: big ? HE.nucDark : HE.nuc, opacity:0.88 }));
+  }
+  // focal anaplasia — a denser, more disorganized cluster of atypical cells
+  const fx = 560, fy = 300;
+  g.appendChild(el('path', {d:blobPath(fx, fy, 120, 95, 0.22, 12, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1, opacity:0.55}));
+  for(let i=0;i<90;i++){
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*100;
+    const x = fx + Math.cos(a)*r*1.15, y = fy + Math.sin(a)*r*0.85;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:3+rnd()*3, ry:2.2+rnd()*3,
+      transform:`rotate(${(rnd()*180).toFixed(0)} ${x} ${y})`, fill:HE.nucDark, opacity:0.9 }));
+  }
+  // scattered mitotic figures — a dividing nucleus depicted as two adjacent condensed masses
+  const mitoses = [{x:180,y:130},{x:340,y:400},{x:670,y:110},{x:230,y:290}];
+  mitoses.forEach(m=>{
+    g.appendChild(el('ellipse', {cx:m.x-2.4, cy:m.y, rx:3.4, ry:2.6, fill:HE.nucDark, opacity:0.95}));
+    g.appendChild(el('ellipse', {cx:m.x+2.4, cy:m.y, rx:3.4, ry:2.6, fill:HE.nucDark, opacity:0.95}));
+  });
+  return [
+    {key:'atypia',    x:120, y:60},
+    {key:'anaplasia', x:fx,  y:fy-110},
+    {key:'mitoses',   x:230, y:340},
+  ];
+}
+
+// Oligodendroglioma — "fried egg" cells (uniform round nuclei each surrounded by a distinct
+// clear perinuclear halo, a formalin-fixation artifact per StatPearls NBK559184) and a "chicken
+// wire" capillary network threading between them. Genuinely new drawing code: no existing
+// primitive in this file draws a halo ring around each cell in a dense uniform sheet, or a
+// branching capillary network of this shape. Reuses drawPsammomaBody verbatim for this entity's
+// own real, commonly-identified calcifications.
+function genODG(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.cytoLite, opacity:0.35}));
+  for(let i=0;i<150;i++){
+    const x = 40+rnd()*(VB.w-80), y = 40+rnd()*(VB.h-80);
+    g.appendChild(el('circle', {cx:x, cy:y, r:11+rnd()*2, fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1, opacity:0.75}));
+    g.appendChild(el('circle', {cx:x, cy:y, r:4.6+rnd()*1, fill:HE.nuc, opacity:0.92}));
+  }
+  // "chicken wire" vasculature — a branching network of thin capillaries between the cells
+  for(let i=0;i<5;i++){
+    let x = rnd()*VB.w, y = rnd()*VB.h;
+    let d = `M ${x.toFixed(0)} ${y.toFixed(0)}`;
+    for(let s=0;s<8;s++){
+      x = Math.max(20, Math.min(VB.w-20, x+(rnd()*2-1)*90));
+      y = Math.max(20, Math.min(VB.h-20, y+(rnd()*2-1)*70));
+      d += ` L ${x.toFixed(0)} ${y.toFixed(0)}`;
+    }
+    g.appendChild(el('path', {d, fill:'none', stroke:HE.vessel, 'stroke-width':1.6, opacity:0.55}));
+  }
+  [{x:150,y:120,r:13},{x:610,y:370,r:11}].forEach(p=>drawPsammomaBody(g, p.x, p.y, p.r));
+  return [
+    {key:'friedegg',      x:300, y:250},
+    {key:'chickenwire',   x:520, y:150},
+    {key:'calcification', x:150, y:170},
+  ];
+}
+
+// Meningioma — concentric whorls of meningothelial cells, syncytial sheets between them, and
+// psammoma bodies mineralizing within some whorls (StatPearls, "Meningioma," NBK560538, verbatim:
+// "whorls and syncytia of meningothelial cells... eventually mineralize, forming psammoma
+// bodies"). Reuses drawWhorl (which itself reuses drawPsammomaBody verbatim) — a fundamentally
+// different architecture from every glioma in this organ, matching this entity's own real,
+// different cell of origin and growth pattern.
+function genMENIN(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.cytoLite, opacity:0.35}));
+  for(let i=0;i<150;i++){
+    const x = rnd()*VB.w, y = rnd()*VB.h;
+    g.appendChild(el('ellipse', {cx:x, cy:y, rx:5+rnd()*3, ry:3+rnd()*2, transform:`rotate(${(rnd()*180).toFixed(0)} ${x} ${y})`, fill:HE.cyto, opacity:0.5}));
+  }
+  const whorls = [{x:220,y:180,r:80,psammoma:true},{x:570,y:140,r:62,psammoma:false},{x:430,y:370,r:88,psammoma:true}];
+  whorls.forEach(w=>drawWhorl(g, w.x, w.y, w.r, rnd, {psammoma:w.psammoma}));
+  return [
+    {key:'whorls',   x:220, y:70},
+    {key:'psammoma', x:430, y:280},
+    {key:'syncytia', x:670, y:420},
   ];
 }
 
@@ -2438,6 +2551,9 @@ const GENERATORS = {
   hcc:    genHCC,
   ichol:  genICHOL,
   gbm:    genGBM,
+  astro:  genASTRO,
+  odg:    genODG,
+  menin:  genMENIN,
   acinar: genProstate,
   crc:    genCRC,
   pdac:   genPDAC,

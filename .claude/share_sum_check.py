@@ -43,6 +43,16 @@ DECLARED = [
     # hole in these three entries' own cited figures — no re-read is owed unless a fourth RCC
     # subtype is ever added to this organ.
     {'key': 'kidneys', 'reason': 'sum 89.0: clear cell + papillary + chromophobe are the field\'s "big three" RCC subtypes, not every RCC subtype WHO recognizes; the ~11-point remainder is real rarer entities (unclassified RCC, collecting duct carcinoma, renal medullary carcinoma, MiT family translocation RCC, SDH-deficient RCC) this organ does not model, not a gap in the three modeled entries\' own figures'},
+    # BRAIN, PERMANENT WITH REASON (2026-09-14, "then brain" authoring): the four modeled entries
+    # (glioblastoma 13.7%, astrocytoma-IDH-mutant 8.9%, oligodendroglioma 7.0%, meningioma 42.6%,
+    # all real CBTRUS/Gomez-et-al.-sourced figures already cited in brain.js) are the field's own
+    # most-common primary-brain/CNS-tumor entities, not a claimed partition of every histology
+    # CBTRUS's own broader report tracks. The ~28-point remainder is real, rarer, currently-
+    # unmodeled CNS tumor types with their own real CBTRUS incidence share (pituitary tumors,
+    # nerve sheath tumors/schwannoma, lymphoma, medulloblastoma, ependymoma, craniopharyngioma, and
+    # others) — not a coverage gap in these four entries' own cited figures. No re-read is owed
+    # unless a fifth CNS tumor type is ever added to this organ.
+    {'key': 'brain', 'reason': 'sum 72.2: glioblastoma + astrocytoma-IDH-mutant + oligodendroglioma + meningioma are this organ\'s own most-common modeled primary-brain/CNS-tumor entities, not every histology CBTRUS tracks; the ~28-point remainder is real rarer entities (pituitary tumors, nerve sheath tumors, lymphoma, medulloblastoma, ependymoma, craniopharyngioma) this organ does not model, not a gap in the four modeled entries\' own figures'},
     # breast is DELIBERATELY ABSENT here, on the STALE-declaration rule (tolerated.py; CLAUDE.md's
     # "AN UNDECLARED COUNT IS EVIDENCE OF AN UNREAD COUNT"): a declaration was written for breast at
     # authoring time (2026-09-13, phaseC_design.md §17) on the correct structural grounds — TNBC (a

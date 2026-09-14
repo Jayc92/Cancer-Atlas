@@ -295,6 +295,16 @@ export const MARGIN_STATUS = Object.freeze({
   // (phaseA_mapping.md, section 3 — no growth consequence is rendered anywhere yet). Until then GBM stays cited
   // with no category and draws nothing, rather than relocating a property to an axis that is not showing it.
   gbm:      { status: 'cited', category: 'poorlyDelineated', badgeSource: 'J Med Life 2009 (PMC3019011)', badgeQuote: 'a poorly delineated mass with no capsula', ref: 'R21 PMC3019011 PMID 20108752 — poorly delineated: shares the indistinct-edge form under arm 3 (ruled 2026-09-09); the hold lifted when the growth axis drew the diffuseness (rim-blend, wide extent) — RENDERED; its own citation on the badge, not PDAC\'s' },
+  // ASTRO/ODG (brain, "then brain" authoring, 2026-09-14): NOT reused from GBM's own PMC3019011
+  // above without checking scope first — that source's own coverage of astrocytoma/
+  // oligodendroglioma specifically was not independently confirmed in this pass's own research, so
+  // it is deliberately not attached to either entity here. Their own dedicated research passes
+  // found only secondary/tertiary gross-margin language (StatPearls' general "Gliomas" chapter
+  // hedges "can be well-circumscribed or diffusely infiltrative"; Radiopaedia is not primary
+  // literature) — disclosed as an honest gap rather than filled with a borrowed or weak citation.
+  astro: { status: 'uncharacterised', uncharacterisedReason: 'checked 2026-09-14 — this pass\'s own research found no primary-literature gross-margin-character statement specific to this entity; the general "Gliomas" StatPearls chapter (NBK441874) hedges both ways ("can be well-circumscribed or diffusely infiltrative"), and a tertiary radiology-reference source is not treated as primary literature here — disclosed rather than filled with an inferred category.', ref: 'checked against StatPearls NBK441874 and Radiopaedia, both insufficiently specific — 2026-09-14' },
+  odg: { status: 'uncharacterised', uncharacterisedReason: 'checked 2026-09-14 — same gap as this organ\'s own Astrocytoma entry: no primary-literature gross-margin-character statement specific to this entity was found in this pass\'s own research, despite this entity\'s own StatPearls chapter (NBK559184) directly confirming its GROWTH pattern (see GROWTH_STATUS below) — the margin axis specifically remains uncharacterised.', ref: 'checked against StatPearls NBK559184 — states growth pattern directly, margin character not addressed — 2026-09-14' },
+  menin: { status: 'uncharacterised', uncharacterisedReason: 'checked 2026-09-14 — "well-circumscribed/dural-based" is used consistently across many 2025-2026 case reports/series describing this entity\'s gross/imaging appearance, but no single canonical primary-literature sentence stating it was found; PathologyOutlines returned HTTP 429 on every attempt, the same persistent block this project has already documented for several other organs. Disclosed rather than filled with a citation this pass could not independently confirm at the primary-literature bar this axis holds elsewhere.', ref: 'checked 2026-09-14 — PathologyOutlines HTTP 429 (persistent block); multi-source case-report-level usage noted but not treated as a primary-literature citation' },
   // PROSTATE ACINAR: the seed was Gleason pattern-4/5 infiltrating descriptions — HISTOLOGIC, not a gross margin.
   // R22, read 2026-09-09 (pre-registered ladder): StatPearls Prostate Cancer (NBK470550) describes histology only;
   // no StatPearls pathology chapter exists; ~40 OA full texts across five queries yield no gross-register
@@ -458,6 +468,22 @@ export const GROWTH_STATUS = Object.freeze({
   // (papillary/mucin-producing) is a different architecture, not addressed by this citation.
   ichol:    { status: 'cited', label: 'nodular (small-duct subtype)', register: 'G', badgeSource: 'Banales et al., Nat Rev Gastroenterol Hepatol, 2020 (PMID 32606456)', badgeQuote: 'presents as a small-sized tubular or acinar adenocarcinoma with nodular growth invading the liver parenchyma', ref: 'PMID 32606456, PMCID PMC7447603 — verified 2026-09-13 (live fetch, not hand-copied); scoped to small-duct subtype only, not drawn' },
   gbm:      { status: 'cited', category: 'diffuselyInfiltrative', register: 'G', badgeSource: 'J Med Life 2009 (PMC3019011)', badgeQuote: 'Grossly, it appears topographically diffuse, a poorly delineated mass with no capsula', ref: 'R21 PMC3019011 PMID 20108752 — EDGE at the wide extent (design §3(b), ruled 2026-09-09); RENDERED' },
+  // ASTRO/ODG (brain, 2026-09-14): unlike the margin axis above, GROWTH is genuinely strongly
+  // sourced for both — the WHO CNS5 classification itself names the family both entities belong
+  // to "adult-type DIFFUSE gliomas" (Louis et al., Neuro-Oncology, 2021, PMID 34185076, already
+  // this organ's own GBM/trunk citation), and each entity's own dedicated StatPearls chapter
+  // states diffuse infiltration directly and specifically, not just via the family name.
+  astro: { status: 'cited', category: 'diffuselyInfiltrative', register: 'G', badgeSource: 'StatPearls, Astrocytoma (NBK559042)', badgeQuote: 'diffuse infiltration into the adjacent white matter', ref: 'NBK559042 PMID 32644468 — checked 2026-09-14, direct quote from the Pathophysiology section; independently corroborated by this entity\'s own WHO CNS5 family name ("adult-type diffuse gliomas", Louis et al. 2021)' },
+  odg: { status: 'cited', category: 'diffuselyInfiltrative', register: 'G', badgeSource: 'StatPearls, Oligodendroglioma (NBK559184)', badgeQuote: 'Oligodendroglioma (OG) is a diffusely infiltrating glioma', ref: 'NBK559184 PMID 32644610 — checked 2026-09-14, verbatim opening sentence of the Introduction; a real correction to an initial assumption that this entity is relatively well-demarcated versus astrocytoma — no source supports that, and this entity is, like every other WHO CNS5 "adult-type diffuse glioma", diffusely infiltrative by definition' },
+  // MENIN (brain, 2026-09-14): the OPPOSITE growth category from every glioma in this organ — a
+  // genuinely different real category, but NOT given a `cited` status: the only supporting
+  // evidence found is INDIRECT (brain invasion is explicitly named a stand-alone WHO grade-2
+  // criterion for this entity — Maier et al., Acta Neuropathol Commun, 2026, PMID 41486296 —
+  // implying most, grade-1, meningiomas do NOT invade brain, consistent with an expansile/
+  // compressive growth pattern) rather than one primary source stating "expansile" or
+  // "compressive" directly. Disclosed as uncharacterised rather than overclaiming a category this
+  // pass's own research could not pin to a direct quote.
+  menin: { status: 'uncharacterised', uncharacterisedReason: 'checked 2026-09-14 — no primary source found stating this entity\'s growth pattern as "expansile" or "compressive" directly; the best available evidence is indirect — brain invasion is a real, stand-alone WHO CNS5 grade-2 criterion for this entity (implying most, grade-1, tumors do not invade brain), disclosed in this entity\'s own trunk/organ-description prose rather than asserted here as a directly-cited growth category.', ref: 'Maier et al., Acta Neuropathol Commun, 2026, PMID 41486296 — indirect support only, checked 2026-09-14' },
   acinar:   { status: 'cited', label: 'multifocal', register: 'H', badgeSource: 'Fontugne et al., JCI Insight 2022 (PMC8876549)', ref: 'PMC8876549 PMID 35050902 — COUNT from whole-mount histology (H disclosed); not renderable at gross register; not drawn' },
   pdac:     { status: 'cited', category: 'infiltrative', register: 'H', badgeSource: 'Int J Mol Sci 2021 (PMC8268881)', badgeQuote: 'neoplastic cells arranged in small tubular glands that infiltrate a desmoplastic stroma', ref: 'R2 PMC8268881 PMID 34201897 — EDGE, histologic (H disclosed), corroborated at gross by R1; RENDERED' },
   pacc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — capsular/local invasion is real and common: "Invasion of the tumor through the capsule is a common finding and in about 50% of cases infiltration of the duodenum, large vessels, stomach, kidney, peritoneum, or spleen can also be observed" — CORRECTED same day: this exact quote is La Rosa et al., Front Med, 2015, PMID 26137463 (already cited elsewhere in this entity), not Al-Hader et al. 2017 as an earlier draft attributed it; an independent citation-verification pass traced the real source. The finding (circumscribed overall but frequently breaching locally) still does not map cleanly onto this axis\'s existing infiltrative/diffuselyInfiltrative categories (both meaning indistinct boundary, not capsular breach) — real finding, correctly sourced now, still the wrong shape for this axis as it stands' },
@@ -550,6 +576,14 @@ export const EXTENT_STATUS = Object.freeze({
   // because "Spread to Regional Lymph Nodes" (the category's own template label) is anatomically
   // nonsensical for an intracranial tumor. The concept, not just the number, doesn't fit.
   gbm: { status: 'uncharacterised', site: 'brain and other nervous system', uncharacterisedReason: 'the SEER page for brain and other nervous system cancers publishes a stage-at-diagnosis distribution, but CBTRUS and NCI PDQ both state directly that primary brain/CNS tumors are not staged the way other cancers are — WHO grade is used instead of SEER Summary Stage — and the page\'s own survival-by-stage figures are internally inconsistent for this site, so extent is not characterised.', ref: 'https://seer.cancer.gov/statfacts/html/brain.html and https://www.cancer.gov/types/brain/patient/adult-brain-treatment-pdq — checked 2026-09-12 (PMID 39371035 for the CBTRUS staging-methodology statement)' },
+  // ASTRO/ODG (brain, 2026-09-14): the SAME gap class as this organ's own GBM entry above — WHO
+  // grade, not SEER Summary Stage, is how this whole family of disease is actually staged.
+  astro: { status: 'uncharacterised', site: 'brain and other nervous system', uncharacterisedReason: 'the SAME gap as this organ\'s own Glioblastoma entry above: SEER\'s brain/CNS page does not stage this family of disease by Summary Stage at all — WHO grade is used instead — and this entity\'s own real WHO-grade-4 molecular criterion (CDKN2A/B homozygous deletion) is disclosed in its own private-pool ledger entry instead.', ref: 'same SEER/CBTRUS/PDQ sources as this organ\'s own GBM entry — checked 2026-09-14' },
+  odg: { status: 'uncharacterised', site: 'brain and other nervous system', uncharacterisedReason: 'the SAME gap as this organ\'s own Glioblastoma and Astrocytoma entries above — WHO grade, not SEER Summary Stage, is how this disease is staged; CBTRUS itself gives no oligodendroglioma-specific incidence breakdown either (confirmed directly by re-fetching its own abstract), consistent with this organ\'s own established finding for astrocytoma.', ref: 'same SEER/CBTRUS/PDQ sources as this organ\'s own GBM entry — checked 2026-09-14' },
+  // MENIN (brain, 2026-09-14): uncharacterised for a DIFFERENT, more basic reason than every
+  // glioma above — not "this page's own categories misbehave for CNS anatomy" (GBM's own
+  // reason), but "this page does not cover this entity at all."
+  menin: { status: 'uncharacterised', site: 'brain and other nervous system', uncharacterisedReason: 'confirmed by direct navigation of SEER\'s own public Stat Facts tool, 2026-09-14: meningioma is not mentioned anywhere on the brain/CNS page, whose stage-based survival table is scoped to MALIGNANT brain/CNS tumors only — this entity is benign/non-malignant for the ~77-81% WHO grade 1 majority and simply out of that page\'s scope, a different and more basic gap than every glioma in this organ (whose own problem is that this same page\'s staging categories behave nonsensically for CNS anatomy, not that the page ignores them). CBTRUS (already this organ\'s own incidence source), not SEER, is the correct population-level source for this entity.', ref: 'https://seer.cancer.gov/statfacts/html/brain.html — checked directly 2026-09-14, meningioma absent from the page entirely' },
   // SHARE-BOUND RULE (phaseC_design.md §6b/§12): tnbc's ~10–20% share put it below the bound; the
   // one clean SEER-Summary-Stage source found (Kohler et al., JNCI, 2015) reports the distribution
   // as age-adjusted incidence RATES by race/ethnicity, not one national count, so there is no
@@ -777,6 +811,22 @@ export const EXTENT_UNDERSTATED = Object.freeze({
     source: 'J Med Life 2009 (PMC3019011)',
     quote: 'Grossly, it appears topographically diffuse, a poorly delineated mass with no capsula',
   }),
+  // ASTRO/ODG (brain, 2026-09-14): the same real disclosure as this organ's own GBM entry above,
+  // now that both entities' own GROWTH axis is cited as diffuselyInfiltrative — each reuses its
+  // own growth citation rather than GBM's, since that source's scope was never confirmed to cover
+  // either entity.
+  astro: Object.freeze({
+    direction: 'the drawn mass is smaller than the cited extent',
+    statement: 'the source describes this tumour as diffusely infiltrating adjacent white matter — its real extent exceeds any boundary this mass shows, and the dissolve at its base depicts that only as a degree',
+    source: 'StatPearls, Astrocytoma (NBK559042)',
+    quote: 'diffuse infiltration into the adjacent white matter',
+  }),
+  odg: Object.freeze({
+    direction: 'the drawn mass is smaller than the cited extent',
+    statement: 'the source opens by calling this tumour "a diffusely infiltrating glioma" — its real extent exceeds any boundary this mass shows, and the dissolve at its base depicts that only as a degree',
+    source: 'StatPearls, Oligodendroglioma (NBK559184)',
+    quote: 'Oligodendroglioma (OG) is a diffusely infiltrating glioma',
+  }),
 });
 // THE RIM-BLEND BAND, shared by the renderer (main.js) and the check so both read one formula: weight 1 at and below
 // the contact plane (−0.2·R along the outward axis), falling by smoothstep to 0 at height 0.35·extent·R.
@@ -961,6 +1011,16 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   // keratinocytes." bcc needs no entry: it correctly uses skin's own organ default (index 1),
   // whose text was likewise extended to name BCC directly.
   scc: 0,
+  // astro/odg NEED NO ENTRY (brain, "then brain" authoring, 2026-09-14): both are adult-type
+  // diffuse gliomas arising from the same subcortical white-matter lineage this organ's own GBM
+  // entry already anchors at index 0 (White matter) — the organ default applies unchanged.
+  // menin ADDED the same pass: meningioma arises from the meninges (specifically the arachnoid
+  // cap cells), not brain tissue at all — a real, different cell of origin from every glioma in
+  // this organ. None of this organ's own four hotspots is literally "meninges"; index 2 (Cerebral
+  // cortex) is the closest real anatomical anchor (the meninges immediately cover the cortex) and
+  // was extended in this same pass to name meningioma's own real origin directly (StatPearls,
+  // "Meningioma," NBK560538) — the reserve_check requirement this mechanism enforces.
+  menin: 2,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never

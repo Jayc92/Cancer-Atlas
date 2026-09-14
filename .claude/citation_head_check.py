@@ -166,12 +166,14 @@ WELL_FORMED = (
     'Barnholtz-Sloan',
     'Calimano-Ramirez',
     'Cittolin-Santos',
+    'Eckel-Passow',
     'Iacobuzio-Donahue',
     'Jaime-Casas',
     'Jamal-Hanjani',
     'Laurent-Puig',
     'Mino-Kenudson',
     'Parra-Herran',
+    'Perez-Gutierrez',
     'Perez-Sanchez',
     'Segura-Moreno',
     # lowercase particles — SURNAME's leading (van|von|de|der|...) clause
@@ -182,7 +184,9 @@ WELL_FORMED = (
     'von Domarus',
     # genuinely two-word surnames — the second-word clause doing the job it exists for, and the
     # reason it cannot be removed to fix the eight entries above
+    'Abu Jarir',
     'Balachandran Pillai',
+    'Dalle Ore',
     'De Leo',
     'Di Carlo',
     'La Rosa',

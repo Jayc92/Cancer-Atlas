@@ -51,15 +51,19 @@
   ],
   [
    "brain.js|data-span-year||2018",
-   1
+   2
   ],
   [
    "brain.js|data-span-year||2022",
-   1
+   2
+  ],
+  [
+   "brain.js|data-span-year||2025",
+   2
   ],
   [
    "brain.js|data-span-year||2026",
-   1
+   5
   ],
   [
    "brain.js|etal-malformed-head|Conejero Merch\u00e1n|2026",
@@ -70,8 +74,24 @@
    1
   ],
   [
+   "brain.js|journal-adjacent-year|NEJM|2015",
+   3
+  ],
+  [
+   "brain.js|prose-year||1951",
+   1
+  ],
+  [
    "brain.js|prose-year||2021",
-   4
+   6
+  ],
+  [
+   "brain.js|prose-year||2026",
+   1
+  ],
+  [
+   "brain.js|semicolon-shadow|Zustovich|2026",
+   1
   ],
   [
    "breast.js|bare-name-comma-year|Working Group|2015",

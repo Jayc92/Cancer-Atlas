@@ -1924,3 +1924,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 4, "kept": 5, "population": 9, "preregistered": 8, "problems": 1, "scored_confirms": 8, "scored_falsifies": 0, "spent": 4}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
   | DONE citation_paren_ledger: 9 paren spans (4 spent, 5 kept), 8 scored (4 as TEST, 4 as FIT and worth no support), 0 falsifying, 1 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-14T16:04:15Z reason=exit=1 marker="DONE share_sum_check:" tool=share_sum_check.py
+     output 22 lines, last 12 below
+  |   liver     GAP sum=87.5 — transplant candidate, human reads the label
+  |   lungs     PARTIAL-FAMILY sum=75.0 (+1 exempt rows)
+  |   ovary     COHERENT sum=98.0
+  |   pancreas  PARTIAL-FAMILY sum=91.8 (+1 exempt rows)
+  |   prostate  COHERENT sum=100.0
+  |   skin      PARTIAL-FAMILY sum=2.0 (+3 exempt rows)
+  |   stomach   COHERENT sum=99.9
+  |   testis    COHERENT sum=100.0
+  |   thyroid   COHERENT sum=98.0
+  |   share_sum_check: 3 flag(s) — 1 dated for re-read, 1 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED share_sum_check flag 'brain': GAP sum=72.2 — transplant candidate, human reads the label — fix it, declare it with a reason, or date it for re-read
+  | DONE share_sum_check: 14 families checked, 3 gap flags, 1 tolerated-count problems
+==== END REFUSAL
