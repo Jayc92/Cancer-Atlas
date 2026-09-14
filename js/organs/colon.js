@@ -25,9 +25,9 @@ export const organEntry = { key:'colon', label:'Colon', system:'Digestive', acti
 export const markerSpec = { points:[{heightFrac:0.48, angle:-50}] };
 
 export const cancerEntries = [
-  { id:'crc',    name:'Colorectal adenocarcinoma', share:'&gt;90% of colonic malignancies ("Colon adenocarcinoma is the predominant colonic malignancy (&gt;90%)", StatPearls, "Colon Cancer")', active:true,  organKey:'colon' },
-  { id:'cnet',   name:'Neuroendocrine tumor',      share:'part of the remaining &lt;10% of colonic malignancies — no individual share figure claimed here', active:false, organKey:'colon' },
-  { id:'clymph', name:'Lymphoma',                  share:'part of the remaining &lt;10% of colonic malignancies — no individual share figure claimed here', active:false, organKey:'colon' },
+  { id:'crc',    name:'Colorectal adenocarcinoma', share:'>90% of colonic malignancies ("Colon adenocarcinoma is the predominant colonic malignancy (>90%)", StatPearls, "Colon Cancer")', active:true,  organKey:'colon' },
+  { id:'cnet',   name:'Neuroendocrine tumor',      share:'part of the remaining <10% of colonic malignancies — no individual share figure claimed here', active:false, organKey:'colon' },
+  { id:'clymph', name:'Lymphoma',                  share:'part of the remaining <10% of colonic malignancies — no individual share figure claimed here', active:false, organKey:'colon' },
 ];
 
 // REPLACED (2026-09-02, colon-swap pass): assets/colon.glb is no longer the HRA large-intestine

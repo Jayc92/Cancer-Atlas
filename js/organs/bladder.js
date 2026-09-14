@@ -113,7 +113,7 @@ export function buildBladderMesh(){
 
 export const organDetail = {
   eyebrow:'Urinary System', title:'Bladder',
-  sub:'Pelvic reservoir · lined by urothelium · stores &amp; expels urine',
+  sub:'Pelvic reservoir · lined by urothelium · stores & expels urine',
   facts:[
     {label:'Location', val:'Lesser pelvis when empty; rises into the abdomen as it fills'},
     {label:'Parts', val:'Apex (dome), body, fundus (base), and neck (StatPearls)'},

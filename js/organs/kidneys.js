@@ -34,7 +34,7 @@ export const cancerEntries = [
   // Cancer names/ids are never searched (see the Kidneys ORGANS comment), so this wouldn't be
   // a functional collision either way, but a shared id would break regionCellCache/panel state
   // if a user ever had both cancer screens loaded in the same session's history.
-  { id:'ccrcc', name:'Clear cell renal cell carcinoma',  share:'~75% of renal cell carcinomas (Li &amp; Kaelin, Hematol Oncol Clin North Am, 2011)', active:true, organKey:'kidneys' },
+  { id:'ccrcc', name:'Clear cell renal cell carcinoma',  share:'~75% of renal cell carcinomas (Li & Kaelin, Hematol Oncol Clin North Am, 2011)', active:true, organKey:'kidneys' },
   { id:'prcc',  name:'Papillary renal cell carcinoma',   share:'~9-13% of renal cell carcinomas (Runarsson et al., BMC Urology, 2024; Cheville et al., Am J Surg Pathol, 2003; Odeh et al., Oncol Lett, 2023)', active:true, organKey:'kidneys' },
   { id:'chrcc', name:'Chromophobe renal cell carcinoma', share:'~2-4% of renal cell carcinomas (Runarsson et al., BMC Urology, 2024; Odeh et al., Oncol Lett, 2023; Cheville et al., Am J Surg Pathol, 2003)',    active:true, organKey:'kidneys' },
 ];
