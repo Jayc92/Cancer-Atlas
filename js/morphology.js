@@ -256,6 +256,16 @@ export const MARGIN_STATUS = Object.freeze({
   lusc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register margin/circumscription sentence found in this pass\'s own search' },
   sclc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register margin/circumscription sentence found in this pass\'s own search' },
   crc:      { status: 'uncharacterised', ref: 'R5 — margin subsumed by the cited growth form' },
+  // CMUC (colon, "then colon" authoring, 2026-09-14): a real, disclosed gap distinct from crc's
+  // own "subsumed by growth" reason — the sources that establish this entity's real molecular/
+  // architectural distinctiveness (MSI-high enrichment, extracellular mucin architecture) do not
+  // address gross margin character at all.
+  cmuc: { status: 'uncharacterised', uncharacterisedReason: 'checked 2026-09-14 — no dedicated source characterizing gross margin/circumscription specifically for mucinous vs conventional colorectal adenocarcinoma was found in this pass’s own search (Vos et al., 2026 and Darwish et al., 2025 both describe histologic architecture and gross gelatinous TEXTURE, not margin character); disclosed as a real gap rather than filled with an inferred category.', ref: 'checked against Vos et al., J Pathol Clin Res, 2026 and Darwish et al., World J Gastrointest Surg, 2025 — 2026-09-14' },
+  // CLYMPH (colon, 2026-09-14): a hematologic malignancy, not a solid tumor — the sources this
+  // entity's own mutation ledger and histology draw on (Li SS et al., 2022; Elsharawi & Liwski,
+  // 2025) are molecular/histologic papers, not gross-pathology-descriptive ones; no gross margin/
+  // circumscription sentence for this entity was found in either.
+  clymph: { status: 'uncharacterised', uncharacterisedReason: 'checked 2026-09-14 — no gross-register margin/circumscription sentence found for primary colonic diffuse large B-cell lymphoma in this pass’s own search (Li SS et al., 2022 and Elsharawi & Liwski, 2025 are both molecular/histologic sources, not gross-pathology descriptions); disclosed as a real gap rather than filled with an inferred category.', ref: 'checked against Li SS et al., Exp Hematol Oncol, 2022 (PMID 36243813) and Elsharawi & Liwski, J Hematol, 2025 (PMCID PMC12758044) — 2026-09-14' },
   ccrcc:    { status: 'unread',          ref: 'R3 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
   // prcc/chrcc, 2026-09-13 (ordinary-organ batch): both real, gross-register, directly verified.
   // Shares seminoma's already-wired wellCircumscribed render category — the render axis is
@@ -448,6 +458,17 @@ export const GROWTH_STATUS = Object.freeze({
   lusc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register growth-pattern sentence found in this pass\'s own search' },
   sclc:     { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register growth-pattern sentence found in this pass\'s own search' },
   crc:      { status: 'cited', label: 'ulcerating-annular (majority), polypoid (a quarter)', register: 'G', badgeSource: 'Int J Mol Sci 2018 (PMC6165083)', ref: 'R6 PMC6165083 — WALL (majority) and PLACEMENT (25%), a named divergence; not drawn' },
+  // CMUC (colon, 2026-09-14): the SAME disclosed gap as this entity's own margin status above —
+  // no dedicated source found characterizing growth pattern (infiltrative vs pushing) specifically
+  // for mucinous vs conventional colorectal adenocarcinoma.
+  cmuc: { status: 'uncharacterised', uncharacterisedReason: 'checked 2026-09-14 — the same gap as this entity’s own margin status: no dedicated source characterizing infiltrative-vs-pushing growth pattern specifically for mucinous colorectal adenocarcinoma was found in this pass’s own search; disclosed as a real gap rather than filled with an inferred category.', ref: 'checked against Vos et al., J Pathol Clin Res, 2026 and Darwish et al., World J Gastrointest Surg, 2025 — 2026-09-14' },
+  // CLYMPH (colon, 2026-09-14): "transmural involvement" (extension through the full bowel-wall
+  // thickness) is a real, cited, disclosed finding — already stated in this entity's own
+  // histology block — but it is a depth-of-invasion/staging fact (matching the Paris/EGILS T
+  // category), not a macroscopic growth-PATTERN description (exophytic/infiltrative/annular) the
+  // way this axis's other cited categories (e.g. crc's own "ulcerating-annular") describe; no
+  // gross growth-pattern source was found for this entity.
+  clymph: { status: 'uncharacterised', uncharacterisedReason: 'checked 2026-09-14 — no gross growth-pattern (exophytic/infiltrative/annular) sentence found for this entity; its real "transmural involvement" finding is a depth-of-invasion/staging fact, already disclosed in this entity’s own histology block and reflected in the Paris staging system’s own T category, not a macroscopic growth-pattern description this axis addresses.', ref: 'checked against Elsharawi & Liwski, J Hematol, 2025 (PMCID PMC12758044) and Ruskoné-Fourmestraux et al., Gut, 2003 (PMID 12740354) — 2026-09-14' },
   ccrcc:    { status: 'unread', ref: 'R3/R4 — blocked-to-tooling (PathologyOutlines gated)', until: '2026-09-17' },
   // prcc/chrcc, 2026-09-13: a real COUNT-axis fact fell out of the same margin-source read for
   // prcc (Amin & Tickoo 1997, n=62: 24/62 multifocal, 3/62 also bilateral); no comparable
@@ -614,6 +635,16 @@ export const EXTENT_STATUS = Object.freeze({
   // Colorectal adenocarcinoma's own cited share (">90% of colonic malignancies", StatPearls)
   // bounds any per-category error at ≤10 points — cleared, no per-subtype source needed.
   crc: { status: 'cited', site: 'colon and rectum', siteNote: 'colon and rectum cancers as a whole, of which adenocarcinoma is >90% (StatPearls, "Colon Cancer") — bounding any per-category error at ≤10 points', shares: { localized: 34, regional: 37, distant: 23, unknown: 6 }, modal: 'regional', basis: 'SEER 21 (Excluding IL) 2016–2022, SEER Combined Summary Stage', submission: 'not stated on the page', source: 'SEER Cancer Stat Facts: Colorectal Cancer', ref: 'https://seer.cancer.gov/statfacts/html/colorect.html — verified 2026-09-10; share-bound applied 2026-09-12' },
+  // SHARE-BOUND RULE (phaseC_design.md §6b): cmuc's own ~10-15% minority share of colorectal
+  // adenocarcinoma forbids borrowing crc's own aggregate directly above (the per-category error
+  // bound would exceed 85 points) — the same structural reason tnbc/pductal/pneuro needed their
+  // own per-entity source rather than their organ's aggregate.
+  cmuc: { status: 'uncharacterised', uncharacterisedReason: 'the share-bound rule forbids borrowing this organ’s own Colorectal adenocarcinoma aggregate directly: at this entity’s own ~10-15% minority share, the per-category error bound would exceed 85 points. No dedicated per-subtype source was found either — SEER’s own Colorectal Cancer Stat Facts page does not break out mucinous histology at all, checked directly (2026-09-14), consistent with this atlas’s own established predominance-vs-presence reading of registry data (data rule 31).', ref: 'checked against SEER Cancer Stat Facts: Colorectal Cancer (seer.cancer.gov/statfacts/html/colorect.html) — 2026-09-14' },
+  // CLYMPH (colon, 2026-09-14): the SAME class of gap as GBM/astro/odg/menin above — a different
+  // staging SYSTEM applies, not SEER Summary Stage — but with a real, rich, disclosed
+  // distribution available (unlike menin's own "not covered at all" case), synthesized across
+  // four independent named SEER-based colon/intestinal DLBCL cohorts rather than picked from one.
+  clymph: { status: 'uncharacterised', uncharacterisedReason: 'this entity is staged by the Ann Arbor system, not SEER Summary Stage — SEER derives a dedicated Ann Arbor Stage variable for lymphoma specifically (confirmed directly from SEER’s own Cancer Stat Facts methodology), not the localized/regional/distant categories this axis renders, so the two are not interchangeable and no conversion is asserted. The real distribution is disclosed here rather than left unstated: across four independent SEER-based colon/intestinal DLBCL cohorts (Cai et al., Oncotarget, 2016, PMID 27708217, N=3,342; Chen et al., Front Oncol, 2022, PMID 36353557, N=2,350; Zhang et al., Sci Rep, 2021, PMID 34845308, N=3,537; Feng et al., Sci Rep, 2025, PMID 40467905, N=10,935), Stage I is consistently the most common (34-46%), Stage II substantial (23-36%), Stage III consistently RARE (5-7% — a real, biologically meaningful finding, since Ann Arbor Stage III specifically means disease on both sides of the diaphragm, a categorically different concept from a solid tumor’s nodal stage), and Stage IV substantial (21-27%).', ref: 'checked against SEER Cancer Stat Facts lymphoma methodology and the four named cohorts above — 2026-09-14; the exact per-cohort figures within each stated range were not individually re-extracted in this pass and should be re-verified at the source before quoting a single-cohort number' },
   // DIVERGENCE SWEEP (2026-09-11/12, user-directed): ccrcc/hcc/luad were each checked against real
   // histotype-specific literature, prioritized by incidence share per the arithmetic argument (a
   // dominant subtype is mathematically constrained toward its organ aggregate; ccRCC ~75%, HCC

@@ -255,6 +255,55 @@ export const TRIALS_CONDITION_MAP = {
       + 'a narrow query\'s own returned set can shift as the trial registry grows — but this is '
       + 'disclosed as defensive, not as a fix for an observed defect, which the other four are.',
   },
+  // CMUC (colon, 2026-09-14): "mucinous" is a confirmed overloaded term across this atlas's own
+  // corpus (gastric/appendiceal/ovarian/pancreatic-IPMN entities all carry it — see data rule 32's
+  // own discussion) — organ-anchored via requireAlso from the start, per the now-required
+  // trials-mapping verification rule (data rule 36), not discovered after a false keep.
+  cmuc: {
+    query: 'colorectal mucinous adenocarcinoma', parent: 'colorectal cancer',
+    conditionKeywords: ['mucinous'], requireAlso: ['colorectal', 'colon', 'rectal'],
+    note: 'EMPTY-ANSWERED, LIVE-VERIFIED 2026-09-14, exhaustively: of the 62 studies currently '
+      + 'recruiting/not-yet-recruiting/enrolling-by-invitation anywhere with "mucinous" in their '
+      + 'own condition field, zero also carry a colorectal/colon/rectal-relevant condition — the '
+      + 'overwhelming majority are pancreatic IPMN (a different disease entirely), with the rest '
+      + 'ovarian/endometrial/breast/appendiceal. No query rewording changes this: it is a real gap '
+      + 'in how trials are TAGGED, not a broken mapping — this registry does not tag colorectal '
+      + 'trials by histologic subtype at the condition-field level (the same class of gap gdiff/'
+      + 'gint/gmix already document for gastric Lauren type), not a claim that no trial anywhere '
+      + 'would accept a mucinous-histology patient. A patient with this diagnosis is very likely '
+      + 'still eligible for many of the broader trials this organ\'s own Colorectal adenocarcinoma '
+      + 'entry surfaces, which enroll by diagnosis and biomarker rather than histologic subtype.',
+  },
+  // CLYMPH (colon, 2026-09-14): a hematologic malignancy, not a solid tumor — "diffuse large
+  // B-cell lymphoma" trials are organized around molecular subtype and treatment history, not
+  // primary anatomic origin (checked live below), a genuinely different registry-tagging
+  // behavior from every solid tumor this organ's own two adenocarcinoma entries use.
+  clymph: {
+    query: 'diffuse large B-cell lymphoma', parent: 'diffuse large B-cell lymphoma',
+    // 'lymphoma, large b-cell, diffuse' is a real, live-caught reordering — MeSH/NCI-thesaurus
+    // "Type, Descriptor" convention (e.g. "Carcinoma, Non-Small-Cell Lung") — the registry's own
+    // "Lymphoma, Large B-Cell, Diffuse" condition tag would otherwise fail the ordinary phrase
+    // check entirely, found via a live 10-result sample before shipping, not after.
+    conditionKeywords: ['diffuse large b-cell', 'dlbcl', 'lymphoma, large b-cell, diffuse'],
+    note: 'LIVE-VERIFIED 2026-09-14: 8/10 sample kept, 2 correctly dropped (both real trials with '
+      + 'no "DLBCL"/"diffuse large b-cell" wording anywhere in their own condition list — "Lymphoma, '
+      + 'B-Cell" and "Relapsed or Refractory Aggressive B-Cell Non-Hodgkins Lymphoma" — neither '
+      + 'confirms DLBCL specifically, so correctly excluded rather than assumed). '
+      + 'EMPTY-ANSWERED for a GI/colon-anchored subset, exhaustively: '
+      + 'of all 397 currently recruiting/not-yet-recruiting/enrolling-by-invitation DLBCL trials, '
+      + 'zero carry a gastrointestinal/colon/colorectal/intestinal/bowel-relevant condition tag '
+      + 'alongside DLBCL. Deliberately NOT organ-anchored via requireAlso, unlike this organ\'s own '
+      + 'cmuc entry — a genuinely different situation, not the same mechanism applied '
+      + 'inconsistently: DLBCL trials are organized by molecular subtype and treatment history, '
+      + 'not primary anatomic origin (checked directly against a live 10-result sample of the '
+      + 'unfiltered query — every kept result is a real, on-topic DLBCL trial regardless of where '
+      + 'in the body the disease arose), so a patient with primary colonic DLBCL is a DLBCL '
+      + 'patient first: the UNFILTERED list below is what a reader with this diagnosis actually '
+      + 'needs, not a GI-narrowed subset that this registry\'s own tagging practice cannot produce '
+      + 'anyway. This is the opposite lesson from cmuc\'s mucinous-adenocarcinoma entry, where '
+      + 'other organs\' "mucinous" trials are genuinely NOT relevant to a colorectal patient — '
+      + 'here, other primary sites\' DLBCL trials generally ARE.',
+  },
   pdac: {
     query: 'pancreatic ductal adenocarcinoma', parent: 'pancreatic cancer',
     conditionKeywords: ['pancreatic', 'pancreas'],

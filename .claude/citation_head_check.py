@@ -207,6 +207,15 @@ WELL_FORMED = (
     # extractor reads as a year is this atlas's own page-access year for that PDQ page, not a
     # publication year of a paper called "NCI PDQ" — well-formed for what it names, not a paper.
     'NCI PDQ',
+    # SURNAME + BARE INITIALS — a fifth shape, distinct from all three above: this is neither a
+    # hyphenated surname, a lowercase-particle clause, nor a second word of the surname itself —
+    # "SS" is the author's own given-name initials, written without periods, exactly as PubMed's
+    # own indexing renders this specific author (Li SS et al., Exp Hematol Oncol, 2022, PMID
+    # 36243813 — confirmed directly on the paper's own PubMed record, colon.js's primary GI DLBCL
+    # mutation-ledger source). Distinguished from an ordinary "Surname Initial." citation (which
+    # the extractor already handles as a single-token head) only by the missing period — PubMed's
+    # own choice, not a transcription slip here.
+    'Li SS',
 )
 
 

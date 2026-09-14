@@ -169,23 +169,25 @@ SCORINGS = ('CONFIRMS', 'FALSIFIES')
 # not attribute — not a corrected author name. 'Fearon' below is the head of "Fearon &amp;
 # Vogelstein"; that truncation is P_AMP's business, not this rule's.
 PREREGISTERED = {
-    'Fearon|1991|js/organs/colon.js:169': {
+    'Fearon|1991|js/organs/colon.js:170': {
         'side': 'SPENT',
         'basis': 'FIT',
         'scored': 'CONFIRMS',
         'reason':
-            'colon.js:169 reads "Fearon &amp; Vogelstein (Cell, 1990) NEVER NAMES APC — the gene '
+            'colon.js:170 (re-addressed 2026-09-14, byte-identical, was :169 — colon-organ authoring '
+            'pushed every line below the cancerEntries array down by one) reads "Fearon &amp; Vogelstein (Cell, 1990) NEVER NAMES APC — the gene '
             'wasn\'t cloned until 1991". The paren carries 1990, the paper\'s own year, and closes; '
             '1991 is the date APC was CLONED, an event, not a publication by these authors. A record '
             'Fearon|1991 would assert a paper that does not exist. Removed as a false record in '
             '4263890 by this rule, which is the strongest form of its being right here.',
     },
-    'Powell|1990|js/organs/colon.js:172': {
+    'Powell|1990|js/organs/colon.js:173': {
         'side': 'SPENT',
         'basis': 'FIT',
         'scored': 'CONFIRMS',
         'reason':
-            'colon.js:172 reads "cites Powell et al. (Nature, 1992) for APC-comes-first, and quotes '
+            'colon.js:173 (re-addressed 2026-09-14, byte-identical, was :172 — same shift as the '
+            'Fearon entry above) reads "cites Powell et al. (Nature, 1992) for APC-comes-first, and quotes '
             'the 1990 model for what". The paren carries 1992, Powell\'s year, and closes; the 1990 '
             'belongs to the Fearon-Vogelstein model being quoted, whose citation is three lines up. '
             'Also removed in 4263890. This is the span whose pairing with Travis falsified the claim '
@@ -485,8 +487,8 @@ def selftest():
     # the four the rule was written on, listed here so a fifth FIT entry has to edit this arm and say
     # why in a commit message.
     fit_at_birth = {
-        'Fearon|1991|js/organs/colon.js:169',
-        'Powell|1990|js/organs/colon.js:172',
+        'Fearon|1991|js/organs/colon.js:170',
+        'Powell|1990|js/organs/colon.js:173',
         'Schulze|2017|js/organs/liver.js:280',
         # Re-addressed 236 -> 259 -> 268 -> 276 -> 277, same span, byte-identical each time (see the
         # entry's own note). "At birth" names the set of SPANS, not the set of addresses; if this arm

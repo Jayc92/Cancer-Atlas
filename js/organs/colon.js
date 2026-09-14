@@ -26,8 +26,9 @@ export const markerSpec = { points:[{heightFrac:0.48, angle:-50}] };
 
 export const cancerEntries = [
   { id:'crc',    name:'Colorectal adenocarcinoma', share:'>90% of colonic malignancies ("Colon adenocarcinoma is the predominant colonic malignancy (>90%)", StatPearls, "Colon Cancer")', active:true,  organKey:'colon' },
+  { id:'cmuc',   name:'Mucinous adenocarcinoma', share:'~10–15% of colorectal adenocarcinomas (Wilsdon et al., Cancers, 2026) — a histologic subtype defined by extracellular mucin comprising more than half the tumor (the WHO diagnostic threshold), not a separate malignancy from the adenocarcinoma already modeled at the Colorectal adenocarcinoma entry above', active:true, organKey:'colon' },
   { id:'cnet',   name:'Neuroendocrine tumor',      share:'part of the remaining <10% of colonic malignancies — no individual share figure claimed here', active:false, organKey:'colon' },
-  { id:'clymph', name:'Lymphoma',                  share:'part of the remaining <10% of colonic malignancies — no individual share figure claimed here', active:false, organKey:'colon' },
+  { id:'clymph', name:'Primary colonic lymphoma',  share:'part of the remaining <10% of colonic malignancies (StatPearls) — among primary gastrointestinal lymphomas restricted to diffuse large B-cell lymphoma, the histology modeled here, the colorectum accounts for 20.5% of cases (2,238/10,935, Feng et al., Sci Rep, 2025, SEER)', active:true, organKey:'colon' },
 ];
 
 // REPLACED (2026-09-02, colon-swap pass): assets/colon.glb is no longer the HRA large-intestine
@@ -279,6 +280,270 @@ const PRIVATE_POOL_CRC = [
   { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, common simply because TTN is one of the largest genes in the genome.' },
 ];
 
+// MUCINOUS ADENOCARCINOMA — a histologic subtype of the SAME adenocarcinoma modeled at crc above
+// (WHO threshold: extracellular mucin comprising more than half the tumor), not a sibling
+// malignancy the way cnet/clymph are. Best single source, a dedicated purpose-built cohort:
+// Vos et al., "Do all colorectal mucinous adenocarcinomas arise via the serrated neoplasia
+// pathway?", J Pathol Clin Res, 2026, PMID 42166218, PMCID PMC13240350 — N=396 (NGS/IHC test
+// cohort), Dutch nationwide pathology databank, 2000-2010, full text, open access.
+// - MSI-HIGH STATUS ~34% (Vos 2026 states "33.8%"; the paper's own 6-subgroup table sums to
+//   34.8%, a ~5-case discrepancy that could not be resolved from the available text — reported
+//   at the qualitative ~34% magnitude rather than a false-precision single decimal) vs
+//   conventional CRC's ~15% (Boland & Goel, Gastroenterology, 2010, PMID 20420947) — a real,
+//   substantial, ~2.3x enrichment and this entity's single most distinctive molecular fact.
+// - KRAS 42.7% (169/396, Vos 2026) sits squarely inside this organ's own already-cited
+//   conventional-CRC range (~35-45%, Domingo 2013/Yaeger 2018, already in TRUNK_CRC/REGIONS_CRC
+//   above) — a clean NEGATIVE finding (no enrichment or depletion). Shown as its own branch gene
+//   below rather than left in prose only: real, substantial, and mechanistically safe to place at
+//   its own site (branch genes at DIFFERENT sites do not need to avoid co-occurring with each
+//   other across an entire tumor — the same reasoning GBM's own EGFR/PDGFRA split already relies
+//   on, where real mutual exclusivity is precisely why two genes are shown at different regions
+//   rather than a reason to drop one).
+// - BRAF 34.1% unstratified (135/396) — but restricting to MSI-high-only patients (Nasca et al.,
+//   Oncologist, 2026, PMID 41978558, PMCID PMC13120881, N=929 MSI-high metastatic CRC),
+//   BRAF-mutated mucinous 34.8% vs non-mucinous 33.6% (p=0.068, NOT significantly different once
+//   MSI status is held constant); Vos's own BRAF-mutant/MSS mucinous subgroup alone is 39/396 =
+//   9.8%, nearly identical to conventional CRC's own 9.6% baseline (Safaee Ardekani et al.,
+//   2012). Strong positive BRAF×MSI-high co-occurrence within this cohort (derived from Vos's own
+//   subgroup counts: OR ~13.8, ~71.5% of BRAF-mutant MAC is also MSI-high) — the enrichment is
+//   substantially explained by this tumor's own elevated MSI-high rate, not an independent
+//   MSI-agnostic property of mucinous histology, the same serrated/CIMP-high pathway
+//   relationship BRAF already shows in conventional CRC.
+// - GNAS 5.8% (23/396) — CHECKED AND EXCLUDED: sits inside the general-CRC pooled 95% CI (4.8%,
+//   CI 3.1-7.3%, Afolabi et al., Cancers, 2022, PMID 36428574, PMCID PMC9688108, meta-analysis of
+//   30 studies/10,689 patients, not histology-stratified) — no dramatic GNAS-mucinous enrichment
+//   in the COLON specifically. The real, well-established GNAS-mucinous association is
+//   APPENDICEAL (KRAS+GNAS co-occurring "in the majority" of appendiceal mucinous neoplasms,
+//   Nagtegaal et al., J Pathol, 2026, PMID 42411933) and pancreatic-IPMN — a different organ's
+//   finding, not ported here without evidence, the same class of mistake data rule 1 already
+//   names (real gene, real frequency, real cancer somewhere, wrong for THIS tumor).
+// - TGFBR2 26.5% (105/396) — real, substantial, mechanistically a classic MSI-driven frameshift
+//   target (a poly-A tract, the kind of short repeat an MSI-high genome mutates); no MSI-
+//   stratified breakdown was reported by Vos 2026 or found elsewhere — a disclosed gap, not
+//   fabricated. Paired with a real, dramatic ROUTE-SWAP finding from the SAME table: SMAD4, this
+//   organ's own conventional-CRC route to disabling the identical TGF-β pathway (~8.6-16.2%
+//   already cited at TRUNK_CRC/REGIONS_CRC above), is found in just 0.8% (3/396) of this cohort —
+//   a ~10-20-fold reduction, independently corroborated as a real conventional-CRC top-tier gene
+//   by TCGA (Nature, 2012, PMID 22810696, listing SMAD4 among "the eight most frequently mutated
+//   genes" in non-hypermutated CRC) so the contrast is not an artifact of SMAD4 being obscure.
+//   Not given its own ledger entry — 0.8% is a near-absence, and drawing it as if present at a
+//   site would misrepresent the finding — but disclosed in TGFBR2's own branch note below,
+//   pathway loss is real either way here, this cohort reaches it almost exclusively through the
+//   receptor rather than its usual downstream effector.
+// - RNF43 25.5% (101/396, Table 2) — Vos et al.'s own Discussion text states "31.6%" for the same
+//   finding; this pass could not reconcile the two figures from the available text (possibly a
+//   stricter inactivating-mutation-only denominator over an undisclosed subset) — the table
+//   figure is used in-product, with the discrepancy disclosed rather than silently resolved.
+//   Vos et al. state a real, direct, mechanistic contrast with conventional colorectal
+//   adenocarcinoma in their own words: "in contrast to upregulation of the WNT pathway in
+//   conventional CRC which generally happens through APC mutation" — an alternative route to the
+//   SAME WNT-pathway-activation endpoint. Consistent with that framing, this SAME cohort's own APC
+//   rate is itself reduced relative to conventional CRC (37.1%, Table 2, vs ~81% already cited at
+//   TRUNK_CRC above) — real room for an alternative route, not asserted from RNF43 alone. Further
+//   enriched in this cohort's own MSI-high-associated serrated subgroup specifically (28.6% vs
+//   12.8% in the non-serrated subgroup, p=0.036, Vos et al., 2026) — the same serrated/MSI-pathway
+//   association this cancer's own BRAF branch gene shares, though no direct RNF43×BRAF pairwise
+//   statistic was found, so no co-occurrence or exclusivity claim is made between the two.
+// - CDX2 — CHECKED AND EXCLUDED from the ledger schema entirely: confirmed across multiple
+//   sources (Tong et al., Oncol Lett, 2026, PMCID PMC13100571) to be an IHC/expression-loss
+//   finding, not a mutation — the same GBM-MGMT-methylation class of exclusion (real, cited, but
+//   no schema slot for a change that isn't genetic).
+// TRUNK/BRANCH ARCHITECTURE: four DISTINCT branch genes, one per site — the more common pattern
+// in this atlas (matching LUSC/LUAD/HCC/ccRCC) rather than a repeated pair, now that four real,
+// independently-sourced candidates survive fit-checking.
+const TRUNK_CMUC = [
+  { gene:'Microsatellite instability-high (MSI-H) status', class:'driver', ccf:'~34% of mucinous colorectal adenocarcinoma (Vos et al., J Pathol Clin Res, 2026, N=396) vs ~15% of colorectal adenocarcinoma generally (Boland &amp; Goel, Gastroenterology, 2010) — roughly double this cancer’s own overall rate', note:'A mismatch-repair-deficiency signature rather than a single gene: a hypermutated genome that has lost the ability to correct replication errors at short repeat sequences. Its prognostic meaning is genuinely context-dependent, not uniformly favorable — among mucinous tumors specifically, MSI-high status associates with BETTER survival in resected disease ("three out of four studies reported a better survival in MAC with microsatellite instability (MSI)," a 44-study, 222,256-patient meta-analysis, Verhulst et al., J Clin Pathol, 2012) but WORSE progression-free survival in metastatic disease treated with checkpoint blockade (hazard ratio 1.48, 95% CI 1.22–1.78, p&lt;0.0001, Nasca et al., Oncologist, 2026, N=929 MSI-high metastatic CRC).' },
+];
+const REGIONS_CMUC = [
+  // Site frequencies reuse the SAME source and cohort as this organ's own conventional CRC entry
+  // (Riihimäki et al., Sci Rep, 2016, PMID 27416752) — its "Signet ring/Mucinous AD" combined
+  // histology stratum (~2,975 of the full ~49,096-patient cohort), which reports two real,
+  // substantial departures from the conventional-CRC pattern at the SAME two sites CRC's own
+  // entry already models: peritoneal spread markedly ELEVATED (OR 3.8, CI 3.2-4.5; 39% of this
+  // subgroup had peritoneal metastases, a direct table figure) and liver spread markedly REDUCED
+  // (OR 0.5, CI 0.4-0.6) relative to conventional adenocarcinoma. No site-specific percentage for
+  // this combined stratum was found for Lungs or Nervous system specifically — disclosed at those
+  // two sites rather than silently borrowed from the conventional-CRC figures at the same names.
+  { id:'CU', name:'Liver', color:cssVar('--coral'), pos3d:{x:-0.54,y:1.48,z:0.5},
+    branch:{ gene:'BRAF mutation', class:'driver', ccf:'34.1% unstratified (135/396, Vos et al., 2026) — but within MSI-high metastatic CRC specifically, mucinous and non-mucinous tumors carry BRAF at statistically indistinguishable rates (34.8% vs 33.6%, p=0.068, Nasca et al., Oncologist, 2026, N=929)', note:'Real, but substantially a consequence of this tumor’s own elevated MSI-high rate rather than an independent property of mucinous histology: BRAF mutation co-occurs with MSI-high status at roughly 13.8-fold the rate chance predicts (derived from Vos et al.’s own subgroup counts), and the BRAF-mutant/MSI-stable subset alone (9.8%, 39/396) is nearly identical to conventional colorectal adenocarcinoma’s own baseline BRAF rate (9.6%, Safaee Ardekani et al., 2012) — the same serrated/CIMP-high pathway relationship BRAF already shows in conventional CRC, not a distinct mucinous mechanism. Liver spread is real but markedly reduced in this subtype (odds ratio 0.5 versus conventional colorectal adenocarcinoma, Riihimäki et al., 2016) — a genuine departure from the Colorectal adenocarcinoma entry’s own Liver site, where liver is the dominant metastatic destination.' } },
+  { id:'CV', name:'Lungs', color:cssVar('--azure'), pos3d:{x:-1.37,y:-0.59,z:0.35},
+    branch:{ gene:'KRAS mutation', class:'driver', ccf:'42.7% (169/396, Vos et al., 2026) — does not differ meaningfully from conventional colorectal adenocarcinoma (~35-45%, Domingo et al., 2013/Yaeger et al., 2018, already cited at this organ’s own Colorectal adenocarcinoma entry)', note:'A clean negative finding, shown rather than omitted: this tumor’s own founding growth-switch mutation is no more or less common than in ordinary colorectal adenocarcinoma — the real molecular distinctiveness of mucinous histology lies elsewhere, at this cancer’s MSI-high trunk entry and at its other three sites’ own route-swap findings. No site-specific spread percentage for this combined mucinous/signet-ring stratum was found for the lungs specifically (Riihimäki et al., 2016 reports this subgroup’s own figures only for liver and peritoneum) — disclosed rather than borrowed from the conventional-CRC figure at this same site name.' } },
+  { id:'CJ', name:'Peritoneum', color:cssVar('--amber'), pos3d:{x:1.31,y:0.39,z:-0.13},
+    branch:{ gene:'TGFBR2 mutation', class:'driver', ccf:'26.5% (105/396, Vos et al., J Pathol Clin Res, 2026) — real and substantial, though this study does not report whether the figure differs further within its own MSI-high subset', note:'The TGF-β receptor whose loss removes a growth-inhibitory checkpoint on intestinal epithelium — mechanistically the same pathway this organ’s own Colorectal adenocarcinoma entry models via SMAD4, downstream of this receptor. A real ROUTE-SWAP from that entry: SMAD4, conventional CRC’s own way of disabling this pathway (~8.6-16.2%, already cited at this organ’s own Colorectal adenocarcinoma entry), is found in just 0.8% (3/396) of this cohort — a ~10-20-fold reduction (Vos et al., 2026) — while TGFBR2 itself, upstream of SMAD4 in the same pathway, sits at 26.5% here. TGFBR2’s own gene sits at a short repeat sequence (a poly-A tract), the classic kind of sequence a mismatch-repair-deficient, MSI-high genome mutates by frameshift — consistent with this tumor’s elevated MSI-high rate, though a clean MSI-stratified breakdown specifically for TGFBR2 was not found. Peritoneal spread is this subtype’s single most distinctive site-level finding: 39% of the combined mucinous/signet-ring stratum had peritoneal metastases (a direct table figure, Riihimäki et al., 2016), and the odds of peritoneal spread relative to conventional colorectal adenocarcinoma are nearly quadrupled (OR 3.8, 95% CI 3.2–4.5) — the mirror image of this subtype’s own reduced liver-spread propensity at the Liver site above.' } },
+  { id:'CX', name:'Nervous system', color:cssVar('--violet'), pos3d:{x:0.51,y:-1.51,z:0.36},
+    branch:{ gene:'RNF43 mutation', class:'driver', ccf:'25.5% (101/396, Table 2, Vos et al., 2026) — the same paper’s own Discussion text states "31.6%" for what appears to be the same finding, a discrepancy this pass could not reconcile from the available text; the table figure is used here', note:'Inactivates a negative regulator of WNT-receptor turnover — an ALTERNATIVE route to WNT-pathway activation, and one this cohort’s own authors state explicitly as a contrast with conventional colorectal adenocarcinoma: "in contrast to upregulation of the WNT pathway in conventional CRC which generally happens through APC mutation" (Vos et al., 2026). Consistent with that framing, this same cohort’s own APC rate is itself reduced relative to conventional CRC — 37.1% here versus the ~81% already cited at this organ’s own Colorectal adenocarcinoma entry — leaving real room for an alternative route. Further enriched in this cohort’s own MSI-high-associated serrated subgroup specifically (28.6% vs 12.8% in the non-serrated subgroup, p=0.036, Vos et al., 2026) — the same serrated/MSI-pathway association this cancer’s own BRAF branch gene shares, though no direct pairwise statistic between the two was found. No site-specific spread percentage for this combined mucinous/signet-ring stratum was found for the nervous system specifically (Riihimäki et al., 2016 reports this subgroup’s own figures only for liver and peritoneum) — disclosed rather than borrowed from the conventional-CRC figure at this same site name.' } },
+];
+const PRIVATE_POOL_CMUC = [
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, the same passenger this organ’s own Colorectal adenocarcinoma entry already models, common simply because TTN is one of the largest genes in the genome.' },
+];
+
+// HISTOLOGY_CMUC (mucinous adenocarcinoma) — verified directly: Vos et al., J Pathol Clin Res,
+// 2026 (already cited above); Darwish et al., World J Gastrointest Surg, 2025, PMCID
+// PMC12305226; Wilsdon et al., Cancers, 2026, PMID 42352451, PMCID PMC13296906 (corrected
+// 2026-09-14, independent citation-verification pass — PMC13100571 is actually Tong et al.,
+// Oncol Lett, 2026, this file's own CDX2-exclusion source below, misattributed here by copying
+// the wrong identifier two paragraphs over). The WHO's own >50%-mucin
+// threshold wording genuinely VARIES across three credible secondary sources ("of the total
+// tumour surface" per Vos 2026; "of the tumor VOLUME" per Darwish 2025; unspecified per Wilsdon)
+// — all trace to the same primary source (WHO Digestive System Blue Book, IARC 2019), which was
+// not independently accessible to resolve which wording is exact — disclosed as a genuine
+// unresolved discrepancy rather than silently picking one. The signet-ring-cell-carcinoma
+// boundary is likewise genuinely ambiguous in the literature: one framing (Ogino 2006, via
+// Wilsdon's own citation) draws a clean line (signet ring = intracellular mucin + discohesive
+// cells; this entity = extracellular mucin pools >50%); another (Darwish 2025) describes real
+// morphologic overlap between the two — disclosed as ambiguity, not resolved by fiat.
+const HISTOLOGY_CMUC = {
+  intro: 'Mucinous adenocarcinoma is defined by what it is mostly made of: clusters of malignant glandular epithelium, of varying grade, floating within abundant pools of extracellular mucin that make up more than half the tumor — the World Health Organization’s own diagnostic threshold, though secondary sources genuinely disagree on whether that half is measured by tumor surface area or by volume, a real wording discrepancy this atlas discloses rather than resolves by fiat. Grossly, that mucin gives the cut surface a distinctive gelatinous quality — terminology tracing back a century, to the original description of "colloid carcinoma." Where this tumor’s boundary with signet ring cell carcinoma sits is itself unsettled: one framing draws a clean line by where the mucin sits (inside and disrupting individual cells for signet ring cell carcinoma, pooled outside them here), while another source describes real morphologic overlap between the two.',
+  ariaSummary: 'Stylized microscopic field: irregular clusters and short strips of malignant glandular epithelium, of varying nuclear grade, suspended within large pale blue-gray pools of extracellular mucin that occupy more than half the visible field. Small glandular clusters float freely inside the mucin pools rather than forming the continuous cribriform sheets this organ’s conventional adenocarcinoma slide shows.',
+  citation: 'Vos et al., J Pathol Clin Res, 2026 (PMID 42166218); Darwish et al., World J Gastrointest Surg, 2025 (PMCID PMC12305226); Wilsdon et al., Cancers, 2026 (PMID 42352451, PMCID PMC13296906).',
+  features: [
+    { key:'mucinpools', label:'Extracellular mucin pools',
+      text:'Pools of extracellular mucin making up more than half the tumor by the WHO’s own diagnostic threshold — the defining feature of this histologic subtype, and the source of its gelatinous gross appearance.' },
+    { key:'floatingclusters', label:'Floating epithelial clusters',
+      text:'Clusters of malignant glandular cells, of varying grade, suspended within the mucin rather than forming continuous sheets — a genuinely different architecture from the complex, cribriform, gland-forming pattern this organ’s own Colorectal adenocarcinoma entry depicts.' },
+    { key:'signetboundary', label:'Boundary with signet ring cell carcinoma',
+      text:'Genuinely unsettled in the literature: one framing separates the two by whether the mucin sits inside or outside the tumor cells; another source describes real morphologic overlap between them.' },
+  ],
+};
+
+// PRIMARY COLONIC LYMPHOMA (diffuse large B-cell lymphoma, DLBCL) — authored directly on this
+// organ per the explicit user ruling recorded in CLAUDE.md's Phase C roadmap: this is
+// organ-localized disease arising IN the gut, and its presence here does NOT settle the separate,
+// still-open question of how systemic blood cancers (leukemia, nodal lymphoma) should eventually
+// be navigated in this atlas. "Primary" is itself defined by Dawson's criteria as bowel-lesion-
+// predominant disease without peripheral lymphadenopathy or hepatosplenic involvement at
+// diagnosis — i.e. gut-anchored by the field's own operational definition, not an atlas framing
+// choice. Best dedicated mutation-ledger source: Li SS et al., Exp Hematol Oncol, 2022, PMID
+// 36243813, PMCID PMC9569083 — N=53 primary GI DLBCL explicitly including 13 large-intestine
+// cases (stomach 11, small intestine 29, large intestine 13), full text, open access.
+// - TOP RAW MUTATION FREQUENCIES (verbatim from the paper): IGLL5 47%, TP53 42%, BTG2 28%,
+//   P2RY8 26%, PCLO 23%. A dedicated follow-up verification pass checked EACH of these five
+//   genes' own driver-vs-passenger standing against three independent frameworks — Khodabakhshi
+//   et al., Oncotarget, 2012, PMID 23131835 (a 44-gene catalogue of aSHM/AID-off-target mutation
+//   hotspots in DLBCL, the mechanism that produces recurrent "mutations" that are bystander scars
+//   of the B-cell's own hypermutation machinery rather than real drivers); Reddy et al., Cell,
+//   2017, PMID 28985567 (a background-mutation-rate-corrected, n=1001, 150-gene DLBCL driver
+//   list — the field's most statistically rigorous attempt to separate true drivers from
+//   elevated-local-rate aSHM passengers); and Li SS et al.'s own curated driver-candidate Table 2
+//   (417 genes cross-referenced against COSMIC/MDG125/SMG127/CDG291).
+// - IGLL5 (47%, the single most frequent alteration) — CHECKED AND EXCLUDED from the ledger as a
+//   confident driver, on a NEW rejection reason distinct from every other exclusion class in this
+//   atlas: not "wrong tumor" (data rule 1) or "mechanistic competition" (HCC's AXIN1 class) or
+//   "no schema slot for a non-genetic change" (GBM's MGMT class) but a LIVE, GENUINELY UNRESOLVED
+//   scientific open question about the gene itself. Li SS et al.'s own text (verbatim, including
+//   the source's own typo): "Although the function of IGLL5 has not been clarified, pervious
+//   [sic] reports have shown that it was commonly mutated in DLBCL... and is homologous to
+//   IGLL1." No DLBCL-specific source checked calls it a
+//   driver outright; its absence from Reddy et al.'s own corrected 150-gene driver list is real
+//   circumstantial evidence against driver status, though absence-of-evidence is not itself proof
+//   of passenger status. Forcing a driver/passenger badge onto a gene whose status the field
+//   itself has not settled would assert certainty this atlas does not have.
+// - BTG2 (28%) — CHECKED AND EXCLUDED, more decisively than IGLL5: explicitly, strongly
+//   catalogued BY NAME in Khodabakhshi et al.'s own aSHM-target table (SHM indicator 0.0123,
+//   clearing their own significance bar; 55 SNVs across 18 samples — the 3rd-highest raw SNV
+//   count of all 44 genes in that table, behind only BCL6 and BCL2, two of the most classic real
+//   aSHM targets in B-cell lymphoma) — real, positive, specific evidence of aSHM-passenger status,
+//   not merely an absence of driver evidence. Also absent from Reddy et al.'s corrected driver
+//   list and from Li SS et al.'s own curated Table 2.
+// - P2RY8 (26%) — CHECKED AND EXCLUDED as genuinely ambiguous rather than confidently either way:
+//   present in Li SS et al.'s own "30 commonly mutated driver genes" shortlist and Table 2 (14/53
+//   patients, COSMIC-annotated "oncogene, fusion"), but showing the identical "fails every
+//   narrower curated panel" pattern their own table shows for KNOWN aSHM-passenger genes (PIM1,
+//   BCL7A) — and Li SS et al.'s own Discussion hedges explicitly ("may probably become the
+//   oncogenic events..."), not a confirmed mechanism. Its own aSHM signal in Khodabakhshi is
+//   marginal (SHM indicator 0.3182, ABOVE their significance cutoff — i.e. not flagged as a
+//   likely aSHM target by that framework either). Genuinely undecided by every source checked;
+//   not modeled rather than modeled on a coin flip.
+// - PCLO (23%) — CHECKED AND EXCLUDED: clears NONE of the three frameworks. Absent from
+//   Khodabakhshi's aSHM table, absent from Reddy's corrected driver list, and absent even from Li
+//   SS et al.'s own complete 417-gene curated-candidate Table 2 (not merely their 30-gene
+//   shortlist) — recurrently mutated but unclassified by every source checked, the weakest
+//   evidentiary standing of the five.
+// - MYD88 0% — a real, notable NEGATIVE finding disclosed in CD79B's own branch note below
+//   rather than silently omitted: MYD88 is CD79B's own classic co-occurring partner in DLBCL's
+//   "MCD" genetic subtype, and its total absence here is internally consistent with this cohort's
+//   own reported germinal-center-B-cell (GCB) skew (62.3% GCB / 37.7% non-GCB by the Hans
+//   algorithm), since MYD88 L265P is classically an activated-B-cell (ABC)-subtype association —
+//   though a broader review synthesis (Elsharawi &amp; Liwski, 2025) reports "approximately equal"
+//   GCB/ABC proportions for this disease generally, a genuine cross-source discrepancy disclosed
+//   rather than resolved by picking one.
+// - TP53 (42%) is the one gene of the five that survives every check: independently confirmed as
+//   a genuine driver in DLBCL by Reddy et al.'s own functional CRISPR screen ("Among genes that
+//   were enriched in the screen and therefore implicated functionally as tumor suppressor genes,
+//   we noted TP53, MGA, PTEN and NCOR1") on top of its sequencing-level significance — the
+//   clean, confidently-driver gene this ledger's own trunk/branch architecture is built around.
+// - CD79B — a real, well-established DLBCL driver NOT in Li SS et al.'s own top-frequency list
+//   but safe and mechanistically sound to add: activates B-cell-receptor signaling, one of the
+//   two defining mutations (with MYD88) of the "MCD" genetic subtype, checked directly against
+//   the same three frameworks above and flagged by none of them as an aSHM-passenger concern.
+// - TRUNK: neither Li SS et al. nor any other primary colonic/GI-DLBCL-specific source addresses
+//   mutation TIMING, clonality, or a founding-event framing at all — confirmed by a direct
+//   full-text search of Li SS et al. for "trunk"/"founder"/"clonal"/"clonality"/"timing"/"temporal
+//   order" (zero hits) and by two direct PubMed searches for a dedicated primary-GI-DLBCL clonal-
+//   evolution/founder-mutation source (both zero results). The general (non-GI-specific) DLBCL
+//   clonal-architecture literature that DOES exist argues against a single-founder model rather
+//   than for one: Morin et al., Blood, 2013, PMID 23699601, found "multiple examples of
+//   well-characterized driver mutations, including hot spot mutations in EZH2, MYD88, CARD11,
+//   and CD79B, that were present in SUBCLONAL populations" — this disease's best-established
+//   drivers are frequently late/subclonal rather than universal/early. A "no single dominant
+//   founder" trunk framing is therefore literature-supported by extension, not by a direct
+//   primary-colonic-DLBCL citation — disclosed as exactly that distinction: checked directly and
+//   not found for this specific disease, with the broader-literature support stated plainly as an
+//   extension rather than presented as direct entity-specific evidence.
+// SITE MODEL — assembled from disclosed, non-uniform real pieces (no single source gives a clean
+// four-category breakdown; each site's own note states exactly which piece covers it and which is
+// borrowed from general, non-GI-specific DLBCL literature): Lee et al., Cancer Med, 2025, PMID
+// 41117486, PMCID PMC12538638 (a dedicated, multicenter, primary COLORECTAL DLBCL cohort, n=25 of
+// 104 total GI DLBCL — the most entity-specific source found) for bone-marrow involvement; Kim et
+// al., Blood, 2011, PMID 21148334 (a large, n=345, dedicated primary INTESTINAL DLBCL cohort) for
+// the real local-relapse-predominant finding; Chen et al., Front Oncol, 2024, PMID 39211552,
+// PMCID PMC11357906 (n=88, primary intestinal DLBCL, mostly small bowel) corroborating bone
+// marrow's real prognostic relevance via its own citation of Wang et al., 2019; and Schmitz et
+// al., J Clin Oncol, 2016, PMID 27382100 (the CNS-IPI paper, n=2,164+1,597, ANY primary site) for
+// CNS relapse rates, explicitly disclosed as general-DLBCL, not colon-specific. TP53 and CD79B
+// are split two sites each — a real gene pair with no known reciprocal conflict, though (unlike
+// this organ's own conventional-CRC and mucinous-adenocarcinoma entries) no direct co-occurrence
+// statistic between the two was found either; disclosed as "no known conflict", not asserted as a
+// documented cooperating pair.
+const TRUNK_CLYMPH = [
+  { gene:'No single dominant founding mutation', class:'driver', ccf:'the top five raw mutation frequencies in this organ\'s own dedicated primary-GI-lymphoma cohort (Li SS et al., Exp Hematol Oncol, 2022, N=53) range 23-47%, with none reaching the near-universal level a founding event usually shows', note:'Unlike this organ\'s own colorectal adenocarcinoma entries, no source — GI-specific or general — states a founding, temporally-earliest driver for this disease. A direct full-text search of this organ\'s own dedicated cohort study for trunk/founder/clonal-timing language returned nothing: it performs no clonal-evolution analysis at all. The general (non-GI-specific) DLBCL literature that does address mutation timing argues against a single founder existing to find: Morin et al. (Blood, 2013) found this disease\'s own best-established drivers (EZH2, MYD88, CARD11, CD79B) frequently present in SUBCLONAL populations, i.e. arising during progression rather than at the tumor\'s founding. This entity\'s real molecular architecture is disclosed at its own branch/private tier instead — including a real, notable negative finding (MYD88 entirely absent in this cohort, 0%) and three real genes (IGLL5, BTG2, P2RY8) checked and excluded from a driver badge because their own driver-vs-passenger status is a genuinely open scientific question, not settled fact this atlas could assert either way.' },
+];
+const REGIONS_CLYMPH = [
+  { id:'CZ', name:'Bone marrow', color:cssVar('--coral'), pos3d:{x:-0.54,y:1.48,z:0.5},
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'42% (Li SS et al., Exp Hematol Oncol, 2022, N=53) — the one gene of this cohort\'s own top five that survives every driver-vs-passenger check run against it', note:'The one clean, confidently-driver gene in this cohort: independently confirmed functionally, not just by sequencing frequency — Reddy et al. (Cell, 2017) ran a genome-wide CRISPR screen in DLBCL and found TP53 among the genes "implicated functionally as tumor suppressor genes." Bone marrow involvement itself is a real, tracked, prognostically meaningful finding in this disease family — Chen et al. (Front Oncol, 2024) cites a dedicated study (Wang et al., 2019, 68 primary intestinal DLBCL cases) finding "bone marrow invasion is an independent risk factor of PFS" — but it is genuinely RARE at diagnosis specifically: a dedicated primary colorectal DLBCL cohort found 0% (0/25) bone marrow involvement at the time of diagnosis (Lee et al., Cancer Med, 2025). Both facts are real and not in tension: rare at the moment of diagnosis, but a real risk factor for the disease\'s own future course when it does occur.' } },
+  { id:'CF', name:'Adjacent bowel & mesentery', color:cssVar('--azure'), pos3d:{x:-1.37,y:-0.59,z:0.35},
+    branch:{ gene:'CD79B mutation', class:'driver', ccf:'not in this organ\'s own dedicated cohort\'s top-five frequency list, but a real, well-established DLBCL driver checked directly against every driver-vs-passenger framework this pass used and flagged by none of them', note:'Activates B-cell-receptor signaling — one of the two defining genes (with MYD88) of DLBCL\'s "MCD" genetic subtype. A real, notable NEGATIVE finding disclosed here rather than omitted: MYD88, CD79B\'s own classic co-occurring partner, is entirely absent in this organ\'s own dedicated cohort (0%, Li SS et al., 2022) — internally consistent with that same cohort\'s own reported germinal-center-B-cell-predominant skew (62.3% GCB), since MYD88 mutation is classically an activated-B-cell-subtype association (a broader review synthesis reports closer-to-equal GCB/ABC proportions for this disease generally, a genuine cross-source discrepancy, disclosed rather than resolved). This disease\'s own real, distinctive relapse pattern — a dedicated 345-patient primary intestinal DLBCL cohort found "the predominant pattern... was local relapse (27.6%)," Kim et al., Blood, 2011, specifically among patients treated with chemotherapy (the paper\'s own denominator for that figure; whether the same pattern holds across the full cohort was not independently confirmed here) — favors nearby bowel and mesenteric tissue over the distant-organ pattern typical of the solid tumors modeled elsewhere in this atlas.' } },
+  { id:'CO', name:'Regional lymph nodes', color:cssVar('--amber'), pos3d:{x:1.31,y:0.39,z:-0.13},
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'42% (Li SS et al., 2022) — same gene and figure as this cancer\'s own Bone marrow site', note:'Same gene as this cancer\'s own Bone marrow site — see that site\'s note for the full driver-verification context. Regional and distant nodal spread is the axis the Ann Arbor staging system — this disease\'s own real staging framework, a different system from the SEER Summary Stage this organ\'s own Colorectal adenocarcinoma and Mucinous adenocarcinoma entries use — is built around; this entity\'s own EXTENT_STATUS record discloses the real stage-at-diagnosis distribution across four independent colon/intestinal DLBCL cohorts.' } },
+  { id:'CQ', name:'Central nervous system', color:cssVar('--violet'), pos3d:{x:0.51,y:-1.51,z:0.36},
+    branch:{ gene:'CD79B mutation', class:'driver', ccf:'same gene as this cancer\'s own Adjacent bowel &amp; mesentery site', note:'Same gene as this cancer\'s own Adjacent bowel &amp; mesentery site — see that site\'s note for the full driver-verification and MYD88-negative-finding context. CNS relapse risk is real and well-quantified, but only in GENERAL (not colon/GI-specific) DLBCL literature — disclosed explicitly rather than presented as entity-specific: the CNS-IPI risk model (Schmitz et al., J Clin Oncol, 2016, N=2,164 development + 1,597 independent validation cohorts, any primary site) found 2-year CNS relapse rates of 0.6% (low-risk, 46% of patients), 3.4% (intermediate-risk, 41%) and 10.2% (high-risk, 12%), nearly identical in both cohorts.' } },
+];
+const PRIVATE_POOL_CLYMPH = [
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background mutational noise, the same passenger this organ’s own Colorectal adenocarcinoma and Mucinous adenocarcinoma entries already model, common simply because TTN is one of the largest genes in the genome.' },
+];
+
+// HISTOLOGY_CLYMPH (primary colonic lymphoma, diffuse large B-cell lymphoma) — verified directly:
+// Elsharawi &amp; Liwski, J Hematol, 2025, PMCID PMC12758044 (architecture, cytology, IHC panel);
+// Li SS et al., Exp Hematol Oncol, 2022, PMID 36243813 (already cited below for its own mutation
+// ledger). Per this atlas's own established convention, IHC markers (CD19/CD20/CD79a/PAX5,
+// CD21/CD23, Ki-67) are named in prose only, never drawn as a ledger or visual feature — the same
+// treatment Prostate's HNF1B/Napsin A already receive. The drawable architecture is genuinely
+// different from every neuroendocrine-family generator already in this file (small, molded, bare
+// nuclei) — see js/histology.js's own genCLymph comment for the full reasoning.
+const HISTOLOGY_CLYMPH = {
+  intro: 'Primary colonic lymphoma is overwhelmingly diffuse large B-cell lymphoma here, as it is at nearly every other gastrointestinal site: sheets of atypical, medium-to-large lymphoid cells with centroblastic or immunoblastic cytology, frequent mitoses, and scattered apoptotic debris, often with extensive necrosis. Unlike the gland-forming architecture of this organ’s own adenocarcinoma entries, this is a monotonous, non-glandular infiltrate that characteristically extends through the full thickness of the bowel wall — transmural involvement is common. Confirming the diagnosis by immunohistochemistry (B-cell markers such as CD20 and PAX5; a Ki-67 proliferation index often exceeding 40%) is described in the cited sources but not drawn here, the same convention this atlas uses for every immunohistochemical finding.',
+  ariaSummary: 'Stylized microscopic field: a dense, monotonous sheet of medium-to-large lymphoid cells with round-to-oval nuclei, several bearing a small but distinct nucleolus, packed closely together without forming glands or any organized structure. Small dark fragments of apoptotic debris are scattered throughout, and several cells are caught mid-division. A patch of necrotic debris sits near the center of the field.',
+  citation: 'Elsharawi &amp; Liwski, J Hematol, 2025 (PMCID PMC12758044); Li SS et al., Exp Hematol Oncol, 2022 (PMID 36243813).',
+  features: [
+    { key:'largecells', label:'Medium-to-large lymphoid cells',
+      text:'Discrete cells of centroblastic or immunoblastic cytology — larger and more variably shaped than the small, densely molded cells of a neuroendocrine carcinoma, and lacking any glandular organization.' },
+    { key:'mitoses', label:'Frequent mitoses',
+      text:'A high proliferation rate is characteristic of this aggressive lymphoma, consistent with a Ki-67 proliferation index often reported above 40%.' },
+    { key:'necrosis', label:'Necrosis',
+      text:'Extensive necrosis is a common finding in this fast-growing tumor, alongside the scattered apoptotic debris visible throughout the sheet.' },
+  ],
+};
+
 // HISTOLOGY (microscopic-view data — every claim verified directly; PathologyOutlines' colon
 // pages were read via the browser pane after direct fetches hit HTTP 429). Two verification
 // outcomes shape the wording:
@@ -315,5 +580,17 @@ export const cancerDetails = {
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_CRC, trunk:TRUNK_CRC, privatePool:PRIVATE_POOL_CRC,
     histology: HISTOLOGY_CRC,
+  },
+  cmuc: {
+    title:'Mucinous Adenocarcinoma', screenLabel:'Mucinous colorectal adenocarcinoma — tumor explorer',
+    legendTitle:'Sites (real distant-metastasis pattern, elevated peritoneal / reduced hepatic)',
+    regions:REGIONS_CMUC, trunk:TRUNK_CMUC, privatePool:PRIVATE_POOL_CMUC,
+    histology: HISTOLOGY_CMUC,
+  },
+  clymph: {
+    title:'Primary Colonic Lymphoma', screenLabel:'Primary colonic lymphoma — tumor explorer',
+    legendTitle:'Sites (assembled from disclosed, non-uniform real findings — see each site\'s own note)',
+    regions:REGIONS_CLYMPH, trunk:TRUNK_CLYMPH, privatePool:PRIVATE_POOL_CLYMPH,
+    histology: HISTOLOGY_CLYMPH,
   },
 };

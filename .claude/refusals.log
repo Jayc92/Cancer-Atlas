@@ -1939,3 +1939,48 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   PROBLEM: UNDECLARED share_sum_check flag 'brain': GAP sum=72.2 — transplant candidate, human reads the label — fix it, declare it with a reason, or date it for re-read
   | DONE share_sum_check: 14 families checked, 3 gap flags, 1 tolerated-count problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-14T18:05:32Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 71 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/colon.js:244 — Nunes|2024 is at 245 (offset +1, name+year), 6 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/colon.js:276 — Nunes|2024 is at 277 (offset +1, name+year), 6 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/colon.js:277 — Cornish|2024 is at 278 (offset +1, name+year), 5 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/colon.js:289 — Arends|2026 is at 550 (offset +261, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/colon.js:301 — Arends|2026 is at 550 (offset +249, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/colon.js:294 — Memari|2026 is at 555 (offset +261, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/colon.js:301 — Memari|2026 is at 555 (offset +254, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/colon.js:296 — Biol|2025 is at 557 (offset +261, name+year), 1 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/colon.js: 36 off line, 5 distinct [-1, 1, 249, 254, 261]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 36, "pointer.identity_oracle": 272, "pointer.on_line": 233, "pointer.pointers_code": 494, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 639/639 hand-typed pointers resolve (file tracked, line in range), 494 code-and-instrument (floored) + 145 prose (reported, not floored) = 639 total, 233/272 with an author+year oracle land on their referent's line, 3 declared off-line, 36 flags, 42 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-14T18:06:04Z reason=exit=3 marker="DONE citation_reach_check:" tool=citation_reach_check.py
+     output 37 lines, last 12 below
+  |     declared 'etal-malformed-head:Gundem G' x1: prostate.js:163
+  |     declared 'etal-malformed-head:Li D' x1: colon.js:226
+  |     declared 'etal-malformed-head:Riihimäki' x23: colon.js:200, colon.js:207, colon.js:209, colon.js:211, colon.js:213, colon.js:359, colon.js:368, colon.js:370
+  |     declared 'etal-malformed-head:Vos AM' x1: colon.js:287
+  |     declared 'etal-malformed-head:Wang K' x1: stomach.js:214
+  |     declared 'etal-out-of-range:Vos AM' x1: colon.js:381
+  |   bare-name-comma-year heads (3 distinct, NOT gated — held): KGCA, TCGA, Working Group
+  |   journal-adjacent-year heads (15 distinct, NOT gated — held): Acad Pathol, CRSLS, Cancer, Cell, Clin Cases, Clin Oncol, Comput Biol, Cureus, Curr Oncol, Gastric Cancer, NEJM, Nature ...
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:Vos AM' at colon.js:287 (1 span). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-out-of-range:Vos AM' at colon.js:381 (1 span). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  | SIDECAR {"metrics": {"declared": 6, "gated_total": 31, "kind_bare_name_comma_year": 7, "kind_bare_name_year": 0, "kind_data_span_year": 136, "kind_etal_malformed_head": 30, "kind_etal_out_of_range": 1, "kind_etal_shadow": 1, "kind_journal_adjacent_year": 31, "kind_paren_shadow": 4, "kind_prose_year": 58, "kind_semicolon_shadow": 10, "kind_unlisted": 0, "problems": 2, "unreached_total": 278}, "name": "citation_reach_check", "ratchet": []}
+  | DONE citation_reach_check: 278 unreached spans (10 added, 0 removed vs the tracked set), 31 gated (6 declared), 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-14T18:06:05Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 27 lines, last 12 below
+  |   UNSCORED  SPENT  Fearon|1991|js/organs/colon.js:170
+  |   CONFIRMS  SPENT  basis TEST  Inman|2021|js/organs/skin.js:539
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   UNSCORED  SPENT  Powell|1990|js/organs/colon.js:173
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Fearon|1991|js/organs/colon.js:170 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: UNSCORED PAREN SPAN Powell|1990|js/organs/colon.js:173 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: STALE SCORING Fearon|1991|js/organs/colon.js:169: scored CONFIRMS on the SPENT side, but no such span is in the population any more. If the sentence was rewritten or the record removed, delete the entry in the same commit — and if its basis was TEST, say so in the message, because deleting a TEST is deleting this rule's only real evidence.
+  |   PROBLEM: STALE SCORING Powell|1990|js/organs/colon.js:172: scored CONFIRMS on the SPENT side, but no such span is in the population any more. If the sentence was rewritten or the record removed, delete the entry in the same commit — and if its basis was TEST, say so in the message, because deleting a TEST is deleting this rule's only real evidence.
+  | SIDECAR {"metrics": {"basis_fit": 2, "basis_test": 5, "kept": 5, "population": 9, "preregistered": 9, "problems": 4, "scored_confirms": 7, "scored_falsifies": 0, "spent": 4}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 9 paren spans (4 spent, 5 kept), 9 scored (5 as TEST, 2 as FIT and worth no support), 0 falsifying, 4 problems
+==== END REFUSAL

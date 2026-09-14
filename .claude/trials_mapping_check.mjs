@@ -372,6 +372,7 @@ const DECLARED_ZERO = {
   psignet: { reason: 'real disease rarity, ~3 US cases/year (Siech et al. 2026) — the organ-anchored query itself returns 0 studies under the live filter', checked: '2026-09-12' },
   pmuc: { reason: 'real disease rarity, ~19 US cases/year (Siech et al. 2026) — the query\'s one live result is an unrelated imaging study, dropped by the base keyword check before requireAlso is even reached', checked: '2026-09-12' },
   pductal: { reason: 'real disease rarity (~50 US cases/year) — no live trial currently ties "ductal" to "prostat" in one condition string; the corpus is dominated by pancreatic ductal adenocarcinoma trials instead', checked: '2026-09-12' },
+  cmuc: { reason: 'NOT disease rarity (mucinous colorectal adenocarcinoma is ~10-15% of colorectal adenocarcinoma) — a registry-tagging gap: of the 62 live studies with "mucinous" in their own condition field, zero also carry a colorectal/colon/rectal-relevant one (the corpus is dominated by pancreatic IPMN, a different disease); this registry does not tag colorectal trials by histologic subtype at the condition-field level, the same class of gap gdiff/gint/gmix already document for gastric Lauren type', checked: '2026-09-14' },
 };
 
 async function main() {

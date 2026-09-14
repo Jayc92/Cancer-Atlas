@@ -52,7 +52,7 @@
    "retrieved": "2026-09-04",
    "status": "verified",
    "code_refs": [
-    "js/organs/colon.js:43"
+    "js/organs/colon.js:44"
    ],
    "sha": "4f0755aaf265d080",
    "notes": "URL RECOVERED THIS PASS (was never recorded in-repo). The claim's second leg ('the file's own embedded asset.extras: CC-BY-4.0') is UNREPRODUCIBLE from the repo: the shipped master is a Blender re-export that dropped the extras. Remediation candidate: re-embed attribution extras in derived GLBs, as the ovary pipeline did."
@@ -169,7 +169,7 @@
    "retrieved": "2026-09-04",
    "status": "verified",
    "code_refs": [
-    "js/organs/colon.js:163"
+    "js/organs/colon.js:164"
    ],
    "sha": "d31b3c9daee7e6fe",
    "notes": "existence/authors/journal verified; N=72,722 not re-read from abstract (time-boxed)"
@@ -799,7 +799,7 @@
    "userFacing": false,
    "refs": [
     "js/organs/stomach.js:267",
-    "js/organs/colon.js:122"
+    "js/organs/colon.js:123"
    ],
    "triage": "journal-name fragment parsed as author (triaged 2026-09-04); not a citation record",
    "window": "corrective",
@@ -1134,7 +1134,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:123"
+    "js/organs/colon.js:124"
    ]
   },
   {
@@ -1144,7 +1144,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:177"
+    "js/organs/colon.js:178"
    ],
    "candidates": [
     {
@@ -1178,8 +1178,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:183",
-    "js/organs/colon.js:206"
+    "js/organs/colon.js:184",
+    "js/organs/colon.js:207"
    ],
    "pmid": "23165447",
    "resolvedTitle": "Use of multivariate analysis to suggest a new molecular classification of colorectal cancer.",
@@ -1200,8 +1200,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:206",
-    "js/organs/colon.js:208"
+    "js/organs/colon.js:207",
+    "js/organs/colon.js:209"
    ],
    "candidates": [
     {
@@ -1234,8 +1234,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:206",
-    "js/organs/colon.js:212"
+    "js/organs/colon.js:207",
+    "js/organs/colon.js:213"
    ],
    "candidates": [
     {
@@ -1271,7 +1271,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:206"
+    "js/organs/colon.js:207"
    ],
    "pmid": "29334918",
    "resolvedTitle": "Colorectal cancer liver metastases - a population-based study on incidence, management and survival.",
@@ -1292,7 +1292,7 @@
    "status": "parse-noise",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:206"
+    "js/organs/colon.js:207"
    ]
   },
   {
@@ -1302,7 +1302,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:208"
+    "js/organs/colon.js:209"
    ],
    "pmid": "2841597",
    "resolvedTitle": "Genetic alterations during colorectal-tumor development.",
@@ -1329,8 +1329,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:210",
-    "js/organs/colon.js:210"
+    "js/organs/colon.js:211",
+    "js/organs/colon.js:211"
    ],
    "candidates": [
     {
@@ -1370,7 +1370,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:210"
+    "js/organs/colon.js:211"
    ],
    "pmid": "28267766",
    "resolvedTitle": "Association of SMAD4 mutation with patient demographics, tumor characteristics, and clinical outcomes in colorectal cancer.",
@@ -1395,7 +1395,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:210"
+    "js/organs/colon.js:211"
    ],
    "candidates": [
     {
@@ -1428,7 +1428,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:210"
+    "js/organs/colon.js:211"
    ],
    "pmid": "34301194",
    "resolvedTitle": "Prognostic role and clinicopathological features of SMAD4 gene mutation in colorectal cancer: a systematic review and meta-analysis.",
@@ -1453,7 +1453,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:210"
+    "js/organs/colon.js:211"
    ],
    "candidates": [
     {
@@ -1486,7 +1486,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:210"
+    "js/organs/colon.js:211"
    ],
    "pmid": "22287157",
    "resolvedTitle": "Incidence, prevalence and risk factors for peritoneal carcinomatosis from colorectal cancer.",
@@ -1511,7 +1511,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:212"
+    "js/organs/colon.js:213"
    ],
    "candidates": [
     "19002263",
@@ -1543,7 +1543,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:212"
+    "js/organs/colon.js:213"
    ],
    "pmid": "23785428",
    "resolvedTitle": "PIK3CA activating mutation in colorectal carcinoma: associations with molecular features and survival.",
@@ -1568,7 +1568,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:212"
+    "js/organs/colon.js:213"
    ],
    "candidates": [
     {
@@ -1605,7 +1605,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:212"
+    "js/organs/colon.js:213"
    ],
    "pmid": "27037031",
    "resolvedTitle": "Systematic review: brain metastases from colorectal cancer--Incidence and patient characteristics.",
@@ -1630,8 +1630,8 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:222",
-    "js/organs/colon.js:278"
+    "js/organs/colon.js:223",
+    "js/organs/colon.js:279"
    ],
    "candidates": [
     {
@@ -1660,7 +1660,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:225"
+    "js/organs/colon.js:226"
    ]
   },
   {
@@ -1670,7 +1670,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:230"
+    "js/organs/colon.js:231"
    ],
    "pmid": "33205306",
    "resolvedTitle": "Alteration of FBXW7 is Associated with Worse Survival in Patients Undergoing Resection of Colorectal Liver Metastases.",
@@ -1694,9 +1694,9 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:244",
-    "js/organs/colon.js:276",
-    "js/organs/colon.js:278"
+    "js/organs/colon.js:245",
+    "js/organs/colon.js:277",
+    "js/organs/colon.js:279"
    ],
    "pubmedCount": 1159,
    "candidates": [
@@ -1728,8 +1728,8 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:277",
-    "js/organs/colon.js:278"
+    "js/organs/colon.js:278",
+    "js/organs/colon.js:279"
    ],
    "pubmedCount": 101,
    "candidates": [
@@ -1750,7 +1750,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/colon.js:277"
+    "js/organs/colon.js:278"
    ],
    "pmid": "39587554",
    "resolvedTitle": "Co-occurring mutations identify prognostic subgroups of microsatellite stable colorectal cancer.",
@@ -1773,8 +1773,8 @@
    "status": "retracted-wrong-backfill",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:289",
-    "js/organs/colon.js:301"
+    "js/organs/colon.js:554",
+    "js/organs/colon.js:566"
    ],
    "triage": "retracted 2026-09-04: backfilled 42616031 is a Streptococcus pneumoniae paper (ISME J); the citation is Arends et al., Histopathology, 2026 (colorectal grading/budding) \u2014 journal was ON the source line but the extractor missed it, and the topic gate matched 'colon' as a substring of 'colonization'. Two compounding instrument defects; word-boundary topic matching required in any future sweep."
   },
@@ -1785,8 +1785,8 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:294",
-    "js/organs/colon.js:301"
+    "js/organs/colon.js:559",
+    "js/organs/colon.js:566"
    ],
    "pmid": "42046640",
    "doi": "10.7759/cureus.105968",
@@ -1810,7 +1810,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/colon.js:296"
+    "js/organs/colon.js:561"
    ]
   },
   {

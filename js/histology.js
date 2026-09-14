@@ -1154,6 +1154,102 @@ function genCRC(g, rnd){
   ];
 }
 
+// Mucinous adenocarcinoma (colon) — genuinely different architecture from Ovary's own Mucinous
+// carcinoma (genMucinous above): that entity's cited feature is INTRAGLANDULAR mucin (mucin-
+// filled glands/cysts, nuclei pushed basally toward the outer wall) — this entity's own cited
+// feature is EXTRACELLULAR mucin POOLS, with malignant epithelial clusters of varying grade
+// floating freely within the mucin rather than lining an organized gland lumen (Darwish et al.,
+// World J Gastrointest Surg, 2025; Vos et al., J Pathol Clin Res, 2026 — see colon.js's own
+// HISTOLOGY_CMUC comment block for full sourcing). Checked directly against every existing
+// primitive before writing new code: drawGlandRing/drawFrond/drawCribriformMass all draw
+// ORGANIZED epithelium around a lumen or fibrovascular core, the opposite of this entity's own
+// defining architecture — free-floating, discontinuous clusters suspended in a non-cellular pool.
+function genCMuc(g, rnd){
+  const MUCINPOOL = '#dbe6ea'; // pale, cool blue-gray — mucin's classic H&E tinctorial appearance,
+  // deliberately distinct from Ovary's own warm pale MUCIN fill (genMucinous, '#f7ecd8') so the
+  // two different entities never read as the same substance at a glance.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const pools = [
+    {cx:210, cy:170, rx:175, ry:135, rot:-0.1},
+    {cx:560, cy:330, rx:165, ry:125, rot:0.25},
+  ];
+  const poolClusters = pools.map(p=>{
+    g.appendChild(el('path', {d:blobPath(p.cx, p.cy, p.rx, p.ry, 0.14, 16, rnd, p.rot), fill:MUCINPOOL, stroke:HE.cytoLn, 'stroke-width':1}));
+    const spots = [];
+    const n = 4 + Math.round(rnd()*2);
+    for(let i=0;i<n;i++){
+      const a = rnd()*Math.PI*2, rr = Math.sqrt(rnd())*0.72;
+      const cx = p.cx + Math.cos(a)*p.rx*rr, cy = p.cy + Math.sin(a)*p.ry*rr;
+      const clusterR = 14 + rnd()*16;
+      g.appendChild(el('path', {d:blobPath(cx, cy, clusterR, clusterR*(0.7+rnd()*0.3), 0.18, 9, rnd, rnd()*Math.PI), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1}));
+      const cellCount = 3 + Math.round(rnd()*3);
+      for(let j=0;j<cellCount;j++){
+        const ca = j/cellCount*Math.PI*2 + rnd()*0.3;
+        drawCell(g, cx+Math.cos(ca)*clusterR*0.5, cy+Math.sin(ca)*clusterR*0.5*0.8, 4.2+rnd()*1.6, 3.0+rnd()*1.6, rnd, {});
+      }
+      spots.push({x:cx, y:cy});
+    }
+    return spots;
+  });
+  return [
+    {key:'mucinpools',      x:pools[0].cx - pools[0].rx*0.3, y:pools[0].cy + pools[0].ry*0.85},
+    {key:'floatingclusters', x:poolClusters[0][0].x, y:poolClusters[0][0].y},
+    {key:'signetboundary',  x:poolClusters[1][0].x, y:poolClusters[1][0].y},
+  ];
+}
+
+// Primary colonic lymphoma (diffuse large B-cell lymphoma) — genuinely different cell size and
+// architecture from every neuroendocrine-family generator's own drawSmallCellSheet (SMALL,
+// MOLDED, bare nuclei with no visible cytoplasm): this entity's own cited cytology is "atypical
+// medium-large lymphoid cells" with centroblastic/immunoblastic morphology, frequent mitoses, and
+// apoptotic debris (Elsharawi et al., J Hematol, 2025 — see colon.js's own HISTOLOGY_CLYMPH
+// comment block for full sourcing) — discrete cells with real cytoplasm and, in a scattered
+// subset, a prominent nucleolus (reusing the exact nucleolus-dot technique genLGSC already
+// established), never molded against their neighbors the way small round blue cell tumors are.
+// Checked directly against every existing primitive before writing new code: drawSmallCellSheet
+// is mechanistically the wrong shape for this entity's own real cell size and lack of molding.
+function genCLymph(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const sheet = {cx:400, cy:250, rx:340, ry:220};
+  g.appendChild(el('path', {d:blobPath(sheet.cx, sheet.cy, sheet.rx, sheet.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  const cells = [];
+  for(let gx=-sheet.rx; gx<=sheet.rx; gx+=24){
+    for(let gy=-sheet.ry; gy<=sheet.ry; gy+=24){
+      if((gx/sheet.rx)**2 + (gy/sheet.ry)**2 > 0.88) continue;
+      cells.push({x:sheet.cx+gx+(rnd()*2-1)*5, y:sheet.cy+gy+(rnd()*2-1)*5});
+    }
+  }
+  let nucleolusCount = 0;
+  cells.forEach(c=>{
+    drawCell(g, c.x, c.y, 7.5+rnd()*2, 5.5+rnd()*1.8, rnd, {});
+    // a scattered minority carry a visibly prominent nucleolus — the real centroblastic/
+    // immunoblastic cytologic detail, drawn on a subset rather than every cell
+    if(rnd() < 0.12 && nucleolusCount < 9){
+      nucleolusCount++;
+      g.appendChild(el('circle', {cx:c.x+(rnd()*2-1)*1.2, cy:c.y+(rnd()*2-1)*1.2, r:1.6, fill:HE.nucDark}));
+    }
+  });
+  // apoptotic debris: small dark irregular fragments scattered through the sheet
+  for(let i=0;i<40;i++){
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.85;
+    g.appendChild(el('circle', {cx:sheet.cx+Math.cos(a)*sheet.rx*r, cy:sheet.cy+Math.sin(a)*sheet.ry*r, r:0.8+rnd()*1.3, fill:HE.debris, opacity:0.7}));
+  }
+  // frequent mitoses — several scattered figures, the opposite of this atlas's own
+  // low-proliferation "single mitosis" idiom (e.g. ovary's low-grade serous carcinoma)
+  const mitoses = [{x:260,y:150},{x:480,y:190},{x:340,y:340},{x:540,y:330},{x:220,y:330}];
+  mitoses.forEach(m=>{
+    const rot = rnd()*180;
+    g.appendChild(el('rect', {x:m.x-1.5, y:m.y-6, width:3, height:12, fill:HE.nucDark, transform:`rotate(${rot.toFixed(0)} ${m.x} ${m.y})`}));
+    g.appendChild(el('rect', {x:m.x-1.5, y:m.y-6, width:3, height:12, fill:HE.nucDark, transform:`rotate(${(rot+70).toFixed(0)} ${m.x} ${m.y})`}));
+  });
+  necrosisBlob(g, 400, 250, 70, 48, rnd, 0.15);
+  return [
+    {key:'largecells', x:sheet.cx - sheet.rx*0.6, y:sheet.cy - sheet.ry*0.7},
+    {key:'mitoses',     x:mitoses[0].x, y:mitoses[0].y - 22},
+    {key:'necrosis',    x:400, y:250},
+  ];
+}
+
 function genPDAC(g, rnd){
   // Pancreatic ductal adenocarcinoma: the field is MOSTLY stroma — desmoplastic stroma can
   // make up "up to 90% of the tumour volume" (see pancreas.js's histology block), so unlike
@@ -2556,6 +2652,8 @@ const GENERATORS = {
   menin:  genMENIN,
   acinar: genProstate,
   crc:    genCRC,
+  cmuc:   genCMuc,
+  clymph: genCLymph,
   pdac:   genPDAC,
   gdiff:  genGDiffuse,
   gint:   genGInt,

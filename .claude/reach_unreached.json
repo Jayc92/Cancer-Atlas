@@ -146,8 +146,16 @@
    1
   ],
   [
+   "colon.js|data-span-year||2000",
+   1
+  ],
+  [
+   "colon.js|data-span-year||2010",
+   1
+  ],
+  [
    "colon.js|data-span-year||2026",
-   3
+   4
   ],
   [
    "colon.js|etal-malformed-head|Li D|2021",
@@ -155,10 +163,14 @@
   ],
   [
    "colon.js|etal-malformed-head|Riihim\u00e4ki|2016",
-   5
+   10
   ],
   [
    "colon.js|journal-adjacent-year|Comput Biol|2025",
+   1
+  ],
+  [
+   "colon.js|journal-adjacent-year|Nature|2012",
    1
   ],
   [

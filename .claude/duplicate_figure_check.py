@@ -27,6 +27,7 @@ DECLARED = [
     {'key': 'skin|CDKN2A loss|49%, 44%|29%, 27%', 'reason': 'false positive: per-site involvement figures on the shared Riihimaki 2018 template — brain 49%/44% (men/women) at one site, liver 29%/27% at the other; the subject is the site, not the gene', 'until': None},
     {'key': 'stomach|RHOA mutation|0.3|0.4', 'reason': 'false positive: per-site odds ratios from one study (Riihimaki 2016) — signet-ring under-use of the liver (OR 0.3) at one site and of the lungs (OR 0.4) at the other', 'until': None},
     {'key': 'stomach|CLDN18–ARHGAP fusion|32%|12%', 'reason': 'false positive: per-site involvement shares on the template "of metastatic gastric-cancer patients" — peritoneum 32% at one site, bone 12% at the other', 'until': None},
+    {'key': 'colon|RNF43 mutation|2, 2026|0.036, 2026', 'reason': 'false positive: two different quantities within the same branch-gene entry (mucinous adenocarcinoma) — the ccf field\'s "Table 2" reference and the note field\'s p=0.036 serrated-subgroup-enrichment statistic, matched only because both cite the same Vos et al., 2026 source; neither is a competing figure for the gene\'s own frequency', 'until': None},
     # SIX MORE, READ 2026-09-12 (phaseC_design.md §13/14's pneuro/pductal authoring pass). All six
     # share one root cause: two ENTIRELY DIFFERENT citations, each written in this file's own
     # standard "Author et al., Journal, year, PMID nnnnn, PMCID PMCnnnnn" phrasing, sit close
