@@ -1819,3 +1819,18 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   absence_claim_check: 37 flag(s) — 3 dated for re-read, 34 permanent with reason, 0 problem(s)
   | DONE absence_claim_check: 3 unscoped claims (2 absence, 1 false corpus universal), 31 universals flagged for a read, 6 world-scoped, 38 cancers indexed (DEFECT 2, DEFECT-FALSE-UNIVERSAL 1, EXEMPT-REASON-GIVEN 2, EXEMPT-SELF-EVIDENCING 1, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 8, OK-SEARCH 24, UNIVERSAL-UNRESOLVED 31, UNIVERSAL-WORLD-SCOPED 6), 0 tolerated-count problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-14T00:59:52Z reason=exit=1 marker="DONE deploy_check:" tool=deploy_check.js
+     output 28 lines, last 12 below
+  |   NOT PUBLISHED: js/histology.js — bytes differ — HEAD 0b622b5607b4 (141689B) vs served fa674793f17b (116604B)
+  |   NOT PUBLISHED: js/organs/bladder.js — bytes differ — HEAD 675f2d36d4fc (65014B) vs served 1fd81b197394 (32982B)
+  |   NOT PUBLISHED: js/morphology.js — bytes differ — HEAD c0fd9a7e8ddd (125484B) vs served 04b69f12ea08 (101306B)
+  |   NOT PUBLISHED: js/organs/breast.js — bytes differ — HEAD 927c9d3dc0ec (45340B) vs served bc52ba4f7d94 (44634B)
+  |   NOT PUBLISHED: js/organs/kidneys.js — bytes differ — HEAD a8603d83856a (41236B) vs served ca8c8a5a3b22 (22116B)
+  |   NOT PUBLISHED: js/organs/liver.js — bytes differ — HEAD 324908bc2d90 (49717B) vs served 5c7c74357f73 (35426B)
+  |   NOT PUBLISHED: js/organs/pancreas.js — bytes differ — HEAD 3f9f1cae81a6 (75204B) vs served 9c10d24b3310 (30992B)
+  |   NOT PUBLISHED: js/organs/testis.js — bytes differ — HEAD ab08c4afaef1 (46751B) vs served 05529a83c7df (30632B)
+  |   NOT PUBLISHED: js/organs/stomach.js — bytes differ — HEAD ae165293207c (47323B) vs served 5717bf4328ce (46806B)
+  |   NOT PUBLISHED: js/organs/thyroid.js — bytes differ — HEAD cb98a14ab315 (59213B) vs served 55e416f7d671 (58619B)
+  |   NOT PUBLISHED: js/trials.js — bytes differ — HEAD 38c6c0a37b2c (68748B) vs served 9b53eb530100 (57981B)
+  | DONE deploy_check: 17/29 assets byte-matched to HEAD 38a53ba, 31 hotspots live, 0 unexplained page errors (2 declared-benign), 12 problems
+==== END REFUSAL
