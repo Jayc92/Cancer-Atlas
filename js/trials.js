@@ -675,6 +675,40 @@ export const TRIALS_CONDITION_MAP = {
       + 'entity-choice note) — no same-string "urachal" excludeIf was needed since no kept '
       + 'string names urachus at all in this sample.',
   },
+  bcc: {
+    query: 'basal cell carcinoma', parent: 'skin cancer',
+    conditionKeywords: ['basal cell'],
+    note: 'LIVE-VERIFIED 2026-09-13 (.claude/trials_mapping_check.mjs bcc): 71 total, 62 kept by '
+      + 'the narrow filter, 10-result sample 10/10 kept genuine. Corpus-vocabulary scan found one '
+      + 'real near-miss the keyword\'s own specificity already handles correctly: "Risk of Skin '
+      + 'Cancers Except Basal-cell Carcinomas" shares the "basal" token but its condition string '
+      + 'spells the disease with a hyphen ("Basal-cell"), which the two-word substring "basal '
+      + 'cell" does not match — confirmed still in the rejected set, not a live gap. '
+      + 'Negation-collision signal: zero matches.',
+  },
+  scc: {
+    query: 'cutaneous squamous cell carcinoma', parent: 'skin cancer',
+    conditionKeywords: ['squamous cell'], requireAlso: ['skin', 'cutaneous'],
+    note: 'LIVE-VERIFIED 2026-09-14 (.claude/trials_mapping_check.mjs scc): 88 total, requireAlso ' +
+      'keeps 71. 10-result sample 8/10 kept, 2 correctly dropped (both real multi-organ basket ' +
+      'trials — NCT05059444 lists 17 unrelated conditions including bladder/lung/breast/gastric/ ' +
+      'pancreatic/ovarian carcinomas; NCT05136196 pairs melanoma with head-and-neck SCC — neither ' +
+      'is cutaneous-SCC-specific, the same named-broadening shape ccrcc\'s own CD70 case already ' +
+      'established). Corpus-vocabulary scan surfaced only real, already-excluded near-misses ' +
+      '(bare "cutaneous"/"squamous" tokens inside melanoma/lung/head-neck strings that do not ' +
+      'contain the literal two-word "squamous cell" substring this filter requires). ' +
+      'Negation-collision signal: zero matches.',
+  },
+  mcc: {
+    query: 'Merkel cell carcinoma', parent: 'skin cancer',
+    conditionKeywords: ['merkel cell'],
+    note: 'LIVE-VERIFIED 2026-09-14 (.claude/trials_mapping_check.mjs mcc): 42 total, 39 kept by the ' +
+      'narrow filter. 10-result sample 10/10 kept genuine. "Merkel cell carcinoma" is a ' +
+      'disease-specific two-word term with no cross-organ overload risk this atlas has hit ' +
+      'elsewhere (unlike "adenocarcinoma"/"squamous cell"/"small cell"/"clear cell") — no ' +
+      'requireAlso needed. Corpus-vocabulary signal: 0 of 4,271 rejected strings share the ' +
+      '"merkel" name-token. Negation-collision signal: zero matches.',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------

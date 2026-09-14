@@ -296,6 +296,29 @@ screen pair per organ:
    EGFR/RB1 replaced an earlier ESR1/MDM4 pick that had the site-pairing
    caveat right but the gene itself wrong for this receptor-negative,
    TP53-mutant tumor.)
+   **THE FIRST EXCEPTION TO "ILLUSTRATIVE FOR EVERY CANCER" (2026-09-14, user
+   ruling, meningioma pass): a site-gene pairing is CITED rather than
+   illustrative when a source states the anatomical association directly and
+   it is independently corroborated.** Every prior site-gene pairing in this
+   atlas is illustrative because no source actually says a given gene's
+   alteration occurs preferentially AT a given anatomic site — the atlas
+   assigns real genes to real sites for pedagogical spread, disclosed as
+   such. Meningioma's NF2-mutant-vs-TRAF7/KLF4/AKT1-mutant split is a
+   genuinely different case: Clark et al. (*Science*, 2013) states directly,
+   with quantified statistics, that NF2-mutant tumors predominate in the
+   cerebral/cerebellar hemispheres (P=9.22×10⁻¹⁴, OR=6.74) while non-NF2
+   tumors predominate at the medial skull base (P=4.36×10⁻⁸, OR=8.80) — a
+   real anatomical claim, not an atlas-assigned illustration — and this is
+   independently corroborated by two further sources (Brastianos et al.,
+   *Nat Genet*, 2013, for the skull-base/SMO-AKT1 association specifically;
+   Naros et al., *Brain Commun*, 2026, for the same hemispheric/medial split
+   via voxel-based mapping). **Check both conditions before citing a
+   site-gene pairing rather than disclosing it as illustrative: (1) a source
+   states the association directly, at the anatomic-site level, not merely
+   "this gene is common in this cancer"; (2) at least one independent source
+   corroborates it.** Meeting only one is not enough — this is what
+   separates a real, citable exception from the ordinary illustrative case
+   every other pairing in this atlas remains.
 3. **Organ-specific mutual-exclusivity constraints must be checked and recorded,
    not just mechanistic fit in general.** LUAD's trunk mutation is KRAS (33%,
    not a near-universal founder like TP53 is for HGSOC/TNBC — see rule 11
@@ -2825,6 +2848,139 @@ screen pair per organ:
       correct, sufficient confirmation that the extent axis carries real meaning for this site,
       satisfying the check's own stated purpose (its Mode 3) without inventing a redundant entry.
 
+34. Skin/BCC, SCC, MCC reference sources — **the three flagged "ordinary-organ" entities completing
+    the Skin organ (melanoma already active), added together 2026-09-13/14. Every citation verified
+    directly at the source; a second, independent citation-verification agent pass caught and fixed
+    5 substantive + 3 minor real defects in BCC/SCC before commit — no fabrications, all drift-class
+    (see data rule 35 for why that distinction matters and stays worth drawing).**
+    - **Registry-non-reportability, BCC/SCC's shared but distinct gap class**: both are excluded from
+      national cancer registries outright — Karia, Han & Schmults, JAAD, 2013, PMID 23375456,
+      verbatim for SCC: "CSCC has been excluded from national cancer registries," the same structural
+      reason BCC has no SEER Summary Stage distribution either. This affects EXTENT specifically
+      (both `uncharacterised`); margin/growth/share draw on ordinary pathology/Medicare-claims
+      literature, unaffected. **BCC**: trunk PTCH1 mutation/loss (73%, Bonilla et al., Nat Genet,
+      2016, PMID 26950094; real cross-cohort range 33-90% tracking method sensitivity — Gailani et
+      al. 1996 SSCP/Reifenberger et al. 2005 SSCP-plus-sequencing/Epstein 2008 review) + SMO mutation
+      (10-20%) — "the most mutated type of human cancer" (Jayaraman et al., 2014, PMID 23774526).
+      Branch: TP53 mutation (accelerating, not founding — Reifenberger's own "with and without"
+      framing) and MYCN **mutation** (30%, Bonilla 2016 — corrected from an earlier draft's
+      "amplification," which the source does not support; caught by the independent
+      citation-verification agent). Private pool: PPP6C/STK19/PTPN14/RB1, all real, all flagged with
+      their own honest mechanistic-fit hedges rather than asserted confidently. Sites real-but-
+      unquantified across all four (Lymph nodes/Lung/Bone/Skin distant), following LUAD's adrenal-
+      gland precedent — metastatic rate 0.0028%-0.55%, corroborated two ways (StatPearls; von Domarus
+      & Stevens, JAAD, 1984, PMID 6736323, a literature series of 205 cases identified/170 accepted
+      and evaluated). **SCC**: trunk TP53 mutation (58% early sequencing to 70% modern whole-exome,
+      Inman et al., Nat Commun, 2018, PMID 30202019 — kept carefully separate from a DIFFERENT,
+      broader p53-**pathway** LOF figure, 71%, from a 2021 pooled meta-analysis, PMID 34272401, the
+      same gene-vs-pathway distinction this atlas already flags for ccRCC's MTOR figure) + CDKN2A
+      mutation/loss as a second, temporally-EARLY trunk entry (present already in actinic keratosis,
+      the precursor lesion — Tandukar et al., Nat Commun, 2025, PMID 41309580 — the same temporal-
+      trunk justification class as HCC's TERT/PDAC's KRAS, data rule 5). Branch: NOTCH1/NOTCH2
+      loss-of-function (~75%, tumor-suppressor role, opposite of NOTCH's oncogenic role in T-cell
+      leukemia — Wang et al., PNAS, 2011, PMID 22006338) and HRAS activating mutation (cohort-
+      dependent, 3-20%). Sites: Lymph nodes is this entity's own real, DEDICATED, quantified
+      metastatic route (3.0-6.7%, Karia et al. 2013) — the one clear natural-history difference from
+      BCC — Lung/Bone/Skin(distant) real-but-unquantified. Private pool: PIK3CA/CCND1/FBXW7, all from
+      one advanced-disease-skewed panel (Al-Rohil et al., Cancer, 2016, PMID 26479420), disclosed as
+      such. Histology reuses genLUSC's own two-zone keratin-pearl/intercellular-bridge technique
+      verbatim (real WHO-sourced architecture, not a coincidental resemblance) — cited to StatPearls,
+      "Cutaneous Squamous Cell Carcinoma" (NBK441939) and Sabbula/Gasalberti/Mukkamalla's own LUSC
+      source (NBK564510), corroborating across two organs; a bladder-squamous-differentiation paper
+      (Guo et al., 2026, PMID 42482763 — blscc's own correct source) was checked and explicitly NOT
+      reused here after the independent verification agent found its "definitive morphological
+      features" quote is scoped to that paper's own bladder-specific working criterion, not a
+      general cross-organ statement — the same over-generalization class as data rule 1's ESR1/MDM4
+      case, caught before shipping this time. Exactly 2 drawable histology features, the third
+      instance of the same real, WHO-sourced 2-feature limit LUSC and blscc already established
+      (`regress.js`'s own `KNOWN_FAILURES`).
+    - **MCC — the genuinely novel structural fact this pass found: TWO REAL, DISTINCT PATHOGENESES,
+      not just two divergent mutation routes the way this atlas's other status-trunk entities
+      (GBM/OCCC/bladder/FTC) already model, but one route that is VIRAL rather than mutational at
+      all.** MCPyV-positive (~81%, Moshiri et al., J Invest Dermatol, 2017, PMID 27815175: 229/282
+      tumors) — driven by the polyomavirus's own large/small T antigens (Shuda et al., PNAS, 2008,
+      PMID 18812503; J Clin Invest, 2011, PMID 21841310; Cheng et al., PLoS Pathog, 2017, PMID
+      29028833), genomically the QUIETEST route this atlas has modeled for any virally-driven tumor
+      (0.40 mutations/Mb, Harms et al., Cancer Res, 2015, PMID 26238782). MCPyV-negative (~19%) —
+      UV-driven, genomically the LOUDEST route this atlas has found (10.09 mutations/Mb, same
+      source, ~25-fold higher than the viral route; neoantigen burden exceeding melanoma's own, Goh
+      et al., Oncotarget, 2016, PMID 26655088). **A real, disclosed model limitation, not silently
+      worked around**: the virally-driven majority route is genomically quiet by mechanism, so it has
+      no real recurrent branch/private-pool mutations to model — every branch/private gene in this
+      entry (NOTCH1/NOTCH2, PRUNE2, PIK3CA, KNSTRN, TTN) is built entirely from the MCPyV-negative
+      lineage's own biology, with every gene's note saying so explicitly, checked directly against
+      every other trunk/branch/private architecture in this atlas before writing it — the first trunk
+      route in the atlas with literally zero modeled branch/private mutations, for a real mechanistic
+      reason (Wong et al., Cancer Res, 2015, PMID 26627015, independently confirms "All viral-negative
+      tumors harbored mutations in RB1, TP53, and a high frequency of mutations in NOTCH1 and FAT1").
+      Sites are real, dedicated, and unusually well-sourced for this atlas (Lewis et al., Cancer Med,
+      2020, PMID 31883234, N=215 with distant metastasis of 1,168 enrolled) — Distant lymph nodes
+      (41%), not skin/lung/bone, is this entity's own single most common real site, stated directly
+      rather than defaulted to the lung/brain/liver/bone shape most cancers in this atlas use.
+      **EXTENT is `cited`, not `uncharacterised`** — the one entity in this organ where a real gap is
+      different in KIND from BCC/SCC's: MCC is genuinely SEER-reportable (confirmed by direct
+      navigation of SEER's own public tool), but SEER has no dedicated Stat Facts page for it at all;
+      the best available real stage-at-diagnosis distribution is NCDB, not SEER — Harms et al., Ann
+      Surg Oncol, 2016, PMID 27198511, N=9,387, the actual paper AJCC's 8th-edition MCC staging system
+      is based on — disclosed as a non-SEER source rather than silently treated as equivalent to one.
+      Histology reuses `drawSmallCellSheet` (the neuroendocrine family's continuing consumer, per
+      data rule 33) for nuclear molding/chromatin, plus a real, quantified, genuinely distinguishing
+      feature the family hadn't needed before — trabecular growth, present in "over 72% of MCCs but
+      only rarely in non-MCC" mimics (Bandino et al., Am J Dermatopathol, 2018).
+    - **Trials mapping, live-verified per the now-required standing rule (see data rule 36): bcc**
+      (71 total/62 kept, 10/10 sample), **scc** (88 total/71 kept via `requireAlso:['skin',
+      'cutaneous']`, 8/10 sample with 2 correctly-dropped multi-organ basket trials), **mcc** (42
+      total/39 kept, 10/10 sample, no `requireAlso` needed — "Merkel cell carcinoma" carries no
+      cross-organ overload risk this atlas has hit elsewhere).
+    - **A real, live citation-verification-agent catch, applied to CLOSE the loop, not just note
+      it**: BCC's own SMO note ("an additional 10% of cases beyond PTCH1's own ~90%") already
+      correctly hedges that a formal exclusivity test wasn't independently confirmed; the PTCH1 ccf's
+      method framing was tightened from an inaccurate "direct sequencing" contrast to the accurate
+      "SSCP screening with confirmatory sequencing" (Reifenberger 2005 used the same underlying
+      technique family as Gailani 1996, just at higher sensitivity, not a categorically different
+      method) — a minor but real precision fix, applied because the independent pass found it.
+    - **This organ's own authoring pass ran directly across a real concurrent-session collision**
+      (a second session's own gate-running workflow repeatedly `git stash`ing the shared working
+      directory while this pass's BCC edits were uncommitted) — fully recovered with no data loss,
+      the stash stack reconciled and cleared, confirmed by the user. Three items the collision
+      surfaced were resolved BEFORE further authoring, per explicit instruction: the worktree-
+      isolated commit mechanism (see the dated `commit_checked.sh` entry elsewhere in this file);
+      confirming lusc/blscc's histology floor was a declared exception, not a live regression; and
+      the `aria_entity_check.py` instrument (see its own dated entry) — all three closed before BCC/
+      SCC/MCC's own content was finished.
+
+35. **Fabrication is a defect class distinct from drift, and neither a gate nor a neighbourhood-based
+    check can reach it — see the full standing entry near the end of the "WHAT COUNTS AS A DONE
+    LINE" section for the reasoning.** Recorded here in the data-rules list too because it surfaced
+    during THIS organ's own citation-verification pass (a claim asserting >90% localized extent for
+    a cancer entity, quoting a source that never uses the word "localized" anywhere and whose own
+    two reported marginals — N1 15.7%/M1 5.9% — cap the maximum possible localized share at 84.3%
+    by inclusion-exclusion, below the claimed figure regardless of overlap) and is the reason the
+    independent citation-verification pass is now REQUIRED rather than practiced for every new
+    organ/cancer pass (data rule 37) — a defect class that looks completely unremarkable to the
+    person who wrote it is exactly the case a required, independent read exists to catch.
+
+36. **A trials-mapping keyword list is verified by running it, never by reading it — REQUIRED, not
+    practiced.** Four real keyword bugs found across this atlas's history, all four found by running
+    the live query and reading its real results, zero found by reading the list and judging it
+    correct. Before any `TRIALS_CONDITION_MAP` entry is considered done: run
+    `.claude/trials_mapping_check.mjs <id>` (the negation-collision signal, corpus-vocabulary signal,
+    and `requireAlso`/`excludeIf` positive controls) AND live-sample ≥10 real results in the browser,
+    reading every kept and dropped condition string by hand. See this file's own dated 2026-09-13
+    ruling on `.claude/trials_mapping_check.mjs`'s negation-collision signal (near the end of this
+    file) for the complete record and that scanner's own disclosed limits.
+
+37. **An independent citation-verification pass over new content is REQUIRED, not practiced — the
+    same ruling as data rule 36, applied to citations rather than trials keywords.** Run once, on
+    this organ's own BCC/SCC round, it found 5 substantive + 3 minor real defects on the first
+    outing — content that had already been written, read back, and judged correct by a human. See
+    this file's own dated 2026-09-13 ruling on required citation-verification passes (near the end
+    of this file) for the method and what it does and does not replace (the existing
+    `citation_crosscheck.py`/
+    `citation_paren_ledger.py` checks catch a different, narrower defect shape — a citation whose own
+    recorded metadata disagrees with itself — never a citation whose claim the source simply doesn't
+    support).
+
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
   `#101a30`), panels `#121a2b` / `#0e1524`, hairline borders `#24314a`.
@@ -4386,6 +4542,64 @@ QUOTES .claude/commit_checked.sh
   **Cosmetic cleanup of a commit message is nowhere near worth touching
   that.** The pollution is recorded here with its range instead:
   `58748d3` … `aafbe04`, 2026-09-05 to 2026-09-06.
+- **A FIFTH VARIANT OF "GATE THE TREE YOU'RE COMMITTING," AND THE FIRST WHERE
+  CARE AT THE CALL SITE CANNOT FIX IT (2026-09-14, found live during the
+  skin/brain/colon authoring pass).** `do_commit`'s tree-cleanliness checks
+  (both the top one and the "still_unstaged" backstop) compare the working
+  tree against the SHARED index via `git diff --name-only`. A concurrent
+  `git add` from another process into that same shared index reconciles the
+  two with no unstaged diff left for either check to see — so foreign
+  content can ride into a commit this script believes it fully controls,
+  and there is no sequence of commands a careful caller could run to close
+  the hole, because the hazard is the shared index existing at all. This is
+  exactly what happened live: another session's own gate run staged content
+  into the shared index while this session's uncommitted BCC work sat in the
+  same working tree, and the two got tangled (recovered afterward via
+  `git stash`, detailed in the session's own transcript, not repeated here).
+  **The fix is `do_commit_worktree()`, a new function beside `do_commit`
+  (never a rewrite of it — every one of that function's own eleven selftest
+  arms still covers exactly what it always did): create a real `git
+  worktree` (its own index, its own checked-out files, reachable by nothing
+  outside the function), copy the CALLER-NAMED files' current on-disk
+  content into it, run the entire existing gate-and-commit machinery
+  unmodified inside that isolation, then land the result on the real branch
+  via `git reset --mixed <new-sha>` — NOT `git merge --ff-only`, which was
+  tried first and measured to fail: merge's safety check refuses whenever
+  the main tree has any local modification to a file the incoming commit
+  touches, even when — as here, always — that modification is byte-identical
+  to what the commit already contains, because the files came from the main
+  tree's own working-tree content in the first place. `reset --mixed` never
+  inspects working-tree content; it only moves HEAD and rewrites the index,
+  which is exactly the isolation property this exists for, GUARDED (a moved
+  branch tip since the worktree was created refuses the reset rather than
+  silently overwriting newer history) rather than blind. Invocation:
+  `commit_checked.sh --worktree "<subject>" "<marker>" "<space-separated
+  files>" <gate command...>`. Proven with a twelfth selftest arm that
+  pre-stages a "pollution" file into the shared index BEFORE invoking the
+  worktree path — the adversarial case, made deterministic rather than
+  timing-dependent — and confirms the resulting commit carries the named
+  file and nothing else.
+- **`aria_entity_check.py` (2026-09-14), the sixth textContent/aria-label
+  entity incident's mechanization, not its first instance.** A field
+  rendered through `.textContent`/`.setAttribute` and a field rendered
+  through `.innerHTML` have opposite escaping requirements — correct in one
+  path is broken in the other — and this codebase has both kinds of field
+  living under similar names in the same organ data files
+  (`organDetail.facts[].label`/`.val` are innerHTML-rendered and correctly
+  carry entities; `cancerEntries[].share`, `organDetail.sub`/`desc`,
+  `viewerAria`, `histology.intro`/`citation`/`ariaSummary`, and hotspot/
+  feature `label`/`text` are textContent- or aria-label-rendered and must
+  never carry one). A concurrent session found and hand-fixed five live
+  instances across four files before this check existed. Declared in
+  `battery.py`'s `INSTRUMENTS`, every field's classification traced to its
+  own render call site before being trusted (see the checker's own header),
+  the one ambiguous field name (`label`) resolved by finding every
+  `facts:[...]` array's real byte span (bracket-depth counted, not
+  regex-guessed to the first `]`) and excluding matches inside it. Live run
+  at introduction: 0 flags — the corpus was already clean by the time the
+  checker landed, which is expected (see condition (8): a clean first run is
+  not evidence the class won't recur, it is the reason this exists as a
+  gate rather than a one-time hand sweep).
 
 ## A STATUS CLAIM CARRIES ITS BACKING — the fourth property of a declaration (2026-09-09, user ruling)
 
@@ -6230,6 +6444,22 @@ refute it, which is worth more than file order.
   entirely: leukaemia cannot be clicked; a second navigation model
   (system / cell lineage / parallel entry) is a design decision to
   take before it forces itself.
+  **CORRECTION (2026-09-14, user ruling): primary GI lymphoma is NOT an
+  instance of this question, and treating it as one would set the wrong
+  precedent.** The navigation problem above is specifically about cancers
+  with NO organ at all — systemic leukemias, nodal lymphomas, disease that
+  has nowhere on a body screen to be clicked. Primary colonic (or gastric,
+  or small-intestinal) lymphoma is different in exactly the respect that
+  matters here: it arises IN the gut, at a real anatomic site, and is
+  organ-localized disease in the ordinary sense, whatever else is unusual
+  about its staging system or mutation framework (see the colon organ's own
+  data rule for those real departures). It is authored directly on the
+  colon organ screen, with its real departures from the solid-tumor model
+  disclosed rather than hidden, and its presence there does NOT settle the
+  broader blood-cancer-navigation question above — that question is still
+  open, still about leukemia and nodal lymphoma specifically, and nobody
+  should later cite colonic lymphoma's own authored entry as having
+  resolved it.
 - **Phase D — staging + trials:** SEER Summary Stage (US-gov public
   domain), NOT AJCC (copyrighted; describe its existence, link, never
   reproduce the tables). TRIALS carry a different duty of care:

@@ -245,6 +245,93 @@ do_commit() {
   return $rc
 }
 
+do_commit_worktree() {
+  # $1 subject, $2 marker, $3 space-separated file list (explicit — never re-derived from the
+  # shared index at call time, which is exactly what a concurrent writer can pollute), rest: gate
+  # command. THE INCIDENT THIS CLOSES (2026-09-13/14): do_commit's own tree-cleanliness checks
+  # (both the top one and the "still_unstaged" backstop) compare the WORKING TREE against the
+  # SHARED INDEX — `git diff --name-only`. A concurrent `git add` into that same shared index
+  # from another process reconciles the two without leaving any unstaged diff for either check to
+  # see, so foreign content can ride into a commit this script believes it fully controlled. The
+  # fifth variant of "gate the tree you're committing" in this file's own history, and the first
+  # where care at the call site cannot fix it — the hazard is the SHARED index existing at all,
+  # not any particular sequence of commands touching it.
+  #
+  # THE FIX IS ISOLATION, NOT A SHARPER CHECK: a `git worktree` has its own index and its own
+  # checked-out files, reachable by nothing outside this function. Copy the CALLER-NAMED files'
+  # CURRENT ON-DISK content into it (never re-derive the list from `git diff` against the shared
+  # index, which is the exact thing being protected against), stage and run the entire existing
+  # do_commit machinery — gate, quoting, KNOWN_MACHINE_STATE re-staging, the backstop — unmodified,
+  # entirely inside the worktree, then fast-forward the main branch onto the result. The object
+  # database and refs are shared across worktrees by design, so the fast-forward is a pure ref
+  # update once the worktree's own commit exists; nothing about the gate or the commit itself
+  # needed to change, which is why this is a NEW function beside do_commit rather than a rewrite
+  # of it — every one of that function's own eleven selftest arms keeps covering exactly what it
+  # always did.
+  # EXPLICIT FORM OVER AMBIENT STATE, deliberately NOT the global $DIR: that variable is fixed at
+  # script-load time to this script's OWN location (the real repo), which is correct for the
+  # normal do_commit path but WRONG inside --selftest, where every arm operates against a scratch
+  # repo reached only by CWD. main_dir captures whichever repo the CALLER is actually standing in
+  # at the moment this function runs — correct in both contexts, and it is what makes this
+  # function's own selftest arm (12) exercise the real code path rather than a stand-in for it.
+  subject="$1"; marker="$2"; files="$3"; shift 3
+  main_dir="$(pwd)"
+  branch="$(git -C "$main_dir" symbolic-ref --short HEAD)" || { echo "COMMIT_CHECKED: HEAD is not on a branch — refusing the worktree path" >&2; return 3; }
+  head_sha="$(git -C "$main_dir" rev-parse HEAD)"
+  wt="$(mktemp -d "${TMPDIR:-/tmp}/commit_checked_wt.XXXXXX")" || return 3
+  if ! git -C "$main_dir" worktree add --detach -q "$wt" "$head_sha" >/dev/null 2>&1; then
+    echo "COMMIT_CHECKED: failed to create an isolated worktree at $head_sha" >&2
+    rmdir "$wt" 2>/dev/null; return 3
+  fi
+  for f in $files; do
+    if [ ! -f "$main_dir/$f" ]; then
+      echo "COMMIT_CHECKED: named file '$f' does not exist in the main tree — refusing" >&2
+      git -C "$main_dir" worktree remove --force "$wt" 2>/dev/null; return 3
+    fi
+    mkdir -p "$wt/$(dirname "$f")" && cp "$main_dir/$f" "$wt/$f"
+  done
+  # refusals.log's own designed staleness (see do_commit's own comment on the exemption) rides
+  # along the same way here — carried in, never required to be one of the named files.
+  [ -f "$main_dir/.claude/refusals.log" ] && { mkdir -p "$wt/.claude"; cp "$main_dir/.claude/refusals.log" "$wt/.claude/refusals.log"; }
+  ( cd "$wt" && git add $files ) >/dev/null 2>&1
+  ( cd "$wt" || exit 2
+    DIR="$wt"; WRAPPER="$wt/.claude/run_checked.sh"
+    do_commit "$subject" "$marker" "$@"
+  )
+  rc=$?
+  if [ $rc -eq 0 ]; then
+    new_sha="$(git -C "$wt" rev-parse HEAD)"
+    # `git merge --ff-only` was the first thing tried here and it is the WRONG tool: merge's
+    # safety check refuses whenever the main tree has ANY local modification to a file the
+    # incoming commit touches, even when that modification is byte-identical to what the commit
+    # already contains — which is exactly the state this function always leaves behind, since the
+    # files it copied into the worktree came FROM the main tree's own working-tree content in the
+    # first place. Measured directly (a scratch reproduction) before writing this: merge refuses
+    # with "Your local changes... would be overwritten", `git reset --mixed` does not, because
+    # reset never inspects working-tree content at all — it only moves HEAD and rewrites the
+    # INDEX to match the target tree, and the working tree already matches by construction.
+    #
+    # STILL GUARDED, NOT BLIND: reset's ability to move HEAD to anywhere makes an unconditional
+    # reset dangerous if $branch has moved on since $head_sha was captured — a concurrent, entirely
+    # legitimate commit from elsewhere would be silently dropped from the branch's history (still
+    # reachable via reflog, but a real, undisclosed rewrite of what "the branch" means). Refuse
+    # instead if that has happened; the worktree commit itself is never lost either way (it is a
+    # real object, reachable at $new_sha, independent of whether this ref update succeeds).
+    current_tip="$(git -C "$main_dir" rev-parse "$branch")"
+    if [ "$current_tip" != "$head_sha" ]; then
+      echo "COMMIT_CHECKED: $branch moved ($head_sha -> $current_tip) while the worktree commit was in progress — refusing to reset over it. The commit exists at $new_sha (parented on the OLD tip); merge or rebase it onto $branch by hand." >&2
+      rc=1
+    elif git -C "$main_dir" reset --mixed -q "$new_sha" >/dev/null 2>&1; then
+      echo "COMMIT_CHECKED: worktree commit $new_sha is now $branch's tip (index updated, working tree already matched)"
+    else
+      echo "COMMIT_CHECKED: committed as $new_sha inside the worktree, but updating $branch to it failed — the commit exists (git log $new_sha) but is not yet on your branch; move it by hand" >&2
+      rc=1
+    fi
+  fi
+  git -C "$main_dir" worktree remove --force "$wt" 2>/dev/null
+  return $rc
+}
+
 if [ "${1:-}" = "--selftest" ]; then
   ok=1
   # ARMS 1 AND 3 DRIVE GENUINE REFUSALS THROUGH run_checked.sh — that is how they prove the commit is
@@ -258,7 +345,12 @@ if [ "${1:-}" = "--selftest" ]; then
   mkdir -p "$scratch" && cd "$scratch" || exit 2
   git init -q . 2>/dev/null
   git config user.email selftest@local; git config user.name selftest
-  echo seed > f.txt; git add f.txt; git commit -qm seed
+  # arm 12 (do_commit_worktree) checks out a real WORKTREE from this scratch repo's own HEAD, and
+  # that worktree needs its own .claude/run_checked.sh to exist for do_commit's internal $WRAPPER
+  # call to find anything at all — seeded here, once, as part of the base commit every arm shares,
+  # rather than given its own commit that would perturb every other arm's rev-list deltas.
+  mkdir -p .claude && cp "$WRAPPER" .claude/run_checked.sh
+  echo seed > f.txt; git add f.txt .claude/run_checked.sh; git commit -qm seed
   base="$(git rev-list --count HEAD)"
 
   # arm 1: a gate that prints NO marker must leave the repo with no new commit — the 4b2c8c5
@@ -427,22 +519,59 @@ if [ "${1:-}" = "--selftest" ]; then
   fi
   git checkout -q -- f.txt   # discard arm 11's mutation so it cannot bleed into a rerun
 
+  # arm 12: do_commit_worktree's whole reason to exist — a "concurrent" write into the MAIN
+  # repo's SHARED index, present before the worktree commit even starts, must not appear in the
+  # resulting commit. True concurrency is not needed to prove this: the isolation is structural
+  # (the worktree has its own index and its own checked-out files), so staging the pollution
+  # first and then invoking the worktree path is already the adversarial case — if the isolation
+  # were broken, the polluting file would ride in regardless of timing.
+  git -C "$scratch" worktree list >/dev/null 2>&1   # confirm worktree subcommand exists in this git
+  base12="$(git rev-list --count HEAD)"
+  echo "intended change" >> f.txt
+  echo "pollution — must never be committed" > intruder.txt
+  git add intruder.txt   # simulates a concurrent writer that got to the SHARED index first
+  do_commit_worktree "worktree isolation" "DONE test:" "f.txt" sh -c 'echo "DONE test: 1 checked"' \
+    >/dev/null 2>&1
+  after12="$(git rev-list --count HEAD)"
+  if [ "$after12" != "$base12" ] \
+     && git show --stat --pretty=format:"" HEAD 2>/dev/null | grep -qF 'f.txt' \
+     && ! git show --stat --pretty=format:"" HEAD 2>/dev/null | grep -qF 'intruder.txt' \
+     && ! git show HEAD:intruder.txt >/dev/null 2>&1; then
+    echo "  ok   worktree commit includes only the named file; pre-staged shared-index pollution is absent from the commit"
+  else
+    echo "  FAIL the worktree commit either did not land, missed the named file, or carried the shared-index pollution"; ok=0
+  fi
+  git reset -q HEAD -- intruder.txt 2>/dev/null; rm -f intruder.txt
+
   cd "$DIR" || exit 2
   rm -rf "$scratch" "$RUN_CHECKED_REFUSAL_LOG"
   if [ $ok -eq 1 ]; then
     echo "SELFTEST PASS — refuses on no-marker, non-zero exit and prose-only output; quotes both "\
 "DONE forms verbatim and no prose; carries the refusal log; refuses an unstaged tracked file before "\
 "the gate runs, exempting refusals.log's own designed staleness; re-stages any known "\
-"machine-written-state file the gate itself mutated mid-run so it lands at its new value, and "\
-"still refuses on a mutation outside that known set"
+"machine-written-state file the gate itself mutated mid-run so it lands at its new value, "\
+"still refuses on a mutation outside that known set, and commits made via the worktree path are "\
+"immune to pollution already staged in the shared index"
     exit 0
   fi
   echo "SELFTEST FAIL — do not trust commits made through this script"
   exit 1
 fi
 
+if [ "${1:-}" = "--worktree" ]; then
+  if [ $# -lt 5 ]; then
+    echo "usage: commit_checked.sh --worktree <subject> <done-marker> \"<space-separated files>\" <gate command...>" >&2
+    exit 2
+  fi
+  shift
+  cd "$DIR" || exit 2
+  do_commit_worktree "$@"
+  exit $?
+fi
+
 if [ $# -lt 3 ]; then
   echo "usage: commit_checked.sh <subject> <done-marker> <gate command...>" >&2
+  echo "       commit_checked.sh --worktree <subject> <done-marker> \"<space-separated files>\" <gate command...>" >&2
   exit 2
 fi
 cd "$DIR" || exit 2

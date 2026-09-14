@@ -358,7 +358,23 @@
    1
   ],
   [
+   "skin.js|data-span-year||1976",
+   1
+  ],
+  [
+   "skin.js|data-span-year||1984",
+   1
+  ],
+  [
    "skin.js|data-span-year||1987",
+   1
+  ],
+  [
+   "skin.js|data-span-year||2000",
+   1
+  ],
+  [
+   "skin.js|data-span-year||2010",
    1
   ],
   [
@@ -366,7 +382,15 @@
    1
   ],
   [
+   "skin.js|data-span-year||2026",
+   4
+  ],
+  [
    "skin.js|journal-adjacent-year|Cell|2015",
+   1
+  ],
+  [
+   "skin.js|paren-shadow|Inman|2021",
    1
   ],
   [
@@ -379,10 +403,14 @@
   ],
   [
    "skin.js|prose-year||2013",
-   1
+   2
   ],
   [
    "skin.js|prose-year||2020",
+   1
+  ],
+  [
+   "skin.js|prose-year||2021",
    1
   ],
   [

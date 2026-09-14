@@ -758,6 +758,13 @@ INSTRUMENTS = [
      ['python3', '.claude/share_sum_check.py']),
     ('duplicate_figure_check', 'pre-commit', 'DONE duplicate_figure_check:',
      ['python3', '.claude/duplicate_figure_check.py']),
+    # aria_entity_check (2026-09-14): a field rendered via .textContent/.setAttribute and a field
+    # rendered via .innerHTML have OPPOSITE escaping requirements — the incident that forced this
+    # was five live instances of the wrong one, found by a concurrent session reading rendered
+    # output rather than by a gate. Declared here, its own reach traced field-by-field against real
+    # render call sites (js/main.js, js/histology.js, js/panel.js) rather than guessed.
+    ('aria_entity_check', 'pre-commit', 'DONE aria_entity_check:',
+     ['python3', '.claude/aria_entity_check.py']),
     # the ONE tolerated-count mechanism (2026-09-10): imported by absence/fraction/share_sum/duplicate; its selftest
     # proves the four verdict classes (undeclared, expired, stale, reasonless) before any instrument relies on them
     ('tolerated_selftest', 'pre-commit', 'DONE tolerated_selftest:',

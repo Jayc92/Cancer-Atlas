@@ -285,6 +285,22 @@ PREREGISTERED = {
             'written "(WHO 2015)" the rule would delete a TRUE record, and nothing here prevents '
             'that. It is the span to re-read first when this rule next comes up.',
     },
+    'Inman|2021|js/organs/skin.js:539': {
+        'side': 'SPENT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'skin.js:539 reads \'~50% (Inman et al., 2018, "CDKN2A changes in nearly 50% of cases") '
+            'to 39% (2021 pooled meta-analysis, PMID 34272401, "cell-cycle-checkpoint control... '
+            'occurred in 39% of tumors...")\'. Inman\'s own parenthetical carries a year (2018) and '
+            'closes before the later "2021" appears in a second, separate parenthetical — the rule '
+            'says Inman is SPENT by its own closed clause and does not reach forward to claim the '
+            'later figure. That is correct here: the 2021 meta-analysis is deliberately left unnamed '
+            'in this ccf string (no author surname given anywhere for it), so there is no true '
+            'Inman-authored 2021 record for the rule to have deleted — unlike Travis above, this is '
+            'not a case of one author publishing two dated works. TEST, not FIT: this span postdates '
+            'the rule, arriving during this pass\'s own SCC TP53/CDKN2A citation correction.',
+    },
 }
 # A FOURTH SHAPE WAS FOUND AND FIXED AT THE SOURCE, NOT SCORED (2026-09-13, lungs lusc/sclc authoring
 # pass) — lungs.js:348 originally read "...(diagnostic threshold, IHC markers) and the WHO 2015

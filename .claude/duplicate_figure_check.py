@@ -85,6 +85,7 @@ DECLARED = [
     {'key': 'pancreas|DAXX mutation/loss|1,133, 1,187, 2019|28, 1,187, 2019', 'reason': 'false positive: per-site single-organ-metastasis counts on the shared Wang et al. 2019 (N=1,187) cohort template — pnet\'s own Liver site (1,133/1,187) and Lung site (28/1,187)', 'until': None},
     {'key': 'pancreas|ATRX mutation/loss|1.8%, 21, 1,187, 2019|0.4%, 5, 1,187, 2019', 'reason': 'false positive: per-site single-organ-metastasis counts on the same Wang et al. 2019 (N=1,187) cohort template — pnet\'s own Bone site (21/1,187, 1.8%) and Brain site (5/1,187, 0.4%)', 'until': None},
     {'key': 'pancreas|TP53 mutation|2024, 28.6%|2024, 38.5%', 'reason': 'false positive: two real per-site recurrence percentages on the shared Capretti et al. 2022 template (both notes also cite Abdalla et al. 2024, the source of the matched "2024" token) — pcyst\'s own Liver site (28.6%) and Lung site (38.5%)', 'until': None},
+    {'key': 'skin|PRUNE2 loss-of-function|25%, 54, 215, 2020|21%, 45, 215, 2020', 'reason': 'false positive: per-site metastatic-involvement figures on the shared Lewis et al., Cancer Med, 2020 (N=215) cohort template — mcc\'s own Skin (distant) site (25%, 54/215) and Bone site (21%, 45/215), the same per-site-figures-on-one-template class as the skin/stomach/thyroid/bladder entries above', 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of

@@ -161,6 +161,7 @@ WELL_FORMED = (
     # hyphenated single-token surnames — the character class, working as intended
     'Al-Hader',
     'Al-Masri',
+    'Al-Rohil',
     'Alvarado-Cabrero',
     'Barnholtz-Sloan',
     'Calimano-Ramirez',
@@ -178,6 +179,7 @@ WELL_FORMED = (
     'van Beek',
     'van der Kaaij',
     'von der Maase',
+    'von Domarus',
     # genuinely two-word surnames — the second-word clause doing the job it exists for, and the
     # reason it cannot be removed to fix the eight entries above
     'Balachandran Pillai',

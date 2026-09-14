@@ -55,9 +55,9 @@ export const markerSpec = { points:[
 // Malignant Melanoma — subtype table, verbatim).
 export const cancerEntries = [
   { id:'melanoma', name:'Cutaneous melanoma', share:'~2% of skin cancers but more than 80% of skin-cancer deaths (NCI). Of subtype-specified US melanomas: superficial spreading ~68%, nodular ~15%, lentigo maligna ~14%, acral lentiginous ~2% (computed from SEER-17 rates, Bradford et al., 2009 — about half of registry melanomas carry no recorded subtype; of ALL registrations worldwide, superficial spreading is 36%, CONCORD-3). Nodular melanoma alone, at 15–20% of primaries, accounts for ~40% of melanoma deaths', active:true, organKey:'skin' },
-  { id:'bcc', name:'Basal cell carcinoma', share:'the most frequently diagnosed malignancy in humans — with cutaneous SCC, ~5.4 million US keratinocyte carcinomas per year in ~3.3 million people (2012; Rogers et al., 2015), and the treated BCC:SCC ratio in Medicare data is ~1:1, not the often-quoted 4:1 — locally destructive but almost never metastasizes', active:false, organKey:'skin' },
-  { id:'scc', name:'Cutaneous squamous cell carcinoma', share:'the second most common skin cancer — incidence rose nearly 3-fold from the 1970s to the early 2000s (StatPearls) — and unlike BCC it carries a real, if low, metastatic risk', active:false, organKey:'skin' },
-  { id:'mcc', name:'Merkel cell carcinoma', share:'rare (~0.7 per 100,000 person-years, US) but highly aggressive neuroendocrine skin cancer — risk factors are UV, advancing age, immunosuppression, and Merkel cell polyomavirus (StatPearls)', active:false, organKey:'skin' },
+  { id:'bcc', name:'Basal cell carcinoma', share:'the most frequently diagnosed malignancy in humans — with cutaneous SCC, ~5.4 million US keratinocyte carcinomas per year in ~3.3 million people (2012; Rogers et al., 2015), and the treated BCC:SCC ratio in Medicare data is ~1:1, not the often-quoted 4:1. Nodular ~79%, superficial ~15%, morpheaform ~6% of cases (Scrivener et al., 2002) — locally destructive but almost never metastasizes (0.0028%–0.55%, corroborated two ways)', active:true, organKey:'skin' },
+  { id:'scc', name:'Cutaneous squamous cell carcinoma', share:'the second most common skin cancer — incidence rose from 61.8 to 162.5 per 100,000 person-years between 1976-1984 and 2000-2010, roughly 2.6-fold (Muzic et al., Mayo Clin Proc, 2017) — and unlike BCC it carries a real, if low, metastatic risk, nodal-first: an estimated 3.0-6.7% of cases develop nodal metastasis (Karia et al., 2013)', active:true, organKey:'skin' },
+  { id:'mcc', name:'Merkel cell carcinoma', share:'rare (~0.68-0.7 per 100,000 person-years, US, stable since 2013 — Paulson et al., 2018; Fakult et al., JAAD, 2025) but highly aggressive neuroendocrine skin cancer with a genuinely bimodal cause — ~81% driven by Merkel cell polyomavirus, the rest by direct UV damage (Moshiri et al., 2017) — plus advancing age and immunosuppression as real risk factors (StatPearls)', active:true, organKey:'skin' },
 ];
 
 // PROCEDURAL, deliberately — and a NEW rejection class, recorded because it is neither of the
@@ -274,13 +274,13 @@ export const organDetail = {
   // because the epidermis point above it is what a top-down cut block presents first.
   hotspots:[
     { key:'epidermis', label:'Epidermis', pos:P(-0.0105, surfY(-0.0105, 0.0040)+0.0002, 0.0040),
-      text:'The outer sheet: keratinized stratified squamous epithelium, avascular — it lives on diffusion from the dermis below. Keratinocytes born in the deepest stratum are pushed outward, flatten, fill with keratin and are shed: four strata across most of the body (basale, spinosum, granulosum, corneum), five in the thick skin of palms and soles. Measured thickness is 0.03 to 0.6 mm depending on site — far thinner than any diagram, this one included, can draw it.' },
+      text:'The outer sheet: keratinized stratified squamous epithelium, avascular — it lives on diffusion from the dermis below. Keratinocytes born in the deepest stratum are pushed outward, flatten, fill with keratin and are shed: four strata across most of the body (basale, spinosum, granulosum, corneum), five in the thick skin of palms and soles. Measured thickness is 0.03 to 0.6 mm depending on site — far thinner than any diagram, this one included, can draw it. Cutaneous squamous cell carcinoma arises from these keratinocytes, often progressing from a precancerous actinic keratosis within this same sheet.' },
     // Anchored on the RIGHT cut face (+x wall) rather than the front one — the front face
     // carries the Dermis and Hypodermis dots, and this label (the longest in the organ)
     // overlapped the Dermis label at the default rotation when all three shared that face;
     // measured by DOM-rect intersection, not eyeballed.
     { key:'basal', label:'Melanocytes & the basal layer', pos:P(SX/2, dejY(SX/2, 0.002)-BAND/2, 0.002),
-      text:'Melanoma arises here. The stratum basale is the epidermis’s single deepest cell layer, riding the undulating dermal-epidermal junction, and it is where the melanocytes sit — about one per ten basal keratinocytes, handing off melanin that shields neighboring cells’ DNA from UV. The darker band drawn at this junction is that pigment. Melanoma is malignant transformation of these cells; how deep a melanoma has grown below this layer — Breslow depth — is the most important prognostic factor in the localized disease.' },
+      text:'Melanoma arises here. The stratum basale is the epidermis’s single deepest cell layer, riding the undulating dermal-epidermal junction, and it is where the melanocytes sit — about one per ten basal keratinocytes, handing off melanin that shields neighboring cells’ DNA from UV. The darker band drawn at this junction is that pigment. Melanoma is malignant transformation of these cells; how deep a melanoma has grown below this layer — Breslow depth — is the most important prognostic factor in the localized disease. Basal cell carcinoma, the most frequently diagnosed malignancy in humans, arises from the basal keratinocytes that make up most of this same layer. Merkel cell carcinoma arises here too, from the rare mechanoreceptor cells scattered among these basal keratinocytes.' },
     { key:'dermis', label:'Dermis', pos:P(-0.0118, -0.0015, SZ/2),
       text:'The skin’s structural bulk — around 90% of its thickness: dense collagen for strength, elastin for recoil, plus the blood vessels, lymphatics, nerves, sweat glands and hair follicles the epidermis lacks. Its upper papillary layer interlocks with the epidermis at the rete ridges; the deeper reticular layer is the thick, load-bearing weave. For a melanoma, crossing into this vascular, lymphatic-rich layer is what turns a surface lesion into a disease that can travel.' },
     { key:'hypodermis', label:'Hypodermis', pos:P(0.0108, -0.0054, SZ/2),
@@ -439,11 +439,253 @@ const HISTOLOGY_MEL = {
   ],
 };
 
+// BCC — every citation verified directly at the source (2026-09-13, "ordinary-organ" batch's
+// skin round). REGISTRY-REPORTABILITY GAP, distinct from the share-bound rule's class of gap:
+// BCC (like SCC) is not reportable to SEER/most state cancer registries at all — a categorically
+// different, more definitive absence than "the organ aggregate is unsafe to use for this rare
+// subtype," which is what the share-bound rule covers elsewhere. This affects EXTENT specifically
+// (no SEER Summary Stage distribution exists for this disease, full stop); margin/growth draw on
+// ordinary gross/histologic pathology literature, unaffected by registry status, and share draws
+// on Medicare-claims-based national estimates (Rogers et al., 2015) rather than SEER incidence.
+//
+// SITE MODEL — real-but-unquantified, not a structural departure. The real metastatic rate is
+// 0.0028%-0.55%, corroborated two ways: StatPearls; and von Domarus & Stevens, JAAD, 1984, PMID
+// 6736323, a literature series (205 cases identified, 170 accepted and evaluated) plus their own
+// institutional 0.1% rate. StatPearls
+// separately gives a lower age-adjusted mortality figure, 0.12/100,000 — consistent with this
+// rarity, but not itself a second metastatic-rate measurement. That combined rate sits below
+// GBM's own <1-2% departure threshold, but no dedicated population-registry site-distribution
+// study exists for this cancer. Available distribution data is von Domarus & Stevens' own pooled
+// case literature: real sites named, no clean modern percentage attached to any of them. The fix
+// reuses the "real site, no percentage" honesty precedent LUAD's adrenal gland and ccRCC's liver/
+// brain already established in this file, extended here to all four sites rather than one or two,
+// because that is what the evidence actually supports.
+const REGIONS_BCC = [
+  { id:'BL', name:'Lymph nodes', color:cssVar('--coral'), pos3d:{x:0.55,y:1.85,z:-0.35},
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'40% (17/42, direct sequencing, Reifenberger et al., Br J Dermatol, 2005, PMID 15656799) to 61% (293 tumors, whole-exome, Bonilla et al., Nat Genet, 2016, PMID 26950094) — real cross-cohort range, older/smaller-cohort methods reading lower', note:'Real, and genuinely independent of this cancer’s own trunk: Reifenberger et al. found TP53 mutations in BCCs "with and without" mutations in the Hedgehog-pathway genes PTCH1/SMO/SUFU — meaning TP53 status does not sort tumors the way the trunk mutation does, and is not itself diagnostic. Mouse-model evidence instead shows it as an accelerating, cooperating event layered onto an already-Hedgehog-driven tumor: p53 loss "markedly enhances" Hedgehog-driven tumorigenesis (Epstein, Nat Rev Cancer, 2008, PMID 18813320) — the same accelerating-not-founding role this atlas’s melanoma entry already gives PTEN loss alongside its own BRAF trunk. Lymph-node involvement is a real, if exceedingly rare, BCC metastatic route (StatPearls).' } },
+  { id:'BU', name:'Lung', color:cssVar('--azure'), pos3d:{x:1.95,y:-0.5,z:0.6},
+    branch:{ gene:'TP53 mutation', class:'driver', ccf:'40-61% — same cross-cohort range as the Lymph nodes site', note:'The same accelerating, trunk-independent event as the Lymph nodes site, shown at a second site because a branch mutation can seed more than one subclone — melanoma’s own CDKN2A-loss/PTEN-loss branch genes in this same file use an identical two-sites-each split for the same reason. Lung is one of the real, named routes for the rare cases that do metastasize (von Domarus & Stevens, 1984; StatPearls) — no population-level percentage was found for this site specifically in what this pass verified, and none is claimed.' } },
+  { id:'BB', name:'Bone', color:cssVar('--amber'), pos3d:{x:-2.0,y:0.65,z:-0.05},
+    branch:{ gene:'MYCN mutation', class:'driver', ccf:'30% of tumors (293 tumors, whole-exome, Bonilla et al., Nat Genet, 2016, PMID 26950094, "recurrent mutations in MYCN (30%)") — this cohort’s single most frequent branch-tier event', note:'A real, BCC-confirmed frequency; the cooperating mechanism is inferred rather than BCC-specifically demonstrated in what this pass could verify — MYCN is a documented direct GLI-pathway target gene in other Hedgehog-driven tumors (Hedgehog-subtype medulloblastoma), and GLI is the Hedgehog trunk’s own downstream effector, making cooperation with this cancer’s PTCH1/SMO trunk mechanistically plausible rather than confirmed. Bone is one of the real, named routes for the rare cases that do metastasize (StatPearls) — no population-level percentage was found for this site in what this pass verified, and none is claimed.' } },
+  { id:'BS', name:'Skin (distant)', color:cssVar('--violet'), pos3d:{x:-0.5,y:-1.8,z:0.65},
+    branch:{ gene:'MYCN mutation', class:'driver', ccf:'30% — same cohort-confirmed frequency as the Bone site', note:'The same GLI-pathway-plausible, cohort-confirmed event as the Bone site, shown at a second site, mirroring the same two-sites-each split used for TP53 above in this entry. A basal cell carcinoma spreading to distant skin is one of the real, named routes for the rare cases that do metastasize (StatPearls) — no population-level percentage was found for this site in what this pass verified, and none is claimed. Overall metastatic rate across all sites combined: 0.0028%-0.55%, corroborated two ways (StatPearls; von Domarus & Stevens, 1984’s own institutional 0.1% rate). The mortality rate is lower still (0.12 per 100,000 = ~0.00012%, StatPearls) — a real, separate figure consistent with this rarity, but not itself a second measurement of the metastatic rate, since not every metastatic case is fatal within a given study period.' } },
+];
+const TRUNK_BCC = [
+  { gene:'PTCH1 mutation or loss', class:'driver', ccf:'73% (293 tumors, whole-exome, Bonilla et al., Nat Genet, 2016, PMID 26950094) — real cross-cohort range 33-90%: 33% by an early, lower-sensitivity SSCP screen (Gailani et al., Nat Genet, 1996, PMID 8782823, n=37); 67% by SSCP screening with confirmatory sequencing (Reifenberger et al., Br J Dermatol, 2005, PMID 15656799, n=42, the same underlying technique family as Gailani’s, run at higher sensitivity); ~90% by review synthesis (Epstein, Nat Rev Cancer, 2008, PMID 18813320) — the spread tracks method sensitivity, older/smaller studies reading lower, the same class of honest range this atlas already carries for HCC’s TERT and LUAD’s KRAS', note:'PTCH1 is the Hedgehog pathway’s own brake: its protein normally represses SMO, and losing it releases signaling that keeps the GLI transcription factors constitutively active — the single most consistently altered gene in this cancer across every cohort ever sequenced. The single most striking fact this atlas has found for any organ’s mutation burden belongs here, not to melanoma: whole-exome sequencing found basal cell carcinoma is "the most mutated type of human cancer" (Jayaraman et al., J Invest Dermatol, 2014, PMID 23774526) — louder than this atlas’s own melanoma entry, the prior record-holder. Independently corroborated by Bonilla et al. (2016): ~65 mutations/Mb across 293 samples, again framed as the highest rate observed in cancer.' },
+  { gene:'SMO mutation', class:'driver', ccf:'10-20% — 10% by SSCP screening with confirmatory sequencing (Reifenberger et al., 2005), 20% by whole-exome (Bonilla et al., 2016)', note:'SMO is the receptor PTCH1 normally restrains; an activating mutation here reaches the identical downstream GLI output as losing PTCH1 does — a second real route to the same pathway activation, largely reported as an alternative to PTCH1 loss rather than a routine co-occurrence (Epstein, 2008: "an additional 10%" of cases beyond PTCH1’s own ~90%), though a formal statistical exclusivity test for this specific pair could not be independently confirmed in what this pass verified.' },
+];
+const PRIVATE_POOL_BCC = [
+  { gene:'PPP6C mutation', class:'driver', ccf:'15% (293 tumors, Bonilla et al., 2016)', note:'A serine/threonine phosphatase subunit, recurrently mutated — the same gene this atlas’s own melanoma entry already carries as a private-pool finding there, at a comparable frequency, in an unrelated UV-driven cancer.' },
+  { gene:'STK19 mutation', class:'driver', ccf:'10% (293 tumors, Bonilla et al., 2016)', note:'A real, recurrent finding in this cohort. Flagged rather than asserted without qualification: in melanoma, an apparent STK19 hotspot has separately been argued in the literature to reflect a sequence-mapping artifact rather than a true somatic driver — whether that concern applies to this cancer’s own STK19 calls was not independently checked in what this pass verified.' },
+  { gene:'PTPN14 loss-of-function', class:'driver', ccf:'23% (293 tumors, Bonilla et al., 2016)', note:'A Hippo-pathway component, real and recurrent at whole-exome scale in this specific cohort — Hippo/YAP-Hedgehog/GLI crosstalk has been described in developmental-biology literature this pass reviewed, but a BCC-specific demonstration of that crosstalk was not independently confirmed in what this pass verified.' },
+  { gene:'RB1 loss-of-function', class:'driver', ccf:'8% (293 tumors, Bonilla et al., 2016)', note:'A cell-cycle checkpoint gene, real and recurrent in this specific cohort — mechanistically coherent with a Hedgehog-driven, exceptionally high-mutation-burden tumor, though not independently demonstrated as cooperating with this cancer’s own trunk beyond the shared cell-cycle theme.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background noise, common because TTN is one of the genome’s largest genes. It earns its place in this cancer’s pool for the reason stated directly in the trunk note: this is real cancer’s single highest measured mutation rate, and almost all of that load is passengers like this one.' },
+];
+
+// HISTOLOGY (microscopic-view data — verified directly against StatPearls, "Basal Cell
+// Carcinoma" (Puckett & Steele, NBK482439, PMID 29494046); PathologyOutlines returned HTTP 429
+// (this project’s own documented, persistent block) so this entry rests on one directly-
+// fetched source rather than this atlas’s usual two — disclosed rather than papered over.
+const HISTOLOGY_BCC = {
+  intro: 'Basal cell carcinoma is malignant transformation of basal keratinocytes, and its microscopic signature is nests of basaloid cells — basophilic (dark, blue-staining) nuclei with minimal surrounding cytoplasm — showing peripheral palisading: the outermost row of cells lines up in an orderly picket-fence pattern around each nest, in sharp contrast to the disorganized architecture inside it. A thin, clear gap — the retraction artifact — typically separates each nest from the surrounding stroma, an artifact of tissue processing rather than a real biological space, but a reliable diagnostic clue. Mucin deposition within and around the nests, and scattered mitotic figures, complete the picture. The nodular subtype depicted here — large, rounded nests — is the most common of BCC’s real histologic variants, accounting for roughly four in five cases.',
+  ariaSummary: 'Stylized microscopic field: pale pink dermis with several large, rounded dark-blue nests of basaloid cells scattered through it. Each nest’s outermost ring of cells is neatly aligned, nuclei pointing outward, like a picket fence — peripheral palisading — while cells toward the center of each nest sit in disorganized clusters. A thin pale gap separates each nest from the surrounding pink stroma — the retraction artifact. Small pools of lighter, bluish material sit within some nests — mucin.',
+  citation: 'Puckett & Steele, StatPearls, "Basal Cell Carcinoma" (NBK482439, PMID 29494046); Scrivener et al., Br J Dermatol, 2002, PMID 12100183 (subtype frequency).',
+  features: [
+    { key:'palisading', label:'Peripheral palisading',
+      text:'The outermost row of basaloid cells in each tumor nest lines up in an orderly, picket-fence arrangement, nuclei oriented outward — a sharp, reliable contrast against the disorganized cells filling the center of the same nest, and one of this cancer’s most distinctive architectural signatures.' },
+    { key:'retraction', label:'Retraction artifact (clefting)',
+      text:'A thin, clear gap commonly separates each tumor nest from the surrounding stroma on standard tissue sections — an artifact of how the tissue is processed rather than a real biological space, but one pathologists rely on as a diagnostic clue precisely because it appears so consistently in this cancer.' },
+    { key:'mucin', label:'Mucin deposition',
+      text:'Pools of mucin — a real, commonly reported finding — accumulate within and around the tumor nests, adding to the palisading and clefting as part of this cancer’s recognizable microscopic signature.' },
+  ],
+};
+
+// SCC — every citation verified directly at the source (2026-09-13/14, same batch as BCC).
+// Same registry-non-reportability gap as BCC (Karia, Han & Schmults, JAAD, 2013, PMID 23375456,
+// its own verbatim statement: "CSCC has been excluded from national cancer registries") — EXTENT
+// is uncharacterised for the identical reason; margin/growth and share are unaffected.
+//
+// TRUNK — TP53 dominant (58-71%) plus CDKN2A as a second, temporally-EARLY trunk entry (present
+// already in the actinic-keratosis precursor stage, per Tandukar et al., Nat Commun, 2025, PMID
+// 41309580 — the same temporal-trunk justification class this atlas already uses for HCC's TERT
+// and PDAC's KRAS, data rule 5), NOT branch-tier, because it is a founding rather than a
+// region-specific event.
+//
+// SITE MODEL — real-but-unquantified for three of four sites, following BCC's own precedent, but
+// with a genuine difference this entity's own research established: unlike BCC, SCC's real
+// metastatic story is dedicated and quantified at the NODAL step specifically (Karia et al., 2013:
+// 3.0-6.7% of an estimated 186,157-419,543 annual US cases developed nodal metastasis) — modeled
+// at the Lymph nodes site with that real range; Lung/Bone/Skin(distant) are real, StatPearls-named
+// routes for the minority that spread further, with no clean population percentage found for any
+// of them in this pass's own search, disclosed the same honest way BCC's own three sites are.
+//
+// BRANCH — NOTCH1/NOTCH2 loss-of-function (~75%, Wang et al., PNAS, 2011, PMID 22006338) and HRAS
+// activating mutation (real, cohort-dependent range, 3-20% — see each site's own note) — no
+// dedicated site-correlated gene study exists for this cancer (checked directly in this pass's own search,
+// same finding as BCC), so the site pairing is ILLUSTRATIVE per data rule 2's own standing
+// convention, not the meningioma-class exception.
+const REGIONS_SCC = [
+  { id:'SL', name:'Lymph nodes', color:cssVar('--coral'), pos3d:{x:0.55,y:1.9,z:-0.35},
+    branch:{ gene:'NOTCH1/NOTCH2 loss-of-function', class:'driver', ccf:'~75% carry a NOTCH1 or NOTCH2 mutation (Wang et al., PNAS, 2011, PMID 22006338, "defining a spectrum for the most prevalent tumor suppressor specific to these epithelial malignancies")', note:'NOTCH here is a tumor SUPPRESSOR, the opposite of its oncogenic role in T-cell leukemia — loss-of-function truncations and point substitutions abrogate signaling rather than activating it. Real, well-corroborated, and orthogonal to the TP53/CDKN2A trunk. Nodal metastasis is this cancer’s own real, dedicated, quantified metastatic route: an estimated 3.0-6.7% of cases (Karia, Han & Schmults, JAAD, 2013, PMID 23375456) — far higher than BCC’s own exceedingly rare spread, the one clear real difference between these two keratinocyte carcinomas’ natural history.' } },
+  { id:'SU', name:'Lung', color:cssVar('--azure'), pos3d:{x:1.95,y:-0.55,z:0.55},
+    branch:{ gene:'HRAS activating mutation', class:'driver', ccf:'real, cohort-dependent range — 3/40 tumors in one dedicated sequencing cohort (Inman et al., Nat Commun, 2018, PMID 30202019), consistent with "previously identified in 3-20% of cSCC" (per that same paper’s own cited literature)', note:'A real, distinct route to MAPK-pathway activation, independent of the TP53/CDKN2A trunk. Lung is one of the real, named routes for the minority of cases that spread beyond regional nodes (StatPearls) — no population-level percentage was found in this pass’s own search, and none is claimed.' } },
+  { id:'SB', name:'Bone', color:cssVar('--amber'), pos3d:{x:-2.0,y:0.7,z:-0.05},
+    branch:{ gene:'NOTCH1/NOTCH2 loss-of-function', class:'driver', ccf:'~75% — same cohort-confirmed frequency as the Lymph nodes site', note:'The same tumor-suppressor loss as the Lymph nodes site, shown at a second site per this entry’s own two-sites-each split (mirroring BCC’s TP53/MYCN convention above). Bone is one of the real, named routes for the minority of cases that spread beyond regional nodes (StatPearls) — no population-level percentage was found in this pass’s own search, and none is claimed.' } },
+  { id:'SS', name:'Skin (distant)', color:cssVar('--violet'), pos3d:{x:-0.5,y:-1.8,z:0.65},
+    branch:{ gene:'HRAS activating mutation', class:'driver', ccf:'real, cohort-dependent range — same as the Lung site above', note:'The same MAPK-activating route as the Lung site, shown at a second site per this entry’s own two-sites-each split. A squamous cell carcinoma spreading to distant skin is one of the real, named routes for the minority of cases that spread beyond regional nodes (StatPearls) — no population-level percentage was found in this pass’s own search, and none is claimed.' } },
+];
+const TRUNK_SCC = [
+  { gene:'TP53 mutation', class:'driver', ccf:'58% by early, lower-sensitivity sequencing (14/24, Brash et al., PNAS, 1991, PMID 1946433, N=24) to 70% by modern whole-exome sequencing (Inman et al., Nat Commun, 2018, PMID 30202019, TP53-gene-mutation frequency specifically) — a separate, broader, PATHWAY-level figure exists alongside it: a 2021 pooled driver-mutation meta-analysis (NPJ Genom Med, PMID 34272401) reports p53-pathway loss-of-function events (not TP53-gene mutation specifically) in 71% of tumors, the same gene-vs-pathway distinction this atlas already flags for ccRCC’s MTOR-pathway figure — real cross-cohort range on the gene-level figure alone, older/smaller-cohort methods reading lower', note:'This tumor carries a real UV mutational signature directly in this trunk gene: three of the earliest-described p53 mutations showed "a CC to TT double-base change, which is only known to be induced by UV" (Brash et al., 1991), and the tumor-suppressor pathway loss is genome-wide — cutaneous squamous cell carcinoma has one of the highest mutation burdens of any cancer, ~50 mutations per megabase (Inman et al., 2018).' },
+  { gene:'CDKN2A mutation or loss', class:'driver', ccf:'~50% (Inman et al., 2018, "CDKN2A changes in nearly 50% of cases") to 39% (2021 pooled meta-analysis, PMID 34272401, "cell-cycle-checkpoint control... occurred in 39% of tumors, primarily affecting the CDKN2A gene")', note:'Temporal trunk, the same justification class this atlas already uses for HCC’s TERT and PDAC’s KRAS (data rule 5): this is an EARLY event, not a late one — "TERT promoter and CDKN2A mutations emerge in actinic keratoses" (Tandukar et al., Nat Commun, 2025, PMID 41309580), the precancerous precursor lesion this cancer often arises from, present before invasive disease develops. The same paper found the invasive-transition step itself is marked by different, later events — ARID2 inactivation and MAPK-pathway activation — disclosed in this entry’s own branch-gene notes (HRAS) rather than modeled as a third trunk tier.' },
+];
+const PRIVATE_POOL_SCC = [
+  { gene:'PIK3CA mutation', class:'driver', ccf:'6% (advanced/metastatic cohort, 315-gene panel, Al-Rohil et al., Cancer, 2016, PMID 26479420)', note:'Real, and flagged with its own real scope limit: this cohort was screened for "clinically relevant genomic alterations" specifically (drug-matchable targets), not a comprehensive mutation census — a real, if advanced-disease-skewed, frequency.' },
+  { gene:'CCND1 amplification', class:'driver', ccf:'6% — same advanced-cohort panel as PIK3CA above', note:'A cell-cycle gene, real and recurrent in this specific advanced-disease cohort, mechanistically coherent alongside CDKN2A loss (both converge on the same cell-cycle checkpoint).' },
+  { gene:'FBXW7 mutation', class:'driver', ccf:'5% — same advanced-cohort panel as PIK3CA above', note:'Real and recurrent in this specific cohort — the same gene this atlas’s own colorectal-cancer entry already carries as a private-pool finding, in an unrelated tumor.' },
+  { gene:'TTN synonymous variant', class:'passenger', note:'A DNA change with no effect on the protein it sits in — background noise, common because TTN is one of the genome’s largest genes. It earns its place in this cancer’s pool for the reason stated directly in the trunk note: cutaneous SCC carries one of the highest mutation burdens of any cancer, ~50 mutations per megabase (Inman et al., 2018), and almost all of that load is passengers like this one.' },
+];
+
+// HISTOLOGY — the SAME defining architecture as this atlas’s own LUSC (lung SCC) and blscc
+// (bladder SCC) entries, real and independently sourced for this organ too: StatPearls,
+// "Cutaneous Squamous Cell Carcinoma" (NBK441939) names keratin pearl formation and
+// intercellular bridges directly for skin SCC; Sabbula, Gasalberti & Mukkamalla, StatPearls,
+// "Squamous Cell Lung Cancer" (NBK564510) independently names the same two features for this
+// atlas’s own LUSC entry, corroborating the same architecture across two organs rather than one
+// source doing double duty. (Guo et al., Front Oncol, 2026, PMID 42482763 — this atlas’s own
+// blscc entry’s source — was checked and is deliberately NOT reused here, caught during this
+// pass’s own independent citation-verification agent: its "definitive morphological features,
+// including keratin pearl formation and/or intercellular bridges" quote is that paper’s own
+// working inclusion-criterion for classifying squamous differentiation in BLADDER tumors
+// specifically, not a general cross-organ statement about squamous carcinoma — citing it here
+// would have over-generalized a bladder-specific source, the same class of mistake as data rule
+// 1’s ESR1/MDM4 case.)
+// Reuses genLUSC’s own two-zone technique verbatim (drawKeratinPearl + the intercellular-bridge
+// line-between-near-neighbors idiom) rather than writing new drawing code — the SAME real
+// architecture, not a coincidental resemblance. Exactly 2 separately-drawable features, matching
+// LUSC’s and blscc’s own real limit for the identical reason (see regress.js’s own KNOWN_FAILURES
+// entry for this cancer, added alongside those two on the same real, WHO-sourced justification).
+const HISTOLOGY_SCC = {
+  intro: 'Cutaneous squamous cell carcinoma is malignant transformation of keratinocytes, and its microscopic signature is the same one that defines squamous carcinoma anywhere in the body: keratin pearls — concentric, onion-skin whorls of keratinizing cells, sometimes with a fully cornified center — and intercellular bridges, the short desmosomal connections between adjacent tumor cells that give this cancer’s cytoplasm its characteristic “spiny” look under the microscope. Either feature alone is sufficient for diagnosis; most tumors show both, in varying proportion between well-differentiated (more keratinization) and poorly-differentiated (fewer pearls, more bridging) areas.',
+  ariaSummary: 'Stylized microscopic field split into two zones. On the left, a sheet of angular pink cells surrounds several concentric whorled structures — keratin pearls, layered like the rings of an onion, some with a solid pale center. On the right, tightly packed polygonal cells fill the field, with fine lines connecting neighboring cells at their touching edges — intercellular bridges, giving the sheet a spiny, cross-hatched texture.',
+  citation: 'StatPearls, "Cutaneous Squamous Cell Carcinoma" (NBK441939); Sabbula, Gasalberti & Mukkamalla, StatPearls, "Squamous Cell Lung Cancer" (NBK564510, corroborating the same architecture in this atlas’s own LUSC entry).',
+  features: [
+    { key:'pearl', label:'Keratin pearl',
+      text:'Concentric, onion-skin whorls of squamous cells progressively keratinizing toward the center, sometimes fully cornified — the single most recognizable architectural feature of squamous cell carcinoma anywhere it arises, and sufficient on its own for diagnosis.' },
+    { key:'bridges', label:'Intercellular bridges',
+      text:'Short, spiny connections between the membranes of adjacent tumor cells — the light-microscope appearance of real desmosomal attachments — giving non-keratinizing areas of the tumor a cross-hatched, “spiny” texture distinct from the smoother sheets of an adenocarcinoma.' },
+  ],
+};
+
+// MCC — every citation verified directly at the source (2026-09-14, same batch as BCC/SCC). The
+// genuinely novel structural fact this entity's own research established: MCC has TWO REAL,
+// DISTINCT PATHOGENESES — not merely two divergent mutation routes the way this atlas's other
+// status-trunk entities already model (GBM's IDH-wildtype status, OCCC's TP53 status, bladder's
+// pathway-divergence status, FTC's RAS-vs-PAX8 divergence — see this entry's own TRUNK note
+// below), but one route that is VIRAL rather than mutational at all — MCPyV-POSITIVE tumors
+// (~81%, Moshiri et al., J Invest Dermatol, 2017, PMID 27815175: 229
+// of 282 tumors) are driven by the Merkel cell polyomavirus's own large and small T antigens, with
+// a genomically QUIET result (0.40 mutations/Mb, Harms et al., Cancer Res, 2015, PMID 26238782);
+// MCPyV-NEGATIVE tumors (~19%) are UV-driven, with a mutation burden that EXCEEDS melanoma's own
+// (10.09 mutations/Mb, same source — a ~25-fold difference from the viral route, and at exome-SNV
+// scale a real neoantigen burden exceeding melanoma's, Goh et al., Oncotarget, 2016, PMID
+// 26655088: "harbor more tumor neoantigens than melanomas... median of 173... 65... neoantigens/
+// sample" for MCPyV-negative MCC vs melanoma respectively).
+//
+// TRUNK — a two-entry STATUS trunk, the same architecture this atlas already uses for FTC's
+// RAS-vs-PAX8 divergence and bladder's pathway-divergence status (data rules 24/27), because
+// neither route is a subtype of the other — each is a real, independently-diagnosable founding
+// mechanism.
+//
+// A REAL, DISCLOSED MODEL LIMITATION, stated here rather than silently worked around: MCPyV-
+// positive tumors are genomically quiet by the mechanism itself (viral, not mutational), so they
+// have no real recurrent branch- or private-pool-tier mutations to model — the private pool this
+// atlas's own architecture draws into EVERY cell regardless of site would misrepresent a virally-
+// driven tumor if populated with the UV-driven route's own tumor-suppressor-loss genes. The
+// branch/private tiers below are therefore built entirely from the MCPyV-NEGATIVE lineage's real,
+// well-documented biology, and every gene's own note says so explicitly — a sampled cell's trunk
+// assignment (MCPyV-positive vs -negative status) should be read as which real route this
+// particular tumor took, and the branch/private mutations shown illustrate the UV-driven route's
+// own real heterogeneity specifically, not a claim that MCPyV-positive tumors carry them too.
+//
+// SITE MODEL — real, dedicated, and unusually well-sourced for this atlas: Lewis et al., Cancer
+// Med, 2020, PMID 31883234, N=215 patients with distant metastasis (of 1,168 enrolled), 305 total
+// metastatic sites. Distant lymph nodes (not skin, not lung) is this entity's own most common real
+// site — a genuinely distinctive fact worth stating directly rather than defaulting to the
+// lung/brain/liver/bone shape most other cancers in this atlas use.
+//
+// EXTENT — SEER has no dedicated Stat Facts page for this entity at all (confirmed by direct
+// navigation of SEER's own public tool, 2026-09-14) despite MCC being genuinely SEER-reportable —
+// a real, different gap from BCC/SCC's own non-reportability. The best available real stage-at-
+// diagnosis distribution is NCDB (National Cancer Data Base), not SEER — Harms et al., Ann Surg
+// Oncol, 2016, PMID 27198511, N=9,387, the actual paper AJCC's 8th edition staging system is based
+// on — disclosed as a non-SEER source rather than silently treated as equivalent to one.
+const REGIONS_MCC = [
+  { id:'ML', name:'Distant lymph nodes', color:cssVar('--coral'), pos3d:{x:0.55,y:1.85,z:-0.35},
+    branch:{ gene:'NOTCH1/NOTCH2 loss-of-function', class:'driver', ccf:'confirmed within the MCPyV-negative subgroup specifically — "All viral-negative tumors harbored mutations in RB1, TP53, and a high frequency of mutations in NOTCH1 and FAT1" (Wong et al., Cancer Res, 2015, PMID 26627015, N=21 MCPyV-negative tumors)', note:'This gene, and every other branch/private-pool gene in this entry, is specific to the MCPyV-NEGATIVE, UV-driven route — see this entry\'s own trunk note for why the virally-driven majority route is not expected to independently carry it. Distant lymph nodes is this cancer\'s own real, most common metastatic site: 41% of documented distant-metastasis cases (88 of 215 patients, Lewis et al., Cancer Med, 2020, PMID 31883234) — a genuinely distinctive fact, since this dedicated site-distribution study identifies lymph nodes as this cancer\'s own single most common real metastatic destination, a level of site-specific certainty BCC\'s and SCC\'s own real-but-unquantified sites (above, in this same organ) do not have.' } },
+  { id:'MS', name:'Skin (distant)', color:cssVar('--azure'), pos3d:{x:1.95,y:-0.55,z:0.55},
+    branch:{ gene:'PRUNE2 loss-of-function', class:'driver', ccf:'confirmed within the MCPyV-negative subgroup specifically — 5 of 8 tumors in a dedicated whole-exome validation cohort (Harms et al., Cancer Res, 2015, PMID 26238782)', note:'Real and recurrent in the MCPyV-negative lineage specifically — see this entry\'s own trunk note. Distant skin is this cancer\'s own second most common real metastatic site: 25% of documented distant-metastasis cases (54 of 215 patients, Lewis et al., 2020) — skin-only distant spread carries a real, better prognosis than multi-organ or liver involvement (hazard ratio 2.7 and 2.1 respectively, same source).' } },
+  { id:'MV', name:'Liver', color:cssVar('--amber'), pos3d:{x:-2.0,y:0.7,z:-0.05},
+    branch:{ gene:'NOTCH1/NOTCH2 loss-of-function', class:'driver', ccf:'same MCPyV-negative-subgroup confirmation as the Distant lymph nodes site above', note:'The same tumor-suppressor loss as the Distant lymph nodes site, shown at a second site, mirroring the same split used for this gene at that site above. Liver is this cancer\'s own third most common real metastatic site: 23% of documented distant-metastasis cases (49 of 215 patients, Lewis et al., 2020) — and, unlike distant skin, liver involvement carries a real, worse prognosis (hazard ratio 2.1).' } },
+  { id:'MB', name:'Bone', color:cssVar('--violet'), pos3d:{x:-0.5,y:-1.8,z:0.65},
+    branch:{ gene:'PRUNE2 loss-of-function', class:'driver', ccf:'same MCPyV-negative-subgroup confirmation as the Skin (distant) site above', note:'The same loss-of-function event as the Skin (distant) site, shown at a second site, mirroring the same split used for this gene at that site above. Bone is this cancer\'s own fourth real metastatic site among the four modeled here: 21% of documented distant-metastasis cases (45 of 215 patients, Lewis et al., 2020) — real and dedicated data, unlike BCC\'s and SCC\'s own unquantified secondary sites elsewhere in this organ.' } },
+];
+const TRUNK_MCC = [
+  { gene:'MCPyV-positive status (viral T antigens)', class:'driver', ccf:'~81% of MCC (229/282 tumors, multimodal virus detection, Moshiri et al., J Invest Dermatol, 2017, PMID 27815175) — the majority route', note:'A real, mechanistically distinct founding route: the virus\'s large T antigen carries mutations that truncate its own C-terminal helicase/DNA-replication domain while leaving its N-terminal retinoblastoma(RB)-binding domain intact — "tumor-derived virus mutations do not affect retinoblastoma tumor suppressor protein (Rb) binding by LT but do eliminate viral DNA replication capacity" (Shuda et al., PNAS, 2008, PMID 18812503). The tumor cell gets constitutive functional RB1 inactivation without ever needing a somatic RB1 mutation. Small T antigen contributes independently, maintaining "eukaryotic translation initiation factor 4E-binding protein 1 (4E-BP1) hyperphosphorylation, resulting in dysregulated cap-dependent translation" (Shuda et al., J Clin Invest, 2011, PMID 21841310) and recruiting the cellular oncoprotein MYCL to a chromatin-remodeling complex (Cheng et al., PLoS Pathog, 2017, PMID 29028833). The genomic result is the quietest genome this atlas has modeled for any virally-driven route: 0.40 mutations/Mb (Harms et al., Cancer Res, 2015, PMID 26238782) — real cancer, without the mutation-driven branch/private-pool architecture every other entity in this atlas carries; see this entry\'s own standing note on that limitation.' },
+  { gene:'MCPyV-negative status (UV-driven)', class:'driver', ccf:'~19% of MCC (53/282 tumors, same source) — real, and genomically the LOUDEST route this atlas has found: 10.09 mutations/Mb (Harms et al., 2015), a ~25-fold difference from the viral route, with 85% of mutations being C>T transitions, "a pattern similar to the UV mutational signature in melanoma" (same source)', note:'TP53 and RB1 are near-universal within this subgroup specifically — 7/8 and 5/8 in one dedicated sequencing cohort (Harms et al., 2015), and "All viral-negative tumors harbored mutations in RB1, TP53" in an independent 21-tumor cohort (Wong et al., Cancer Res, 2015, PMID 26627015). At exome-SNV scale this route\'s own neoantigen burden exceeds melanoma\'s (Goh et al., Oncotarget, 2016, PMID 26655088) — the same convergent RB1/p53-pathway loss the viral route reaches through T-antigen binding, reached here through direct, UV-signature mutation instead. This is the founding route for every branch and private-pool gene modeled in this entry — see this entry\'s own standing note.' },
+];
+const PRIVATE_POOL_MCC = [
+  { gene:'PIK3CA activating mutation', class:'driver', ccf:'confirmed within the MCPyV-negative subgroup, including activating hotspot E545K (Harms et al., Cancer Res, 2015, PMID 26238782, one of 16 tumors in the full validation cohort)', note:'Real and recurrent within the MCPyV-negative lineage specifically — the same standing note as this entry\'s branch genes: not modeled as present in the virally-driven majority route.' },
+  { gene:'KNSTRN mutation', class:'driver', ccf:'confirmed within the MCPyV-negative subgroup (Harms et al., Cancer Res, 2015, PMID 26238782)', note:'Real and recurrent within the MCPyV-negative lineage specifically, alongside PRUNE2/NOTCH1/NOTCH2/GRIN2A in the same dedicated sequencing cohort — same standing note on lineage-specificity as this entry\'s branch genes.' },
+  { gene:'TTN passenger mutation', class:'passenger', note:'Background noise from one of the genome\'s largest genes — honestly lineage-restricted, like every other gene in this entry\'s branch/private tiers: it belongs to the MCPyV-negative route\'s own high mutation burden (10.09 mutations/Mb), not to the virally-driven majority route, which has almost nothing to generate passengers from at all.' },
+];
+
+// HISTOLOGY — real, small-cell neuroendocrine architecture, reusing this atlas's own established
+// drawSmallCellSheet family (already dispatched for lung/bladder/prostate small-cell/neuroendocrine
+// carcinoma) rather than writing new drawing code, plus one real, quantified, genuinely
+// MCC-distinguishing feature that family didn't previously need: trabecular growth pattern,
+// found in "over 72% of MCCs but only rarely in non-MCC" small round blue cell tumors, with 72.2%
+// sensitivity / 87.8% specificity for distinguishing this cancer from its mimics (Bandino et al.,
+// Am J Dermatopathol, 2018) — real IHC markers (CM2B4 anti-large-T-antigen positivity, CK20
+// dot-like perinuclear staining) are named in prose rather than drawn, the same "name more than is
+// drawn" treatment LUAD's own two undrawn growth patterns and GBM's MGMT methylation status
+// already get.
+const HISTOLOGY_MCC = {
+  intro: 'Merkel cell carcinoma is malignant transformation of Merkel cells, and its microscopic picture is classic small-cell neuroendocrine architecture: sheets of small, round, hyperchromatic cells with scant cytoplasm, nuclear molding — nuclei pressing into and deforming their neighbors — and finely stippled “salt and pepper” chromatin. A real, distinguishing feature beyond the generic small-cell picture: trabecular growth, cells arranged in ribbon-like cords rather than pure sheets, found in the large majority of these tumors and useful for telling this cancer apart from other small round blue cell tumors it can resemble. Necrosis and a high mitotic rate are common. Two real immunohistochemical markers not shown here but worth naming: CM2B4, an antibody against the Merkel cell polyomavirus’s own large T antigen, and a distinctive dot-like, perinuclear pattern of cytokeratin 20 positivity reported almost nowhere else in cancer.',
+  ariaSummary: 'Stylized microscopic field: sheets of small, densely packed dark cells with scant visible cytoplasm, their nuclei molding against and flattening one another. The chromatin has a fine, stippled, salt-and-pepper texture. Some cells are arranged in ribbon-like cords — the trabecular pattern — rather than uniform sheets. An irregular pale patch marks an area of necrosis.',
+  citation: 'Rocha et al., 2025, PMID 39819074; Bandino et al., Am J Dermatopathol, 2018 (trabecular pattern); Busam et al., Am J Surg Pathol, 2009, PMID 19609205 (CM2B4); Vanchinathan et al., 2009, PMID 19318809 (CK20 dot-like pattern).',
+  features: [
+    { key:'molding', label:'Nuclear molding',
+      text:'Densely packed small tumor cells with scant cytoplasm press against and deform their neighbors’ nuclei — the defining cytologic feature of small-cell neuroendocrine carcinoma wherever it arises, this cancer included.' },
+    { key:'chromatin', label:'Salt-and-pepper chromatin',
+      text:'Finely stippled, evenly distributed nuclear chromatin without prominent nucleoli — the classic neuroendocrine chromatin pattern, giving the nuclei a speckled, granular look rather than the coarse clumping of many other carcinomas.' },
+    { key:'trabecular', label:'Trabecular growth',
+      text:'Cells arranged in ribbon-like cords rather than uniform sheets — a real, quantified, genuinely distinguishing feature of this cancer specifically: present in over 72% of Merkel cell carcinomas but only rarely in the other small round blue cell tumors it can be mistaken for (Bandino et al., 2018).' },
+  ],
+};
+
 export const cancerDetails = {
   melanoma: {
     title:'Cutaneous Melanoma', screenLabel:'Cutaneous melanoma — tumor explorer',
     legendTitle:'Sites (real distant-metastasis pattern)',
     regions:REGIONS_MEL, trunk:TRUNK_MEL, privatePool:PRIVATE_POOL_MEL,
     histology: HISTOLOGY_MEL,
+  },
+  bcc: {
+    title:'Basal Cell Carcinoma', screenLabel:'Basal cell carcinoma — tumor explorer',
+    legendTitle:'Sites (real, exceedingly rare metastatic routes — no population percentage exists for any of them)',
+    regions:REGIONS_BCC, trunk:TRUNK_BCC, privatePool:PRIVATE_POOL_BCC,
+    histology: HISTOLOGY_BCC,
+  },
+  scc: {
+    title:'Cutaneous Squamous Cell Carcinoma', screenLabel:'Cutaneous squamous cell carcinoma — tumor explorer',
+    legendTitle:'Sites (real nodal-first spread — Lymph nodes quantified, others real but unquantified)',
+    regions:REGIONS_SCC, trunk:TRUNK_SCC, privatePool:PRIVATE_POOL_SCC,
+    histology: HISTOLOGY_SCC,
+  },
+  mcc: {
+    title:'Merkel Cell Carcinoma', screenLabel:'Merkel cell carcinoma — tumor explorer',
+    legendTitle:'Sites (real, dedicated metastatic-site study — see this entry\'s own trunk note for why the mutation ledger below draws on one lineage only)',
+    regions:REGIONS_MCC, trunk:TRUNK_MCC, privatePool:PRIVATE_POOL_MCC,
+    histology: HISTOLOGY_MCC,
   },
 };

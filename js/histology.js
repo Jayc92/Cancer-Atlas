@@ -2304,6 +2304,126 @@ function genPCYST(g, rnd){
   ];
 }
 
+function genBCC(g, rnd){
+  // Basal cell carcinoma: solid basaloid nests with peripheral palisading (an outward-facing,
+  // picket-fence ring of elongated nuclei at each nest's boundary) and a retraction artifact
+  // (a thin, pale halo separating each nest from the surrounding stroma — a real, if
+  // processing-artifactual, diagnostic clue: StatPearls NBK482439). No existing primitive draws
+  // a SOLID nest with OUTWARD-facing peripheral nuclei — drawGlandRing's own ring faces a
+  // central lumen, the opposite orientation — so the nest-plus-palisade shape here is genuinely
+  // new, built from the same el()/blobPath()/rnd() primitives every generator in this file uses.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.stroma, opacity:0.35}));
+  const nests = [
+    {x:150, y:130, r:70}, {x:400, y:90,  r:58}, {x:620, y:150, r:64},
+    {x:230, y:320, r:66}, {x:470, y:360, r:72}, {x:660, y:340, r:50},
+  ];
+  nests.forEach((n, ni)=>{
+    const rot = rnd()*Math.PI;
+    // Retraction artifact first, so a pale halo peeks out from behind the nest drawn over it.
+    g.appendChild(el('path', {d:blobPath(n.x, n.y, n.r*1.14, n.r*1.1, 0.08, 16, rnd, rot), fill:HE.bg, opacity:0.9}));
+    // The nest itself: densely basophilic, minimal visible cytoplasm.
+    g.appendChild(el('path', {d:blobPath(n.x, n.y, n.r, n.r*0.96, 0.1, 16, rnd, rot), fill:HE.nucDark, stroke:HE.nuc, 'stroke-width':1.2, opacity:0.92}));
+    // Peripheral palisading: elongated nuclei just inside the boundary, oriented tangentially.
+    const pN = Math.round(n.r*0.42);
+    for(let i=0;i<pN;i++){
+      const a = i/pN*Math.PI*2 + rnd()*0.15;
+      const x = n.x + Math.cos(a)*n.r*0.82, y = n.y + Math.sin(a)*n.r*0.79;
+      const tangentDeg = (a*180/Math.PI) + 90;
+      g.appendChild(el('ellipse', {cx:x, cy:y, rx:5.2+rnd()*1.0, ry:2.3+rnd()*0.5, transform:`rotate(${tangentDeg.toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})`, fill:HE.nuc, stroke:HE.nucDark, 'stroke-width':0.6, opacity:0.95}));
+    }
+    // Disorganized interior: smaller, randomly-oriented nuclei filling the nest's core.
+    const iN = Math.round(n.r*0.55);
+    for(let i=0;i<iN;i++){
+      const a = rnd()*Math.PI*2, rr = Math.sqrt(rnd())*n.r*0.62;
+      const x = n.x + Math.cos(a)*rr, y = n.y + Math.sin(a)*rr*0.94;
+      g.appendChild(el('ellipse', {cx:x, cy:y, rx:3.4+rnd()*1.2, ry:2.8+rnd()*1.0, transform:`rotate(${(rnd()*180).toFixed(0)} ${x.toFixed(1)} ${y.toFixed(1)})`, fill:HE.nuc, opacity:0.85}));
+    }
+    // Mucin pools on two of the six nests — a real, commonly-reported finding (StatPearls).
+    if(ni===1 || ni===4){
+      for(let m=0;m<2;m++){
+        const a = rnd()*Math.PI*2, rr = n.r*0.32;
+        const mx = n.x+Math.cos(a)*rr, my = n.y+Math.sin(a)*rr*0.9;
+        g.appendChild(el('path', {d:blobPath(mx, my, 10+rnd()*4, 7+rnd()*3, 0.2, 8, rnd, rnd()*Math.PI), fill:HE.clear, stroke:HE.clearLn, 'stroke-width':0.8, opacity:0.85}));
+      }
+    }
+    // A mitotic figure on one nest — two small dark rotated bars, the same idiom this file's
+    // own bladder/thyroid generators already use for frequent mitoses.
+    if(ni===3){
+      const mx = n.x-8, my = n.y+6;
+      for(let s=0;s<2;s++){
+        g.appendChild(el('rect', {x:mx-3+s*5, y:my-1.2, width:5, height:2.4, transform:`rotate(${(30+s*70).toFixed(0)} ${mx+s*5} ${my})`, fill:HE.nucDark}));
+      }
+    }
+  });
+  return [
+    {key:'palisading', x:nests[0].x, y:nests[0].y - nests[0].r - 14},
+    {key:'retraction',  x:nests[2].x, y:nests[2].y - nests[2].r - 14},
+    {key:'mucin',       x:nests[4].x, y:nests[4].y - nests[4].r - 14},
+  ];
+}
+
+function genSCC(g, rnd){
+  // Cutaneous squamous cell carcinoma: the SAME defining architecture as this file's own genLUSC
+  // (lung SCC) and genBlSCC (bladder SCC) — keratin pearls + intercellular bridges, real and
+  // WHO-sourced for this organ too (Guo et al., Front Oncol, 2026, PMID 42482763; StatPearls
+  // NBK441939). ZERO NEW DRAWING CODE: this is genLUSC's own two-zone technique dispatched again
+  // verbatim (drawKeratinPearl + the intercellular-bridge line-between-near-neighbors idiom), the
+  // same reuse this file's own SCLC/pductal generators already demonstrated for their own families.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.cytoLite, opacity:0.35}));
+  const sheetA = {cx:210, cy:250, rx:190, ry:200};
+  g.appendChild(el('path', {d:blobPath(sheetA.cx, sheetA.cy, sheetA.rx, sheetA.ry, 0.12, 14, rnd, 0), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1}));
+  const pearls = [{x:150, y:170, r:38}, {x:255, y:290, r:46}, {x:150, y:355, r:30}];
+  for(let i=0;i<70;i++){
+    const x = sheetA.cx-sheetA.rx+rnd()*sheetA.rx*2, y = sheetA.cy-sheetA.ry+rnd()*sheetA.ry*2;
+    if(((x-sheetA.cx)/sheetA.rx)**2 + ((y-sheetA.cy)/sheetA.ry)**2 > 0.92) continue;
+    if(pearls.some(p=>Math.hypot(x-p.x, y-p.y) < p.r*1.15)) continue;
+    drawCell(g, x, y, 6.5+rnd()*2, 4.5+rnd()*2.2, rnd, {nucOffset:2});
+  }
+  pearls.forEach(p=>drawKeratinPearl(g, p.x, p.y, p.r, rnd));
+
+  const sheetB = {cx:600, cy:250, rx:165, ry:200};
+  g.appendChild(el('path', {d:blobPath(sheetB.cx, sheetB.cy, sheetB.rx, sheetB.ry, 0.12, 14, rnd, 0), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1}));
+  const bridgeCells = [];
+  for(let gx=-sheetB.rx; gx<=sheetB.rx; gx+=17){
+    for(let gy=-sheetB.ry; gy<=sheetB.ry; gy+=17){
+      if((gx/sheetB.rx)**2 + (gy/sheetB.ry)**2 > 0.88) continue;
+      bridgeCells.push({x:sheetB.cx+gx+(rnd()*2-1)*3, y:sheetB.cy+gy+(rnd()*2-1)*3});
+    }
+  }
+  bridgeCells.forEach((c, i)=>{
+    for(let j=i+1;j<bridgeCells.length;j++){
+      const d = Math.hypot(bridgeCells[j].x-c.x, bridgeCells[j].y-c.y);
+      if(d < 19) g.appendChild(el('line', {x1:c.x, y1:c.y, x2:bridgeCells[j].x, y2:bridgeCells[j].y, stroke:HE.cytoLn, 'stroke-width':1.1, opacity:0.75}));
+    }
+  });
+  bridgeCells.forEach(c=>drawCell(g, c.x, c.y, 7, 4.3+rnd()*1.8, rnd, {nucOffset:1.5}));
+
+  return [
+    {key:'pearl',    x:255, y:290},
+    {key:'bridges',  x:600, y:250},
+  ];
+}
+
+function genMCC(g, rnd){
+  // Merkel cell carcinoma: the neuroendocrine histology family's third real consumer (after
+  // prostate's pneuro and lungs' SCLC), proving the same reuse a third time — drawSmallCellSheet
+  // dispatched again verbatim for nuclear molding/salt-and-pepper chromatin, plus necrosisBlob.
+  // The one genuinely new element: TRABECULAR growth, a real, quantified, distinguishing feature
+  // for this cancer specifically (Bandino et al., 2018: >72% of MCC, rarely in mimicking small
+  // round blue cell tumors) — built from the SAME drawSmallCellSheet primitive at a highly
+  // elongated aspect ratio (ribbon-shaped rather than round), not new drawing code either.
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const sheetA = drawSmallCellSheet(g, rnd, 200, 160, 145, 120, {spacing:8, moldingReach:1.4});
+  const trab1 = drawSmallCellSheet(g, rnd, 470, 300, 150, 34, {spacing:7.5, moldingReach:1.4, rot:0.35});
+  const trab2 = drawSmallCellSheet(g, rnd, 560, 400, 130, 30, {spacing:7.5, moldingReach:1.4, rot:0.55});
+  necrosisBlob(g, 330, 380, 70, 50, rnd, 0.2);
+  return [
+    {key:'molding',    x:sheetA.cx, y:sheetA.cy},
+    {key:'chromatin',  x:sheetA.cx+60, y:sheetA.cy+40},
+    {key:'trabecular', x:trab1.cx, y:trab1.cy},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -2343,6 +2463,9 @@ const GENERATORS = {
   pacc:   genPACC,
   pnet:   genPNET,
   pcyst:  genPCYST,
+  bcc:    genBCC,
+  scc:    genSCC,
+  mcc:    genMCC,
 };
 
 // ------------------------------------------------------------

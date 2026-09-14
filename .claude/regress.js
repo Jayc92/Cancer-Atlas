@@ -87,6 +87,21 @@ const KNOWN_FAILURES = [
     'desmoglein-3 expression, absence of GATA3/uroplakin III) are IHC marker facts, not gross/H&E ' +
     'architecture this atlas\'s histology views draw for any cancer. Revisit only if a future pass finds a ' +
     'real, separately-drawable third feature in a source not yet read.' },
+  { check: 'cancer scc histology', reason: 'The THIRD instance of the identical exception, LUSC ' +
+    'and blscc above — the same real, WHO-sourced two-feature diagnostic threshold applies to ' +
+    'squamous carcinoma everywhere it arises, not organ-specifically: StatPearls, "Cutaneous ' +
+    'Squamous Cell Carcinoma" (NBK441939), names keratin pearl formation and intercellular ' +
+    'bridges directly for this organ, and Sabbula, Gasalberti & Mukkamalla, StatPearls, ' +
+    '"Squamous Cell Lung Cancer" (NBK564510) independently names the identical two features for ' +
+    'LUSC above, with nothing else offered as a defining architectural feature in either source. ' +
+    '(Guo et al., Front Oncol, 2026, PMID 42482763 — blscc\'s own source above — was checked and ' +
+    'found scoped to bladder squamous differentiation specifically, not squamous carcinoma ' +
+    'generally, so it is deliberately NOT used as a cross-organ citation here — caught during an ' +
+    'independent citation-verification pass, 2026-09-14; see skin.js\'s own HISTOLOGY_SCC comment ' +
+    'for the full correction.) Three organs landing on the same real limit for the same real ' +
+    'reason, each on its own organ-appropriate source, strengthens the exception rather than ' +
+    'weakening it — this is not a per-organ coincidence, it is the same disease process. Revisit ' +
+    'only if a future pass finds a real, separately-drawable third feature in a source not yet read.' },
 ];
 // PAGE ERRORS ARE A COUNT TOO (2026-09-10, user: 'an undeclared count is evidence of an unread count'). This harness
 // printed '2 page errors' on every run for as long as it has existed and nobody read them until a tolerated-count sweep
