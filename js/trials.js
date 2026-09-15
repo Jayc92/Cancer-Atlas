@@ -797,6 +797,110 @@ export const TRIALS_CONDITION_MAP = {
       '"Meningioma" carries no cross-organ overload risk this atlas has hit elsewhere. ' +
       'Negation-collision signal: zero matches.',
   },
+  // Lymph Nodes organ, eight entities (2026-09-14) — every mapping live-fetched and hand-read
+  // against the real ClinicalTrials.gov v2 API before being written here, per data rule 36
+  // (a keyword list is verified by running it, never by reading it).
+  fl: {
+    query: 'follicular lymphoma', parent: 'follicular lymphoma',
+    conditionKeywords: ['follicular lymphoma', 'lymphoma, follicular'],
+    note: 'LIVE-VERIFIED 2026-09-14: 10-result sample, 6/10 kept. Correctly dropped: a trial whose '
+      + 'conditions are entirely angioimmunoblastic/PTCL-family (no condition string contains the '
+      + 'contiguous phrase "follicular lymphoma" — "Follicular Helper T-Cell Lymphoma" does not, '
+      + 'confirmed against keywordRegex\'s own whole-phrase, not per-word, construction), an ARDS '
+      + 'ventilation-strategy trial (query-broadening noise), a GEP-NET trial, and a bare '
+      + '"Relapsed or Refractory Aggressive B-Cell Non-Hodgkins Lymphoma" trial with no FL-specific '
+      + 'condition string. Negation-collision signal: zero matches.',
+  },
+  mcl: {
+    query: 'mantle cell lymphoma', parent: 'mantle cell lymphoma',
+    conditionKeywords: ['mantle cell lymphoma', 'mantle-cell lymphoma', 'lymphoma, mantle cell'],
+    note: 'LIVE-VERIFIED 2026-09-14: 10-result sample, 9/10 kept, 1 correctly dropped (a bare '
+      + '"Lymphoma" condition with no MCL-specific term, from a glofitamab basket study). '
+      + 'Negation-collision signal: zero matches.',
+  },
+  bl: {
+    query: 'Burkitt lymphoma', parent: 'Burkitt lymphoma',
+    conditionKeywords: ['burkitt lymphoma', 'burkitt leukemia', 'burkitt\'s lymphoma'],
+    note: 'LIVE-VERIFIED 2026-09-14: 10-result sample, only 2/10 kept — a real, disclosed low '
+      + 'yield, not a broken mapping. The query itself returns mostly B-cell acute lymphoblastic '
+      + 'leukemia trials (real biological/treatment overlap with Burkitt lymphoma, which is why '
+      + 'ClinicalTrials.gov\'s own search surfaces them for this query), but the great majority of '
+      + 'those trials\' own declared conditions never mention Burkitt at all — correctly dropped, '
+      + 'since this atlas\'s trials duty-of-care is to what a trial actually declares, not what a '
+      + 'search engine associates it with. The 2 kept both explicitly declare "Burkitt Lymphoma" '
+      + 'or "Burkitt Leukemia" as a condition. Negation-collision signal: zero matches.',
+  },
+  chl: {
+    query: 'classical Hodgkin lymphoma', parent: 'Hodgkin lymphoma',
+    conditionKeywords: ['hodgkin lymphoma'],
+    excludeIf: ['nodular lymphocyte predominant', 'nlphl', 'non-hodgkin', 'non hodgkin'],
+    note: 'Two same-string collisions, not one: "\\bhodgkin lymphoma\\b" alone would match the '
+      + 'substring inside "Nodular Lymphocyte Predominant Hodgkin Lymphoma" (a real, WHO-distinct, '
+      + 'non-classical entity this entry does not model) — confirmed by direct regex inspection, '
+      + 'not assumed safe. No NLPHL trial appeared in the live 10-result sample this round, so that '
+      + 'exclusion could not be positively demonstrated against a real match this pass — recorded '
+      + 'as a reasoned, checked risk rather than a positive control, per this project\'s own '
+      + 'distinction between the two. The SECOND collision is the LUSC/SCLC shape (data rule 33) '
+      + 'and IS live: "\\bhodgkin lymphoma\\b" also matches inside "Non-Hodgkin Lymphoma" — a '
+      + 'completely different disease category, not a WHO-adjacent variant — found by '
+      + '.claude/trials_mapping_check.mjs\'s negation-collision signal against 98 distinct '
+      + 'non-Hodgkin condition strings in the parent corpus (none in the live 49-study narrow-query '
+      + 'result set at this round, but the corpus moves — see the seminoma/ccRCC precedent). Fixed '
+      + 'with excludeIf ["non-hodgkin", "non hodgkin"], the same hyphen-and-space-variant pattern '
+      + 'every other excludeIf entry in this file uses. LIVE-VERIFIED 2026-09-14: 10-result sample, '
+      + '8/10 kept, 2 correctly dropped (a follicular lymphoma trial with no Hodgkin mention; a '
+      + 'generic "Mature B-Cell Neoplasm" registry with no Hodgkin mention).',
+  },
+  aitl: {
+    query: 'angioimmunoblastic T-cell lymphoma', parent: 'peripheral T-cell lymphoma',
+    conditionKeywords: ['angioimmunoblastic'],
+    note: 'A single-word keyword, deliberately: "angioimmunoblastic" is specific enough to carry '
+      + 'no cross-organ or cross-entity collision risk on its own (unlike "ductal" or "papillary"), '
+      + 'and it correctly matches both nomenclatures found live — the classic name '
+      + '("Angioimmunoblastic T-cell Lymphoma (AITL)") and the newer WHO-5th-edition name '
+      + '("Follicular Helper T-Cell Lymphoma, Angioimmunoblastic-Type") — without needing two '
+      + 'separate phrase entries. LIVE-VERIFIED 2026-09-14: 10-result sample, 9/10 kept, 1 '
+      + 'correctly dropped (a generic elderly-cancer registry with no AITL-specific condition). '
+      + 'Negation-collision signal: zero matches.',
+  },
+  ndlbcl: {
+    query: 'diffuse large B-cell lymphoma', parent: 'diffuse large B-cell lymphoma',
+    conditionKeywords: ['diffuse large b-cell', 'dlbcl', 'lymphoma, large b-cell, diffuse'],
+    note: 'SAME query and conditionKeywords as this atlas\'s own Colon-organ clymph entry, '
+      + 'deliberately — it is the identical disease, and clymph\'s own note already establishes '
+      + 'why no requireAlso is added: DLBCL trials are organized by molecular subtype/treatment '
+      + 'history, not primary anatomic site, so a nodal-scoped and a colon-scoped entry for the '
+      + 'same disease correctly surface the same live corpus. Re-verified independently rather '
+      + 'than assumed to inherit clymph\'s own prior result: LIVE-VERIFIED 2026-09-14, 10-result '
+      + 'sample, 9/10 kept, 1 correctly dropped (a bare "Lymphoma, B-Cell" condition with no '
+      + 'DLBCL-specific term, even though the trial\'s own title names it).',
+  },
+  nmzl: {
+    query: 'marginal zone lymphoma', parent: 'marginal zone lymphoma',
+    conditionKeywords: ['marginal zone lymphoma', 'lymphoma, b-cell marginal zone', 'lymphoma, marginal zone'],
+    note: 'NO requireAlso for nodal-vs-splenic-vs-extranodal/MALT subtype, checked directly rather '
+      + 'than assumed: the live 10-result sample contained zero trials specifically qualified to '
+      + 'one MZL subtype (no "Splenic Marginal Zone Lymphoma" or "MALT Lymphoma" condition string '
+      + 'appeared) — real trials enroll "marginal zone lymphoma" as one category regardless of '
+      + 'subtype, the same DLBCL-shaped reason clymph/ndlbcl need no organ anchor either. '
+      + 'LIVE-VERIFIED 2026-09-14: 10-result sample, 7/10 kept, 3 correctly dropped (Waldenström-'
+      + 'only, CLL-registry-only, and a bare "B-cell Non Hodgkin Lymphoma" condition, none naming '
+      + 'MZL). Negation-collision signal: zero matches.',
+  },
+  ptcln: {
+    query: 'peripheral T-cell lymphoma', parent: 'peripheral T-cell lymphoma',
+    conditionKeywords: ['peripheral t-cell lymphoma', 'ptcl-nos', 'ptcl, nos', 'ptcl'],
+    note: 'Bare "ptcl" ADDED after the live sample caught a real miss: "T-cell Lymphoma (PTCL and '
+      + 'CTCL)" and a TRBC1-targeted trial declaring condition "PTCL" alone both carry the bare '
+      + 'abbreviation with no spelled-out "peripheral T-cell lymphoma" anywhere in that same '
+      + 'condition string — the identical bare-acronym gap this project has now found for '
+      + 'seminoma\'s "NET" and pancreatic NET\'s own keyword list, closed here before shipping '
+      + 'rather than after. "PTCL" carries negligible collision risk as a bare token (checked: no '
+      + 'other cancer/organ abbreviation in this atlas coincides with it). LIVE-VERIFIED '
+      + '2026-09-14 against the corrected keyword list: 10-result sample, 5/10 kept, 5 correctly '
+      + 'dropped (pure-CTCL/mycosis-fungoides/Sezary trials and an NK-T-cell-only trial, none '
+      + 'declaring a PTCL-family condition).',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------

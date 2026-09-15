@@ -1,7 +1,20 @@
 {
  "_schema": "cancer-atlas citation manifest v1 (citation-durability pass, 2026-09-04)",
  "_method": "status: verified = claim re-verified at source on `retrieved` date; verified-partial = source/series located, specific figure not re-read; quote-absent = source reachable but quoted text not present; not-relocated = time-boxed search failed; unreproducible = recorded verification leg cannot be re-run from the repo; downgraded = claim reduced to illustrative per Ruling 1. Text quotes only, never images (Ruling 2).",
- "entries": [
+  "entries": [
+  {
+   "id": "lic-lymphnodes",
+   "cls": "licence",
+   "claim": "lymphnodes.glb CC BY 4.0, NIH 3D Human Reference Atlas 'Lymph Node, Female' (3DPX-020975), DOI 10.48539/HBM463.LFHF.874 -- underlying data is Ce3D microscopy of mouse tissue, not the Visible Human Dataset every other HRA organ here uses",
+   "url": "https://3d.nih.gov/entries/3DPX-020975",
+   "quote": "License: CC-BY",
+   "retrieved": "2026-09-14",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/lymphnodes.js:14"
+   ],
+   "sha": "4c2bf104b7b6ec1a"
+  },
   {
    "id": "lic-lungs",
    "cls": "licence",

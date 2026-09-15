@@ -254,6 +254,27 @@ DECLARED_UNREACHED = {
         'the first author. Stripping the initials would damage the correction to please the '
         'extractor. The paper itself is not lost: Cooper has five records elsewhere in the same '
         'file. TOLERATED PERMANENTLY, not held — this span should never produce a record.',
+    'etal-malformed-head:Beá':
+        'NON-ASCII SURNAME, same cause and same held fix (widen SURNAME) as Riihimäki/Conejero '
+        'Merchán/Affò above. One representative span, lymphnodes.js:215 (three further spans '
+        'elsewhere in the same file carry the same citation and are not individually addressed '
+        'here — the sibling Bódor/Fernàndez entries below each name one clean span for the same '
+        'reason), all Beá et al., PNAS, 2013, PMID 24145436 — the MCL genomic-landscape paper '
+        'this entity\'s ATM/TP53/NOTCH1/NOTCH2 branch-gene figures and mutual-exclusivity '
+        'findings are drawn from; zero records corpus-wide for this author. Counted separately '
+        'from Riihimäki/Conejero Merchán/Affò, same reasoning: a merged count would hide which '
+        'paper is unreached.',
+    'etal-malformed-head:Bódor':
+        'NON-ASCII SURNAME, same cause and same held fix as above. One span, lymphnodes.js:164, '
+        'Bódor et al., Blood, 2013, PMID 24052547 — the EZH2 clonal-persistence-across-'
+        'transformation source cited in this entity\'s own FL branch note (the early-versus-late '
+        'timing question EZH2\'s branch-gene entry discloses as unresolved); zero records '
+        'corpus-wide for this author.',
+    'etal-malformed-head:Fernàndez':
+        'NON-ASCII SURNAME, same cause and same held fix as above. One span, lymphnodes.js:206, '
+        'Fernàndez et al., Cancer Res, 2010, PMID 20124476 — the SOX11+/SOX11- MCL survival-'
+        'comparison source cited in this entity\'s own trunk note; zero records corpus-wide for '
+        'this author.',
     # 'etal-out-of-range:Louis' WAS DELETED HERE, in the boundary-test commit that made its span
     # stop being gated (2026-09-06). Recorded as a comment for one commit because the deletion is
     # the mechanism working end to end, and the entry is the only one in this dict's history to have

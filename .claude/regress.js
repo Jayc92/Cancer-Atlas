@@ -61,48 +61,19 @@ fs.mkdirSync(OUT, { recursive: true });
 const report = { errors: [], checks: [] };
 // Failing checks tolerated BY NAME, each with a reason (see the verdict block at the end). Empty means every red check
 // fails the gate. Shape: { check: '<exact check name>', reason: '<why it is tolerated, and until when>' }.
-const KNOWN_FAILURES = [
-  { check: 'cancer lusc histology', reason: 'LUSC draws exactly 2 histology features (Keratin pearl, ' +
-    'Intercellular bridges), one short of the >=3 floor this check was written against — a floor the ' +
-    'SMALL-POPULATION INVARIANTS note in CLAUDE.md already flags as "shaped to today\'s authoring, not ' +
-    'a rule." Checked directly against the primary source (Sabbula, Gasalberti & Mukkamalla, StatPearls, ' +
-    'NBK564510, "Squamous Cell Lung Cancer", last update 2024-02-14) before declaring rather than after: ' +
-    'its own Pathophysiology section names exactly these two features as what defines a transformed ' +
-    'squamous cell ("characterized by keratinization and intercellular bridges"), and its Histopathology ' +
-    'section\'s third WHO-2015 variant, basaloid, is defined by an ABSENCE of squamous differentiation ' +
-    '(">50% basaloid component with minimal areas of squamous differentiation") — a solid sheet with no ' +
-    'positive, separately-drawable architecture of its own, which is why it is named but not drawn, the ' +
-    'same treatment LUAD\'s own two undrawn growth patterns get. The source\'s only other histologic facts ' +
-    '(p63/p40 IHC positivity; the 10%-of-tumor-bulk diagnostic threshold) are not gross/H&E architecture ' +
-    'this atlas\'s histology views draw anywhere, for any cancer. Revisit only if a future pass finds a ' +
-    'real, separately-drawable third feature in a source not yet read — not by lowering the floor and not ' +
-    'by drawing basaloid as a plain sheet just to hit a count.' },
-  { check: 'cancer blscc histology', reason: 'The SAME exception class as LUSC above, on an equally strong ' +
-    'primary-source justification, not a weaker one — checked against that bar before declaring, per the ' +
-    'standing note that a second exception here needs its own real justification, not a copy of the first\'s. ' +
-    'Guo et al., Front Oncol, 2026, PMID 42482763, states the WHO-sourced diagnostic threshold verbatim: ' +
-    '"definitive morphological features, including keratin pearl formation and/or intercellular bridges" — ' +
-    'exactly these two, named as jointly sufficient ("and/or"), with nothing else offered as a defining ' +
-    'architectural feature. The other real findings this entity\'s own research turned up (diffuse CK14/' +
-    'desmoglein-3 expression, absence of GATA3/uroplakin III) are IHC marker facts, not gross/H&E ' +
-    'architecture this atlas\'s histology views draw for any cancer. Revisit only if a future pass finds a ' +
-    'real, separately-drawable third feature in a source not yet read.' },
-  { check: 'cancer scc histology', reason: 'The THIRD instance of the identical exception, LUSC ' +
-    'and blscc above — the same real, WHO-sourced two-feature diagnostic threshold applies to ' +
-    'squamous carcinoma everywhere it arises, not organ-specifically: StatPearls, "Cutaneous ' +
-    'Squamous Cell Carcinoma" (NBK441939), names keratin pearl formation and intercellular ' +
-    'bridges directly for this organ, and Sabbula, Gasalberti & Mukkamalla, StatPearls, ' +
-    '"Squamous Cell Lung Cancer" (NBK564510) independently names the identical two features for ' +
-    'LUSC above, with nothing else offered as a defining architectural feature in either source. ' +
-    '(Guo et al., Front Oncol, 2026, PMID 42482763 — blscc\'s own source above — was checked and ' +
-    'found scoped to bladder squamous differentiation specifically, not squamous carcinoma ' +
-    'generally, so it is deliberately NOT used as a cross-organ citation here — caught during an ' +
-    'independent citation-verification pass, 2026-09-14; see skin.js\'s own HISTOLOGY_SCC comment ' +
-    'for the full correction.) Three organs landing on the same real limit for the same real ' +
-    'reason, each on its own organ-appropriate source, strengthens the exception rather than ' +
-    'weakening it — this is not a per-organ coincidence, it is the same disease process. Revisit ' +
-    'only if a future pass finds a real, separately-drawable third feature in a source not yet read.' },
-];
+// EMPTY, per this file's own documented ideal ("empty at birth" — see the label-overlap entry
+// this replaced, 2026-09-10). It briefly held three entries (lusc/blscc/scc histology) tolerating
+// a >=3 FLOOR none of those three could clear at exactly 2 — each with a real, checked, primary-
+// source justification for why 2 is genuinely all there is. RETIRED, not merely emptied, on
+// 2026-09-15 (user-directed): the floor itself was the wrong instrument — it could tolerate a
+// genuine 2-declared/2-rendered entity only by ALSO being unable to distinguish it from a
+// 4-declared/3-rendered one (exactly the shape the ndlbcl anchor-key bug produced, invisible to a
+// floor because 3 still clears >=3). The check below now asserts declared-count equals
+// rendered-count instead, which passes all three of these for the real reason (they render every
+// feature they declare) rather than by narrow, per-entity exemption — so the exemptions are
+// deleted in the same commit as the fix that makes them stale, per this project's own standing
+// rule against a tolerance outliving the defect it was written for.
+const KNOWN_FAILURES = [];
 // PAGE ERRORS ARE A COUNT TOO (2026-09-10, user: 'an undeclared count is evidence of an unread count'). This harness
 // printed '2 page errors' on every run for as long as it has existed and nobody read them until a tolerated-count sweep
 // did: both are the browser's own favicon.ico request 404ing (no favicon is shipped). Same mechanism as KNOWN_FAILURES,
@@ -113,10 +84,74 @@ const BENIGN_PAGE_ERRORS = [
   { type: 'console', match: /^Failed to load resource: the server responded with a status of 404 \((Not Found|File not found)\) @ .*\/favicon\.ico$/, reason: 'the console echo of the favicon.ico 404 above — the same request reported a second way; the handler appends the resource URL so this matches favicon alone, never a missing asset' },
 ];
 const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); if(!ok) console.log('FAIL', name, detail || ''); else console.log('ok  ', name, detail || ''); };
+// ANY HARNESS ACTION THAT CAN DO NOTHING AND CONTINUE is the general shape the ovary/lymphnodes
+// sidebar-label-matching bugs were both instances of (2026-09-14, user ruling on the lymphnodes
+// pass): a click that resolves to no element, or to the wrong element, leaves the app on its
+// PREVIOUS screen with no error of its own, and every downstream check in that iteration then
+// reads stale state — which can itself pass, making a no-op click indistinguishable from a
+// working one on a green run (the original incident's crash further downstream was luck, not
+// detection). Read the app's own state after a navigation click, never the DOM text the click was
+// matched against, and refuse to run the rest of an iteration against a screen nobody asked for.
+const assertNavigated = (name, expected, actual) => {
+  const ok = actual === expected;
+  check(name, ok, ok ? '' : `landed on '${actual}', wanted '${expected}' — navigation click silently no-op'd or matched the wrong row; skipping the rest of this iteration rather than probing stale state`);
+  return ok;
+};
+
+// THE HARNESS WAS DRIVING THE USER'S REAL BROWSER (2026-09-15, user-directed, found live during
+// the lymphnodes pass): a run crashed mid-check with 'Failed to fetch dynamically imported module:
+// https://<a real job-application site>/...' — the Puppeteer-controlled page had been navigated to
+// a page inside the machine owner's OWN logged-in browser session, not this app. Root cause: the
+// old default pointed executablePath at the INSTALLED Google Chrome.app binary, the one the user's
+// everyday browsing runs in. That binary carries its own singleton-instance/already-running-
+// instance handling that a bare command-line launch does not reliably override, so a
+// puppeteer.launch() call against it can hand control to an ALREADY-OPEN window of the user's own
+// browser instead of a truly separate process — at which point every screenshot, every read, every
+// evaluate this harness makes can see whatever that browser can see: the user's cookies,
+// authenticated sessions, open tabs. Nothing sensitive was read this time (this harness only reads
+// app-specific selectors), but the exposure is real and this repo has held personal documents in
+// its working tree before. FIX, at the launch call rather than as a one-off: (1) resolveChromePath
+// below refuses the installed-Chrome fallback entirely and requires a dedicated "Chrome for
+// Testing" build (Google's own distribution built for exactly this case — a different application
+// identity from the user's Chrome, with none of its singleton-instance behaviour); (2) an explicit,
+// freshly-created userDataDir per run, deleted on exit, so even a future launch-target mistake
+// can't inherit an existing profile's cookies/sessions. Neither depends on the other for safety —
+// either alone would have prevented this — but both together make the run fully reproducible too,
+// which was never the point but is a real side effect.
+function resolveChromePath() {
+  if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
+  const os = require('os');
+  const cacheRoot = path.join(os.homedir(), '.cache', 'puppeteer', 'chrome');
+  let dirs = [];
+  try { dirs = fs.readdirSync(cacheRoot).filter(d => /^(mac|mac_arm|linux|win)/.test(d)); } catch {}
+  for (const d of dirs) {
+    const macApp = path.join(cacheRoot, d, `chrome-${d.startsWith('mac_arm') ? 'mac-arm64' : d.startsWith('mac') ? 'mac-x64' : d}`,
+      'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing');
+    if (fs.existsSync(macApp)) return macApp;
+    const linuxBin = path.join(cacheRoot, d, `chrome-${d}`, 'chrome');
+    if (fs.existsSync(linuxBin)) return linuxBin;
+  }
+  throw new Error('No cached "Chrome for Testing" build found under ~/.cache/puppeteer/chrome, and '
+    + 'CHROME_PATH is unset. This harness deliberately will not fall back to an installed browser — '
+    + 'see the comment above this function for why. Install one with: '
+    + 'npx @puppeteer/browsers install chrome@stable');
+}
+
+// Hoisted so the outer .catch() below can also reach them for cleanup on a harness crash — the
+// Workday-hijack incident crashed mid-run with an uncaught error, which reaches that .catch(),
+// never the closeBrowser() calls inside the IIFE, and would otherwise leak both the browser
+// process and the temp profile directory on every such crash, not just on a clean exit.
+let browser, profileDir;
+const closeBrowser = async () => {
+  try { if (browser) await browser.close(); } catch {}
+  try { if (profileDir) fs.rmSync(profileDir, { recursive: true, force: true }); } catch {}
+};
 
 (async () => {
-  const browser = await puppeteer.launch({
-    executablePath: process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  const os = require('os');
+  profileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cancer-atlas-regress-profile-'));
+  browser = await puppeteer.launch({
+    executablePath: resolveChromePath(), userDataDir: profileDir,
     headless: 'new', args: ['--use-gl=angle', '--enable-webgl', '--window-size=1400,940'],
   });
   const page = await browser.newPage();
@@ -154,7 +189,7 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
   if (!initialised.ok || !(initialised.rows > 0)) {
     console.log(`PROBE FAILURE — the app did not initialise in the harness (${initialised.error || ('sidebar rows: ' + initialised.rows)}; page title: ${JSON.stringify(initialised.title || '')}). `
       + 'This is the harness\'s own failure, not a finding about the app; no check was run. Is the server rooted at the repo? Is Chrome launching?');
-    await browser.close(); process.exit(1);
+    await closeBrowser(); process.exit(1);
   }
 
   // ---- body screen: markers per sex ----
@@ -336,11 +371,23 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
   });
   console.log('organs:', JSON.stringify(organKeys));
   for (const o of organKeys.filter(o => o.active)) {
-    await page.evaluate(async (key) => {
+    // Match on the organ's own LABEL, not a guessed de-slugification of its key — the
+    // key==='ovary'?'ovaries':key special case was already one label-shape exception; a second
+    // organ key that doesn't literal-match its label (lymphnodes -> "Lymph Nodes", the space
+    // breaking a naive .includes(key) check) is the second instance of the same class, found
+    // live: the click silently no-op'd, the app stayed on the PREVIOUS organ (Thyroid), and every
+    // later per-organ check in this same pass read stale Thyroid state until a downstream cancer-
+    // row lookup for an entity that only exists on Lymph Nodes found nothing and crashed
+    // dispatching an event on undefined. The label is already available on `o` — use it directly
+    // instead of extending the key-guessing special case a second time.
+    await page.evaluate(async (label) => {
       const rows = [...document.querySelectorAll('#sidebarList > *')];
-      const row = rows.find(r => r.textContent.toLowerCase().includes(key === 'ovary' ? 'ovaries' : key));
+      const row = rows.find(r => r.textContent.toLowerCase().includes(label.toLowerCase()));
       if (row) row.click();
-    }, o.key);
+    }, o.label);
+    await new Promise(r => setTimeout(r, 400));
+    const landedOrgan = await page.evaluate(async () => (await import('./js/state.js')).state.currentOrganKey);
+    if (!assertNavigated(`organ ${o.key} sidebar navigation`, o.key, landedOrgan)) continue;
     let pts = 0;
     for (let t = 0; t < 40; t++) {
       await new Promise(r => setTimeout(r, 500));
@@ -452,19 +499,31 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
     return m.CANCERS.filter(c => c.active).map(c => ({ id: c.id, organKey: c.organKey, name: c.name }));
   });
   console.log('cancers:', JSON.stringify(cancers));
+  // Same defect as the organ loop's own key===label mismatch (lymph nodes -> "Lymph Nodes", the
+  // space breaking a naive .includes(key) check) — a SECOND, sibling matcher that never got the
+  // organ loop's own label-based fix, only found live because assertNavigated (below) is the
+  // first thing that ever checked whether this click landed on the right organ at all
+  // (2026-09-14, user-directed guard, caught its own target on the first real run). Look up each
+  // cancer's own organ label from the same organKeys the organ loop already fetched, instead of
+  // extending the key-guessing special case a second time.
+  const organLabelByKey = Object.fromEntries(organKeys.map(o => [o.key, o.label]));
   for (const c of cancers) {
-    await page.evaluate(async (ck) => {
+    await page.evaluate(async (label) => {
       const rows = [...document.querySelectorAll('#sidebarList > *')];
-      const row = rows.find(r => r.textContent.toLowerCase().includes(ck === 'ovary' ? 'ovaries' : ck));
+      const row = rows.find(r => r.textContent.toLowerCase().includes(label.toLowerCase()));
       if (row) row.click();
-    }, c.organKey);
+    }, organLabelByKey[c.organKey]);
     await new Promise(r => setTimeout(r, 1500));
+    const landedOrganForCancer = await page.evaluate(async () => (await import('./js/state.js')).state.currentOrganKey);
+    if (!assertNavigated(`cancer ${c.id} organ navigation`, c.organKey, landedOrganForCancer)) continue;
     await page.evaluate((cname) => {
       const rows = [...document.querySelectorAll('#screenOrgan [role="button"], #screenOrgan .cancer-row, #screenOrgan li, #screenOrgan div')];
       const row = rows.filter(r => r.textContent.includes(cname)).sort((a, b) => a.textContent.length - b.textContent.length)[0];
       if (row) row.click();
     }, c.name);
     await new Promise(r => setTimeout(r, 2000));
+    const landedCancer = await page.evaluate(async () => (await import('./js/state.js')).state.currentCancerId);
+    if (!assertNavigated(`cancer ${c.id} cancer-row navigation`, c.id, landedCancer)) continue;
     const labels = await page.evaluate(() => [...document.querySelectorAll('.site-label')].map(l => l.textContent.trim()));
     check(`cancer ${c.id} sites`, labels.length === 4, JSON.stringify(labels));
     const lrects = await page.evaluate(() => [...document.querySelectorAll('.site-label')].map(l => { const r = l.getBoundingClientRect(); return { t: l.textContent.trim(), x: r.x, y: r.y, w: r.width, h: r.height }; }));
@@ -503,13 +562,26 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
       return { present: true };
     });
     await new Promise(r => setTimeout(r, 900));
-    const hist = await page.evaluate(() => {
+    const hist = await page.evaluate(async (cancerId) => {
       const layer = document.getElementById('txHistologyLayer');
       const svg = layer && layer.querySelector('svg');
       const feats = layer ? [...layer.querySelectorAll('[role="button"]')].map(f => f.textContent.trim()) : [];
-      return { svg: !!svg, feats };
-    });
-    check(`cancer ${c.id} histology`, histOk.present && hist.svg && hist.feats.length >= 3, JSON.stringify(hist.feats));
+      // COUNT EQUALITY, NOT A FLOOR (2026-09-15, user-directed, generalising the ndlbcl anchor-key
+      // catch): a shared drawing generator with a hardcoded anchor list silently drops any feature
+      // key it doesn't recognise (js/histology.js's own render loop: an anchor with no matching
+      // feature renders nothing, and a feature with no matching anchor is never even iterated).
+      // A floor of >=3 passed ndlbcl's real 3-declared/2-rendered mismatch by coincidence — it
+      // would have passed a 4-declared/3-rendered mismatch too. Comparing against the entity's own
+      // DECLARED feature count catches any such drop regardless of where the count lands, and
+      // still correctly passes an entity that genuinely declares (and renders) fewer than 3 — see
+      // KNOWN_FAILURES' retired lusc/blscc entries, both real 2-declared/2-rendered cases a floor
+      // could never tell apart from a dropped one.
+      const idxMod = await import('./js/organs/index.js');
+      const declared = (idxMod.CANCER_DETAILS[cancerId].histology || {}).features || [];
+      return { svg: !!svg, feats, declaredCount: declared.length };
+    }, c.id);
+    check(`cancer ${c.id} histology`, histOk.present && hist.svg && hist.feats.length === hist.declaredCount && hist.declaredCount >= 1,
+      `rendered ${JSON.stringify(hist.feats)}, declared ${hist.declaredCount}`);
     await page.screenshot({ path: path.join(OUT, `05_cancer_${c.id}_hist.png`) });
     await page.evaluate(() => { const t = document.getElementById('txHistologyToggle'); if (t) t.click(); });
     await new Promise(r => setTimeout(r, 500));
@@ -662,5 +734,5 @@ const check = (name, ok, detail) => { report.checks.push({ name, ok, detail }); 
   if (undeclaredErrors.length) console.log('UNDECLARED PAGE ERROR(S): ' + JSON.stringify(undeclaredErrors.slice(0, 5)) + ' — read them, then fix or declare with a reason');
   if (undeclared.length || stale.length || undeclaredErrors.length || staleBenign.length) { console.log(`REGRESS VERDICT: ${undeclared.length} undeclared failing check(s), ${stale.length} stale declaration(s), ${undeclaredErrors.length} undeclared page error(s), ${staleBenign.length} stale benign declaration(s) — exit 1`); process.exitCode = 1; }
   if (report.errors.length) console.log(JSON.stringify(report.errors.slice(0, 10), null, 1));
-  await browser.close();
-})().catch(e => { console.error('HARNESS ERROR', e); process.exit(1); });
+  await closeBrowser();
+})().catch(async e => { console.error('HARNESS ERROR', e); await closeBrowser(); process.exit(1); });

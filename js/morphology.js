@@ -381,6 +381,21 @@ export const MARGIN_STATUS = Object.freeze({
   blnec: { status: 'unread', ref: 'one candidate source found (Chinese J Pathol, 2014, PMID 25582251, n=17: "polypoid, lobulated, fungating or ulcerous structures") — single small non-English series, not corroborated by a second source in this pass', until: '2026-10-01' },
   blscc: { status: 'uncharacterised', ref: 'checked 2026-09-13 — the real gross finding (Shokeir et al., BJU Int, 2004, PMID 14690486) is a GROWTH-pattern statement, not gross circumscription; no separate margin/circumscription sentence found' },
   bladc: { status: 'uncharacterised', ref: 'checked 2026-09-13 — gross-register description exists only for metastatic (pseudomyxoma peritonei) disease, not the primary tumor, in what was accessible this pass' },
+  // Lymph Nodes organ, all eight entities (2026-09-14): "margin" as a gross-pathology concept
+  // describes the boundary of a discrete SOLID MASS against surrounding tissue — every source
+  // consulted while authoring this organ describes these diseases in terms of nodal effacement,
+  // dissemination, or infiltrate composition, never a resectable mass with a gross margin the
+  // way this atlas's solid-tumor organs are described. Checked rather than assumed per entity,
+  // not defaulted to uncharacterised as a batch shortcut: no source for any of the eight states
+  // a gross circumscription/margin finding at all.
+  fl:     { status: 'uncharacterised', ref: 'checked 2026-09-14 — sources describe nodal colonization by expanding follicles, not a gross margin; none found' },
+  mcl:    { status: 'uncharacterised', ref: 'checked 2026-09-14 — sources describe diffuse/nodular/mantle-zone infiltration patterns, not a gross margin; none found' },
+  bl:     { status: 'uncharacterised', ref: 'checked 2026-09-14 — sources describe a rapidly growing mass lesion (abdominal/jaw) but no gross-circumscription finding was found for either presentation' },
+  chl:    { status: 'uncharacterised', ref: 'checked 2026-09-14 — sources describe nodal effacement by a mixed inflammatory infiltrate, not a gross margin; none found' },
+  aitl:   { status: 'uncharacterised', ref: 'checked 2026-09-14 — sources describe diffuse nodal effacement, not a gross margin; none found' },
+  ndlbcl: { status: 'uncharacterised', ref: 'checked 2026-09-14 — same gap as this atlas\'s own Colon-organ primary colonic lymphoma entity (clymph), for the same disease; no gross-margin finding found for the nodal presentation either' },
+  nmzl:   { status: 'uncharacterised', ref: 'checked 2026-09-14 — sources describe a diffuse, disseminated infiltration pattern; no gross-margin finding found' },
+  ptcln:  { status: 'uncharacterised', ref: 'checked 2026-09-14 — a diagnosis of exclusion with no single defining gross or histologic pattern; no gross-margin finding found' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -548,6 +563,19 @@ export const GROWTH_STATUS = Object.freeze({
   blnec: { status: 'unread', ref: 'same single candidate source as the margin axis (PMID 25582251, n=17) — describes gross shape only, not a named growth-pattern category', until: '2026-10-01' },
   blscc: { status: 'cited', label: 'ulcerative (non-bilharzial form)', register: 'G', badgeSource: 'Shokeir, BJU Int, 2004 (PMID 14690486)', badgeQuote: 'At cystoscopy tumours are predominantly ulcerative', ref: 'PMID 14690486 — scoped to the non-bilharzial (Western) form this entity models; the bilharzial form is real but genuinely different ("predominantly nodular," same source) and not modeled; not drawn (no wired category)' },
   bladc: { status: 'uncharacterised', ref: 'checked 2026-09-13 — no gross-register growth-pattern sentence found for the primary tumor specifically in this pass\'s own search' },
+  // Lymph Nodes organ, all eight entities (2026-09-14): this axis's four wired categories
+  // (multifocal/infiltrative/exophytic/wall) model a discrete solid mass's own shape against
+  // its organ — none fits a systemic or nodal-effacing lymphoid malignancy, and none of the
+  // sources read while authoring this organ describes one of these entities using any of the
+  // four terms in the sense this axis renders. Checked per entity, not defaulted as a batch.
+  fl:     { status: 'uncharacterised', ref: 'checked 2026-09-14 — "at least focal follicular growth pattern" (Salaverria et al., 2023) describes histologic architecture, not one of this axis\'s four wired mass-shape categories' },
+  mcl:    { status: 'uncharacterised', ref: 'checked 2026-09-14 — diffuse/nodular/mantle-zone are real histologic growth patterns (Jares, Colomer & Campo, 2012) but none maps to this axis\'s wired categories' },
+  bl:     { status: 'uncharacterised', ref: 'checked 2026-09-14 — no source found describing this cancer\'s growth in terms this axis renders' },
+  chl:    { status: 'uncharacterised', ref: 'checked 2026-09-14 — no source found describing this cancer\'s growth in terms this axis renders' },
+  aitl:   { status: 'uncharacterised', ref: 'checked 2026-09-14 — "diffuse infiltrate" (WHO-HAEM5, per Anagnostopoulos-class sourcing) describes nodal effacement, not one of this axis\'s wired mass-shape categories' },
+  ndlbcl: { status: 'uncharacterised', ref: 'checked 2026-09-14 — same gap as this atlas\'s own Colon-organ clymph entity for the same disease' },
+  nmzl:   { status: 'uncharacterised', ref: 'checked 2026-09-14 — "disseminated disease" (Traverse-Glehen et al., 2006) describes distribution, not one of this axis\'s wired mass-shape categories' },
+  ptcln:  { status: 'uncharacterised', ref: 'checked 2026-09-14 — a diagnosis of exclusion with no single defining growth pattern reported' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -794,6 +822,24 @@ export const EXTENT_STATUS = Object.freeze({
   blnec: { status: 'uncharacterised', site: 'bladder', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at ~3.2% share; the one dedicated staging source found (Sci Rep, 2023, PMID 37253772, n=975) gives M-stage (M0 75.7%/M1 23.6%), not the SEER Summary Stage localized/regional/distant/unknown format this axis renders', ref: 'checked 2026-09-13 — no SEER Stat Facts page or SEER-Summary-Stage-formatted source found for this histologic subtype' },
   blscc: { status: 'uncharacterised', site: 'bladder', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at ~3.1% share; no dedicated SEER Summary Stage breakdown specific to bladder squamous cell carcinoma was found — only pathologic-TNM and organ-confined/non-organ-confined splits (Abdollah et al., 2012, PMID 21810161; Guo et al., 2026, PMID 42482763), neither the SEER Summary Stage format', ref: 'checked 2026-09-13 — no SEER Stat Facts page for this histologic subtype' },
   bladc: { status: 'uncharacterised', site: 'bladder', uncharacterisedReason: 'the share-bound rule forbids the organ aggregate at ~1.9% share; no clean SEER Summary Stage breakdown specific to non-urachal bladder adenocarcinoma was found (the one dedicated SEER cohort located, Natale et al., 2019, PMID 31395362, pools all adenocarcinoma subtypes and its full text was paywalled)', ref: 'checked 2026-09-13 — no SEER Stat Facts page or per-subtype stage-at-diagnosis source found for this histologic subtype' },
+  // Lymph Nodes organ, all eight entities (2026-09-14): DECIDED ORGAN-WIDE BEFORE AUTHORING,
+  // not per entry — the same disposition brain's GBM entry already established for a structural
+  // (not merely missing-source) reason. Lymphomas are staged by the Ann Arbor system (stage
+  // I-IV, defined by which side(s) of the diaphragm nodal/extranodal disease sits on), a
+  // genuinely different framework from the SEER Combined Summary Stage (localized/regional/
+  // distant/unknown) this axis renders — this atlas's own Colon-organ clymph entity already
+  // states this exact incompatibility for the same disease's organ-localized presentation
+  // ("Ann Arbor staging system... a different system from the SEER Summary Stage"). No SEER
+  // Summary Stage distribution exists for any of these eight entities for that structural
+  // reason, checked directly rather than assumed to generalize from clymph's own prior finding.
+  fl:     { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage — the same structural incompatibility this atlas\'s own Colon-organ clymph entity already documents for this disease family', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity' },
+  mcl:    { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity; stage-at-diagnosis is real and disclosed in this cancer\'s own trunk/branch notes instead (66-88% stage III/IV across independent cohorts)' },
+  bl:     { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity' },
+  chl:    { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity' },
+  aitl:   { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity; 89% stage III/IV at diagnosis is real and disclosed in this cancer\'s own site notes instead (Federico et al., 2013)' },
+  ndlbcl: { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage — the same gap as this atlas\'s own Colon-organ clymph entity for the same disease', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity' },
+  nmzl:   { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity; real, disclosed cross-cohort stage disagreement (41-59% vs 76% stage III/IV) is in this cancer\'s own trunk note instead' },
+  ptcln:  { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity; ~70% advanced-stage at presentation is real and disclosed in this cancer\'s own trunk note instead (Broccoli & Zinzani, 2017)' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';
@@ -944,6 +990,7 @@ export const ORIGIN_HOTSPOT = Object.freeze({
   testis: 0,   // Seminiferous tubules
   bladder: 0,  // Bladder wall (dome) — its text carries the lateral-wall origin fact
   thyroid: 1,  // Right lobe — its text carries the follicular-cell origin
+  lymphnodes: 0, // Follicles — germinal-center/mantle-zone B-cell origin for most of this organ's entities
 });
 
 // PER-ENTRY OVERRIDE (2026-09-11, user-directed fix to a live origin-collapse contradiction found
@@ -1052,6 +1099,26 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   // was extended in this same pass to name meningioma's own real origin directly (StatPearls,
   // "Meningioma," NBK560538) — the reserve_check requirement this mechanism enforces.
   menin: 2,
+  // aitl ADDED (Lymph Nodes organ, first pass, 2026-09-14): angioimmunoblastic T-cell lymphoma
+  // arises from T-follicular-helper cells, whose normal habitat is the paracortex — a real,
+  // spatially locatable origin distinct from the germinal-center/mantle-zone lineage this
+  // organ's own default hotspot (Follicles) anchors most of its other entities at. This
+  // organ's own Paracortex hotspot (index 1) was written from the start to carry this fact
+  // directly (de Leval et al., Blood, 2007, PMID 17284527), the reserve_check requirement this
+  // mechanism enforces. fl/mcl/bl/chl (germinal-center or mantle-zone lineage) need no entry —
+  // the organ default already applies. ndlbcl/nmzl/ptcln get NO entry either, on the OPPOSITE
+  // ground: per this file's own §9 procedure (phaseC_design.md, first applied to prostate's
+  // pneuro), their real origin question has no spatial answer at all, so no override is added
+  // on that basis — see each entity's own trunk note in js/organs/lymphnodes.js for the direct
+  // disclosure. SECOND, THIRD, AND FOURTH ROWS FOR THE §9 REGISTRY (phaseC_design.md's own
+  // running table, kept in step with pneuro's original row): ndlbcl (DLBCL's GCB/ABC
+  // cell-of-origin split is transcriptional, not spatial — Sehn & Salles, N Engl J Med, 2021),
+  // nmzl (cell of origin "remains poorly defined... not necessarily marginal zone B cells," and
+  // the marginal zone itself is "usually not recognized morphologically in lymph nodes" at all
+  // — van den Brand & van Krieken, Haematologica, 2013, PMID 23813646), ptcln (a diagnosis of
+  // exclusion with no defined normal counterpart for the majority of cases — Iqbal et al.,
+  // Blood, 2014, PMID 24632715).
+  aitl: 1,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never

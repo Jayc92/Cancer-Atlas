@@ -1243,10 +1243,21 @@ function genCLymph(g, rnd){
     g.appendChild(el('rect', {x:m.x-1.5, y:m.y-6, width:3, height:12, fill:HE.nucDark, transform:`rotate(${(rot+70).toFixed(0)} ${m.x} ${m.y})`}));
   });
   necrosisBlob(g, 400, 250, 70, 48, rnd, 0.15);
+  // Two callers share this generator with two DIFFERENT third features — colon.js's own
+  // HISTOLOGY_CLYMPH keys its third feature 'necrosis' (the real, drawn necrosisBlob above);
+  // lymphnodes.js's own HISTOLOGY_NDLBCL keys its third feature 'effaced' instead (the real,
+  // architecture-replacing-the-whole-field property this monotonous sheet already depicts,
+  // contrasted against follicular lymphoma's organized nodules — see that entry's own intro
+  // text). The render loop below only shows an anchor whose key has a matching feature in the
+  // CALLING entity's own histology.features, so BOTH anchors ship here and each entity's own
+  // feature list picks up only the one it actually defines — found live (2026-09-14) when
+  // ndlbcl's real, authored 3rd feature rendered as only 2, because this generator's own
+  // returned anchor list had never been extended past clymph's original 'necrosis' key.
   return [
     {key:'largecells', x:sheet.cx - sheet.rx*0.6, y:sheet.cy - sheet.ry*0.7},
     {key:'mitoses',     x:mitoses[0].x, y:mitoses[0].y - 22},
     {key:'necrosis',    x:400, y:250},
+    {key:'effaced',     x:sheet.cx + sheet.rx*0.55, y:sheet.cy + sheet.ry*0.6},
   ];
 }
 
@@ -2633,6 +2644,246 @@ function genMCC(g, rnd){
   ];
 }
 
+// Lymph Nodes organ (2026-09-14) — eight entities, one verbatim histology reuse (ndlbcl below,
+// registered as genCLymph — the identical disease this atlas's own Colon-organ clymph entity
+// already draws, just presenting nodally) and seven genuinely new generators, checked against
+// every existing primitive before writing new code per this project's own reuse-before-writing
+// standard: none of drawGlandRing/drawWhorl/drawKeratinPearl/drawCribriformMass/drawFrond/
+// drawSmallCellSheet/drawSingleFileCord fit follicular lymphoma's organized nodular architecture,
+// Burkitt's starry-sky pattern, Hodgkin's sparse-large-cell-in-mixed-background, or AITL's
+// arborizing vasculature — each gets real new drawing code below.
+
+// Follicular lymphoma: the one entity on this screen whose growth pattern is itself organized
+// into discrete follicles (Salaverria et al., 2023 — "at least a focal follicular growth
+// pattern"), not a diffuse sheet. Each follicle is a mixed centrocyte/centroblast population,
+// the real WHO-defined cytology.
+function genFL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const follicles = [
+    {cx:230, cy:180, rx:110, ry:95},
+    {cx:470, cy:150, rx:95,  ry:88},
+    {cx:610, cy:320, rx:105, ry:92},
+    {cx:280, cy:370, rx:90,  ry:80},
+  ];
+  follicles.forEach((f, i)=>{
+    g.appendChild(el('path', {d:blobPath(f.cx, f.cy, f.rx, f.ry, 0.14, 14, rnd, i*0.7), fill:HE.stroma, stroke:HE.stromaLn, 'stroke-width':1.5}));
+    for(let gx=-f.rx; gx<=f.rx; gx+=20){
+      for(let gy=-f.ry; gy<=f.ry; gy+=20){
+        if((gx/f.rx)**2 + (gy/f.ry)**2 > 0.82) continue;
+        const x = f.cx+gx+(rnd()*2-1)*4, y = f.cy+gy+(rnd()*2-1)*4;
+        const isCentroblast = rnd() < 0.28;
+        drawCell(g, x, y, isCentroblast?6.5+rnd():4.5+rnd()*1.5, isCentroblast?4.2+rnd()*0.8:3+rnd()*1.4, rnd, {});
+      }
+    }
+  });
+  return [
+    {key:'follicles',    x:follicles[0].cx - follicles[0].rx*0.55, y:follicles[0].cy - follicles[0].ry*0.7},
+    {key:'centrocytes',  x:follicles[1].cx, y:follicles[1].cy},
+    {key:'centroblasts', x:follicles[2].cx, y:follicles[2].cy - 20},
+  ];
+}
+
+// Mantle cell lymphoma: monotonous small-medium cells with angulated nuclei, drawn at the
+// mantle-zone growth pattern specifically (a paler, spared residual germinal center surrounded
+// by an expanded cuff of neoplastic cells) — the most diagnostically distinctive of this
+// disease's three real growth patterns, per Jares, Colomer & Campo, 2012.
+function genMCL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  const gc = {cx:400, cy:250, rx:80, ry:65};
+  g.appendChild(el('path', {d:blobPath(gc.cx, gc.cy, gc.rx, gc.ry, 0.12, 12, rnd, 0), fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1.2}));
+  for(let gx=-field.rx; gx<=field.rx; gx+=20){
+    for(let gy=-field.ry; gy<=field.ry; gy+=20){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*4, y = field.cy+gy+(rnd()*2-1)*4;
+      if(((x-gc.cx)/gc.rx)**2 + ((y-gc.cy)/gc.ry)**2 < 1.05) continue; // spared GC stays empty
+      drawCell(g, x, y, 5+rnd()*1.4, 3.6+rnd()*1.1, rnd, {});
+    }
+  }
+  return [
+    {key:'monotonous',  x:field.cx - field.rx*0.6, y:field.cy - field.ry*0.6},
+    {key:'mantlezone',  x:gc.cx + gc.rx*1.4, y:gc.cy},
+    {key:'residualgc',  x:gc.cx, y:gc.cy},
+  ];
+}
+
+// Burkitt lymphoma: a monotonous medium-cell sheet, defined by the "starry sky" pattern —
+// pale tingible-body macrophages scattered through the dark tumor cells — a direct visual
+// consequence of this disease's near-total (>95%) proliferation rate.
+function genBL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const sheet = {cx:400, cy:250, rx:335, ry:215};
+  g.appendChild(el('path', {d:blobPath(sheet.cx, sheet.cy, sheet.rx, sheet.ry, 0.08, 16, rnd, 0), fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1}));
+  const macrophages = [];
+  for(let i=0;i<11;i++){
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.82;
+    macrophages.push({x:sheet.cx+Math.cos(a)*sheet.rx*r, y:sheet.cy+Math.sin(a)*sheet.ry*r, r:16+rnd()*8});
+  }
+  for(let gx=-sheet.rx; gx<=sheet.rx; gx+=17){
+    for(let gy=-sheet.ry; gy<=sheet.ry; gy+=17){
+      if((gx/sheet.rx)**2 + (gy/sheet.ry)**2 > 0.85) continue;
+      const x = sheet.cx+gx+(rnd()*2-1)*3, y = sheet.cy+gy+(rnd()*2-1)*3;
+      if(macrophages.some(m=>((x-m.x)**2+(y-m.y)**2) < m.r*m.r)) continue;
+      drawCell(g, x, y, 4.6+rnd()*0.9, 3.4+rnd()*0.7, rnd, {});
+    }
+  }
+  macrophages.forEach(m=>{
+    g.appendChild(el('path', {d:blobPath(m.x, m.y, m.r, m.r*0.9, 0.22, 10, rnd, rnd()*3), fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1, opacity:0.85}));
+    for(let i=0;i<4;i++){
+      const a = rnd()*Math.PI*2, rr = rnd()*m.r*0.5;
+      g.appendChild(el('circle', {cx:m.x+Math.cos(a)*rr, cy:m.y+Math.sin(a)*rr, r:1.4+rnd()*1.6, fill:HE.debris, opacity:0.75}));
+    }
+  });
+  const mitoses = [{x:260,y:150},{x:520,y:190},{x:360,y:340}];
+  mitoses.forEach(m=>{
+    const rot = rnd()*180;
+    g.appendChild(el('rect', {x:m.x-1.4, y:m.y-5.5, width:2.8, height:11, fill:HE.nucDark, transform:`rotate(${rot.toFixed(0)} ${m.x} ${m.y})`}));
+    g.appendChild(el('rect', {x:m.x-1.4, y:m.y-5.5, width:2.8, height:11, fill:HE.nucDark, transform:`rotate(${(rot+70).toFixed(0)} ${m.x} ${m.y})`}));
+  });
+  return [
+    {key:'monotonous', x:sheet.cx - sheet.rx*0.6, y:sheet.cy - sheet.ry*0.7},
+    {key:'starrysky',  x:macrophages[0].x, y:macrophages[0].y},
+    {key:'mitoses',    x:mitoses[0].x, y:mitoses[0].y - 20},
+  ];
+}
+
+// Classical Hodgkin lymphoma: a mixed reactive background (small lymphocytes, eosinophils,
+// plasma cells) with rare, large, binucleate Reed-Sternberg cells — the inverse density of
+// every other lymphoma on this screen, since HRS cells make up only 0.1-10% of the tumor mass.
+function genCHL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  for(let gx=-field.rx; gx<=field.rx; gx+=15){
+    for(let gy=-field.ry; gy<=field.ry; gy+=15){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*5, y = field.cy+gy+(rnd()*2-1)*5;
+      const roll = rnd();
+      if(roll < 0.10){ // eosinophil — bilobed, brighter/redder
+        drawCell(g, x, y, 3.6, 2.2, rnd, {cytoFill:HE.vessel, nucFill:'#7a3030'});
+      } else if(roll < 0.16){ // plasma cell — eccentric nucleus, denser cytoplasm
+        drawCell(g, x, y, 3.4, 2.0, rnd, {cytoFill:HE.stroma, nucOffset:1.6});
+      } else { // small reactive lymphocyte
+        drawCell(g, x, y, 0, 2.4+rnd()*0.6, rnd, {});
+      }
+    }
+  }
+  const rs = [{x:270,y:200},{x:520,y:310}];
+  rs.forEach(c=>{
+    g.appendChild(el('ellipse', {cx:c.x, cy:c.y, rx:15, ry:13, fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':1.4}));
+    [-5.2, 5.2].forEach(dx=>{
+      g.appendChild(el('circle', {cx:c.x+dx, cy:c.y, r:6.2, fill:HE.nuc}));
+      g.appendChild(el('circle', {cx:c.x+dx, cy:c.y, r:2.4, fill:HE.nucDark}));
+    });
+  });
+  return [
+    {key:'rscells',         x:rs[0].x, y:rs[0].y - 24},
+    {key:'mixedbackground', x:field.cx + field.rx*0.4, y:field.cy - field.ry*0.5},
+    {key:'rarity',          x:rs[1].x, y:rs[1].y - 24},
+  ];
+}
+
+// AITL: a diffuse, polymorphous infiltrate of pale clear-cytoplasm T cells effaced through the
+// node, with the disease's own single most recognizable feature — branching, arborizing
+// high-endothelial venules — threading through it.
+function genAITL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  // arborizing vessels: a trunk with several branching segments
+  function branch(g, x, y, angle, len, depth, rnd){
+    if(depth <= 0 || len < 14) return;
+    const x2 = x + Math.cos(angle)*len, y2 = y + Math.sin(angle)*len;
+    g.appendChild(el('line', {x1:x, y1:y, x2:x2, y2:y2, stroke:HE.vesselDk, 'stroke-width':Math.max(1.4, depth*1.1), 'stroke-linecap':'round'}));
+    branch(g, x2, y2, angle + 0.5 + rnd()*0.3, len*0.72, depth-1, rnd);
+    branch(g, x2, y2, angle - 0.5 - rnd()*0.3, len*0.72, depth-1, rnd);
+  }
+  branch(g, 260, 400, -1.7, 90, 4, rnd);
+  branch(g, 560, 380, -2.1, 85, 4, rnd);
+  for(let gx=-field.rx; gx<=field.rx; gx+=16){
+    for(let gy=-field.ry; gy<=field.ry; gy+=16){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*4, y = field.cy+gy+(rnd()*2-1)*4;
+      const roll = rnd();
+      if(roll < 0.09){
+        drawCell(g, x, y, 3.6, 2.2, rnd, {cytoFill:HE.vessel, nucFill:'#7a3030'}); // eosinophil
+      } else if(roll < 0.15){
+        drawCell(g, x, y, 3.4, 2.0, rnd, {cytoFill:HE.stroma, nucOffset:1.6}); // plasma cell
+      } else {
+        drawCell(g, x, y, 4.6+rnd()*0.8, 3.2+rnd()*0.7, rnd, {cytoFill:HE.clear, cytoStroke:HE.clearLn}); // clear TFH-derived cell
+      }
+    }
+  }
+  return [
+    {key:'clearcells',   x:field.cx - field.rx*0.55, y:field.cy - field.ry*0.6},
+    {key:'arborizing',   x:300, y:340},
+    {key:'polymorphous', x:field.cx + field.rx*0.4, y:field.cy + field.ry*0.5},
+  ];
+}
+
+// Nodal marginal zone lymphoma: pale, monocytoid cells surrounding darker residual follicular
+// remnants — a biphasic pattern, and a diffuse rather than confined growth, matching this
+// entity's own genuinely unresolved relationship to the marginal zone it is named for.
+function genNMZL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1}));
+  const remnants = [{cx:290, cy:200, r:60}, {cx:520, cy:320, r:52}];
+  remnants.forEach(r=>{
+    g.appendChild(el('path', {d:blobPath(r.cx, r.cy, r.r, r.r*0.88, 0.16, 12, rnd, rnd()*3), fill:HE.stroma, stroke:HE.stromaLn, 'stroke-width':1.2}));
+    for(let gx=-r.r; gx<=r.r; gx+=16){
+      for(let gy=-r.r*0.88; gy<=r.r*0.88; gy+=16){
+        if((gx/r.r)**2 + (gy/(r.r*0.88))**2 > 0.85) continue;
+        drawCell(g, r.cx+gx+(rnd()*2-1)*3, r.cy+gy+(rnd()*2-1)*3, 4.2+rnd(), 3.2+rnd()*0.8, rnd, {});
+      }
+    }
+  });
+  for(let gx=-field.rx; gx<=field.rx; gx+=18){
+    for(let gy=-field.ry; gy<=field.ry; gy+=18){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*4, y = field.cy+gy+(rnd()*2-1)*4;
+      if(remnants.some(r=>((x-r.cx)**2+(y-r.cy)**2) < r.r*r.r*0.85)) continue;
+      drawCell(g, x, y, 5.4+rnd()*1.2, 3.4+rnd()*0.9, rnd, {cytoFill:HE.clear, cytoStroke:HE.clearLn});
+    }
+  }
+  return [
+    {key:'monocytoid',        x:field.cx, y:field.cy + 60},
+    {key:'residualfollicles', x:remnants[0].cx, y:remnants[0].cy},
+    {key:'diffusegrowth',     x:field.cx - field.rx*0.55, y:field.cy - field.ry*0.6},
+  ];
+}
+
+// PTCL-NOS: a pleomorphic, architecture-effacing infiltrate with no single defining cell type —
+// a diagnosis reached by exclusion, drawn the same way: varied small/medium/large atypical
+// cells with reactive eosinophils and plasma cells, no organized structure.
+function genPTCLN(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  for(let gx=-field.rx; gx<=field.rx; gx+=17){
+    for(let gy=-field.ry; gy<=field.ry; gy+=17){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*5, y = field.cy+gy+(rnd()*2-1)*5;
+      const roll = rnd();
+      if(roll < 0.08){
+        drawCell(g, x, y, 3.4, 2.1, rnd, {cytoFill:HE.vessel, nucFill:'#7a3030'}); // eosinophil
+      } else if(roll < 0.14){
+        drawCell(g, x, y, 3.2, 1.9, rnd, {cytoFill:HE.stroma, nucOffset:1.5}); // plasma cell
+      } else {
+        const sizeRoll = rnd();
+        const cytoR = sizeRoll<0.33 ? 3.4+rnd()*0.8 : sizeRoll<0.75 ? 5+rnd()*1 : 7+rnd()*1.6;
+        drawCell(g, x, y, cytoR, cytoR*0.62, rnd, {});
+      }
+    }
+  }
+  return [
+    {key:'pleomorphic', x:field.cx - field.rx*0.55, y:field.cy - field.ry*0.6},
+    {key:'effaced',     x:field.cx, y:field.cy},
+    {key:'reactive',    x:field.cx + field.rx*0.4, y:field.cy + field.ry*0.5},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -2680,6 +2931,14 @@ const GENERATORS = {
   bcc:    genBCC,
   scc:    genSCC,
   mcc:    genMCC,
+  fl:     genFL,
+  mcl:    genMCL,
+  bl:     genBL,
+  chl:    genCHL,
+  aitl:   genAITL,
+  ndlbcl: genCLymph,
+  nmzl:   genNMZL,
+  ptcln:  genPTCLN,
 };
 
 // ------------------------------------------------------------

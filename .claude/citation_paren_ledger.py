@@ -303,6 +303,57 @@ PREREGISTERED = {
             'not a case of one author publishing two dated works. TEST, not FIT: this span postdates '
             'the rule, arriving during this pass\'s own SCC TP53/CDKN2A citation correction.',
     },
+    # FOUR NEW SPANS, LYMPH NODES ORGAN (2026-09-14) — three more Fearon/Powell-shaped false
+    # cross-citation pairings, correctly SPENT, plus one more Travis/De Leo/Park-shaped aside,
+    # correctly KEPT. All four basis TEST: this organ postdates the rule.
+    'Su|1997|js/organs/lymphnodes.js:27': {
+        'side': 'SPENT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'lymphnodes.js:27 reads "...2008–2017 (Su et al., PLoS One, 2022) — an older but still '
+            'widely-cited 22% figure comes from a 1997 international cohort (Non-Hodgkin\'s Lymphoma '
+            'Classification Project, Blood, 1997)". Su\'s own parenthetical carries its real year, '
+            '2022, and closes before either "1997" appears — both belong to a separate, later-cited, '
+            'no-personal-author group ("Non-Hodgkin\'s Lymphoma Classification Project"). A '
+            'Su|1997 record would assert a paper Su did not write; the rule correctly spends it.',
+    },
+    'Okosun|2013|js/organs/lymphnodes.js:164': {
+        'side': 'SPENT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'lymphnodes.js:164 reads "...Okosun et al. (2014) and Bódor et al. (2013) — both larger, '
+            'multi-timepoint cohorts — found EZH2 predominantly clonal...". Okosun\'s own parenthetical '
+            'carries its real year, 2014, and closes before the later "2013", which belongs to the '
+            'separately-cited Bódor et al. An Okosun|2013 record would misdate Okosun\'s own paper by '
+            'a year and assign it Bódor\'s; the rule correctly spends it.',
+    },
+    'Iqbal|2025|js/organs/lymphnodes.js:491': {
+        'side': 'SPENT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'lymphnodes.js:491 (re-addressed 2026-09-14, byte-identical, was :489 — earlier edits in '
+            'this same commit, above this span, pushed it down by two lines) reads "...in the '
+            'founding cohort (Iqbal et al., 2014); a later, refined '
+            'cohort...first found 35% (22/63, Amador et al., Mod Pathol, 2025, PMID 39491745)". '
+            'Iqbal\'s own parenthetical carries its real year, 2014, and closes long before the later '
+            '"2025", which belongs to the separately-cited Amador et al. An Iqbal|2025 record would '
+            'assert a paper Iqbal did not write; the rule correctly spends it.',
+    },
+    'Swerdlow|2016|js/organs/lymphnodes.js:231': {
+        'side': 'KEPT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'lymphnodes.js:231 reads "Swerdlow et al. (WHO), Blood, 2016 (PMID 26980727)". A \')\' '
+            'does sit between the head and 2016 — but "(WHO)" carries no year (it names the '
+            'classification body, not a date), so the rule declines and the record stands: the '
+            'Travis/De Leo/Park aside shape again. Swerdlow et al., Blood, 2016, PMID 26980727 is '
+            'the real 2016 WHO lymphoid-neoplasm classification revision — a true record the rule '
+            'correctly keeps.',
+    },
 }
 # A FOURTH SHAPE WAS FOUND AND FIXED AT THE SOURCE, NOT SCORED (2026-09-13, lungs lusc/sclc authoring
 # pass) — lungs.js:348 originally read "...(diagnostic threshold, IHC markers) and the WHO 2015

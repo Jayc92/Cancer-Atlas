@@ -754,6 +754,9 @@ this section exists to make (folded into §2's checklist above as its new step 0
    | entry | organ | mechanism | source |
    |---|---|---|---|
    | prostate neuroendocrine (`pneuro`, AUTHORED 2026-09-12) | prostate | treatment-emergent lineage plasticity from pre-existing acinar adenocarcinoma | de Kouchkovsky et al., *The Prostate*, 2024, PMID 38173302 |
+   | nodal DLBCL (`ndlbcl`, AUTHORED 2026-09-14) | lymph nodes | GCB/ABC cell-of-origin classification is transcriptional (gene-expression-profiling), not a spatial finding | Sehn & Salles, *N Engl J Med*, 2021, PMID 33657296 |
+   | nodal marginal zone lymphoma (`nmzl`, AUTHORED 2026-09-14) | lymph nodes | real cell of origin "remains poorly defined... not necessarily marginal zone B cells," and the marginal zone itself is usually morphologically absent from lymph nodes at all | van den Brand & van Krieken, *Haematologica*, 2013, PMID 23813646 |
+   | peripheral T-cell lymphoma, NOS (`ptcln`, AUTHORED 2026-09-14) | lymph nodes | diagnosis of exclusion with no defined normal cellular counterpart for the majority of cases | Iqbal et al., *Blood*, 2014, PMID 24632715 |
 
 **What this DID resolve, on authoring — the de-novo-vs-treatment-emergent distinction this row
 used to flag as unchecked.** `pneuro`'s trunk note (TP53+RB1 concurrent loss, `TRUNK_PNEURO` in

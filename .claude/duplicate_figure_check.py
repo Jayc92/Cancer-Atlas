@@ -47,6 +47,11 @@ DECLARED = [
     # feature and naked nuclei 89% (33/37) at the other. Two real, independently-verified figures
     # from one cited paper, not one figure restated with drifted numbers.
     {'key': 'lungs|None|95%, 35, 37|89%, 33, 37', 'reason': 'false positive: two different SCLC histology features on the shared Ng & Li 2024 (n=37) cohort template — nuclear molding 95% (35/37) and naked nuclei 89% (33/37) — the same shared-citation-template class as the entries above, not a drifted duplicate', 'until': None},
+    # NINTH, READ 2026-09-14 (lymph nodes organ authoring pass). Two pairs, both the same
+    # shared-template class as every entry above.
+    {'key': 'lymphnodes|9p24.1 alteration (PD-L1/PD-L2)|2|3', 'reason': 'false positive: a bare "2"/"3" caught inside two different subtype-enrichment fractions on the Cervical (mixed-cellularity, 608/1,162) and Mediastinal (nodular-sclerosis, 741/1,136) hotspot notes — digits from unrelated fraction denominators, not a drifted figure', 'until': None},
+    {'key': 'lymphnodes|9p24.1 alteration (PD-L1/PD-L2)|52.3%, 608, 1,162, 24.2%|65.2%, 741, 1,136, 19.0%', 'reason': 'false positive: two different real subtype-predominance findings from the SAME Tharmaseelan et al. 2026 (N=3,715) cohort, sharing the branch-gene template — mixed-cellularity enrichment in cervical-only presentation (52.3% vs 24.2%) at this cancer\'s Cervical site, nodular-sclerosis enrichment in cervical+mediastinal presentation (65.2% vs 19.0%) at its Mediastinal site — not one figure restated', 'until': None},
+    {'key': 'lymphnodes|TP53 mutation|2017, 28819011|2015, 26022239', 'reason': 'false positive: two different real citations for two related but distinct MCL findings sharing this file\'s standard citation phrasing — Eskelund et al. (Blood, 2017)\'s diagnostic-cohort TP53 mutation frequency (Bone marrow site) and Delfau-Larue et al. (Blood, 2015)\'s CDKN2A-co-occurrence-with-TP53-deletion finding (Peripheral blood site note) — neither is the other\'s figure drifted', 'until': None},
     # EIGHTH, READ 2026-09-13 (breast idc/ilc authoring pass). Two REAL, genuinely different PIK3CA
     # mutation rates for two DIFFERENT histologic entities, both drawn from the SAME paper's own two
     # subgroup analyses (Ciriello et al., Cell, 2015, PMID 26451490): IDC-NST 33% (164/490) and ILC
