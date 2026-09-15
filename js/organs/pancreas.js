@@ -370,7 +370,7 @@ const HISTOLOGY_PNET = {
 // PMID 29259370, PMCID PMC5725289: "only one... out of the total 78 PACC cases sequenced in the
 // three studies"), a further ~11 cases from Furukawa et al., 2015 not independently re-cited here
 // — Al-Hader's other two pooled studies (Jiao and Chmielecki, the latter already cited below for
-// this entity's own branch pair) are NOT counted twice in this tally. Abraham et al. (Am J Surg
+// this entity's own branch pair) are NOT counted twice in this tally. Abraham et al. (Am J
 // Pathol, 2002, PMID 11891193, PMCID PMC1867188, N=21) was checked and REMOVED from this list: its
 // own Methods never tests KRAS at all, and its KRAS-wild-type sentence cites prior literature
 // rather than its own 21 tumors — a real attribution error this pass's own verification caught

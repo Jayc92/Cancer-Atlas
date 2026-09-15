@@ -303,7 +303,7 @@ const HISTOLOGY_IDC = {
 // is measured at 95% (120/127 by DNA+RNA; 100% of the 79 cases with DNA+RNA+protein all three,
 // Ciriello et al., Cell, 2015, PMID 26451490) and independently corroborated at ~90% by protein
 // loss alone across four citations this atlas's own research pass traced to Moll et al., Am J
-// Pathol, 1993 (PMID 8256857) as the founding source. CDH1 MUTATION SPECIFICALLY (DNA sequencing
+// Pathol, 1993 (PMID 8256859) as the founding source. CDH1 MUTATION SPECIFICALLY (DNA sequencing
 // only) is a separate, lower, real number: 63% (80/127, Ciriello 2015) and 65% (an independent
 // 413-tumor cohort, Desmedt et al., J Clin Oncol, 2016, PMID 26926684) — two different real
 // counts of two different things, not one figure restated. A real, direct contradiction in the
