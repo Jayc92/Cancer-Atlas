@@ -887,6 +887,10 @@ NON_INSTRUMENTS = {
                          'a /tmp path would be the scratch pointer this project stopped writing); asserts nothing, '
                          'prints facts, writes PNGs outside the tree — not a gate',
     'citations.json': 'the manifest — data, not a tool',
+    'mesh_sources_manifest.md': 'a record — seven raw mesh-source downloads audited and moved out '
+                                'of the tree to ~/cancer-atlas-mesh-sources/ (2026-09-15), per-file '
+                                'identity/license/verdict so the same search is never re-run from '
+                                'scratch; asserts nothing, ratchets nothing, no code to touch',
     'reach_unreached.json': 'machine-written tracked set — citation_reach_check.py is the only writer; the sorted multiset of '
                             'unreached citation-shaped spans keyed by content, so the count becomes an identity list whose '
                             'ADDED/REMOVED prints every run and whose staged diff is the acceptance (2026-09-10)',
