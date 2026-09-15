@@ -2344,3 +2344,153 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |  }
   | ]
 ==== END REFUSAL
+==== REFUSAL 2026-09-15T13:44:48Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 136 lines, last 12 below
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:242 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:158 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 48 flag(s) — 3 dated for re-read, 43 permanent with reason, 2 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/marrow.js|comment|That is why PV models as ONE trunk entry': js/organs/marrow.js:233 [comment] comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'layerSlab-census': 2 organ files build a cut block (['js/organs/marrow.js', 'js/organs/skin.js']); the skin.js "only one" claim needs a re-read — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 1 unscoped claims (1 absence, 0 false corpus universal), 41 universals flagged for a read, 6 world-scoped, 64 cancers indexed (DEFECT 1, EXEMPT-REASON-GIVEN 4, EXEMPT-SELF-EVIDENCING 2, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 11, OK-SEARCH 52, UNIVERSAL-UNRESOLVED 41, UNIVERSAL-WORLD-SCOPED 6), 2 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-15T13:44:49Z reason=exit=1 marker="DONE fraction_check:" tool=fraction_check.py
+     output 40 lines, last 12 below
+  |   MISMATCH? thyroid:333  stated ~60% vs 43/100 = 43.0%
+  |   MISMATCH? thyroid:333  stated ~60% vs 34/43 = 79.07%
+  |   MISMATCH? thyroid:350  stated ~60% vs 43/100 = 43.0%
+  |   COMMENT MISMATCH? thyroid:307  stated 43-60% vs 34/43 = 79.07%
+  | TWO-YEAR-RANGE strings (human confirms-deliberate): 3
+  |    breast:37  [('1988', '2016'), ('2017', '2021')]
+  |    skin:59  [('1976', '1984'), ('2000', '2010')]
+  |    thyroid:36  [('1974', '2013'), ('1994', '2013')]
+  | SIDECAR {"metrics": {"comment_blocks": 52, "comment_flags": 4, "cross_half_flags": 0, "cross_half_pairs": 18, "field_flags": 7, "field_strings": 173, "two_year_range": 3}, "name": "fraction_check", "ratchet": []}
+  |   fraction_check: 9 flag(s) — 0 dated for re-read, 8 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED fraction_check flag 'marrow|field|100%|22/490': marrow:283 stated 100% vs 22/490 = 4.49% — fix it, declare it with a reason, or date it for re-read
+  | DONE fraction_check: 173 field strings with fraction+percent, 7 mismatch flags; 52 comment blocks, 4 comment flags; 18 cross-half shared fractions, 0 unpaired; 1 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-15T13:44:50Z reason=exit=1 marker="DONE duplicate_figure_check:" tool=duplicate_figure_check.py
+     output 136 lines, last 12 below
+  |   DRIFT? thyroid:441 vs :443  (gene A='RAS mutation (H/K/N-RAS)' B='RAS mutation (H/K/N-RAS)')
+  |      window: involvement 18% of cases Besic Gazic 2013
+  |      A=['18%', '2013']  B=['13%', '2013']
+  |   duplicate_figure_check: 37 flag(s) — 0 dated for re-read, 31 permanent with reason, 6 problem(s)
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'marrow|CALR mutation (exon 9 insertion/deletion|55%, 35%|75%, 15%': marrow:253 vs :313 A=['55%', '35%'] B=['75%', '15%'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'marrow|Low-hypodiploid status (32–39 chromosome|35.8%, 29, 81|28.4%, 23, 81': marrow:495 vs :497 A=['35.8%', '29', '81'] B=['28.4%', '23', '81'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'marrow|None|2011, 21909114|2024, 39143224': marrow:377 vs :485 A=['2011', '21909114'] B=['2024', '39143224'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'marrow|None|559232|531464': marrow:134 vs :283 A=['559232'] B=['531464'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'marrow|t(11;14)(CCND1::IGH) translocation|39.1%|13%': marrow:451 vs :453 A=['39.1%'] B=['13%'] — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED duplicate_figure_check flag 'marrow|t(4;14)(FGFR3/NSD2::IGH) translocation|23%, 2022|19.2%, 2022': marrow:455 vs :457 A=['23%', '2022'] B=['19.2%', '2022'] — fix it, declare it with a reason, or date it for re-read
+  | 
+  | DONE duplicate_figure_check: 12996 same-file string pairs compared, 41 drift flags, 6 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-15T13:44:51Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 78 lines, last 12 below
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/skin.js:404 — Hodis|2012 is at 356 (offset -48, name+year), 3 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/skin.js:405 — Hodis|2012 is at 356 (offset -49, name+year), 3 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/skin.js:408 — Alexandrov|2013 is at 359 (offset -49, name+year), 1 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/skin.js:419 — Dermatol|2026 is at 382 (offset -37, name+year), 12 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/skin.js:419 — Asato|2024 is at 382 (offset -37, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/skin.js:431 — Asato|2024 is at 382 (offset -49, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/skin.js:431 — Gontijo|2026 is at 382 (offset -49, name+year), 2 occurrences in the file
+  |   OFF LINE: .claude/citations.json:backfill -> js/organs/skin.js:431 — Waqar|2022 is at 382 (offset -49, name+year), 1 occurrences in the file
+  |   OFFSETS BY FILE (a shared offset means ONE edit moved many pointers):
+  |     js/organs/skin.js: 43 off line, 14 distinct [-49, -48, -47, -45, -43, -42, -37, -35, -33, -24, -7, -6, 19, 27]
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 43, "pointer.identity_oracle": 272, "pointer.on_line": 226, "pointer.pointers_code": 507, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 652/652 hand-typed pointers resolve (file tracked, line in range), 507 code-and-instrument (floored) + 145 prose (reported, not floored) = 652 total, 226/272 with an author+year oracle land on their referent's line, 3 declared off-line, 43 flags, 42 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-15T13:45:30Z reason=exit=3 marker="DONE citation_reach_check:" tool=citation_reach_check.py
+     output 54 lines, last 12 below
+  |     declared 'etal-malformed-head:Li D' x1: colon.js:226
+  |     declared 'etal-malformed-head:Riihimäki' x23: colon.js:200, colon.js:207, colon.js:209, colon.js:211, colon.js:213, colon.js:359, colon.js:368, colon.js:370
+  |     declared 'etal-malformed-head:Wang K' x1: stomach.js:214
+  |     declared 'etal-malformed-head:— Pölönen' x1: marrow.js:485
+  |   bare-name-comma-year heads (4 distinct, NOT gated — held): Educ Program, KGCA, TCGA, Working Group
+  |   journal-adjacent-year heads (17 distinct, NOT gated — held): Acad Pathol, Blood, CRSLS, Cancer, Cell, Clin Cases, Clin Oncol, Comput Biol, Cureus, Curr Oncol, Gastric Cancer, NEJM ...
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:Bladé' at marrow.js:455 (1 span). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:Bührer' at marrow.js:345 (1 span). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:Döhner' at marrow.js:410, marrow.js:410, marrow.js:411, marrow.js:411 (4 spans). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:— Pölönen' at marrow.js:485 (1 span). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  | SIDECAR {"metrics": {"declared": 9, "gated_total": 42, "kind_bare_name_comma_year": 8, "kind_bare_name_year": 0, "kind_data_span_year": 143, "kind_etal_malformed_head": 42, "kind_etal_out_of_range": 0, "kind_etal_shadow": 3, "kind_journal_adjacent_year": 35, "kind_paren_shadow": 9, "kind_prose_year": 63, "kind_semicolon_shadow": 19, "kind_unlisted": 0, "problems": 4, "unreached_total": 322}, "name": "citation_reach_check", "ratchet": []}
+  | DONE citation_reach_check: 322 unreached spans (20 added, 0 removed vs the tracked set), 42 gated (9 declared), 4 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-15T13:45:31Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 116 lines, last 12 below
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von Domarus'
+  |               js/organs/skin.js:403, js/organs/skin.js:418, js/organs/skin.js:422
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:107
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Al Assaf' at js/organs/marrow.js:249 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Avet-Loiseau' at js/organs/marrow.js:460 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Exon Publications' at js/organs/marrow.js:396 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'de Botton' at js/organs/marrow.js:208, js/organs/marrow.js:210, js/organs/marrow.js:212 (3 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 50, "heads_total": 54, "imprecise": 8, "problems": 4, "records": 110, "well_formed": 42}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 54 multi-token heads on 110/1468 records, 8 declared imprecise, 42 declared well-formed, 4 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-15T13:45:32Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 29 lines, last 12 below
+  |   CONFIRMS  SPENT  basis TEST  Iqbal|2025|js/organs/lymphnodes.js:491
+  |   CONFIRMS  SPENT  basis TEST  Okosun|2013|js/organs/lymphnodes.js:164
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:173
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  SPENT  basis TEST  Su|1997|js/organs/lymphnodes.js:27
+  |   CONFIRMS  KEPT   basis TEST  Swerdlow|2016|js/organs/lymphnodes.js:231
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Inman|2021|js/organs/skin.js:490 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: STALE SCORING Inman|2021|js/organs/skin.js:539: scored CONFIRMS on the SPENT side, but no such span is in the population any more. If the sentence was rewritten or the record removed, delete the entry in the same commit — and if its basis was TEST, say so in the message, because deleting a TEST is deleting this rule's only real evidence.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 8, "kept": 6, "population": 13, "preregistered": 13, "problems": 2, "scored_confirms": 12, "scored_falsifies": 0, "spent": 7}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 13 paren spans (7 spent, 6 kept), 13 scored (8 as TEST, 4 as FIT and worth no support), 0 falsifying, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-15T13:55:24Z reason=exit=1 marker="==== DONE:" tool=regress.js
+     output 671 lines, last 12 below
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/assets/thumbs/marrow.png"
+  |  },
+  |  {
+  |   "type": "404",
+  |   "msg": "http://localhost:3057/favicon.ico"
+  |  },
+  |  {
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |  }
+  | ]
+==== END REFUSAL
+==== REFUSAL 2026-09-15T14:26:33Z reason=exit=1 marker="DONE pointer_check:" tool=pointer_check.py
+     output 38 lines, last 12 below
+  |   ok   classify(): a pointer inside a scanned .sh file is CODE
+  |   ok   classify(): a pointer inside a scanned .claude/*.md file is PROSE
+  |   ok   classify(): a pointer inside CLAUDE.md is PROSE, same as every other .md file
+  |   ok   the code/prose split of a synthetic 2-code/3-prose pointer list is 2/3, not a blend — removing one of the three prose entries would drop prose_n to 2 and leave code_n at 2 unchanged, which is the whole point: a documentation condensation cannot touch the floored metric
+  | SELFTEST PASS — fires on both dangling shapes, on a referent off its line, on one absent from the file, and on all five ways an exemption can be wrong; keeps floor-only pointers out of the identity count; refuses a substring match for a short surname and accepts a non-ASCII one; finds a far-away referent in real corpus bytes; classifies all four real origin shapes into CODE-OR-PROSE correctly, with a mixed-population fixture proving the split is real and not a blend; and takes its population from git rather than from the filesystem
+  |   DANGLING: .claude/citation_reach_check.py line 279 -> marrow.js:345
+  |   DANGLING: .claude/citation_reach_check.py line 284 -> marrow.js:410
+  |   DANGLING: .claude/citation_reach_check.py line 285 -> marrow.js:411
+  |   DANGLING: .claude/citation_reach_check.py line 289 -> marrow.js:455
+  |   DANGLING: .claude/citation_reach_check.py line 296 -> marrow.js:485
+  | SIDECAR {"metrics": {"pointer.exempt": 3, "pointer.flags": 5, "pointer.identity_oracle": 272, "pointer.on_line": 269, "pointer.pointers_code": 512, "pointer.pointers_prose": 145}, "name": "pointer_check", "ratchet": ["pointer.pointers_code", "pointer.identity_oracle"]}
+  | DONE pointer_check: 652/657 hand-typed pointers resolve (file tracked, line in range), 512 code-and-instrument (floored) + 145 prose (reported, not floored) = 657 total, 269/272 with an author+year oracle land on their referent's line, 3 declared off-line, 5 flags, 42 files scanned for prose pointers
+==== END REFUSAL
+==== REFUSAL 2026-09-15T14:40:27Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 31 lines, last 12 below
+  |   CONFIRMS  SPENT  basis TEST  Iqbal|2025|js/organs/lymphnodes.js:491
+  |   CONFIRMS  SPENT  basis TEST  Okosun|2013|js/organs/lymphnodes.js:164
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:173
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  SPENT  basis TEST  Su|1997|js/organs/lymphnodes.js:27
+  |   CONFIRMS  KEPT   basis TEST  Swerdlow|2016|js/organs/lymphnodes.js:231
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Grob|2022|js/organs/marrow.js:172 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: UNSCORED PAREN SPAN Hallek|2000|js/organs/marrow.js:411 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 9, "kept": 6, "population": 15, "preregistered": 13, "problems": 2, "scored_confirms": 13, "scored_falsifies": 0, "spent": 9}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 15 paren spans (9 spent, 6 kept), 13 scored (9 as TEST, 4 as FIT and worth no support), 0 falsifying, 2 problems
+==== END REFUSAL

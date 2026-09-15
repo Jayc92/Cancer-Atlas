@@ -287,12 +287,12 @@ PREREGISTERED = {
             'written "(WHO 2015)" the rule would delete a TRUE record, and nothing here prevents '
             'that. It is the span to re-read first when this rule next comes up.',
     },
-    'Inman|2021|js/organs/skin.js:539': {
+    'Inman|2021|js/organs/skin.js:490': {
         'side': 'SPENT',
         'basis': 'TEST',
         'scored': 'CONFIRMS',
         'reason':
-            'skin.js:539 reads \'~50% (Inman et al., 2018, "CDKN2A changes in nearly 50% of cases") '
+            'skin.js:490 reads \'~50% (Inman et al., 2018, "CDKN2A changes in nearly 50% of cases") '
             'to 39% (2021 pooled meta-analysis, PMID 34272401, "cell-cycle-checkpoint control... '
             'occurred in 39% of tumors...")\'. Inman\'s own parenthetical carries a year (2018) and '
             'closes before the later "2021" appears in a second, separate parenthetical — the rule '
@@ -353,6 +353,32 @@ PREREGISTERED = {
             'Travis/De Leo/Park aside shape again. Swerdlow et al., Blood, 2016, PMID 26980727 is '
             'the real 2016 WHO lymphoid-neoplasm classification revision — a true record the rule '
             'correctly keeps.',
+    },
+    # TWO NEW SPANS, MARROW ORGAN (2026-09-15) — both the same Fearon/Powell/Su-shaped false
+    # cross-citation pairing, correctly SPENT. Basis TEST: this organ postdates the rule.
+    'Grob|2022|js/organs/marrow.js:172': {
+        'side': 'SPENT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'marrow.js:172 reads \'...entity" (Grob et al., Blood, 2022, PMID 35108372). Note this '
+            'category is NOT the same as a WHO-defining AML entity in the 2022 WHO classification '
+            'specifically...\'. Grob\'s own parenthetical carries its real year, 2022, and closes '
+            'before the later, unrelated bare "2022" appears — that second occurrence names the WHO '
+            'classification\'s own revision year, not a citation, and has no author of its own. A '
+            'Grob-reaching-forward record would misattribute the WHO-classification-year mention to '
+            'Grob; the rule correctly spends the head at its own closed clause.',
+    },
+    'Hallek|2000|js/organs/marrow.js:411': {
+        'side': 'SPENT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'marrow.js:411 reads \'...(Hallek, 2025)\', note:\'...median survival 79 months (Döhner '
+            'et al., 2000)...\'. Hallek\'s own parenthetical (in the ccf field) carries its real '
+            'year, 2025, and closes before the later "2000" appears in the note field\'s own, '
+            'separately-cited Döhner et al. group. A Hallek|2000 record would assert a paper Hallek '
+            'did not write and steal Döhner\'s own year; the rule correctly spends it.',
     },
 }
 # A FOURTH SHAPE WAS FOUND AND FIXED AT THE SOURCE, NOT SCORED (2026-09-13, lungs lusc/sclc authoring

@@ -2058,7 +2058,7 @@
    "userFacing": true,
    "refs": [
     "js/organs/skin.js:46",
-    "js/organs/skin.js:400"
+    "js/organs/skin.js:351"
    ],
    "pmid": "19380664",
    "resolvedTitle": "Acral lentiginous melanoma: incidence and survival patterns in the United States, 1986-2005.",
@@ -2194,7 +2194,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:247"
+    "js/organs/skin.js:198"
    ],
    "pubmedCount": 22,
    "pmid": "18435612",
@@ -2218,7 +2218,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:249"
+    "js/organs/skin.js:200"
    ],
    "pmid": "24278043",
    "resolvedTitle": "Skin melanocytes: biology and development.",
@@ -2241,7 +2241,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:252"
+    "js/organs/skin.js:203"
    ],
    "pubmedCount": 2,
    "pmid": "33348690",
@@ -2264,8 +2264,8 @@
    "status": "entry-time-identifier",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:297",
-    "js/organs/skin.js:400"
+    "js/organs/skin.js:291",
+    "js/organs/skin.js:351"
    ],
    "pmid": "22180178",
    "resolvedTitle": "NRAS mutation status is an independent prognostic factor in metastatic melanoma.",
@@ -2284,8 +2284,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:300",
-    "js/organs/skin.js:400"
+    "js/organs/skin.js:251",
+    "js/organs/skin.js:351"
    ],
    "pmid": "16291983",
    "resolvedTitle": "Distinct sets of genetic alterations in melanoma.",
@@ -2313,8 +2313,8 @@
    "status": "still-zero-pass",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:304",
-    "js/organs/skin.js:400"
+    "js/organs/skin.js:298",
+    "js/organs/skin.js:351"
    ],
    "candidates": [
     {
@@ -2339,8 +2339,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:315",
-    "js/organs/skin.js:391"
+    "js/organs/skin.js:342",
+    "js/organs/skin.js:342"
    ],
    "pmid": "15254054",
    "resolvedTitle": "Incidence proportions of brain metastases in patients diagnosed (1973 to 2001) in the Metropolitan Detroit Cancer Surveillance System.",
@@ -2363,7 +2363,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:332"
+    "js/organs/skin.js:351"
    ],
    "pmid": "16609049",
    "resolvedTitle": "Genetic alterations in signaling pathways in melanoma.",
@@ -2383,7 +2383,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:380"
+    "js/organs/skin.js:373"
    ],
    "pubmedCount": 10,
    "pmid": "29028110",
@@ -2407,9 +2407,9 @@
    "status": "ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:391",
-    "js/organs/skin.js:393",
-    "js/organs/skin.js:401"
+    "js/organs/skin.js:358",
+    "js/organs/skin.js:358",
+    "js/organs/skin.js:358"
    ],
    "candidates": [
     "26559571",
@@ -2423,9 +2423,9 @@
    "status": "still-zero-pass",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:391",
-    "js/organs/skin.js:393",
-    "js/organs/skin.js:395"
+    "js/organs/skin.js:348",
+    "js/organs/skin.js:348",
+    "js/organs/skin.js:348"
    ],
    "pubmedCount": 8
   },
@@ -2436,7 +2436,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:391"
+    "js/organs/skin.js:342"
    ],
    "candidates": [
     {
@@ -2461,7 +2461,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:391"
+    "js/organs/skin.js:342"
    ],
    "pmid": "20960525",
    "resolvedTitle": "Prognostic factors for survival in melanoma patients with brain metastases.",
@@ -2482,7 +2482,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:393"
+    "js/organs/skin.js:344"
    ],
    "pmid": "15009714",
    "resolvedTitle": "Genetic interaction between NRAS and BRAF mutations and PTEN/MMAC1 inactivation in melanoma.",
@@ -2503,8 +2503,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:393",
-    "js/organs/skin.js:400"
+    "js/organs/skin.js:351",
+    "js/organs/skin.js:351"
    ],
    "pmid": "19282848",
    "resolvedTitle": "Braf(V600E) cooperates with Pten loss to induce metastatic melanoma.",
@@ -2525,7 +2525,7 @@
    "status": "still-saturated",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:393"
+    "js/organs/skin.js:344"
    ],
    "candidates": [
     {
@@ -2550,7 +2550,7 @@
    "status": "ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:397"
+    "js/organs/skin.js:373"
    ],
    "candidates": [
     "29028110",
@@ -2568,7 +2568,7 @@
    "status": "ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:400"
+    "js/organs/skin.js:351"
    ],
    "candidates": [
     "12704387",
@@ -2586,7 +2586,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:400"
+    "js/organs/skin.js:351"
    ],
    "pmid": "28783719",
    "resolvedTitle": "Tumours with class 3 BRAF mutants are sensitive to the inhibition of activated RAS.",
@@ -2611,7 +2611,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:400"
+    "js/organs/skin.js:351"
    ],
    "pmid": "21107323",
    "resolvedTitle": "Melanomas acquire resistance to B-RAF(V600E) inhibition by RTK or N-RAS upregulation.",
@@ -2636,7 +2636,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:401"
+    "js/organs/skin.js:352"
    ],
    "candidates": [
     {
@@ -2665,7 +2665,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:401"
+    "js/organs/skin.js:352"
    ],
    "pubmedCount": 562,
    "candidates": [
@@ -2694,7 +2694,7 @@
    "status": "still-ambiguous",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:401"
+    "js/organs/skin.js:352"
    ],
    "candidates": [
     {
@@ -2723,7 +2723,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:404"
+    "js/organs/skin.js:355"
    ],
    "pmid": "22842228",
    "resolvedTitle": "Exome sequencing identifies recurrent somatic RAC1 mutations in melanoma.",
@@ -2746,7 +2746,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:404"
+    "js/organs/skin.js:355"
    ],
    "pmid": "22842228",
    "resolvedTitle": "Exome sequencing identifies recurrent somatic RAC1 mutations in melanoma.",
@@ -2770,8 +2770,8 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:404",
-    "js/organs/skin.js:405"
+    "js/organs/skin.js:356",
+    "js/organs/skin.js:356"
    ],
    "pmid": "22817889",
    "resolvedTitle": "A landscape of driver mutations in melanoma.",
@@ -2792,7 +2792,7 @@
    "status": "backfilled",
    "userFacing": true,
    "refs": [
-    "js/organs/skin.js:408"
+    "js/organs/skin.js:359"
    ],
    "pubmedCount": 79,
    "pmid": "23945592",
@@ -2814,7 +2814,7 @@
    "status": "parse-noise",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:419"
+    "js/organs/skin.js:382"
    ]
   },
   {
@@ -2824,8 +2824,8 @@
    "status": "still-zero-pass",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:419",
-    "js/organs/skin.js:431"
+    "js/organs/skin.js:382",
+    "js/organs/skin.js:382"
    ],
    "candidates": [
     {
@@ -2850,7 +2850,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:431"
+    "js/organs/skin.js:382"
    ],
    "pmid": "42066632",
    "doi": "10.1016/j.abd.2026.501349",
@@ -2874,7 +2874,7 @@
    "status": "backfilled",
    "userFacing": false,
    "refs": [
-    "js/organs/skin.js:431"
+    "js/organs/skin.js:382"
    ],
    "pmid": "35875272",
    "resolvedTitle": "Recognizing Histopathological Simulators of Melanoma to Avoid Misdiagnosis.",

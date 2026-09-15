@@ -396,6 +396,22 @@ export const MARGIN_STATUS = Object.freeze({
   ndlbcl: { status: 'uncharacterised', ref: 'checked 2026-09-14 — same gap as this atlas\'s own Colon-organ primary colonic lymphoma entity (clymph), for the same disease; no gross-margin finding found for the nodal presentation either' },
   nmzl:   { status: 'uncharacterised', ref: 'checked 2026-09-14 — sources describe a diffuse, disseminated infiltration pattern; no gross-margin finding found' },
   ptcln:  { status: 'uncharacterised', ref: 'checked 2026-09-14 — a diagnosis of exclusion with no single defining gross or histologic pattern; no gross-margin finding found' },
+  // Marrow organ, all ten entities (2026-09-15): the same structural reason as Lymph Nodes'
+  // own eight entities above — "margin" as a gross-pathology concept describes a discrete,
+  // resectable solid mass's boundary against surrounding tissue, and every one of this organ's
+  // entities is a systemic marrow disease (or, for AML/CML, occasionally a discrete myeloid-
+  // sarcoma mass at an EXTRAmedullary site, disclosed in that entity's own REGIONS notes rather
+  // than characterized here). Checked per entity during authoring, not defaulted as a batch.
+  aml:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse marrow replacement by a blast infiltrate, not a gross margin; myeloid sarcoma, where it occurs, is disclosed at REGIONS level rather than characterized here' },
+  apl:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse marrow replacement by abnormal promyelocytes, not a gross margin' },
+  cml:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse granulocytic marrow hyperplasia, not a gross margin' },
+  mds:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe cross-lineage marrow dysplasia, not a gross margin; this disease has no established mass-forming presentation at all' },
+  et:     { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe a megakaryocyte-proliferative marrow, not a gross margin' },
+  pv:     { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe panmyelosis, a diffuse trilineage marrow proliferation, not a gross margin' },
+  pmf:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe progressive marrow fibrosis, a real, graded architectural finding (MF-0 through MF-3) that is not a gross margin in this axis\'s sense' },
+  mm:     { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse marrow replacement by plasma-cell sheets; discrete plasmacytomas, where they occur, are disclosed at REGIONS level (extramedullary vs. paraskeletal) rather than characterized here' },
+  cll:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse blood/marrow/nodal infiltration by small lymphocytes, not a gross margin' },
+  all:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse marrow replacement by a lymphoblast infiltrate, not a gross margin' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -576,6 +592,21 @@ export const GROWTH_STATUS = Object.freeze({
   ndlbcl: { status: 'uncharacterised', ref: 'checked 2026-09-14 — same gap as this atlas\'s own Colon-organ clymph entity for the same disease' },
   nmzl:   { status: 'uncharacterised', ref: 'checked 2026-09-14 — "disseminated disease" (Traverse-Glehen et al., 2006) describes distribution, not one of this axis\'s wired mass-shape categories' },
   ptcln:  { status: 'uncharacterised', ref: 'checked 2026-09-14 — a diagnosis of exclusion with no single defining growth pattern reported' },
+  // Marrow organ, all ten entities (2026-09-15): same reasoning as Lymph Nodes above — this
+  // axis's four wired mass-shape categories (diffuse/infiltrative/exophytic/multifocal) describe
+  // a discrete solid mass's own growth pattern, and none of this organ's entities forms one at
+  // the primary-disease level. PMF's real, graded fibrosis (MF-0 through MF-3) is architecture,
+  // not a wired mass-shape category, and is disclosed at histology level instead.
+  aml:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
+  apl:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
+  cml:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
+  mds:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders; this disease has no mass-forming presentation at all' },
+  et:     { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
+  pv:     { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
+  pmf:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — this cancer\'s real, graded fibrosis (MF-0 through MF-3, Thiele et al., 2005, PMID 16079113) is architecture, not one of this axis\'s wired mass-shape categories; disclosed at histology level instead' },
+  mm:     { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
+  cll:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
+  all:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -840,6 +871,21 @@ export const EXTENT_STATUS = Object.freeze({
   ndlbcl: { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage — the same gap as this atlas\'s own Colon-organ clymph entity for the same disease', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity' },
   nmzl:   { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity; real, disclosed cross-cohort stage disagreement (41-59% vs 76% stage III/IV) is in this cancer\'s own trunk note instead' },
   ptcln:  { status: 'uncharacterised', site: 'lymph nodes', uncharacterisedReason: 'staged by the Ann Arbor system, not SEER Combined Summary Stage', ref: 'checked 2026-09-14 — no SEER Summary Stage distribution exists for this entity; ~70% advanced-stage at presentation is real and disclosed in this cancer\'s own trunk note instead (Broccoli & Zinzani, 2017)' },
+  // Marrow organ, all ten entities (2026-09-15): none is staged by SEER Combined Summary Stage
+  // (localized/regional/distant) — each has its own real, disease-specific staging system
+  // instead (Rai/Binet for CLL, ISS/R-ISS for myeloma, dedicated risk-stratification models for
+  // the MPNs, blast-percentage/genetic-risk classification for the acute leukemias) — the same
+  // structural incompatibility already established for this organ's own Lymph Nodes sibling.
+  aml:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic blood/marrow disease with no anatomic localized/regional/distant distinction; risk-stratified by cytogenetics/molecular genetics (ELN criteria) instead', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
+  apl:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic blood/marrow disease with no anatomic localized/regional/distant distinction', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
+  cml:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic blood/marrow disease staged by disease phase (chronic/accelerated/blast), not anatomic extent', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
+  mds:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic marrow disease risk-stratified by IPSS/IPSS-R (blast percentage, cytogenetics, cytopenias), not anatomic extent', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
+  et:     { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic marrow disease with no anatomic localized/regional/distant distinction', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
+  pv:     { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic marrow disease with no anatomic localized/regional/distant distinction', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
+  pmf:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic marrow disease risk-stratified by dedicated prognostic models (MIPSS70, MYSEC-PM), not anatomic extent — disclosed in this cancer\'s own trunk note instead', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
+  mm:     { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'staged by the International Staging System (ISS/R-ISS: beta-2-microglobulin, albumin, LDH, cytogenetics), not anatomic extent', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity; real extramedullary-vs-paraskeletal site data is disclosed in this cancer\'s own REGIONS notes instead' },
+  cll:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'staged by the Rai or Binet clinical staging systems (lymphocytosis, nodes, organomegaly, cytopenias), not anatomic extent', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
+  all:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic blood/marrow disease with no anatomic localized/regional/distant distinction; risk-stratified by genetic subtype and age instead', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity; real extramedullary sanctuary-site data (CNS, testis) is disclosed in this cancer\'s own REGIONS notes instead' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';
@@ -991,6 +1037,12 @@ export const ORIGIN_HOTSPOT = Object.freeze({
   bladder: 0,  // Bladder wall (dome) — its text carries the lateral-wall origin fact
   thyroid: 1,  // Right lobe — its text carries the follicular-cell origin
   lymphnodes: 0, // Follicles — germinal-center/mantle-zone B-cell origin for most of this organ's entities
+  marrow: 2,   // Perivascular / sinusoidal niche — hematopoietic stem/progenitor cells reside
+               // here per current evidence (Morrison & Scadden, Nature, 2014, PMID 24429631);
+               // every entry's own real developmental origin is a §9 non-spatial fact stated in
+               // its own trunk note (phaseC_design.md §9), not an ORIGIN_HOTSPOT_ENTRY override —
+               // see that registry's own running table for why none of this organ's ten entities
+               // needs one.
 });
 
 // PER-ENTRY OVERRIDE (2026-09-11, user-directed fix to a live origin-collapse contradiction found

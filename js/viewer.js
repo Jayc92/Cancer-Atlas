@@ -376,6 +376,65 @@ export function applyTissueMottleVertexColors(geometry, seed, opts){
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 }
 
+// One layer slab: a box whose top/bottom surfaces follow the interface functions. Faces get
+// their OWN vertices (top grid, bottom grid, four wall strips) so computeVertexNormals keeps
+// the cut edges crisp instead of smearing normals around the 90-degree corner — the walls ARE
+// the cut faces this whole representation exists to show. Extracted from js/organs/skin.js
+// (2026-09-15, Marrow pass) into this shared module so a second schematic-cross-section organ
+// doesn't duplicate a 50-line geometry-building function — skin.js's own SX/SZ block-footprint
+// constants are now passed in explicitly (sx, sz) rather than closed over, since two different
+// organs building two different-sized blocks cannot share one hardcoded footprint.
+export function layerSlab(fTop, fBottom, color, roughness, sx, sz){
+  const NX = 44, NZ = 32;
+  const hx = sx/2, hz = sz/2;
+  const positions = [], indices = [];
+  const gridAt = (fn)=>{ // returns starting vertex index of an NX+1 x NZ+1 grid
+    const start = positions.length/3;
+    for(let i=0;i<=NX;i++) for(let j=0;j<=NZ;j++){
+      const x = -hx + i/NX*sx, z = -hz + j/NZ*sz;
+      positions.push(x, fn(x,z), z);
+    }
+    return start;
+  };
+  const quad = (a,b,c,d)=>{ indices.push(a,b,c, b,d,c); };
+  // top surface (up-facing winding), bottom (down-facing)
+  const t = gridAt(fTop);
+  for(let i=0;i<NX;i++) for(let j=0;j<NZ;j++){
+    const a = t+i*(NZ+1)+j;
+    quad(a+NZ+1, a, a+NZ+2, a+1);
+  }
+  const b = gridAt(fBottom);
+  for(let i=0;i<NX;i++) for(let j=0;j<NZ;j++){
+    const a = b+i*(NZ+1)+j;
+    quad(a, a+NZ+1, a+1, a+NZ+2);
+  }
+  // four wall strips, each with fresh vertices sampled along its rim
+  const wall = (samples, outward)=>{
+    const start = positions.length/3;
+    samples.forEach(([x,z])=>{ positions.push(x, fTop(x,z), z); positions.push(x, fBottom(x,z), z); });
+    for(let k=0;k<samples.length-1;k++){
+      const a = start+k*2;
+      if(outward) indices.push(a, a+1, a+2, a+1, a+3, a+2);
+      else        indices.push(a, a+2, a+1, a+1, a+2, a+3);
+    }
+  };
+  const xs = Array.from({length:NX+1}, (_,i)=>-hx + i/NX*sx);
+  const zs = Array.from({length:NZ+1}, (_,j)=>-hz + j/NZ*sz);
+  wall(zs.map(z=>[ hx, z]), false);  // +x wall
+  wall(zs.map(z=>[-hx, z]), true);   // -x wall
+  wall(xs.map(x=>[x,  hz]), true);   // +z wall (the front cut face the hotspots sit on)
+  wall(xs.map(x=>[x, -hz]), false);  // -z wall
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.setIndex(indices);
+  geo.computeVertexNormals();
+  // Same material treatment as every organ since the clip-fix pass: MeshPhysicalMaterial for
+  // its specularIntensity control (MeshStandardMaterial has none), 0.15 per the approved
+  // Blender-verified material model.
+  const mat = new THREE.MeshPhysicalMaterial({ color, roughness, metalness:0.0, specularIntensity:0.15 });
+  return new THREE.Mesh(geo, mat);
+}
+
 export function makeViewer(container, opts){
   const scene = new THREE.Scene();
   // Near plane 0.01, not 0.1. applyFraming() slides the camera to (boundingRadius · padding)

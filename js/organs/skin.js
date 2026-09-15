@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { cssVar } from '../viewer.js';
+import { cssVar, layerSlab } from '../viewer.js';
 
 // active:true. Alias collision check (same convention as every prior organ): no other organ's
 // aliases contain "skin", "melanoma", "cutaneous", "mole", or "integument" (checked against
@@ -138,73 +138,24 @@ function dhY(x, z){
        + 0.00022*Math.sin(z*1500 + 1.0);
 }
 
-// One layer slab: a box whose top/bottom surfaces follow the interface functions. Faces get
-// their OWN vertices (top grid, bottom grid, four wall strips) so computeVertexNormals keeps
-// the cut edges crisp instead of smearing normals around the 90-degree corner — the walls ARE
-// the cut faces this whole representation exists to show.
-function layerSlab(fTop, fBottom, color, roughness){
-  const NX = 44, NZ = 32;
-  const hx = SX/2, hz = SZ/2;
-  const positions = [], indices = [];
-  const gridAt = (fn)=>{ // returns starting vertex index of an NX+1 x NZ+1 grid
-    const start = positions.length/3;
-    for(let i=0;i<=NX;i++) for(let j=0;j<=NZ;j++){
-      const x = -hx + i/NX*SX, z = -hz + j/NZ*SZ;
-      positions.push(x, fn(x,z), z);
-    }
-    return start;
-  };
-  const quad = (a,b,c,d)=>{ indices.push(a,b,c, b,d,c); };
-  // top surface (up-facing winding), bottom (down-facing)
-  const t = gridAt(fTop);
-  for(let i=0;i<NX;i++) for(let j=0;j<NZ;j++){
-    const a = t+i*(NZ+1)+j;
-    quad(a+NZ+1, a, a+NZ+2, a+1);
-  }
-  const b = gridAt(fBottom);
-  for(let i=0;i<NX;i++) for(let j=0;j<NZ;j++){
-    const a = b+i*(NZ+1)+j;
-    quad(a, a+NZ+1, a+1, a+NZ+2);
-  }
-  // four wall strips, each with fresh vertices sampled along its rim
-  const wall = (samples, outward)=>{
-    const start = positions.length/3;
-    samples.forEach(([x,z])=>{ positions.push(x, fTop(x,z), z); positions.push(x, fBottom(x,z), z); });
-    for(let k=0;k<samples.length-1;k++){
-      const a = start+k*2;
-      if(outward) indices.push(a, a+1, a+2, a+1, a+3, a+2);
-      else        indices.push(a, a+2, a+1, a+1, a+2, a+3);
-    }
-  };
-  const xs = Array.from({length:NX+1}, (_,i)=>-hx + i/NX*SX);
-  const zs = Array.from({length:NZ+1}, (_,j)=>-hz + j/NZ*SZ);
-  wall(zs.map(z=>[ hx, z]), false);  // +x wall
-  wall(zs.map(z=>[-hx, z]), true);   // -x wall
-  wall(xs.map(x=>[x,  hz]), true);   // +z wall (the front cut face the hotspots sit on)
-  wall(xs.map(x=>[x, -hz]), false);  // -z wall
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geo.setIndex(indices);
-  geo.computeVertexNormals();
-  // Same material treatment as every organ since the clip-fix pass: MeshPhysicalMaterial for
-  // its specularIntensity control (MeshStandardMaterial has none), 0.15 per the approved
-  // Blender-verified material model.
-  const mat = new THREE.MeshPhysicalMaterial({ color, roughness, metalness:0.0, specularIntensity:0.15 });
-  return new THREE.Mesh(geo, mat);
-}
+// layerSlab (the shared box-with-follow-surface-tops primitive) now lives in js/viewer.js,
+// imported above — extracted there during the Marrow pass (2026-09-15) so a second schematic-
+// cross-section organ doesn't duplicate it. Its old signature took no sx/sz (closing over this
+// file's own SX/SZ module constants); the shared version takes them explicitly, so every call
+// site here now passes SX, SZ as its last two arguments.
 
 export function buildSkinMesh(){
   const group = new THREE.Group();
   // epidermis (surface tone), pigmented basal band, dermis (verified white/ivory — NOT the
   // conventional pink), hypodermis (verified light-yellow fat)
-  group.add(layerSlab(surfY, (x,z)=>dejY(x,z),        0x9a6a4c, 0.62)); // epidermis
-  group.add(layerSlab((x,z)=>dejY(x,z), (x,z)=>dejY(x,z)-BAND, 0x5e3d28, 0.66)); // basal band
+  group.add(layerSlab(surfY, (x,z)=>dejY(x,z),        0x9a6a4c, 0.62, SX, SZ)); // epidermis
+  group.add(layerSlab((x,z)=>dejY(x,z), (x,z)=>dejY(x,z)-BAND, 0x5e3d28, 0.66, SX, SZ)); // basal band
   // dermis base is pushed well toward neutral — the warm key/ambient (0xffddb0/0xfff1e0)
   // suppress blue hard in this legacy pipeline, and the first render's 0xded2bd sampled as
   // outright TAN (195,167,130) on the cut face, which contradicts the verified "white dermis";
   // re-sampled after this change to confirm an ivory read without blown-white pixels.
-  group.add(layerSlab((x,z)=>dejY(x,z)-BAND, dhY,     0xf2eee6, 0.58)); // dermis
-  group.add(layerSlab(dhY, ()=>Y_BOT,                 0xd9c06a, 0.55)); // hypodermis
+  group.add(layerSlab((x,z)=>dejY(x,z)-BAND, dhY,     0xf2eee6, 0.58, SX, SZ)); // dermis
+  group.add(layerSlab(dhY, ()=>Y_BOT,                 0xd9c06a, 0.55, SX, SZ)); // hypodermis
 
   // Hair follicles + shafts — two, interior (not bisected by the cut faces), each a tilted
   // tube from a bulb in the deep dermis up through the epidermis, with a free shaft above the
@@ -254,7 +205,7 @@ export const organDetail = {
   // 5-10% Jebbawi; one-sixth Perez-Sanchez 2018; ~2.7kg SEER) — no percentage is claimed.
   // Sex-differing primary-site epidemiology (the marker explanation): CONCORD-3 (Di Carlo
   // et al., Eur J Cancer, 2025), verbatim range in the markerSpec comment above.
-  desc:'Skin is the body’s largest organ — around 1.5 to 2 square meters of it — and the only one this atlas shows as a cut block rather than a whole shape, because skin covers the whole body rather than sitting in one place. From the top down: the epidermis, a thin avascular sheet of keratinized stratified squamous epithelium, constantly renewed from its deepest stratum; the dermis, a thick collagen-and-elastin connective layer carrying the vessels, nerves, glands and hair follicles (on cut section it is white — the pink of most diagrams is convention, not observation); and the hypodermis, an insulating, shock-absorbing layer of fat. Melanocytes — the cells melanoma arises from — live in the epidermis’s basal layer, roughly one for every ten basal keratinocytes, handing melanin to their neighbors as built-in UV shielding. Their density is essentially the same in everyone: differences in skin tone come from how much melanin the cells produce and package, not how many of them there are — the surface tone shown here is one point on that real continuum. In men, melanoma arises most often on the trunk; in women, on the lower limbs and hips (CONCORD-3, 59 countries) — which is why the body-screen marker for this organ sits on the chest of the male figure and the lower leg of the female one. One note about this 3D model itself: it is a schematic cross-section built to published descriptions, and neither its overall size nor its layer proportions are to scale — the thicknesses are exaggerated for legibility, where a real epidermis measures 0.03 to 0.6 mm across body sites and the whole skin averages only ~2 mm.',
+  desc:'Skin is the body’s largest organ — around 1.5 to 2 square meters of it — and one of two organs this atlas shows as a cut block rather than a whole shape (the other is Marrow, a distributed tissue running through bone), because skin covers the whole body rather than sitting in one place. From the top down: the epidermis, a thin avascular sheet of keratinized stratified squamous epithelium, constantly renewed from its deepest stratum; the dermis, a thick collagen-and-elastin connective layer carrying the vessels, nerves, glands and hair follicles (on cut section it is white — the pink of most diagrams is convention, not observation); and the hypodermis, an insulating, shock-absorbing layer of fat. Melanocytes — the cells melanoma arises from — live in the epidermis’s basal layer, roughly one for every ten basal keratinocytes, handing melanin to their neighbors as built-in UV shielding. Their density is essentially the same in everyone: differences in skin tone come from how much melanin the cells produce and package, not how many of them there are — the surface tone shown here is one point on that real continuum. In men, melanoma arises most often on the trunk; in women, on the lower limbs and hips (CONCORD-3, 59 countries) — which is why the body-screen marker for this organ sits on the chest of the male figure and the lower leg of the female one. One note about this 3D model itself: it is a schematic cross-section built to published descriptions, and neither its overall size nor its layer proportions are to scale — the thicknesses are exaggerated for legibility, where a real epidermis measures 0.03 to 0.6 mm across body sites and the whole skin averages only ~2 mm.',
   buildMesh: buildSkinMesh,
   // Real meters (~3cm block). pos-anchored hotspots put it through the frameContents/scaled-
   // marker/no-glow-light path (that branch keys on pos-vs-dir, not mesh provenance) — correct

@@ -378,6 +378,66 @@
    2
   ],
   [
+   "marrow.js|data-span-year||2023",
+   2
+  ],
+  [
+   "marrow.js|data-span-year||2024",
+   1
+  ],
+  [
+   "marrow.js|etal-malformed-head|Blad\u00e9|2022",
+   1
+  ],
+  [
+   "marrow.js|etal-malformed-head|B\u00fchrer|2022",
+   1
+  ],
+  [
+   "marrow.js|etal-malformed-head|D\u00f6hner|2000",
+   4
+  ],
+  [
+   "marrow.js|etal-malformed-head|\u2014 P\u00f6l\u00f6nen|2024",
+   1
+  ],
+  [
+   "marrow.js|etal-shadow||2025",
+   1
+  ],
+  [
+   "marrow.js|journal-adjacent-year|Rev Cancer|2005",
+   1
+  ],
+  [
+   "marrow.js|journal-adjacent-year|WHO|2016",
+   1
+  ],
+  [
+   "marrow.js|paren-shadow|Grob|2022",
+   1
+  ],
+  [
+   "marrow.js|paren-shadow|Hallek|2000",
+   1
+  ],
+  [
+   "marrow.js|prose-year||2000",
+   1
+  ],
+  [
+   "marrow.js|prose-year||2022",
+   2
+  ],
+  [
+   "marrow.js|prose-year||2025",
+   1
+  ],
+  [
+   "marrow.js|semicolon-shadow|Sonneveld|2025",
+   1
+  ],
+  [
    "ovary.js|data-span-year||2026",
    2
   ],
@@ -499,7 +559,7 @@
   ],
   [
    "skin.js|data-span-year||2026",
-   4
+   5
   ],
   [
    "skin.js|journal-adjacent-year|Cell|2015",

@@ -370,6 +370,111 @@ function drawSingleFileCord(g, x0, y0, angle, rnd, opts){
   }
 }
 
+// Auer rod — a thin, needle-like azurophilic cytoplasmic inclusion. Genuinely new (checked
+// directly: nothing existing here draws a linear intracytoplasmic rod). Real, cited feature of
+// AML generally and, bundled, of APL's own "faggot cells" specifically (both js/organs/marrow.js
+// entries cite StatPearls' verbatim "Auer rods may be present singly or in bundles and may form
+// characteristic faggot cells"). One rod is a thin capsule (rounded-end rectangle, approximated
+// by a very high-radius stroked line) rotated to a given angle through a cell's own cytoplasm.
+function drawRod(g, cx, cy, angle, len, opts){
+  const o = opts || {};
+  const hx = Math.cos(angle)*len/2, hy = Math.sin(angle)*len/2;
+  g.appendChild(el('line', {
+    x1:cx-hx, y1:cy-hy, x2:cx+hx, y2:cy+hy,
+    stroke:o.color || '#8a2f3d', 'stroke-width':o.width || 1.6, 'stroke-linecap':'round', opacity:o.opacity || 0.9,
+  }));
+}
+
+// A multi-lobed nucleus — one shape covering two real, opposite findings, parameterized by lobe
+// count: ET/PMF's large, hyperlobulated "stag-horn" megakaryocyte nucleus (many lobes) and
+// CML's small, hypolobate "dwarf" megakaryocyte nucleus (one or two lobes) are the same real
+// cell type at two real, cited, opposite ends of one anatomical spectrum, not two coincidentally
+// similar shapes. Each lobe is its own small blob-path circle, arranged radially around a center
+// so the lobes visually connect without a separate connecting-stalk shape.
+function drawLobulatedNucleus(g, cx, cy, r, lobes, rnd, opts){
+  const o = opts || {};
+  const lobeR = r * (lobes <= 2 ? 0.62 : 0.5);
+  for(let i=0;i<lobes;i++){
+    const a = (i/lobes)*Math.PI*2 + (o.rot||0) + (rnd()*2-1)*0.15;
+    const dist = lobes <= 1 ? 0 : r*0.42;
+    const lx = cx + Math.cos(a)*dist, ly = cy + Math.sin(a)*dist;
+    g.appendChild(el('path', {
+      d: blobPath(lx, ly, lobeR*(0.85+rnd()*0.25), lobeR*(0.8+rnd()*0.25), 0.14, 9, rnd, rnd()*3),
+      fill:o.fill || HE.nuc, opacity:o.opacity || 0.92,
+    }));
+  }
+}
+
+// Reticulin/collagen fiber strand — a wavy line crossing the field, the real, defining
+// architectural feature of myelofibrosis (js/organs/marrow.js's PMF entry, graded MF-0 through
+// MF-3 per Thiele et al., Haematologica, 2005, PMID 16079113). Genuinely new: nothing existing
+// here draws an extended, freely-crossing fibrous strand (blobPath draws closed shapes only).
+function drawFiberStrand(g, x0, y0, length, angle, waviness, rnd, opts){
+  const o = opts || {};
+  const segs = o.segs || 8, cosA = Math.cos(angle), sinA = Math.sin(angle);
+  const perp = angle + Math.PI/2;
+  let d = `M ${x0.toFixed(1)} ${y0.toFixed(1)}`;
+  for(let i=1;i<=segs;i++){
+    const t = i/segs, wobble = Math.sin(t*Math.PI*3 + rnd()*2)*waviness;
+    const bx = x0 + cosA*length*t + Math.cos(perp)*wobble;
+    const by = y0 + sinA*length*t + Math.sin(perp)*wobble;
+    d += ` L ${bx.toFixed(1)} ${by.toFixed(1)}`;
+  }
+  g.appendChild(el('path', {d, fill:'none', stroke:o.color || '#c9a0ac', 'stroke-width':o.width || 1.8, opacity:o.opacity || 0.75}));
+}
+
+// A ring of small dark dots around a nucleus — MDS's ring sideroblasts, iron (hemosiderin)
+// deposits in the mitochondria encircling at least a third of the nucleus (the WHO-recognized
+// diagnostic feature js/organs/marrow.js's MDS entry cites, NBK586202).
+function drawSideroblastRing(g, cx, cy, r, rnd, opts){
+  const o = opts || {};
+  const n = o.count || 9;
+  for(let i=0;i<n;i++){
+    const a = (i/n)*Math.PI*2*(o.arc||1) + (o.start||0);
+    g.appendChild(el('circle', {cx:cx+Math.cos(a)*r, cy:cy+Math.sin(a)*r, r:1.1+rnd()*0.5, fill:o.color || '#5a2f1a', opacity:0.85}));
+  }
+}
+
+// A bilobed, dumbbell-shaped nucleus — pseudo-Pelger-Huët neutrophils, MDS's own dysgranulopoiesis
+// feature (two round lobes joined by a thin neck, instead of a normally-segmented multi-lobed
+// neutrophil nucleus). Genuinely distinct from drawLobulatedNucleus's radial arrangement: this is
+// two lobes on a fixed axis with a visible connecting neck, the real "pince-nez"/dumbbell shape.
+function drawBilobedNucleus(g, cx, cy, r, rnd, opts){
+  const o = opts || {};
+  const angle = o.angle != null ? o.angle : rnd()*Math.PI;
+  const dx = Math.cos(angle)*r*0.55, dy = Math.sin(angle)*r*0.55;
+  g.appendChild(el('line', {x1:cx-dx, y1:cy-dy, x2:cx+dx, y2:cy+dy, stroke:o.color||HE.nuc, 'stroke-width':r*0.5, opacity:0.9}));
+  g.appendChild(el('circle', {cx:cx-dx, cy:cy-dy, r:r*0.52, fill:o.color||HE.nuc, opacity:0.92}));
+  g.appendChild(el('circle', {cx:cx+dx, cy:cy+dy, r:r*0.52, fill:o.color||HE.nuc, opacity:0.92}));
+}
+
+// Radiating chromatin lines from a nucleus's center — the plasma-cell "clock face"/"cartwheel"
+// chromatin pattern (js/organs/marrow.js's Multiple Myeloma entry, StatPearls NBK556082 verbatim:
+// "coarse chromatin arranged in a clock face (art wheel) pattern" — the source's own wording,
+// including its own apparent "art wheel" typo for "cart wheel", quoted rather than silently
+// corrected). Genuinely new: nothing existing here draws chromatin as discrete radial spokes.
+function drawRadialChromatin(g, cx, cy, r, spokes, rnd, opts){
+  const o = opts || {};
+  g.appendChild(el('circle', {cx, cy, r, fill:o.fill || HE.nucDark, opacity:0.9}));
+  for(let i=0;i<spokes;i++){
+    const a = (i/spokes)*Math.PI*2 + rnd()*0.1;
+    g.appendChild(el('line', {
+      x1:cx, y1:cy, x2:cx+Math.cos(a)*r*0.92, y2:cy+Math.sin(a)*r*0.92,
+      stroke:o.spokeColor || HE.bg, 'stroke-width':0.7, opacity:0.55,
+    }));
+  }
+}
+
+// A smeared, disrupted cell outline — CLL's own smudge cells (Gumprecht shadows): fragile
+// leukemic lymphocytes ruptured during blood-smear preparation, leaving a blurred nuclear-debris
+// trail rather than an intact cell (js/organs/marrow.js's CLL entry). Genuinely distinct from
+// every other shape here: a soft-edged, elongated, low-opacity smear rather than a bounded cell.
+function drawSmudge(g, cx, cy, len, angle, rnd, opts){
+  const o = opts || {};
+  const d = blobPath(cx, cy, len, len*0.38, 0.35, 10, rnd, angle);
+  g.appendChild(el('path', {d, fill:o.color || HE.nucDark, opacity:0.4, stroke:'none'}));
+}
+
 // ------------------------------------------------------------
 // Per-cancer generators. Each draws into <g> and returns label anchor points {key,x,y} in
 // viewBox coordinates; keys must match the cancer's histology.features[].key.
@@ -2884,6 +2989,284 @@ function genPTCLN(g, rnd){
   ];
 }
 
+// AML: a replacing sheet of myeloblasts — medium-large cells, high nuclear:cytoplasmic ratio,
+// open chromatin, prominent nucleoli — with a real minority carrying Auer rods (js/organs/
+// marrow.js's AML entry, StatPearls NBK507875).
+function genAML(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  const rodCells = [];
+  for(let gx=-field.rx; gx<=field.rx; gx+=19){
+    for(let gy=-field.ry; gy<=field.ry; gy+=19){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*5, y = field.cy+gy+(rnd()*2-1)*5;
+      drawCell(g, x, y, 6+rnd()*1.6, 4.2+rnd()*1, rnd, {nucFill:'#5a3d78'});
+      if(rnd() < 0.1) rodCells.push({x, y});
+    }
+  }
+  rodCells.forEach(c=>drawRod(g, c.x, c.y, rnd()*Math.PI, 9+rnd()*3));
+  return [
+    {key:'myeloblasts', x:field.cx - field.rx*0.5, y:field.cy - field.ry*0.5},
+    {key:'auerrods',    x:rodCells[0] ? rodCells[0].x : field.cx, y:rodCells[0] ? rodCells[0].y : field.cy},
+  ];
+}
+
+// APL: hypergranular promyelocytes — dense coarse cytoplasmic granules partly obscuring an
+// irregular nucleus — with faggot cells, bundles of multiple Auer rods clustered in one cell's
+// cytoplasm (js/organs/marrow.js's APL entry, StatPearls NBK459352, verbatim faggot-cell quote).
+function genAPL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  let faggot = null;
+  for(let gx=-field.rx; gx<=field.rx; gx+=20){
+    for(let gy=-field.ry; gy<=field.ry; gy+=20){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*5, y = field.cy+gy+(rnd()*2-1)*5;
+      drawCell(g, x, y, 6.4+rnd()*1.4, 4+rnd()*1, rnd, {cytoFill:'#d9a5b0', nucFill:'#4a2f5c'});
+      for(let i=0;i<7;i++){ // coarse cytoplasmic granules
+        const ga = rnd()*Math.PI*2, gr = rnd()*5.6;
+        g.appendChild(el('circle', {cx:x+Math.cos(ga)*gr, cy:y+Math.sin(ga)*gr, r:0.7+rnd()*0.5, fill:'#7a2f3d', opacity:0.75}));
+      }
+      if(rnd() < 0.05){
+        const baseA = rnd()*Math.PI;
+        for(let i=0;i<4;i++) drawRod(g, x+(rnd()*2-1)*1.5, y+(rnd()*2-1)*1.5, baseA+(rnd()*2-1)*0.2, 7+rnd()*2);
+        faggot = {x, y};
+      }
+    }
+  }
+  return [
+    {key:'hypergranular', x:field.cx - field.rx*0.5, y:field.cy - field.ry*0.5},
+    {key:'faggotcells',   x:faggot ? faggot.x : field.cx, y:faggot ? faggot.y : field.cy},
+  ];
+}
+
+// CML: left-shifted granulocytic maturation — a full spectrum of maturing precursors banded
+// near one edge ("along the trabeculae"), with scattered small, hypolobate "dwarf" megakaryocytes
+// (js/organs/marrow.js's CML entry, StatPearls NBK531459).
+function genCML(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  const dwarfs = [];
+  for(let gx=-field.rx; gx<=field.rx; gx+=18){
+    for(let gy=-field.ry; gy<=field.ry; gy+=18){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*4, y = field.cy+gy+(rnd()*2-1)*4;
+      if(rnd() < 0.03){ dwarfs.push({x, y}); continue; } // reserve this spot for a dwarf megakaryocyte
+      const maturity = (gx+field.rx)/(2*field.rx); // 0 near left edge (immature) -> 1 (mature)
+      const cytoR = 5.6 - maturity*2.2;
+      const lobes = maturity < 0.3 ? 1 : maturity < 0.65 ? 2 : 3+Math.round(rnd());
+      drawCell(g, x, y, cytoR, 0, rnd, {cytoOpacity:0.85});
+      drawLobulatedNucleus(g, x, y, cytoR*0.62, lobes, rnd, {});
+    }
+  }
+  dwarfs.forEach(({x,y})=>{
+    drawCell(g, x, y, 5.5, 0, rnd, {cytoOpacity:0.85});
+    drawLobulatedNucleus(g, x, y, 3.2, 1, rnd, {});
+  });
+  return [
+    {key:'leftshift', x:field.cx - field.rx*0.55, y:field.cy},
+    {key:'dwarfmega',  x:dwarfs[0] ? dwarfs[0].x : field.cx, y:dwarfs[0] ? dwarfs[0].y : field.cy},
+  ];
+}
+
+// MDS: cross-lineage dysplasia — ring sideroblasts (erythroid precursors ringed by iron
+// deposits), micromegakaryocytes (small, underdeveloped, hypolobate), and pseudo-Pelger-Huët
+// neutrophils (bilobed, dumbbell-shaped nuclei) — js/organs/marrow.js's MDS entry, NCBI Bookshelf
+// NBK586202, reproducing the WHO Classification's own morphology table.
+function genMDS(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  let sidero = null, micromega = null, pelger = null;
+  for(let gx=-field.rx; gx<=field.rx; gx+=19){
+    for(let gy=-field.ry; gy<=field.ry; gy+=19){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*5, y = field.cy+gy+(rnd()*2-1)*5;
+      const roll = rnd();
+      if(roll < 0.06){
+        drawCell(g, x, y, 5.4, 3, rnd, {cytoFill:'#e8b8a0'});
+        drawSideroblastRing(g, x, y, 4.2, rnd, {arc:0.7});
+        sidero = {x, y};
+      } else if(roll < 0.11){
+        drawCell(g, x, y, 5, 0, rnd, {});
+        drawLobulatedNucleus(g, x, y, 2.8, 2, rnd, {});
+        micromega = {x, y};
+      } else if(roll < 0.16){
+        drawCell(g, x, y, 5.6, 0, rnd, {cytoOpacity:0.7});
+        drawBilobedNucleus(g, x, y, 2.6, rnd, {});
+        pelger = {x, y};
+      } else {
+        drawCell(g, x, y, 5+rnd()*1.2, 3.2+rnd()*0.8, rnd, {});
+      }
+    }
+  }
+  return [
+    {key:'ringsideroblast', x:sidero ? sidero.x : field.cx, y:sidero ? sidero.y : field.cy},
+    {key:'micromega',       x:micromega ? micromega.x : field.cx, y:micromega ? micromega.y : field.cy},
+    {key:'pelgerhuet',      x:pelger ? pelger.x : field.cx, y:pelger ? pelger.y : field.cy},
+  ];
+}
+
+// ET: large, hyperlobulated "stag-horn" megakaryocytes clustered in an otherwise normocellular
+// (near-normal granulocyte/erythroid) marrow (js/organs/marrow.js's ET entry, Michiels et al.,
+// Acta Haematol, 2015, PMID 25116092).
+function genET(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  const megaSpots = [{x:field.cx-120, y:field.cy-50}, {x:field.cx+90, y:field.cy+60}, {x:field.cx-30, y:field.cy+90}];
+  for(let gx=-field.rx; gx<=field.rx; gx+=20){
+    for(let gy=-field.ry; gy<=field.ry; gy+=20){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*4, y = field.cy+gy+(rnd()*2-1)*4;
+      if(megaSpots.some(m=>Math.hypot(x-m.x, y-m.y) < 22)) continue;
+      drawCell(g, x, y, 4.6+rnd()*1, 2.9+rnd()*0.7, rnd, {});
+    }
+  }
+  megaSpots.forEach(m=>{
+    drawCell(g, m.x, m.y, 13+rnd()*2, 0, rnd, {cytoOpacity:0.85});
+    drawLobulatedNucleus(g, m.x, m.y, 9, 6+Math.round(rnd()*2), rnd, {});
+  });
+  return [
+    {key:'stagshorn',    x:megaSpots[0].x, y:megaSpots[0].y},
+    {key:'normocellular', x:field.cx + field.rx*0.5, y:field.cy - field.ry*0.5},
+  ];
+}
+
+// PV: panmyelosis — hypercellular marrow with all three lineages (erythroid, granulocytic,
+// megakaryocytic) proliferating together, little fat space remaining (js/organs/marrow.js's PV
+// entry, StatPearls NBK531464).
+function genPV(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  for(let gx=-field.rx; gx<=field.rx; gx+=13){
+    for(let gy=-field.ry; gy<=field.ry; gy+=13){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*3, y = field.cy+gy+(rnd()*2-1)*3;
+      const roll = rnd();
+      if(roll < 0.06){ // scattered large megakaryocytes
+        drawCell(g, x, y, 10+rnd()*1.5, 0, rnd, {cytoOpacity:0.85});
+        drawLobulatedNucleus(g, x, y, 6.5, 4+Math.round(rnd()*2), rnd, {});
+      } else if(roll < 0.5){ // erythroid precursors
+        drawCell(g, x, y, 3.6+rnd()*0.6, 2.8+rnd()*0.4, rnd, {cytoFill:'#e8b8a0'});
+      } else { // granulocyte precursors
+        drawCell(g, x, y, 4+rnd()*0.8, 2.4+rnd()*0.6, rnd, {});
+      }
+    }
+  }
+  return [
+    {key:'panmyelosis',  x:field.cx - field.rx*0.5, y:field.cy - field.ry*0.4},
+    {key:'hypercellular', x:field.cx + field.rx*0.4, y:field.cy + field.ry*0.5},
+  ];
+}
+
+// PMF: reticulin/collagen fibrosis — dense, wavy fibrous strands crossing the marrow — with
+// atypical, clustered megakaryocytes trapped among them (js/organs/marrow.js's PMF entry,
+// StatPearls NBK531464; Thiele et al., Haematologica, 2005, PMID 16079113).
+function genPMF(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  for(let s=0;s<22;s++){
+    const x0 = field.cx + (rnd()*2-1)*field.rx*0.85, y0 = field.cy + (rnd()*2-1)*field.ry*0.85;
+    drawFiberStrand(g, x0, y0, 90+rnd()*70, rnd()*Math.PI, 10+rnd()*6, rnd);
+  }
+  const clusterSpots = [{x:field.cx-100, y:field.cy-40}, {x:field.cx+110, y:field.cy+70}];
+  clusterSpots.forEach(c=>{
+    for(let k=0;k<3;k++){
+      const jx = c.x+(rnd()*2-1)*16, jy = c.y+(rnd()*2-1)*16;
+      drawCell(g, jx, jy, 9+rnd()*2, 0, rnd, {cytoOpacity:0.85});
+      drawLobulatedNucleus(g, jx, jy, 6, 4+Math.round(rnd()*3), rnd, {});
+    }
+  });
+  for(let gx=-field.rx; gx<=field.rx; gx+=26){
+    for(let gy=-field.ry; gy<=field.ry; gy+=26){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*5, y = field.cy+gy+(rnd()*2-1)*5;
+      if(clusterSpots.some(c=>Math.hypot(x-c.x, y-c.y) < 30)) continue;
+      drawCell(g, x, y, 3.6+rnd()*0.8, 2.4+rnd()*0.6, rnd, {cytoOpacity:0.5});
+    }
+  }
+  return [
+    {key:'reticulin',    x:field.cx - field.rx*0.3, y:field.cy - field.ry*0.55},
+    {key:'atypicalmega', x:clusterSpots[0].x, y:clusterSpots[0].y},
+  ];
+}
+
+// Multiple myeloma: sheets of plasma cells with an eccentric, "clock face" nucleus and a pale
+// perinuclear zone (Golgi apparatus) beside it (js/organs/marrow.js's MM entry, StatPearls
+// NBK556082).
+function genMM(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  let sample = null;
+  for(let gx=-field.rx; gx<=field.rx; gx+=17){
+    for(let gy=-field.ry; gy<=field.ry; gy+=17){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*4, y = field.cy+gy+(rnd()*2-1)*4;
+      const ang = rnd()*Math.PI*2, off = 4.5;
+      const nx = x + Math.cos(ang)*off, ny = y + Math.sin(ang)*off;
+      g.appendChild(el('ellipse', {cx:x, cy:y, rx:6.4, ry:6, fill:'#6a4a8c', stroke:'#4a3268', 'stroke-width':1, opacity:0.9}));
+      g.appendChild(el('circle', {cx:x-Math.cos(ang)*off*0.7, cy:y-Math.sin(ang)*off*0.7, r:2.4, fill:HE.clear, opacity:0.7})); // perinuclear pale zone
+      drawRadialChromatin(g, nx, ny, 3.6, 8, rnd, {});
+      if(!sample) sample = {x, y, nx, ny};
+    }
+  }
+  return [
+    {key:'clockface',     x:sample.nx, y:sample.ny},
+    {key:'perinuclearhof', x:sample.x - 6, y:sample.y - 6},
+  ];
+}
+
+// CLL: monotonous small, mature lymphocytes with dense, featureless nuclei, and scattered
+// smudge cells (Gumprecht shadows) — ruptured cells left as smeared nuclear debris rather than
+// intact cells (js/organs/marrow.js's CLL entry, Hallek, Am J Hematol, 2025, PMID 39871707).
+function genCLL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const field = {cx:400, cy:250, rx:330, ry:210};
+  g.appendChild(el('path', {d:blobPath(field.cx, field.cy, field.rx, field.ry, 0.08, 16, rnd, 0), fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+  let smudge = null;
+  for(let gx=-field.rx; gx<=field.rx; gx+=15){
+    for(let gy=-field.ry; gy<=field.ry; gy+=15){
+      if((gx/field.rx)**2 + (gy/field.ry)**2 > 0.9) continue;
+      const x = field.cx+gx+(rnd()*2-1)*3, y = field.cy+gy+(rnd()*2-1)*3;
+      if(rnd() < 0.04){
+        drawSmudge(g, x, y, 6+rnd()*2, rnd()*Math.PI, rnd, {});
+        if(!smudge) smudge = {x, y};
+      } else {
+        drawCell(g, x, y, 3.4+rnd()*0.6, 2.8+rnd()*0.4, rnd, {});
+      }
+    }
+  }
+  return [
+    {key:'smudgecells', x:smudge ? smudge.x : field.cx, y:smudge ? smudge.y : field.cy},
+    {key:'smalllymph',  x:field.cx + field.rx*0.5, y:field.cy - field.ry*0.5},
+  ];
+}
+
+// ALL: a dense, uniform lymphoblast sheet — small round cells, scant cytoplasm, high nuclear:
+// cytoplasmic ratio, densely condensed chromatin (js/organs/marrow.js's ALL entry, StatPearls
+// NBK611988). Reuses drawSmallCellSheet directly — the neuroendocrine family's own primitive
+// turns out to fit this real, distinct cell type too: small, tightly molded nuclei with almost
+// no separately-rendered cytoplasm is exactly this cancer's own real morphology, not a
+// coincidental resemblance. Darker nucFill than that primitive's own default, to read as the
+// "condensed," not "open," chromatin this cancer is deliberately contrasted against AML's own
+// histology on.
+function genALL(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const sheetA = drawSmallCellSheet(g, rnd, 240, 210, 195, 165, {spacing:8, moldingReach:1.4, nucFill:'#241535'});
+  const sheetB = drawSmallCellSheet(g, rnd, 560, 320, 180, 145, {spacing:8, moldingReach:1.4, rot:0.4, nucFill:'#241535'});
+  return [
+    {key:'lymphoblasts',      x:sheetA.cx, y:sheetA.cy},
+    {key:'condensedchromatin', x:sheetB.cx, y:sheetB.cy},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -2939,6 +3322,16 @@ const GENERATORS = {
   ndlbcl: genCLymph,
   nmzl:   genNMZL,
   ptcln:  genPTCLN,
+  aml:    genAML,
+  apl:    genAPL,
+  cml:    genCML,
+  mds:    genMDS,
+  et:     genET,
+  pv:     genPV,
+  pmf:    genPMF,
+  mm:     genMM,
+  cll:    genCLL,
+  all:    genALL,
 };
 
 // ------------------------------------------------------------

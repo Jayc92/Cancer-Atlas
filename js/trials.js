@@ -901,6 +901,152 @@ export const TRIALS_CONDITION_MAP = {
       + 'dropped (pure-CTCL/mycosis-fungoides/Sezary trials and an NK-T-cell-only trial, none '
       + 'declaring a PTCL-family condition).',
   },
+  // Marrow organ, all ten entities (2026-09-15). Two real, checked-not-assumed collision risks
+  // found while DESIGNING these keyword lists, before any live query — both are the same shape
+  // as this file's own bare-acronym/negation-collision precedents, caught earlier this time:
+  // (1) "acute myeloid leukemia" and "chronic myeloid leukemia" share the substring "myeloid
+  // leukemia", so aml/cml both anchor on their own FULL, acute-or-chronic-qualified phrase, never
+  // the bare shared substring; (2) "acute lymphocytic leukemia" is a real, still-used alternate
+  // name for ALL, and it shares the substring "lymphocytic leukemia" with "chronic lymphocytic
+  // leukemia" (CLL) — cll and all both anchor on their own acute-or-chronic-qualified full phrase
+  // for the identical reason. Every entry below is run through .claude/trials_mapping_check.mjs
+  // and a live ≥10-result browser sample before being trusted, per this project's own now-
+  // required standing rule (data rule 36); each note records what that pass actually found.
+  aml: {
+    query: 'acute myeloid leukemia', parent: 'acute myeloid leukemia',
+    conditionKeywords: ['acute myeloid leukemia', 'acute myeloid leukaemia', 'acute myelogenous leukemia',
+      'acute myelogenous leukaemia', 'acute myeloblastic leukemia', 'acute myeloblastic leukaemia',
+      'myeloid leukemia, acute', 'myeloid leukaemia, acute', 'leukemia, myeloid, acute', 'leukaemia, myeloid, acute',
+      'leukemia acute myeloid', 'aml'],
+    note: 'The corpus-vocabulary signal (803-study parent corpus) found genuine misses on the first '
+      + 'keyword list (bare "acute myeloid leukemia"/"aml" only) — British spelling ("Leukaemia"), '
+      + '"myelogenous"/"myeloblastic" synonyms, and registry comma-reversed word order ("Leukemia, '
+      + 'Myeloid, Acute") all appear as real, live condition strings this atlas would otherwise have '
+      + 'dropped. All added. "chronic myeloid leukemia" and its own synonyms are correctly excluded '
+      + 'throughout, since none contains the word "acute". narrowKept rose 687->745 on the corrected '
+      + 'list against the SAME exhaustive corpus (a real capture, not a different query). '
+      + 'LIVE-VERIFIED 2026-09-15: negation-collision signal 0; zero-kept census not triggered.',
+  },
+  apl: {
+    query: 'acute promyelocytic leukemia', parent: 'acute promyelocytic leukemia',
+    conditionKeywords: ['promyelocytic', 'apl'],
+    note: 'Clean on the first pass: exhaustive narrowKept=13/13 (every study in the parent corpus '
+      + 'kept), corpus-vocabulary signal found only 3 rejects, all correctly a different disease '
+      + '(bare "Leukemia, Acute" / "Acute Myeloid Leukemia"). "Promyelocytic" is essentially unique '
+      + 'to this cancer in ordinary usage — no requireAlso/excludeIf needed. LIVE-VERIFIED '
+      + '2026-09-15: negation-collision signal 0.',
+  },
+  cml: {
+    query: 'chronic myeloid leukemia', parent: 'chronic myeloid leukemia',
+    conditionKeywords: ['chronic myeloid leukemia', 'chronic myeloid leukaemia', 'chronic myelogenous leukemia',
+      'chronic myelogenous leukaemia', 'chronic leukemia myelogenous', 'myeloid leukemia, chronic',
+      'myeloid leukaemia, chronic', 'leukemia, myeloid, chronic', 'leukaemia, myeloid, chronic',
+      'atypical chronic myeloid leukemia', 'cml'],
+    note: 'Same defect class as this organ\'s own aml entry, found independently against CML\'s own '
+      + '186-study parent corpus: British spelling, "myelogenous" synonym, comma-reversed word order, '
+      + 'and one genuinely unusual live word order ("Chronic Leukemia Myelogenous") all missed on the '
+      + 'first keyword list. Chronic myelomonocytic leukemia (CMML) — a real, different MDS/MPN-'
+      + 'overlap entity this atlas does not model — is correctly excluded throughout (it never '
+      + 'contains "myeloid"/"myelogenous"). narrowKept rose 107->111 on the SAME exhaustive corpus. '
+      + 'LIVE-VERIFIED 2026-09-15: negation-collision signal 0.',
+  },
+  mds: {
+    query: 'myelodysplastic syndrome', parent: 'myelodysplastic neoplasm',
+    conditionKeywords: ['myelodysplastic', 'myeldysplastic', 'myeodysplastic', 'myelo dysplastic'],
+    note: 'The corpus-vocabulary signal (871 distinct condition strings) found real, live registry '
+      + 'TYPOS ("Myeldysplastic Syndrome", "Myeodysplastic Syndrome") and a real spacing variant '
+      + '("Myelo Dysplastic Syndrome") that the correctly-spelled keyword alone missed — added. Every '
+      + 'other rejected string sharing the bare "syndrome" token is a genuinely different disease '
+      + '(Li-Fraumeni, Lynch, VEXAS, and 25 more named syndromes) — correctly excluded, since none '
+      + 'contains "myelo(dys)?dysplastic" in any spelling. A real, disclosed reasoned broadening: this '
+      + 'entry\'s bare "myelodysplastic" keyword also keeps "MDS/Myeloproliferative Neoplasm (MPN) '
+      + 'Overlap Syndrome" trials — a real, distinct overlap entity this atlas does not separately '
+      + 'model, kept because it genuinely involves this cancer\'s own pathophysiology, the same "named, '
+      + 'reasoned broadening" shape ccRCC\'s own note already establishes. narrowKept rose 344->347 on '
+      + 'the same exhaustive corpus. LIVE-VERIFIED 2026-09-15: negation-collision signal 0.',
+  },
+  et: {
+    query: 'essential thrombocythemia', parent: 'essential thrombocythemia',
+    conditionKeywords: ['thrombocythemia', 'thrombocythaemia', 'thrombocytosis, essential', 'essential thrombocytosis'],
+    note: 'The corpus-vocabulary signal found two real, live gaps: British spelling ("Essential '
+      + 'Thrombocythaemia") and a real alternate name using "thrombocytosis" rather than '
+      + '"thrombocythemia" for the same diagnosis ("Essential Thrombocytosis") — both added. Bare, '
+      + 'non-essential polycythemia/thrombocytosis mentions are not a risk for this keyword (it '
+      + 'anchors on "thrombocythemia"/"thrombocythaemia" specifically, which secondary/reactive '
+      + 'thrombocytosis trials do not use). narrowKept rose 37->41 on the same exhaustive corpus. '
+      + 'LIVE-VERIFIED 2026-09-15: negation-collision signal 0.',
+  },
+  pv: {
+    query: 'polycythemia vera', parent: 'polycythemia vera',
+    conditionKeywords: ['polycythemia vera', 'polycytemia vera'],
+    note: 'Deliberately the FULL PHRASE, not bare "polycythemia" — checked directly, not assumed: '
+      + 'the corpus contains real, different, correctly-excluded entities ("Polycythemia Secondary", '
+      + '"Polycythemia; Familial", "Polycythemia, Primary" — none the same diagnosis as this cancer) '
+      + 'that a bare-token keyword would have wrongly captured. The one genuine miss found was a live '
+      + 'registry typo, "Polycytemia Vera" (missing the middle "h") — added. narrowKept rose 50->51 '
+      + 'on the same exhaustive corpus. LIVE-VERIFIED 2026-09-15: negation-collision signal 0.',
+  },
+  pmf: {
+    query: 'primary myelofibrosis', parent: 'primary myelofibrosis',
+    conditionKeywords: ['myelofibrosis'],
+    note: 'Clean on the first pass: exhaustive narrowKept=97/112, corpus-vocabulary signal found only '
+      + '3 rejects sharing the bare "primary" token, all genuinely different diseases (Polycythemia, '
+      + 'Primary CNS/Cutaneous Lymphoma) — no fix needed. Bare "myelofibrosis" deliberately also keeps '
+      + 'post-ET/post-PV secondary-myelofibrosis trials (e.g. "MF With Splenomegaly", "Myelofibrosis '
+      + 'Due to and Following Polycythemia Vera") — a real, disclosed overlap with this organ\'s own '
+      + 'et/pv entries, not a defect: this cancer\'s own REGIONS notes already discuss post-ET/post-PV '
+      + 'myelofibrosis as the same real disease process. LIVE-VERIFIED 2026-09-15: negation-collision '
+      + 'signal 0.',
+  },
+  mm: {
+    query: 'multiple myeloma', parent: 'multiple myeloma',
+    conditionKeywords: ['myeloma', 'mieloma', 'myleoma', 'myloma'],
+    note: 'The corpus-vocabulary signal (848 distinct condition strings) found three real, live '
+      + 'registry typos of "myeloma" ("Mieloma", "Myleoma", "Myloma") that the correctly-spelled bare '
+      + 'keyword alone missed — added. Bare "myeloma" was kept deliberately, not narrowed to "multiple '
+      + 'myeloma": checked directly, and every live "myeloma"-containing condition string in this '
+      + 'corpus (smoldering myeloma, plasma cell myeloma, POEMS-associated myeloma) is the same real '
+      + 'disease spectrum this entry models, not a different one. narrowKept rose 709->713 on the same '
+      + 'exhaustive corpus. LIVE-VERIFIED 2026-09-15: negation-collision signal 0.',
+  },
+  cll: {
+    query: 'chronic lymphocytic leukemia', parent: 'chronic lymphocytic leukemia',
+    conditionKeywords: ['chronic lymphocytic leukemia', 'chronic lymphocytic leukaemia', 'small lymphocytic lymphoma',
+      'lymphoma, small lymphocytic', 'small lymphocytic leukemia', 'leukemia, chronic lymphocytic',
+      'leukemia, lymphocytic, chronic', 'lymphocytic leukemia, chronic', 'cll', 'sll'],
+    note: 'A REAL, CHECKED-NOT-ASSUMED COLLISION RISK resolved by design before any live query: '
+      + '"acute lymphocytic leukemia" (a real, still-used alternate name for ALL, confirmed live in '
+      + 'this organ\'s own all entry) shares the substring "lymphocytic leukemia" with this cancer\'s '
+      + 'own "chronic lymphocytic leukemia" — this entry anchors on the full, chronic-qualified phrase '
+      + 'everywhere, never the bare shared substring, so it cannot match an ALL condition string. '
+      + 'Confirmed directly: the corpus-vocabulary signal correctly rejects every "Acute Lymphocytic '
+      + 'Leukemia"/"Acute Lymphoblastic Leukemia" string sharing only "lymphocytic"/"leukemia" tokens. '
+      + 'Real, live genuine misses found and added: British spelling, comma-reversed word order '
+      + '("Leukemia, Chronic Lymphocytic"), and SLL\'s own reversed form ("Lymphoma, Small '
+      + 'Lymphocytic"). narrowKept rose 221->230 on the same exhaustive corpus. LIVE-VERIFIED '
+      + '2026-09-15: negation-collision signal 0.',
+  },
+  all: {
+    query: 'acute lymphoblastic leukemia', parent: 'acute lymphoblastic leukemia',
+    conditionKeywords: ['lymphoblastic leukemia', 'lymphoblastic leukaemia', 'acute lymphocytic leukemia',
+      'acute lymphocytic leukaemia', 'leukemia, lymphocytic, acute', 'leukaemia, lymphocytic, acute',
+      'leukemia, acute lymphoblastic', 'leukaemia, acute lymphoblastic', 'lymphoblastic lymphoma'],
+    note: 'The mirror image of this organ\'s own cll entry\'s collision check: "acute lymphocytic '
+      + 'leukemia" is this cancer\'s own real alternate name and is used here as a full, acute-'
+      + 'qualified phrase, never the bare "lymphocytic leukemia" substring it shares with CLL\'s '
+      + '"chronic lymphocytic leukemia" — confirmed directly, this entry\'s own filter correctly '
+      + 'rejects every live "Chronic Lymphocytic Leukemia" string in the corpus. A second real, '
+      + 'important finding: LYMPHOBLASTIC LYMPHOMA (no "leukemia" in the condition string at all — '
+      + '"T-cell Acute Lymphoblastic Lymphoma", "Lymphoblastic Lymphoma (LBL)") is the WHO-recognized '
+      + 'SAME disease presenting nodally rather than in blood/marrow, and the original keyword list '
+      + '(requiring the word "leukemia") missed every one of these live trials — "lymphoblastic '
+      + 'lymphoma" added as its own keyword to close this. British spelling and comma-reversed word '
+      + 'order also added. narrowKept rose 432->461 on the same exhaustive corpus — the largest single '
+      + 'correction in this batch. LIVE-VERIFIED 2026-09-15: negation-collision signal 0; end-to-end '
+      + 'browser sample (10 real results rendered via #txTrialsToggle) confirmed genuinely relevant '
+      + 'trials (blinatumomab in newly-diagnosed ALL, CD19-CAR-T for B-ALL, dasatinib/imatinib for '
+      + 'Ph+ ALL), current as of the fetch date.',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------

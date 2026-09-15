@@ -163,6 +163,7 @@ WELL_FORMED = (
     'Al-Masri',
     'Al-Rohil',
     'Alvarado-Cabrero',
+    'Avet-Loiseau',
     'Barnholtz-Sloan',
     'Calimano-Ramirez',
     'Cittolin-Santos',
@@ -181,6 +182,7 @@ WELL_FORMED = (
     'Segura-Moreno',
     'Traverse-Glehen',
     # lowercase particles — SURNAME's leading (van|von|de|der|...) clause
+    'de Botton',
     'de Kanter',
     'de Kouchkovsky',
     'de Leval',
@@ -192,6 +194,7 @@ WELL_FORMED = (
     # genuinely two-word surnames — the second-word clause doing the job it exists for, and the
     # reason it cannot be removed to fix the eight entries above
     'Abu Jarir',
+    'Al Assaf',
     'Balachandran Pillai',
     'Dalle Ore',
     'De Leo',

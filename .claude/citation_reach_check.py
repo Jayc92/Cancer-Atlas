@@ -275,6 +275,26 @@ DECLARED_UNREACHED = {
         'Fernàndez et al., Cancer Res, 2010, PMID 20124476 — the SOX11+/SOX11- MCL survival-'
         'comparison source cited in this entity\'s own trunk note; zero records corpus-wide for '
         'this author.',
+    'etal-malformed-head:Bührer':
+        'NON-ASCII SURNAME, same cause and same held fix as above. One span, marrow.js:345, '
+        'Bührer et al., Leukemia, 2022, PMID 36163264 — the splenic-niche leukemia-SUPPORTING '
+        'citation in CML\'s own multi-niche biology note; zero records corpus-wide for this '
+        'author.',
+    'etal-malformed-head:Döhner':
+        'NON-ASCII SURNAME, same cause and same held fix as above. Four spans, marrow.js:410 '
+        '(ccf+note) and marrow.js:411 (ccf+note), all Döhner et al., N Engl J Med, 2000, PMID '
+        '11136261 — CLL\'s own hierarchical FISH-classification source (del17p/ATM/trisomy-12/ '
+        'del13q survival figures); zero records corpus-wide for this author.',
+    'etal-malformed-head:Bladé':
+        'NON-ASCII SURNAME, same cause and same held fix as above. One span, marrow.js:455, '
+        'Bladé et al., Blood Cancer J, 2022, PMID 35314675 — the true-extramedullary-versus-'
+        'paraskeletal distinction cited in MM\'s own Pleura-site note; zero records corpus-wide '
+        'for this author.',
+    'etal-malformed-head:— Pölönen':
+        'NON-ASCII SURNAME, same cause and same held fix as above; the leading em-dash in this '
+        'key is the extractor\'s own head-matching artifact, not a second defect. One span, '
+        'marrow.js:485, Pölönen et al., Nature, 2024, PMID 39143224 — ALL\'s own T-lineage '
+        'NOTCH1/CDKN2A driver-frequency citation; zero records corpus-wide for this author.',
     # 'etal-out-of-range:Louis' WAS DELETED HERE, in the boundary-test commit that made its span
     # stop being gated (2026-09-06). Recorded as a comment for one commit because the deletion is
     # the mechanism working end to end, and the entry is the only one in this dict's history to have
