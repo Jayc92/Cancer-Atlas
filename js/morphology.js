@@ -426,11 +426,18 @@ export const MARGIN_STATUS = Object.freeze({
   // prevention — none was tasked with a dedicated gross-pathology margin/circumscription search,
   // so 'not yet searched' is the honest state here, matching this atlas's own Uterus-organ
   // precedent directly above rather than a false 'checked and not found' negative.
-  cscc: { status: 'uncharacterised', ref: 'not yet searched — this organ\'s own research pass was scoped to epidemiology, mechanism, genomics, site model, histology and prevention, not gross margin/circumscription character' },
-  cadeno: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
-  cgas: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
-  cclear: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
-  cmeso: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
+  // DATED 2026-09-16 (user ruling — the tolerated-count rule does not permit a bare "not yet
+  // searched" with no owner and no date; see RULINGS.md's own new entry on this class). All five
+  // corrected from 'uncharacterised' — which this file's own convention reserves for a CHECKED
+  // negative that says what was read — to 'unread', which is what "not yet searched" actually is.
+  // Per CLAUDE.md's own "THE REGISTER FINDING": roughly a third of margin reads across this atlas
+  // resolve to "searched and unavailable" (a different, legitimate uncharacterised outcome) rather
+  // than to a citable category — expect some, not all, of these five to convert cleanly.
+  cscc: { status: 'unread', ref: 'this organ\'s own research pass was scoped to epidemiology, mechanism, genomics, site model, histology and prevention, not gross margin/circumscription character — a dedicated read is owed', until: '2026-10-01' },
+  cadeno: { status: 'unread', ref: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry — a dedicated read is owed', until: '2026-10-01' },
+  cgas: { status: 'unread', ref: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry — a dedicated read is owed', until: '2026-10-01' },
+  cclear: { status: 'unread', ref: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry — a dedicated read is owed', until: '2026-10-01' },
+  cmeso: { status: 'unread', ref: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry — a dedicated read is owed', until: '2026-10-01' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -636,11 +643,13 @@ export const GROWTH_STATUS = Object.freeze({
   // CERVIX (2026-09-15): same scope note as this organ's own MARGIN_STATUS entries above — the
   // background research passes behind this organ were not tasked with a dedicated gross-growth-
   // pattern search, so 'not yet searched' is the honest state.
-  cscc: { status: 'uncharacterised', ref: 'not yet searched — this organ\'s own research pass was scoped to epidemiology, mechanism, genomics, site model, histology and prevention, not gross growth pattern' },
-  cadeno: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
-  cgas: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
-  cclear: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
-  cmeso: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
+  // DATED 2026-09-16 — same correction and same reasoning as this organ's own MARGIN_STATUS block
+  // above ('uncharacterised' misused for what is really 'unread'; see RULINGS.md).
+  cscc: { status: 'unread', ref: 'this organ\'s own research pass was scoped to epidemiology, mechanism, genomics, site model, histology and prevention, not gross growth pattern — a dedicated read is owed', until: '2026-10-01' },
+  cadeno: { status: 'unread', ref: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry — a dedicated read is owed', until: '2026-10-01' },
+  cgas: { status: 'unread', ref: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry — a dedicated read is owed', until: '2026-10-01' },
+  cclear: { status: 'unread', ref: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry — a dedicated read is owed', until: '2026-10-01' },
+  cmeso: { status: 'unread', ref: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry — a dedicated read is owed', until: '2026-10-01' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -653,7 +662,13 @@ export const GROWTH_STATUS = Object.freeze({
 // submission where the page states it, and the date the page was followed. Source: SEER Cancer Stat Facts, public
 // domain; never AJCC (licensed). The reader-side argument (user): the render must not depict a stage the reader might
 // not have — text can correct a conservative picture upward, but a frightening one cannot be unseen.
-export const EXTENT_STATUSES = Object.freeze(['uncharacterised', 'cited']);
+// WIDENED 2026-09-16 (user ruling) to admit 'unread', for the same reason MARGIN_STATUSES/
+// GROWTH_STATUSES already carry it: "not yet searched" is a read OWED, not a checked negative,
+// and reserve_check.js's own generic date-audit loop (margin/growth/extent alike) already treats
+// an 'unread' row's `until` date as load-bearing — this enum simply catches up to that. The first
+// live use is this organ's own five entities, converted from a bare, undated 'uncharacterised' in
+// the same commit that adds this value.
+export const EXTENT_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 export const EXTENT_STATUS = Object.freeze({
   // SHARE-BOUND RULE (phaseC_design.md §6b): the aggregate is safe to show directly only where
   // the subtype's own share bounds the per-category error under (1−share)×100. Checked and
@@ -947,11 +962,16 @@ export const EXTENT_STATUS = Object.freeze({
   // itself — which would let a reader see the detection-vs-biology distinction this atlas's own
   // extentSentence() framing exists to draw, directly on the SCC/adenocarcinoma entries — is not
   // yet wired for this organ.
-  cscc: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — this organ\'s own research pass did not fetch SEER\'s dedicated Cervix Uteri Cancer Stat Facts page; the share-bound rule would forbid using its organ-wide aggregate directly for this entity\'s own ~69.4% share regardless, so a dedicated per-histology source would be needed either way', ref: 'not yet searched — 2026-09-15' },
-  cadeno: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule would forbid the organ aggregate at this entity\'s own ~26.1% share regardless', ref: 'not yet searched — 2026-09-15' },
-  cgas: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'not yet searched — 2026-09-15' },
-  cclear: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'not yet searched — 2026-09-15' },
-  cmeso: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'not yet searched — 2026-09-15' },
+  // DATED 2026-09-16 — same correction as this organ's own margin/growth axes above, extended to
+  // extent (EXTENT_STATUSES widened to admit 'unread' for exactly this case — see its own
+  // definition above). `uncharacterisedReason` is kept as the field name extentSentence() reads
+  // regardless of status (it branches only on `!== 'cited'`), but every entry below is now dated,
+  // not settled.
+  cscc: { status: 'unread', site: 'cervix uteri', uncharacterisedReason: 'this organ\'s own research pass did not fetch SEER\'s dedicated Cervix Uteri Cancer Stat Facts page; the share-bound rule would forbid using its organ-wide aggregate directly for this entity\'s own ~69.4% share regardless, so a dedicated per-histology source would be needed either way', ref: 'a dedicated per-histology SEER-stage read is owed', until: '2026-10-01' },
+  cadeno: { status: 'unread', site: 'cervix uteri', uncharacterisedReason: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule would forbid the organ aggregate at this entity\'s own ~26.1% share regardless', ref: 'a dedicated per-histology SEER-stage read is owed', until: '2026-10-01' },
+  cgas: { status: 'unread', site: 'cervix uteri', uncharacterisedReason: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'a dedicated per-histology SEER-stage read is owed', until: '2026-10-01' },
+  cclear: { status: 'unread', site: 'cervix uteri', uncharacterisedReason: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'a dedicated per-histology SEER-stage read is owed', until: '2026-10-01' },
+  cmeso: { status: 'unread', site: 'cervix uteri', uncharacterisedReason: 'same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'a dedicated per-histology SEER-stage read is owed', until: '2026-10-01' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';

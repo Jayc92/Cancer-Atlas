@@ -264,3 +264,46 @@ has one) is not automatically this: as instance 3 shows, a selftest can run a me
 its own terms while that same mechanism corrupts state *outside* what the selftest itself checks.
 The question is not "does the guard's own test suite pass" but "what does this guard touch that
 its own test suite doesn't look at."
+
+## 10. A descriptive name is not an origin claim — caught by checking before building, by the
+## reviewer this time, not the implementer (2026-09-16)
+
+**The error.** Mid-way through authoring Cervix, a message asserted that usual-type (HPV-
+associated) endocervical adenocarcinoma originates further up the endocervical canal — from
+endocervical glandular epithelium specifically — rather than sharing the transformation zone with
+squamous cell carcinoma. The reasoning read the entity's own descriptive name, "endocervical
+adenocarcinoma," as if it were an origin claim: *endocervical* names WHERE THE TUMOR IS FOUND and
+WHAT IT RESEMBLES (glandular, columnar architecture, consistent with the endocervix's own lining),
+which is a real and correct thing for a histologic name to encode — it is a different claim from
+WHERE THE FOUNDING TRANSFORMATION EVENT ACTUALLY OCCURRED, which is what this atlas's own
+`ORIGIN_HOTSPOT` mechanism exists to anchor. The two can point at different places for a real
+tumor (a cancer's cells can migrate, differentiate, and come to occupy tissue some distance from
+where the first oncogenic event actually happened), so the substitution is never automatically
+safe, and here it was checked and found wrong: Herfs et al. (*PNAS*, 2012, PMID 22689991) directly
+immunostains both squamous cell carcinoma AND adenocarcinoma (in situ and invasive) for the same
+squamocolumnar-junction marker signature, 100% positive in both — independently corroborated by
+three older reserve-cell papers, including Christopherson et al.'s own 1979 verbatim finding that
+squamous, glandular, and mixed cervical carcinoma all share one cell of origin. The two entities'
+real, checked origin IS the same site. The suggested split was never implemented.
+
+**The class this belongs to.** This is the SAME location-versus-origin register conflation this
+project has already caught repeatedly in other directions — the gross-versus-histologic register
+mismatch (data rule 20 and elsewhere), detection-framing versus biological behavior (the extent
+axis's own "found at diagnosis" discipline), enrollment criteria versus true origin (Phase D's
+trials duty-of-care). All of those were caught in claims ABOUT to be written into content. This one
+is the same conflation arriving as a proposed EDIT to a claim already correctly made — a subtler
+presentation, because the existing content (`cscc`/`cadeno` sharing one origin hotspot) was already
+right, and the failure mode was almost overwriting a correct answer with a plausible-sounding wrong
+one, not authoring a wrong one from scratch.
+
+**Why this entry exists in THIS file and not just in a session record: the direction the catch ran.**
+Every other instance in this project's history of "a suggestion sounded right and turned out not to
+survive a primary-source check" has the person building the content catching their OWN assumption
+before it shipped. Here the roles were reversed: the REVIEWER proposed the change, and the
+IMPLEMENTER checked it against Herfs et al. and three corroborating sources before touching any
+code, then reported back that the literature didn't support it rather than making the edit. The
+two-role structure of this project — one party proposing or reviewing, another building — is almost
+always described running the other direction (an implementer's shortcut caught by a reviewer's
+read). It runs both ways. **Treat a plausible-sounding correction with the same discipline as a
+plausible-sounding first draft: check it against the primary source before implementing it, from
+whichever direction it arrives.**

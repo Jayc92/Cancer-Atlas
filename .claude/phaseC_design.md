@@ -782,6 +782,42 @@ treatment-emergent cohort. Each claim is sourced from the population it actually
 than one cohort's figures standing in for both, which is the "own read" this row asked for before
 authoring.
 
+**A THIRD KIND, DISTINCT FROM BOTH ABOVE — CROSS-ORGAN ORIGIN (RULED 2026-09-16, user; see §18 for
+the Fallopian Tube decision this was found while making).** Every row in the table above shares one
+property: the honest answer to "where does this arise" is NOT A LOCATION AT ALL — a founder
+genotype, a developmental-lineage fact, a transcriptional classifier. This is a different, THIRD
+shape: the honest answer IS a location, a perfectly ordinary spatial claim — it just is not a
+location on THIS entry's own organ. Ovary's own already-authored HGSOC entry is the worked
+example: the real, cited, mainstream model is that most HGSOC originates at the tubal fimbria
+(fallopian tube tissue), not the ovarian surface epithelium its own `ORIGIN_HOTSPOT` anchor points
+at — and until Fallopian Tube exists as its own organ in this atlas, there is, literally, no tube
+to point at. This is NOT the same defect as the table above (nobody is claiming HGSOC's origin
+isn't spatial — it very much is), and it is NOT solved by §9's own procedural amendment above
+(rule 1, "do not force a spatial override," does not apply — the override IS warranted, the
+anchor is just on the wrong SCREEN, not wrong in KIND).
+
+**The fix is not a new mechanism — `ORIGIN_HOTSPOT`/`ORIGIN_HOTSPOT_ENTRY` already index by organ
+key and by cancer id respectively, and nothing stops an entry's origin note from naming a
+DIFFERENT organ's own hotspot by name.** What cross-organ origin actually requires, once Fallopian
+Tube is authored, is **BIDIRECTIONAL LINKAGE, checked in both directions rather than assumed from
+one:**
+1. **Forward** — Fallopian Tube's own fimbria hotspot must state directly that this is where
+   Ovary's HGSOC entry is understood to actually originate, by name (`ovary.js`'s own `hgsoc` id),
+   not merely "high-grade serous carcinoma" in the abstract — a reader on the Fallopian Tube organ
+   screen should be able to tell this is the SAME cancer they could also reach from Ovary.
+2. **Backward** — Ovary's own existing HGSOC-tubal-origin note (already written, already citing
+   the tubal-origin model) should be revisited once Fallopian Tube exists, to point AT it by name
+   rather than continuing to describe a tube this atlas had no anatomical home for. This is a
+   real, scheduled FOLLOW-UP edit to already-served prose (data rule 2's register-guard standard
+   applies), not a new fact to establish — the citations backing it are already in `ovary.js`.
+3. **The registry entry, when this becomes real:** add a row to the table above (not a new table)
+   the moment Fallopian Tube ships, naming both directions of the link explicitly — this section
+   extends to cover the third kind; it does not need a fourth mechanism to do it.
+
+**No row is added to the table above YET** — the fimbria hotspot and the backward link both remain
+to be authored when Fallopian Tube itself is built (§18's own scope), and this paragraph exists so
+whoever authors it finds the requirement already written down rather than rediscovering it.
+
 ## 10. Item 4 — a proposed incidence floor for build-out, with the resulting count
 ## (2026-09-11/12, user-directed; RULING NEEDED, nothing decided here)
 
@@ -1388,3 +1424,57 @@ any of this atlas's existing histology families (frond/cribriform, small-cell sh
 signet-ring, clear-cell nests) on a first read, and whether it factors into an existing primitive or
 needs a new one is to be reported before drawing anything, per the standing "report family fit before
 building" discipline §7 already established for every other family decision.
+
+## 18. Fallopian Tube — RULED: full organ screen, and why (2026-09-16, user ruling)
+
+**The decision: Fallopian Tube is authored as a full organ screen, not a below-floor blurb and not
+a hotspot bolted onto an existing organ's screen.** Stated plainly because the OBVIOUS-seeming
+justification is the wrong one and must not be the one whoever builds this reaches for: **the
+basis is NOT tubal carcinoma's own incidence.** Primary fallopian tube carcinoma is genuinely rare
+as its own reportable entity — by the incidence-floor logic §10-§12 already worked out for this
+atlas, it would sit close to the floor on that basis alone, plausibly a below-floor blurb candidate
+like `pmuc`/`psignet`. **The real basis is the cross-organ-origin gap §9 now names above**: Ovary's
+own already-authored, already-shipped HGSOC entry cites the real, mainstream tubal-origin model for
+this cancer, and has had no anatomical home to point that citation at since the day it was written.
+An organ that exists mainly to give ANOTHER organ's own origin claim a place to live is a genuinely
+different justification from every other organ this atlas has built, and the below-floor mechanism
+(built for genuine rarity with nothing else to recommend a full entry) is the wrong tool for it —
+it would model the wrong reason for building this organ at all, and a future reader would have no
+way to recover why it exists from the below-floor blurb form alone.
+
+**Prevention content is a real, scoped requirement for this organ, not left implicit: opportunistic
+salpingectomy — removing the fallopian tubes during other pelvic surgery (hysterectomy, tubal
+ligation) specifically as an ovarian/tubal-cancer risk-reduction strategy — must be sourced and
+given the SAME prominence Cervix's own prevention narrative was held to** (real, verified, quantified
+effect sizes; the detection-vs-biology framing that already governs the extent axis elsewhere in
+this atlas). Not yet sourced or drafted — this is a requirement recorded for the authoring pass,
+not the authoring itself, matching the "record the decision, not the built organ" scope this
+section is written at.
+
+**STIC (serous tubal intraepithelial carcinoma) is RULED OUT as its own cancer entity — organ-level
+content on a fimbrial hotspot instead, and the REASON is the part worth keeping, not just the
+verdict.** STIC is real, and it is the leading candidate precursor lesion in the tubal-origin model
+of HGSOC — but every one of this atlas's own cancer-entity axes (`EXTENT_STATUS`, `GROWTH_STATUS`,
+`REGIONS_*`/site model, trials mapping) is built on a load-bearing assumption this section states
+explicitly because nothing else in the schema does: **these axes presuppose invasive disease.**
+STIC is, by definition, intraepithelial — not yet invasive. Forced into this schema, an honest
+author would have to leave `EXTENT_STATUS`/`GROWTH_STATUS`/site model/trials either genuinely
+EMPTY (an entry that renders as if broken, on every axis at once, for a structural reason no
+`uncharacterised`/`unread` status communicates) or INVENTED (a fabricated metastatic-site model for
+a lesion that by definition has not yet metastasized, exactly the class of defect this project's
+own citation-verification discipline exists to catch, self-inflicted this time rather than found in
+someone else's prose). Neither is acceptable, and there is no shame in the honest answer: STIC
+belongs in `organDetail.desc`/the fimbria hotspot's own text, where it can be described accurately
+— as a precursor lesion, in prose, with its real citations — without straining a schema built for a
+different kind of entity. If this atlas ever needs a fourth schema shape for precursor/in-situ
+lesions specifically (NIFTP's own exclusion from Thyroid's carcinoma list, and bladder's in-situ
+share category, are the two nearest precedents already in this file's own history — neither went as
+far as a dedicated schema shape), that is a separate, larger design question for whoever notices a
+second candidate for it — not solved here, and not needed to close this ruling.
+
+**What this section does NOT do: build the organ.** Mesh sourcing, the real HGSOC-site-frequency
+citations already in `ovary.js` (to be re-read, not re-derived, when writing the fimbria hotspot),
+the opportunistic-salpingectomy citations, and the bidirectional linkage §9 now requires are all
+still open, scoped work for the actual authoring pass — this section records the shape the decision
+takes, per this project's own "record the reason, not just the verdict" standard, so that pass
+starts from a settled structural question rather than re-litigating it.

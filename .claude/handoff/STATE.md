@@ -1,8 +1,13 @@
 # Current State
 
-**Written 2026-09-15/16, after the Cervix organ landed.** This file changes on every commit (see
+**Written 2026-09-15/16, after the Cervix organ landed; revised 2026-09-16 in a second, docs-only
+commit that captured three things which existed only in conversation and would otherwise have been
+lost — see "Docs-only follow-up" below.** This file changes on every commit (see
 `OPERATING_CONTRACT.md`'s enforcement note) — if you're reading this and it looks stale relative to
-`git log`, trust `git log`, not this file, and update this file before you do anything else.
+`git log`, trust `git log`, not this file, and update this file before you do anything else. **One
+honest caveat about this mechanism, stated because it is easy to over-trust: the gate proves this
+file was TOUCHED on every commit, not that what it says is ACCURATE — read it, don't just note that
+it changed.**
 
 ## The Cervix organ — CLOSED, committed (this commit — check `git log -1` for the SHA)
 
@@ -92,26 +97,61 @@ narrative), all five cancer entities' site maps and cell-level mutation panels (
 corrected citations actually render), the histology view for `cscc`, and a live ClinicalTrials.gov
 fetch for `cscc` returning real, correctly-filtered results.
 
+## Docs-only follow-up (2026-09-16, same day, second commit — check `git log -2` for both SHAs)
+
+Three things surfaced in conversation after the Cervix commit above landed, none of which had
+reached any file yet. Captured here rather than left to erode with the session that produced them:
+
+1. **Fallopian Tube ruled: full organ screen — not below-floor, not a hotspot bolted onto an
+   existing screen.** Recorded in full, with the reasoning (NOT tubal carcinoma's own incidence —
+   the real basis is that Ovary's own HGSOC entry cites a tubal origin with nowhere to point it),
+   in `.claude/phaseC_design.md` §18. STIC is ruled OUT as its own cancer entity — this atlas's own
+   `EXTENT_STATUS`/`GROWTH_STATUS`/site-model/trials axes all presuppose invasive disease, and an
+   intraepithelial lesion forced into them would leave every axis empty or invented; STIC becomes
+   organ-level prose on a fimbria hotspot instead. Opportunistic salpingectomy is a real, scoped
+   prevention-content requirement for the eventual authoring pass, held to Cervix's own standard —
+   not yet sourced or drafted. `phaseC_design.md` §9 gained a THIRD registry kind, cross-organ
+   origin (after spatial-within-organ and developmental/non-spatial): Ovary's HGSOC is the worked
+   example, and the fix needs bidirectional linkage (Fallopian Tube's own fimbria hotspot naming
+   `hgsoc` by id; Ovary's own existing tubal-origin note revisited to point back once the tube
+   exists) — checked directly against the schema before assuming a new mechanism was needed; none
+   was. **Still not built** — this is the structural decision, not the organ. Do not start
+   authoring Fallopian Tube's actual content without reading `phaseC_design.md` §18 first.
+2. **The cervix origin error, recorded in `RULINGS.md`'s own new section.** Mid-Cervix-pass, a
+   message asserted usual-type adenocarcinoma originates further up the endocervical canal than
+   SCC, treating the *descriptive* name "endocervical adenocarcinoma" (location and resemblance) as
+   an *origin* claim. Checked against primary literature before implementing — Herfs et al. 2012
+   immunostains both entities positive for the same SCJ signature, corroborated by three older
+   sources on the shared subcolumnar reserve cell — and the suggested change was never made. Filed
+   under the same location-vs-origin register conflation this project already catches elsewhere,
+   and named explicitly as a *reviewer* error caught by the implementer — the two-role structure
+   most often described running the other direction.
+3. **The Cervix margin/growth/extent debt is now DATED, not left as a bare "not yet searched."**
+   All five entities across all three axes converted from `status: 'uncharacterised'` (this file's
+   own convention for a CHECKED negative that says what was read — which "not yet searched" is
+   not) to `status: 'unread'` with `until: '2026-10-01'`. `EXTENT_STATUSES` was widened to admit
+   `'unread'` for the first time, since it previously only had `['uncharacterised', 'cited']` —
+   `reserve_check.js`'s own generic date-audit loop already iterated over the extent axis looking
+   for exactly this, so the fix is catching the schema up to a check that was already running, not
+   building a new one. Per `CLAUDE.md`'s own "THE REGISTER FINDING," expect roughly a third of
+   these fifteen rows to resolve to "searched and unavailable" by the due date — a real, legitimate
+   end state, not a failure to close the debt.
+
 ## Genuinely unresolved, worth flagging explicitly for whoever picks this up
 
-- **Push and deploy-verify this commit** — the immediate next action once this file itself is
-  read, not a background item.
-- **Margin/growth/extent for all five Cervix entities are honestly `uncharacterised`/`not yet
-  searched`, not `checked and not found`.** This organ's own background research was scoped to
-  epidemiology, viral/mutational mechanism, genomics, site model, histology, and prevention — a
-  dedicated gross-pathology margin/growth search and a dedicated per-histology SEER Cancer Stat
-  Facts extent search were never run. SEER does publish a dedicated "Cervix Uteri" Cancer Stat
-  Facts page, but the share-bound rule would forbid using its organ-wide aggregate directly for
-  either `cscc` (~69.4% share) or `cadeno` (~26.1% share) regardless, so a dedicated per-histology
-  source would be needed either way — a real, open task for whoever picks this up next, not a
-  quick aggregate-borrow.
+- **Push and deploy-verify this docs-only commit** too — the immediate next action once this file
+  itself is read, not a background item.
+- **Fifteen Cervix margin/growth/extent reads are owed by 2026-10-01** (see above) — check
+  `js/morphology.js`'s own `MARGIN_STATUS`/`GROWTH_STATUS`/`EXTENT_STATUS` tables for the exact
+  `cscc`/`cadeno`/`cgas`/`cclear`/`cmeso` rows before that date passes; `reserve_check.js` will mark
+  them overdue on its own, but this is disclosed here so nobody has to wait for the gate to notice.
+- **Fallopian Tube's structural decision is now settled (see above) — the next action is authoring
+  it**, starting from `phaseC_design.md` §18's own scope (mesh sourcing, the fimbria hotspot and
+  its bidirectional link back to Ovary's HGSOC entry, the opportunistic-salpingectomy prevention
+  citations, and the STIC-as-prose treatment), not re-litigating the shape.
 - **File the GitHub Support request to garbage-collect the orphaned objects from the earlier
   security incident's first, leaking push, and purge any cached views.** Still not filed as of
   this commit, per the last several handoffs' own record — check whether it's been done since.
-- **Fallopian tube is next, per the user's own explicit sequencing** — and it needs its own
-  structural decision BEFORE building it: full entry, below-floor blurb, or a hotspot on an
-  existing screen (Ovary's own HGSOC entry already describes tubal origin with no tube to point
-  at). Do not start authoring content for it until that decision is made.
 - **Oral cavity is explicitly deferred**, not ready to build: its highest-incidence story
   (HPV-positive disease) is actually *oropharyngeal*, and this project's own mesh-availability
   survey found nothing usable for pharynx specifically. Understood and disclosed, not forgotten.
