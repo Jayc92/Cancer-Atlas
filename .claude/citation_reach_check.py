@@ -229,6 +229,18 @@ DECLARED_UNREACHED = {
         'PMID 39117110, the iCCA histology/desmoplastic-stroma source cited for that entry\'s own '
         'REGIONS_ICHOL and HISTOLOGY_ICHOL content; zero records corpus-wide for this author. '
         'Counted separately, same reasoning: a merged count would hide which paper is unreached.',
+    'etal-malformed-head:Nicolás':
+        'NON-ASCII SURNAME, same cause and same held fix (widen SURNAME) as Riihimäki/Conejero '
+        'Merchán/Affò above. One span, cervix.js:146, Nicolás et al., Mod Pathol, 2019, PMID '
+        '30911077, the second of two related-cohort HPV-positivity sources for this organ\'s own '
+        'Squamous Cell Carcinoma trunk note; zero records corpus-wide for this author.',
+    'etal-malformed-head:de Sanjosé':
+        'NON-ASCII SURNAME, same cause and same held fix (widen SURNAME) as Riihimäki/Conejero '
+        'Merchán/Affò/Nicolás above. Four spans, cervix.js:167/192/222/248, de Sanjosé et al., '
+        'Lancet Oncol, 2010, PMID 20952254 — this organ\'s own real HPV-genotype-concentration '
+        'source, cited four times across the Squamous Cell Carcinoma and Adenocarcinoma trunk '
+        'notes because the same paper supplies both entities\' own genotype figures; zero records '
+        'corpus-wide for this author.',
     'etal-malformed-head:Li D':
         'INITIAL IN HEAD, PubMed style — the exact shape that started this whole check ("Li Z et '
         'al." in liver.js). One span, colon.js:225, Front Oncol 2021; zero records for that '

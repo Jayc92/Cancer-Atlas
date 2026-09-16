@@ -181,7 +181,9 @@ WELL_FORMED = (
     'Sakata-Yanagimoto',
     'Segura-Moreno',
     'Traverse-Glehen',
+    'Vinh-Hung',
     # lowercase particles — SURNAME's leading (van|von|de|der|...) clause
+    'da Silva',
     'de Botton',
     'de Kanter',
     'de Kouchkovsky',

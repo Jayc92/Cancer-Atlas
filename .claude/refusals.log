@@ -2779,3 +2779,198 @@ fourth layer being right, and it is the kind of run this file was built to keep.
   |   NOT PUBLISHED: js/trials.js — bytes differ — HEAD 67a30f296309 (102502B) vs served b6518a01d461 (98430B)
   | DONE deploy_check: 27/32 assets byte-matched to HEAD a9b0f0f, 35 hotspots live, 0 unexplained page errors (2 declared-benign), 5 problems
 ==== END REFUSAL
+==== REFUSAL 2026-09-16T02:14:43Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 153 lines, last 12 below
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:242 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:158 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 56 flag(s) — 3 dated for re-read, 48 permanent with reason, 5 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/histology.js|comment|Distinct from every other gland-forming ': js/histology.js:3386 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag "js/organs/cervix.js|comment|Isolated via this atlas's established Bl": js/organs/cervix.js:45 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/cervix.js|comment|since no other organ in this atlas is ce': js/organs/cervix.js:6 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/cervix.js|comment|the same discipline every real-scan orga': js/organs/cervix.js:107 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag "js/organs/cervix.js|text|this histology\\'s single most consistent": js/organs/cervix.js:343 [text] comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 0 unscoped claims (0 absence, 0 false corpus universal), 49 universals flagged for a read, 6 world-scoped, 73 cancers indexed (EXEMPT-REASON-GIVEN 4, EXEMPT-SELF-EVIDENCING 2, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 13, OK-SEARCH 55, UNIVERSAL-UNRESOLVED 49, UNIVERSAL-WORLD-SCOPED 6), 5 tolerated-count problems, 5 total problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:15:19Z reason=exit=1 marker="DONE citation_crosscheck:" tool=citation_crosscheck.py
+     output 208 lines, last 12 below
+  |   23636398 Kandoth 2013 [entry-time(v2-source)] js/organs/uterus.js:267
+  |       author: recorded 'Kandoth' vs id-first-author 'Cancer Genome Atlas Research Network'
+  |   33919741 Diagnostics 2021 [pmc-mapped] js/organs/uterus.js:191
+  |       author: recorded 'Diagnostics' vs id-first-author 'De Leo A'
+  |   citation_crosscheck: 64 flag(s) — 0 dated for re-read, 62 permanent with reason, 2 problem(s)
+  |   PROBLEM: UNDECLARED citation_crosscheck flag '25229645|Carunchio|2015': [entry-time(v2-source)] js/organs/cervix.js:142: author: recorded 'Carunchio' vs id-first-author 'Rodriguez-Carunchio L' — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED citation_crosscheck flag '28112728|TCGA|2017': [entry-time(v2-source)] js/organs/cervix.js:164: author: recorded 'TCGA' vs id-first-author 'Cancer Genome Atlas Research Network' — fix it, declare it with a reason, or date it for re-read
+  | 
+  | live known-positive assertion: PASS (a synthetic wrong author flags against real fetched data)
+  |   flags written: $TMPDIR/atlas-battery-34b0af02fb22/crosscheck_flags.json
+  | SIDECAR {"metrics": {"declared_unmappable": 1, "flags": 70, "records": 751}, "name": "citation_crosscheck", "ratchet": ["records"]}
+  | DONE citation_crosscheck: 751 records checked, 70 flags, 1 declared-unmappable, 2 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:15:21Z reason=exit=3 marker="DONE citation_reach_check:" tool=citation_reach_check.py
+     output 53 lines, last 12 below
+  |     declared 'etal-malformed-head:Fernàndez' x1: lymphnodes.js:206
+  |     declared 'etal-malformed-head:Gundem G' x1: prostate.js:163
+  |     declared 'etal-malformed-head:Li D' x1: colon.js:226
+  |     declared 'etal-malformed-head:Riihimäki' x23: colon.js:200, colon.js:207, colon.js:209, colon.js:211, colon.js:213, colon.js:359, colon.js:368, colon.js:370
+  |     declared 'etal-malformed-head:Wang K' x1: stomach.js:214
+  |     declared 'etal-malformed-head:de Sanjosé' x3: cervix.js:159, cervix.js:214, cervix.js:240
+  |     declared 'etal-malformed-head:— Pölönen' x1: marrow.js:485
+  |   bare-name-comma-year heads (4 distinct, NOT gated — held): Educ Program, KGCA, TCGA, Working Group
+  |   journal-adjacent-year heads (19 distinct, NOT gated — held): Acad Pathol, Blood, CRSLS, Cancer, Cell, Clin Cases, Clin Oncol, Comput Biol, Cureus, Curr Oncol, Gastric Cancer, Gynecol Pathol ...
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:de Sanjosé' at cervix.js:159, cervix.js:214, cervix.js:240 (3 spans). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  | SIDECAR {"metrics": {"declared": 13, "gated_total": 45, "kind_bare_name_comma_year": 8, "kind_bare_name_year": 0, "kind_data_span_year": 171, "kind_etal_malformed_head": 45, "kind_etal_out_of_range": 0, "kind_etal_shadow": 3, "kind_journal_adjacent_year": 44, "kind_paren_shadow": 12, "kind_prose_year": 73, "kind_semicolon_shadow": 21, "kind_unlisted": 0, "problems": 1, "unreached_total": 377}, "name": "citation_reach_check", "ratchet": []}
+  | DONE citation_reach_check: 377 unreached spans (30 added, 0 removed vs the tracked set), 45 gated (13 declared), 1 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:15:22Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 118 lines, last 12 below
+  |   well-formed 'van den Brand'
+  |               js/organs/lymphnodes.js:437, js/organs/lymphnodes.js:465
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von Domarus'
+  |               js/organs/skin.js:403, js/organs/skin.js:418, js/organs/skin.js:422
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:107
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Vinh-Hung' at js/organs/cervix.js:28 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'da Silva' at js/organs/cervix.js:358, js/organs/cervix.js:368, js/organs/cervix.js:375 (3 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 54, "heads_total": 56, "imprecise": 8, "problems": 2, "records": 125, "well_formed": 46}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 56 multi-token heads on 125/1644 records, 8 declared imprecise, 46 declared well-formed, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:15:23Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 35 lines, last 12 below
+  |   CONFIRMS  SPENT  basis TEST  Matsuo|2013|js/organs/uterus.js:44
+  |   CONFIRMS  SPENT  basis TEST  Okosun|2013|js/organs/lymphnodes.js:164
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:173
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  SPENT  basis TEST  Su|1997|js/organs/lymphnodes.js:27
+  |   CONFIRMS  KEPT   basis TEST  Swerdlow|2016|js/organs/lymphnodes.js:231
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Agarwal|2018|js/organs/cervix.js:340 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: UNSCORED PAREN SPAN Carunchio|2019|js/organs/cervix.js:143 (rule says SPENT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 13, "kept": 7, "population": 19, "preregistered": 17, "problems": 2, "scored_confirms": 17, "scored_falsifies": 0, "spent": 12}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 19 paren spans (12 spent, 7 kept), 17 scored (13 as TEST, 4 as FIT and worth no support), 0 falsifying, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:26:37Z reason=exit=1 marker="==== DONE:" tool=regress.js
+     output 755 lines, last 12 below
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/assets/thumbs/cervix.png"
+  |  },
+  |  {
+  |   "type": "404",
+  |   "msg": "http://localhost:3057/favicon.ico"
+  |  },
+  |  {
+  |   "type": "console",
+  |   "msg": "Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:3057/favicon.ico"
+  |  }
+  | ]
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:35:15Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 153 lines, last 12 below
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:242 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:158 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 56 flag(s) — 3 dated for re-read, 48 permanent with reason, 5 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/histology.js|comment|Distinct from every other gland-forming ': js/histology.js:3386 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag "js/organs/cervix.js|comment|Isolated via this atlas's established Bl": js/organs/cervix.js:45 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/cervix.js|comment|since no other organ in this atlas is ce': js/organs/cervix.js:6 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag 'js/organs/cervix.js|comment|the same discipline every real-scan orga': js/organs/cervix.js:107 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED absence_claim_check flag "js/organs/cervix.js|text|this histology\\'s single most consistent": js/organs/cervix.js:351 [text] comparative/superlative over the corpus, not a presence claim — gene presence cannot settle it — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 0 unscoped claims (0 absence, 0 false corpus universal), 49 universals flagged for a read, 6 world-scoped, 73 cancers indexed (EXEMPT-REASON-GIVEN 4, EXEMPT-SELF-EVIDENCING 2, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 13, OK-SEARCH 55, UNIVERSAL-UNRESOLVED 49, UNIVERSAL-WORLD-SCOPED 6), 5 tolerated-count problems, 5 total problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:35:53Z reason=exit=1 marker="DONE citation_crosscheck:" tool=citation_crosscheck.py
+     output 208 lines, last 12 below
+  |   23636398 Kandoth 2013 [entry-time(v2-source)] js/organs/uterus.js:267
+  |       author: recorded 'Kandoth' vs id-first-author 'Cancer Genome Atlas Research Network'
+  |   33919741 Diagnostics 2021 [pmc-mapped] js/organs/uterus.js:191
+  |       author: recorded 'Diagnostics' vs id-first-author 'De Leo A'
+  |   citation_crosscheck: 64 flag(s) — 0 dated for re-read, 62 permanent with reason, 2 problem(s)
+  |   PROBLEM: UNDECLARED citation_crosscheck flag '25229645|Carunchio|2015': [entry-time(v2-source)] js/organs/cervix.js:143: author: recorded 'Carunchio' vs id-first-author 'Rodriguez-Carunchio L' — fix it, declare it with a reason, or date it for re-read
+  |   PROBLEM: UNDECLARED citation_crosscheck flag '28112728|TCGA|2017': [entry-time(v2-source)] js/organs/cervix.js:172: author: recorded 'TCGA' vs id-first-author 'Cancer Genome Atlas Research Network' — fix it, declare it with a reason, or date it for re-read
+  | 
+  | live known-positive assertion: PASS (a synthetic wrong author flags against real fetched data)
+  |   flags written: $TMPDIR/atlas-battery-34b0af02fb22/crosscheck_flags.json
+  | SIDECAR {"metrics": {"declared_unmappable": 1, "flags": 70, "records": 753}, "name": "citation_crosscheck", "ratchet": ["records"]}
+  | DONE citation_crosscheck: 753 records checked, 70 flags, 1 declared-unmappable, 2 tolerated-count problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:35:55Z reason=exit=3 marker="DONE citation_reach_check:" tool=citation_reach_check.py
+     output 44 lines, last 12 below
+  |     declared 'etal-malformed-head:Li D' x1: colon.js:226
+  |     declared 'etal-malformed-head:Nicolás' x1: cervix.js:146
+  |     declared 'etal-malformed-head:Riihimäki' x23: colon.js:200, colon.js:207, colon.js:209, colon.js:211, colon.js:213, colon.js:359, colon.js:368, colon.js:370
+  |     declared 'etal-malformed-head:Wang K' x1: stomach.js:214
+  |     declared 'etal-malformed-head:de Sanjosé' x4: cervix.js:167, cervix.js:192, cervix.js:222, cervix.js:248
+  |     declared 'etal-malformed-head:— Pölönen' x1: marrow.js:485
+  |   bare-name-comma-year heads (4 distinct, NOT gated — held): Educ Program, KGCA, TCGA, Working Group
+  |   journal-adjacent-year heads (19 distinct, NOT gated — held): Acad Pathol, Blood, CRSLS, Cancer, Cell, Clin Cases, Clin Oncol, Comput Biol, Cureus, Curr Oncol, Gastric Cancer, Gynecol Pathol ...
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:Nicolás' at cervix.js:146 (1 span). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  |   PROBLEM: UNDECLARED unreached citation head 'etal-malformed-head:de Sanjosé' at cervix.js:167, cervix.js:192, cervix.js:222, cervix.js:248 (4 spans). This span contains "et al." and produced NO record, so its identifiers reach no instrument. Either make it extractable, or declare it in DECLARED_UNREACHED with a reason saying why it stays unreachable.
+  | SIDECAR {"metrics": {"declared": 13, "gated_total": 47, "kind_bare_name_comma_year": 8, "kind_bare_name_year": 0, "kind_data_span_year": 177, "kind_etal_malformed_head": 47, "kind_etal_out_of_range": 0, "kind_etal_shadow": 3, "kind_journal_adjacent_year": 44, "kind_paren_shadow": 11, "kind_prose_year": 73, "kind_semicolon_shadow": 20, "kind_unlisted": 0, "problems": 2, "unreached_total": 383}, "name": "citation_reach_check", "ratchet": []}
+  | DONE citation_reach_check: 383 unreached spans (8 added, 2 removed vs the tracked set), 47 gated (13 declared), 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:35:56Z reason=exit=3 marker="DONE citation_head_check:" tool=citation_head_check.py
+     output 118 lines, last 12 below
+  |   well-formed 'van den Brand'
+  |               js/organs/lymphnodes.js:437, js/organs/lymphnodes.js:465
+  |   well-formed 'van der Kaaij'
+  |               js/organs/stomach.js:30
+  |   well-formed 'von Domarus'
+  |               js/organs/skin.js:403, js/organs/skin.js:418, js/organs/skin.js:422
+  |   well-formed 'von der Maase'
+  |               js/organs/testis.js:107
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'Vinh-Hung' at js/organs/cervix.js:28 (1 record). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  |   PROBLEM: UNDECLARED HEAD SHAPE 'da Silva' at js/organs/cervix.js:366, js/organs/cervix.js:376, js/organs/cervix.js:383 (3 records). This author string is not a single run of letters, so either the corpus really writes it that way — add it to WELL_FORMED — or the extractor swallowed adjacent text, in which case add it to IMPRECISE with the corrected string and the span quoted. Do not widen or narrow SURNAME to make this go away: that is a change in reach and needs its own commit and its own measurement.
+  | SIDECAR {"metrics": {"declared": 54, "heads_total": 56, "imprecise": 8, "problems": 2, "records": 125, "well_formed": 46}, "name": "citation_head_check", "ratchet": []}
+  | DONE citation_head_check: 56 multi-token heads on 125/1647 records, 8 declared imprecise, 46 declared well-formed, 2 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:35:58Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 33 lines, last 12 below
+  |   CONFIRMS  SPENT  basis TEST  Matsuo|1973|js/organs/uterus.js:44
+  |   CONFIRMS  SPENT  basis TEST  Matsuo|2013|js/organs/uterus.js:44
+  |   CONFIRMS  SPENT  basis TEST  Okosun|2013|js/organs/lymphnodes.js:164
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:173
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  SPENT  basis TEST  Su|1997|js/organs/lymphnodes.js:27
+  |   CONFIRMS  KEPT   basis TEST  Swerdlow|2016|js/organs/lymphnodes.js:231
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Agarwal|2018|js/organs/cervix.js:348 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 13, "kept": 7, "population": 18, "preregistered": 17, "problems": 1, "scored_confirms": 17, "scored_falsifies": 0, "spent": 11}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 18 paren spans (11 spent, 7 kept), 17 scored (13 as TEST, 4 as FIT and worth no support), 0 falsifying, 1 problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:52:56Z reason=exit=1 marker="DONE absence_claim_check:" tool=absence_claim_check.py
+     output 143 lines, last 12 below
+  |       and an inner oblique layer found nowhere else in the GI tract
+  |   world-scoped universal needs a read: js/organs/kidneys.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/ovary.js:6 (shares ['clear', 'ovarian', 'ovaries', 'uniquely'])
+  |       'occc'/'ovarian clear cell' uniquely to Ovaries.
+  |   world-scoped universal needs a read: js/organs/lungs.js:128 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it
+  |       The desc used to open "Uniquely among organs
+  |   world-scoped universal needs a read: js/organs/ovary.js:6 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/kidneys.js:6 (shares ['carcinoma', 'ccrcc', 'kidneys', 'renal', 'uniquely'])
+  |       'ccrcc' and 'renal cell carcinoma' keep resolving uniquely to Kidneys.
+  |   world-scoped universal needs a read: js/organs/skin.js:242 [comment] — asserts exclusivity over the whole body, not over the atlas — no corpus scan can settle it — possible restatement at js/organs/colon.js:158 (shares ['nowhere', 'reason', 'second', 'trunk'])
+  |       a second reason it lives in the trunk-note prose and nowhere else.
+  |   absence_claim_check: 53 flag(s) — 3 dated for re-read, 49 permanent with reason, 1 problem(s)
+  |   PROBLEM: UNDECLARED absence_claim_check flag "js/organs/cervix.js|comment|Isolated via this atlas's established Bl": js/organs/cervix.js:45 [comment] quantifies over the atlas; record names no gene symbol — fix it, declare it with a reason, or date it for re-read
+  | DONE absence_claim_check: 0 unscoped claims (0 absence, 0 false corpus universal), 46 universals flagged for a read, 6 world-scoped, 73 cancers indexed (EXEMPT-REASON-GIVEN 4, EXEMPT-SELF-EVIDENCING 2, EXEMPT-SOURCE-ATTESTED 4, OK-SCOPED 13, OK-SEARCH 55, UNIVERSAL-UNRESOLVED 46, UNIVERSAL-WORLD-SCOPED 6), 1 tolerated-count problems, 1 total problems
+==== END REFUSAL
+==== REFUSAL 2026-09-16T02:53:37Z reason=exit=3 marker="DONE citation_paren_ledger:" tool=citation_paren_ledger.py
+     output 34 lines, last 12 below
+  |   CONFIRMS  SPENT  basis TEST  Matsuo|2013|js/organs/uterus.js:44
+  |   CONFIRMS  SPENT  basis TEST  Okosun|2013|js/organs/lymphnodes.js:164
+  |   CONFIRMS  KEPT   basis TEST  Park|2021|js/organs/thyroid.js:335
+  |   CONFIRMS  SPENT  basis FIT   Powell|1990|js/organs/colon.js:173
+  |   CONFIRMS  SPENT  basis FIT   Schulze|2017|js/organs/liver.js:280
+  |   CONFIRMS  SPENT  basis TEST  Su|1997|js/organs/lymphnodes.js:27
+  |   CONFIRMS  KEPT   basis TEST  Swerdlow|2016|js/organs/lymphnodes.js:231
+  |   CONFIRMS  KEPT   basis FIT   Travis|2011|js/organs/lungs.js:277
+  |   PROBLEM: UNSCORED PAREN SPAN Agarwal|2018|js/organs/cervix.js:350 (rule says KEPT). A ')' sits between this head and its year, so the pre-registered claim — a closed year-bearing parenthetical spends the head — was exercised on it. Read the span, decide whether the rule got it right, and add an entry to PREREGISTERED with side, basis TEST, a verdict of CONFIRMS or FALSIFIES, and the span quoted. Basis is TEST, not FIT: the rule was already written when this span arrived, so this is evidence and the four FIT entries are not. FIRST CHECK WHETHER IT ARRIVED AT ALL: if a STALE SCORING problem names the same head and year, this is probably ONE existing span whose line moved, and the two problems are its removal and its arrival. Take the OLD entry's line text, find its one occurrence in the new file, and if the bytes are identical RE-ADDRESS the existing entry and keep its basis. Scoring a relocation as TEST would manufacture evidence for this rule out of a line-number change, and TEST is the only number here that counts.
+  |   PROBLEM: STALE SCORING Agarwal|2018|js/organs/cervix.js:348: scored CONFIRMS on the KEPT side, but no such span is in the population any more. If the sentence was rewritten or the record removed, delete the entry in the same commit — and if its basis was TEST, say so in the message, because deleting a TEST is deleting this rule's only real evidence.
+  | SIDECAR {"metrics": {"basis_fit": 4, "basis_test": 13, "kept": 7, "population": 18, "preregistered": 18, "problems": 2, "scored_confirms": 17, "scored_falsifies": 0, "spent": 11}, "name": "citation_paren_ledger", "ratchet": ["basis_test"]}
+  | DONE citation_paren_ledger: 18 paren spans (11 spent, 7 kept), 18 scored (13 as TEST, 4 as FIT and worth no support), 0 falsifying, 2 problems
+==== END REFUSAL

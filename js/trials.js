@@ -1099,6 +1099,99 @@ export const TRIALS_CONDITION_MAP = {
       + 'structured metadata doesn\'t carry what the free-text title claims, the same class of gap '
       + 'this atlas\'s trials-mapping method has already found and accepted elsewhere.',
   },
+  // Cervix, all five entities (2026-09-15). "cervical" carries a real, checked collision risk of
+  // its own — the SAME organ-anchor word this atlas already uses successfully for cscc/cadeno/
+  // cgas/cclear/cmeso also names cervical SPINE/lymph-node anatomy in unrelated oncology contexts
+  // — so every entry was checked directly (production-matching pageSize=10, sorted by
+  // LastUpdatePostDate desc, exactly what the live app fetches) rather than assumed safe by
+  // analogy. Result: zero real "cervical spine"/"cervical lymph node" false positives found
+  // anywhere in the samples read for any of the five entries — the collision that WAS real and
+  // repeatedly observed is the established basket-trial shape (a bare "Cervical Cancer" tag
+  // alongside an unrelated organ's squamous/adenocarcinoma/clear-cell tag as a SEPARATE string in
+  // the same multi-tumor trial), which the existing same-string requireAlso mechanism already
+  // handles correctly — confirmed by hand-reading every kept and dropped condition string in each
+  // production-matching sample, not assumed from the mechanism's own prior track record.
+  cscc: {
+    query: 'squamous cell carcinoma of the cervix', parent: 'cervical cancer',
+    conditionKeywords: ['squamous'], requireAlso: ['cervi'],
+    note: 'LIVE-VERIFIED 2026-09-15, production-matching fetch (pageSize=10, sorted by '
+      + 'LastUpdatePostDate desc): 4/10 kept, all four genuinely real cervical SCC condition '
+      + 'strings ("Cervical Squamous Cell Carcinoma" x2, "Locally Advanced Cervical Squamous '
+      + 'Cell Carcinoma", "Squamous Cell Carcinoma of the Cervix"). 6/10 correctly dropped — every '
+      + 'one is a real multi-tumor basket trial where "Cervical Cancer" and an unrelated organ\'s '
+      + 'squamous-cell tag (head-and-neck/lung/esophagus) sit as two SEPARATE declared condition '
+      + 'strings, so same-string co-occurrence correctly excludes them. .claude/'
+      + 'trials_mapping_check.mjs\'s own exhaustive sweep of the full 66-study narrow corpus '
+      + 'confirms 14 same-string cervi+squamous matches total, zero false positives among them. '
+      + 'Negation-collision signal: zero matches.',
+  },
+  cadeno: {
+    query: 'cervical adenocarcinoma', parent: 'cervical cancer',
+    conditionKeywords: ['adenocarcinoma'], requireAlso: ['cervi'],
+    excludeIf: ['clear cell', 'gastric-type', 'gastric type', 'mesonephric'],
+    note: 'LIVE-VERIFIED 2026-09-15. At the exact production-matching fetch (pageSize=10, sorted '
+      + 'by LastUpdatePostDate desc), 0/10 kept that day — every one of the 10 most-recently-'
+      + 'updated studies is a large multi-tumor basket where "Cervical Cancer" names no '
+      + 'adenocarcinoma-specific string, correctly dropped. NOT a broken query: '
+      + '.claude/trials_mapping_check.mjs\'s own exhaustive, full-pagination sweep of the entire '
+      + '261-study narrow corpus (not just the top 10) found 11 real kept matches genuinely '
+      + 'exist — they simply were not among the 10 most-recently-updated at this exact fetch, the '
+      + 'same sort-order-dependent near-empty result this atlas\'s own ftc/pnet entries already '
+      + 'document for a real, not-ultra-rare subtype. excludeIf VERIFIED load-bearing by the same '
+      + 'tool\'s positive control (22 of 1243 distinct narrow-query condition strings are real '
+      + 'contamination it correctly excludes, e.g. "Metastatic Clear Cell Renal Cell Carcinoma", '
+      + '"Gastric-type Endocervical Adenocarcinoma"): "Clear Cell Adenocarcinoma of Cervix" '
+      + '(NCT06730347) contains both "adenocarcinoma" and "cervi" in one string and would '
+      + 'otherwise be wrongly kept here — it is this organ\'s own HPV-independent Clear Cell '
+      + 'Carcinoma entity, not usual-type adenocarcinoma, excluded the same way idc/ilc exclude '
+      + 'each other\'s histology within one organ. Negation-collision signal: zero matches.',
+  },
+  cgas: {
+    query: 'gastric-type endocervical adenocarcinoma', parent: 'cervical cancer',
+    conditionKeywords: ['gastric-type', 'gastric type'],
+    note: 'LIVE-VERIFIED 2026-09-15: the entire narrow-query corpus is 3 studies (fewer than one '
+      + 'page), all three kept, all three genuinely real ("Gastric-type Endocervical '
+      + 'Adenocarcinoma" x2, "Gastric Type Adenocarcinoma (GAS) With STK11 Mutation" — the space-'
+      + 'form variant, which is why both the hyphenated and spaced forms are in '
+      + 'conditionKeywords). No organ-anchor (requireAlso) needed: "gastric-type" is disease-'
+      + 'specific gynecologic-pathology terminology, not a term stomach/gastric-primary trials use '
+      + 'for their own disease (which is tagged plain "gastric adenocarcinoma", never "gastric-'
+      + 'type") — checked directly rather than assumed, and this organ\'s own tiny 3-study corpus '
+      + 'left nothing else to check against. Real disease rarity (~10% of endocervical '
+      + 'adenocarcinoma) explains the small trial population, not a broken query.',
+  },
+  cclear: {
+    query: 'clear cell carcinoma of the cervix', parent: 'cervical cancer',
+    conditionKeywords: ['clear cell'], requireAlso: ['cervi'],
+    note: 'LIVE-VERIFIED 2026-09-15, production-matching fetch (pageSize=10): 2/10 kept, both '
+      + 'genuinely real ("Human Papillomavirus-Independent Cervical Adenocarcinoma, Clear Cell-'
+      + 'Type"; "Clear Cell Adenocarcinoma of Cervix" — the same NCT06730347 excludeIf-relevant to '
+      + 'cadeno above, correctly a positive KEPT match here, its actual own entity). 8/10 '
+      + 'correctly dropped — every one is a real multi-tumor basket where "Cervical Cancer" and '
+      + '"Clear Cell Renal Cell Carcinoma" (an unrelated kidney cancer sharing only the "clear '
+      + 'cell" words) sit as two separate condition strings. One real, disclosed gap found and NOT '
+      + 'fixable by keyword tuning (the ucs/idc precedent): NCT06677190 ("Belzutifan in Recurrent '
+      + 'Clear Cell Carcinoma of Gynecologic Origin") is a genuine, on-topic trial per its own '
+      + 'title, but its structured Condition field never uses the words "clear cell" anywhere, '
+      + 'only generic organ tags ("Cervical Cancer", "Ovarian Cancer", etc.) — the registry\'s own '
+      + 'metadata doesn\'t carry what the free-text title claims, so it is correctly, if '
+      + 'regrettably, dropped.',
+  },
+  cmeso: {
+    query: 'mesonephric carcinoma cervix', parent: 'cervical cancer',
+    conditionKeywords: ['mesonephric'], requireAlso: ['cervi'],
+    note: 'LIVE-VERIFIED 2026-09-15: the narrow query returns 0 studies under the RECRUITING/'
+      + 'NOT_YET_RECRUITING/ENROLLING_BY_INVITATION filter — checked live, not assumed; expect '
+      + 'EMPTY-ANSWERED. A bare "mesonephric carcinoma" query with no organ anchor, checked '
+      + 'separately, ALSO returns zero studies whose own condition strings contain the literal '
+      + 'word "mesonephric" anywhere (the 8 studies that query surfaces are unrelated pediatric '
+      + 'germ-cell/rhabdoid-tumor trials matched by ClinicalTrials.gov\'s own broad free-text '
+      + 'relevance search, not by any real "mesonephric" tag) — so requireAlso is not currently '
+      + 'exercised, but is kept as the same zero-cost prophylactic guard this atlas\'s own crc '
+      + 'entry already establishes as an accepted pattern. Real disease rarity (under 1% of '
+      + 'endocervical adenocarcinoma, the rarest entity on this organ\'s own page), not a broken '
+      + 'query.',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------

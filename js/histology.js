@@ -3337,6 +3337,148 @@ function genCarcinosarcoma(g, rnd){
   ];
 }
 
+// Cervical usual-type (HPV-associated) endocervical adenocarcinoma — the IECC's own primary
+// diagnostic criterion (Stolnicu et al., Am J Surg Pathol, 2018, PMID 29135516, read directly at
+// full text): "Apical mitotic figures and apoptotic bodies appreciable at scanning magnification"
+// — a genuinely different, more specific visual claim than "some mitoses somewhere in the gland,"
+// and the one real, drawable feature this pass could confirm at the primary source (the same
+// paper's own cytoplasmic definition — 0-50% of cells with intracytoplasmic mucin — is a
+// diagnostic threshold, not something a static image can show, so it is named in prose instead).
+// Reuses drawGlandRing verbatim (the same primitive genEndometrioid/genCarcinosarcoma already
+// dispatch to) for the glands themselves; the one new element is placing mitotic-figure marks
+// specifically at each gland's OWN inner (luminal/apical) border rather than scattered through the
+// full thickness of the epithelium, which is what "apical" actually means and is the entire visual
+// point of this generator.
+function genCervixAdeno(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const glands = [];
+  for(let row=0; row<4; row++){
+    for(let col=0; col<3; col++){
+      const jx = (rnd()*2-1)*10, jy = (rnd()*2-1)*10;
+      glands.push({ x:150 + col*230 + (row%2? 60:0) + jx, y:90 + row*115 + jy, r:52+rnd()*8 });
+    }
+  }
+  glands.forEach(gl=>{
+    drawGlandRing(g, gl.x, gl.y, gl.r*0.62, rnd, { cellR:11, nucMin:4.2, nucMax:5.8 });
+    // Apical mitotic figures / apoptotic bodies — placed just inside the gland's own lumen edge,
+    // at the luminal (apical) surface of the lining cells, not mid-cytoplasm or basally.
+    const n = 2 + Math.round(rnd()*2);
+    for(let i=0;i<n;i++){
+      const a = rnd()*Math.PI*2;
+      const rr = gl.r*0.62*0.86;
+      const mx = gl.x + Math.cos(a)*rr, my = gl.y + Math.sin(a)*rr;
+      if(rnd() < 0.5){
+        // a condensed, dark mitotic figure (chromosomes clumped, no clear nuclear envelope)
+        g.appendChild(el('path', {d:`M ${(mx-3.4).toFixed(1)} ${(my-2.6).toFixed(1)} L ${(mx+3.2).toFixed(1)} ${(my+2.8).toFixed(1)} M ${(mx+3.4).toFixed(1)} ${(my-2.4).toFixed(1)} L ${(mx-3.0).toFixed(1)} ${(my+2.9).toFixed(1)}`, stroke:HE.nucDark, 'stroke-width':2.4, fill:'none', opacity:0.95}));
+      } else {
+        // a small, round, deeply eosinophilic apoptotic body
+        g.appendChild(el('circle', {cx:mx, cy:my, r:3.1, fill:'#c1445a', opacity:0.85}));
+      }
+    }
+  });
+  return [
+    {key:'glands',  x:glands[0].x, y:glands[0].y},
+    {key:'apical',  x:glands[1].x, y:glands[1].y},
+    {key:'mucin',   x:glands[2].x, y:glands[2].y},
+  ];
+}
+
+// Gastric-type endocervical adenocarcinoma (HPV-independent) — real, primary-sourced diagnostic
+// criteria (Kojima et al., Am J Surg Pathol, 2007, PMID 17460448, verbatim): tumor cells with
+// "clear and/or pale eosinophilic and voluminous cytoplasm, with distinct cell borders." Distinct
+// from this file's own genEndometrioid/genCervixAdeno generators specifically in cell SIZE and
+// BORDER SHARPNESS — large, pale cells with a heavy, crisply-drawn membrane outline, not the
+// thinner outlines those two use for ordinary columnar cells. The well-differentiated end of this
+// entity's real spectrum (minimal deviation adenocarcinoma) is named in prose, not drawn as a
+// separate feature, per this atlas's own "name more than is drawn" convention (the same treatment
+// LUSC's basaloid variant and this file's own genCarcinosarcoma heterologous-pattern list already
+// get) — the ISGyP's own grading guidelines (Talia et al., 2021, PMID 33570864) explicitly
+// recommend against grading this entity, so no low/high-grade contrast is drawn either.
+function genGastricType(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const glands = [];
+  for(let row=0; row<3; row++){
+    for(let col=0; col<3; col++){
+      const jx = (rnd()*2-1)*14, jy = (rnd()*2-1)*14;
+      glands.push({ x:160 + col*250 + (row%2? 70:0) + jx, y:110 + row*150 + jy, r:66+rnd()*10 });
+    }
+  }
+  glands.forEach(gl=>{
+    g.appendChild(el('circle', {cx:gl.x, cy:gl.y, r:gl.r*0.5, fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+    const n = Math.max(9, Math.round(gl.r*0.32));
+    for(let i=0;i<n;i++){
+      const a = i/n*Math.PI*2 + rnd()*0.15;
+      const cx = gl.x + Math.cos(a)*gl.r, cy = gl.y + Math.sin(a)*gl.r;
+      const rx = 15+rnd()*3, ry = 12+rnd()*3;
+      // large, pale (clear-to-pale-eosinophilic), voluminous cytoplasm with a DISTINCT, heavy
+      // cell border — the two defining features quoted in the source, drawn together
+      g.appendChild(el('ellipse', {cx, cy, rx, ry, transform:`rotate(${(a*180/Math.PI).toFixed(0)} ${cx.toFixed(1)} ${cy.toFixed(1)})`, fill:rnd()<0.6?HE.clear:HE.cyto, stroke:HE.nucDark, 'stroke-width':1.8, opacity:0.92}));
+      g.appendChild(el('ellipse', {cx:cx+Math.cos(a)*6, cy:cy+Math.sin(a)*6, rx:5.4, ry:4.4, transform:`rotate(${(a*180/Math.PI).toFixed(0)} ${cx.toFixed(1)} ${cy.toFixed(1)})`, fill:HE.nuc, opacity:0.9}));
+    }
+  });
+  return [
+    {key:'cytoplasm', x:glands[0].x, y:glands[0].y},
+    {key:'borders',   x:glands[1].x, y:glands[1].y},
+    {key:'glands',    x:glands[2].x, y:glands[2].y},
+  ];
+}
+
+// Mesonephric carcinoma — real, primary-sourced defining feature (Clement et al., Am J Surg
+// Pathol, 1995, PMID 7573674, via da Silva et al. 2021's own reference trail; described directly
+// by PathologyOutlines): small, back-to-back TUBULES (not round follicles) lined by cuboidal
+// cells, containing eosinophilic intraluminal colloid-like secretions that stain positive for
+// PASD and mucicarmine. Genuinely reuses a TECHNIQUE already established in this file rather than
+// inventing new geometry from scratch — genFTC's own local `follicle()` helper (a ring of lining
+// cells around a filled lumen) is the same underlying idiom, re-implemented here with elongated,
+// angular tubules instead of round follicles, since the real architecture is tubular, and a
+// distinct, deeper-eosinophilic fill for the colloid-like secretion rather than thyroid's own pale
+// colloid tone, so the two substances never read as the same thing at a glance. The real
+// architectural polymorphism this entity is also known for (retiform, sex cord-like, papillary,
+// hobnail, glomeruloid, solid, sieve-like, spindled patterns) is named in prose, not drawn — the
+// tubular pattern is the most common and the one with a real, quotable defining secretion.
+function genMesonephric(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  const tubule = (x, y, len, ang, colloid)=>{
+    const dx = Math.cos(ang), dy = Math.sin(ang);
+    const w = 15 + colloid*0.0; // fixed half-width, kept as a named var for clarity
+    const path = `M ${(x-dx*len/2-dy*w).toFixed(1)} ${(y-dy*len/2+dx*w).toFixed(1)} `
+      + `L ${(x+dx*len/2-dy*w).toFixed(1)} ${(y+dy*len/2+dx*w).toFixed(1)} `
+      + `L ${(x+dx*len/2+dy*w).toFixed(1)} ${(y+dy*len/2-dx*w).toFixed(1)} `
+      + `L ${(x-dx*len/2+dy*w).toFixed(1)} ${(y-dy*len/2-dx*w).toFixed(1)} Z`;
+    g.appendChild(el('path', {d:path, fill:HE.cytoLite, stroke:HE.cytoLn, 'stroke-width':1}));
+    // eosinophilic intraluminal colloid-like secretion, deeper/pinker than thyroid's own pale
+    // colloid so the two substances never read as the same fill
+    const innerLen = len*0.72, innerW = w*0.42;
+    const innerPath = `M ${(x-dx*innerLen/2-dy*innerW).toFixed(1)} ${(y-dy*innerLen/2+dx*innerW).toFixed(1)} `
+      + `L ${(x+dx*innerLen/2-dy*innerW).toFixed(1)} ${(y+dy*innerLen/2+dx*innerW).toFixed(1)} `
+      + `L ${(x+dx*innerLen/2+dy*innerW).toFixed(1)} ${(y+dy*innerLen/2-dx*innerW).toFixed(1)} `
+      + `L ${(x-dx*innerLen/2+dy*innerW).toFixed(1)} ${(y-dy*innerLen/2-dx*innerW).toFixed(1)} Z`;
+    g.appendChild(el('path', {d:innerPath, fill:'#d1697a', opacity:0.85}));
+    const nNuc = Math.max(5, Math.round(len/9));
+    for(let i=0;i<nNuc;i++){
+      const t = (i/(nNuc-1) - 0.5)*len*0.94;
+      const side = i%2? 1 : -1;
+      const nx = x + dx*t - dy*w*0.72*side, ny = y + dy*t + dx*w*0.72*side;
+      g.appendChild(el('ellipse', {cx:nx, cy:ny, rx:3.6, ry:2.8, fill:HE.nuc, opacity:0.92}));
+    }
+  };
+  const tubules = [];
+  for(let row=0; row<5; row++){
+    for(let col=0; col<4; col++){
+      const x = 110 + col*175 + (row%2? 55:0) + (rnd()*2-1)*10;
+      const y = 70 + row*90 + (rnd()*2-1)*10;
+      const ang = (rnd()*2-1)*0.5 + (col%2? 0:Math.PI/2);
+      tubules.push({x, y, len:70+rnd()*20, ang});
+      tubule(x, y, 70+rnd()*20, ang, 1);
+    }
+  }
+  return [
+    {key:'tubules',  x:tubules[0].x, y:tubules[0].y},
+    {key:'colloid',  x:tubules[5].x, y:tubules[5].y},
+    {key:'polymorphism', x:tubules[10].x, y:tubules[10].y},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -3414,6 +3556,24 @@ const GENERATORS = {
   usero:  genHGSOC,
   uclear: genOCCC,
   ucs:    genCarcinosarcoma,
+  // Cervix (2026-09-15): cscc reuses genBlSCC verbatim — the same real, defining architecture
+  // (keratin pearls + intercellular bridges coexisting within ONE population, not two separate
+  // WHO variants needing separate zones) already confirmed for bladder's own squamous
+  // differentiation, and equally real for cervical SCC's own classic keratinizing/non-keratinizing
+  // spectrum (StatPearls, "Cervical Squamous Cell Carcinoma," PMID 32644501). cadeno and cgas
+  // dispatch the two new generators above. cclear reuses genOCCC directly — cervical clear cell
+  // carcinoma's own hobnail-cell/tubulocystic architecture is confirmed directly shared with
+  // OCCC's (PathologyOutlines, Agarwal & Valente), and genOCCC's own three drawn features
+  // (hyalinized papillae + hyaline bodies; hobnail + clear/eosinophilic admixture; uniform
+  // high-grade nuclei) never include necrosis or psammoma bodies as mandatory — exactly the two
+  // features a direct cervix-vs-ovary/endometrium comparison found USUALLY ABSENT in the cervical
+  // entity, so reuse does not overclaim a feature this entity doesn't reliably show. cmeso
+  // dispatches the new genMesonephric above.
+  cscc:   genBlSCC,
+  cadeno: genCervixAdeno,
+  cgas:   genGastricType,
+  cclear: genOCCC,
+  cmeso:  genMesonephric,
 };
 
 // ------------------------------------------------------------

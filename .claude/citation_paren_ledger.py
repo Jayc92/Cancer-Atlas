@@ -406,6 +406,24 @@ PREREGISTERED = {
             'collection-window endpoints (1973–2013) following Matsuo\'s real year, 2018, inside the '
             'same closed parenthetical. Same read, same reasoning, same verdict: SPENT, CONFIRMS.',
     },
+    # ONE NEW SPAN, CERVIX ORGAN (2026-09-15) — a genuinely different shape from the Matsuo pair
+    # above: the parenthetical here names neither a second citation nor a date range, but which
+    # organ's version of a shared PathologyOutlines page template this is.
+    'Agarwal|2018|js/organs/cervix.js:350': {
+        'side': 'KEPT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'RE-ADDRESSED from :348 to :350 (2026-09-15, same commit as the source edit that moved '
+            'it — a citation fix two lines above pushed this span down; bytes identical, so this is '
+            'a re-address, not a fresh TEST instance). cervix.js:350 reads \'Agarwal & Valente, '
+            'PathologyOutlines, "Clear cell carcinoma" '
+            '(Cervix), citing Int J Gynecol Pathol, 2018;37:388\'. "(Cervix)" disambiguates which '
+            'organ\'s PathologyOutlines "Clear cell carcinoma" page this is (the same page template '
+            'exists per-organ on that site) — it names no second author, no second year, and no '
+            'date range, so it is neither a shadow citation nor a false cross-pairing. One real '
+            'citation, used once; the rule\'s own KEPT prediction is correct.',
+    },
 }
 # A FOURTH SHAPE WAS FOUND AND FIXED AT THE SOURCE, NOT SCORED (2026-09-13, lungs lusc/sclc authoring
 # pass) — lungs.js:348 originally read "...(diagnostic threshold, IHC markers) and the WHO 2015

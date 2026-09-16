@@ -2185,8 +2185,22 @@ def main(argv):
         return 0
     phase = next((a for a in argv[1:] if not a.startswith('-')), None)
     if phase not in PHASES:
-        print(f'usage: battery.py [{" | ".join(PHASES)}] [--selftest]', file=sys.stderr)
+        print(f'usage: battery.py [{" | ".join(PHASES)}] [--selftest] [--fast]', file=sys.stderr)
         return 2
+    # --fast (2026-09-15, user-requested): skips ONLY the 'regress' member — the browser suite that
+    # costs the ~15-30 minutes every other member's combined runtime doesn't. Built for the fix-
+    # iterate loop specifically (chasing a citation flag the browser suite can't see anyway), not as
+    # a lighter gate. SAFE BY CONSTRUCTION, not by convention: commit_checked.sh hardcodes
+    # `python3 .claude/battery.py pre-commit` with no flag, so a fast run can never BE the commit
+    # gate — the real, full battery still runs there regardless of what anyone did locally first.
+    # Loud, not silent, because a skip that looks identical to a partial failure defeats its own
+    # purpose: printed once here, before anything runs, and folded into the DONE line's own count
+    # further down (declared_for_phase is read from the static INSTRUMENTS table and would otherwise
+    # print e.g. "18/19 ran" with nothing explaining the gap).
+    fast_mode = '--fast' in argv
+    if fast_mode:
+        print('FAST MODE: skipping regress (the browser suite) — NOT a substitute for the real '
+              'gate; commit_checked.sh always runs the full battery regardless.')
 
     problems = []
     # FIRST, BEFORE ANY MEMBER OR THE OTHER PREFLIGHT (user ruling: a precondition belongs before
@@ -2217,6 +2231,11 @@ def main(argv):
     problems += machine_path_fires
 
     members = [(n, m, a) for n, p, m, a in INSTRUMENTS if p == phase]
+    if fast_mode:
+        # Filtered here, before missing_from_run's own `expected` list is derived from `members`
+        # (below) — assertion 1 never expects a member that was never in scope for this run, so a
+        # deliberate skip cannot masquerade as (or trip a problem shaped like) "NEVER RAN: regress".
+        members = [(n, m, a) for n, m, a in members if n != 'regress']
     needs_records = any(RECORDS_ARTIFACT in a for _n, _m, a in members)
     needs_server = any('.claude/regress.js' in a for _n, _m, a in members)
 
@@ -2345,7 +2364,8 @@ def main(argv):
     # failures, so a battery line claiming clean would be false on every green run. The runner
     # counts marker-printed-and-exit-zero and says exactly that; each member's own DONE line
     # carries its own findings, quoted verbatim, which is where the numbers belong.
-    print(f'DONE battery: phase {phase} — {reported}/{declared_for_phase} declared instruments '
+    print(f'DONE battery: phase {phase}{" (FAST MODE — regress skipped, not a full gate run)" if fast_mode else ""} '
+          f'— {reported}/{declared_for_phase} declared instruments '
           f'ran and reported (marker printed, exit 0), {len(INSTRUMENTS)} declared in total, '
           f'{len(tracked_claude_files())} .claude/ files all declared, '
           f'{len(gitignore_comment_lines) - len(gitignore_fires)}/'

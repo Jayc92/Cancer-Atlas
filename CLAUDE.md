@@ -389,7 +389,24 @@ screen pair per organ:
    below): KRAS is already mutated in ~92–95% of even the earliest, lowest-
    grade PanIN precursor lesions, flat across every grade — it comes first in
    time. GBM's IDH-wildtype status is a third, classifier-shaped variant.
-   Check which justification actually applies per organ; three now exist.**
+   **A fourth, transformation-defining variant exists too — Prostate's
+   treatment-emergent neuroendocrine entry (data rule 32): TP53/RB1 concurrent
+   loss is truncal not because of when or where it occurs, but because it
+   molecularly enables the lineage transformation itself. This paragraph had
+   drifted out of step with that addition (it kept saying "three" after rule
+   32 already established a fourth) — caught and reconciled here rather than
+   compounded by a fifth uncorrected trailer.**
+   **A fifth kind — not a somatic mutation at all — is Cervix's HPV E6/E7
+   viral-oncoprotein trunk (`js/organs/cervix.js`, `TRUNK_CSCC`/`TRUNK_CADENO`):
+   truncal because a virus's own oncoproteins directly degrade p53 (E6, via
+   UBE3A-mediated ubiquitination — Scheffner et al., *Cell*, 1990/1993) and
+   inactivate Rb (E7, releasing E2F — Dyson et al., *Science*, 1989;
+   Chellappan et al., *PNAS*, 1992, confirmed directly in cervical carcinoma
+   cell lines), with no human-genome mutation doing this cancer's founding
+   work at all. Check which of these five justifications actually applies per
+   organ — spatial-ubiquity default, temporal-earliest, diagnostic-classifier,
+   transformation-defining, or viral/oncoprotein-driven; five now exist, and
+   whichever paragraph states the running count is the one to update next.**
 6. **A gene pair can follow a third mutation-framing model — "general rule,
    with a documented exception" — distinct from both rule 3's *competing*
    and rule 4's *cooperating* patterns.** HCC's TP53 and CTNNB1 mutations are
@@ -2980,6 +2997,154 @@ screen pair per organ:
     `citation_paren_ledger.py` checks catch a different, narrower defect shape — a citation whose own
     recorded metadata disagrees with itself — never a citation whose claim the source simply doesn't
     support).
+38. Cervix reference sources — **organ #18, five entities (cscc/cadeno/cgas/cclear/cmeso),
+    2026-09-15. Every citation verified directly at the source; a required independent
+    citation-verification pass (data rule 37) found and this pass fixed six real defects on the
+    first outing — the fourth confirmed organ in a row to have at least one, further supporting
+    the "fabrication/misattribution is a structural constant of this class of defect" finding
+    (near the end of this file) rather than a run of bad luck.**
+    - **A genuinely new kind of trunk-justification — the fifth, after spatial-ubiquity/temporal-
+      earliest/diagnostic-classifier/transformation-defining (data rule 5, updated in place):**
+      HPV E6/E7 viral-oncoprotein activity is truncal for `cscc`/`cadeno` not because of when or
+      where it occurs, but because the founding event is not a human-genome mutation at all — a
+      virus's own oncoproteins directly degrade p53 (E6, via UBE3A-mediated ubiquitination —
+      Scheffner et al., *Cell*, 1990/1993, PMID 2175676/8221889) and inactivate Rb (E7, releasing
+      E2F — Dyson et al., *Science*, 1989, PMID 2537532; Chellappan et al., *PNAS*, 1992, PMID
+      1316611, confirmed directly in cervical carcinoma cell lines: "the E2F-pRb complex is absent
+      in various human cervical carcinoma cell lines that... express the E7 protein"). Real
+      HPV-positivity rate by rigorous PCR (not the less-specific Hybrid Capture 2 assay): 85.6-97.1%
+      of SCC across three independent cohorts (Rodríguez-Carunchio et al., *BJOG*, 2015, PMID
+      25229645: 97.1% in SCC specifically, 101/104; Nicolás et al., *Mod Pathol*, 2019, PMID
+      30911077: 90%, 193/214 — a related cohort from the same center; Kulhan et al., *Eur Rev Med
+      Pharmacol Sci*, 2023, PMID 37843334: 85.6%, 83/97, an unrelated Turkish cohort). Real HPV
+      genotype concentration, checked separately by histology because it genuinely differs:
+      HPV-16/18 account for 71% of cervical carcinoma overall (de Sanjosé et al., *Lancet Oncol*,
+      2010, PMID 20952254, 38 countries, N=10,575) but HPV-16/18/45 together account for 94% of
+      adenocarcinoma specifically — a real, cited, adenocarcinoma-specific third contributor
+      (HPV-45), not the same genotype burden as SCC.
+    - **§9 registry check (phaseC_design.md), CHECKED AND FOUND NOT TO APPLY — a real, confirmed
+      NEGATIVE, not skipped:** unlike prostate's NEPC or several marrow/lymph-node entities, this
+      organ's origin question DOES have a genuine spatial answer for its two HPV-associated
+      entities — the squamocolumnar-junction transformation zone is a real, discrete, checked cell
+      population (Yang et al., *Mod Pathol*, 2015, PMID 25975286, confirmed directly, quoted
+      verbatim twice independently: "a very small and discrete population of vulnerable
+      squamocolumnar junction cells" sharing an immunophenotype with "over 90% of high-grade
+      squamous intraepithelial lesions and cervical carcinomas"). `mesonephric carcinoma (cmeso)`
+      gets its own `ORIGIN_HOTSPOT_ENTRY` override (Lateral wall, index 3) on equally direct
+      grounds — it arises from mesonephric (Wolffian) duct remnants specifically, found in the
+      lateral cervical wall in up to 22% of adult cervices, not from the mucosal surface at all
+      (da Silva et al., *Mod Pathol*, 2021, PMID 33772212). `cgas`/`cclear` (the other two
+      HPV-independent entities) were deliberately left on the organ default (transformation zone)
+      rather than given an unverified override, since no independently-confirmed site-of-origin
+      claim distinguishing them from `cscc`/`cadeno` was found this pass.
+    - **WHO 2020's HPV-status axis, checked against "breast's criterion" (a non-histologic category
+      earns a full entry only when it carries distinctive, independently renderable morphology) —
+      all three HPV-independent candidates cleared it, confirmed via dedicated research rather than
+      assumed either way:** gastric-type (`cgas`) — real, quotable, primary-sourced defining
+      cytoplasm/border criteria (Kojima et al., *Am J Surg Pathol*, 2007, PMID 17460448, verbatim:
+      "clear and/or pale eosinophilic and voluminous cytoplasm, with distinct cell borders") plus a
+      real, quantified clinical-distinctiveness finding — 42% vs. 91% 5-year disease-specific
+      survival vs. HPV-associated adenocarcinoma (Karamurzin et al., *Am J Surg Pathol*, 2015,
+      PMID 26457350, N=38 vs. 139) — which is also the real outcome data behind the ISGyP's own
+      grading guideline that this entity "should be considered high-grade regardless of morphology"
+      (Talia et al., *Int J Gynecol Pathol*, 2021, PMID 33570864); clear cell (`cclear`) — real,
+      quantified survival divergence from both the HPV-associated majority (P=.003/.032) and
+      statistical indistinguishability from gastric-type (P=.313/.508) — i.e., it behaves like the
+      other HPV-independent entity, not like the HPV-associated majority (Stolnicu et al., *Am J
+      Surg Pathol*, 2022, PMID 34985047, 58 cases/14 institutions); mesonephric (`cmeso`) — the
+      most consistent single molecular signature of any entity on this organ's own page (KRAS
+      mutation, 90-100% across two independent cohorts — da Silva et al., 2021; Lin et al.,
+      *Gynecol Oncol Rep*, 2020, PMID 33024807), with a real negative control confirming this tracks
+      malignant transformation specifically: the BENIGN precursor (mesonephric hyperplasia) lacks
+      KRAS/NRAS mutations entirely (Mirkovic et al., *Histopathology*, 2017, PMID 28703285,
+      verbatim title: "Cervical mesonephric hyperplasia lacks KRAS/NRAS mutations").
+    - **Real subtype shares, one denominator, admitting a real predominance-vs-presence caveat
+      (data rule 31) rather than ignoring it:** SCC 69.4% (38,145/54,987), adenocarcinoma 26.1%
+      (14,333/54,987), adenosquamous 3.6% and small cell neuroendocrine 1.0% (neither modeled as
+      its own entry) — all four counts sum exactly to the cohort's own N (Kobayashi et al., *Int J
+      Gynecol Cancer*, 2025, PMID 40795434). Adenocarcinoma's own rise is real and disclosed as a
+      trend, not a static number: 10.8% (1973-1977) to 22.4% (1993-1996) of all cervical cancer, a
+      107.4% relative increase, while SCC's own age-adjusted incidence fell 41.9% over the same
+      period (Smith et al., *Gynecol Oncol*, 2000, PMID 10926787). Within adenocarcinoma
+      specifically, the IECC's own 409-case international cohort gives usual-type 73%, gastric-type
+      10%, clear cell 3%, with mesonephric absent from the cohort's own top-5 named subtypes
+      entirely — under 1% (Stolnicu et al., 2018, PMID 29135516, the paper WHO 2020 adopted for this
+      exact split).
+    - **Mesh — a genuine extraction-and-reuse case, not a new download.** No dedicated Cervix 3D
+      reference object exists anywhere in the HRA library or HuBMAP's own ASCT+B table (confirmed
+      directly, three independent methods: NIH 3D keyword search, full 80-entry HRA collection
+      browse, HuBMAP ASCT+B cross-check). `assets/cervix.glb` is extracted from the already-
+      integrated `assets/uterus.glb`'s own three real, individually-named sub-meshes (`VH_F_cervix`
+      — 1,825 vertices/3,508 triangles in the source file, real geometric substance, not a small
+      anchor point; `VH_F_internal_cervical_os`; `VH_F_external_cervical_os`), which survive
+      Blender extraction with their real anatomical names intact — same CC BY 4.0 license as the
+      source asset (a derivative of a CC BY work carries the same attribution license). All four
+      hotspot anchors are measured local-space vertex coordinates from the raw, uncompressed
+      intermediate export (never the shipped `EXT_meshopt_compression`-flagged file), verified
+      pairwise-separated (minimum 12.6mm across a ~27mm-scale mesh).
+    - **The prevention narrative — real, verified, and given deliberate on-screen prominence per
+      the task's own instruction, not left as a footnote:** HPV vaccination before age ~12-13
+      reduces later cervical cancer/high-grade-precursor risk by roughly 85-97% across three
+      independent national-registry studies (Scotland, Sweden, England) — verified directly, with
+      one real nuance the on-screen text should be read alongside rather than exactly matching: each
+      study shows a steep age gradient (e.g. England's 16-18 vaccination band is only 34-39%
+      efficacy), so the 85-97% headline is anchored to the youngest (~12-13) vaccination band
+      specifically, not a flat claim across the whole "before age 13-17" span the copy names.
+      England's own study authors' "almost eliminated cervical cancer" phrase for the first
+      fully-vaccinated cohort is genuinely their own words (Falcaro et al., *Lancet*, 2021,
+      Interpretation section), not the atlas's own characterization. The 1987 five-Nordic-country
+      screening-coverage/mortality-decline comparison (10-80% decline tracking coverage) and the
+      WHO's own "nearly 94% of cervical cancer deaths occur in low- and middle-income countries...
+      because access to public health services is limited" quote were both confirmed exact verbatim
+      against the live sources.
+    - **Trials mapping — live-verified against real ClinicalTrials.gov data for all five entities,
+      per the now-required standing rule (data rule 36), and a real cross-entity leak caught and
+      fixed before shipping:** "cervical" carries a real, checked collision risk (cervical
+      spine/lymph-node anatomy in unrelated oncology contexts) — zero real false positives of that
+      shape were found in any sample read; the collision that WAS real and repeatedly observed is
+      the ordinary multi-tumor-basket shape (a bare "Cervical Cancer" tag alongside an unrelated
+      organ's histology tag as a separate condition string), which the existing same-string
+      `requireAlso` mechanism already handles. `cadeno`'s own `excludeIf` (`clear cell`/
+      `gastric-type`/`gastric type`/`mesonephric`) was added after finding "Clear Cell Adenocarcinoma
+      of Cervix" would otherwise be wrongly kept under `cadeno`'s own filter — it is `cclear`'s own
+      entity, not usual-type adenocarcinoma, the same idc/ilc-class within-organ exclusion this
+      atlas already uses. `cmeso` is EMPTY-ANSWERED (real disease rarity, under 1% of endocervical
+      adenocarcinoma) — checked live, not assumed, including a bare "mesonephric carcinoma" query
+      with no organ anchor returning zero real matches of any kind.
+    - **Margin/growth/extent — honestly `uncharacterised`/`unread` for all five entities, matching
+      this atlas's own Uterus-organ precedent rather than a false negative:** the background
+      research for this organ was scoped to epidemiology, viral/mutational mechanism, genomics,
+      site model, histology, and prevention — a dedicated gross-pathology margin/growth search and
+      a dedicated per-histology SEER Cancer Stat Facts extent search were not run this pass. Flagged
+      explicitly as the one genuinely open follow-up item for this organ, not silently deferred.
+    - **Six real citation defects found by the required independent citation-verification pass,
+      all fixed at the source (see `js/organs/cervix.js`'s own inline `CORRECTED 2026-09-15`
+      comments for the full trail):** (1) an earlier draft used Rodríguez-Carunchio's pooled
+      SCC+adenocarcinoma HPV-positivity figure (94.2%) for an SCC-specific claim, where the same
+      cohort's own SCC-only figure is higher (97.1%, 101/104) — fixed to use the correct, more
+      precise SCC-specific number; (2) Kulhan et al. 2023's own background-literature citation of
+      the general cervical-carcinoma HPV-negative rate ("~7%") was presented as this specific
+      cohort's own result — fixed to use the cohort's real measured figure (85.6% positive, 83/97);
+      (3) a Dyson et al. 1989 quote was a blended paraphrase inside quotation marks, not verbatim
+      anywhere in the source — fixed to quote the paper's own real title exactly; (4) "best
+      regarded as inherently high grade" was misattributed to Kojima et al. 2007 (a real but
+      different, earlier immunophenotype paper with no grading-guideline content) — fixed to the
+      real source, Talia et al. 2021's ISGyP grading guidelines, with the real Karamurzin et al.
+      2015 outcome data (42% vs. 91% 5-yr DSS) behind the recommendation, traced through the
+      citation chain rather than guessed; (5) Jenkins et al. 2020 was called a "review" (it is an
+      original 45-sample reclassification study) and credited with naming a broad TP53/CDKN2A/
+      ARID1A/KRAS/KMT2D gene list that its own abstract does not contain (only STK11, in the
+      germline Peutz-Jeghers context, which the entry correctly keeps) — fixed to attribute the
+      gene list to its real sole source (Yoshida et al., 2026) and correct the mischaracterization;
+      (6) an architectural-pattern list and a PASD/mucicarmine-positivity claim for mesonephric
+      carcinoma overclaimed primary-source (Clement et al., 1995) confirmation beyond what that
+      paywalled paper's own accessible abstract actually supports (4 of 8 patterns confirmed; the
+      histochemistry claim unsupported) — downgraded to disclose exactly which claims trace to the
+      primary source and which are broader, undated literature description. One additional finding
+      — Lu et al. 2021's own STK11-prognosis P=.01 figure could not be independently re-confirmed
+      because the paper is fully paywalled with no OA copy anywhere — left as-is (unreachable is not
+      the same claim as wrong; the "unverifiable-by-access" outcome state this file's own epi-pass
+      contract already establishes), disclosed here rather than silently assumed sound.
 
 ## Design system
 - **Palette:** deep navy background (`#0b0f1a`, radial gradient toward
@@ -4428,6 +4593,23 @@ misreading a green DONE line rather than by any check firing.
   and another arrived and the total held), and it can move the record set
   with every sidecar frozen (any pure line shift, reported as `moved`).
   Neither number implies the other in either direction, so **read both**.
+
+**`--fast` (2026-09-15, user-requested; the Cervix pass's own iterate-loop cost made it worth
+building) — skips ONLY `regress`, the one member whose cost (~15-30 minutes, the browser suite)
+dwarfs every other member's combined runtime, and whose own checks a citation-field typo or a
+misattributed quote can never trip anyway.** SAFE BY CONSTRUCTION, not by convention or discipline:
+`commit_checked.sh` hardcodes `python3 .claude/battery.py pre-commit` with no flag, so a `--fast`
+run can never BE the commit gate — the full battery, `regress` included, still runs inside the
+worktree commit regardless of what ran locally first. Built LOUD on purpose, per this section's own
+standing lesson that a silent skip is indistinguishable from a partial failure: prints a banner the
+moment the flag is seen, and folds "(FAST MODE — regress skipped, not a full gate run)" into the
+DONE line itself, so the `18/19 declared instruments ran` a fast run reports can never be mistaken
+for a shortfall — assertion 1's own `expected` list is filtered the same way `members` is (before
+`missing_from_run` ever sees it), so a deliberate skip cannot manufacture a `NEVER RAN: regress`
+problem either. `needs_server` is computed from the same filtered `members`, so fast mode also never
+pays to start the dev server. Measured live, not assumed: a real `--fast` pre-commit run against the
+Cervix organ's own final citation-fix round completed in 49.9 seconds (down from the 15-30 minute
+full run), VERDICT: PASS.
 
 ## REPAIRING A LINE SHIFT: NO SINGLE INSTRUMENT'S OUTPUT IS THE WORKLIST (2026-09-07, user ruling)
 

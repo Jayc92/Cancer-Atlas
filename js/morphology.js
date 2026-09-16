@@ -421,6 +421,16 @@ export const MARGIN_STATUS = Object.freeze({
   usero: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
   uclear: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
   ucs: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
+  // CERVIX (2026-09-15): the four background research passes behind this organ's own authoring
+  // were scoped to epidemiology, viral/mutational mechanism, genomics, site model, histology and
+  // prevention — none was tasked with a dedicated gross-pathology margin/circumscription search,
+  // so 'not yet searched' is the honest state here, matching this atlas's own Uterus-organ
+  // precedent directly above rather than a false 'checked and not found' negative.
+  cscc: { status: 'uncharacterised', ref: 'not yet searched — this organ\'s own research pass was scoped to epidemiology, mechanism, genomics, site model, histology and prevention, not gross margin/circumscription character' },
+  cadeno: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
+  cgas: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
+  cclear: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
+  cmeso: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -623,6 +633,14 @@ export const GROWTH_STATUS = Object.freeze({
   usero: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
   uclear: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
   ucs: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
+  // CERVIX (2026-09-15): same scope note as this organ's own MARGIN_STATUS entries above — the
+  // background research passes behind this organ were not tasked with a dedicated gross-growth-
+  // pattern search, so 'not yet searched' is the honest state.
+  cscc: { status: 'uncharacterised', ref: 'not yet searched — this organ\'s own research pass was scoped to epidemiology, mechanism, genomics, site model, histology and prevention, not gross growth pattern' },
+  cadeno: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
+  cgas: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
+  cclear: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
+  cmeso: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -917,6 +935,23 @@ export const EXTENT_STATUS = Object.freeze({
   usero: { status: 'uncharacterised', site: 'uterine corpus', uncharacterisedReason: 'the organ aggregate fails the share-bound rule far more severely at this entity\'s own ~10% share; no dedicated per-histology SEER Summary Stage source was found', ref: 'https://seer.cancer.gov/statfacts/html/corp.html — verified 2026-09-15 (aggregate only, not usable per-entity)' },
   uclear: { status: 'uncharacterised', site: 'uterine corpus', uncharacterisedReason: 'the organ aggregate fails the share-bound rule far more severely at this entity\'s own <5% share; no dedicated per-histology SEER Summary Stage source was found', ref: 'https://seer.cancer.gov/statfacts/html/corp.html — verified 2026-09-15 (aggregate only, not usable per-entity)' },
   ucs: { status: 'uncharacterised', site: 'uterine corpus', uncharacterisedReason: 'the organ aggregate fails the share-bound rule far more severely at this entity\'s own ~4.7% share; no dedicated per-histology SEER Summary Stage source was found', ref: 'https://seer.cancer.gov/statfacts/html/corp.html — verified 2026-09-15 (aggregate only, not usable per-entity)' },
+  // CERVIX, all five entities (2026-09-15): SEER does publish a dedicated "Cervix Uteri" Cancer
+  // Stat Facts page, but this pass did not fetch it — the share-bound rule would forbid using it
+  // directly for any of the five entities anyway (cscc's own ~69.4% share and cadeno's ~26.1%
+  // share both fall well short of the ≥90% bound the rule requires before an organ aggregate may
+  // stand in for one histology; cgas/cclear/cmeso are minority entities within adenocarcinoma and
+  // fail it far more severely), so a dedicated per-histology source would be needed regardless —
+  // not yet searched, rather than a false 'checked and not found' negative. Flagged as the one
+  // genuinely open follow-up item for this organ: the prevention narrative in organDetail.desc
+  // states real, verified vaccination/screening effect sizes, but the extent-at-diagnosis axis
+  // itself — which would let a reader see the detection-vs-biology distinction this atlas's own
+  // extentSentence() framing exists to draw, directly on the SCC/adenocarcinoma entries — is not
+  // yet wired for this organ.
+  cscc: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — this organ\'s own research pass did not fetch SEER\'s dedicated Cervix Uteri Cancer Stat Facts page; the share-bound rule would forbid using its organ-wide aggregate directly for this entity\'s own ~69.4% share regardless, so a dedicated per-histology source would be needed either way', ref: 'not yet searched — 2026-09-15' },
+  cadeno: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule would forbid the organ aggregate at this entity\'s own ~26.1% share regardless', ref: 'not yet searched — 2026-09-15' },
+  cgas: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'not yet searched — 2026-09-15' },
+  cclear: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'not yet searched — 2026-09-15' },
+  cmeso: { status: 'uncharacterised', site: 'cervix uteri', uncharacterisedReason: 'not yet searched — same scope note as this organ\'s own Squamous Cell Carcinoma entry; the share-bound rule fails far more severely at this entity\'s own minority share of adenocarcinoma', ref: 'not yet searched — 2026-09-15' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';
@@ -1078,6 +1113,14 @@ export const ORIGIN_HOTSPOT = Object.freeze({
                // its own trunk note (phaseC_design.md §9), not an ORIGIN_HOTSPOT_ENTRY override —
                // see that registry's own running table for why none of this organ's ten entities
                // needs one.
+  cervix: 0,   // Transformation zone — the real, checked, spatial origin for this organ's two
+               // HPV-associated entities (cscc, cadeno); see js/organs/cervix.js's own hotspot
+               // text (Yang et al., Mod Pathol, 2015, PMID 25975286) and the phaseC_design.md §9
+               // registry note in that file confirming this is a genuine spatial claim, not a
+               // §9 non-spatial exception. cgas/cclear (HPV-independent) are left on this same
+               // default rather than given an unverified override — no independently-confirmed
+               // site-of-origin claim distinguishing them from cscc/cadeno was found this pass.
+               // cmeso gets its own override below (lateral wall, Wolffian duct remnants).
 });
 
 // PER-ENTRY OVERRIDE (2026-09-11, user-directed fix to a live origin-collapse contradiction found
@@ -1206,6 +1249,14 @@ export const ORIGIN_HOTSPOT_ENTRY = Object.freeze({
   // exclusion with no defined normal counterpart for the majority of cases — Iqbal et al.,
   // Blood, 2014, PMID 24632715).
   aitl: 1,
+  // cmeso ADDED 2026-09-15 ("then Cervix" authoring) — the SAME exemption expiry as every prior
+  // organ's second-active-entry pass above: Cervix goes from zero to five active entries at once,
+  // and mesonephric carcinoma genuinely arises from mesonephric (Wolffian) duct remnants in the
+  // cervix's own LATERAL WALL, a real, different, non-mucosal origin from cscc/cadeno's
+  // transformation-zone default. Index 3 is the Lateral wall hotspot, whose own text names this
+  // origin directly (da Silva et al., Mod Pathol, 2021, PMID 33772212, "up to 22% of adult
+  // cervices" — the reserve_check requirement this mechanism enforces).
+  cmeso: 3,
 });
 
 // THE LABEL AND BADGE — the entire honesty mechanism for a visitor who sees one cancer and never
