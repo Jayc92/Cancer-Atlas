@@ -339,6 +339,19 @@
    ],
    "sha": "f38cebc430a1f8f3",
    "notes": "compound point descriptor; cited pages 404 under guessed URLs today"
+  },
+  {
+   "id": "lic-uterus",
+   "cls": "licence",
+   "claim": "uterus.glb CC BY 4.0, NIH 3D Human Reference Atlas 'Uterus, Female' (3DPX-020996), Visible-Human-Dataset-derived -- per-entry NIH 3D page renders NO licence text (quote-absent class, same as kidneys/liver/brain/prostate/pancreas/bladder/breast); durable instrument is the project-level statement",
+   "url": "https://humanatlas.io/3d-reference-library",
+   "quote": "All HRA 3D reference objects are released under Attribution 4.0 International (CC BY 4.0)",
+   "retrieved": "2026-09-15",
+   "status": "verified",
+   "code_refs": [
+    "js/organs/uterus.js"
+   ],
+   "sha": "90898df684870fc5"
   }
  ],
  "_limits": "THE MANIFEST MAKES RECORDS DURABLE, NOT TRUE. A quote entered wrongly at creation time is preserved faithfully, hashed, and dated forever \u2014 initial verification is the single point of failure, and it has demonstrably failed once (col-prostate: a quote recorded as 'confirmed directly' that was never at the named source, evidenced by a Wayback snapshot predating the verification). The structural checks cannot reach that class; nothing can, except care at entry.",

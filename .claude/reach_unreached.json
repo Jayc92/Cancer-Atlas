@@ -708,6 +708,78 @@
   [
    "thyroid.js|prose-year||2048",
    1
+  ],
+  [
+   "uterus.js|data-span-year||1973",
+   2
+  ],
+  [
+   "uterus.js|data-span-year||1988",
+   1
+  ],
+  [
+   "uterus.js|data-span-year||1998",
+   2
+  ],
+  [
+   "uterus.js|data-span-year||2001",
+   1
+  ],
+  [
+   "uterus.js|data-span-year||2013",
+   2
+  ],
+  [
+   "uterus.js|data-span-year||2017",
+   2
+  ],
+  [
+   "uterus.js|journal-adjacent-year|Clin Oncol|2026",
+   2
+  ],
+  [
+   "uterus.js|journal-adjacent-year|Nature|2013",
+   1
+  ],
+  [
+   "uterus.js|journal-adjacent-year|Sci Rep|2023",
+   2
+  ],
+  [
+   "uterus.js|journal-adjacent-year|WHO-|2020",
+   1
+  ],
+  [
+   "uterus.js|journal-adjacent-year|WHO|2020",
+   1
+  ],
+  [
+   "uterus.js|paren-shadow|Matsuo|1973",
+   1
+  ],
+  [
+   "uterus.js|paren-shadow|Matsuo|2013",
+   1
+  ],
+  [
+   "uterus.js|prose-year||1973",
+   1
+  ],
+  [
+   "uterus.js|prose-year||2013",
+   1
+  ],
+  [
+   "uterus.js|prose-year||2021",
+   1
+  ],
+  [
+   "uterus.js|prose-year||2026",
+   1
+  ],
+  [
+   "uterus.js|semicolon-shadow|McConechy|2013",
+   1
   ]
  ]
 }

@@ -207,11 +207,13 @@ DECLARED = [
     {'key': '35701318|Pancreatology|2022', 'reason': 'pancreas.js:506: the id\'s own first author is Capretti G, matching the file\'s own "Capretti et al." text; same journal-as-author extraction artifact.', 'until': None},
     {'key': '22865907|JCEM|2012', 'reason': 'thyroid.js:344-354: the id\'s own first author is Boichard A, matching the file\'s own "Boichard et al." text; same journal-as-author extraction artifact.', 'until': None},
     {'key': '21325462|JCEM|2011', 'reason': 'thyroid.js:345-354: the id\'s own first author is Moura MM, matching the file\'s own "Moura et al." text; same journal-as-author extraction artifact.', 'until': None},
+    {'key': '33919741|Diagnostics|2021', 'reason': 'uterus.js:191: the id\'s own first author is De Leo A — the same paper this file names in full elsewhere ("De Leo et al., Diagnostics (Basel), 2021, PMC8070731, WHO-classification review") and that citation_paren_ledger.py\'s own PREREGISTERED entries for ovary.js:373/433/503 already scored KEPT for exactly this citation; this comment abbreviates it to just the journal name, "Diagnostics 2021" — same journal-as-author extraction artifact as the kidneys.js Radiographics entry.', 'until': None},
     # --- TCGA/consortium-name convention ---
     {'key': '26536169|Linehan|2016', 'reason': 'kidneys.js:248: the id is TCGA\'s own papillary RCC paper (explicitly named as such in the same comment); PubMed\'s own first-author field for TCGA consortium papers is the consortium name itself, while the atlas correctly names the paper\'s real, named lead investigator.', 'until': None},
     {'key': '22960745|TCGA|2012', 'reason': 'lungs.js:302-358: TCGA\'s own squamous-cell-lung-carcinoma paper; same consortium-name-vs-named-investigator convention as the kidneys.js Linehan entry.', 'until': None},
     {'key': '23000897|TCGA|2012', 'reason': 'breast.js:326: TCGA\'s own 2012 breast-cancer paper, correctly the FIRST of four citations in this dense sentence (unlike its two neighbouring PMIDs above, this one genuinely is the record it claims to be) — same consortium-name convention.', 'until': None},
     {'key': '25079317|TCGA|2014', 'reason': 'stomach.js:315: TCGA\'s own 2014 gastric-cancer paper; same consortium-name convention.', 'until': None},
+    {'key': '23636398|Kandoth|2013', 'reason': 'uterus.js:267: PMID 23636398 is the PanCancer "Mutational landscape and significance across 12 major cancer types" paper; PubMed\'s own first-author field for this consortium paper is the corporate group name itself ("Cancer Genome Atlas Research Network"), while the atlas correctly names the paper\'s real, commonly-cited lead author, Kandoth C — same consortium-name-vs-named-investigator convention as the kidneys.js Linehan entry.', 'until': None},
     # --- multi-author head, non-first name ---
     {'key': '26965579|Springer|2016', 'reason': 'bladder.js:391: the source correctly credits two real co-authors together, "Cowan, Springer et al." — this tool\'s own extraction picked the second name; the id\'s own first author, Cowan M, confirms the same paper.', 'until': None},
     {'key': '20940415|Dreyling|2011', 'reason': 'lymphnodes.js:219: the source correctly credits three real co-authors, "Pérez-Galán, Dreyling & Wiestner" — this tool\'s own extraction picked the middle name; the id\'s own first author, Perez-Galan P, confirms the same paper.', 'until': None},
@@ -227,6 +229,7 @@ DECLARED = [
     # --- compound-surname truncation ---
     {'key': '34571521|Chaparro|2021', 'reason': 'marrow.js:176: the source correctly writes the full compound surname "Godínez-Chaparro" (matching the id\'s own first author, Godinez-Chaparro JA); this tool\'s own extraction truncated it to the second component.', 'until': None},
     {'key': '36114167|Segura|2022', 'reason': 'marrow.js:451: the source correctly writes the full compound surname "Jiménez-Segura" (matching the id\'s own first author, Jimenez-Segura R); same truncation artifact as the marrow.js Chaparro entry.', 'until': None},
+    {'key': '32749941|Castillo|2020', 'reason': 'uterus.js:213: the source correctly writes the full compound surname "León-Castillo" (matching the id\'s own first author, Leon-Castillo A); this tool\'s own extraction truncated it to the second component — same truncation artifact as the marrow.js Chaparro/Segura entries.', 'until': None},
     # --- epub-vs-print pubdate ---
     {'key': '22088332|Ehdaie|2011', 'reason': 'bladder.js:374: a one-year epub-ahead-of-print-vs-indexed-pubdate lag (recorded 2011, id-pubdate 2012) — author and journal both match cleanly.', 'until': None},
     {'key': '28064239|Krysiak|2016', 'reason': 'lymphnodes.js:159: same epub-vs-print lag as the bladder.js Ehdaie entry (recorded 2016, id-pubdate 2017) — author and journal both match cleanly.', 'until': None},
@@ -388,9 +391,12 @@ def records_path(argv, quiet=False):
         print('citation_crosscheck: REFUSING TO SCAN — no v2 records artifact given.\n'
               '  Without it the entry-time-identifier population is invisible and the scan\n'
               '  silently shrinks (110 records instead of 142) under a normal-looking DONE line.\n'
-              '  Regenerate and pass it:\n'
-              '    python3 .claude/extract_citations.py /tmp/atlas-battery/records.json\n'
-              '    python3 .claude/citation_crosscheck.py /tmp/atlas-battery/records.json\n'
+              '  Regenerate and pass it (path is WORK_DIR from battery.py, worktree-scoped since\n'
+              '  2026-09-15 — print it with battery.py\'s own WORK_DIR constant, do not assume\n'
+              '  a fixed /tmp/atlas-battery path):\n'
+              '    python3 -c "from battery import WORK_DIR; print(WORK_DIR)"  # from .claude/\n'
+              '    python3 .claude/extract_citations.py "$WORK_DIR/records.json"\n'
+              '    python3 .claude/citation_crosscheck.py "$WORK_DIR/records.json"\n'
               '  Or run the whole battery, which regenerates it first:\n'
               '    python3 .claude/battery.py pre-commit', file=sys.stderr)
         sys.exit(2)

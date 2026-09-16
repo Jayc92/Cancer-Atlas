@@ -693,6 +693,7 @@
 #
 # 7-bis applies to this runner too: DONE line last, and its absence must fail the invocation.
 #   .claude/run_checked.sh "DONE battery:" python3 .claude/battery.py pre-commit
+import hashlib
 import json
 import os
 import re
@@ -714,7 +715,23 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # RESOLVE THIS CONSTANT, DO NOT TYPE THE PATH, and check an artefact's mtime before treating it as
 # this run's evidence. `python3 -c "import tempfile,os; print(os.path.join(tempfile.gettempdir(),
 # 'atlas-battery'))"` prints the real one.
-WORK_DIR = os.path.join(tempfile.gettempdir(), 'atlas-battery')
+#
+# WORKTREE-SCOPED, NOT MACHINE-GLOBAL (2026-09-15, user-directed). The bare 'atlas-battery' name
+# above was shared by EVERY invocation on this machine regardless of which checkout ran it — the
+# main repo, any `--worktree` commit's own isolated checkout, any standalone diagnostic run, all
+# writing RECORDS_ARTIFACT/POLARITY_ARTIFACT/CROSSCHECK_ARTIFACT to the identical path at once.
+# Worktree isolation exists specifically to answer the concurrent-writer problem (see
+# commit_checked.sh's own "THE FIX IS ISOLATION, NOT A SHARPER CHECK" note) — a shared WORK_DIR
+# left that isolation only partial, since the gate's own generated artifacts could still race a
+# second, unrelated invocation touching the same machine-global path. Never confirmed as the cause
+# of any specific failure (see STATE.md's own account of the citation_crosscheck/citation_paren_
+# ledger worktree refusal this session hit and could not reproduce standalone), but the mechanism
+# is real regardless of whether it explains that one incident, and it is cheap to close. Scoped by
+# REPO_ROOT (which is the invoking checkout's own path — the worktree's, when running inside one,
+# since this file is copied there and __file__ resolves accordingly) rather than by REPO_ROOT
+# itself verbatim, so the directory name stays short and never embeds a path.
+WORK_DIR = os.path.join(tempfile.gettempdir(),
+                         'atlas-battery-' + hashlib.sha256(REPO_ROOT.encode()).hexdigest()[:12])
 RECORDS_ARTIFACT = os.path.join(WORK_DIR, 'records.json')
 POLARITY_ARTIFACT = os.path.join(WORK_DIR, 'polarity_scan.json')
 CROSSCHECK_ARTIFACT = os.path.join(WORK_DIR, 'crosscheck_flags.json')
@@ -750,6 +767,23 @@ INSTRUMENTS = [
     # (name,                     phase,        done marker,                    argv)
     ('syntax_check', 'pre-commit', 'DONE syntax_check:',
      ['sh', '.claude/syntax_check.sh']),
+    # untracked_corpus_check (2026-09-15): every citation instrument below this line derives its
+    # corpus from `git ls-files`, which cannot see a file git doesn't know about yet — js/organs/
+    # uterus.js sat untracked through this entire organ's authoring pass, and every one of those
+    # instruments silently examined less than the working tree actually held. Runs SECOND, right
+    # after syntax_check and before anything that reads RECORDS_ARTIFACT, so a compromised corpus
+    # is caught before the other citation instruments' own results could be mistaken for clean.
+    # See its own header for the full incident and why widening extract_citations.py's own glob is
+    # the wrong fix.
+    ('untracked_corpus_check', 'pre-commit', 'DONE untracked_corpus_check:',
+     ['python3', '.claude/untracked_corpus_check.py']),
+    # handoff_denylist_check (2026-09-15): a real leak reached .claude/handoff/MEMORY_history-
+    # archive.md and one push before it was caught — assertion 6 matches path SHAPES and has no
+    # concept of a bare filename or a first name with no path attached. A small, named denylist
+    # (family surname, the three leaked document titles, any email address) scoped to the handoff
+    # package specifically. See its own header for what it is not (a general PII scanner).
+    ('handoff_denylist_check', 'pre-commit', 'DONE handoff_denylist_check:',
+     ['python3', '.claude/handoff_denylist_check.py']),
     ('absence_claim_check', 'pre-commit', 'DONE absence_claim_check:',
      ['python3', '.claude/absence_claim_check.py']),
     ('fraction_check', 'pre-commit', 'DONE fraction_check:',
@@ -2323,6 +2357,17 @@ def main(argv):
           f'{len(sidecars)}/{len(reported_clean)} reporting members '
           f'emitted a sidecar, {ratcheted_metrics} sidecar metrics ratcheted, '
           f'{len(problems)} problems')
+    # VERDICT LINE (2026-09-15, user-directed after a real misread): a per-instrument member can
+    # print its own "0 problems" for a narrower, internal sub-metric (e.g. absence_claim_check's
+    # own tolerated-count ratchet) while a DIFFERENT mechanism in the SAME member (an UNSCOPED
+    # ABSENCE CLAIM defect, counted nowhere in that sub-metric) is what actually drives its real
+    # exit code — and the human reading the log sees a "0" sitting right next to the real "1
+    # problem" this function already computed, and trusts the wrong number. The DONE line above is
+    # unambiguous to a machine (this function's own `problems` list is the one true source), but
+    # not to a human skimming a long scroll of per-member zeros. This line exists so the verdict
+    # cannot be misread: always the LAST line, always this exact literal prefix, never a bare
+    # number a reader has to interpret.
+    print(f'VERDICT: {"FAIL" if problems else "PASS"} ({len(problems)} problem{"" if len(problems) == 1 else "s"})')
     return 1 if problems else 0
 
 

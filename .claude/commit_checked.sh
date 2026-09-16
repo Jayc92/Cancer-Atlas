@@ -164,6 +164,10 @@ set -u
 
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 WRAPPER="$(cd "$(dirname "$0")" && pwd)/run_checked.sh"
+# HANDOFF_CHECK_BYPASSED: set by the top-level --no-handoff-update flag, checked in do_commit
+# below. Defaults unset/empty — the ordinary path always requires the handoff package's own
+# state file to be part of the commit.
+HANDOFF_CHECK_BYPASSED="${HANDOFF_CHECK_BYPASSED:-}"
 
 do_commit() {
   # $1 subject, $2 marker, rest: gate command
@@ -177,6 +181,63 @@ do_commit() {
     echo "what this commit would capture. Stage them or revert them, then retry. REFUSING TO COMMIT:" >&2
     echo "$unstaged" | sed 's/^/    /' >&2
     return 3
+  fi
+  # THE HANDOFF PACKAGE STAYS CURRENT BY CONSTRUCTION, NOT BY BEING REMEMBERED (2026-09-15,
+  # user-directed). This project has learned repeatedly — the DONE-quote practice above is the
+  # canonical instance — that a rule enforced only by a human or a future session remembering to
+  # follow it gets skipped eventually, without anyone deciding to skip it. So: every commit through
+  # this script must include a real, staged change to .claude/handoff/STATE.md (the handoff
+  # package's own current-state file), or it refuses before the gate even runs — cheap to check,
+  # and checked before the expensive part for the same reason the tree-cleanliness check above
+  # runs first. `--no-handoff-update` is the escape hatch for the rare legitimate case (a pure
+  # tooling fix with nothing to say about project state) — it does not make the commit refuse, but
+  # it DOES leave a permanent, append-only record that the requirement was bypassed, in the same
+  # refusals.log every genuine refusal already lives in, so the bypass is auditable rather than
+  # silent. A bypass is not a failure to log; it is a decision, and decisions get recorded.
+  #
+  # SCOPED TO REPOS THAT ACTUALLY HAVE A HANDOFF PACKAGE, checked by file existence rather than
+  # assumed — this script's own --selftest arms operate against throwaway scratch repos that
+  # never create .claude/handoff/ at all, and a bare `git diff --cached` against a path that
+  # exists nowhere in that repo returns empty output with no error, which would have looked
+  # identical to "not staged" and refused every one of those arms' own, entirely unrelated test
+  # commits. Existence-gating is what keeps this rule from firing somewhere it doesn't apply,
+  # without needing every caller (including every selftest arm) to know this flag exists.
+  # THREE CASES, KEPT SEPARATE ON PURPOSE (fixed 2026-09-15, found live while landing the handoff
+  # package's own first commit): NO HANDOFF PACKAGE HERE AT ALL is a silent no-op, not a logged
+  # bypass — every --selftest scratch repo hits this, and logging "--no-handoff-update was passed"
+  # for a caller that never passed it would be a false claim about why the branch fired, the exact
+  # defect class this project elsewhere calls a claim that says more than what happened. A GENUINE
+  # bypass (the flag WAS passed, in a repo that DOES have a handoff package) is the only case that
+  # logs. Otherwise, the ordinary staged-check runs.
+  if [ ! -f ".claude/handoff/STATE.md" ]; then
+    :
+  elif [ -n "$HANDOFF_CHECK_BYPASSED" ]; then
+    # RELATIVE, NOT "$DIR/...": this branch used to hard-code the script-load-time real-repo path,
+    # so every --selftest arm that reaches here (every one does — a scratch repo never has
+    # .claude/handoff/STATE.md) silently appended a bypass entry into the REAL repo's own tracked
+    # refusals.log, not the scratch repo's. Caught by diffing the working tree against a commit
+    # that had just gone through --selftest earlier in the same session: ten stray
+    # "handoff-update-bypassed" entries, none of them a real event. cwd is already the right repo
+    # by the time do_commit runs in every calling context (the plain path cd's to $DIR, the
+    # --worktree path's subshell cd's to $wt, --selftest cd's to its own scratch dir) — a relative
+    # path here is what actually matches that, the same way every other git call in this function
+    # already does.
+    handoff_log=".claude/refusals.log"
+    if [ -s "$handoff_log" ] && [ -n "$(tail -c 1 "$handoff_log")" ]; then
+      printf '\n' >> "$handoff_log"
+    fi
+    printf '==== REFUSAL %s reason=handoff-update-bypassed marker="%s" tool=n/a\n' \
+      "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$marker" >> "$handoff_log"
+    printf '     --no-handoff-update was passed; STATE.md was NOT required to be staged for this commit\n' >> "$handoff_log"
+    printf '     subject: %s\n' "$subject" >> "$handoff_log"
+  else
+    handoff_staged="$(git diff --cached --name-only -- .claude/handoff/STATE.md 2>/dev/null)"
+    if [ -z "$handoff_staged" ]; then
+      echo "COMMIT_CHECKED: .claude/handoff/STATE.md is not staged with a real change against HEAD" >&2
+      echo "— REFUSING TO COMMIT. Update the handoff package's own state file and stage it, or pass" >&2
+      echo "--no-handoff-update to override (the override is logged, not silent)." >&2
+      return 3
+    fi
   fi
   out="$(mktemp)"
   if ! sh "$WRAPPER" "$marker" "$@" >"$out" 2>&1; then
@@ -331,6 +392,30 @@ do_commit_worktree() {
   git -C "$main_dir" worktree remove --force "$wt" 2>/dev/null
   return $rc
 }
+
+# --no-handoff-update may appear anywhere in the real argument list (before or after
+# --worktree) — pulled out here, at the top level, before any positional dispatch below runs,
+# so do_commit/do_commit_worktree never have to know this flag exists. Left alone entirely for
+# --selftest, which never touches the handoff check at all.
+# ARGUMENT-BOUNDARY SAFE, deliberately not a join-into-one-string-then-eval: the worktree path's
+# own third argument is ITSELF a space-separated file list inside one positional parameter, and
+# the commit subject can contain spaces too — joining every arg with spaces and re-splitting
+# would corrupt both. This rotates through "$@" via a sentinel instead, appending each kept
+# argument back as its own, still-quoted positional parameter — no re-splitting, no glob
+# expansion, exact boundaries preserved.
+if [ "${1:-}" != "--selftest" ]; then
+  _end_marker="__CC_ARGS_END__$$"
+  set -- "$@" "$_end_marker"
+  while [ "$1" != "$_end_marker" ]; do
+    _a="$1"; shift
+    if [ "$_a" = "--no-handoff-update" ]; then
+      HANDOFF_CHECK_BYPASSED=1
+    else
+      set -- "$@" "$_a"
+    fi
+  done
+  shift   # drop the sentinel
+fi
 
 if [ "${1:-}" = "--selftest" ]; then
   ok=1

@@ -412,6 +412,15 @@ export const MARGIN_STATUS = Object.freeze({
   mm:     { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse marrow replacement by plasma-cell sheets; discrete plasmacytomas, where they occur, are disclosed at REGIONS level (extramedullary vs. paraskeletal) rather than characterized here' },
   cll:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse blood/marrow/nodal infiltration by small lymphocytes, not a gross margin' },
   all:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — sources describe diffuse marrow replacement by a lymphoblast infiltrate, not a gross margin' },
+  // UTERUS (2026-09-15): the four background research passes behind this organ's own authoring
+  // were scoped to driver genes, molecular classification (TCGA/ProMisE), site model and
+  // histology — none was tasked with a dedicated gross-pathology margin/circumscription search,
+  // so 'not yet searched' is the honest state here, distinct from every 'checked and not found'
+  // entry above and below, which reflects an actual completed search this pass did not perform.
+  uendo: { status: 'uncharacterised', ref: 'not yet searched — this organ\'s own research pass was scoped to driver genes, molecular classification, site model and histology, not gross margin/circumscription character' },
+  usero: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
+  uclear: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
+  ucs: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
 });
 export const MARGIN_STATUSES = Object.freeze(['uncharacterised', 'unread', 'cited']);
 
@@ -607,6 +616,13 @@ export const GROWTH_STATUS = Object.freeze({
   mm:     { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
   cll:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
   all:    { status: 'uncharacterised', ref: 'checked 2026-09-15 — no source found describing this cancer\'s growth in terms this axis renders' },
+  // UTERUS (2026-09-15): same scope note as this organ's own MARGIN_STATUS entries above — the
+  // background research passes behind this organ were not tasked with a dedicated gross-growth-
+  // pattern search, so 'not yet searched' is the honest state.
+  uendo: { status: 'uncharacterised', ref: 'not yet searched — this organ\'s own research pass was scoped to driver genes, molecular classification, site model and histology, not gross growth pattern' },
+  usero: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
+  uclear: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
+  ucs: { status: 'uncharacterised', ref: 'not yet searched — same scope note as this organ\'s own Endometrioid entry' },
 });
 
 // THE EXTENT AXIS AS TEXT (design: .claude/phaseA_extent_design.md, rulings 1–3 of 2026-09-10). Stage at diagnosis is a
@@ -886,6 +902,21 @@ export const EXTENT_STATUS = Object.freeze({
   mm:     { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'staged by the International Staging System (ISS/R-ISS: beta-2-microglobulin, albumin, LDH, cytogenetics), not anatomic extent', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity; real extramedullary-vs-paraskeletal site data is disclosed in this cancer\'s own REGIONS notes instead' },
   cll:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'staged by the Rai or Binet clinical staging systems (lymphocytosis, nodes, organomegaly, cytopenias), not anatomic extent', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity' },
   all:    { status: 'uncharacterised', site: 'marrow', uncharacterisedReason: 'a systemic blood/marrow disease with no anatomic localized/regional/distant distinction; risk-stratified by genetic subtype and age instead', ref: 'checked 2026-09-15 — no SEER Summary Stage distribution exists for this entity; real extramedullary sanctuary-site data (CNS, testis) is disclosed in this cancer\'s own REGIONS notes instead' },
+  // UTERUS, all four entities (2026-09-15) — SHARE-BOUND RULE (phaseC_design.md §6b): SEER does
+  // publish a dedicated "Uterine Cancer" Stat Facts page (verified live, 2026-09-15:
+  // Localized 67%, Regional 18%, Distant 11%, Unknown 4%; SEER 21 Excluding IL, 2016–2022) — but
+  // it is an ORGAN aggregate across every histologic subtype, and the share-bound rule requires
+  // (1−share)×100 ≤ ~10 points before an aggregate may stand in for one histology. None of this
+  // organ's four entities clears that bar: Endometrioid, the most common at ~78–80% share, still
+  // implies up to ~22 points of possible per-category error; Serous (~10%), Clear cell (<5%), and
+  // Carcinosarcoma (~4.7%) fail it far more severely. No dedicated per-histology SEER Summary
+  // Stage source was found in this organ's own research pass for any of the four (the site-model
+  // literature search found only combined-EC distant-metastasis-site data, disclosed at REGIONS
+  // level in each entity's own trunk/branch notes instead of an extent breakdown).
+  uendo: { status: 'uncharacterised', site: 'uterine corpus', uncharacterisedReason: 'the organ aggregate exists (SEER: 67/18/11/4% localized/regional/distant/unknown) but fails the share-bound rule at this entity\'s own ~78–80% share (up to ~22 points of possible per-category error); no dedicated per-histology SEER Summary Stage source was found', ref: 'https://seer.cancer.gov/statfacts/html/corp.html — verified 2026-09-15 (aggregate only, not usable per-entity)' },
+  usero: { status: 'uncharacterised', site: 'uterine corpus', uncharacterisedReason: 'the organ aggregate fails the share-bound rule far more severely at this entity\'s own ~10% share; no dedicated per-histology SEER Summary Stage source was found', ref: 'https://seer.cancer.gov/statfacts/html/corp.html — verified 2026-09-15 (aggregate only, not usable per-entity)' },
+  uclear: { status: 'uncharacterised', site: 'uterine corpus', uncharacterisedReason: 'the organ aggregate fails the share-bound rule far more severely at this entity\'s own <5% share; no dedicated per-histology SEER Summary Stage source was found', ref: 'https://seer.cancer.gov/statfacts/html/corp.html — verified 2026-09-15 (aggregate only, not usable per-entity)' },
+  ucs: { status: 'uncharacterised', site: 'uterine corpus', uncharacterisedReason: 'the organ aggregate fails the share-bound rule far more severely at this entity\'s own ~4.7% share; no dedicated per-histology SEER Summary Stage source was found', ref: 'https://seer.cancer.gov/statfacts/html/corp.html — verified 2026-09-15 (aggregate only, not usable per-entity)' },
 });
 export function extentSentence(entryName, ext){
   if(!ext) return '';
@@ -1037,6 +1068,10 @@ export const ORIGIN_HOTSPOT = Object.freeze({
   bladder: 0,  // Bladder wall (dome) — its text carries the lateral-wall origin fact
   thyroid: 1,  // Right lobe — its text carries the follicular-cell origin
   lymphnodes: 0, // Follicles — germinal-center/mantle-zone B-cell origin for most of this organ's entities
+  uterus: 0,   // Endometrium — all four active entities arise here, including carcinosarcoma's
+               // carcinomatous component (Zhao et al., PNAS, 2016, PMID 27791010: "CS likely
+               // begins as carcinoma, followed by sarcomatous transformation") — no per-entry
+               // ORIGIN_HOTSPOT_ENTRY override needed.
   marrow: 2,   // Perivascular / sinusoidal niche — hematopoietic stem/progenitor cells reside
                // here per current evidence (Morrison & Scadden, Nature, 2014, PMID 24429631);
                // every entry's own real developmental origin is a §9 non-spatial fact stated in

@@ -122,6 +122,11 @@ DECLARED = [
     # Marrow organ authoring pass, 2026-09-15.
     {'key': 'js/organs/marrow.js|comment|That is why PV models as ONE trunk entry', 'reason': 'TRUE, confirmed by direct count of this file\'s own arrays: TRUNK_PV holds exactly 1 entry (JAK2 only), TRUNK_ET and TRUNK_PMF each hold exactly 3 (JAK2/CALR/MPL) — the claim is about this repo\'s own code structure, not literature, and gene presence cannot settle it because it names no single gene symbol to check against', 'until': None},
     {'key': 'layerSlab-census', 'reason': "skin.js's own \"only one cut block\" claim is corrected in place at the same commit that adds marrow.js as a second layerSlab-built cross-section — see the dated fix in skin.js's own comment/desc; not a stale, unaddressed claim", 'until': None},
+    # Uterus organ authoring pass, 2026-09-15.
+    {'key': 'js/organs/uterus.js|comment|since no other organ in this atlas is ut', 'reason': "TRUE by construction — this is the first commit adding a 'uterus' organEntry.key; confirmed by grep, no other js/organs/*.js file declares key:'uterus'", 'until': None},
+    {'key': 'js/organs/uterus.js|comment|same sourcing discipline as every other ', 'reason': 'TRUE — every real-mesh organ in this atlas (bladder/brain/breast/kidneys/liver/lymphnodes/pancreas/prostate/colon/thyroid/stomach) is documented in CLAUDE.md as following the same NIH-3D-or-Sketchfab-sourcing-plus-license-verification discipline this comment restates, an already-established atlas-wide convention rather than a new corpus fact', 'until': None},
+    {'key': 'js/organs/uterus.js|comment|same discipline as every real-scan organ', 'reason': 'TRUE, the same established convention restated a second time in this file (Blender import/topology-check/weld/shade-smooth/recenter/export pipeline, documented at length in CLAUDE.md for every real-scan organ in this atlas)', 'until': None},
+    {'key': 'js/organs/uterus.js|comment|HISTOLOGY — genuinely new drawing code, ', 'reason': "TRUE, checked directly against every existing generator (drawGlandRing/drawFrond/drawCribriformMass/drawSmallCellSheet/drawKeratinPearl/drawWhorl/drawPsammomaBody, and genATC's own spindle-fascicle technique) before writing genCarcinosarcoma — the same verification discipline this atlas's own genATC header already documents for itself, restated here for a second, genuinely different biphasic composition", 'until': None},
 ]
 # EXPLICIT FORM OVER AMBIENT STATE (2026-09-09): this tool roots ITSELF at the repo it lives in. The battery
 # always ran it with cwd=REPO_ROOT, which hid a bare-cwd dependence for the tool's whole life — the sweep of
@@ -896,10 +901,20 @@ if __name__ == '__main__':
     problems_t = resolve('absence_claim_check', universal_flags, DECLARED)
     tally = ', '.join(f'{k} {v}' for k, v in sorted(counts.items()))
     bad = len(defects) + len(universals)
-    # DONE line last (7-bis): a clean scan is never a pass without it.
+    # THE MISREAD THIS FIX EXISTS FOR (2026-09-15, user-directed): this line used to end with
+    # "{len(problems_t)} tolerated-count problems" — trailing, and in the exact position every
+    # other instrument's DONE line puts ITS real problem count, but exit() actually keys on
+    # `bad or problems_t`, a DIFFERENT, wider condition. A run with bad=1, problems_t=0 printed a
+    # line ending "0 tolerated-count problems" while exiting 1 — a human reading the trailing
+    # number as the verdict was told the opposite of the truth, even though `bad` was ALSO printed,
+    # earlier in the same sentence, unlabeled as a problem. Fixed by computing the one true total
+    # up front and making it the thing both the DONE line and the exit code agree on — no number in
+    # this line may be mistaken for "the" count when it is only part of one.
+    total_problems = bad + len(problems_t)
     print(f'DONE absence_claim_check: {bad} unscoped claims '
           f'({len(defects)} absence, {len(universals)} false corpus universal), '
           f'{len(unresolved)} universals flagged for a read, '
           f'{len(world)} world-scoped, '
-          f'{len(presence)} cancers indexed ({tally or "no claims found"}), {len(problems_t)} tolerated-count problems')
-    sys.exit(1 if (bad or problems_t) else 0)
+          f'{len(presence)} cancers indexed ({tally or "no claims found"}), '
+          f'{len(problems_t)} tolerated-count problems, {total_problems} total problems')
+    sys.exit(1 if total_problems else 0)

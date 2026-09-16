@@ -380,6 +380,32 @@ PREREGISTERED = {
             'separately-cited Döhner et al. group. A Hallek|2000 record would assert a paper Hallek '
             'did not write and steal Döhner\'s own year; the rule correctly spends it.',
     },
+    # TWO NEW SPANS, UTERUS ORGAN (2026-09-15) — a variant of the Fearon/Powell/Su/Grob-shaped false
+    # cross-citation pairing: the two extra numbers here are not a second cited work at all but the
+    # two endpoints of a data-collection date RANGE, mentioned in the same clause as the real
+    # citation. Both correctly SPENT; basis TEST, this organ postdates the rule.
+    'Matsuo|1973|js/organs/uterus.js:44': {
+        'side': 'SPENT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'uterus.js:44 reads "4.7% of endometrial cancers (11,000/235,849, Matsuo et al., '
+            'J Gynecol Oncol, 2018, SEER 1973–2013) and rising — 1.7% in 1973 to 5.6% by 2013". '
+            'Matsuo\'s own parenthetical carries the paper\'s real year, 2018, and closes after the '
+            'SEER registry\'s own collection window, 1973–2013, which follows it in the same clause — '
+            'those two numbers name the span of years the registry covers, not a second and third '
+            'Matsuo publication. A Matsuo|1973 record would assert a paper that does not exist; the '
+            'rule correctly spends it.',
+    },
+    'Matsuo|2013|js/organs/uterus.js:44': {
+        'side': 'SPENT',
+        'basis': 'TEST',
+        'scored': 'CONFIRMS',
+        'reason':
+            'Same span as Matsuo|1973 immediately above (uterus.js:44) — the second of the two SEER '
+            'collection-window endpoints (1973–2013) following Matsuo\'s real year, 2018, inside the '
+            'same closed parenthetical. Same read, same reasoning, same verdict: SPENT, CONFIRMS.',
+    },
 }
 # A FOURTH SHAPE WAS FOUND AND FIXED AT THE SOURCE, NOT SCORED (2026-09-13, lungs lusc/sclc authoring
 # pass) — lungs.js:348 originally read "...(diagnostic threshold, IHC markers) and the WHO 2015

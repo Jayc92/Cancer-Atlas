@@ -150,6 +150,14 @@ DECLARED = [
     {'key': 'thyroid|comment|43-60%|34/43', 'reason': "false positive: 43-60% is the cross-cohort RET-positivity RANGE (Elisei 2008 + Gild 2023); 34/43 is M918T's dominance WITHIN Elisei's own RET-positive subset — two different real numbers, not a restatement", 'until': None},
     {'key': 'thyroid|field|~60%|34/43', 'reason': "false positive, same mechanism: ~60% is Gild et al. 2023's own cohort estimate; 34/43 is M918T's dominance within Elisei et al. 2008's RET-positive subset — different papers, different quantities", 'until': None},
     {'key': 'thyroid|field|~60%|43/100', 'reason': "false positive, same mechanism: ~60% is Gild et al. 2023's own cohort estimate; 43/100 is Elisei et al. 2008's own, separately-cited sporadic-cohort RET-positivity rate — two independent cohorts' figures sitting near each other, not one restated", 'until': None},
+    # UTERUS (2026-09-15, serous carcinoma authoring pass). Same mechanism as pancreas/prostate/
+    # thyroid above: one sentence packs two different real figures from the SAME source (Hussein
+    # et al., Mod Pathol, 2015, PMID 25394778) — 24/25 (96%) is the share of POLE-mutant endometrial
+    # tumors showing defining ENDOMETRIOID morphologic features; 28% is a DIFFERENT, separately-
+    # reported share of those same tumors whose severe nuclear atypia raised concern for SEROUS
+    # carcinoma on top of that. Re-verified against the research agent's own direct quote of the
+    # source before declaring: neither figure restates the other.
+    {'key': 'uterus|comment|28%|24/25', 'reason': "false positive, same mechanism as pancreas/prostate/thyroid above: 24/25 (96%) is the share of POLE-mutant endometrial tumors with defining endometrioid features (Hussein et al., 2015); 28% is a different, separately-reported share of those same tumors whose atypia raised serous concern — two real figures from one source, not one restated as the other", 'until': None},
     # NOT A FALSE POSITIVE — a genuine mismatch, disclosed rather than silently corrected
     # (2026-09-13, kidneys prcc authoring pass, caught by an independent citation-verification
     # pass and re-verified against the primary source before declaring). Linehan et al. (NEJM,

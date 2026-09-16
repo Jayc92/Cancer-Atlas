@@ -1047,6 +1047,58 @@ export const TRIALS_CONDITION_MAP = {
       + 'trials (blinatumomab in newly-diagnosed ALL, CD19-CAR-T for B-ALL, dasatinib/imatinib for '
       + 'Ph+ ALL), current as of the fetch date.',
   },
+  // Uterus, all four entities (2026-09-15) — each histology term below has a real, confirmed
+  // collision risk with the SAME term used for an ovarian entity already active in this atlas
+  // ("endometrioid" — Ovary's own endometrioid entry; "serous"/"clear cell" — HGSOC/OCCC;
+  // "carcinosarcoma" exists in ovarian/other primary sites too), so every entry anchors with
+  // requireAlso to the organ terms these registered trials actually use ("endometrial"/
+  // "uterine"/"uterus" — endometrial carcinoma trials overwhelmingly name the disease
+  // "endometrial," not "uterine," which is why both stems are required).
+  uendo: {
+    query: 'endometrioid endometrial carcinoma', parent: 'endometrial cancer',
+    conditionKeywords: ['endometrioid'], excludeIf: ['ovarian', 'ovary', 'fallopian', 'peritoneal'],
+    note: 'LIVE-CAUGHT BUG, FIXED before shipping: a requireAlso anchor (endometrial/uterine/'
+      + 'uterus) was tried first, matching this atlas\'s own organ-anchor precedent — but a live '
+      + '10-result sample caught a real false drop, NCT06468215 ("Fertility Sparing Therapy for '
+      + 'Patients With Stage IA G2 Endometrial Cancer"), whose only relevant condition string is '
+      + 'the bare MeSH-style tag "Carcinoma, Endometrioid" with no co-occurring organ word at '
+      + 'all. Switched to excludeIf instead: every genuine ovarian-endometrioid trial observed in '
+      + 'this corpus explicitly qualifies it ("Ovarian Endometrioid Adenocarcinoma", "Fallopian '
+      + 'Tube Endometrioid Adenocarcinoma"), so excluding those organ words is the safer '
+      + 'discriminator than requiring an endometrial/uterine one — the same requireAlso-too-'
+      + 'strict shape this atlas\'s Lungs pass already found for LUSC/SCLC (data rule 33).',
+  },
+  usero: {
+    query: 'uterine serous carcinoma', parent: 'endometrial cancer',
+    conditionKeywords: ['serous'], requireAlso: ['endometrial', 'uterine', 'uterus'],
+    note: 'requireAlso anchors against this atlas\'s own Ovary/HGSOC entry, which shares the bare '
+      + 'term "serous" heavily (ovarian serous carcinoma trials vastly outnumber uterine ones in '
+      + 'the live corpus) — live-verified 2026-09-15.',
+  },
+  uclear: {
+    query: 'uterine clear cell carcinoma', parent: 'endometrial cancer',
+    conditionKeywords: ['clear cell'], requireAlso: ['endometrial', 'uterine', 'uterus'],
+    note: 'requireAlso anchors against this atlas\'s own Kidneys/ccRCC and Ovary/clear-cell '
+      + 'entries, both of which share the bare term "clear cell" — live-verified 2026-09-15.',
+  },
+  ucs: {
+    query: 'uterine carcinosarcoma', parent: 'endometrial cancer',
+    conditionKeywords: ['carcinosarcoma', 'mmmt', 'malignant mixed mesodermal'],
+    requireAlso: ['endometrial', 'uterine', 'uterus'],
+    note: 'LIVE-CAUGHT BUG, FIXED before shipping: the keyword "malignant mixed mullerian" never '
+      + 'matches real corpus data — the actual condition string this atlas\'s own corpus-'
+      + 'vocabulary signal surfaced is "Uterine Corpus Malignant Mixed Mesodermal (Mullerian) '
+      + 'Tumor," with "Mesodermal" between "Mixed" and "(Mullerian)," not the adjacent phrase the '
+      + 'keyword assumed. Corrected to "malignant mixed mesodermal", the word that actually '
+      + 'appears. requireAlso anchors against carcinosarcoma of other primary sites (ovarian, '
+      + 'cervical). One real, disclosed structural limitation found in the same pass, not fixable '
+      + 'by keyword tuning: NCT05559879 ("Cabozantinib and Dostarlimab in Recurrent Gynecologic '
+      + 'Carcinosarcoma") is a genuine uterine-carcinosarcoma trial per its own title, but its '
+      + 'registered Condition field never uses the word "carcinosarcoma" at all (only "Gynecologic '
+      + 'Cancer", "Carcinoma", "Uterine Cancer", "Endometrial Cancer") — the registry\'s own '
+      + 'structured metadata doesn\'t carry what the free-text title claims, the same class of gap '
+      + 'this atlas\'s trials-mapping method has already found and accepted elsewhere.',
+  },
 };
 
 // ---- the fetch-time filter (design doc §1b) --------------------------------------------------

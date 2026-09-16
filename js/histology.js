@@ -3267,6 +3267,76 @@ function genALL(g, rnd){
   ];
 }
 
+// Uterus/carcinosarcoma (ucs) — genuinely new drawing code, checked directly against every
+// existing generator before writing this one (the same discipline genATC's own header already
+// documents for itself): no prior generator combines a glandular/papillary epithelial component
+// with a true spindle-cell sarcomatous component juxtaposed in one field, which is the single
+// most diagnostic visual feature of this real tumor type (McConechy et al., J Pathol Clin Res,
+// 2015, PMID 27499902; Zhao et al., PNAS, 2016, PMID 27791010 — full citations in
+// js/organs/uterus.js's own HISTOLOGY_UCS block). Reuses TWO existing primitives rather than
+// inventing new geometry from scratch: drawGlandRing (the epithelial/carcinomatous component,
+// the same primitive genEndometrioid dispatches, since this tumor's own carcinomatous component
+// is itself of endometrial-carcinoma type) and genATC's own spindle-fascicle technique (the
+// sarcomatous component) — a "partial reuse" tier composition, the same tier
+// genProstateDuctal's frond+cribriform+gland combination already established. A small
+// cartilage-like nodule represents the real ~34-40% heterologous-differentiation minority
+// (Rosati et al., J Cancer Res Clin Oncol, 2023, PMID 36773091) without claiming it is the
+// dominant sarcoma pattern — the homologous (smooth-muscle-like) majority is what the fascicles
+// themselves depict.
+function genCarcinosarcoma(g, rnd){
+  g.appendChild(el('rect', {x:0, y:0, width:VB.w, height:VB.h, fill:HE.bg}));
+  // Epithelial (carcinomatous) component, left half of the field — confluent glands, the same
+  // primitive genEndometrioid uses.
+  g.appendChild(el('path', {d:blobPath(220, 250, 210, 230, 0.08, 14, rnd, 0), fill:HE.stroma, opacity:0.25}));
+  const glandSpots = [];
+  for(let row=0; row<5; row++){
+    for(let col=0; col<4; col++){
+      const jitterX = (rnd()*2-1)*6, jitterY = (rnd()*2-1)*6;
+      glandSpots.push({ x:70 + col*66 + (row%2?30:0) + jitterX, y:70 + row*82 + jitterY, r:24+rnd()*5 });
+    }
+  }
+  glandSpots.forEach(s=>{ drawGlandRing(g, s.x, s.y, s.r*0.5, rnd, { cellR:8.5, nucMin:3.4, nucMax:4.8 }); });
+  // Sarcomatous component, right half of the field — spindle-cell fascicles, the same technique
+  // genATC's own tumor-cell-body fascicles use (bundles of elongated spindle cells at varying
+  // angles), representing the homologous (leiomyosarcoma-like) majority pattern.
+  const bands = [
+    {x0:430, y0:70, ang:0.2, len:340, n:22},
+    {x0:460, y0:280, ang:1.3, len:200, n:16},
+    {x0:600, y0:40, ang:0.9, len:220, n:16},
+  ];
+  bands.forEach(b=>{
+    const dx = Math.cos(b.ang), dy = Math.sin(b.ang);
+    const px = -dy, py = dx;
+    for(let i=0;i<b.n;i++){
+      const t = i/b.n*b.len + rnd()*12;
+      const off = (rnd()*2-1)*14;
+      const cx = b.x0 + dx*t + px*off, cy = b.y0 + dy*t + py*off;
+      const ang = b.ang*180/Math.PI + (rnd()*2-1)*10;
+      const rx = 11+rnd()*4, ry = 2.8+rnd()*1.1;
+      g.appendChild(el('ellipse', {cx, cy, rx, ry, transform:`rotate(${ang.toFixed(0)} ${cx} ${cy})`, fill:HE.cyto, stroke:HE.cytoLn, 'stroke-width':0.9, opacity:0.92}));
+      g.appendChild(el('ellipse', {cx, cy, rx:rx*0.42, ry:ry*0.72, transform:`rotate(${ang.toFixed(0)} ${cx} ${cy})`, fill:HE.nucDark, opacity:0.95}));
+    }
+  });
+  // A small heterologous nest (cartilage-like matrix) admixed at the sarcoma component's edge —
+  // named in the feature text, not claimed as the dominant sarcoma pattern.
+  const chond = {cx:700, cy:400, rx:56, ry:46};
+  g.appendChild(el('path', {d:blobPath(chond.cx, chond.cy, chond.rx, chond.ry, 0.14, 12, rnd, 0), fill:HE.clear, stroke:HE.clearLn, 'stroke-width':1.3, opacity:0.85}));
+  for(let i=0;i<14;i++){
+    const a = rnd()*Math.PI*2, r = Math.sqrt(rnd())*0.75;
+    const x = chond.cx+Math.cos(a)*chond.rx*r, y = chond.cy+Math.sin(a)*chond.ry*r;
+    g.appendChild(el('circle', {cx:x, cy:y, r:5+rnd()*2, fill:'none', stroke:HE.nucDark, 'stroke-width':1, opacity:0.7}));
+    g.appendChild(el('circle', {cx:x, cy:y, r:2.6, fill:HE.nucDark, opacity:0.85}));
+  }
+  // The sharp boundary itself, drawn as a slightly darker seam — the single most diagnostic
+  // visual feature named in the intro text.
+  g.appendChild(el('path', {d:'M 400 20 Q 380 250 400 480', fill:'none', stroke:HE.stromaLn, 'stroke-width':3, opacity:0.6}));
+  return [
+    {key:'epithelial', x:150, y:230},
+    {key:'sarcomatous', x:500, y:200},
+    {key:'heterologous', x:chond.cx, y:chond.cy-chond.ry-14},
+  ];
+}
+
 const GENERATORS = {
   hgsoc:  genHGSOC,
   tnbc:   genTNBC,
@@ -3332,6 +3402,18 @@ const GENERATORS = {
   mm:     genMM,
   cll:    genCLL,
   all:    genALL,
+  // Uterus — uendo/uclear reuse Ovary's own generators directly (matching the ndlbcl:genCLymph
+  // cross-organ-reuse precedent above): uendo depicts the SAME architecture genEndometrioid was
+  // originally built to show, and uclear's morphology is confirmed directly shared with OCCC's
+  // own primary source (js/organs/uterus.js's own HISTOLOGY_UENDO/HISTOLOGY_UCLEAR comments have
+  // the full citations). usero reuses genHGSOC on a direct, sourced architectural-similarity
+  // finding (PathologyOutlines: uterine serous carcinoma architecture is "similar to tubo-ovarian
+  // high grade serous carcinoma," with drop-metastasis from HGSOC a real, routine differential
+  // diagnosis). ucs dispatches the new genCarcinosarcoma above.
+  uendo:  genEndometrioid,
+  usero:  genHGSOC,
+  uclear: genOCCC,
+  ucs:    genCarcinosarcoma,
 };
 
 // ------------------------------------------------------------

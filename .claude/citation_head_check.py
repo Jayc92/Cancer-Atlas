@@ -200,6 +200,7 @@ WELL_FORMED = (
     'De Leo',
     'Di Carlo',
     'La Rosa',
+    'Le Gallo',
     'Lott Limbach',
     'Mehrvarz Sarshekeh',
     'Myo Min',
